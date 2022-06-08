@@ -8,8 +8,8 @@
     "./dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf ./dist && tsc",
+    "test": "rimraf ./dist && tsc --p ./tsconfig.test.json && node --test",
+    "build": "rimraf ./dist && tsc --p ./tsconfig.json",
     "build:watch": "tsc --watch"
   },
   "author": "",

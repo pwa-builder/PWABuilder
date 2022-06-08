@@ -27,10 +27,22 @@ export class ManifestPlatformForm extends LitElement {
 
   static get styles() {
     return css`
+      sl-input::part(base),
+      sl-select::part(control),
+      sl-menu-item::part(base),
+      sl-button::part(base),
+      sl-checkbox::part(base),
+      sl-checkbox::part(control) {
+        --sl-input-font-size-medium: 16px;
+        --sl-button-font-size-medium: 12px;
+        --sl-font-size-medium: 16px;
+        --sl-input-height-medium: 3em;
+        --sl-toggle-size: 16px;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1.5em;
+        row-gap: 1em;
       }
       .form-row {
         display: flex;
@@ -78,25 +90,21 @@ export class ManifestPlatformForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       sl-menu {
          width: 100%;
       }
-
       #cat-field {
         display: grid;
         grid-template-rows: repeat(6, auto);
@@ -105,54 +113,72 @@ export class ManifestPlatformForm extends LitElement {
         padding: 0 5px 5px 5px;
         background: white;
       }
-
       #override-list {
         display: flex;
         flex-direction: column;
         align-items: center;
         row-gap: 5px;
       }
-
       #override-item {
         display: flex;
         align-items: center;
         column-gap: 10px;
       }
-
       sl-details {
         width: 100%;
       }
-
       sl-details::part(base){
         width: 100%;
-        max-height: 350px;
-        overflow-y: scroll;
+        max-height: fit-content
       }
-
       sl-details::part(header){
-        height: 38px;
         padding: 10px 15px;
+        font-size: 16px;
       }
-
       .shortcut-holder {
         display: flex;
         flex-direction: column;
       }
-
       .shortcut-header{
         margin-bottom: 5px;
         margin-top: 0;
+        font-size: 16px;
       }
-
       .shortcut-details::part(content){
         display: flex;
         flex-direction: column;
         row-gap: 10px;
       }
-
       .shortcut-holder sl-button {
         width: 50%;
         align-self: flex-end;
+      }
+      .long-items {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+      }
+      .long-items h3 {
+        font-size: 18px;
+        margin: 0;
+      }
+      .long-items p {
+        font-size: 14px;
+        margin: 0;
+      }
+      .long-items .form-field {
+        width: 100%;
+      }
+      .items-holder {
+        display: flex;
+        column-gap: 10px;
+        overflow-x: scroll;
+        padding-bottom: 10px;
+      }
+      .editable {
+        display: flex;
+        align-items:center;
+        justify-content: space-between;
       }
     `;
   }
@@ -308,7 +334,6 @@ export class ManifestPlatformForm extends LitElement {
             <sl-input class="shortcut-input" name="url" placeholder="Shortcut url" /></sl-input>
             <sl-input class="shortcut-input" name="src" placeholder="Shortcut icon src" /></sl-input>
             <sl-input class="shortcut-input" name="desc" placeholder="Shortcut description" /></sl-input>
-
             <sl-button type="submit">Add to Manifest</sl-button>
           </form>
         `
@@ -347,27 +372,47 @@ export class ManifestPlatformForm extends LitElement {
     this.shortcutHTML = [];
     const inputs = [...e.target.querySelectorAll('sl-input')];
 
+    this.updateShortcutsInManifest(inputs, -1);
+  }
+
+  updateShortcutsInManifest(inputs: any, index: number){
     let name = inputs.filter((input: any) => input.name === "name")[0].value;
     let url = inputs.filter((input: any) => input.name === "url")[0].value;
     let src = inputs.filter((input: any) => input.name === "src")[0].value;
     let desc = inputs.filter((input: any) => input.name === "desc")[0].value;
 
-    const scObject: ShortcutItem = {
-      name: name,
-      url: url,
-      icons: [
-        {
-          src: src
-        }
-      ],
-      description: desc
-    }
+    let scObject: ShortcutItem;
 
-    if(!this.manifest.shortcuts){
-      this.manifest.shortcuts = []
+    if(src.length == 0){
+      scObject = {
+        name: name,
+        url: url,
+        description: desc
+      }
+    } else {
+      scObject = {
+        name: name,
+        url: url,
+        icons: [
+          {
+            src: src
+          }
+        ],
+        description: desc
+      }
     }
+    
 
-    this.manifest.shortcuts?.push(scObject)
+    if(index == -1){
+
+      if(!this.manifest.shortcuts){
+        this.manifest.shortcuts = []
+      }
+
+      this.manifest.shortcuts?.push(scObject)
+    } else {
+      this.manifest.shortcuts![index] = scObject;
+    }
 
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
@@ -378,7 +423,6 @@ export class ManifestPlatformForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
-
   }
 
   addProtocolToManifest(e: any){
@@ -386,6 +430,10 @@ export class ManifestPlatformForm extends LitElement {
     this.protocolHTML = [];
     const inputs = [...e.target.querySelectorAll('sl-input')];
 
+    this.updateProtocolsInManifest(inputs, -1);
+  }
+
+  updateProtocolsInManifest(inputs: any, index: number){
     let protocol: string = inputs.filter((input: any) => input.name === "protocol")[0].value;
     let url: string= inputs.filter((input: any) => input.name === "url")[0].value;
 
@@ -394,12 +442,15 @@ export class ManifestPlatformForm extends LitElement {
       url: url
     }
 
-    if(!this.manifest.protocol_handlers){
-      this.manifest.protocol_handlers = []
+    if(index === -1){
+      if(!this.manifest.protocol_handlers){
+        this.manifest.protocol_handlers = []
+      }
+  
+      this.manifest.protocol_handlers?.push(pObject);
+    } else {
+      this.manifest.protocol_handlers![index] = pObject;
     }
-
-    this.manifest.protocol_handlers?.push(pObject)
-
 
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
@@ -418,9 +469,13 @@ export class ManifestPlatformForm extends LitElement {
     const inputs = [...e.target.querySelectorAll('sl-input')];
     const select = e.target.querySelector('sl-select');
 
+    this.updateRelatedAppsInManifest(inputs, select, -1);
+  }
+
+  updateRelatedAppsInManifest(inputs: any, select: any, index: number){
     let platform: string = select.value;
-    let url: string= inputs.filter((input: any) => input.name === "url")[0].value;
-    let id: string= inputs.filter((input: any) => input.name === "id")[0].value;
+    let url: string = inputs.filter((input: any) => input.name === "url")[0].value;
+    let id: string = inputs.filter((input: any) => input.name === "id")[0].value;
 
     const appObject: RelatedApplication  = {
       platform: platform,
@@ -428,12 +483,15 @@ export class ManifestPlatformForm extends LitElement {
       id: id
     }
 
-    if(!this.manifest.related_applications){
-      this.manifest.related_applications = []
+    if(index == -1){
+      if(!this.manifest.related_applications){
+        this.manifest.related_applications = []
+      }
+  
+      this.manifest.related_applications?.push(appObject);
+    } else {
+      this.manifest.related_applications![index] = appObject;
     }
-
-    this.manifest.related_applications?.push(appObject)
-
 
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
@@ -444,6 +502,38 @@ export class ManifestPlatformForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+  }
+
+
+  toggleEditing(tag: string){
+    let inputs = [...this.shadowRoot!.querySelectorAll('[data-tag= \"' + tag + '\"]:not(sl-icon-button):not(sl-select)')];
+    inputs.forEach((input: any) =>  input.disabled = !input.disabled);
+
+    let select: any = this.shadowRoot!.querySelector('sl-select[data-tag= \"' + tag + '\"]');
+    console.log(select);
+    if(select){
+      select.disabled = !select.disabled;
+    }
+
+    let button: any = this.shadowRoot!.querySelector('sl-icon-button[data-tag= \"' + tag + '\"]');
+    
+    if(button!.name === "pencil"){
+      button.name = "save";
+    } else {
+      button.name = "pencil";
+
+      const split_tag = tag.split(" ");
+      const field = split_tag[0]
+      const index = split_tag[1];
+
+      if(field === "shortcuts"){
+        this.updateShortcutsInManifest(inputs, parseInt(index));
+      } else if(field === "protocol"){
+        this.updateProtocolsInManifest(inputs, parseInt(index));
+      } else {
+        this.updateRelatedAppsInManifest(inputs, select, parseInt(index));
+      }
+    }
   }
 
   render() {
@@ -488,7 +578,44 @@ export class ManifestPlatformForm extends LitElement {
             </sl-select>
           </div>
         </div>
-        <div class="form-row">
+        <div class="long-items">
+          <div class="form-field">
+            <div class="field-header">
+              <h3>Related Applications</h3>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications"
+                target="_blank"
+                rel="noopener"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <p class="toolTip">
+                  Click for more info on the related applications option in your manifest.
+                </p>
+              </a>
+            </div>
+            <p>related apps desc</p>
+            <sl-details class="shortcut-details" summary="Click to edit related apps">
+              <sl-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</sl-button>
+              <div class="items-holder">
+                ${ this.manifest.related_applications ? this.manifest.related_applications.map((app: any, i: number) =>
+                  html`
+                    <div class="shortcut-holder">
+                      <div class="editable">
+                        <h4 class="shortcut-header">Related App #${i + 1}</h4>
+                        <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.toggleEditing("related " + i.toString())}></sl-icon-button>
+                      </div>
+                      <sl-select placeholder="Select a Platform" placement="bottom" .value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
+                        ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
+                      </sl-select>
+                      <sl-input class="shortcut-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} disabled></sl-input>
+                      <sl-input class="shortcut-input" placeholder="App ID" value=${app.id || ""} name="id" data-tag=${"related " + i.toString()} disabled></sl-input>
+                    </div>
+                  `
+                ): html``}
+                ${this.relatedAppsHTML ? this.relatedAppsHTML.map((ele: TemplateResult) => ele) : html``}
+              </div>
+            </sl-details>
+          </div>
           <div class="form-field">
             <div class="field-header">
               <h3>Display Override</h3>
@@ -545,22 +672,25 @@ export class ManifestPlatformForm extends LitElement {
             <p>Links to key tasks or pages within a web app</p>
             <sl-details class="shortcut-details" summary="Click to edit shortcuts">
               <sl-button @click=${() => this.addFieldToHTML("shortcuts")} ?disabled=${this.shortcutHTML.length != 0}>Add Shortcut</sl-button>
-              ${this.manifest.shortcuts ? this.manifest.shortcuts!.map((sc: any, i: number) =>
-                html`
-                  <div class="shortcut-holder">
-                    <h4 class="shortcut-header">Shortcut #${i + 1}</h4>
-                    <sl-input class="shortcut-input" placeholder="Shortcut name" value=${sc.name || ""} /></sl-input>
-                    <sl-input class="shortcut-input" placeholder="Shortcut url" value=${sc.url || ""} /></sl-input>
-                    <sl-input class="shortcut-input" placeholder="Shortcut icon src" value=${sc.icons ? sc.icons[0].src : ""} /></sl-input>
-                    <sl-input class="shortcut-input" placeholder="Shortcut description" value=${sc.description || ""} /></sl-input>
-                  </div>
-                `
-              ) : html``}
-              ${this.shortcutHTML.map((ele: TemplateResult) => ele)}
+              <div class="items-holder">
+                ${this.manifest.shortcuts ? this.manifest.shortcuts!.map((sc: any, i: number) =>
+                  html`
+                    <div class="shortcut-holder">
+                      <div class="editable">
+                        <h4 class="shortcut-header">Shortcut #${i + 1}</h4>
+                        <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"shortcut " + i.toString()} @click=${() => this.toggleEditing("shortcut " + i.toString())}></sl-icon-button>
+                      </div>
+                      <sl-input class="shortcut-input" name="name" placeholder="Shortcut name" value=${sc.name || ""} data-tag=${"shortcut " + i.toString()} disabled></sl-input>
+                      <sl-input class="shortcut-input" name="url" placeholder="Shortcut url" value=${sc.url || ""} data-tag=${"shortcut " + i.toString()} disabled></sl-input>
+                      <sl-input class="shortcut-input" name="src" placeholder="Shortcut icon src" value=${sc.icons ? sc.icons[0].src : ""} data-tag=${"shortcut " + i.toString()} disabled></sl-input>
+                      <sl-input class="shortcut-input" name="desc" placeholder="Shortcut description" value=${sc.description || ""} data-tag=${"shortcut " + i.toString()} disabled></sl-input>
+                    </div>
+                  `
+                ) : html``}
+                ${this.shortcutHTML.map((ele: TemplateResult) => ele)}
+                </div>
             </sl-details>
           </div>
-        </div>
-        <div class="form-row">
           <div class="form-field">
             <div class="field-header">
               <h3>Protocol Handlers</h3>
@@ -578,52 +708,23 @@ export class ManifestPlatformForm extends LitElement {
             <p>Protocols this web app can register and handle</p>
             <sl-details class="shortcut-details" summary="Click to edit protocol handlers">
               <sl-button @click=${() => this.addFieldToHTML("protocol_handlers")} ?disabled=${this.protocolHTML.length != 0}>Add Protocol</sl-button>
-              ${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.map((p: any, i: number) =>
-                html`
-                  <div class="shortcut-holder">
-                    <h4 class="shortcut-header">Protocol Handler #${i + 1}</h4>
-                    <sl-input class="shortcut-input" placeholder="Protocol" value=${p.protocol || ""} /></sl-input>
-                    <sl-input class="shortcut-input" placeholder="URL" value=${p.url || ""} /></sl-input>
-                  </div>
-                `
-              ): html``}
-              ${this.protocolHTML.map((ele: TemplateResult) => ele)}
+              <div class="items-holder">
+                ${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.map((p: any, i: number) =>
+                  html`
+                    <div class="shortcut-holder">
+                      <div class="editable">
+                        <h4 class="shortcut-header">Protocol Handler #${i + 1}</h4>
+                        <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"protocol " + i.toString()} @click=${() => this.toggleEditing("protocol " + i.toString())}></sl-icon-button>
+                      </div>
+                      <sl-input class="shortcut-input" name="protocol" placeholder="Protocol" value=${p.protocol || ""} data-tag=${"protocol " + i.toString()} disabled></sl-input>
+                      <sl-input class="shortcut-input" name="url" placeholder="URL" value=${p.url || ""} data-tag=${"protocol " + i.toString()} disabled></sl-input>
+                    </div>
+                  `
+                ): html``}
+                ${this.protocolHTML.map((ele: TemplateResult) => ele)}
+                </div>
             </sl-details>
           </div>
-          <div class="form-field">
-            <div class="field-header">
-              <h3>Related Applications</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the related applications option in your manifest.
-                </p>
-              </a>
-            </div>
-            <p>related apps desc</p>
-            <sl-details class="shortcut-details" summary="Click to edit related apps">
-              <sl-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</sl-button>
-              ${ this.manifest.related_applications ? this.manifest.related_applications.map((app: any, i: number) =>
-                html`
-                  <div class="shortcut-holder">
-                    <h4 class="shortcut-header">Related App #${i + 1}</h4>
-                    <sl-select placeholder="Select a Platform" placement="bottom" .value=${app.platform || ""}>
-                      ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
-                    </sl-select>
-                    <sl-input class="shortcut-input" placeholder="App URL" value=${app.url || ""} /></sl-input>
-                    <sl-input class="shortcut-input" placeholder="App ID" value=${app.id || ""} /></sl-input>
-                  </div>
-                `
-              ): html``}
-              ${this.relatedAppsHTML ? this.relatedAppsHTML.map((ele: TemplateResult) => ele) : html``}
-            </sl-details>
-          </div>
-        </div>
-        <div class="form-row">
           <div class="form-field">
             <div class="field-header">
               <h3>Categories</h3>
@@ -645,7 +746,6 @@ export class ManifestPlatformForm extends LitElement {
                       html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat} chekced>${cat}</sl-checkbox>`
                     :
                       html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat}>${cat}</sl-checkbox>`
-
                   )}
               </div>
           </div>
@@ -654,4 +754,3 @@ export class ManifestPlatformForm extends LitElement {
     `;
   }
 }
-

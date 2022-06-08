@@ -346,11 +346,11 @@ export class AppHome extends LitElement {
           }
         }
         @media screen and (-ms-high-contrast: white-on-black) {
-          #input-form fast-text-field::part(control):focus:not(:focus-visible) {
+          #input-form fast-text-field::part(control):focus {
             outline: none;
           }
           #input-form fast-text-field::part(control):focus-visible {
-            outline: skyblue solid 3px;
+            outline: skyblue solid 6px;
             outline-offset: 2px;
           }
           #input-form fast-text-field::part(control) {
@@ -451,7 +451,7 @@ export class AppHome extends LitElement {
           const goodURL = manifestContext.siteUrl;
           
           if (goodURL !== undefined) {
-            Router.go(`/testing?site=${goodURL}`);
+            Router.go(`/reportcard?site=${goodURL}`);
           }
         } catch (err) {
           // couldnt get manifest

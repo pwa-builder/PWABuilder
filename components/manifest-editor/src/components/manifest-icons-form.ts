@@ -45,7 +45,7 @@ export class ManifestIconsForm extends LitElement {
       #form-holder {
         display: flex;
         flex-direction: column;
-        row-gap: 1.5em;
+        row-gap: 1em;
       }
       .form-field {
         width: 50%;
@@ -71,7 +71,6 @@ export class ManifestIconsForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
-
       .toolTip {
         visibility: hidden;
         width: 200px;
@@ -86,14 +85,12 @@ export class ManifestIconsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
@@ -316,7 +313,6 @@ export class ManifestIconsForm extends LitElement {
           <div class="icon-gallery">
             ${this.iconSrcListParse().map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
           </div>
-
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
           <div id="icon-section">

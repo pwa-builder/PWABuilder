@@ -1,0 +1,12 @@
+.featured-posts .featured-post:first-child {
+  grid-column: span 2 / span 2;
+}
+
+.doc-link {
+  color: var(--primary-font-color);
+  text-decoration: none;
+}
+
+.doc-link p {
+  font-weight: normal;
+}
