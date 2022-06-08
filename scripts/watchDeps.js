@@ -1,12 +1,20 @@
-var { getPkgFromCurrentDir, getAllPkgs, getAllDepsInOrder } =  require('./fileHelpers.js');
-var { exec } = require('child_process');
-var kill  = require('tree-kill');
-var chalk = require('chalk');
+require('./init.js').setupScripts();
+
+const { exec } = require('child_process');
+const { getPkgFromCurrentDir, getAllPkgs, getAllDepsInOrder } =  require('./fileHelpers.js');
+const kill  = require('tree-kill');
+const chalk = require('chalk');
 
 const processes = [];
+const cleaningUp = false;
 
 const cleanUp = () => {
-  console.log('exiting, need to clean up');
+  if (cleaningUp) {
+    return
+  }
+
+  cleaningUp = true;
+  console.log('exiting, stopping all watch processes');
 
   for (let proc of processes) {
     kill(proc.pid, 'SIGINT');
@@ -14,11 +22,11 @@ const cleanUp = () => {
 
   setTimeout(() => {
     process.exit();
-  }, 2000)
+  }, 1000)
 };
 
 if (process.platform === "win32") {
-  var rl = require("readline").createInterface({
+  const rl = require("readline").createInterface({
     input: process.stdin,
     output: process.stdout
   });
