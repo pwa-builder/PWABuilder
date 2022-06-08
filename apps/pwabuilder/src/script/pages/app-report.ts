@@ -152,6 +152,7 @@ export class AppReport extends LitElement {
         }
         #content-holder {
           max-width: 1300px;
+          width: 100%;
           display: flex;
           flex-direction: column;
           row-gap: 1.5em;
@@ -225,20 +226,23 @@ export class AppReport extends LitElement {
           width: 70%;
           border-radius: 10px;
           background-color: white;
-          height: 180px;
           align-items: center;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
-        #app-actions button {
+        #app-actions button:not(#test-download) {
           font-weight: bold;
+          white-space: nowrap;
+          padding: .75em 2em;
+          border-radius: 50px;
+          font-size: 16px;
         }
         #actions {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           padding: 1em;
-          padding-bottom: 0;
           width: 100%;
+          gap: .5em;
         }
         #app-image-skeleton {
           height: 85px;
@@ -250,7 +254,7 @@ export class AppReport extends LitElement {
           margin-bottom: 10px;
         }
         #test {
-          row-gap: 20px;
+          row-gap: 1em;
           width: 45%;
         }
         .flex-col-center {
@@ -266,22 +270,21 @@ export class AppReport extends LitElement {
         }
         #retest {
           background-color: #4f3fb6;
-          border-radius: 50px;
-          padding: 1em;
           color: white;
           display: flex;
           align-items: center;
           column-gap: 10px;
-          font-size: 16px;
           border: none;
         }
         #last-edited {
           color: #808080;
           font-size: 12px;
+          line-height: 12px;
+          white-space: nowrap;
           margin: 0;
           display: flex;
           align-items: center;
-          column-gap: 10px;
+          column-gap: .5em;
         }
         #package {
           row-gap: 20px;
@@ -290,9 +293,6 @@ export class AppReport extends LitElement {
         #pfs {
           background-color: black;
           color: white;
-          font-size: 16px;
-          border-radius: 50px;
-          padding: 1em 3em;
           border: none;
         }
         #hover {
@@ -306,6 +306,10 @@ export class AppReport extends LitElement {
           display: flex;
           column-gap: 0.5em;
           align-items: center;
+
+          font-weight: bold;
+          white-space: nowrap;
+          font-size: 12px;
         }
         #test-download:hover img {
           animation: bounce 1s;
@@ -353,6 +357,7 @@ export class AppReport extends LitElement {
         #todo {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
+          border-radius: 10px;
         }
         sl-details {
           width: 100%;
@@ -377,10 +382,16 @@ export class AppReport extends LitElement {
         #manifest-header {
           display: flex;
           justify-content: space-between;
+          gap: 1em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
-        #mh-left {
+        #mh-content{
+          display: flex;
+          gap: 1em;
+          justify-content: space-between;
+        }
+        #mh-text {
           width: 50%;
           row-gap: 0.5em;
         }
@@ -388,6 +399,7 @@ export class AppReport extends LitElement {
           font-size: 24px;
           font-weight: bold;
           margin: 0;
+          white-space: nowrap;
         }
         .card-desc {
           margin: 0;
@@ -426,7 +438,7 @@ export class AppReport extends LitElement {
           font-size: 16px;
           font-weight: bold;
           border-radius: 50px;
-          padding: 0.5em 2em;
+          padding: 0.75em 2em;
         }
         #report-wrapper .alternate:hover {
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
@@ -440,8 +452,16 @@ export class AppReport extends LitElement {
           flex-direction: column;
           row-gap: 10px;
         }
-        .detail-list p {
+        .detail-list-header {
           font-size: 18px;
+          margin: 0;
+          font-weight: bold;
+        }
+        .detail-list p:not(.detail-list-header){
+          margin: 0;
+        }
+        .missing {
+          font-size: 14px;
           margin: 0;
           font-weight: bold;
         }
@@ -483,12 +503,16 @@ export class AppReport extends LitElement {
         }
         #sw-actions {
           row-gap: 1em;
-          width: 40%;
+          width: fit-content;
         }
         .detail-grid {
           display: flex;
           flex-direction: column;
           row-gap: 0.5em;
+        }
+
+        sl-progress-ring {
+          height: fit-content;
         }
         .red {
           --indicator-color: var(--error-color);
@@ -582,8 +606,80 @@ export class AppReport extends LitElement {
         }
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
-        ${mediumBreakPoint(css``)}
-        ${smallBreakPoint(css``)}
+        ${mediumBreakPoint(css`
+          sl-progress-ring {
+            --size: 75px;
+            font-size: 14px;
+          }
+          .progressRingSkeleton::part(base) {
+            width: 75px;
+            height: 75px;
+          }
+          #two-cell-row {
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #two-cell-row > * {
+            width: 100%;
+          }
+        `)}
+        ${smallBreakPoint(css`
+        
+          sl-progress-ring {
+            --size: 75px;
+            font-size: 14px;
+          }
+          .progressRingSkeleton::part(base) {
+            width: 75px;
+            height: 75px;
+          }
+          #two-cell-row {
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #two-cell-row > * {
+            width: 100%;
+          }
+
+          #header-row {
+            flex-direction: column;
+            row-gap: 1.5em;
+          }
+
+          #app-card{
+            width: 100%;
+          }
+          #app-actions {
+            width: 100%;
+          }
+          #app-actions button:not(#test-download) {
+            font-size: 12px;
+          }
+          #retest img {
+            height: 14px;
+          }
+          #last-edited {
+            font-size: 10px;
+          }
+
+          #test-download {
+            font-size: 10px;
+          }
+          #mh-content {
+            flex-direction: column;
+          }
+          #mh-text {
+            width: 100%;
+          }
+          #manifest-detail-grid{
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+          }
+          #report-wrapper .alternate {
+            font-size: 16px;
+          }
+        `)}
       `,
     ];
   }
@@ -1006,15 +1102,16 @@ export class AppReport extends LitElement {
           </div>
           <div id="manifest" class="flex-col">
             <div id="manifest-header">
-              <div id="mh-left" class="flex-col">
-                <p class="card-header">Manifest</p>
-                <p class="card-desc">
-                  PWABuilder has analyzed your Web Manifest. You do not have a web
-                  manifest. Use our Manifest editor to generate one. You can
-                  package for the store once you have a valid manifest.
-                </p>
-              </div>
-              <div id="mh-right">
+              <div id="mh-content">
+                <div id="mh-text" class="flex-col">
+                  <p class="card-header">Manifest</p>
+                  <p class="card-desc">
+                    PWABuilder has analyzed your Web Manifest. You do not have a web
+                    manifest. Use our Manifest editor to generate one. You can
+                    package for the store once you have a valid manifest.
+                  </p>
+                </div>
+
                 <div id="mh-actions" class="flex-col">
                   <button
                     type="button"
@@ -1037,6 +1134,9 @@ export class AppReport extends LitElement {
                     />
                   </a>
                 </div>
+              </div>
+              
+              <div id="mh-right">
                 ${this.manifestDataLoading ? 
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring 
@@ -1051,7 +1151,7 @@ export class AppReport extends LitElement {
               ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
               <div id="manifest-detail-grid">
                 <div class="detail-list">
-                  <p>*Required</p>
+                  <p class="detail-list-header">*Required</p>
                   ${this.validationResults.map((result: Validation) => result.category === "required" ? 
                   html`
                     <div class="test-result">
@@ -1063,7 +1163,7 @@ export class AppReport extends LitElement {
 
                   ${this.requiredMissingFields.length > 0 ?
                   html`
-                    <p>-- Missing Fields --</p>
+                    <p class="missing">-- Missing Required Fields --</p>
                     ${this.requiredMissingFields.map((field: string) =>
                     html`<div class="test-result">
                       <img src=${stop_src} alt="stop result icon"/>
@@ -1075,7 +1175,7 @@ export class AppReport extends LitElement {
                   
                 </div>
                 <div class="detail-list">
-                  <p>Recommended</p>
+                  <p class="detail-list-header">Recommended</p>
                   ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
                   html`
                     <div class="test-result">
@@ -1086,7 +1186,7 @@ export class AppReport extends LitElement {
 
                   ${this.reccMissingFields.length > 0 ?
                   html`
-                    <p>-- Missing Fields --</p>
+                    <p class="missing">-- Missing Recommended Fields --</p>
                     ${this.reccMissingFields.map((field: string) =>
                     html`<div class="test-result">
                       <img src=${yield_src} alt="yield result icon"/>
@@ -1097,7 +1197,7 @@ export class AppReport extends LitElement {
                   html``}
                 </div>
                 <div class="detail-list">
-                  <p>Optional</p>
+                  <p class="detail-list-header">Optional</p>
                   ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
                   html`
                     <div class="test-result">
@@ -1108,7 +1208,7 @@ export class AppReport extends LitElement {
 
                   ${this.optMissingFields.length > 0 ?
                   html`
-                    <p>-- Missing Fields --</p>
+                    <p class="missing">-- Missing Optional Fields --</p>
                     ${this.optMissingFields.map((field: string) =>
                     html`<div class="test-result">
                       <img src=${yield_src} alt="yield result icon"/>
@@ -1161,7 +1261,7 @@ export class AppReport extends LitElement {
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
-                    <p>*Required</p>
+                    <p class="detail-list-header">*Required</p>
                     ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
                     html`
                       <div class="test-result">
@@ -1172,7 +1272,7 @@ export class AppReport extends LitElement {
                     html``)}
                   </div>
                   <div class="detail-list">
-                    <p>Recommended</p>
+                    <p class="detail-list-header">Recommended</p>
                     ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
                     html`
                     <div class="test-result">
@@ -1183,7 +1283,7 @@ export class AppReport extends LitElement {
                     html``)}
                   </div>
                   <div class="detail-list">
-                    <p>Optional</p>
+                    <p class="detail-list-header">Optional</p>
                     ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
                     html`
                       <div class="test-result">
@@ -1233,7 +1333,7 @@ export class AppReport extends LitElement {
               ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
-                    <p>*Required</p>
+                    <p class="detail-list-header">*Required</p>
                     ${this.securityResults.map((result: Validation) => result.category === "required" ? 
                       html`
                         <div class="test-result">
