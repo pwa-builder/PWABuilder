@@ -451,7 +451,7 @@ export class AppHome extends LitElement {
           const goodURL = manifestContext.siteUrl;
           
           if (goodURL !== undefined) {
-            Router.go(`/reportcard?site=${goodURL}`);
+            Router.go(`/testing?site=${goodURL}`);
           }
         } catch (err) {
           // couldnt get manifest
