@@ -2,6 +2,7 @@
   "scripts": {
     "build": "rimraf dist && tsc && rollup -c rollup.config.js",
     "dev:build": "concurrently \"tsc --watch --preserveWatchOutput\" \"rollup -c rollup.config.dev.js\"",
+    "build:watch": "concurrently \"tsc --watch --preserveWatchOutput\" \"rollup -c rollup.config.dev.js\"",
     "start:build": "rimraf build && rimraf dist && tsc && concurrently \"npm run dev:build\" \"web-dev-server --root-dir build --app-index build/index.html --open --compatibility none\"",
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
     "test": "tsc"

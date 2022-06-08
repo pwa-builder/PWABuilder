@@ -9,11 +9,13 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx rimraf ./dist && tsc"
+    "build": "rimraf ./dist && tsc",
+    "build:watch": "tsc --watch"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "rimraf": "^3.0.2"
   }
 }
