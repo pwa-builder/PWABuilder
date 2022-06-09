@@ -1,7 +1,7 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
-import { validateSingleField } from '@pwabuilder/manifest-validation';
+//import { validateSingleField } from '@pwabuilder/manifest-validation';
 
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
@@ -176,7 +176,7 @@ export class ManifestInfoForm extends LitElement {
     const fieldName = input.dataset['field'];
     input.classList.toggle("input-focused");
 
-    const validation = await validateSingleField(fieldName!, updatedValue);
+    const validation = true; //await validateSingleField(fieldName!, updatedValue); this isn't working rn, just temporarily doing this
     //console.log("validation", validation);
 
     if(validation){
