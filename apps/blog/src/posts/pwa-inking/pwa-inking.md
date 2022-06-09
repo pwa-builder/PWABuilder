@@ -7,7 +7,7 @@ date: 2021-07-15
 updatedDate: 2021-07-15
 trending: true
 featured: false
-image: pwa-linking.png
+image: pwa-blog-2d-ink.gif
 author:
   name: Killian McCoy
 tags:
@@ -17,7 +17,9 @@ tags:
   - Windows
 ---
 
-<iframe title="GIF of the pwa-inking component working" src="\posts\pwa-inking\pwa-blog-2d-ink.gif" width="480" height="308" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/gfrRt9TzYCv24qaoCl">via GIPHY</a></p>
+<img src="https://media.giphy.com/media/gfrRt9TzYCv24qaoCl/giphy.gif" alt="GIF of the pwa-inking component working" width="480" height="408">
+
+<p><a href="https://giphy.com/gifs/gfrRt9TzYCv24qaoCl">via GIPHY</a></p>
 There are many ways to enable inking on the web, but they all involve their challenges to set up. Do you need to support 2D drawing or 3D rendering? How will you minimize rendering latency? How should the drawing respond to browser events like window resizing, tab switching, or zooming? What kinds of input do you want to handle? What do you want to do with a finished drawing?
 
 The [PWABuilder](https://pwabuilder.com/) team built a solution that enables a basic inking experience for the modern web and addresses the above considerations. We are excited to announce the 1.0 version of [the pwa-inking component](https://github.com/pwa-builder/pwa-inking) is now available!
