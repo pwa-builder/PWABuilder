@@ -362,6 +362,9 @@ export class AppReport extends LitElement {
         sl-details {
           width: 100%;
         }
+        sl-details::part(content) {
+          padding-top: 0;
+        }
         #todo-detail::part(base) {
           border-radius: 10px;
         }
