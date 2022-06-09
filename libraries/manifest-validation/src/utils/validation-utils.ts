@@ -136,3 +136,39 @@ export async function findSingleField(field: string, value: any): Promise<Valida
     resolve(singleField);
   })
 }
+
+export function containsStandardCategory(categories: string[]): boolean {
+  // https://github.com/w3c/manifest/wiki/Categories
+  const standardCategories = [
+    'books',
+    'business',
+    'education',
+    'entertainment',
+    'finance',
+    'fitness',
+    'food',
+    'games',
+    'government',
+    'health',
+    'kids',
+    'lifestyle',
+    'magazines',
+    'medical',
+    'music',
+    'navigation',
+    'news',
+    'personalization',
+    'photo',
+    'politics',
+    'productivity',
+    'security',
+    'shopping',
+    'social',
+    'sports',
+    'travel',
+    'utilities',
+    'weather',
+  ];
+  
+  return categories.some(c => standardCategories.includes(c));
+}

@@ -1,5 +1,5 @@
 import { Validation } from "./interfaces";
-import { isStandardOrientation } from "./utils/validation-utils";
+import { containsStandardCategory, isStandardOrientation } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -304,6 +304,24 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
             return isArray;
+        }
+    },
+    {
+        infoString: "The categories member is an array of strings that represent the categories of the web application.",
+        displayString: "Manifest has categories field",
+        category: "optional",
+        member: "categories",
+        defaultValue: [],
+        docsLink:
+            "https://developer.mozilla.org/en-US/docs/Web/Manifest/categories",
+        quickFix: true,
+        test: (value: any[]) => {
+            if (value) {
+                const isGood = containsStandardCategory(value);
+                return isGood;
+            }
+
+            return false;
         }
     },
     {
