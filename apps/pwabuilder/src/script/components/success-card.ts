@@ -42,6 +42,8 @@ export class SuccessCard extends LitElement {
         align-items: flex-start;
         justify-content: space-between;
         width: 100%;
+        /* for screen reader scan */
+        flex-direction: row-reverse;
       }
 
       .success-line-one h3 {
@@ -117,8 +119,8 @@ export class SuccessCard extends LitElement {
     return html`
       <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank" aria-label=${"Success story of " + this.company + " link"}>
         <div class="success-line-one">
-          <h3 tabindex="0">${this.cardValue}</h3>
-          <img src=${this.imageUrl} alt="${this.company} logo"/>
+           <img src=${this.imageUrl} alt="${this.company} logo"/>
+           <h3>${this.cardValue}</h3>
         </div>
         <p class="success-stat">${this.cardStat}</p>
         <p class="success-desc">${this.description}</p>
