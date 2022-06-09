@@ -239,6 +239,10 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
         quickFix: true,
+        test: (value: string) => {
+            // should exist
+            return value && typeof value === "string" && value.length > 0;
+        }
     },
     {
         infoString: "The related_applications field is an array of objects specifying native applications that are installable by, or accessible to, the underlying platform — for example, a platform-specific (native) Windows application.",
@@ -249,6 +253,11 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
         quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+
+            return isArray;
+        }
     },
     {
         member: "lang",
@@ -271,7 +280,9 @@ export const maniTests: Array<Validation> = [
         defaultValue: "ltr",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
-        quickFix: true
+        quickFix: true,
+        test: (value: string) =>
+                value && typeof value === "string" && value.length > 0 && value === "ltr" || value === "rtl"
     },
     {
         member: "description",
@@ -311,7 +322,12 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
-        quickFix: true
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+
+            return isArray;
+        }
     },
     {
         member: "display_override",
@@ -322,5 +338,10 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
         quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+
+            return isArray;
+        }
     }
 ];
