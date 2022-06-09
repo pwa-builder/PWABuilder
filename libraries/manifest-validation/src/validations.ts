@@ -3,6 +3,40 @@ import { isStandardOrientation } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
+        infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
+        displayString: "Manifest has name field",
+        category: "required",
+        member: "name",
+        defaultValue: "placeholder name",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
+        errorString: "name is required and should be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) => {
+            return value && typeof value === "string" && value.length > 0;
+        }
+    },
+    {
+        infoString: "share_target enables your app to get shared content from other apps",
+        displayString: "Manifest has share_target field",
+        category: "optional",
+        member: "share_target",
+        defaultValue: JSON.stringify({
+            "action": "/share-target/",
+            "methods": ["GET"],
+            "params": {
+                "title": "title",
+                "text": "text",
+                "url": "url"
+              }
+        }),
+        docsLink: "https://web.dev/web-share-target/",
+        errorString: "share_target should be an object",
+        quickFix: true,
+        test: (value: string) => {
+            return value && typeof value === "object";
+        }
+    },
+    {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
         displayString: "Manifest has icons field",
         category: "required",
@@ -43,6 +77,19 @@ export const maniTests: Array<Validation> = [
         defaultValue: "placeholder name",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
         errorString: "name is required and should be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) => {
+            return value && typeof value === "string" && value.length > 0;
+        }
+    },
+    {
+        infoString: "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
+        displayString: "Manifest has a scope field",
+        category: "optional",
+        member: "scope",
+        defaultValue: "/",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/scope",
+        errorString: "scope is required and should be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
