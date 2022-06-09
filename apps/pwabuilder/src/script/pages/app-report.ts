@@ -75,7 +75,7 @@ const stop_src = "/assets/new/stop.svg";
 
 const required_fields = ["icons", "name", "short_name", "start_url"];
 const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
-const optional_fields = ["iarc_rating_id", "related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope"];
+const optional_fields = ["iarc_rating_id", "related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -736,7 +736,6 @@ export class AppReport extends LitElement {
 
       let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
 
-
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
           ? parsedManifestContext.manifest.short_name
@@ -746,7 +745,7 @@ export class AppReport extends LitElement {
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
-      if(manifestContext.manifest.theme_color){
+      if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
         this.styles.backgroundColor = manifestContext.manifest.theme_color;
         // calculate whether is best to use white or black
         this.styles.color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');

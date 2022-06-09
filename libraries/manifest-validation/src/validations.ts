@@ -70,19 +70,6 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
-        infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
-        displayString: "Manifest has name field",
-        category: "required",
-        member: "name",
-        defaultValue: "placeholder name",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
-        errorString: "name is required and should be a string with a length > 0",
-        quickFix: true,
-        test: (value: string) => {
-            return value && typeof value === "string" && value.length > 0;
-        }
-    },
-    {
         infoString: "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
         displayString: "Manifest has a scope field",
         category: "optional",
