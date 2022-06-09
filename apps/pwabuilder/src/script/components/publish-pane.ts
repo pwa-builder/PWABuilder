@@ -105,15 +105,17 @@ export class PublishPane extends LitElement {
         flex-direction: column;
         row-gap: .5em;
         width: 100%;
+        max-height: 90vh;
       }
       #frame-content {
         display: flex;
         flex-direction: column;
+        max-height: 90vh;
       }
       #frame-header {
         display: flex;
         flex-direction: column;
-        row-gap: .5em;
+        row-gap: .25em;
         padding: 1em;
         padding-bottom: 0;
       }
@@ -128,11 +130,13 @@ export class PublishPane extends LitElement {
       }
       .card-wrapper {
         width: 100%;
+        height: 100%;
         max-height: 330px;
         display: flex;
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
+        padding: 1em;
       }
       .packaged-tracker {
         height: max-content;
@@ -162,7 +166,6 @@ export class PublishPane extends LitElement {
         align-items: flex-start;
         justify-content: flex-start;
         width: 100%;
-        padding: 1em 1.5em;
         row-gap: .45em;
       }
       .title-block h3 {
@@ -190,7 +193,7 @@ export class PublishPane extends LitElement {
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-gap: 1em;
+        grid-gap: .75em;
         padding: 1em;
       }
       app-button {
@@ -202,7 +205,7 @@ export class PublishPane extends LitElement {
         width: 75%;
         background-color: black;
         color: white; 
-        font-size: 16px;
+        font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
         border: none;
@@ -285,6 +288,8 @@ export class PublishPane extends LitElement {
       }
       #form-header-text h1 {
         font-size: 24px;
+        white-space: nowrap;
+        line-height: 24px;
       }
       #form-header-text p {
         font-size: 14px;
@@ -293,21 +298,45 @@ export class PublishPane extends LitElement {
       #form-area {
         padding: 1em;
       }
-      
+
+      /* > 1920 */
+      ${xxxLargeBreakPoint(css``)}
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css``)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-        
       `)}
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
-        
-      `)}
-      /*1024px - 1365px*/
-      ${xLargeBreakPoint(css`
-      `)}
-      /* > 1920 */
-      ${xxxLargeBreakPoint(css`
-          
+      /* < 480 */
+      ${smallBreakPoint(css`
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: scroll;
+        }
+        #frame-header{
+          margin-bottom: 10px;
+        }
+        #frame-header h1 {
+          font-size: 20px;
+          line-height: 20px;
+        }
+        #frame-header p {
+          font-size: 12px;
+        }
+        #form-header-content img {
+          height: 35px;
+        }
+        #form-header-text h1 {
+          font-size: 20px;
+          white-space: nowrap;
+          line-height: 20px;
+        }
+        #form-header-text p {
+          font-size: 12px;
+        }
       `)}
     `
     ];

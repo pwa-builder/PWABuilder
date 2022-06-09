@@ -483,8 +483,6 @@ export class AppReport extends LitElement {
           column-gap: 1em;
           width: 100%;
         }
-        #sw {
-        }
         #sw-header {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
@@ -523,9 +521,6 @@ export class AppReport extends LitElement {
         .green {
           --indicator-color: var(--success-color);
         }
-        #security {
-          justify-content: space-between;
-        }
         .half-width-cards {
           display: flex;
           flex-direction: column;
@@ -537,7 +532,6 @@ export class AppReport extends LitElement {
         #sec-header {
           justify-content: space-between;
           row-gap: 0.5em;
-          height: 100%;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
         }
@@ -678,6 +672,10 @@ export class AppReport extends LitElement {
           }
           #report-wrapper .alternate {
             font-size: 16px;
+          }
+
+          .modal {
+            max-width: 90vw;
           }
         `)}
       `,
@@ -891,8 +889,36 @@ export class AppReport extends LitElement {
 
   async retest() {
     if (this.siteURL) {
+      this.resetData();
       this.runAllTests(this.siteURL);
     }
+  }
+
+  resetData(){
+    // reset scores
+    this.manifestValidCounter = 0;
+    this.manifestTotalScore = 0;
+    this.swValidCounter = 0;
+    this.swTotalScore = 0;
+    this.secValidCounter = 0;
+    this.secTotalScore = 0;
+
+    // reset missing lists
+    this.requiredMissingFields = [];
+    this.reccMissingFields = [];
+    this.optMissingFields = [];
+
+    // activate loaders
+    this.manifestDataLoading = true;
+    this.swDataLoading = true;
+    this.secDataLoading = true;
+
+    // hide the detail lists
+    let details = this.shadowRoot!.querySelectorAll('sl-details');
+
+    details.forEach((detail: any) => {
+      detail.hide();
+    });
   }
 
   async handleDoubleChecks() {
