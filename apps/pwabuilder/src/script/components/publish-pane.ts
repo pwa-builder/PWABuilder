@@ -194,7 +194,8 @@ export class PublishPane extends LitElement {
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: .75em;
-        padding: 1em;
+        padding: 1em;    
+        overflow-y: scroll;
       }
       app-button {
         display: flex;

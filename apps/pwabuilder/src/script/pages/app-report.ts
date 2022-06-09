@@ -75,7 +75,7 @@ const stop_src = "/assets/new/stop.svg";
 
 const required_fields = ["icons", "name", "short_name", "start_url"];
 const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
-const optional_fields = ["iarc_rating_id", "related_applications", "lang", "dir", "description", "protocol_handlers", "display_override"];
+const optional_fields = ["iarc_rating_id", "related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope"];
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -446,6 +446,7 @@ export class AppReport extends LitElement {
         #manifest-detail-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
+          gap: 1em;
         }
         .detail-list {
           display: flex;
@@ -523,11 +524,12 @@ export class AppReport extends LitElement {
           border-radius: 10px;
           background-color: white;
           row-gap: 0.5em;
-          flex: 1;
-        }
+          align-self: flex-start;
+
+          }
         #sec-header {
           justify-content: space-between;
-          row-gap: 0.5em;
+          row-gap: .5em;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
           height: 100%;
@@ -665,7 +667,6 @@ export class AppReport extends LitElement {
           #manifest-detail-grid{
             display: flex;
             flex-direction: column;
-            gap: 1em;
           }
           #report-wrapper .alternate {
             font-size: 16px;
@@ -673,6 +674,9 @@ export class AppReport extends LitElement {
 
           .modal {
             max-width: 90vw;
+          }
+          .half-width-cards {
+            width: 100%;
           }
         `)}
       `,
@@ -823,6 +827,7 @@ export class AppReport extends LitElement {
 
   async handleMissingFields(manifest: Manifest){
     let missing = await reportMissing(manifest);
+    console.log("missing", missing);
     missing.forEach((field: string) => {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field)

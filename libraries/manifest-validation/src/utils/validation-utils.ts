@@ -15,13 +15,13 @@ const possibleManiKeys = [
   "short_name",
   "start_url",
   "theme_color",
-  "generated",
   "shortcuts",
   "categories",
   "screenshots",
   "iarc_rating_id",
   "icons",
-  "share_target"
+  "share_target",
+  "display_override"
 ];
 
 export function isStandardOrientation(orientation: string): boolean {
