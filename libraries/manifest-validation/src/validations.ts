@@ -184,8 +184,13 @@ export const maniTests: Array<Validation> = [
         errorString: "background_color is required and should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
-            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return hexRegex.test(value);
+            if (value) {
+                const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+                return hexRegex.test(value);
+            }
+            else {
+                return false;
+            }
         },
     },
     {
@@ -199,8 +204,13 @@ export const maniTests: Array<Validation> = [
         errorString: "theme_color is required and should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
-            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return hexRegex.test(value);
+            if (value) {
+                const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+                return hexRegex.test(value);
+            }
+            else {
+                return false;
+            }
         },
     },
     {
