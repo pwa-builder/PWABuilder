@@ -20,7 +20,7 @@ import { getPossibleBadges, sortBadges } from '../services/badges';
 
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('report-card')
 export class ReportCard extends LitElement {
