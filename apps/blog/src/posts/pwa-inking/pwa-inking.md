@@ -7,7 +7,7 @@ date: 2021-07-15
 updatedDate: 2021-07-15
 trending: true
 featured: false
-image: pwa-blog-2d-ink.gif
+image: pwa-linking.png
 author:
   name: Killian McCoy
 tags:
