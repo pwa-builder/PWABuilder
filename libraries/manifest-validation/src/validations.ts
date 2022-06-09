@@ -269,7 +269,7 @@ export const maniTests: Array<Validation> = [
                     return false;
                 }
                 else {
-                    return false;
+                    return true;
                 }
             }
             else {
