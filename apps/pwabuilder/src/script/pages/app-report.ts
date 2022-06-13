@@ -198,9 +198,10 @@ export class AppReport extends LitElement {
               display: none;
             }
             .reportCard h1 {
-              font-size: 33px;
+              font-size: 24px;
+              line-height: 30px;
               margin-top: 0;
-              margin-bottom: 1em;
+              margin-bottom: 2em;
             }
             .reportCard p {
               display: none;
