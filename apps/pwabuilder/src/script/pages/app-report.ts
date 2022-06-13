@@ -26,7 +26,8 @@ import style from '../../../styles/layout-defaults.css';
 import {
   Icon,
   ManifestContext,
-  RawTestResult
+  RawTestResult,
+  TestResult
 } from '../utils/interfaces';
 
 import { fetchOrCreateManifest } from '../services/manifest';
@@ -1304,7 +1305,7 @@ export class AppReport extends LitElement {
                 <div class="detail-grid">
                   <div class="detail-list">
                     <p class="detail-list-header">*Required</p>
-                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ? 
                     html`
                       <div class="test-result">
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
@@ -1315,7 +1316,7 @@ export class AppReport extends LitElement {
                   </div>
                   <div class="detail-list">
                     <p class="detail-list-header">Recommended</p>
-                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ? 
                     html`
                     <div class="test-result">
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
@@ -1326,7 +1327,7 @@ export class AppReport extends LitElement {
                   </div>
                   <div class="detail-list">
                     <p class="detail-list-header">Optional</p>
-                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ? 
                     html`
                       <div class="test-result">
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
@@ -1376,7 +1377,7 @@ export class AppReport extends LitElement {
                 <div class="detail-grid">
                   <div class="detail-list">
                     <p class="detail-list-header">*Required</p>
-                    ${this.securityResults.map((result: Validation) => result.category === "required" ? 
+                    ${this.securityResults.map((result: TestResult) => result.category === "required" ? 
                       html`
                         <div class="test-result">
                           ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}

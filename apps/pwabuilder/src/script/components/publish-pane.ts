@@ -223,7 +223,7 @@ export class PublishPane extends LitElement {
         width: 100%;
         border-bottom: 2px solid #5D5DB9;
         margin-top: 20px;
-        margin-bottom: 40px;
+        margin-bottom: 14px;
       }
       #apk-type p {
         font-size: 20px;
@@ -235,6 +235,7 @@ export class PublishPane extends LitElement {
         height: 100%;
         margin: 0;
         padding: 10px 0;
+        white-space: nowrap;
       }
       #apk-type p:hover {
         cursor: pointer;
@@ -262,7 +263,7 @@ export class PublishPane extends LitElement {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         padding: 1em;
-        gap: 1.5em;
+        gap: .5em;
       }
       #form-header > img {
         width: 25px;
@@ -338,6 +339,14 @@ export class PublishPane extends LitElement {
         #form-header-text p {
           font-size: 12px;
         }
+        #apk-type p {
+          font-size: 16px;
+        }
+
+        #info-tooltip {
+          height: 16px
+        }
+
       `)}
     `
     ];
