@@ -76,6 +76,7 @@ export class PWAManifestEditor extends LitElement {
         overflow-y: auto;
         overflow-x: hidden;
         height: 500px;
+        padding: .5em;
       }
     `;
   }

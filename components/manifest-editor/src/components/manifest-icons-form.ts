@@ -102,18 +102,6 @@ export class ManifestIconsForm extends LitElement {
         flex-direction: column;
         margin: 10px 0;
       }
-      .image-buttons {
-        border: none;
-        padding: 10px 0;
-        background-color: white;
-        border-radius: 44px;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-        width: 50%;
-        font-weight: bold;
-      }
-      .image-buttons:hover {
-        cursor: pointer;
-      }
       #input-file {
         display: none;
       }
@@ -316,7 +304,7 @@ export class ManifestIconsForm extends LitElement {
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
           <div id="icon-section">
-            <button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</button>
+            <sl-button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</sl-button>
             <input
               id="input-file"
               class="file-input hidden"

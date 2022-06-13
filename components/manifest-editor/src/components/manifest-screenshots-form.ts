@@ -24,6 +24,10 @@ export class ManifestScreenshotsForm extends LitElement {
   @state() protected screenshotsList: Array<Screenshot> = [];
   @state() initialScreenshotLength = -1;
 
+  // Generation Status
+  @state() protected showSuccessMessage = false;
+  @state() protected showErrorMessage = false;
+
   static get styles() {
     return css`
       sl-input::part(base),
@@ -108,6 +112,23 @@ export class ManifestScreenshotsForm extends LitElement {
         justify-content: center;
         gap: 5px;
       }
+
+      .screenshots-actions button {
+        width: fit-content;
+        height: fit-content;
+      }
+
+    @keyframes slide {
+      0% , 100%{ bottom: -35px}
+      25% , 75%{ bottom: -2px}
+      20% , 80%{ bottom: 2px}
+    }
+    @keyframes rotate {
+      0% { transform: rotate(-15deg)}
+      25% , 75%{ transform: rotate(0deg)}
+      100% {  transform: rotate(25deg)}
+    }
+  
     `;
   }
 
@@ -244,10 +265,14 @@ export class ManifestScreenshotsForm extends LitElement {
             composed: true
           });
           this.dispatchEvent(screenshotsUpdated);
+          // In the future if we wanna show some message it can be tied to this bool
+          this.showSuccessMessage = true;
         }
       }
     } catch (e) {
       console.error(e);
+      // In the future if we wanna show some message it can be tied to this bool
+      this.showErrorMessage = true;
     }
 
     this.awaitRequest = false;
@@ -338,17 +363,17 @@ export class ManifestScreenshotsForm extends LitElement {
           <h3>Generate Screenshots</h3>
           <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>
           ${this.renderScreenshotInputUrlList()}
-          <button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</button>
+          <sl-button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</sl-button>
           <div class="sc-gallery">
             ${this.newScreenshotSrcListParse().map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}
           </div>
           <div class="screenshots-actions">
-            <button
+            <sl-button
               type="submit"
               ?loading=${this.awaitRequest}
               ?disabled=${this.generateScreenshotButtonDisabled}
               @click=${this.generateScreenshots}
-              >Generate Screenshots</button>
+              >Generate Screenshots</sl-button>
           </div>
         </div>
       </div>
