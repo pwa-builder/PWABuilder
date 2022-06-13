@@ -42,6 +42,10 @@ export class ManifestIconsForm extends LitElement {
 
   static get styles() {
     return css`
+    
+      sl-button::part(base) {
+        --sl-button-font-size-medium: 14px;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;

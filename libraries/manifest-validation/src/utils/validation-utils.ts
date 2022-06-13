@@ -172,3 +172,7 @@ export function containsStandardCategory(categories: string[]): boolean {
   
   return categories.some(c => standardCategories.includes(c));
 }
+
+export const required_fields = ["icons", "name", "short_name", "start_url"];
+export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
+export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];

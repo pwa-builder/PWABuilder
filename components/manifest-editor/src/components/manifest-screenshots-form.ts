@@ -31,9 +31,11 @@ export class ManifestScreenshotsForm extends LitElement {
   static get styles() {
     return css`
       sl-input::part(base),
-      sl-select::part(control) {
+      sl-select::part(control),
+      sl-button::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
+        --sl-button-font-size-medium: 14px;
       }
       
       #form-holder {

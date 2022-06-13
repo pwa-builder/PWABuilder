@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { doubleCheckManifest, getManifestContext } from '../services/app-info';
-import { validateManifest, Validation, Manifest, reportMissing } from '@pwabuilder/manifest-validation';
+import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -72,10 +72,6 @@ const error_messages = {
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
-
-const required_fields = ["icons", "name", "short_name", "start_url"];
-const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
-const optional_fields = ["iarc_rating_id", "related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -613,6 +609,9 @@ export class AppReport extends LitElement {
           width: 200px;
           --color: #d0d0d3
         }
+        sl-tooltip::part(base){
+          --sl-tooltip-font-size: 14px;
+        }
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
@@ -807,15 +806,17 @@ export class AppReport extends LitElement {
 
     //  This just makes it so that the valid things are first
     // and the invalid things show after.
+    console.log(this.validationResults);
     this.validationResults.sort((a, b) => {
       if(a.valid && !b.valid){
         return -1;
       } else if(b.valid && !a.valid){
         return 1;
       } else {
-        return a.field - b.field;
+        return a.member.localeCompare(b.member);
       }
     });
+    console.log(this.validationResults);
     
     this.manifestTotalScore = this.validationResults.length;
 
@@ -1198,7 +1199,12 @@ export class AppReport extends LitElement {
                   ${this.validationResults.map((result: Validation) => result.category === "required" ? 
                   html`
                     <div class="test-result">
-                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="stop result icon"/>`}
+                      ${result.valid ? 
+                        html`<img src=${valid_src} alt="passing result icon"/>` : 
+                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                                <img src=${stop_src} alt="invalid result icon"/>
+                              </sl-tooltip>`
+                      }
                       <p>${result.displayString}</p>
                     </div>
                   ` : 
@@ -1209,7 +1215,9 @@ export class AppReport extends LitElement {
                     <p class="missing">-- Missing Required Fields --</p>
                     ${this.requiredMissingFields.map((field: string) =>
                     html`<div class="test-result">
-                      <img src=${stop_src} alt="stop result icon"/>
+                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
+                            <img src=${stop_src} alt="invalid result icon"/>
+                          </sl-tooltip>
                       <p>Manifest includes ${field} field</p>
                     </div>`
                     )}
@@ -1222,7 +1230,12 @@ export class AppReport extends LitElement {
                   ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
                   html`
                     <div class="test-result">
-                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+                      ${result.valid ? 
+                        html`<img src=${valid_src} alt="passing result icon"/>` : 
+                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                                <img src=${yield_src} alt="yield result icon"/>
+                              </sl-tooltip>
+                        `}
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
@@ -1232,7 +1245,9 @@ export class AppReport extends LitElement {
                     <p class="missing">-- Missing Recommended Fields --</p>
                     ${this.reccMissingFields.map((field: string) =>
                     html`<div class="test-result">
-                      <img src=${yield_src} alt="yield result icon"/>
+                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
+                            <img src=${yield_src} alt="yield result icon"/>
+                          </sl-tooltip>
                       <p>Manifest includes ${field} field</p>
                     </div>`
                     )}
@@ -1244,7 +1259,13 @@ export class AppReport extends LitElement {
                   ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
                   html`
                     <div class="test-result">
-                      ${result.valid ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                      ${result.valid ? 
+                        html`<img src=${valid_src} alt="passing result icon"/>` : 
+                        html`
+                          <sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                            <img src=${yield_src} alt="yield result icon"/>
+                          </sl-tooltip>
+                        `}
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
@@ -1253,10 +1274,13 @@ export class AppReport extends LitElement {
                   html`
                     <p class="missing">-- Missing Optional Fields --</p>
                     ${this.optMissingFields.map((field: string) =>
-                    html`<div class="test-result">
-                      <img src=${yield_src} alt="yield result icon"/>
-                      <p>Manifest includes ${field} field</p>
-                    </div>`
+                    html`
+                        <div class="test-result">
+                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
+                            <img src=${yield_src} alt="yield result icon"/>
+                          </sl-tooltip>
+                          <p>Manifest includes ${field} field</p>
+                        </div>`
                     )}
                   ` :
                   html``}
@@ -1308,7 +1332,7 @@ export class AppReport extends LitElement {
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ? 
                     html`
                       <div class="test-result">
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
                     ` : 
@@ -1319,7 +1343,7 @@ export class AppReport extends LitElement {
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ? 
                     html`
                     <div class="test-result">
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
                     ` : 
@@ -1330,7 +1354,7 @@ export class AppReport extends LitElement {
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ? 
                     html`
                       <div class="test-result">
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
                     ` : 
@@ -1380,7 +1404,7 @@ export class AppReport extends LitElement {
                     ${this.securityResults.map((result: TestResult) => result.category === "required" ? 
                       html`
                         <div class="test-result">
-                          ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                          ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                           <p>${result.infoString}</p>
                         </div>
                       ` : 

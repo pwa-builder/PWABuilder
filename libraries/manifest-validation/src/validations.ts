@@ -168,7 +168,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "#000000",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
-        errorString: "background_color is required and should be a valid hex color",
+        errorString: "background_color should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
             if (value) {
@@ -188,7 +188,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "#000000",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
-        errorString: "theme_color is required and should be a valid hex color",
+        errorString: "theme_color should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
             if (value) {
@@ -299,9 +299,23 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-
             return isArray;
-        }
+        },
+        errorString: "Related applications should be a non-empty array."
+    },
+    {
+        infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
+        displayString: "Manifest has prefer related applications field",
+        category: "optional",
+        member: "prefer_related_applications",
+        defaultValue: false,
+        docsLink:
+            "https://developer.mozilla.org/en-US/docs/Web/Manifest/prefer_related_applications",
+        quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
+        test: (value: any) => {
+            return typeof(value)  === "boolean"
+        },
+        errorString: "Prefer related applications should be set to a boolean value."
     },
     {
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
