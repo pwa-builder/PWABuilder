@@ -3,7 +3,7 @@
 Once you've developed your PWA using the starter, it's time to publish your application to the web. 
 This not only makes your PWA available through the browser, but also allows you to package your application for different app stores with <a href=#/builder/quick-start>PWABuilder.</a>
 
-For now, we only have guidance for publishing with Azure Static Web Apps, but will be adding additional routes in the future.
+For now, we only have guidance for publishing with Azure Static Web Apps and GitHub Pages, but will be adding additional routes in the future.
 
 ## Azure Static Web Apps
 
