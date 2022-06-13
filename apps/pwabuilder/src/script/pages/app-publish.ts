@@ -411,7 +411,7 @@ export class AppPublish extends LitElement {
           letter-spacing: 0px;
           text-align: center;
           width: 100%;
-          height: 100%;
+          white-space: nowrap;
           margin: 0;
           padding: 10px 0;
         }
