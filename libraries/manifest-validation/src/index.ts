@@ -1,4 +1,5 @@
 import { Manifest, Validation } from "./interfaces";
+export { Manifest, Validation } from "./interfaces";
 import { findMissingKeys, findSingleField, isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 import { maniTests } from "./validations";
 

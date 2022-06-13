@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { doubleCheckManifest, getManifestContext } from '../services/app-info';
-import { validateManifest, Validation, reportMissing } from '@pwabuilder/manifest-validation'
+import { validateManifest, Validation, Manifest, reportMissing } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -25,7 +25,6 @@ import { testServiceWorker } from '../services/tests/service-worker';
 import style from '../../../styles/layout-defaults.css';
 import {
   Icon,
-  Manifest,
   ManifestContext,
   RawTestResult
 } from '../utils/interfaces';
@@ -482,6 +481,17 @@ export class AppReport extends LitElement {
         .details::part(header) {
           height: 40px;
         }
+
+        #two-cell-row {
+          display: flex;
+          column-gap: 1em;
+          width: 100%;
+        }
+
+        #two-cell-row > * {
+          width: 50%;
+        }
+
         #sw-header {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
@@ -523,13 +533,15 @@ export class AppReport extends LitElement {
         .half-width-cards {
           display: flex;
           flex-direction: column;
-          width: 48%;
           border-radius: 10px;
           background-color: white;
           row-gap: 0.5em;
           align-self: flex-start;
+        }
 
-          }
+        #security {
+          height: 100%;
+        }
         #sec-header {
           justify-content: space-between;
           row-gap: .5em;
@@ -1251,119 +1263,48 @@ export class AppReport extends LitElement {
               </div>
             </sl-details>
           </div>
-          <div id="sw" class="half-width-cards">
-            <div id="sw-header" class="flex-col">
-              <div id="swh-top">
-                <div id="swh-text" class="flex-col">
-                  <p class="card-header">Service Worker</p>
-                  <p class="card-desc">
-                    PWABuilder has analyzed your Service Worker, check out the
-                    results below. Want to add a Service Worker or check out our
-                    pre-built Service Workers? Tap Genereate Service Worker.
-                  </p>
+          <div id="two-cell-row">
+            <div id="sw" class="half-width-cards">
+              <div id="sw-header" class="flex-col">
+                <div id="swh-top">
+                  <div id="swh-text" class="flex-col">
+                    <p class="card-header">Service Worker</p>
+                    <p class="card-desc">
+                      PWABuilder has analyzed your Service Worker, check out the
+                      results below. Want to add a Service Worker or check out our
+                      pre-built Service Workers? Tap Genereate Service Worker.
+                    </p>
+                  </div>
+                  ${this.swDataLoading ? 
+                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                    html`<sl-progress-ring
+                    id="swProgressRing"
+                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
+                    value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
+                    >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
+                    `
+                  }
                 </div>
-                ${this.swDataLoading ? 
-                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
-                  html`<sl-progress-ring
-                  id="swProgressRing"
-                  class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
-                  value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                  >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
-                  `
-                }
-              </div>
-              <div id="sw-actions" class="flex-col">
-                <button type="button" class="alternate">
-                  Generate Service Worker
-                </button>
-                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                  <p class="arrow_link">Service Worker Documentation</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
-                </a>
-              </div>
-            </div>
-            <sl-details id="sw-details" class="details">
-              ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
-              <div class="detail-grid">
-                <div class="detail-list">
-                  <p class="detail-list-header">*Required</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
-                  html`
-                    <div class="test-result">
-                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
-                      <p>${result.infoString}</p>
-                    </div>
-                  ` : 
-                  html``)}
-                </div>
-                <div class="detail-list">
-                  <p class="detail-list-header">Recommended</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
-                  html`
-                  <div class="test-result">
-                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                      <p>${result.infoString}</p>
-                    </div>
-                  ` : 
-                  html``)}
-                </div>
-                <div class="detail-list">
-                  <p class="detail-list-header">Optional</p>
-                  ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
-                  html`
-                    <div class="test-result">
-                      ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
-                      <p>${result.infoString}</p>
-                    </div>
-                  ` : 
-                  html``)}
+                <div id="sw-actions" class="flex-col">
+                  <button type="button" class="alternate">
+                    Generate Service Worker
+                  </button>
+                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                    <p class="arrow_link">Service Worker Documentation</p>
+                    <img
+                      src="/assets/new/arrow.svg"
+                      alt="arrow"
+                      role="presentation"
+                    />
+                  </a>
                 </div>
               </div>
-            </sl-details>
-          </div>
-          <div id="security" class="half-width-cards">
-            <div id="sec-header" class="flex-col">
-              <div id="sec-top">
-                <div id="sec-text" class="flex-col">
-                  <p class="card-header">Security</p>
-                  <p class="card-desc">
-                    PWABuilder has done a basic analysis of your HTTPS setup.
-                    You can use LetsEncrypt to get a free HTTPS certificate, or
-                    publish to Azure to get built-in HTTPS support.
-                  </p>
-                </div>
-                ${this.secDataLoading ? 
-                  html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
-                  html`<sl-progress-ring
-                  id="secProgressRing"
-                  class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
-                  value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                  >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring>
-                  `
-                }
-                
-              </div>
-              <div id="sec-actions" class="flex-col">
-                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
-                  <p class="arrow_link">Security Documentation</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
-                </a>
-              </div>
-            </div>
-            <sl-details id="sec-details" class="details">
-            ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
-              <div class="detail-grid">
-                <div class="detail-list">
-                  <p class="detail-list-header">*Required</p>
-                  ${this.securityResults.map((result: Validation) => result.category === "required" ? 
+              <sl-details id="sw-details" class="details">
+                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+                <div class="detail-grid">
+                  <div class="detail-list">
+                    <p class="detail-list-header">*Required</p>
+                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "required" ? 
                     html`
                       <div class="test-result">
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
@@ -1371,9 +1312,82 @@ export class AppReport extends LitElement {
                       </div>
                     ` : 
                     html``)}
+                  </div>
+                  <div class="detail-list">
+                    <p class="detail-list-header">Recommended</p>
+                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "recommended" ? 
+                    html`
+                    <div class="test-result">
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                        <p>${result.infoString}</p>
+                      </div>
+                    ` : 
+                    html``)}
+                  </div>
+                  <div class="detail-list">
+                    <p class="detail-list-header">Optional</p>
+                    ${this.serviceWorkerResults.map((result: Validation) => result.category === "optional" ? 
+                    html`
+                      <div class="test-result">
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="passing result icon"/>`}
+                        <p>${result.infoString}</p>
+                      </div>
+                    ` : 
+                    html``)}
+                  </div>
+                </div>
+              </sl-details>
+            </div>
+            <div id="security" class="half-width-cards">
+              <div id="sec-header" class="flex-col">
+                <div id="sec-top">
+                  <div id="sec-text" class="flex-col">
+                    <p class="card-header">Security</p>
+                    <p class="card-desc">
+                      PWABuilder has done a basic analysis of your HTTPS setup.
+                      You can use LetsEncrypt to get a free HTTPS certificate, or
+                      publish to Azure to get built-in HTTPS support.
+                    </p>
+                  </div>
+                  ${this.secDataLoading ? 
+                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                    html`<sl-progress-ring
+                    id="secProgressRing"
+                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
+                    value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
+                    >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring>
+                    `
+                  }
+                  
+                </div>
+                <div id="sec-actions" class="flex-col">
+                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                    <p class="arrow_link">Security Documentation</p>
+                    <img
+                      src="/assets/new/arrow.svg"
+                      alt="arrow"
+                      role="presentation"
+                    />
+                  </a>
                 </div>
               </div>
-            </sl-details>
+              <sl-details id="sec-details" class="details">
+              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+                <div class="detail-grid">
+                  <div class="detail-list">
+                    <p class="detail-list-header">*Required</p>
+                    ${this.securityResults.map((result: Validation) => result.category === "required" ? 
+                      html`
+                        <div class="test-result">
+                          ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="passing result icon"/>`}
+                          <p>${result.infoString}</p>
+                        </div>
+                      ` : 
+                      html``)}
+                  </div>
+                </div>
+              </sl-details>
+            </div>
           </div>
           ${this.manifestEditorOpened
             ? html` <div class="modal-blur flex-center">
