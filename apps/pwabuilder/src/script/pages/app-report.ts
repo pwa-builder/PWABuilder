@@ -492,6 +492,7 @@ export class AppReport extends LitElement {
         }
         .details::part(header) {
           height: 40px;
+          padding: 1.5em .75em;
         }
 
         #two-cell-row {
@@ -547,7 +548,6 @@ export class AppReport extends LitElement {
           flex-direction: column;
           border-radius: 10px;
           background-color: white;
-          row-gap: 0.5em;
           align-self: flex-start;
         }
 
@@ -871,7 +871,7 @@ export class AppReport extends LitElement {
           status = "yellow";
         }
 
-        this.todoItems.push({"card": "mani-details", "field": test.member, "fix": test.errorString, "status": status})
+        this.todoItems.push({"card": "mani-details", "field": test.member, "fix": test.errorString, "status": status});
       }
     });
 
@@ -916,6 +916,15 @@ export class AppReport extends LitElement {
     this.serviceWorkerResults.forEach((result: any) => {
       if(result.result){
         this.swValidCounter++;
+      } else {
+        let status ="";
+        if(result.category === "required"){
+          status = "red";
+        } else {
+          status = "yellow";
+        }
+
+        this.todoItems.push({"card": "sw-details", "field": result.infoString, "fix": result.infoString, "status": status});
       }
     })
     this.swTotalScore = this.serviceWorkerResults.length;
@@ -942,6 +951,15 @@ export class AppReport extends LitElement {
     this.securityResults.forEach((result: any) => {
       if(result.result){
         this.secValidCounter++;
+      } else {
+        let status ="";
+        if(result.category === "required"){
+          status = "red";
+        } else {
+          status = "yellow";
+        }
+
+        this.todoItems.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
       }
     })
     this.secTotalScore = this.securityResults.length;
@@ -1397,7 +1415,7 @@ export class AppReport extends LitElement {
                     <p class="detail-list-header">*Required</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ? 
                     html`
-                      <div class="test-result">
+                      <div class="test-result" data-field=${result.infoString}>
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
@@ -1408,7 +1426,7 @@ export class AppReport extends LitElement {
                     <p class="detail-list-header">Recommended</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ? 
                     html`
-                    <div class="test-result">
+                    <div class="test-result" data-field=${result.infoString}>
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
@@ -1419,7 +1437,7 @@ export class AppReport extends LitElement {
                     <p class="detail-list-header">Optional</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ? 
                     html`
-                      <div class="test-result">
+                      <div class="test-result" data-field=${result.infoString}>
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
@@ -1469,7 +1487,7 @@ export class AppReport extends LitElement {
                     <p class="detail-list-header">*Required</p>
                     ${this.securityResults.map((result: TestResult) => result.category === "required" ? 
                       html`
-                        <div class="test-result">
+                        <div class="test-result" data-field=${result.infoString}>
                           ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                           <p>${result.infoString}</p>
                         </div>
