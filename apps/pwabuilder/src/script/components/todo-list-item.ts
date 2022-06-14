@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import {
@@ -11,8 +11,10 @@ import {
 
 @customElement('todo-item')
 export class SuccessCard extends LitElement {
-  @property({ type: String }) level: string = "";
-  @property({ type: String }) content: string = "";
+  @property({ type: String }) field: string = "";
+  @property({ type: String }) card: string = "";
+  @property({ type: String }) fix: string = "";
+  @property({ type: String }) status: string = "";
 
   static get styles() {
     return [
@@ -27,8 +29,13 @@ export class SuccessCard extends LitElement {
         padding: .5em;
         margin-bottom: 10px;
       }
-      #item-wrapper sl-icon {
-        color: red;
+
+      #item-wrapper:hover {
+        cursor: pointer;
+      }
+
+      #item-wrapper img {
+        height: 17px;
       }
       
       /* < 480px */
@@ -58,12 +65,37 @@ export class SuccessCard extends LitElement {
     super();
   }
 
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    let splitString = this.fix.split("~");
+    
+    if(splitString.length > 1){
+      this.fix = splitString.join(" "+ this.field + " ");
+    } else {
+      this.fix = splitString.join(" ");
+    }
+  }
+
+  bubbleEvent(){
+    let event = new CustomEvent('todo-clicked', {
+      detail: {
+          field: this.field,
+          card: this.card,
+          fix: this.fix
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
   render() {
     return html`
-      <div id="item-wrapper">
-        <sl-icon name="exclamation-circle-fill"></sl-icon>
-        ${this.content}
+      <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
+        ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+        
+        ${this.fix}
       </div>
     `;
   }
 }
+
+const yield_src = "/assets/new/yield.svg";
+const stop_src = "/assets/new/stop.svg";

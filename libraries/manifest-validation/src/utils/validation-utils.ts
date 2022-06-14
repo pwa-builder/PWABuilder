@@ -1,4 +1,5 @@
 import { Manifest, Validation } from "../interfaces";
+import { langCodes, languageCodes } from "../locales";
 import { maniTests } from "../validations";
 
 const possibleManiKeys = [
@@ -171,6 +172,15 @@ export function containsStandardCategory(categories: string[]): boolean {
   ];
   
   return categories.some(c => standardCategories.includes(c));
+}
+
+export function isValidLanguageCode(code: string){
+  languageCodes.forEach((lang: langCodes) => {
+    if(lang.code === code) {
+      return true;
+    }
+    return false;
+  })
 }
 
 export const required_fields = ["icons", "name", "short_name", "start_url"];

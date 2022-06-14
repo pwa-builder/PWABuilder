@@ -129,6 +129,21 @@ export class AppReport extends LitElement {
   @state() reccMissingFields: any[] = [];
   @state() optMissingFields: any[] = [];
 
+ /*  
+  So in order to connect the to do items with the things below 
+  We can have an object that looks like this
+  {
+    card: id to the details card (manifest, sw, sec)
+    field: the manifest field name, security check or sw check
+    fix: the string that will surround the field name ie "Add ~ to your manfiest!"
+  }
+  We can use the card to expand the details (details.show())
+  and then we can use a data-field on each validation to connect to the field
+  and then do some shake animation via that.
+  We can use the field, split on the ~, and then rejoin to slot the word in.
+  */
+  @state() todoItems: any[] = [];
+
 
   static get styles() {
     return [
@@ -612,6 +627,33 @@ export class AppReport extends LitElement {
         sl-tooltip::part(base){
           --sl-tooltip-font-size: 14px;
         }
+
+        .animate{
+          animation-delay: 1s;
+          animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
+          perspective: 1000px;
+        }
+
+        @keyframes shake {
+          10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+          }
+          
+          20%, 80% {
+            transform: translate3d(2px, 0, 0);
+          }
+
+          30%, 50%, 70% {
+            transform: translate3d(-4px, 0, 0);
+          }
+
+          40%, 60% {
+            transform: translate3d(4px, 0, 0);
+          }
+        }
+
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
@@ -806,7 +848,6 @@ export class AppReport extends LitElement {
 
     //  This just makes it so that the valid things are first
     // and the invalid things show after.
-    console.log(this.validationResults);
     this.validationResults.sort((a, b) => {
       if(a.valid && !b.valid){
         return -1;
@@ -816,13 +857,21 @@ export class AppReport extends LitElement {
         return a.member.localeCompare(b.member);
       }
     });
-    console.log(this.validationResults);
     
     this.manifestTotalScore = this.validationResults.length;
 
     this.validationResults.forEach((test: Validation) => {
       if(test.valid){
         this.manifestValidCounter++;
+      } else {
+        let status ="";
+        if(test.category === "required"){
+          status = "red";
+        } else {
+          status = "yellow";
+        }
+
+        this.todoItems.push({"card": "mani-details", "field": test.member, "fix": test.errorString, "status": status})
       }
     });
 
@@ -843,7 +892,7 @@ export class AppReport extends LitElement {
 
   async handleMissingFields(manifest: Manifest){
     let missing = await reportMissing(manifest);
-    console.log("missing", missing);
+    
     missing.forEach((field: string) => {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field)
@@ -852,6 +901,7 @@ export class AppReport extends LitElement {
       } if(optional_fields.includes(field)){
         this.optMissingFields.push(field)
       } 
+      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
     });
     return missing.length;
   }
@@ -1030,6 +1080,23 @@ export class AppReport extends LitElement {
     }
   }
 
+  animateItem(e: CustomEvent){
+    e.preventDefault;
+
+    let details = this.shadowRoot!.getElementById(e.detail.card);
+    (details as any)!.show()
+
+    details!.scrollIntoView({behavior: "smooth"});
+
+    let item = this.shadowRoot!.querySelector('[data-field="' + e.detail.field + '"]');
+
+    item!.classList.toggle("animate");
+    setTimeout(() => {
+      item!.classList.toggle("animate");
+    }, 1000)
+    this.requestUpdate();
+  }
+
 
 
   render() {
@@ -1130,18 +1197,17 @@ export class AppReport extends LitElement {
           </div>
           <div id="todo">
             <sl-details id="todo-detail" summary="To-do list">
-              <todo-item
-                .status=${'red'}
-                .content=${'This is an example to do item.'}
-              ></todo-item>
-              <todo-item
-                .status=${'red'}
-                .content=${"Theoretically we'd loop through these."}
-              ></todo-item>
-              <todo-item
-                .status=${'red'}
-                .content=${'and display them here.'}
-              ></todo-item>
+             ${this.todoItems.map((todo: any) => 
+                html`
+                  <todo-item
+                    .status=${todo.status}
+                    .field=${todo.field}
+                    .fix=${todo.fix}
+                    .card=${todo.card}
+                    @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+                  </todo-item>`
+              )}
+            
             </sl-details>
           </div>
           <div id="manifest" class="flex-col">
@@ -1198,7 +1264,7 @@ export class AppReport extends LitElement {
                   <p class="detail-list-header">*Required</p>
                   ${this.validationResults.map((result: Validation) => result.category === "required" ? 
                   html`
-                    <div class="test-result">
+                    <div class="test-result" data-field=${result.member}>
                       ${result.valid ? 
                         html`<img src=${valid_src} alt="passing result icon"/>` : 
                         html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
@@ -1214,7 +1280,7 @@ export class AppReport extends LitElement {
                   html`
                     <p class="missing">-- Missing Required Fields --</p>
                     ${this.requiredMissingFields.map((field: string) =>
-                    html`<div class="test-result">
+                    html`<div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
                             <img src=${stop_src} alt="invalid result icon"/>
                           </sl-tooltip>
@@ -1229,7 +1295,7 @@ export class AppReport extends LitElement {
                   <p class="detail-list-header">Recommended</p>
                   ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
                   html`
-                    <div class="test-result">
+                    <div class="test-result" data-field=${result.member}>
                       ${result.valid ? 
                         html`<img src=${valid_src} alt="passing result icon"/>` : 
                         html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
@@ -1244,7 +1310,7 @@ export class AppReport extends LitElement {
                   html`
                     <p class="missing">-- Missing Recommended Fields --</p>
                     ${this.reccMissingFields.map((field: string) =>
-                    html`<div class="test-result">
+                    html`<div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
                             <img src=${yield_src} alt="yield result icon"/>
                           </sl-tooltip>
@@ -1258,7 +1324,7 @@ export class AppReport extends LitElement {
                   <p class="detail-list-header">Optional</p>
                   ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
                   html`
-                    <div class="test-result">
+                    <div class="test-result" data-field=${result.member}>
                       ${result.valid ? 
                         html`<img src=${valid_src} alt="passing result icon"/>` : 
                         html`
@@ -1275,7 +1341,7 @@ export class AppReport extends LitElement {
                     <p class="missing">-- Missing Optional Fields --</p>
                     ${this.optMissingFields.map((field: string) =>
                     html`
-                        <div class="test-result">
+                        <div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
                             <img src=${yield_src} alt="yield result icon"/>
                           </sl-tooltip>

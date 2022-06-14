@@ -1,5 +1,5 @@
 import { Validation } from "./interfaces";
-import { containsStandardCategory, isStandardOrientation } from "./utils/validation-utils";
+import { containsStandardCategory, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -346,7 +346,7 @@ export const maniTests: Array<Validation> = [
         errorString: "lang is required and should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0
+                value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
     },
     {
         member: "dir",
