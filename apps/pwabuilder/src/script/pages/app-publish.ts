@@ -420,6 +420,10 @@ export class AppPublish extends LitElement {
           cursor: pointer;
         }
 
+        #apk-type info-circle-tooltip {
+          pointer-events: none
+        }
+
         #other-android{
           display: flex;
           align-items: center;
@@ -795,22 +799,13 @@ export class AppPublish extends LitElement {
     this.openOculusOptions = false;
   }
 
-  fetchAndroidNav() {
-    return html`
-      <div id="apk-type">
-        <p>Google Play</p>
-        <p>Other Android</p>
-      </div>
-    `
-  }
-
   toggleApkType(event: any){
     let old = this.shadowRoot!.querySelector(".selected-apk");
     old?.classList.replace("selected-apk", "unselected-apk");
     let next = event.target;
     next.classList.replace("unselected-apk", "selected-apk");
 
-    if(event.target.innerHTML === "Google Play"){
+    if(event.target.dataset.type === "play"){
       this.isGooglePlay = true;
     } else {
       this.isGooglePlay = false;
@@ -864,18 +859,18 @@ export class AppPublish extends LitElement {
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
           
         <div id="apk-type" slot="modal-nav">
-            <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
-              <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
-                Other Android
-                <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
-              </p> 
-          </div>
-          ${this.isGooglePlay ?
-            html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
-            html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
-          }
+          <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)} data-type="play">Google Play</p>
+          <p class="unselected-apk apk-type" id="other-android" data-type="other" @click=${(e: any) => this.toggleApkType(e)}>
+            Other Android
+            <info-circle-tooltip @click=${() => 0} id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
+          </p>
+        </div>
+        ${this.isGooglePlay ?
+          html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
+            this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
+          html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
+            this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
+        }
     </app-modal>
       
       <!-- ios options modal -->
