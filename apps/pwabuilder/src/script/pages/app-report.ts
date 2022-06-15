@@ -590,12 +590,12 @@ export class AppReport extends LitElement {
     }
   }
 
-  async getManifest(url: string) {
+  async getManifest(url: string): Promise<ManifestContext> {
     this.isAppCardInfoLoading = true;
     const manifestContext = await fetchOrCreateManifest(url);
-    sessionStorage.setItem('manifest_context', JSON.stringify(manifestContext));
     this.isAppCardInfoLoading = false;
     this.populateAppCard(manifestContext, url);
+    return manifestContext;
   }
 
   populateAppCard(manifestContext: ManifestContext, url: string) {
@@ -613,22 +613,19 @@ export class AppReport extends LitElement {
     }
   }
   async runAllTests(url: string) {
-    this.getManifest(url);
-    testManifest(url);
-    testServiceWorker(url);
-    testSecurity(url);
-    //this.updateTimeLastTested();
+    this.testManifest(url);
+    this.testServiceWorker(url);
+    this.testSecurity(url);
   }
 
   async testManifest(url: string) {
     //add manifest validation logic
-    const manifestTestResult = await testManifest(url, false);
+    const manifestContext = await this.getManifest(url);
+    const manifestTestResult = await testManifest(manifestContext);
     sessionStorage.setItem(
       'manifest_tests',
       JSON.stringify(manifestTestResult)
     );
-
-    //TODO: Fire event when ready
   }
 
   async testServiceWorker(url: string) {

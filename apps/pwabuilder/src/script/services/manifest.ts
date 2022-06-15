@@ -37,118 +37,56 @@ export function resetInitialManifest() {
 }
 
 // Uses Azure manifest Puppeteer service to fetch the manifest
-async function getManifestViaPuppeteer(
+async function getManifest(
   url: string
-): Promise<ManifestDetectionResult> {
+): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
-  const manifestTestUrl = `${env.api}/WebManifest?site=${encodedUrl}`;
-  const response = await fetch(manifestTestUrl, {
-    method: 'POST',
-  });
-  if (!response.ok) {
-    console.warn(
-      'Fetching manifest via Puppeteer service failed',
-      response.statusText
-    );
+  //TODO: Replace with prod
+  const manifestTestUrl = `https://pwabuilder-tests-dev.azurewebsites.net/api/FetchWebManifest?site=${encodedUrl}`;
+  try {
+    const response = await fetch(manifestTestUrl, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      console.warn('Fetching manifest failed', response.statusText);
 
-    throw new Error(
-      `Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`
-    );
+      throw new Error(
+        `Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`
+      );
+    }
+    const responseData = await response.json<PuppeteerManifestFinderResult>();
+    if (!responseData) {
+      console.warn(
+        'Fetching manifest failed due to no response data',
+        response
+      );
+      throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
+    }
+
+    // OK, the call succeeded.
+    // But if we didn't detect the manifest, we want to fail the result here
+    // to give the other manifest detector a chance to succeed.
+    if (responseData.content && responseData.content.json) {
+      return {
+        content: responseData.content.json,
+        format: 'w3c',
+        generatedUrl: responseData.content.url || url,
+        siteUrl: url,
+        default: {
+          short_name: responseData.content.json.short_name || '',
+        },
+        id: '',
+        generated: responseData.content ? false : true,
+        errors: [],
+        suggestions: [],
+        warnings: [],
+      };
+    }
+  } catch (e) {
+    console.warn('Manifest not found', e);
+    return null;
   }
-  const responseData = await response.json<PuppeteerManifestFinderResult>();
-  if (!responseData) {
-    console.warn(
-      'Fetching manifest via Puppeteer failed due to no response data',
-      response
-    );
-    throw new Error(`Unable to get JSON from ${manifestTestUrl}`);
-  }
-
-  // OK, the call succeeded.
-  // But if we didn't detect the manifest, we want to fail the result here
-  // to give the other manifest detector a chance to succeed.
-  if (!responseData.content || !responseData.content.json) {
-    console.info(
-      "Manifest detection via Puppeteer completed, but couldn't detect the manifest.",
-      responseData
-    );
-    throw new Error(
-      "HTML parse manifest detector couldn't find the manifest. " +
-        responseData.error
-    );
-  }
-
-  return {
-    content: responseData.content.json,
-    format: 'w3c',
-    generatedUrl: responseData.content.url || url,
-    siteUrl: url,
-    default: {
-      short_name: responseData.content.json.short_name || '',
-    },
-    id: '',
-    generated: responseData.content ? false : true,
-    errors: [],
-    suggestions: [],
-    warnings: [],
-  };
-}
-
-// Uses Azure HTML parsing microservice to fetch the manifest, then hands it to the API.
-async function getManifestViaHtmlParse(
-  url: string
-): Promise<ManifestDetectionResult> {
-  const manifestTestUrl = `${env.manifestFinderUrl}?url=${encodeURIComponent(
-    url
-  )}`;
-  const response = await fetch(manifestTestUrl);
-  if (!response.ok) {
-    console.warn('Fetching manifest via HTML parsing service failed', response);
-    throw new Error(`Error fetching from ${manifestTestUrl}`);
-  }
-  const responseData = await response.json<HtmlParseManifestFinderResult>();
-
-  if (responseData.error || !responseData.manifestContents) {
-    console.warn(
-      'Fetching manifest via HTML parsing service failed due to no response data',
-      response
-    );
-    throw new Error(responseData.error || "Manifest couldn't be fetched");
-  }
-
-  // OK, the call succeeded.
-  // But if we didn't detect the manifest, we want to fail the result here.
-  // This is needed so that sites with JS-injected manifests (e.g. vscode.dev) can
-  // still be detected by our Puppeteer-based manifest detector.
-  // See https://github.com/pwa-builder/PWABuilder/issues/2157
-  if (!responseData.manifestContents) {
-    console.info(
-      "Manifest detection via HTML parse completed, but couldn't detect the manifest.",
-      responseData
-    );
-    throw new Error(
-      "Manifest detection via HTML parsing completed but couldn't find the manifest. " +
-        responseData.error
-    );
-  }
-
-  return {
-    content: responseData.manifestContents,
-    format: 'w3c',
-    generatedUrl: responseData.manifestUrl || url,
-    siteUrl: url,
-    default: {
-      short_name: responseData.manifestContents.short_name || '',
-    },
-    id: '',
-    generated: responseData.manifestContents ? false : true,
-    errors: responseData.error ? [responseData.error] : [],
-    suggestions: [],
-    warnings: Object.entries(responseData.warnings).map(
-      keyVal => `${keyVal[0]}: ${keyVal[1]}`
-    ), // e.g. "categories: Must be an array"
-    manifestContainsInvalidJson: responseData.manifestContainsInvalidJson,
-  };
+  return null;
 }
 
 function timeoutAfter(milliseconds: number): Promise<void> {
@@ -174,58 +112,41 @@ async function fetchManifest(
   // We also timebox manifest detection to 10 seconds, as the Puppeteer fetch can take a very long time.
 
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
-    let knownGoodUrl: string;
-    try {
-      knownGoodUrl = cleanUrl(url);
-    } catch (err) {
-      reject(err);
-      return;
-    }
 
-    // Some sites that don't have a manifest take a long time for our Puppeteer-based test to complete.
-    // If 10 seconds passes, we ignore the detectors and move to creating a manifest in the interest of time.
-    // rollup is giving warnings about the void type being returned from Promise.any(manifestDetectors),
-    // void is returned when the detectors timeout so none of the relevant code gets run with type void.
-    // so we can ignore this warning.
-    //@ts-ignore:next-line
-    const manifestDetectors = [
-      getManifestViaPuppeteer(knownGoodUrl),
-      getManifestViaHtmlParse(knownGoodUrl),
-      timeoutAfter(10000),
-    ];
+  let knownGoodUrl: string;
+  try {
+    knownGoodUrl = cleanUrl(url);
+  } catch (err) {
+    reject(err);
+    return;
+  }
 
-    //@ts-ignore:next-line
-    const manifestDetectionResult = await Promise.any(manifestDetectors);
+  //@ts-ignore:next-line
+  const manifestDetectionResult = await getManifest(knownGoodUrl);
 
-    //@ts-ignore:next-line
-    if (manifestDetectionResult) {
-      const context = getManifestContext();
+  //@ts-ignore:next-line
+  if (manifestDetectionResult) {
+    const context = getManifestContext();
 
-      if (!context.initialManifest) {
-        //@ts-ignore:next-line
-        initialManifest = manifestDetectionResult.content;
-        context.initialManifest = initialManifest;
-        setManifestContext(context);
-      }
-
+    if (!context.initialManifest) {
       //@ts-ignore:next-line
-      resolve(manifestDetectionResult);
-    } else {
-      console.error('All manifest detectors failed: Timeout expired.');
-      if (createIfNone) {
-        const createdManifest = await createManifestFromPageOrEmpty(
-          knownGoodUrl
-        );
-        const createdManifestResult = wrapManifestInDetectionResult(
-          createdManifest,
-          knownGoodUrl,
-          true
-        );
-        resolve(createdManifestResult);
-      }
+      initialManifest = manifestDetectionResult.content;
+      context.initialManifest = initialManifest;
+      setManifestContext(context);
     }
-  });
+    return manifestDetectionResult;
+  } else {
+    console.error('All manifest detectors failed: Timeout expired.');
+    if (createIfNone) {
+      const createdManifest = await createManifestFromPageOrEmpty(knownGoodUrl);
+      const createdManifestResult = wrapManifestInDetectionResult(
+        createdManifest,
+        knownGoodUrl,
+        true
+      );
+      return createdManifestResult;
+    }
+  }
 }
 
 /**
@@ -246,7 +167,6 @@ export async function fetchOrCreateManifest(
 
   setURL(siteUrl);
   const detectionResult = await fetchManifest(siteUrl, createIfNone);
-
   // Update our global manifest state.
   const context = {
     manifest: detectionResult.content,
