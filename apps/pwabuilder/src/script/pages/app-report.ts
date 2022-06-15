@@ -657,6 +657,18 @@ export class AppReport extends LitElement {
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
+          #header-row {
+            flex-direction: column;
+            row-gap: 1.5em;
+          }
+
+          #app-card{
+            width: 100%;
+          }
+          #app-actions {
+            width: 100%;
+          }
+
           sl-progress-ring {
             --size: 75px;
             font-size: 14px;
@@ -710,6 +722,13 @@ export class AppReport extends LitElement {
           }
           #last-edited {
             font-size: 10px;
+          }
+
+          #test {
+            width: 50%;
+          }
+          #package{
+            width: 50%;
           }
 
           #test-download {
@@ -1102,7 +1121,7 @@ export class AppReport extends LitElement {
     e.preventDefault;
 
     let details = this.shadowRoot!.getElementById(e.detail.card);
-    (details as any)!.show()
+    (details as any)!.show();
 
     details!.scrollIntoView({behavior: "smooth"});
 
@@ -1112,7 +1131,6 @@ export class AppReport extends LitElement {
     setTimeout(() => {
       item!.classList.toggle("animate");
     }, 1000)
-    this.requestUpdate();
   }
 
 
