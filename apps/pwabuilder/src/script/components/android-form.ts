@@ -80,6 +80,7 @@ export class AndroidForm extends AppPackageFormBase {
                                       storePassword: ''
                                     };
     }
+
   }
 
   initGenerate(ev: InputEvent) {
