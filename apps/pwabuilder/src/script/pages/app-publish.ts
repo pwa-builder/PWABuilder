@@ -811,6 +811,7 @@ export class AppPublish extends LitElement {
     } else {
       this.isGooglePlay = false;
     }
+    console.log("isGooglePlayAPK", this.isGooglePlay);
   }
 
   render() {
