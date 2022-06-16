@@ -12,6 +12,9 @@
     <link rel="icon" href="/assets/icons/icon_24.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.75/dist/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.75/dist/shoelace.js"></script>
+
     <link rel="stylesheet" href="styles/global.css">
 </head>
 
@@ -47,6 +50,22 @@
                 function(hook) {
                     hook.doneEach(function() {
                         window.recordPageView(document.location.href, getPageName());
+                    });
+                },
+                function(hook) {
+                    var summitBanner = [
+                        '<sl-alert open variant="success" class="pwa-summit-banner">',
+                        '<sl-icon slot="icon" name="globe2"></sl-icon>',
+                        '<div>',
+                        '<strong>Upcoming: PWA Summit on October 5th! &#x1F604; </strong><br />',
+                        '<a href="https://pwasummit.org/">PWA Summit</a> is an online conference dedicated entirely to helping developer succeed with Progressive Web Apps. ',
+                        'If you have interest in speaking, you can submit a talk <a href="https://sessionize.com/pwa-summit-2022"> here.</a> Sign ups will be open through July 13th.',
+                        '</div>',
+                        '</sl-alert>'
+                    ].join('');
+
+                    hook.afterEach(function(html) {
+                        return summitBanner + html;
                     });
                 }
             ]
