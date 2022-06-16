@@ -627,10 +627,7 @@ export class AppPublish extends LitElement {
           });
     } finally {
       this.generating = false;
-      this.openAndroidOptions = false;
-      this.openWindowsOptions = false;
-      this.openiOSOptions = false;
-      this.openOculusOptions = false;
+      this.storeOptionsCancel();
     }
   }
 
@@ -797,6 +794,14 @@ export class AppPublish extends LitElement {
     this.openAndroidOptions = false;
     this.openiOSOptions = false;
     this.openOculusOptions = false;
+
+    // resetting google play tabs
+    this.isGooglePlay = true;
+
+    let old = this.shadowRoot!.querySelector(".selected-apk");
+    old?.classList.replace("selected-apk", "unselected-apk");
+    let next = this.shadowRoot?.querySelector('[data-type="play"]')
+    next!.classList.replace("unselected-apk", "selected-apk");
   }
 
   toggleApkType(event: any){

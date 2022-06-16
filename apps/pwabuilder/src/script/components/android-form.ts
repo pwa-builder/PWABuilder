@@ -63,12 +63,14 @@ export class AndroidForm extends AppPackageFormBase {
     }
     
     this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+    console.log("this.packageOptions from firstUpdated in android-form", this.packageOptions);
   }
 
   initGenerate(ev: InputEvent) {
     ev.preventDefault();
 
     if(!this.isGooglePlayApk){
+      console.log("Changing signing mode to None...")
       this.packageOptions.features.locationDelegation!.enabled = false;
       this.packageOptions.features.playBilling!.enabled = false;
       this.packageOptions.isChromeOSOnly = false;
@@ -85,6 +87,8 @@ export class AndroidForm extends AppPackageFormBase {
                                       storePassword: ''
                                     };
     }
+
+    console.log("this.packageOptions right before generating package.", this.packageOptions);
 
     const eventArgs = new CustomEvent('init-android-gen', {
       detail: this.packageOptions,
