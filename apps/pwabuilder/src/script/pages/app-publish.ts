@@ -582,6 +582,7 @@ export class AppPublish extends LitElement {
 
   async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
     // Record analysis results to our analytics portal.
+    console.log("Generating package...", options);
     recordProcessStep(
       'analyze-and-package-pwa',
       `create-${platform}-package`,
@@ -810,6 +811,7 @@ export class AppPublish extends LitElement {
     } else {
       this.isGooglePlay = false;
     }
+    console.log("isGooglePlayAPK", this.isGooglePlay);
   }
 
   render() {

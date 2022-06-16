@@ -61,9 +61,15 @@ export class AndroidForm extends AppPackageFormBase {
     if (this.manifestContext.isGenerated) {
       this.manifestContext = await fetchOrCreateManifest();
     }
-
+    
     this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+  }
+
+  initGenerate(ev: InputEvent) {
+    ev.preventDefault();
+
     if(!this.isGooglePlayApk){
+      console.log("Not a google play apk.")
       this.packageOptions.features.locationDelegation!.enabled = false;
       this.packageOptions.features.playBilling!.enabled = false;
       this.packageOptions.isChromeOSOnly = false;
@@ -81,11 +87,7 @@ export class AndroidForm extends AppPackageFormBase {
                                     };
     }
 
-  }
-
-  initGenerate(ev: InputEvent) {
-    ev.preventDefault();
-
+    console.log("Package Options:", this.packageOptions);
     const eventArgs = new CustomEvent('init-android-gen', {
       detail: this.packageOptions,
       composed: true,
