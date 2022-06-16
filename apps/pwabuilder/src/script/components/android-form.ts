@@ -85,7 +85,6 @@ export class AndroidForm extends AppPackageFormBase {
                                         storePassword: ''
                                       };
       }
-      console.log("this.packageOptions", this.packageOptions);  
     }
   }
 
