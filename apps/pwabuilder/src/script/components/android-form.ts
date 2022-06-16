@@ -1,4 +1,4 @@
-import { css, html, TemplateResult } from 'lit';
+import { css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
@@ -63,32 +63,34 @@ export class AndroidForm extends AppPackageFormBase {
     }
     
     this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
-    console.log("this.packageOptions from firstUpdated in android-form", this.packageOptions);
+  }
+
+  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if(_changedProperties.has("isGooglePlayApk")){
+      this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+      if(!this.isGooglePlayApk){
+        this.packageOptions.features.locationDelegation!.enabled = false;
+        this.packageOptions.features.playBilling!.enabled = false;
+        this.packageOptions.isChromeOSOnly = false;
+        this.packageOptions.enableNotifications = false;
+        this.packageOptions.signingMode = "none";
+        this.packageOptions.signing = {
+                                        file: null,
+                                        alias: '',
+                                        fullName: '',
+                                        organization: '',
+                                        organizationalUnit: '',
+                                        countryCode: '',
+                                        keyPassword: '',
+                                        storePassword: ''
+                                      };
+      }
+      console.log("this.packageOptions", this.packageOptions);  
+    }
   }
 
   initGenerate(ev: InputEvent) {
     ev.preventDefault();
-
-    if(!this.isGooglePlayApk){
-      console.log("Changing signing mode to None...")
-      this.packageOptions.features.locationDelegation!.enabled = false;
-      this.packageOptions.features.playBilling!.enabled = false;
-      this.packageOptions.isChromeOSOnly = false;
-      this.packageOptions.enableNotifications = false;
-      this.packageOptions.signingMode = "none";
-      this.packageOptions.signing = {
-                                      file: null,
-                                      alias: '',
-                                      fullName: '',
-                                      organization: '',
-                                      organizationalUnit: '',
-                                      countryCode: '',
-                                      keyPassword: '',
-                                      storePassword: ''
-                                    };
-    }
-
-    console.log("this.packageOptions right before generating package.", this.packageOptions);
 
     const eventArgs = new CustomEvent('init-android-gen', {
       detail: this.packageOptions,
