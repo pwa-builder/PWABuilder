@@ -69,7 +69,6 @@ export class AndroidForm extends AppPackageFormBase {
     ev.preventDefault();
 
     if(!this.isGooglePlayApk){
-      console.log("Not a google play apk.")
       this.packageOptions.features.locationDelegation!.enabled = false;
       this.packageOptions.features.playBilling!.enabled = false;
       this.packageOptions.isChromeOSOnly = false;
@@ -87,7 +86,6 @@ export class AndroidForm extends AppPackageFormBase {
                                     };
     }
 
-    console.log("Package Options:", this.packageOptions);
     const eventArgs = new CustomEvent('init-android-gen', {
       detail: this.packageOptions,
       composed: true,
