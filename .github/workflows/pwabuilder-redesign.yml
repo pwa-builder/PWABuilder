@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - redesign
+    paths:
+      - "apps/pwabuilder/**"
   workflow_dispatch:
 
 jobs:
@@ -24,14 +26,16 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm start
+        working-directory: "/apps/pwabuilder"
+        
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: "/apps/pwabuilder/"
+
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,4 +57,3 @@ jobs:
           app-name: 'pwabuilder-redesign'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F6B865326BEE43B69611CD2A34DC0AA1 }}
-          package: .
