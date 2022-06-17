@@ -25,6 +25,7 @@ jobs:
         run: |
           npm install
           npm start
+        working-directory: "/apps/pwabuilder"
         
 
       - name: Upload artifact for deployment job
