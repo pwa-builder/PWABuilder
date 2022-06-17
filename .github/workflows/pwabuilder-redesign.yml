@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - redesign
-    paths:
-      - "apps/pwabuilder/**"
   workflow_dispatch:
 
 jobs:
