@@ -4,7 +4,7 @@
   "start_url": "/index.html",
   "display": "standalone",
   "description": "Documentation for using PWABuilder tools and building PWAs.",
-  "lang": "English",
+  "lang": "en-US",
   "dir": "auto",
   "theme_color": "#491576",
   "background_color": "#ffffff",
