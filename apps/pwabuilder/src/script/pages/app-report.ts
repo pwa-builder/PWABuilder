@@ -103,7 +103,7 @@ export class AppReport extends LitElement {
 
   // will be used to control the state of the "Package for store" button.
   @state() canPackage: boolean = false;
-  @state() manifestEditorOpened: boolean = false;
+  @state() manifestEditorOpened: boolean = true;
   @state() publishModalOpened: boolean = false;
 
   // Controls the last tested section
@@ -651,6 +651,43 @@ export class AppReport extends LitElement {
 
           40%, 60% {
             transform: translate3d(4px, 0, 0);
+          }
+        }
+
+        @media(max-width: 765px){
+          .modal {
+            max-width: 600px;
+            max-height: 600px;
+          }
+
+          manifest-editor-frame {
+            max-width: 600px;
+            max-height: 600px;
+            overflow-y: scroll;
+          }
+        }
+
+        @media(max-width: 600px){
+          .modal {
+            max-width: 450px;
+            max-height: 500px;
+          }
+
+          manifest-editor-frame {
+            max-width: 450px;
+            max-height: 500px;
+          }
+        }
+
+        @media(max-width: 450px){
+          .modal {
+            max-width: 300px;
+            max-height: 400px;
+          }
+
+          manifest-editor-frame {
+            max-width: 300px;
+            max-height: 400px;
           }
         }
 

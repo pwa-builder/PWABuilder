@@ -70,6 +70,7 @@ export class ManifestEditorFrame extends LitElement {
         color: rgb(79, 63, 182);
         display: flex;
         column-gap: 10px;
+        white-space: nowrap;
       }
       .arrow_anchor:visited {
         color: #4F3FB6;
@@ -108,18 +109,18 @@ export class ManifestEditorFrame extends LitElement {
         --sl-input-font-size-medium: 12px;
       }
       .primary {
-          background: black;
-          color: white;
-          border: none;
-          font-size: 16px;
-          font-weight: bold;
-          border-radius: 50px;
-          padding: 1em 1em;
-          width: 75%;
-        }
-        .primary:hover {
-          cursor: pointer;
-        }
+        background: black;
+        color: white;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 50px;
+        padding: 1em 1em;
+        width: 75%;
+      }
+      .primary:hover {
+        cursor: pointer;
+      }
       /* < 480px */
       ${smallBreakPoint(css`
       `)}

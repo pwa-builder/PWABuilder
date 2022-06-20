@@ -129,6 +129,24 @@ export class ManifestInfoForm extends LitElement {
       sl-switch {
         --height: 22px;
       }
+
+      @media(max-width: 765px){
+        .form-row {
+          flex-direction: column;
+          row-gap: 1em;
+        }
+        .form-field {
+          width: 100%;
+        }
+      }
+
+      @media(max-width: 600px){
+
+      }
+
+      @media(max-width: 450px){
+
+      }
     `;
   }
 

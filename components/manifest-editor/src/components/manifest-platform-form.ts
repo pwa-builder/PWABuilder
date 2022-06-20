@@ -180,6 +180,16 @@ export class ManifestPlatformForm extends LitElement {
         align-items:center;
         justify-content: space-between;
       }
+
+      @media(max-width: 765px){
+        .form-row {
+          flex-direction: column;
+          row-gap: 1em;
+        }
+        .form-field {
+          width: 100%;
+        }
+      }
     `;
   }
 
