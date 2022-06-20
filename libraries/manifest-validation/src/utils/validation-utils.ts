@@ -60,13 +60,13 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
               if (test.member === key && test.test) {
                   const testResult = await test.test(manifest[key]);
   
-                  if (testResult === false) {
-                      test.valid = false;
-                      data.push(test);
+                  if(testResult){
+                    test.valid = true;
+                    data.push(test);
                   }
                   else {
-                      test.valid = true;
-                      data.push(test);
+                    test.valid = false;
+                    data.push(test);
                   }
               }
           })
@@ -175,12 +175,16 @@ export function containsStandardCategory(categories: string[]): boolean {
 }
 
 export function isValidLanguageCode(code: string){
+  // temporary fix that helps with codes like en-US that we don't cover.
+  let langUsed = code.split("-")[0];
+  let flag = false;
+
   languageCodes.forEach((lang: langCodes) => {
-    if(lang.code === code) {
-      return true;
+    if(lang.code === langUsed) {
+      flag = true;
     }
-    return false;
   })
+  return flag;
 }
 
 export const required_fields = ["icons", "name", "short_name", "start_url"];

@@ -24,7 +24,7 @@ export async function validateSingleField(field: string, value: any): Promise<Va
     return new Promise(async (resolve, reject) => {
         try {
             const data = await findSingleField(field, value);
-            console.log('data', data);
+            //console.log('data', data);
             resolve(data);
         }
         catch(err) {

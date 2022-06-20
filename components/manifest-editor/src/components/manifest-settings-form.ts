@@ -114,6 +114,11 @@ export class ManifestSettingsForm extends LitElement {
     this.dispatchEvent(manifestUpdated);
   }
 
+  // temporary fix that helps with codes like en-US that we don't cover.
+  parseLangCode(code: string){
+    return code.split("-")[0];
+  }
+
   render() {
     return html`
       <div id="form-holder">
@@ -188,7 +193,7 @@ export class ManifestSettingsForm extends LitElement {
               </a>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" .value=${this.manifest.lang! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" .value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>

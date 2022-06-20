@@ -340,10 +340,10 @@ export const maniTests: Array<Validation> = [
         displayString: "Manifest specifies a language",
         infoString: "The lang member is a string that represents the default language of your PWA.",
         category: "optional",
-        defaultValue: "en-US",
+        defaultValue: "en",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/lang",
-        errorString: "lang is required and should be set to a valid language code",
+        errorString: "lang should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
                 value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
