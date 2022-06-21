@@ -333,7 +333,8 @@ export const maniTests: Array<Validation> = [
             }
 
             return false;
-        }
+        },
+        errorString: "Categories should be a non-empty array."
     },
     {
         member: "lang",
