@@ -42,6 +42,10 @@ export class ManifestIconsForm extends LitElement {
 
   static get styles() {
     return css`
+    
+      sl-button::part(base) {
+        --sl-button-font-size-medium: 14px;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;
@@ -71,7 +75,6 @@ export class ManifestIconsForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
-
       .toolTip {
         visibility: hidden;
         width: 200px;
@@ -86,14 +89,12 @@ export class ManifestIconsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
@@ -104,18 +105,6 @@ export class ManifestIconsForm extends LitElement {
         display: flex;
         flex-direction: column;
         margin: 10px 0;
-      }
-      .image-buttons {
-        border: none;
-        padding: 10px 0;
-        background-color: white;
-        border-radius: 44px;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-        width: 50%;
-        font-weight: bold;
-      }
-      .image-buttons:hover {
-        cursor: pointer;
       }
       #input-file {
         display: none;
@@ -316,11 +305,10 @@ export class ManifestIconsForm extends LitElement {
           <div class="icon-gallery">
             ${this.iconSrcListParse().map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
           </div>
-
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
           <div id="icon-section">
-            <button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</button>
+            <sl-button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</sl-button>
             <input
               id="input-file"
               class="file-input hidden"

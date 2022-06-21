@@ -7,12 +7,13 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
+import { fileSave } from 'browser-fs-access';
 
 import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xLargeBreakPoint,
+  //xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -36,9 +37,11 @@ export class PublishPane extends LitElement {
   @state() selectedStore = "";
 
   // Used to download files
+  @state() readyToDownload = false;
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  
 
   readonly platforms: ICardData[] = [
     {
@@ -93,7 +96,6 @@ export class PublishPane extends LitElement {
   static get styles() {
     return [
     css`
-
       * {
         box-sizing: border-box;
       }
@@ -103,42 +105,39 @@ export class PublishPane extends LitElement {
         flex-direction: column;
         row-gap: .5em;
         width: 100%;
+        max-height: 90vh;
       }
-
       #frame-content {
         display: flex;
         flex-direction: column;
+        max-height: 90vh;
       }
-
       #frame-header {
         display: flex;
         flex-direction: column;
-        row-gap: .5em;
+        row-gap: .25em;
         padding: 1em;
         padding-bottom: 0;
       }
-
       #frame-header > * {
         margin: 0;
       }
-
       #frame-header h1 {
         font-size: 24px;
       }
-
       #frame-header p {
         font-size: 14px;
       }
-
       .card-wrapper {
         width: 100%;
+        height: 100%;
         max-height: 330px;
         display: flex;
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
+        padding: 1em;
       }
-
       .packaged-tracker {
         height: max-content;
         width: 33%;
@@ -152,7 +151,6 @@ export class PublishPane extends LitElement {
         top: 0;
         right: 0;
       }
-
       .packaged-tracker p {
         margin: 0;
         text-align: center;
@@ -161,7 +159,6 @@ export class PublishPane extends LitElement {
         line-height: 12px;
         font-weight: bold;
       }
-
       .title-block {
         box-sizing: border-box;
         display: flex;
@@ -169,15 +166,12 @@ export class PublishPane extends LitElement {
         align-items: flex-start;
         justify-content: flex-start;
         width: 100%;
-        padding: 1em 1.5em;
         row-gap: .45em;
       }
-
       .title-block h3 {
         margin: 0;
         font-size: 24px;
       }
-
       .factoids {
         width: 100%;
         height: max-content;
@@ -185,11 +179,9 @@ export class PublishPane extends LitElement {
         margin: 0;
         margin-top: 10px;
       }
-
       .factoids li {
         font-size: 14px;
       }
-
       .platform-actions-block {
         align-self: center;
         display: flex;
@@ -197,47 +189,42 @@ export class PublishPane extends LitElement {
         row-gap: 10px;
         width: 100%;
       }
-
       #store-cards {
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-gap: 1em;
-        padding: 1em;
+        grid-gap: .75em;
+        padding: 1em;    
+        overflow-y: scroll;
       }
-
       app-button {
         display: flex;
         justify-content: center;
       }
-
       .package-button {
         all: unset;
         width: 75%;
         background-color: black;
         color: white; 
-        font-size: 16px;
+        font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
         border: none;
         text-align: center;
         font-weight: bold;
       }
-
       .package-button:hover {
         cursor: pointer;
         background-color: rgba(0, 0, 0, 0.75);
       }
-
       #apk-type {
         display: flex;
         align-items: baseline;
         width: 100%;
         border-bottom: 2px solid #5D5DB9;
         margin-top: 20px;
-        margin-bottom: 40px;
+        margin-bottom: 14px;
       }
-
       #apk-type p {
         font-size: 20px;
         font-weight: 700;
@@ -245,25 +232,21 @@ export class PublishPane extends LitElement {
         letter-spacing: 0px;
         text-align: center;
         width: 100%;
-        height: 100%;
         margin: 0;
         padding: 10px 0;
+        white-space: nowrap;
       }
-
       #apk-type p:hover {
         cursor: pointer;
       }
-
       #other-android{
         display: flex;
         align-items: center;
         justify-content: center;
       }
-
       #info-tooltip {
         height: 20px
       }
-
       .selected-apk {
         border-bottom: 5px solid #5D5DB9;
         color: #5D5DB9;
@@ -272,7 +255,6 @@ export class PublishPane extends LitElement {
       .unselected-apk {
         border-bottom: 5px solid transparent;
       }
-
       #form-header {
         display: flex;
         flex-direction: column;
@@ -280,69 +262,90 @@ export class PublishPane extends LitElement {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         padding: 1em;
-        gap: 1.5em;
+        gap: .5em;
       }
-
       #form-header > img {
         width: 25px;
       }
-
       #form-header > button {
         all: unset;
       }
-
       #form-header > button:hover {
         cursor: pointer;
       }
-
       #form-header-content {
         display: flex;
         gap: 1em;
       }
-
       #form-header-content img {
         height: 50px;
       }
-
       #form-header-text {
         display: flex;
         flex-direction: column;
       }
-
       #form-header-text > * {
         margin: 0;
       }
-
       #form-header-text h1 {
         font-size: 24px;
+        white-space: nowrap;
+        line-height: 24px;
       }
-
       #form-header-text p {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5)
       }
-
       #form-area {
         padding: 1em;
       }
-      
-      /* 480px - 639px */
-      ${mediumBreakPoint(css`
-        
-      `)}
-
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
-        
-      `)}
-
-      /*1024px - 1365px*/
-      ${xLargeBreakPoint(css`
-      `)}
 
       /* > 1920 */
-      ${xxxLargeBreakPoint(css`
-          
+      ${xxxLargeBreakPoint(css``)}
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css``)}
+
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
+      `)}
+      /* < 480 */
+      ${smallBreakPoint(css`
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: scroll;
+        }
+        #frame-header{
+          margin-bottom: 10px;
+        }
+        #frame-header h1 {
+          font-size: 20px;
+          line-height: 20px;
+        }
+        #frame-header p {
+          font-size: 12px;
+        }
+        #form-header-content img {
+          height: 35px;
+        }
+        #form-header-text h1 {
+          font-size: 20px;
+          white-space: nowrap;
+          line-height: 20px;
+        }
+        #form-header-text p {
+          font-size: 12px;
+        }
+        #apk-type p {
+          font-size: 16px;
+        }
+
+        #info-tooltip {
+          height: 16px
+        }
+
       `)}
     `
     ];
@@ -474,17 +477,22 @@ export class PublishPane extends LitElement {
 
     try {
       this.generating = true;
+      console.log("generating files");
       const packageData = await generatePackage(platform, options);
 
       if (packageData) {
+        console.log("succesfully generated files");
         this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
+          console.log("non test blob");
           this.blob = packageData.blob;
+          this.readyToDownload = true;
         }
       }
     } catch (err) {
+      console.log("error");
       console.error(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
@@ -509,6 +517,18 @@ export class PublishPane extends LitElement {
       this.openWindowsOptions = false;
       this.openiOSOptions = false;
       this.openOculusOptions = false; */
+    }
+  }
+
+  async downloadPackage(){
+    if (this.blob || this.testBlob) {
+      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+        fileName: this.downloadFileName || 'your_pwa.zip',
+        extensions: ['.zip'],
+      });
+
+      this.blob = undefined;
+      this.testBlob = undefined;
     }
   }
 
@@ -539,7 +559,6 @@ export class PublishPane extends LitElement {
 
   render() {
     return html`
-
       <div id="frame-wrapper">
         <div id="frame-content">
         ${this.cardsOrForm ?
@@ -548,7 +567,6 @@ export class PublishPane extends LitElement {
             <h1>Awesome! Your PWA is store ready!</h1>
             <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
           </div>
-
           <div id="store-cards">
             ${this.renderContentCards()}
           </div>`
@@ -563,11 +581,21 @@ export class PublishPane extends LitElement {
                 <p>Customize your ${this.selectedStore} app below!</p>
               </div>
             </div>
-          </div>        
-          <div id="form-area">
-            ${this.renderForm()}
-          </div>`
-          }
+          </div> 
+          ${!this.readyToDownload ?   
+            // so if this is false then we wanna show the form  
+            html`
+              <div id="form-area">
+                ${this.renderForm()}
+              </div>
+            ` :
+            // when this becomes true this means that we are ready to download something
+            html`
+              <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
+            `
+          }  
+        `
+        }
         </div>
       </div>
         

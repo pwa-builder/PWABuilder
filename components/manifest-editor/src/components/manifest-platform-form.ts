@@ -27,7 +27,6 @@ export class ManifestPlatformForm extends LitElement {
 
   static get styles() {
     return css`
-
       sl-input::part(base),
       sl-select::part(control),
       sl-menu-item::part(base),
@@ -40,7 +39,6 @@ export class ManifestPlatformForm extends LitElement {
         --sl-input-height-medium: 3em;
         --sl-toggle-size: 16px;
       }
-
       #form-holder {
         display: flex;
         flex-direction: column;
@@ -92,25 +90,21 @@ export class ManifestPlatformForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       sl-menu {
          width: 100%;
       }
-
       #cat-field {
         display: grid;
         grid-template-rows: repeat(6, auto);
@@ -119,51 +113,42 @@ export class ManifestPlatformForm extends LitElement {
         padding: 0 5px 5px 5px;
         background: white;
       }
-
       #override-list {
         display: flex;
         flex-direction: column;
         align-items: center;
         row-gap: 5px;
       }
-
       #override-item {
         display: flex;
         align-items: center;
         column-gap: 10px;
       }
-
       sl-details {
         width: 100%;
       }
-
       sl-details::part(base){
         width: 100%;
         max-height: fit-content
       }
-
       sl-details::part(header){
         padding: 10px 15px;
         font-size: 16px;
       }
-
       .shortcut-holder {
         display: flex;
         flex-direction: column;
       }
-
       .shortcut-header{
         margin-bottom: 5px;
         margin-top: 0;
         font-size: 16px;
       }
-
       .shortcut-details::part(content){
         display: flex;
         flex-direction: column;
         row-gap: 10px;
       }
-
       .shortcut-holder sl-button {
         width: 50%;
         align-self: flex-end;
@@ -173,7 +158,6 @@ export class ManifestPlatformForm extends LitElement {
         flex-direction: column;
         row-gap: 10px;
       }
-
       .long-items h3 {
         font-size: 18px;
         margin: 0;
@@ -195,6 +179,16 @@ export class ManifestPlatformForm extends LitElement {
         display: flex;
         align-items:center;
         justify-content: space-between;
+      }
+
+      @media(max-width: 765px){
+        .form-row {
+          flex-direction: column;
+          row-gap: 1em;
+        }
+        .form-field {
+          width: 100%;
+        }
       }
     `;
   }
@@ -350,7 +344,6 @@ export class ManifestPlatformForm extends LitElement {
             <sl-input class="shortcut-input" name="url" placeholder="Shortcut url" /></sl-input>
             <sl-input class="shortcut-input" name="src" placeholder="Shortcut icon src" /></sl-input>
             <sl-input class="shortcut-input" name="desc" placeholder="Shortcut description" /></sl-input>
-
             <sl-button type="submit">Add to Manifest</sl-button>
           </form>
         `
@@ -763,7 +756,6 @@ export class ManifestPlatformForm extends LitElement {
                       html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat} chekced>${cat}</sl-checkbox>`
                     :
                       html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat}>${cat}</sl-checkbox>`
-
                   )}
               </div>
           </div>
@@ -772,4 +764,3 @@ export class ManifestPlatformForm extends LitElement {
     `;
   }
 }
-

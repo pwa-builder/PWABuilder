@@ -66,19 +66,17 @@ export class PWAManifestEditor extends LitElement {
       sl-tab-group {
         --indicator-color: #4F3FB6;
       }
-
       sl-tab[active]::part(base) {
         color: #4F3FB6;
       }
-
       sl-tab::part(base):hover {
         color: #4F3FB6;
       }
-
       sl-tab-panel::part(base){
         overflow-y: auto;
         overflow-x: hidden;
         height: 500px;
+        padding: .5em;
       }
     `;
   }
@@ -148,7 +146,6 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab slot="nav" panel="screenshots">Screenshots</sl-tab>
         <sl-tab slot="nav" panel="preview">Preview</sl-tab>
         <sl-tab slot="nav" panel="code">Code</sl-tab>
-
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-info-form></sl-tab-panel>
         <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-settings-form></sl-tab-panel>
         <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-platform-form></sl-tab-panel>

@@ -10,7 +10,6 @@ export class ManifestSettingsForm extends LitElement {
 
   static get styles() {
     return css`
-
       sl-input::part(base),
       sl-select::part(control),
       sl-menu-item::part(base) {
@@ -18,7 +17,6 @@ export class ManifestSettingsForm extends LitElement {
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
       }
-
       #form-holder {
         display: flex;
         flex-direction: column;
@@ -70,25 +68,31 @@ export class ManifestSettingsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       sl-menu {
         width: 100%;
       }
 
+      @media(max-width: 765px){
+        .form-row {
+          flex-direction: column;
+          row-gap: 1em;
+        }
+        .form-field {
+          width: 100%;
+        }
+      }
     `;
   }
 
@@ -118,6 +122,14 @@ export class ManifestSettingsForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+  }
+
+  // temporary fix that helps with codes like en-US that we don't cover.
+  parseLangCode(code: string){
+    if(code){
+      return code.split("-")[0];
+    } 
+    return "";
   }
 
   render() {
@@ -194,7 +206,7 @@ export class ManifestSettingsForm extends LitElement {
               </a>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" .value=${this.manifest.lang! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" .value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
