@@ -114,6 +114,7 @@ async function fetchManifest(url: string, createIfNone = true): Promise<Manifest
   try {
     knownGoodUrl = cleanUrl(url);
   } catch (err) {
+    console.warn("URL not valid!")
     reject(err);
     return;
   }
