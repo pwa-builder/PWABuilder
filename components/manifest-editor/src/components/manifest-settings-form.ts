@@ -126,7 +126,6 @@ export class ManifestSettingsForm extends LitElement {
 
   // temporary fix that helps with codes like en-US that we don't cover.
   parseLangCode(code: string){
-    console.log("code", code);
     if(code){
       return code.split("-")[0];
     } 

@@ -97,37 +97,17 @@ const default_results: TestResult[] = [
 ];
 
 export async function testManifest(
-  url: string
+  manifest?: ManifestContext
 ): Promise<Array<TestResult> | boolean> {
   try {
-    const manifestData = fetchOrCreateManifest(url);
-
-    const twentySecondTimeout = new Promise<Array<TestResult>>(resolve =>
-      setTimeout(() => resolve(default_results), default_timeout)
-    );
-
-    const fetchResultOrTimeout: Array<TestResult> | ManifestContext =
-      await Promise.race([twentySecondTimeout, manifestData]);
-
-    if (!fetchResultOrTimeout) {
-      console.warn('Manifest check timed out after 20 seconds.');
+    if (manifest == null || manifest == undefined) {
+      console.warn('No manifest found');
       return default_results;
-    }
-
-    if (fetchResultOrTimeout) {
-      const manifest = fetchResultOrTimeout;
-      if (Array.isArray(manifest)) {
-        console.error('Could not test manifest, returning default results');
-        return manifest as Array<TestResult>;
-      } else {
-        return await runManifestChecks(manifest);
-      }
     } else {
-      console.error('Could not get manifest data');
-      return default_results;
+      return await runManifestChecks(manifest);
     }
   } catch (err) {
-    console.warn('Could not fetch a manifest to test due to error.', err);
+    console.warn('Could not fetch a manifest due to error', err);
     return default_results;
   }
 }

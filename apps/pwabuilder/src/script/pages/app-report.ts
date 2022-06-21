@@ -103,7 +103,7 @@ export class AppReport extends LitElement {
 
   // will be used to control the state of the "Package for store" button.
   @state() canPackage: boolean = false;
-  @state() manifestEditorOpened: boolean = true;
+  @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
 
   // Controls the last tested section
@@ -835,12 +835,12 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
-  async getManifest(url: string) {
+  async getManifest(url: string): Promise<ManifestContext> {
     this.isAppCardInfoLoading = true;
     const manifestContext = await fetchOrCreateManifest(url);
-    sessionStorage.setItem('manifest_context', JSON.stringify(manifestContext));
     this.isAppCardInfoLoading = false;
     this.populateAppCard(manifestContext, url);
+    return manifestContext;
   }
 
   populateAppCard(manifestContext: ManifestContext, url: string) {
@@ -898,7 +898,7 @@ export class AppReport extends LitElement {
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
     details!.disabled = true;
 
-    let manifest = JSON.parse(sessionStorage.getItem("manifest_context")!).manifest;
+    let manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
     
     this.validationResults = await validateManifest(manifest);
 
