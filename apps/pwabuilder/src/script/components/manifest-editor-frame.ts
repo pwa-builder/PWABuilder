@@ -71,6 +71,7 @@ export class ManifestEditorFrame extends LitElement {
         display: flex;
         column-gap: 10px;
         white-space: nowrap;
+        width: fit-content;
       }
       .arrow_anchor:visited {
         color: #4F3FB6;
