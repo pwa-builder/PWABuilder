@@ -23,8 +23,8 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          npm install --prefix ./my-app
-          npm start --prefix ./my-app
+          npm install --prefix /apps/pwabuilder
+          npm start --prefix /apps/pwabuilder
 #        working-directory: "/apps/pwabuilder"
         
 
