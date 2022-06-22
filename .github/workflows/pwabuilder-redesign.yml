@@ -23,8 +23,8 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          npm install --prefix /apps/pwabuilder
-          npm start --prefix /apps/pwabuilder
+          npm install --prefix apps/pwabuilder
+          npm start --prefix apps/pwabuilder
 #        working-directory: "/apps/pwabuilder"
         
 
@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: "/apps/pwabuilder/"
+          path: "./apps/pwabuilder/"
 
 
   deploy:
