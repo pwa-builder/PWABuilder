@@ -23,9 +23,9 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          npm install
-          npm start
-        working-directory: "/apps/pwabuilder"
+          npm install --prefix ./my-app
+          npm start --prefix ./my-app
+#        working-directory: "/apps/pwabuilder"
         
 
       - name: Upload artifact for deployment job
