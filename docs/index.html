@@ -17,6 +17,7 @@
 
     <link rel="stylesheet" href="styles/global.css">
     <link rel="manifest" href="manifest.json" />
+
 </head>
 
 <body>
@@ -47,6 +48,7 @@
             loadSidebar: true,
             subMaxLevel: 2,
             auto2top: true,
+            executeScript: true,
             plugins: [
                 function(hook) {
                     hook.doneEach(function() {
@@ -80,6 +82,12 @@
     <script src="//cdn.jsdelivr.net/npm/docsify-prism@latest/dist/docsify-prism.min.js "></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1 "></script>
+    <script>
+        if (typeof navigator.serviceWorker !== 'undefined') {
+          navigator.serviceWorker.register('sw.js')
+        }
+    </script>
+    
 
 </body>
 

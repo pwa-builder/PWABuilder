@@ -5,6 +5,7 @@
 
 - **Home** 
   - [About](/ "PWABuilder Suite Documentation")
+  - [Beginner's Guide](/home/pwa-intro "Beginner's Guide to PWA")
 
 - **PWA Starter** 
   - [Quick Start](/starter/quick-start "PWA Starter - Quick Start")
