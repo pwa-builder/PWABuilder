@@ -8,6 +8,11 @@ on:
     branches:
       - redesign
   workflow_dispatch:
+  
+env:
+  AZURE_WEBAPP_NAME: MY_WEBAPP_NAME   # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: './apps/pwabuilder'      # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '14.x'                # set this to the node version to use
 
 jobs:
   build:
@@ -24,7 +29,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install --prefix apps/pwabuilder
-          npm start --prefix apps/pwabuilder
+          npm build --prefix apps/pwabuilder
 #        working-directory: "/apps/pwabuilder"
         
 
