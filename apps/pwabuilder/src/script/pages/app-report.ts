@@ -681,13 +681,13 @@ export class AppReport extends LitElement {
 
         @media(max-width: 450px){
           .modal {
-            max-width: 300px;
-            max-height: 400px;
+            max-width: 320px;
+            max-height: 600px;
           }
 
           manifest-editor-frame {
-            max-width: 300px;
-            max-height: 400px;
+            max-width: 320px;
+            max-height: 600px;
           }
         }
 
@@ -695,7 +695,7 @@ export class AppReport extends LitElement {
         ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
           #header-row {
-            flex-direction: column;
+            flex-direction: column-reverse;
             row-gap: 1.5em;
           }
 
@@ -741,7 +741,7 @@ export class AppReport extends LitElement {
           }
 
           #header-row {
-            flex-direction: column;
+            flex-direction: column-reverse;
             row-gap: 1.5em;
           }
 
@@ -790,6 +790,10 @@ export class AppReport extends LitElement {
           }
           .half-width-cards {
             width: 100%;
+          }
+          #actions-footer img {
+            height: 16px;
+            width: auto;
           }
         `)}
       `,
@@ -1033,6 +1037,7 @@ export class AppReport extends LitElement {
     if (this.siteURL) {
       this.resetData();
       this.runAllTests(this.siteURL);
+      sessionStorage.setItem('last_tested', JSON.stringify(new Date()));
     }
   }
 
