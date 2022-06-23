@@ -53,3 +53,7 @@
 .pwa-summit-banner a {
     color: var(--sl-color-green-700);
 }
+
+sl-button {
+    width: 100%;
+}
