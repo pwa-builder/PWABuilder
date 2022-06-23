@@ -30,7 +30,7 @@ Service workers are a type of [web worker](https://developer.mozilla.org/en-US/d
 They are event-driven and operate in a separate thread from the rest of your application.
 
 Service workers are how progressive web apps work offline: service workers can cache essential resources and handle requests when the network is down. 
-Every request to andfrom a PWA goes through the service worker, and there are a ton of different strategies for how to cache and fetch necessary resources.
+Every request to and from a PWA goes through the service worker, and there are a ton of different strategies for how to cache and fetch necessary resources.
 
 Learn more [here.](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 
