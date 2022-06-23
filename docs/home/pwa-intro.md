@@ -112,7 +112,7 @@ You'll see shortcuts to take you directly to different parts of the documentatio
 
 #### Trigger a notification
 
-Lastly, let's take a look at an example web capability: notifications.
+Lastly, let's take a look at an example web capability: push notifications.
 
 Before we can send notifications, we need to request permission from the user. This button will trigger the permission prompt:
 
