@@ -99,7 +99,7 @@ Once the PWA is installed, try launching it from the operating system. It should
 
 #### Use the app without connection
 
-Try turning on airplane mode or disconnecting from WiFI.
+Try turning on airplane mode or disconnecting from WiFi.
 
 Navigating around the PWA should still work, and all the static content should still load.
 In this instance, the whole application is static, and should work entirely as expected.
