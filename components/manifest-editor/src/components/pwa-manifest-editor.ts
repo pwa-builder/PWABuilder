@@ -119,7 +119,7 @@ export class PWAManifestEditor extends LitElement {
 
     this.manifest = {...this.manifest, [field]: change};
 
-    console.log("updated manifest -->", this.manifest);
+    //console.log("updated manifest -->", this.manifest);
   }
 
   public resetManifest(){

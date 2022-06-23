@@ -103,7 +103,7 @@ export class AppReport extends LitElement {
 
   // will be used to control the state of the "Package for store" button.
   @state() canPackage: boolean = false;
-  @state() manifestEditorOpened: boolean = true;
+  @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
 
   // Controls the last tested section
@@ -1278,7 +1278,7 @@ export class AppReport extends LitElement {
             </div>
           </div>
           <div id="todo">
-            <sl-details id="todo-detail" summary="To-do list">
+            <sl-details id="todo-detail" summary="To-do list"}>
              ${this.todoItems.map((todo: any) => 
                 html`
                   <todo-item
