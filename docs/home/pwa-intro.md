@@ -38,7 +38,7 @@ Learn more [here.](https://developer.mozilla.org/en-US/docs/Web/API/Service_Work
 
 ## Installability
 
-A web app that has a manifest and a service worker can be locally installed! *Installability* is one of the key lines that separates classic web apps and their progressive counterparts.
+A web app that has a manifest and a service worker can be locally installed! *Installability* is one of the key differences that separates classic web apps and their progressive counterparts.
 
 Just like a native application, an installed PWA can be launched from the operating system, pinned to desktops and taskbars, and indexed by your device's search software.
 
