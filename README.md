@@ -13,7 +13,7 @@ This repo is home to several projects in the PWABuilder family of tools.
 
 | Docs | Source | Contribute |
 | -------- | -------------- | --------|
-| [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link]
+| [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki/Documentation)
 | [blog.pwabuilder.com](https://blog.pwabuilder.com) | [/apps/blog](/apps/blog) | [/apps/blog](/apps/blog)
 
 ## Components
