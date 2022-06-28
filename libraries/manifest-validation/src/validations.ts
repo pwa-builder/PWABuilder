@@ -61,12 +61,7 @@ export const maniTests: Array<Validation> = [
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
-            if (isArray) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return isArray;
         }
     },
     {
