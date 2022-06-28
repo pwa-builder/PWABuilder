@@ -25,4 +25,4 @@ jobs:
         run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
 
       - name: Push
-        run: docker push pwabuilder.azurecr.io/pwa-site-dev:latest
+        run: docker push pwabuilder.azurecr.io/pwa-site-dev:redesign
