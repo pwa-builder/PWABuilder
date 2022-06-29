@@ -14,9 +14,7 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
 
         let data = await loopThroughKeys(manifest);
 
-        if (data && data.length > 0) {
-            resolve(data);
-        }
+        resolve(data);
     });
 }
 
