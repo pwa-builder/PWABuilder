@@ -42,7 +42,7 @@ async function getManifest(
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
   //TODO: Replace with prod
-  const manifestTestUrl = `https://pwabuilder-tests-dev.azurewebsites.net/api/FetchWebManifest?site=${encodedUrl}`;
+  const manifestTestUrl = `https://pwabuilder-tests.azurewebsites.net/api/FetchWebManifest?site=${encodedUrl}`;
   try {
     const response = await fetch(manifestTestUrl, {
       method: 'POST',
