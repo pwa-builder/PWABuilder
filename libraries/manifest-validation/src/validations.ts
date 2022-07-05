@@ -443,5 +443,18 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
+    },
+    {
+        member: "launch_handler",
+        displayString: "Manifest has launch handler field",
+        infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
+        category: "recommended",
+        defaultValue: "",
+        docsLink: "https://developer.chrome.com/docs/web-platform/launch-handler/",
+        errorString: "launch_handler should be defined",
+        quickFix: false,
+        test: (value: any) => {
+            return value && typeof value === "object";
+        }
     }
 ];
