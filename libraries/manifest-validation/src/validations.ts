@@ -95,22 +95,6 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Manifest has short name field",
-        category: "required",
-        member: "short_name",
-        defaultValue: "placeholder",
-        docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
-        errorString:
-            "short_name is required and should be a string with a length >= 2 and should not have any whitespace",
-        quickFix: true,
-        test: (value: string) => {
-          const existsAndLength = value && typeof value === "string" && value.length >= 2 && value.trim() === value;
-          return existsAndLength;
-        },
-    },
-    {
-        infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
         displayString: "Short name is the correct minimum length (2 characters)",
         category: "required",
         member: "short_name",
