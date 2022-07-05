@@ -59,6 +59,7 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
           maniTests.forEach(async (test) => {
               if (test.member === key && test.test) {
                   const testResult = await test.test(manifest[key]);
+
   
                   if(testResult){
                     test.valid = true;

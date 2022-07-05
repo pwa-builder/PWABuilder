@@ -189,6 +189,49 @@ export class ManifestPlatformForm extends LitElement {
         .form-field {
           width: 100%;
         }
+        #cat-field {
+          grid-template-columns: repeat(4, auto);
+          grid-auto-flow: unset;
+        }
+      }
+
+      @media(max-width: 600px){
+        #cat-field {
+          grid-template-columns: repeat(3, auto);
+        }
+      }
+
+      @media(max-width: 480px){
+        sl-input::part(base),
+        sl-select::part(control),
+        sl-menu-item::part(base),
+        sl-button::part(base),
+        sl-checkbox::part(base),
+        sl-checkbox::part(control) {
+          --sl-input-font-size-medium: 14px;
+          --sl-font-size-medium: 14px;
+          --sl-input-height-medium: 2.5em;
+          --sl-button-font-size-medium: 10px;
+          --sl-toggle-size: 14px;
+        }
+
+        sl-details::part(header) {
+          padding: 5px 10px;
+          font-size: 14px;
+        }
+
+        .form-row p, .long-items p {
+          font-size: 12px;
+        }
+
+        .form-row h3, .long-items h3 {
+          font-size: 16px;
+        }
+
+        #cat-field {
+          grid-template-columns: repeat(2, auto);
+        }
+        
       }
     `;
   }

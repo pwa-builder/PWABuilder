@@ -71,6 +71,7 @@ export class ManifestEditorFrame extends LitElement {
         display: flex;
         column-gap: 10px;
         white-space: nowrap;
+        width: fit-content;
       }
       .arrow_anchor:visited {
         color: #4F3FB6;
@@ -121,8 +122,46 @@ export class ManifestEditorFrame extends LitElement {
       .primary:hover {
         cursor: pointer;
       }
+
+      #add-to-pack {
+        white-space: nowrap;
+      }
+
+      @media(max-width: 600px){  
+        
+        #frame-footer {
+          flex-direction: column-reverse;
+          gap: 1em;
+        }
+        #footer-actions {
+          width: 100%;
+        }
+        #footer-links {
+          width: 100%;
+          align-items: center;
+        }
+        .primary {
+          font-size: 14px;
+          white-space: nowrap;
+          width: 100%;
+        }
+      }
+
+      @media(max-width: 480px){  
+        #frame-header h1 {
+          font-size: 22px;
+        }
+        #frame-header p {
+          font-size: 12px;
+        }
+        .arrow_anchor {
+          font-size: 12px;
+        }
+      }
+
       /* < 480px */
       ${smallBreakPoint(css`
+          
       `)}
       /* 480px - 639px */
       ${mediumBreakPoint(css`

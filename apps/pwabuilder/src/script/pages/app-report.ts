@@ -33,6 +33,8 @@ import {
 import { fetchOrCreateManifest } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+
 /* const possible_messages = {
   overview: {
     heading: "Your PWA's report card.",
@@ -534,6 +536,10 @@ export class AppReport extends LitElement {
         sl-progress-ring {
           height: fit-content;
         }
+
+        sl-progress-ring::part(base).progress-ring__track {
+          stroke-width: 2px;
+        }
         .red {
           --indicator-color: var(--error-color);
         }
@@ -669,25 +675,25 @@ export class AppReport extends LitElement {
 
         @media(max-width: 600px){
           .modal {
-            max-width: 450px;
-            max-height: 500px;
+            max-width: 480px;
+            max-height: 650px;
           }
 
           manifest-editor-frame {
-            max-width: 450px;
-            max-height: 500px;
+            max-width: 480px;
+            max-height: 650px;
           }
         }
 
-        @media(max-width: 450px){
+        @media(max-width: 480px){
           .modal {
-            max-width: 300px;
-            max-height: 400px;
+            max-width: 320px;
+            max-height: 600px;
           }
 
           manifest-editor-frame {
-            max-width: 300px;
-            max-height: 400px;
+            max-width: 320px;
+            max-height: 600px;
           }
         }
 
@@ -695,7 +701,7 @@ export class AppReport extends LitElement {
         ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
           #header-row {
-            flex-direction: column;
+            flex-direction: column-reverse;
             row-gap: 1.5em;
           }
 
@@ -741,7 +747,7 @@ export class AppReport extends LitElement {
           }
 
           #header-row {
-            flex-direction: column;
+            flex-direction: column-reverse;
             row-gap: 1.5em;
           }
 
@@ -790,6 +796,10 @@ export class AppReport extends LitElement {
           }
           .half-width-cards {
             width: 100%;
+          }
+          #actions-footer img {
+            height: 16px;
+            width: auto;
           }
         `)}
       `,
@@ -1030,9 +1040,11 @@ export class AppReport extends LitElement {
   }
 
   async retest() {
+    recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
     if (this.siteURL) {
       this.resetData();
       this.runAllTests(this.siteURL);
+      sessionStorage.setItem('last_tested', JSON.stringify(new Date()));
     }
   }
 
@@ -1097,11 +1109,21 @@ export class AppReport extends LitElement {
   }
 
   toggleManifestEditorModal() {
+    if(this.manifestEditorOpened){
+      recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
+    } else {
+      recordPWABuilderProcessStep("manifest_editor_opened", AnalyticsBehavior.ProcessCheckpoint);
+    }
     this.manifestEditorOpened = !this.manifestEditorOpened;
     this.requestUpdate();
   }
 
   togglePublishModal() {
+    if(this.publishModalOpened){
+      recordPWABuilderProcessStep("publish_modal_closed", AnalyticsBehavior.ProcessCheckpoint);
+    } else {
+      recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
+    }
     this.publishModalOpened = !this.publishModalOpened;
     this.requestUpdate();
   }
@@ -1156,6 +1178,7 @@ export class AppReport extends LitElement {
 
   animateItem(e: CustomEvent){
     e.preventDefault;
+    recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     let details = this.shadowRoot!.getElementById(e.detail.card);
     (details as any)!.show();
@@ -1269,7 +1292,11 @@ export class AppReport extends LitElement {
             </div>
           </div>
           <div id="todo">
-            <sl-details id="todo-detail" summary="To-do list">
+            <sl-details 
+              id="todo-detail" 
+              summary="To-do list"
+              @click=${() => recordPWABuilderProcessStep("todo_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}
+              >
              ${this.todoItems.map((todo: any) => 
                 html`
                   <todo-item
@@ -1308,6 +1335,7 @@ export class AppReport extends LitElement {
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
                     rel="noopener"
                     target="_blank"
+                    @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
                   >
                     <p class="arrow_link">Manifest Documentation</p>
                     <img
@@ -1330,7 +1358,11 @@ export class AppReport extends LitElement {
                 }
               </div>
             </div>
-            <sl-details id="mani-details" class="details">
+            <sl-details 
+              id="mani-details" 
+              class="details"
+              @click=${() => recordPWABuilderProcessStep("manifest_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}
+              >
               ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
               <div id="manifest-detail-grid">
                 <div class="detail-list">
@@ -1453,7 +1485,12 @@ export class AppReport extends LitElement {
                   <button type="button" class="alternate">
                     Generate Service Worker
                   </button>
-                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <a 
+                    class="arrow_anchor" 
+                    href="" rel="noopener" 
+                    target="_blank"
+                    href=""
+                    @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                     <p class="arrow_link">Service Worker Documentation</p>
                     <img
                       src="/assets/new/arrow.svg"
@@ -1463,7 +1500,10 @@ export class AppReport extends LitElement {
                   </a>
                 </div>
               </div>
-              <sl-details id="sw-details" class="details">
+              <sl-details 
+                id="sw-details" 
+                class="details"
+                @click=${() => recordPWABuilderProcessStep("sw_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}>
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
@@ -1525,7 +1565,11 @@ export class AppReport extends LitElement {
                   
                 </div>
                 <div id="sec-actions" class="flex-col">
-                  <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                  <a 
+                    class="arrow_anchor" 
+                    href="" rel="noopener" 
+                    target="_blank"
+                    @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                     <p class="arrow_link">Security Documentation</p>
                     <img
                       src="/assets/new/arrow.svg"
@@ -1535,7 +1579,11 @@ export class AppReport extends LitElement {
                   </a>
                 </div>
               </div>
-              <sl-details id="sec-details" class="details">
+              <sl-details 
+                id="sec-details" 
+                class="details"
+                @click=${() => recordPWABuilderProcessStep("security_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}
+                >
               ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
                 <div class="detail-grid">
                   <div class="detail-list">

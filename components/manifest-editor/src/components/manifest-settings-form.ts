@@ -93,6 +93,24 @@ export class ManifestSettingsForm extends LitElement {
           width: 100%;
         }
       }
+
+      @media(max-width: 480px){
+        sl-input::part(base),
+        sl-select::part(control),
+        sl-menu-item::part(base) {
+          --sl-input-font-size-medium: 14px;
+          --sl-font-size-medium: 14px;
+          --sl-input-height-medium: 2.5em;
+        }
+
+        .form-row p {
+          font-size: 12px;
+        }
+
+        .form-row h3 {
+          font-size: 16px;
+        }
+      }
     `;
   }
 

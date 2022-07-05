@@ -78,6 +78,22 @@ export class PWAManifestEditor extends LitElement {
         height: 500px;
         padding: .5em;
       }
+
+      @media(max-width: 765px){
+
+      }
+
+      @media(max-width: 600px){
+
+      }
+
+      @media(max-width: 480px){
+        sl-tab::part(base) {
+          --sl-font-size-small: 12px;
+          --sl-spacing-medium: .5rem;
+          --sl-space-large: .75em;
+        }
+      }
     `;
   }
 
@@ -103,7 +119,7 @@ export class PWAManifestEditor extends LitElement {
 
     this.manifest = {...this.manifest, [field]: change};
 
-    console.log("updated manifest -->", this.manifest);
+    //console.log("updated manifest -->", this.manifest);
   }
 
   public resetManifest(){

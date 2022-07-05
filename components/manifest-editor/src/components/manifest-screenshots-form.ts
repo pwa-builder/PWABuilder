@@ -120,16 +120,44 @@ export class ManifestScreenshotsForm extends LitElement {
         height: fit-content;
       }
 
-    @keyframes slide {
-      0% , 100%{ bottom: -35px}
-      25% , 75%{ bottom: -2px}
-      20% , 80%{ bottom: 2px}
-    }
-    @keyframes rotate {
-      0% { transform: rotate(-15deg)}
-      25% , 75%{ transform: rotate(0deg)}
-      100% {  transform: rotate(25deg)}
-    }
+      @keyframes slide {
+        0% , 100%{ bottom: -35px}
+        25% , 75%{ bottom: -2px}
+        20% , 80%{ bottom: 2px}
+      }
+      @keyframes rotate {
+        0% { transform: rotate(-15deg)}
+        25% , 75%{ transform: rotate(0deg)}
+        100% {  transform: rotate(25deg)}
+      }
+
+      @media(max-width: 765px){
+
+        sl-input {
+          width: 100%;
+        }
+        
+      }
+
+      @media(max-width: 600px){
+        sl-input::part(base),
+        sl-select::part(control),
+        sl-button::part(base) {
+          --sl-input-font-size-medium: 14px;
+          --sl-input-height-medium: 2.5em;
+          --sl-button-font-size-medium: 12px;
+        }
+      }
+
+      @media(max-width: 480px){
+        .form-field p {
+          font-size: 12px;
+        }
+
+        .form-field h3 {
+          font-size: 16px;
+        }
+      }
   
     `;
   }
@@ -238,7 +266,6 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   async generateScreenshots() {
-    console.log("generating screenshots...")
     try {
       this.awaitRequest = true;
 
@@ -246,7 +273,6 @@ export class ManifestScreenshotsForm extends LitElement {
         // to-do: take another type look at this
         // @ts-ignore
         const screenshots = await generateScreenshots(this.screenshotUrlList);
-        console.log("Got the screenshots, updating manifest...")
         if (screenshots) {
           this.screenshotsList = screenshots;
           let manifestUpdated = new CustomEvent('manifestUpdated', {

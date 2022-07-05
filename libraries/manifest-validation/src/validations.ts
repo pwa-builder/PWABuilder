@@ -61,12 +61,7 @@ export const maniTests: Array<Validation> = [
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
-            if (isArray) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return isArray;
         }
     },
     {
@@ -107,10 +102,10 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
         errorString:
-            "short_name is required and should be a string with a length > 0 and should not have any whitespace",
+            "short_name is required and should be a string with a length >= 2 and should not have any whitespace",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && typeof value === "string" && value.length > 0 && value.trim() === value;
+          const existsAndLength = value && typeof value === "string" && value.length >= 2 && value.trim() === value;
           return existsAndLength;
         },
     },
