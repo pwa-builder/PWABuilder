@@ -149,7 +149,7 @@ Due to the fact that iOS has very limited support for PWAs we will be supporting
 
 This usually is a result of the fields `background_color` or `theme_color` being set to `none` in the `manifest` file. These fields are optional so if you do not want to specifiy a color, you can omit the field all together.
   
-#### Error: `Failed to download Web Manifest [URL to Web Manifest]on.Responded with status 503`
+#### Error: `Failed to download Web Manifest [URL to Web Manifest].Responded with status 503`
 
 This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that your pause your firewall service while packaging with PWABuilder and you can enable it again after your have your package.
   

@@ -66,6 +66,13 @@ export class ComapniesPackaged extends LitElement {
         cursor: pointer;
       }
 
+      .controls ion-icon {
+        color: #4F3FB6;
+        padding: 5px;
+        border: 1px solid #4F3FB6;
+        border-radius: 50%;
+      }
+
       @keyframes scroll {
         0% { transform: translateX(0); }
         14% { transform: translateX(calc(var(--slide-width) * -1)); }
@@ -154,6 +161,13 @@ export class ComapniesPackaged extends LitElement {
           --carousel-width: 1000px;
         }
       }
+
+      @media screen and (-ms-high-contrast: white-on-black) {
+        .controls ion-icon {
+          color: white;
+          border-color: white;
+        }
+      }
     `
     ];
   }
@@ -219,7 +233,7 @@ export class ComapniesPackaged extends LitElement {
             )}
         </div>
       </div>
-      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Play.svg" alt="play button" /></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><img src="/assets/Pause.svg" alt="pause button" /></button>`}
+      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="play" aria-label="play button"></ion-icon></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="pause" aria-label="pause button"></ion-icon></button>`}
     </div>
     `;
   }

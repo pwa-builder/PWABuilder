@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 import {
   smallBreakPoint,
@@ -18,7 +18,6 @@ export class ManifestEditorFrame extends LitElement {
   static get styles() {
     return [
     css`
-
       * {
         box-sizing: border-box;
       }
@@ -29,32 +28,26 @@ export class ManifestEditorFrame extends LitElement {
         row-gap: .5em;
         width: 100%;
       }
-
       #frame-content {
         display: flex;
         flex-direction: column;
         row-gap: 1em;
         padding: 1em;
       }
-
       #frame-header {
         display: flex;
         flex-direction: column;
         row-gap: .5em;
       }
-
       #frame-header > * {
         margin: 0;
       }
-
       #frame-header h1 {
         font-size: 24px;
       }
-
       #frame-header p {
         font-size: 14px;
       }
-
       #frame-footer {
         background-color: #F2F3FB;
         padding: 1em 2em;
@@ -64,7 +57,6 @@ export class ManifestEditorFrame extends LitElement {
         align-items: center;
         justify-content: space-between;
       }
-
       .arrow_link {
         margin: 0;
         border-bottom: 1px solid #4F3FB6;
@@ -78,6 +70,8 @@ export class ManifestEditorFrame extends LitElement {
         color: rgb(79, 63, 182);
         display: flex;
         column-gap: 10px;
+        white-space: nowrap;
+        width: fit-content;
       }
       .arrow_anchor:visited {
         color: #4F3FB6;
@@ -99,14 +93,12 @@ export class ManifestEditorFrame extends LitElement {
             transform: translateX(5px);
         }
       }
-
       #footer-links {
         display: flex;
         flex-direction: column;
         row-gap: 1em;
         width: 50%;
       }
-
       #footer-actions {
         display: flex;
         flex-direction: column;
@@ -114,49 +106,76 @@ export class ManifestEditorFrame extends LitElement {
         align-items: center;
         width: 50%;
       }
-
       #footer-actions sl-checkbox::part(base){
         --sl-input-font-size-medium: 12px;
       }
-
       .primary {
-          background: black;
-          color: white;
-          border: none;
-          font-size: 16px;
-          font-weight: bold;
-          border-radius: 50px;
-          padding: 1em 1em;
-          width: 75%;
-        }
+        background: black;
+        color: white;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 50px;
+        padding: 1em 1em;
+        width: 75%;
+      }
+      .primary:hover {
+        cursor: pointer;
+      }
 
-        .primary:hover {
-          cursor: pointer;
+      #add-to-pack {
+        white-space: nowrap;
+      }
+
+      @media(max-width: 600px){  
+        
+        #frame-footer {
+          flex-direction: column-reverse;
+          gap: 1em;
         }
+        #footer-actions {
+          width: 100%;
+        }
+        #footer-links {
+          width: 100%;
+          align-items: center;
+        }
+        .primary {
+          font-size: 14px;
+          white-space: nowrap;
+          width: 100%;
+        }
+      }
+
+      @media(max-width: 480px){  
+        #frame-header h1 {
+          font-size: 22px;
+        }
+        #frame-header p {
+          font-size: 12px;
+        }
+        .arrow_anchor {
+          font-size: 12px;
+        }
+      }
 
       /* < 480px */
       ${smallBreakPoint(css`
-
+          
       `)}
-
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-
       `)}
-
       /* 640px - 1023px */
       ${largeBreakPoint(css`
       `)}
-
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
       `)}
-
       /* > 1920 */
       ${xxxLargeBreakPoint(css`
           
       `)}
-
     `
     ];
   }

@@ -24,7 +24,6 @@ export class ManifestInfoForm extends LitElement {
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
       }
-
       #form-holder {
         display: flex;
         flex-direction: column;
@@ -76,21 +75,18 @@ export class ManifestInfoForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       .color_field input[type="radio"]{
         height: 25px;
         width: fit-content;
@@ -109,38 +105,71 @@ export class ManifestInfoForm extends LitElement {
         border: 1px solid #808080;
         outline: none;
       }
-
       .color_field input[type="color"]::-webkit-color-swatch-wrapper {
         padding: 0;
       }
-
       .color_field input[type="color"]:hover {
         cursor: pointer;
       }
-
       .color-holder p {
         font-size: 16px;
         color: #808080;
       }
-
       sl-menu {
         width: 100%;
       }
-
       .switch_box {
         display: flex;
         align-items: center;
         gap: 10px;
       }
-
       .switch_box p {
         font-size: 16px;
       }
-
       sl-switch {
         --height: 22px;
       }
 
+      @media(max-width: 765px){
+        .form-row:not(.color-row) {
+          flex-direction: column;
+          row-gap: 1em;
+        }
+        .form-row:not(.color-row) .form-field {
+          width: 100%;
+        }
+      }
+
+      @media(max-width: 600px){
+
+      }
+
+      @media(max-width: 480px){
+        sl-input::part(base),
+        sl-select::part(control),
+        sl-menu-item::part(base) {
+          --sl-input-font-size-medium: 14px;
+          --sl-font-size-medium: 14px;
+          --sl-input-height-medium: 2.5em;
+        }
+
+        .form-row p {
+          font-size: 12px;
+        }
+
+        .form-row h3 {
+          font-size: 16px;
+        }
+
+        .color-row {
+          gap: 1em;
+          flex-direction: column;
+        }
+
+        .color-row .form-field {
+          width: 100%;
+        }
+      }
     `;
   }
 
@@ -299,7 +328,7 @@ export class ManifestInfoForm extends LitElement {
             </sl-select>
           </div>
         </div>
-        <div class="form-row">
+        <div class="form-row color-row">
           <div class="form-field color_field">
             <div class="field-header">
               <h3>Background Color</h3>

@@ -24,13 +24,18 @@ export class ManifestScreenshotsForm extends LitElement {
   @state() protected screenshotsList: Array<Screenshot> = [];
   @state() initialScreenshotLength = -1;
 
+  // Generation Status
+  @state() protected showSuccessMessage = false;
+  @state() protected showErrorMessage = false;
+
   static get styles() {
     return css`
-
       sl-input::part(base),
-      sl-select::part(control) {
+      sl-select::part(control),
+      sl-button::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
+        --sl-button-font-size-medium: 14px;
       }
       
       #form-holder {
@@ -62,7 +67,6 @@ export class ManifestScreenshotsForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
-
       .toolTip {
         visibility: hidden;
         width: 200px;
@@ -77,21 +81,18 @@ export class ManifestScreenshotsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
       a:visited, a:focus {
         color: black;
       }
-
       .sc-gallery {
         display: flex;
         gap: 7px;
@@ -113,6 +114,51 @@ export class ManifestScreenshotsForm extends LitElement {
         justify-content: center;
         gap: 5px;
       }
+
+      .screenshots-actions button {
+        width: fit-content;
+        height: fit-content;
+      }
+
+      @keyframes slide {
+        0% , 100%{ bottom: -35px}
+        25% , 75%{ bottom: -2px}
+        20% , 80%{ bottom: 2px}
+      }
+      @keyframes rotate {
+        0% { transform: rotate(-15deg)}
+        25% , 75%{ transform: rotate(0deg)}
+        100% {  transform: rotate(25deg)}
+      }
+
+      @media(max-width: 765px){
+
+        sl-input {
+          width: 100%;
+        }
+        
+      }
+
+      @media(max-width: 600px){
+        sl-input::part(base),
+        sl-select::part(control),
+        sl-button::part(base) {
+          --sl-input-font-size-medium: 14px;
+          --sl-input-height-medium: 2.5em;
+          --sl-button-font-size-medium: 12px;
+        }
+      }
+
+      @media(max-width: 480px){
+        .form-field p {
+          font-size: 12px;
+        }
+
+        .form-field h3 {
+          font-size: 16px;
+        }
+      }
+  
     `;
   }
 
@@ -220,7 +266,6 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   async generateScreenshots() {
-    console.log("generating screenshots...")
     try {
       this.awaitRequest = true;
 
@@ -228,7 +273,6 @@ export class ManifestScreenshotsForm extends LitElement {
         // to-do: take another type look at this
         // @ts-ignore
         const screenshots = await generateScreenshots(this.screenshotUrlList);
-        console.log("Got the screenshots, updating manifest...")
         if (screenshots) {
           this.screenshotsList = screenshots;
           let manifestUpdated = new CustomEvent('manifestUpdated', {
@@ -249,10 +293,14 @@ export class ManifestScreenshotsForm extends LitElement {
             composed: true
           });
           this.dispatchEvent(screenshotsUpdated);
+          // In the future if we wanna show some message it can be tied to this bool
+          this.showSuccessMessage = true;
         }
       }
     } catch (e) {
       console.error(e);
+      // In the future if we wanna show some message it can be tied to this bool
+      this.showErrorMessage = true;
     }
 
     this.awaitRequest = false;
@@ -340,22 +388,20 @@ export class ManifestScreenshotsForm extends LitElement {
           <div class="sc-gallery">
             ${this.initialScreenshotLength > 0 ? this.screenshotSrcListParse().map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><ion-icon name="images"></ion-icon> There are no screenshots in your manifest</div>`}
           </div>
-
           <h3>Generate Screenshots</h3>
           <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>
-
           ${this.renderScreenshotInputUrlList()}
-          <button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</button>
+          <sl-button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</sl-button>
           <div class="sc-gallery">
             ${this.newScreenshotSrcListParse().map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}
           </div>
           <div class="screenshots-actions">
-            <button
+            <sl-button
               type="submit"
               ?loading=${this.awaitRequest}
               ?disabled=${this.generateScreenshotButtonDisabled}
               @click=${this.generateScreenshots}
-              >Generate Screenshots</button>
+              >Generate Screenshots</sl-button>
           </div>
         </div>
       </div>

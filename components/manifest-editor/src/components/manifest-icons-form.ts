@@ -36,12 +36,22 @@ export class ManifestIconsForm extends LitElement {
   // Icon state vars
   @state() uploadSelectedImageFile: Lazy<File>;
   @state() canWeGenerate = true;
+  @state() generatingZip = false;
+  @state() zipGenerated = false;
   @state() uploadImageObjectUrl: string = '';
   @state() errored: boolean = false;
   @state() selectedPlatforms: PlatformInformation[] = [...platformsData];
 
   static get styles() {
     return css`
+
+      sl-checkbox::part(base),
+      sl-checkbox::part(control),
+      sl-button::part(base) {
+        --sl-button-font-size-medium: 14px;
+        --sl-input-font-size-medium: 16px;
+        --sl-toggle-size: 16px;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;
@@ -71,7 +81,6 @@ export class ManifestIconsForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
-
       .toolTip {
         visibility: hidden;
         width: 200px;
@@ -86,14 +95,12 @@ export class ManifestIconsForm extends LitElement {
         left: 10px;
         z-index: 1;
       }
-
       .field-header a {
         display: flex;
         align-items: center;
         position: relative;
         color: black;
       }
-
       a:hover .toolTip {
         visibility: visible;
       }
@@ -104,18 +111,6 @@ export class ManifestIconsForm extends LitElement {
         display: flex;
         flex-direction: column;
         margin: 10px 0;
-      }
-      .image-buttons {
-        border: none;
-        padding: 10px 0;
-        background-color: white;
-        border-radius: 44px;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-        width: 50%;
-        font-weight: bold;
-      }
-      .image-buttons:hover {
-        cursor: pointer;
       }
       #input-file {
         display: none;
@@ -128,11 +123,18 @@ export class ManifestIconsForm extends LitElement {
         gap: 7px;
         flex-wrap: wrap;
       }
-      #icon-options{
-        display: flex;
-        column-gap: 10px;
-        align-items: flex-start;
+      #icon-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr .25fr;
+        place-items: center;
+        gap: .5em;
       }
+
+      #icon-options sl-button {
+        grid-column: 2;
+      }
+
       #selected-icon {
         max-width: 115px;
       }
@@ -141,6 +143,50 @@ export class ManifestIconsForm extends LitElement {
         flex-direction: column;
         row-gap: 5px;
       }
+
+      @media(max-width: 765px){
+        sl-checkbox::part(base),
+        sl-checkbox::part(control) {
+          --sl-input-font-size-medium: 14px;
+          --sl-toggle-size: 14px;
+        }
+      }
+
+      @media(max-width: 600px){
+        .icon {
+            max-width: 90px;
+        }
+
+        #icon-options {
+          grid-template-columns: .25fr 1fr;
+        }
+
+        #selected-icon {
+          max-width: 90px;
+        }
+        
+      }
+
+      @media(max-width: 480px){
+
+        sl-button::part(base) {
+          --sl-button-font-size-medium: 12px;
+        }
+
+        .form-field p {
+          font-size: 12px;
+        }
+
+        .form-field h3 {
+          font-size: 16px;
+        }
+
+        #selected-icon {
+          max-width: 70px;
+        }
+        
+      }
+
     `;
   }
 
@@ -175,6 +221,7 @@ export class ManifestIconsForm extends LitElement {
   }
 
   async handleModalInputFileChange() {
+    this.zipGenerated = false;
     let input = (this.shadowRoot!.getElementById('input-file') as HTMLInputElement);
     const files = input.files ?? undefined;
 
@@ -247,6 +294,8 @@ export class ManifestIconsForm extends LitElement {
 
   async generateZip() {
 
+    this.generatingZip = true;
+
     const file = this.uploadSelectedImageFile
 
     try {
@@ -281,6 +330,10 @@ export class ManifestIconsForm extends LitElement {
         throw new Error('Error from service: ' + postRes.Message);
       }
 
+      this.zipGenerated = true;
+      setTimeout(() => { this.zipGenerated = false }, 3000);
+
+      this.generatingZip = false;
       this.downloadZip(`${baseUrl}${postRes.Uri}`);
     } catch (e) {
       console.error(e);
@@ -316,11 +369,10 @@ export class ManifestIconsForm extends LitElement {
           <div class="icon-gallery">
             ${this.iconSrcListParse().map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
           </div>
-
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
           <div id="icon-section">
-            <button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</button>
+            <sl-button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</sl-button>
             <input
               id="input-file"
               class="file-input hidden"
@@ -339,8 +391,8 @@ export class ManifestIconsForm extends LitElement {
                 html`<sl-checkbox value=${plat.value} @sl-change=${(e: any) => this.handlePlatformChange(e, plat)} checked>${plat.label}</sl-checkbox>`)}
             </div>
             ${this.canWeGenerate ?
-              html`<button @click=${this.generateZip}>Generate Zip</button>` :
-              html`<button @click=${this.generateZip} disabled>Generate Zip</button>`
+              html`<sl-button @click=${this.generateZip} ?loading=${this.generatingZip}>${!this.zipGenerated ? html`Generate Zip` : html`Zip Generated!`}</sl-button>` :
+              html`<sl-tooltip content="Upload a new icon to generate another zip."><sl-button @click=${this.generateZip} disabled>Generate Zip</sl-button></sl-tooltip>`
             }
           </div>` : html``}
         </div>

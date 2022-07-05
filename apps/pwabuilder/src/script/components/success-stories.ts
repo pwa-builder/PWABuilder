@@ -52,18 +52,6 @@ export class SuccessStories extends LitElement {
         column-gap: 1em;
       }
 
-      /* for screen reader only */
-      .screen-reader-only {
-        border: 0; 
-        clip: rect(0 0 0 0); 
-        height: 1px; 
-        margin: -1px;
-        overflow: hidden;
-        padding: 0;
-        position: absolute;
-        width: 1px;
-      }   
-      
       /* < 480px */
       ${smallBreakPoint(css`
           #success-panel {
@@ -184,7 +172,6 @@ export class SuccessStories extends LitElement {
           <h2>PWA success stories</h2>
           <div id="success-cards">
             ${this.cards.map((card: any) => html`
-            <span class="screen-reader-only">${card.company} success story</span>
             <success-card
             cardStat=${card.stat}
             description=${card.description}

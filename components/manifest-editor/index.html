@@ -6,7 +6,7 @@
 
     <script type="module" src="/dist/index.js"></script>
 
-    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="/global.css" />
 
     <link
       rel="stylesheet"
@@ -23,10 +23,23 @@
   </head>
 
   <body>
-    <div id="manifest-editor-modal" class="flex-center">
-      <div id="modal" class="flex-col-center">
-        <pwa-manifest-editor></pwa-manifest-editor>
+    <div id="editor-holder">
+      <div id="close"><ion-icon name="close"></ion-icon></div>
+      <div id="editor-header">
+        <div id="header-text">
+          <h1>Generate a manifest</h1>
+          <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url. Once you are staistifed with you score package your PWA for the stores.</p>
+        </div>
+        <div id="header-actions">
+          <button id="download-button">Download Manifest</button>
+          <button id="reset-button">Reset to original Manifest <ion-icon name="refresh"></ion-icon></button>
+          <div id="actions">
+            <span class="header-action"><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">VS Code Extension </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
+            <span class="header-action"><a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener">Manifest Documentation </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
+          </div>
+        </div>
       </div>
+      <pwa-manifest-editor></pwa-manifest-editor>
     </div>
     <!-- Ion Icons -->
     <script type="module" src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.esm.js"></script>
@@ -99,30 +112,12 @@
                                     "sizes": "28x28"
                                   }
                                 ],
-                                "categories": ["magazines", "productivity"],
+                                "categories": ["magazines"],
                                 "shortcuts" : [
                                   {
                                     "name": "Today's agenda",
                                     "url": "/today",
                                     "description": "List of events planned for today"
-                                  },
-                                  {
-                                    "name": "Today's agenda",
-                                    "url": "/today",
-                                    "description": "List of events planned for today"
-                                  }
-                                ],
-                                "protocol_handlers" : [
-                                  {
-                                    "protocol": "Today's agenda",
-                                    "url": "/today"
-                                  }
-                                ],
-                                "related_applications": [
-                                  {
-                                    "platform": "play",
-                                    "url": "https://play.google.com/store/apps/details?id=com.example.app1",
-                                    "id": "com.example.app1"
                                   }
                                 ]
                             }; //load an initial manifest

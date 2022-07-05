@@ -1,13 +1,15 @@
 export interface Validation {
     infoString?: string;
+    displayString?: string;
     category: string;
     member: string;
-    defaultValue?: string | any[];
+    defaultValue?: string | boolean | any[]; // prefer related apps is a boolean
     docsLink?: string;
     errorString?: string;
     quickFix: boolean;
     test?: Function;
     testName?: string;
+    valid?: boolean;
 }
 
 export interface Manifest {
