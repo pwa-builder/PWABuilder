@@ -1176,12 +1176,13 @@ export class AppReport extends LitElement {
     }
   }
 
-  animateItem(e: CustomEvent){
+  async animateItem(e: CustomEvent){
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     let details = this.shadowRoot!.getElementById(e.detail.card);
-    (details as any)!.show();
+
+    await (details as any)!.show();
 
     details!.scrollIntoView({behavior: "smooth"});
 
