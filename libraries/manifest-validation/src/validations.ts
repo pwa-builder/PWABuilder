@@ -65,6 +65,41 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have atleast one icon with purpose any",
+        category: "required",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        errorString: "Need atleast one icon with purpose set to any",
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const anyIcon = value.find(icon => icon.purpose === "any");
+
+                return anyIcon ? true : false;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
         infoString: "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
         displayString: "Manifest has a scope field",
         category: "optional",
