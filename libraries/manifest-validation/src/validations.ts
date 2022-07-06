@@ -95,17 +95,17 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Manifest has short name field",
+        displayString: "Short name is the correct minimum length (2 characters)",
         category: "required",
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
         errorString:
-            "short_name is required and should be a string with a length >= 2 and should not have any whitespace",
+            "short_name is required and should be a string with a length >= 2",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && typeof value === "string" && value.length >= 2 && value.trim() === value;
+          const existsAndLength = value && value.length >= 2;
           return existsAndLength;
         },
     },
@@ -118,7 +118,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -414,6 +414,31 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
             return isArray;
+        }
+    },
+    {
+        member: "id",
+        displayString: "Manifest has an app ID",
+        infoString: "The id member is a string that represents the unique identifier of your PWA to the browser.",
+        category: "recommended",
+        defaultValue: "/",
+        docsLink: "https://developer.chrome.com/blog/pwa-manifest-id",
+        errorString: "id should be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) =>
+            value && typeof value === "string" && value.length > 0,
+    },
+    {
+        member: "launch_handler",
+        displayString: "Manifest has launch handler field",
+        infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
+        category: "recommended",
+        defaultValue: "",
+        docsLink: "https://developer.chrome.com/docs/web-platform/launch-handler/",
+        errorString: "launch_handler should be defined",
+        quickFix: false,
+        test: (value: any) => {
+            return value && typeof value === "object";
         }
     }
 ];
