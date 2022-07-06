@@ -32,6 +32,7 @@ export interface AndroidPackageOptions {
   iconUrl: string;
   includeSourceCode: boolean;
   isChromeOSOnly: boolean;
+  isMetaQuest: boolean;
   launcherName: string;
   maskableIconUrl: string | null;
   monochromeIconUrl: string | null;

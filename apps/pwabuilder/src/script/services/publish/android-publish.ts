@@ -69,7 +69,7 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     fallbackType: 'customtabs',
     features: {
       locationDelegation: {
-        enabled: true
+        enabled: false
       },
       playBilling: {
         enabled: false
@@ -79,6 +79,7 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     iconUrl: '',
     includeSourceCode: false,
     isChromeOSOnly: false,
+    isMetaQuest: false,
     launcherName: '',
     maskableIconUrl: '',
     monochromeIconUrl: '',
@@ -173,7 +174,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
     fallbackType: 'customtabs',
     features: {
       locationDelegation: {
-        enabled: true,
+        enabled: false,
       },
       playBilling: {
         enabled: false,
@@ -183,6 +184,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
     iconUrl: getAbsoluteUrl(icon.src, manifestUrlOrRoot),
     includeSourceCode: false,
     isChromeOSOnly: false,
+    isMetaQuest: false,
     launcherName: (manifest.short_name || appName || 'My PWA').substring(0, 30), // launcher name should be the short name. If none is available, fallback to the full app name.
     maskableIconUrl: getAbsoluteUrl(maskableIcon?.src, manifestUrlOrRoot),
     monochromeIconUrl: getAbsoluteUrl(monochromeIcon?.src, manifestUrlOrRoot),

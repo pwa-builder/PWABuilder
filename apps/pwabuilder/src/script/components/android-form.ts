@@ -603,6 +603,22 @@ export class AndroidForm extends AppPackageFormBase {
                 </div>` : html``}
 
                 <div class="form-group">
+                  <label>
+                    ${localeStrings.text.android.titles.metaquest}
+                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your Android package will be compatible with Meta Quest devices.',
+                      inputId: 'metaquest-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.isMetaQuest === true,
+                      inputHandler: (_, checked) => this.packageOptions.isMetaQuest = checked
+                    })}
+                  </div>
+                </div>
+
+                <div class="form-group">
                   <label>${localeStrings.text.android.titles.source_code}</label>
                   <div class="form-check">
                     ${this.renderFormInput({
