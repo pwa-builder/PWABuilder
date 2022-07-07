@@ -52,6 +52,11 @@ export class ManifestInfoForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
+
+      .error::part(base){
+        border-color: #eb5757;
+      }
+
       .color_field {
         display: flex;
         flex-direction: column;
@@ -181,6 +186,7 @@ export class ManifestInfoForm extends LitElement {
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
       this.initMissingColors();
+      // validate all the fields here?
     }
   }
 
@@ -215,10 +221,8 @@ export class ManifestInfoForm extends LitElement {
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
-    input.classList.toggle("input-focused");
 
     const validation = await validateSingleField(fieldName!, updatedValue);
-    //console.log("validation", validation);
 
     if(validation){
       // Since we already validated, we only send valid updates.
@@ -233,7 +237,7 @@ export class ManifestInfoForm extends LitElement {
       this.dispatchEvent(manifestUpdated);
     } else {
       console.error("input invalid.");
-      // realistically we'll do some visual thing to show it is invalid.
+      input.classList.toggle("error");
     }
 
   }

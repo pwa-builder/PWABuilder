@@ -125,13 +125,19 @@ export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array
 
 export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
   return new Promise(async (resolve) => {
-    let singleField = undefined;
+
+    // For && operations, true is the base.
+    let singleField = true;
 
     maniTests.forEach((test) => {
       if (test.member === field && test.test) {
         const testResult = test.test(value);
 
-        singleField = testResult;
+        // If the test passes true && true = true.
+        // If the test fails true && false = false
+        // If a field has MULTIPLE tests, they will stack
+        // ie: true (base) && true (test 1) && false (ie test 2 fails).
+        singleField = singleField && testResult;
       }
     });
 
