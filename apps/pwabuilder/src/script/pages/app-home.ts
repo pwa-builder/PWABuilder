@@ -50,7 +50,7 @@ export class AppHome extends LitElement {
           content: "";
         }
         #home-block {
-          background: url(/assets/new/NoOtterHeroBackground_1920.png);
+          background: url(/assets/new/Hero1920_withmani.jpg);
           background-position: center center;
           background-size: cover;
           background-repeat: no-repeat;
@@ -225,7 +225,7 @@ export class AppHome extends LitElement {
         ${largeBreakPoint(css`
           #home-block {
             padding-left: 4.5em;
-            background: url(/assets/new/NoOtterHeroBackground_1024.png);
+            background: url(/assets/new/Hero1024_withmani.png);
             background-position: center center;
             background-size: cover;
             background-repeat: no-repeat;
@@ -244,7 +244,7 @@ export class AppHome extends LitElement {
             padding-top: 4em;
             padding-bottom: 6em;
             background: url(/assets/new/Hero480_withmani.jpg);
-            background-position: center center;
+            background-position: center bottom;
             background-size: cover;
             background-repeat: no-repeat;
           }
@@ -354,7 +354,7 @@ export class AppHome extends LitElement {
         /*1024px - 1365px*/ 
         ${xLargeBreakPoint(css`
             #home-block {
-              background: url(/assets/new/NoOtterHeroBackground_1366.png);
+              background: url(/assets/new/Hero1366_withmani.png);
               background-position: center center;
               background-size: cover;
               background-repeat: no-repeat;
@@ -504,7 +504,6 @@ export class AppHome extends LitElement {
       <app-header part="header"></app-header>
       <main>
         <div id="home-block">
-          <img id="mani" src="/assets/new/Otter.svg" alt="mani the web otter" />
           <div id="wrapper">
             <h1 id="home-header" slot="hero-container">
               Helping developers build and publish PWAs

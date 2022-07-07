@@ -78,6 +78,7 @@ export class ResourceHubNew extends LitElement {
       ${largeBreakPoint(css`
           #hub-panel{
             background-image: url(/assets/new/OtterBackgroundPWA1024.jpg);
+            background-position: center center;
             padding: 3.25em;
           }
       `)}
