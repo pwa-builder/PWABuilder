@@ -14,8 +14,6 @@ You can download the Azure CLI <a href="https://docs.microsoft.com/en-us/cli/azu
 #### Prerequisites:
 
 Some things you'll need before we get started:
-
-* Installed Azure CLI
   
 * PWA source repository hosted on GitHub
   
@@ -23,42 +21,11 @@ Some things you'll need before we get started:
 
 #### Step by Step
 
-1. Use this command to log in to Azure with the CLI. It will redirect you to the browser to authenticate.
-
-```bash
-az login
-```
-
-2. Create a resource group with this command.
-
-```bash
-az group create --name my-swa-group --location "eastus2"
-```
-
-3. For this next step, you will need your GitHub repository URL. Replace the `name`, `app-location` and `source` arguments and run this command
-
-```bash
-az staticwebapp create \
-    --name <name of your PWA> \
-    --resource-group my-swa-group \
-    --source <URL to your Github repository> \
-    --location "eastus2" \
-    --branch main \
-    --app-location "<path to your PWA's root>" \
-    --login-with-github
-```
-
-?> **Note** The `app-location` argument is the root directory of your PWA in the repository. If your PWA lives at the top level of your repo, just use `/`.
-
-4. You will be prompted in the command line to authorize GitHub, follow the link and enter the provided code.
-
-5. Run a query command to find your PWA's URL.
-
-```
-az staticwebapp show --name random-pwa --query "defaultHostname"
-```
-
-6. That's it, your PWA can be found at that URL. If your static web app didn't deploy properly, check out the `Actions` tab on your GitHub repository for possible errors.
+1. Run `npm run deploy` in the root of your PWA source repository. This will trigger the Azure Static Web Apps CLI which will walk you through the process of deploying your app.
+2. You will be asked to login to your Azure account.
+3. After logging in, the [deploy command](https://azure.github.io/static-web-apps-cli/docs/cli/swa-deploy) will be called. 
+4. When asked, ensure you use the default settings for your app, which can be found in the `swa-cli.config.json` file in the root of your app.
+5. And thats it, finish following the prompts from the Azure Static Web Apps CLI and your app will be deployed to Azure.
 
 #### Next Steps
 
