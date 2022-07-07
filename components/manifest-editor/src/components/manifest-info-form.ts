@@ -17,6 +17,13 @@ export class ManifestInfoForm extends LitElement {
 
   static get styles() {
     return css`
+
+      :host {
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #4f3fb670;
+        --sl-input-border-color-focus: #4F3FB6ac;
+      }
+
       sl-input::part(base),
       sl-select::part(control),
       sl-menu-item::part(base) {
@@ -55,6 +62,10 @@ export class ManifestInfoForm extends LitElement {
 
       .error::part(base){
         border-color: #eb5757;
+
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #eb575770;
+        --sl-input-border-color-focus: #eb5757ac;
       }
 
       .color_field {
@@ -235,8 +246,12 @@ export class ManifestInfoForm extends LitElement {
         composed: true
       });
       this.dispatchEvent(manifestUpdated);
+
+      if(input.classList.contains("error")){
+        input.classList.toggle("error");
+      }
     } else {
-      console.error("input invalid.");
+      // toggle error class to display error.
       input.classList.toggle("error");
     }
 
