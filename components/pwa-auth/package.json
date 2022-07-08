@@ -17,6 +17,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
+    "@azure/msal-browser": "^2.27.0",
     "@rollup/plugin-strip": "^2.1.0",
     "@types/apple-signin-api": "^1.5.1",
     "@types/facebook-js-sdk": "^3.3.5",

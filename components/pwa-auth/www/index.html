@@ -12,11 +12,10 @@
             
         <pwa-auth 
             appearance="button" 
-            credentialmode="first"
-            microsoftkey="266d4854-0bf8-4540-9fa9-d8409274f8f6"
+            credentialmode="silent"
+            microsoftkey="ce35509c-2864-42e6-90d2-ce25c3c536e9"
             googlekey="535371030919-i0fns6kc49ovit7cob0k7cbpste49ksk.apps.googleusercontent.com"
-            facebookkey="498544657719315"
-            applekey="com.pwabuilder.com.pwaauthtest">
+            facebookkey="498544657719315">
         </pwa-auth>
         
     </div>
@@ -85,6 +84,14 @@
                     failureElement.querySelector(".card-text").textContent = JSON.stringify(e.detail.error);
                 }
             });
+            authComponent.addEventListener("signout-completed", e => {
+                console.log("Signed out success");
+                const detailsElement = document.querySelector("#signInDetails");
+                const successElement = document.querySelector("#signInSuccess");
+                const failureElement = document.querySelector("#signInFailure");
+                detailsElement.style.display = "none";
+                successElement.style.display = "none";
+            })
         </script>
 
         <!-- Use Bootstrap for styling in this sample -->
