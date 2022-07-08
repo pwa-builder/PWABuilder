@@ -7,6 +7,8 @@ const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui'
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
 
+let infoFields = ["name", "short_name", "description", "display", "background_color", "theme_color"];
+
 @customElement('manifest-info-form')
 export class ManifestInfoForm extends LitElement {
 
@@ -58,14 +60,6 @@ export class ManifestInfoForm extends LitElement {
         display: flex;
         align-items: center;
         column-gap: 5px;
-      }
-
-      .error::part(base){
-        border-color: #eb5757;
-
-        --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #eb575770;
-        --sl-input-border-color-focus: #eb5757ac;
       }
 
       .color_field {
@@ -146,6 +140,18 @@ export class ManifestInfoForm extends LitElement {
         --height: 22px;
       }
 
+      .error::part(base){
+        border-color: #eb5757;
+
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #eb575770;
+        --sl-input-border-color-focus: #eb5757ac;
+      }
+
+      .error::part(control){
+        border-color: #eb5757;
+      }
+
       @media(max-width: 765px){
         .form-row:not(.color-row) {
           flex-direction: column;
@@ -193,11 +199,30 @@ export class ManifestInfoForm extends LitElement {
     super();
   }
 
-  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
       this.initMissingColors();
-      // validate all the fields here?
+      
+      await this.validateAllFields();
+    }
+  }
+
+  async validateAllFields(){
+    for(let i = 0; i < infoFields.length; i++){
+      let field = infoFields[i];
+
+      if(this.manifest[field]){
+        const validation = await validateSingleField(field, this.manifest[field]);
+
+        if(!validation){
+          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          input!.classList.add("error");
+        }
+      } else {
+        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+        input!.classList.add("error");
+      }
     }
   }
 

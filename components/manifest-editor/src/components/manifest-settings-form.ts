@@ -1,7 +1,11 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
+import { validateSingleField } from '@pwabuilder/manifest-validation';
+
+const settingsFields = ["start_url", "scope", "orientation", "lang", "dir"];
+let manifestInitialized: boolean = false;
 
 @customElement('manifest-settings-form')
 export class ManifestSettingsForm extends LitElement {
@@ -10,6 +14,13 @@ export class ManifestSettingsForm extends LitElement {
 
   static get styles() {
     return css`
+
+      :host {
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #4f3fb670;
+        --sl-input-border-color-focus: #4F3FB6ac;
+      }
+
       sl-input::part(base),
       sl-select::part(control),
       sl-menu-item::part(base) {
@@ -84,6 +95,18 @@ export class ManifestSettingsForm extends LitElement {
         width: 100%;
       }
 
+      .error::part(base){
+        border-color: #eb5757;
+
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #eb575770;
+        --sl-input-border-color-focus: #eb5757ac;
+      }
+
+      .error::part(control){
+        border-color: #eb5757;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
@@ -118,28 +141,60 @@ export class ManifestSettingsForm extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+      manifestInitialized = true;
+      
+      await this.validateAllFields();
+    }
   }
 
-  handleInputChange(event: InputEvent){
+  async validateAllFields(){
+    for(let i = 0; i < settingsFields.length; i++){
+      let field = settingsFields[i];
+
+      if(this.manifest[field]){
+        const validation = await validateSingleField(field, this.manifest[field]);
+        //console.log(field, validation);
+        if(!validation){
+          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          input!.classList.add("error");
+        }
+      } else {
+        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+        input!.classList.add("error");
+      }
+    }
+  }
+
+  async handleInputChange(event: InputEvent){
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
-    // Validate using Justin's code
-    // if false, show error logic
-    // else continue
+    const validation = await validateSingleField(fieldName!, updatedValue);
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: fieldName,
-          change: updatedValue
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
+
+    if(validation){
+      // Since we already validated, we only send valid updates.
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: fieldName,
+            change: updatedValue
+        },
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(manifestUpdated);
+
+      if(input.classList.contains("error")){
+        input.classList.toggle("error");
+      }
+    } else {
+      // toggle error class to display error.
+      input.classList.toggle("error");
+    }
   }
 
   // temporary fix that helps with codes like en-US that we don't cover.
