@@ -1,6 +1,6 @@
 {
   "dir": "ltr",
-  "lang": "EN",
+  "lang": "en",
   "name": "PWABuilder",
   "display": "standalone",
   "start_url": "/",
@@ -9,7 +9,6 @@
   "description": "All the tools you need to build and deploy your Progressive Web Apps.",
   "orientation": "any",
   "background_color": "#FFFFFF",
-  "related_applications": [],
   "prefer_related_applications": false,
   "icons": [
     {
@@ -82,6 +81,6 @@
     "simple"
   ],
   "categories": [
-    "utility"
+    "utilities"
   ]
 }
