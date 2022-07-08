@@ -356,7 +356,7 @@ export class ManifestPlatformForm extends LitElement {
         composed: true
       });
       this.dispatchEvent(manifestUpdated);
-      
+
       if(input.classList.contains("error")){
         input.classList.toggle("error");
       }
@@ -416,6 +416,11 @@ export class ManifestPlatformForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    let input = this.shadowRoot!.querySelector('[data-field=display_override]');
+    if(input!.classList.contains("error")){
+      input!.classList.toggle("error");
+    }  
 
     this.requestUpdate();
   }
@@ -519,6 +524,11 @@ export class ManifestPlatformForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    let input = this.shadowRoot!.querySelector('[data-field=shortcuts]');
+    if(input!.classList.contains("error")){
+      input!.classList.toggle("error");
+    }    
   }
 
   addProtocolToManifest(e: any){
@@ -557,6 +567,11 @@ export class ManifestPlatformForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    let input = this.shadowRoot!.querySelector('[data-field=protocol_handlers]');
+    if(input!.classList.contains("error")){
+      input!.classList.toggle("error");
+    }  
   }
 
   addRelatedAppToManifest(e: any){
@@ -598,6 +613,11 @@ export class ManifestPlatformForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    let input = this.shadowRoot!.querySelector('[data-field=related_applications]');
+    if(input!.classList.contains("error")){
+      input!.classList.toggle("error");
+    }  
   }
 
 
