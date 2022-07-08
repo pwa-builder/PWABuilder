@@ -549,6 +549,10 @@ export class AppReport extends LitElement {
         .green {
           --indicator-color: var(--success-color);
         }
+        .macro_error {
+          width: 3em;
+          height: auto;
+        }
         .half-width-cards {
           display: flex;
           flex-direction: column;
@@ -1355,7 +1359,7 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing" 
                             class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore))}
                             value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.manifestValidCounter} / ${this.manifestTotalScore}</sl-progress-ring>`
+                          >${this.manifestValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
                 }
               </div>
             </div>
@@ -1478,7 +1482,7 @@ export class AppReport extends LitElement {
                     id="swProgressRing"
                     class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                    >${this.swValidCounter} / ${this.swTotalScore}</sl-progress-ring>
+                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`${this.swValidCounter} / ${this.swTotalScore}`}</sl-progress-ring>
                     `
                   }
                 </div>
@@ -1560,7 +1564,7 @@ export class AppReport extends LitElement {
                     id="secProgressRing"
                     class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter} / ${this.secTotalScore}</sl-progress-ring>
+                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`${this.secValidCounter} / ${this.secTotalScore}`}</sl-progress-ring>
                     `
                   }
                   
