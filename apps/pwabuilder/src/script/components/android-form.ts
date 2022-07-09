@@ -139,6 +139,15 @@ export class AndroidForm extends AppPackageFormBase {
     this.requestUpdate();
   }
 
+  isMetaQuestChanged(checked: boolean) {
+    this.packageOptions.isMetaQuest = checked;
+    if (checked) {
+      this.packageOptions.minSdkVersion = 23;
+    } else {
+      delete this.packageOptions.minSdkVersion;
+    }
+  }
+
   androidSigningKeyUploaded(event: any) {
     const filePicker = event as HTMLInputElement;
     if (filePicker && filePicker.files && filePicker.files.length > 0) {
@@ -613,7 +622,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputId: 'metaquest-input',
                       type: 'checkbox',
                       checked: this.packageOptions.isMetaQuest === true,
-                      inputHandler: (_, checked) => this.packageOptions.isMetaQuest = checked
+                      inputHandler: (_, checked) => this.isMetaQuestChanged(checked)
                     })}
                   </div>
                 </div>

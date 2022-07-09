@@ -61,6 +61,8 @@ export interface AndroidPackageOptions {
   startUrl: string;
   themeColor: string;
   webManifestUrl: string;
+  fullScopeUrl: string;
+  minSdkVersion?: number;
 }
 
 /**

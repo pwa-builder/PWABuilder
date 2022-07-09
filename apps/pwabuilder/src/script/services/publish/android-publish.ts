@@ -106,7 +106,8 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     splashScreenFadeOutDuration: 300,
     startUrl: '',
     themeColor: '#ffffff',
-    webManifestUrl: ''
+    webManifestUrl: '',
+    fullScopeUrl: ''
   };
 }
 
@@ -160,6 +161,8 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
   )
     ? pwaUrl
     : maniUrl;
+
+  const fullScopeUrl = new URL(manifest.scope || '.', manifestUrlOrRoot).toString();
 
   return {
     appVersion: '1.0.0.0',
@@ -215,7 +218,8 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
     themeColor: manifest.theme_color || '#FFFFFF',
     shareTarget: manifest.share_target,
     webManifestUrl: maniUrl,
-    pwaUrl: manifestContext.siteUrl
+    pwaUrl: manifestContext.siteUrl,
+    fullScopeUrl: fullScopeUrl
   };
 }
 
