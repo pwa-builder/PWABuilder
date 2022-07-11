@@ -104,7 +104,7 @@ export class AppReport extends LitElement {
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
-  @state() canPackage: boolean = false;
+  @state() canPackage: boolean = true;
   @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
 
@@ -308,6 +308,14 @@ export class AppReport extends LitElement {
           color: white;
           border: none;
         }
+        #pfs-disabled{
+          background-color: #00000065;
+          border: none;
+          color: white;
+        }
+        #pfs-disabled:hover{
+          cursor: pointer;
+        }
         #hover {
           background-color: rgba(0, 0, 0, 0.75);
         }
@@ -481,6 +489,7 @@ export class AppReport extends LitElement {
           font-size: 14px;
           margin: 0;
           font-weight: bold;
+          white-space: no-wrap; 
         }
         .details::part(base) {
           border-radius: 0;
@@ -716,6 +725,17 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
+          #mh-content {
+            flex-direction: column;
+          }
+          #mh-text {
+            width: 100%;
+          }
+          #manifest-detail-grid{
+            display: flex;
+            flex-direction: column;
+          }
+
           sl-progress-ring {
             --size: 75px;
             font-size: 14px;
@@ -937,6 +957,8 @@ export class AppReport extends LitElement {
         let status ="";
         if(test.category === "required"){
           status = "red";
+          this.canPackage = this.canPackage && false;
+          console.log("this.canpackage being set to false from manifest");
         } else {
           status = "yellow";
         }
@@ -993,8 +1015,9 @@ export class AppReport extends LitElement {
         if(result.category === "required"){
           status = "red";
           missing = true;
+          this.canPackage = this.canPackage && false;
+          console.log("this.canpackage being set to false from sw");
           this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
-
         } else {
           status = "yellow";
         }
@@ -1032,6 +1055,8 @@ export class AppReport extends LitElement {
         let status ="";
         if(result.category === "required"){
           status = "red";
+          this.canPackage = this.canPackage && false;
+          console.log("this.canpackage being set to false from sec");
         } else {
           status = "yellow";
         }
@@ -1270,13 +1295,27 @@ export class AppReport extends LitElement {
                 </div>
                 <img src="/assets/new/vertical-divider.png" role="presentation" />
                 <div id="package" class="flex-col-center">
-                  <button
-                    type="button"
-                    id="pfs"
-                    @click=${() => this.togglePublishModal()}
-                  >
-                    Package for store
-                  </button>
+                    ${this.canPackage ?
+                      html`
+                      <button
+                        type="button"
+                        id="pfs"
+                        @click=${() => this.togglePublishModal()}
+                      >
+                        Package for store
+                      </button>
+                      ` : 
+                      html`
+                      <sl-tooltip content="Handle all required todo's and retest in order to package!">
+                          <button
+                            type="button"
+                            id="pfs-disabled"
+                            aria-disabled="true"
+                          >
+                            Package for store
+                          </button>
+                      </sl-tooltip>
+                      `}
                   <button type="button" id="test-download">
                     <p class="arrow_link">Download test package</p>
                     <img
