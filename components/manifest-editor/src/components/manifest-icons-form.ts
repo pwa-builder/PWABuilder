@@ -76,11 +76,20 @@ export class ManifestIconsForm extends LitElement {
         font-size: 14px;
         margin: 0;
       }
+
       .field-header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 5px;
+      }
+
+      .header-left{
         display: flex;
         align-items: center;
         column-gap: 5px;
       }
+      
       .toolTip {
         visibility: hidden;
         width: 200px;
@@ -353,17 +362,21 @@ export class ManifestIconsForm extends LitElement {
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
-            <h3>*App Icons</h3>
-            <a
-              href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
-              target="_blank"
-              rel="noopener"
-            >
-              <ion-icon name="information-circle-outline"></ion-icon>
-              <p class="toolTip">
-                Click for more info on the icons option in your manifest.
-              </p>
-            </a>
+            <div class="header-left">
+              <h3>*App Icons</h3>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
+                target="_blank"
+                rel="noopener"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <p class="toolTip">
+                  Click for more info on the icons option in your manifest.
+                </p>
+              </a>
+            </div>
+
+            <p>(required)</p>
           </div>
           <p>Below are the current Icons in your apps Manifest</p>
           <div class="icon-gallery">

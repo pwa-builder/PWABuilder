@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
-import { validateSingleField } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir"];
 let manifestInitialized: boolean = false;
@@ -52,6 +52,13 @@ export class ManifestSettingsForm extends LitElement {
         flex-direction: column;
       }
       .field-header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 5px;
+      }
+
+      .header-left{
         display: flex;
         align-items: center;
         column-gap: 5px;
@@ -141,7 +148,7 @@ export class ManifestSettingsForm extends LitElement {
     super();
   }
 
-  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
       
@@ -161,8 +168,12 @@ export class ManifestSettingsForm extends LitElement {
           input!.classList.add("error");
         }
       } else {
-        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-        input!.classList.add("error");
+        /* This handles the case where the field is not in the manifest.. 
+        we only want to make it red if its REQUIRED. */
+        if(required_fields.includes(field)){
+          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          input!.classList.add("error");
+        }
       }
     }
   }
@@ -211,17 +222,21 @@ export class ManifestSettingsForm extends LitElement {
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>*Start URL</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the start url option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>*Start URL</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the start url option in your manifest.
+                  </p>
+                </a>
+              </div>
+
+              <p>(required)</p>
             </div>
             <p>The relative URL that loads when your app starts</p>
             <sl-input placeholder="PWA Start URL" .value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>

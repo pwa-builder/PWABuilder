@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
-import { validateSingleField } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
 //import { validateSingleField } from 'manifest-validation';
 
 const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
@@ -19,8 +19,6 @@ let manifestInitialized: boolean = false;
 export class ManifestPlatformForm extends LitElement {
 
   @property({type: Object}) manifest: Manifest = {};
-
-  @state() manifestInitialized: boolean = false;
 
   @state() activeOverrideItems: string[] = [];
   @state() inactiveOverrideItems: string[] = [];
@@ -263,7 +261,7 @@ export class ManifestPlatformForm extends LitElement {
     super();
   }
 
-  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
 
     /* The first two checks are to reset the view with the most up to date manifest fields.
      The last check prevents the dropdown selector in related apps from causing everything
@@ -271,13 +269,13 @@ export class ManifestPlatformForm extends LitElement {
      run again. Its true purpose is to keep the view aligned with the manifest. */
      
     if(_changedProperties.has("manifest") &&
-      !this.manifestInitialized && this.manifest.name){
+      manifestInitialized && this.manifest.name){
 
-      this.manifestInitialized = true;
+      manifestInitialized = true;
       await this.validateAllFields();
       this.reset();
     } else {
-      this.manifestInitialized = false;
+      manifestInitialized = false;
     }
   }
 
@@ -292,8 +290,12 @@ export class ManifestPlatformForm extends LitElement {
           input!.classList.add("error");
         }
       } else {
-        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-        input!.classList.add("error");
+        /* This handles the case where the field is not in the manifest.. 
+        we only want to make it red if its REQUIRED. */
+        if(required_fields.includes(field)){
+          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          input!.classList.add("error");
+        }
       }
     }
   }

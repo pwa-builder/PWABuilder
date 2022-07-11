@@ -1,7 +1,7 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
-import { validateSingleField } from '@pwabuilder/manifest-validation';
+import { validateSingleField, required_fields } from '@pwabuilder/manifest-validation';
 
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
@@ -57,6 +57,13 @@ export class ManifestInfoForm extends LitElement {
         flex-direction: column;
       }
       .field-header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 5px;
+      }
+
+      .header-left{
         display: flex;
         align-items: center;
         column-gap: 5px;
@@ -199,7 +206,7 @@ export class ManifestInfoForm extends LitElement {
     super();
   }
 
-  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
       this.initMissingColors();
@@ -220,8 +227,12 @@ export class ManifestInfoForm extends LitElement {
           input!.classList.add("error");
         }
       } else {
-        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-        input!.classList.add("error");
+        /* This handles the case where the field is not in the manifest.. 
+        we only want to make it red if its REQUIRED. */
+        if(required_fields.includes(field)){
+          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          input!.classList.add("error");
+        }
       }
     }
   }
@@ -301,34 +312,42 @@ export class ManifestInfoForm extends LitElement {
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>*Name</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the name option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>*Name</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the name option in your manifest.
+                  </p>
+                </a>
+              </div>
+
+              <p>(required)</p>
             </div>
             <p>The name of your app as displayed to the user</p>
             <sl-input placeholder="PWA Name" .value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>*Short Name</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the short name option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>*Short Name</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the short name option in your manifest.
+                  </p>
+                </a>
+              </div>
+
+              <p>(required)</p>
             </div>
             <p>Used in app launchers</p>
             <sl-input placeholder="PWA Short Name" .value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>

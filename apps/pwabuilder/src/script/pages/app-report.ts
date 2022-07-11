@@ -981,6 +981,8 @@ export class AppReport extends LitElement {
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
     details!.disabled = true;
 
+    let missing = false;
+
     const serviceWorkerTestResult = await testServiceWorker(url);
     this.serviceWorkerResults = serviceWorkerTestResult;
     this.serviceWorkerResults.forEach((result: any) => {
@@ -990,11 +992,16 @@ export class AppReport extends LitElement {
         let status ="";
         if(result.category === "required"){
           status = "red";
+          missing = true;
+          this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
+
         } else {
           status = "yellow";
         }
 
-        this.todoItems.push({"card": "sw-details", "field": result.infoString, "fix": result.infoString, "status": status});
+        if(!missing){
+          this.todoItems.push({"card": "sw-details", "field": result.infoString, "fix": result.infoString, "status": status});
+        }
       }
     })
     this.swTotalScore = this.serviceWorkerResults.length;
@@ -1189,6 +1196,11 @@ export class AppReport extends LitElement {
     await (details as any)!.show();
 
     details!.scrollIntoView({behavior: "smooth"});
+
+    if(e.detail.field === "Open SW Modal"){
+      // open sw modal
+      console.log("Open SW Modal");
+    }
 
     let item = this.shadowRoot!.querySelector('[data-field="' + e.detail.field + '"]');
 
