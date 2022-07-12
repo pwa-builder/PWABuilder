@@ -13,7 +13,7 @@ export function recordPWABuilderProcessStep(
   additionalInfo?: {}) {
     if (env.isProduction) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
-      let scn = 'pwa-builder-beta-test';
+      let scn = 'pwa-builder-beta-test-a';
 
       if(demo_used){
         scn = 'demo-process';
