@@ -123,7 +123,7 @@ self.addEventListener('fetch', event => {
 
 This snippet showcases using a *Cache-First* strategy to fetch resources. When the service worker intercepts a request, it will check the cache first for a response, and then go to the network if it fails to get a response.
 
-The Cache-First strategy is basic and has some cons (for example, updating stale resources), but works great for simple, beginener use cases.
+The Cache-First strategy is basic and has some cons (for example, updating stale resources), but works great for simple, beginner use cases.
 
 ## Next Steps
 
