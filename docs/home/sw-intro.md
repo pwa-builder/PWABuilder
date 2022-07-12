@@ -1,6 +1,6 @@
 # Introduction to Service Workers
 
-Service workers are on of the key components of a progressive web app, and are a requirement for your PWA to be installable and work properly offline.
+Service workers are one of the key components of a progressive web app, and are a requirement for your PWA to be installable and work properly offline.
 
 This article will provide an overview of service worker basics and what they can do for your PWA.
 
