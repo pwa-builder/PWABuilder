@@ -84,7 +84,7 @@ When the `install` event is emitted, this snippet will open a new cache with nam
 
 After the install event, the next step in the service worker lifecycle is *activation*. An `activate` event is emitted immediately after installation is completed.
 
-We can use this event to have our service worker claim any clients already running:
+We can use this event to have our service worker take control of instances of our app that are already running. This is called *claiming a client*:
 
 ```js
 self.addEventListener('activate', event => {
