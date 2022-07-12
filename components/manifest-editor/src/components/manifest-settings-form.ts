@@ -243,17 +243,19 @@ export class ManifestSettingsForm extends LitElement {
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Scope</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the scope option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Scope</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the scope option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>Which URLs can load within your app</p>
             <sl-input placeholder="PWA Scope" data-field="scope" .value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
@@ -262,17 +264,19 @@ export class ManifestSettingsForm extends LitElement {
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>Orientation</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the orientaiton option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Orientation</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the orientaiton option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>The default screen orientation of your app</p>
             <sl-select placeholder="Select an Orientation" data-field="orientation" .value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
@@ -281,17 +285,19 @@ export class ManifestSettingsForm extends LitElement {
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Language</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/language"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the language option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Language</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/language"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the language option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>The primary language of your app</p>
             <sl-select placeholder="Select a Language" data-field="lang" .value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
@@ -302,17 +308,19 @@ export class ManifestSettingsForm extends LitElement {
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>Dir</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the dir option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Dir</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the dir option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>The base direction in which to display direction-capable members of the manifest</p>
             <sl-select placeholder="Select a Direction" data-field="dir" .value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>

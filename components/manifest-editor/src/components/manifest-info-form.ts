@@ -356,34 +356,38 @@ export class ManifestInfoForm extends LitElement {
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>Description</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/description"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the description option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Description</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/description"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the description option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>Used in app storefronts and install dialogs</p>
             <sl-input placeholder="PWA Description" .value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Display</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the display option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Display</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the display option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>The appearance of your app window</p>
             <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .value=${this.manifest.display! || ""}>
@@ -394,34 +398,38 @@ export class ManifestInfoForm extends LitElement {
         <div class="form-row color-row">
           <div class="form-field color_field">
             <div class="field-header">
-              <h3>Background Color</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the background color option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Background Color</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the background color option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>Select a Background color</p>
               <span class="color-holder"><input type="color" id="background_color_picker" .value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p></span>
             </div>
           <div class="form-field color_field">
             <div class="field-header">
-              <h3>Theme Color</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the theme color option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Theme Color</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <p class="toolTip">
+                    Click for more info on the theme color option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
               <p>Select a Theme color</p>
               <span class="color-holder"><input type="color" id="theme_color_picker" .value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p></span>
