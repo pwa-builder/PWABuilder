@@ -34,6 +34,7 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { text } from 'express';
 
 /* const possible_messages = {
   overview: {
@@ -958,12 +959,11 @@ export class AppReport extends LitElement {
         if(test.category === "required"){
           status = "red";
           this.canPackage = this.canPackage && false;
-          console.log("this.canpackage being set to false from manifest");
         } else {
           status = "yellow";
         }
 
-        this.todoItems.push({"card": "mani-details", "field": test.member, "fix": test.errorString, "status": status});
+        this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
       }
     });
 
@@ -1016,7 +1016,6 @@ export class AppReport extends LitElement {
           status = "red";
           missing = true;
           this.canPackage = this.canPackage && false;
-          console.log("this.canpackage being set to false from sw");
           this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
         } else {
           status = "yellow";
@@ -1056,7 +1055,6 @@ export class AppReport extends LitElement {
         if(result.category === "required"){
           status = "red";
           this.canPackage = this.canPackage && false;
-          console.log("this.canpackage being set to false from sec");
         } else {
           status = "yellow";
         }
@@ -1216,6 +1214,12 @@ export class AppReport extends LitElement {
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
+    if(e.detail.card === "retest"){
+      // pop up a message that confirms they have updated their files
+      // that pop up has the button that can retest
+      return;
+    }
+
     let details = this.shadowRoot!.getElementById(e.detail.card);
 
     await (details as any)!.show();
@@ -1227,7 +1231,21 @@ export class AppReport extends LitElement {
       console.log("Open SW Modal");
     }
 
-    let item = this.shadowRoot!.querySelector('[data-field="' + e.detail.field + '"]');
+    let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
+
+    // The below block is just to get the specific item to animate if a field has more than 1 test.
+    let item: any;
+    if(itemList!.length === 1){
+      item = itemList![0]
+    } else {
+      itemList.forEach((temp: any) => {
+        let textSplit = temp.querySelector('p').innerHTML.split("-->");
+        let text = textSplit[textSplit.length - 1]
+        if(text === e.detail.displayString){
+          item = temp;
+        }
+      })
+    }
 
     item!.classList.toggle("animate");
     setTimeout(() => {
@@ -1235,6 +1253,9 @@ export class AppReport extends LitElement {
     }, 1000)
   }
 
+  addRetestTodo(){
+    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add Manifest to your server and retest your site!", "status": "retest"});
+  }
 
 
   render() {
@@ -1280,7 +1301,7 @@ export class AppReport extends LitElement {
                     }}
                   >
                     <img
-                      src="/assets/new/retest.png"
+                      src="/assets/new/retest.svg"
                       alt="retest site"
                       role="presentation"
                     />Retest Site
@@ -1360,6 +1381,7 @@ export class AppReport extends LitElement {
                     .field=${todo.field}
                     .fix=${todo.fix}
                     .card=${todo.card}
+                    .displayString=${todo.displayString}
                     @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
                   </todo-item>`
               )}
@@ -1661,7 +1683,7 @@ export class AppReport extends LitElement {
             ? html` <div class="modal-blur flex-center">
                 <div class="modal flex-col-center">
                   <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
-                  <manifest-editor-frame></manifest-editor-frame>
+                  <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo()}></manifest-editor-frame>
                 </div>
               </div>`
             : html``}

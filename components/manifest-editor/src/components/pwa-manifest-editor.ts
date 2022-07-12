@@ -143,6 +143,7 @@ export class PWAManifestEditor extends LitElement {
     element.click();
 
     document.body.removeChild(element);
+
   }
 
   // Think about what this function should actually return?

@@ -190,6 +190,12 @@ export class ManifestEditorFrame extends LitElement {
   downloadManifest(){
     let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
     editor.downloadManifest();
+
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
   }
 
   render() {

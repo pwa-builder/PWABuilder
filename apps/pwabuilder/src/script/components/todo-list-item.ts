@@ -15,6 +15,7 @@ export class SuccessCard extends LitElement {
   @property({ type: String }) card: string = "";
   @property({ type: String }) fix: string = "";
   @property({ type: String }) status: string = "";
+  @property({ type: String }) displayString: string = "";
 
   static get styles() {
     return [
@@ -80,7 +81,8 @@ export class SuccessCard extends LitElement {
       detail: {
           field: this.field,
           card: this.card,
-          fix: this.fix
+          fix: this.fix,
+          displayString: this.displayString
       }
     });
     this.dispatchEvent(event);
@@ -89,7 +91,7 @@ export class SuccessCard extends LitElement {
   render() {
     return html`
       <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
-        ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+        ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
         
         ${this.fix}
       </div>
@@ -99,3 +101,4 @@ export class SuccessCard extends LitElement {
 
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
+const retest_src = "/assets/new/retest-black.svg";
