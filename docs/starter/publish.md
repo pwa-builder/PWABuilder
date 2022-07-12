@@ -5,7 +5,7 @@ This not only makes your PWA available through the browser, but also allows you 
 
 For now, we only have guidance for publishing with Azure Static Web Apps and GitHub Pages, but will be adding additional routes in the future.
 
-!> This guidance is intended for progressive web apps build with the PWA Starter. These steps might need to be altered slightly for PWAs built from other templates or tech stacks.
+!> This guidance is intended for progressive web apps built with the PWA Starter. These steps might need to be altered slightly for PWAs built from other templates or tech stacks.
 
 ## Azure Static Web Apps
 
