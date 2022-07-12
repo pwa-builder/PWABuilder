@@ -5,33 +5,46 @@ This not only makes your PWA available through the browser, but also allows you 
 
 For now, we only have guidance for publishing with Azure Static Web Apps and GitHub Pages, but will be adding additional routes in the future.
 
+!> This guidance is intended for progressive web apps build with the PWA Starter. These steps might need to be altered slightly for PWAs built from other templates or tech stacks.
+
 ## Azure Static Web Apps
 
-One option for deploying your PWA is Azure Static Web Apps, and can be set up in just minutes using the Azure command line tool.
+One option for deploying your PWA is Azure Static Web Apps, and can be set up in just minutes using the Azure Static Web Apps command line tool.
 
-You can download the Azure CLI <a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli">here.</a>
+The Azure Staic Web Apps CLI is included in the PWA Starter's Node dependencies, and will be installed when you run `npm install`.
+
+You can check out the Azure SWA CLI website [here.](https://azure.github.io/static-web-apps-cli/)
 
 #### Prerequisites:
 
-Some things you'll need before we get started:
-  
-* PWA source repository hosted on GitHub
+What you'll need before we get started:
   
 * <a href="https://azure.microsoft.com/en-us/free"> Free Azure account </a>
 
-#### Step by Step
+#### Step By Step
 
-1. Run `npm run deploy` in the root of your PWA source repository. This will trigger the Azure Static Web Apps CLI which will walk you through the process of deploying your app.
-2. You will be asked to login to your Azure account.
-3. After logging in, the [deploy command](https://azure.github.io/static-web-apps-cli/docs/cli/swa-deploy) will be called. 
+To deploy the PWA Starter as an Azure static web app:
+
+1. Install dependencies with npm:
+```
+npm install
+```
+
+2. The Starter comes with a deploy script that will trigger the static web app CLI. Run this command:
+```
+npm run deploy
+```
+3. Log in to your Azure account when prompted.
+
 4. When asked, ensure you use the default settings for your app, which can be found in the `swa-cli.config.json` file in the root of your app.
+
 5. And thats it, finish following the prompts from the Azure Static Web Apps CLI and your app will be deployed to Azure.
 
 #### Next Steps
 
-You can trigger a new deployment of your PWA by commiting to the branch that your GitHub Action is associated with. Check the `Actions` tab for status of recent deployments.
+To learn more about the SWA CLI, check out their documentation [here.](https://azure.github.io/static-web-apps-cli/)
 
-If you want to learn more about Azure Static Web Apps, check out the <a href="https://docs.microsoft.com/en-us/azure/static-web-apps/"> documentation. </a>
+If you want some more general guidance on Azure Static Web Apps, more information can be found [here.](https://docs.microsoft.com/en-us/azure/static-web-apps/)
 
 ## Github Pages
 
