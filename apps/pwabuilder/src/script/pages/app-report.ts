@@ -17,6 +17,8 @@ import '../components/app-modal';
 import '../components/todo-list-item';
 import '../components/manifest-editor-frame';
 import '../components/publish-pane';
+import '../components/sw-selector';
+
 
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
@@ -108,6 +110,8 @@ export class AppReport extends LitElement {
   @state() canPackage: boolean = true;
   @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
+
+  @state() swSelectorOpen: boolean = false;
 
   // Controls the last tested section
   @state() lastTested: string = "Last tested seconds ago";
@@ -1227,7 +1231,7 @@ export class AppReport extends LitElement {
     details!.scrollIntoView({behavior: "smooth"});
 
     if(e.detail.field === "Open SW Modal"){
-      // open sw modal
+      this.swSelectorOpen = true;
       console.log("Open SW Modal");
     }
 
@@ -1560,11 +1564,11 @@ export class AppReport extends LitElement {
                   }
                 </div>
                 <div id="sw-actions" class="flex-col">
-                  <button type="button" class="alternate">
+                  <button type="button" class="alternate" @click=${() => this.swSelectorOpen = true}>
                     Generate Service Worker
                   </button>
                   <a 
-                    class="arrow_anchor" 
+                    class="arrow_anchor"
                     href="" rel="noopener" 
                     target="_blank"
                     href=""
@@ -1679,14 +1683,7 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-          ${this.manifestEditorOpened
-            ? html` <div class="modal-blur flex-center">
-                <div class="modal flex-col-center">
-                  <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.toggleManifestEditorModal()} />
-                  <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo()}></manifest-editor-frame>
-                </div>
-              </div>`
-            : html``}
+          <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo()} .open=${this.manifestEditorOpened} @manifestEditorClosed=${() => this.manifestEditorOpened = false}></manifest-editor-frame>
           ${this.publishModalOpened
             ? html` <div class="modal-blur flex-center">
                 <div class="modal flex-col-center">
@@ -1695,6 +1692,7 @@ export class AppReport extends LitElement {
                 </div>
               </div>`
             : html``}
+            <sw-selector .open=${this.swSelectorOpen} @swSelectorClosed=${() => this.swSelectorOpen = false}></sw-selector>
         </div>
       </div>
     `;

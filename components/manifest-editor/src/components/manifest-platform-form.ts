@@ -672,7 +672,7 @@ export class ManifestPlatformForm extends LitElement {
                 </p>
               </a>
             </div>
-            <p>Displays what ages are appropriate for your PWA</p>
+            <p>Displays what ages are suitable for your PWA</p>
             <sl-input placeholder="PWA IARC Rating ID" .value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
