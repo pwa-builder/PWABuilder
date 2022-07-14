@@ -147,7 +147,7 @@ export class SummitBanner extends LitElement {
               <p id="bold-text">Upcoming: PWA Summit on October 5th! 😄</p>
               <p>
                 <a href="https://pwasummit.org/" target="_blank" rel="noopener">PWA Summit</a> is an online conference dedicated entirely to helping developers succeed with Progressive Web Apps. 
-                If you have interest in speaking, you can submit a talk <a href="https://sessionize.com/pwa-summit-2022" target="_blank" rel="noopener">here</a>. Sign ups will be open through July 13th.
+                If you have interest in speaking, you can submit a talk <a href="https://sessionize.com/pwa-summit-2022" target="_blank" rel="noopener">here</a>. Sign ups will be open through July 20th.
               </p>
             </div>
 
