@@ -319,7 +319,7 @@ export class AppReport extends LitElement {
           color: white;
         }
         #pfs-disabled:hover{
-          cursor: pointer;
+          cursor: no-drop;
         }
         #hover {
           background-color: rgba(0, 0, 0, 0.75);
