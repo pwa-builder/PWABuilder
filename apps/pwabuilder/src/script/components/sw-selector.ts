@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/sw-panel'
+import { service_workers } from '../utils/service-workers/service-workers';
 
 @customElement('sw-selector')
 export class SWSelector extends LitElement {
@@ -173,13 +174,10 @@ export class SWSelector extends LitElement {
           <p>Download one of our pre-built Service Workers package that utilize Workbox to make building your offline experience easy.</p>
         </div>
         <sl-tab-group id="sw-tabs" @sl-tab-show=${(e: any) => this.setSelectedSW(e)}>
-          <sl-tab slot="nav" panel="1">SW #1</sl-tab>
-          <sl-tab slot="nav" panel="2">SW #2</sl-tab>
-          <sl-tab slot="nav" panel="3">SW #3</sl-tab>
-
-          <sl-tab-panel name="1"><sw-panel .type=${"Offline Pages"}></sw-panel></sl-tab-panel>
-          <sl-tab-panel name="2"><sw-panel .type=${"Offline Page Copy of Pages"}></sw-panel></sl-tab-panel>
-          <sl-tab-panel name="3"><sw-panel .type=${"Offline Copy with Backup Offline Page"}></sw-panel></sl-tab-panel>
+          ${service_workers.map((sw: any, index: number) => 
+            html`
+            <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>
+            <sl-tab-panel name=${index}><sw-panel .sw=${sw} ></sw-panel></sl-tab-panel>`)}
         </sl-tab-group>
 
         <div id="frame-footer" slot="footer">

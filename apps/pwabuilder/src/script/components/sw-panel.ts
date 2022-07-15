@@ -1,10 +1,13 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+import '../components/code-editor'
+
 @customElement('sw-panel')
 export class SWPanel extends LitElement {
 
-  @property({type: String}) type: string = "";
+  @property({type: Object}) sw: any = {};
+
 
   static get styles() {
     return css`
@@ -40,46 +43,26 @@ export class SWPanel extends LitElement {
     super();
   }
 
-  getDescription(){
-    for(let i = 0; i < sw_objects.length; i++){
-      let obj = sw_objects[i];
-      if(obj.type === this.type){
-        return html`${obj.desc}`
-      }
-    }
-    return html``
+  handleEditorUpdate(){
+    console.log("update");
   }
 
   render() {
     return html`
       <div class="panel-holder">
         <div class="panel-desc">
-          <h2>${this.type}</h2>
-          <p>${this.getDescription()}</p>
+          <h2>${this.sw.type}</h2>
+          <p>${this.sw.desc}</p>
         </div>
         <div class="code-block">
           <h2>Code</h2>
-          
+          <code-editor
+            copyText="Copy Service Worker"
+            .startText=${this.sw.code}
+          >
+        </code-editor>
         </div>
       </div>
     `;
   }
 }
-
-const sw_objects: any = [
-  {
-    type: "Offline Pages",
-    desc: 'This simple but elegant solution pulls a file from your web server called "offline.html" (make sure that file is actually there) and serves the file whenever a network connection can not be made.',
-    download: "filepath"
-  },
-  {
-    type: "Offline Page Copy of Pages",
-    desc: "A solution that expands the offline capabilities of your app. A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline",
-    download: "filepath"
-  },
-  {
-    type: "Offline Copy with Backup Offline Page",
-    desc: 'A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline. This then adds the "offline page" that allows you to customize the message and experience if the app is offline, and the page is not in the cache.',
-    download: "filepath"
-  }
-]
