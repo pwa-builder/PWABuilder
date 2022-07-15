@@ -13,8 +13,8 @@
     "start": "npm run build && npx nodemon server.js",
     "serve": "npx nodemon server.js",
     "dev": "cross-env NODE_ENV=development && concurrently \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
-    "debug": "concurrently \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server --config web-dev-server.debugging.config.mjs\"",
-    "test2": "echo should run second"
+    "dev:deps": "cross-env NODE_ENV=development && concurrently \"node ../../scripts/watchDeps.js\" \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
+    "debug": "concurrently \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server --config web-dev-server.debugging.config.mjs\""
   },
   "author": "",
   "license": "ISC",

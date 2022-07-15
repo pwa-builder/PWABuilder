@@ -32,7 +32,7 @@ They are event-driven and operate in a separate thread from the rest of your app
 Service workers are how progressive web apps work offline: service workers can cache essential resources and handle requests when the network is down. 
 Every request to and from a PWA goes through the service worker, and there are a ton of different strategies for how to cache and fetch necessary resources.
 
-Learn more [here.](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
+Learn more in the [Introduction to Service Workers](/home/sw-intro)
 
 !> Service workers only work with applications that are secured through `HTTPS`. Before you can add a service worker, make sure your app is secure.
 
