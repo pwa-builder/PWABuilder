@@ -88,6 +88,11 @@ For routing, the Starter uses Vaadin Router, a lightweight client-side router th
 
 Learn more [here.](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos)
 
+#### Azure Static Web Apps CLI
+The Starter uses the Azure Static Web Apps CLI to enable you to deploy your PWA to Azure, along with local performance testing etc.
+
+Learn more [here.](https://azure.github.io/static-web-apps-cli/)
+
 
 ## Navigating the Starter
 

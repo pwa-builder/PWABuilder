@@ -7,11 +7,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="description" content="Documentation for building great progressive web apps with the PWABuilder tooling suite.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta property="og:image" content="/assets/icons/pwa-builder.png">
 
     <link rel="icon" href="/assets/icons/icon_24.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.75/dist/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.75/dist/shoelace.js"></script>
+
     <link rel="stylesheet" href="styles/global.css">
+    <link rel="manifest" href="manifest.json" />
+
 </head>
 
 <body>
@@ -42,10 +48,27 @@
             loadSidebar: true,
             subMaxLevel: 2,
             auto2top: true,
+            executeScript: true,
             plugins: [
                 function(hook) {
                     hook.doneEach(function() {
                         window.recordPageView(document.location.href, getPageName());
+                    });
+                },
+                function(hook) {
+                    var summitBanner = [
+                        '<sl-alert open variant="success" class="pwa-summit-banner">',
+                        '<sl-icon slot="icon" name="globe2"></sl-icon>',
+                        '<div>',
+                        '<strong>Upcoming: PWA Summit on October 5th! &#x1F604; </strong><br />',
+                        '<a href="https://pwasummit.org/">PWA Summit</a> is an online conference dedicated entirely to helping developers succeed with Progressive Web Apps. ',
+                        'If you have interest in speaking, you can submit a talk <a href="https://sessionize.com/pwa-summit-2022"> here.</a> Sign ups will be open through July 20th.',
+                        '</div>',
+                        '</sl-alert>'
+                    ].join('');
+
+                    hook.afterEach(function(html) {
+                        return summitBanner + html;
                     });
                 }
             ]
@@ -59,6 +82,12 @@
     <script src="//cdn.jsdelivr.net/npm/docsify-prism@latest/dist/docsify-prism.min.js "></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1 "></script>
+    <script>
+        if (typeof navigator.serviceWorker !== 'undefined') {
+          navigator.serviceWorker.register('sw.js')
+        }
+    </script>
+    
 
 </body>
 

@@ -53,4 +53,4 @@ If you're looking for more specific guidance on how to publish a PWA to a specif
 
 **[Google Play Store](/builder/android)**
 
-**[iOS App Store](/builder/ios)**
+**[iOS App Store](/builder/app-store)**
