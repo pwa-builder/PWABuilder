@@ -1,0 +1,22 @@
+{
+  "name": "PWA Builder Blog",
+  "excerpt": "Learn about the latest updates of PWA Builder and how to build great PWAs across platforms",
+  "description": "PWA Builder Blog & Documentation site",
+  "url": "https://blog.pwabuilder.com",
+  "baseUrl": "/",
+  "images": {
+    "subHeader": "sub-header-background.png",
+    "placeholder": "placeholder.png",
+    "logo": "logo.svg"
+  },
+  "feed": {
+    "filename": "feed.xml",
+    "path": "/feed/feed.xml",
+    "id": "https://example.com/"
+  },
+  "jsonfeed": {
+    "filename": "feed.json",
+    "path": "/feed/feed.json",
+    "url": "https://example.com/feed/feed.json"
+  }
+}

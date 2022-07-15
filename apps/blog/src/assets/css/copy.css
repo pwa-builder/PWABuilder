@@ -1,0 +1,17 @@
+pre[class*="language-"] {
+  @apply relative overflow-visible rounded;
+}
+pre[class*="language-"] .copy {
+  transform: translate(-10px, -90%);
+  cursor: pointer;
+  transition: all 200ms ease;
+  @apply flex justify-center items-center absolute top-0 right-0 rounded-t px-2 py-1 text-secondary-font bg-secondary;
+}
+pre[class*="language-"]:hover .copy:hover {
+  transform: translate(-10px, -100%);
+  @apply opacity-75;
+}
+
+code {
+  overflow: scroll;
+}

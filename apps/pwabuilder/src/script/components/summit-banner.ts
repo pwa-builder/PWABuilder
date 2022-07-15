@@ -4,52 +4,49 @@ import { customElement, state } from 'lit/decorators.js';
 
 import { smallBreakPoint } from '../utils/css/breakpoints';
 
-@customElement('survey-banner')
-export class SurveyBanner extends LitElement {
+@customElement('summit-banner')
+export class SummitBanner extends LitElement {
   @state() show = true;
 
   static get styles() {
     return css`
-      #survey-banner {
+      #summit-banner {
         background: rgb(243, 243, 243);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 50px;
+        height: fit-content;
         background-color: #342A6A;
         color: white;
+        padding: .75em;
       }
 
       #banner-content {
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 1em;
       }
 
-      #desk_box {
-        height: 29px;
-        width: 29px;
-        margin-right: 10px;
+      #banner-text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: .25em;
       }
 
-      #survey-banner #take-survey-button {
-        border-radius: var(--button-radius);
-        border: none;
-        background: white;
-        padding: 10px 20px;
-        margin-left: 10px;
-        font-weight: 700;
-        width: fit-content;
+      #banner-text a {
+        color: white;
       }
 
-      #take-survey-button:hover {
-        cursor: pointer;
+      #bold-text {
+        font-weight: bold;
       }
 
-      #survey-banner p{
+      #summit-banner p{
         font-size: 14px;
-        line-height: 24px;
-        font-weight: 700;
+        line-height: 16px;
+        margin: 0;
       }
 
       #spacer {
@@ -59,14 +56,12 @@ export class SurveyBanner extends LitElement {
       #closer {
         height: 100%;
         display: flex;
-        align-items: baseline;
+        align-self: flex-start;
       }
 
       #desk_close {
         height: 12px;
         width: 12px;
-        margin-top: 5px;
-        margin-right: 5px;
       }
 
       #desk_close:hover {
@@ -90,11 +85,10 @@ export class SurveyBanner extends LitElement {
       }
 
       ${smallBreakPoint(css`
-        #survey-banner {
+        #summit-banner {
           align-items: center;
           display: flex;
           justify-content: space-between;
-          height: 60px;
         }
 
         #banner-content {
@@ -104,10 +98,7 @@ export class SurveyBanner extends LitElement {
         #survey-banner p{
           font-size: 12px;
           line-height: 15px;
-          font-weight: 700;
-          width: 120px;
           margin: 0 10px;
-          max-height: 45px;
         }
 
         #spacer {
@@ -120,8 +111,6 @@ export class SurveyBanner extends LitElement {
 
         #mobile_close {
           display: block;
-          margin-top: 5px;
-          margin-right: 5px;
         }
 
         #desk_box {
@@ -130,10 +119,6 @@ export class SurveyBanner extends LitElement {
 
         #desk_close {
           display: none;
-        }
-
-        #survey-banner #take-survey-button {
-          margin: 0;
         }
       `)}
     `;
@@ -154,22 +139,18 @@ export class SurveyBanner extends LitElement {
     return html`
       ${this.show
         ? html`
-        <div id="survey-banner">
+        <div id="summit-banner">
           <div id="spacer"></div>
           <div id="banner-content">
-            <img id="desk_box" src="assets/images/wrapped-gift 1_Desktop.png" alt="gift box image"/>
-            <img id="mobile_box" src="assets/images/wrapped-gift 1_Mobile.png" alt="gift box image"/>
-            <p>
-              Complete the survey for a chance to win a $25 Amazon gift card. 
-            </p>
 
-            <a href="https://forms.office.com/r/LHq6gqJ9Lf" target="_blank" rel="noopener"><button
-              id="take-survey-button"
-              aria-label="Take Survey Button"
-              @click="${() => console.log("open suvery")}"
-            >
-            Take Survey
-            </button></a>
+            <div id="banner-text">
+              <p id="bold-text">Upcoming: PWA Summit on October 5th! 😄</p>
+              <p>
+                <a href="https://pwasummit.org/" target="_blank" rel="noopener">PWA Summit</a> is an online conference dedicated entirely to helping developers succeed with Progressive Web Apps. 
+                If you have interest in speaking, you can submit a talk <a href="https://sessionize.com/pwa-summit-2022" target="_blank" rel="noopener">here</a>. Sign ups will be open through July 20th.
+              </p>
+            </div>
+
           </div>
           <div id="closer" @click="${() => this.close()}">
             <img id="desk_close" src="assets/images/Close_desk.png" alt="gift box image"/>

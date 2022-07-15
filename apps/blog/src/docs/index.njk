@@ -1,0 +1,14 @@
+---
+pagination:
+  data: collections.docs
+  size: 20
+  alias: docs
+  reverse: true
+permalink: "/docs/{% if pagination.pageNumber > 0 %}page/{{ pagination.pageNumber + 1 }}/{% endif %}"
+title: PWABuilder Documentation
+---
+
+{% extends 'layouts/home.njk' %}
+{% block body %}
+  {% include "docs.njk" %}
+{% endblock %}

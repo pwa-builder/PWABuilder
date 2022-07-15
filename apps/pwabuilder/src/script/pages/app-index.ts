@@ -7,6 +7,7 @@ import '../components/app-footer';
 import '../components/app-header';
 import '../components/app-button';
 import '../components/cookie-banner';
+import '../components/summit-banner';
 import '../components/discord-box';
 import { recordPageView } from '../utils/analytics';
 
@@ -158,6 +159,7 @@ export class AppIndex extends LitElement {
   render() {
     return html`
       <div>
+        <summit-banner></summit-banner>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
       

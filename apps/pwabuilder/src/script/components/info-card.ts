@@ -54,6 +54,7 @@ export class Infocard extends LitElement {
         margin: 0;
         margin-bottom: .5em;
         text-align: center;
+        white-space: nowrap;
       }
 
       .card-content p {

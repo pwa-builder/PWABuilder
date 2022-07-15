@@ -10,7 +10,7 @@ import { generatePackage, Platform } from '../services/publish';
 import { fileSave } from 'browser-fs-access';
 
 import {
-  smallBreakPoint,
+  // smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
   xLargeBreakPoint,
