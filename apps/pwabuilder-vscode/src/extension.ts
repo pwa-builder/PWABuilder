@@ -31,6 +31,7 @@ import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
+import { generateScreenshots } from "./services/manifest/assets-service";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -138,7 +139,8 @@ export function activate(context: vscode.ExtensionContext) {
   const generateScreenshotsCommand = vscode.commands.registerCommand(
     handleScreenshotsCommandID,
     async () => {
-      ScreenshotGenerationPanel.render(context.extensionUri);
+      // ScreenshotGenerationPanel.render(context.extensionUri);
+      await generateScreenshots()
     }
   )
 
