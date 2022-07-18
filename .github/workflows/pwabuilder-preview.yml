@@ -1,3 +1,5 @@
+name: PWABuilder.com Preview CI/CD
+
 # This workflow will build and push a node.js application to an Azure Web App when a release is created.
 #
 # This workflow assumes you have already created the target Azure App Service web app.
