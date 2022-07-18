@@ -114,9 +114,9 @@ export class ScreenshotGenerationPanel {
 
         <div id="first-six">
           <div class="six">
-            <label for="file_input">Enter the URL you would like screenshots of:</label>
+            <label for="url_input">Enter the URL you would like screenshots of:</label>
             <div class="input-area">
-              <input type="file" name="file_input" id="file_input" required />
+              <input type="text" name="url_input" id="url_input" required />
 
               <a
                 href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
@@ -136,9 +136,9 @@ export class ScreenshotGenerationPanel {
     <script>
       const vscode = acquireVsCodeApi();
 
-      let file = undefined;
-      document.querySelector("#file_input").addEventListener("change", (ev) => {
-        file = ev.target.files[0];
+      let urlToScreenshot = undefined;
+      document.querySelector("#url_input").addEventListener("change", (ev) => {
+        urlToScreenshot = ev.target.value;
       });
 
       async function generateScreenshots() {
@@ -152,7 +152,7 @@ export class ScreenshotGenerationPanel {
             const response = await fetch(url, {
               method: "POST",
               body: JSON.stringify({
-                url: "https://webboard.app"
+                url: urlToScreenshot
               }),
             });
 
@@ -198,7 +198,7 @@ export class ScreenshotGenerationPanel {
       color: white;
     }
 
-    #file_input {
+    #url_input {
       display: block;
       height: 2em;
       width: 14em;
@@ -274,7 +274,7 @@ export class ScreenshotGenerationPanel {
       color: black;
     }
 
-    #file_input {
+    #url_input {
       border: none;
       color: currentColor;
     }

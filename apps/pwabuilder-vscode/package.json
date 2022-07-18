@@ -188,11 +188,6 @@
         "command": "pwa-studio.help",
         "title": "PWA Studio: Help",
         "icon": "$(note)"
-      },
-      {
-        "command": "pwa-studio.publishChecklist",
-        "title": "PWA Studio: Publish Checklist",
-        "icon": "$(info)"
       }
     ],
     "viewsWelcome": [
