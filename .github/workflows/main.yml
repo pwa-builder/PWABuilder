@@ -6,8 +6,12 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
+    paths:
+      - "apps/pwabuilder-vscode/**"
     branches: [ main ]
   pull_request:
+    paths:
+      - "apps/pwabuilder-vscode/**"
     branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
