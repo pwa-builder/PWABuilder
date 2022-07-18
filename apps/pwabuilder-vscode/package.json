@@ -3,7 +3,7 @@
   "displayName": "PWA Studio",
   "description": "PWA Studio makes VSCode the best development environment for building PWAs!",
   "publisher": "PWABuilder",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
@@ -182,6 +182,11 @@
         "command": "pwa-studio.help",
         "title": "PWA Studio: Help",
         "icon": "$(note)"
+      },
+      {
+        "command": "pwa-studio.publishChecklist",
+        "title": "PWA Studio: Publish Checklist",
+        "icon": "$(info)"
       }
     ],
     "viewsWelcome": [
@@ -300,7 +305,6 @@
     "esbuild-base": "esbuild ./src/extension.ts --bundle --platform=node --external:./node_modules/* --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "build": "npm run esbuild -- --sourcemap",
     "test-compile": "tsc -p ./",
     "compile": "tsc -p ./ && npm run copy",
     "watch": "npm run copy && tsc -watch -p ./",

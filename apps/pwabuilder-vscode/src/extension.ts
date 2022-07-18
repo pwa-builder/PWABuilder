@@ -27,6 +27,7 @@ import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
+import { PublishChecklistPanel } from "./views/publish-checklist";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
@@ -48,6 +49,7 @@ const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const helpCommandID = "pwa-studio.help";
+const publishChecklistID = "pwa-studio.publishChecklist";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -136,6 +138,13 @@ export function activate(context: vscode.ExtensionContext) {
     helpCommandID,
     async () => {
       HelpViewPanel.render(context.extensionUri);
+    }
+  );
+
+  const publishChecklistCommand = vscode.commands.registerCommand(
+    publishChecklistID,
+    async () => {
+      PublishChecklistPanel.render(context.extensionUri);
     }
   );
 
@@ -249,6 +258,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(generateAdvWorkerCommand);
   context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
+  context.subscriptions.push(publishChecklistCommand);
 }
 
 export function deactivate() {}

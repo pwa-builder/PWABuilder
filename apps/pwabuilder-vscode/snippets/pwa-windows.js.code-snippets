@@ -30,7 +30,7 @@
         "body": [
             "// Requesting permission should only be done in response to a user action. This is a best practice, to avoid interrupting the user with permission prompts when the user hasn't yet interacted with a feature that uses notifications.",
             "${1:button}.addEventListener(\"${2:click}\", () => {",
-            "\tNotifications.requestPermission().then(permission => {",
+            "\tNotification.requestPermission().then(permission => {",
             "\t\tif (permission === \"granted\") {",
             "\t\t\t${0:console.log(\"The user accepted\")};",
             "\t\t}",
