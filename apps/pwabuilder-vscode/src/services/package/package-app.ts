@@ -252,8 +252,6 @@ async function packageWithPwaBuilder(): Promise<any> {
   });
 
   if (packageData) {
-    const url = getURL();
-
     return packageData.blob();
   }
 }
