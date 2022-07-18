@@ -194,6 +194,23 @@ export function isValidLanguageCode(code: string){
   return flag;
 }
 
+function getDimensions(sizes: string){
+  return (sizes || '0x0')
+    .split(' ')
+    .map(size => {
+      const dimensions = size.split('x');
+      return {
+        width: Number.parseInt(dimensions[0] || '0', 10),
+        height: Number.parseInt(dimensions[1] || '0', 10),
+      };
+    });
+}
+
+export function isAtLeast(sizes: string, width: number, height: number): boolean {
+  const dimensions = getDimensions(sizes);
+  return dimensions.some(i => i.width >= width && i.height >= height);
+}
+
 export const required_fields = ["icons", "name", "short_name", "start_url"];
 export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];

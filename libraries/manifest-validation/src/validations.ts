@@ -1,5 +1,5 @@
 import { Validation } from "./interfaces";
-import { containsStandardCategory, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
+import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -91,6 +91,41 @@ export const maniTests: Array<Validation> = [
             
             if (isArray) {
                 const anyIcon = value.find(icon => icon.purpose === "any");
+
+                return anyIcon ? true : false;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have atleast one PNG icon 512x512 or larger",
+        category: "required",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        errorString: "Need atleast one PNG icon 512x512 or larger",
+        quickFix: false,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const anyIcon = value.find(icon => isAtLeast(icon.sizes, 512, 512) && (icon.type === 'image/png' || icon.src.endsWith(".png")));
 
                 return anyIcon ? true : false;
             }

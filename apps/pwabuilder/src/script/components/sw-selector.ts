@@ -8,7 +8,7 @@ import { service_workers } from '../utils/service-workers/service-workers';
 export class SWSelector extends LitElement {
 
   @property({type: Boolean}) open: boolean = false;
-  @state() selectedSW: string = "1";
+  @state() selectedSW: string = "0";
 
   static get styles() {
     return css`
@@ -139,6 +139,26 @@ export class SWSelector extends LitElement {
       .primary:hover {
         cursor: pointer;
       }
+
+      @media(max-width: 600px){  
+        
+        #frame-footer {
+          flex-direction: column-reverse;
+          gap: 1em;
+        }
+        #footer-actions {
+          width: 100%;
+        }
+        #footer-links {
+          width: 100%;
+          align-items: center;
+        }
+        .primary {
+          font-size: 14px;
+          white-space: nowrap;
+          width: 100%;
+        }
+      }
     `;
   }
 
@@ -156,14 +176,21 @@ export class SWSelector extends LitElement {
 
   setSelectedSW(e: any){
     this.selectedSW = e.detail.name;
-    console.log(this.selectedSW);
   }
 
   downloadSW(){
-    var a = document.createElement("a");
-    a.href = '/assets/service-workers/sw_' + this.selectedSW + '.js';
-    a.setAttribute("download", "pwabuilder-sw.js");
-    a.click();
+    let filename = "pwabuilder-sw.js";
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(service_workers[parseInt(this.selectedSW)].code));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+
   }
 
   render() {
