@@ -26,6 +26,7 @@ import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { IconGenerationPanel } from "./views/icons-view";
+import { ScreenshotGenerationPanel } from "./views/screenshots-view";
 import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
@@ -47,8 +48,9 @@ const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
 const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
+const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
-const publishChecklistID = "pwa-studio.publishChecklist";
+// const publishChecklistID = "pwa-studio.publishChecklist";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -132,6 +134,13 @@ export function activate(context: vscode.ExtensionContext) {
       IconGenerationPanel.render(context.extensionUri);
     }
   );
+
+  const generateScreenshotsCommand = vscode.commands.registerCommand(
+    handleScreenshotsCommandID,
+    async () => {
+      ScreenshotGenerationPanel.render(context.extensionUri);
+    }
+  )
 
   const helpCommand = vscode.commands.registerCommand(
     helpCommandID,
@@ -247,10 +256,11 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
   context.subscriptions.push(generateIconsCommand);
+  context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(generateAdvWorkerCommand);
   context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
-  context.subscriptions.push(publishChecklistCommand);
+  // context.subscriptions.push(publishChecklistCommand);
 }
 
 export function deactivate() {}

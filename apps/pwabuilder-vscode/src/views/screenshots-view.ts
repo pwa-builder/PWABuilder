@@ -24,18 +24,21 @@ export class ScreenshotGenerationPanel {
       extensionUri
     );
 
-    let iconsObject: any;
+    let screenshotsObject: any;
+
     // Handle messages from the webview
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
         switch (message.command) {
           case "prompt":
-            trackEvent("generate", { type: "icons" } );
+            trackEvent("generate", { type: "screenshots" } );
 
-            iconsObject = message.iconsObject;
+            console.log(message);
+
+            screenshotsObject = message.screenshotsObject;
             const manifest: vscode.Uri = await findManifest();
 
-            if (manifest && iconsObject.icons) {
+            if (manifest && screenshotsObject.icons) {
               // read manifest file
               const manifestFile = await vscode.workspace.openTextDocument(
                 manifest
@@ -45,10 +48,10 @@ export class ScreenshotGenerationPanel {
                 manifestFile.getText()
               );
 
-              const newIconsData = await convertBaseToFile(iconsObject.icons);
+              const newIconsData = await convertBaseToFile(screenshotsObject.icons);
 
               // add icons to manifest
-              manifestObject.icons = newIconsData.icons;
+              manifestObject.screenshots = newIconsData.icons;
 
               // write manifest file
               await writeFile(
@@ -93,7 +96,7 @@ export class ScreenshotGenerationPanel {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="https://glitch.com/favicon.ico" />
 
-    <title>PWA VSCode Extension Manifest Form</title>
+    <title>PWA VSCode Extension Screenshots Form</title>
 
     <script type="module" src="${toolkitUri}"></script>
 
@@ -105,13 +108,13 @@ export class ScreenshotGenerationPanel {
       <form id="manifest-options" onsubmit="handleSubmit(event)">
 
       <div id="submit-block">
-        <h1>Generate Icons</h1>
-        <button type="submit" id="submit" type="submit">Generate Icons</vscode-button>
+        <h1>Generate Screenshots</h1>
+        <vscode-button type="submit" id="submit" type="submit">Generate Screenshots</vscode-button>
       </div>
 
         <div id="first-six">
           <div class="six">
-            <label for="file_input">Choose a 512x512 icon:</label>
+            <label for="file_input">Enter the URL you would like screenshots of:</label>
             <div class="input-area">
               <input type="file" name="file_input" id="file_input" required />
 
@@ -122,7 +125,7 @@ export class ScreenshotGenerationPanel {
               >
                 <ion-icon name="information-circle-outline"></ion-icon>
                 <p class="toolTip">
-                  Click for more info on icons your manifest.
+                  Click for more info on screenshots your manifest.
                 </p>
               </a>
             </div>
@@ -138,24 +141,19 @@ export class ScreenshotGenerationPanel {
         file = ev.target.files[0];
       });
 
-      async function generateIcons() {
+      async function generateScreenshots() {
         return new Promise(async (resolve, reject) => {
 
           const url =
-            "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
+            "https://pwa-screenshots.azurewebsites.net/screenshotsAsBase64Strings";
 
-          const form = new FormData();
-          form.append("baseImage", file);
-          form.append("platform", "windows10");
-          form.append("platform", "android");
-          form.append("platform", "ios");
-          form.append("colorChanged", "false");
-          form.append("padding", "0");
           // send formdata with http node module
           try {
             const response = await fetch(url, {
               method: "POST",
-              body: form,
+              body: JSON.stringify({
+                url: "https://webboard.app"
+              }),
             });
 
             const data = await response.json();
@@ -173,18 +171,18 @@ export class ScreenshotGenerationPanel {
         // update button text
         document.querySelector("#submit").innerText = "Generating...";
 
-        const icons = await generateIcons();
+        const screenshots = await generateScreenshots();
         
-        document.querySelector("#submit").innerText = "Generate Icons";
+        document.querySelector("#submit").innerText = "Generate Screenshots";
 
         let maniObj = {
-          icons: icons,
+          screenshots
         };
 
         vscode.postMessage({
           command: "prompt",
-          text: "Your icons have been generated!",
-          iconsObject: maniObj,
+          text: "Your Screenshots have been generated!",
+          screenshotsObject: maniObj,
         });
 
         event.preventDefault();
