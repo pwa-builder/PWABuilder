@@ -2,8 +2,6 @@ import { open } from "fs/promises";
 import * as vscode from "vscode";
 import { getAnalyticsClient } from "../usage-analytics";
 
-import { trackEvent } from "../usage-analytics";
-
 let manifest: any | undefined;
 
 export async function generateManifest(context: vscode.ExtensionContext) {
