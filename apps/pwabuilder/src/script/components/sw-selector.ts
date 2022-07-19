@@ -191,6 +191,12 @@ export class SWSelector extends LitElement {
 
     document.body.removeChild(element);
 
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
+
   }
 
   render() {

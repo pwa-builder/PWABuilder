@@ -153,6 +153,20 @@ export class PWAManifestEditor extends LitElement {
     return this.manifest.screenshots;
   }
 
+  errorInTab(panel: string){
+    let tabs = this.shadowRoot!.querySelectorAll('sl-tab');
+    let tab = tabs[0];
+
+    tabs.forEach((temp: any) => {
+      if(temp.panel === panel){
+        tab = temp;
+      }
+    })
+    if(!tab.innerHTML.endsWith(" !")){
+      tab.innerHTML += " !";
+    }
+  }
+
   render() {
     return html`
       <sl-tab-group id="editor-tabs">
@@ -163,7 +177,7 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab slot="nav" panel="screenshots">Screenshots</sl-tab>
         <sl-tab slot="nav" panel="preview">Preview</sl-tab>
         <sl-tab slot="nav" panel="code">Code</sl-tab>
-        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-info-form></sl-tab-panel>
+        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${() => this.errorInTab("info")}></manifest-info-form></sl-tab-panel>
         <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-settings-form></sl-tab-panel>
         <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-platform-form></sl-tab-panel>
         <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-icons-form></sl-tab-panel>

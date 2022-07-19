@@ -1257,8 +1257,8 @@ export class AppReport extends LitElement {
     }, 1000)
   }
 
-  addRetestTodo(){
-    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add Manifest to your server and retest your site!", "status": "retest"});
+  addRetestTodo(toAdd: string){
+    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest"});
   }
 
 
@@ -1683,7 +1683,7 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-          <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo()} .open=${this.manifestEditorOpened} @manifestEditorClosed=${() => this.manifestEditorOpened = false}></manifest-editor-frame>
+          <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")} .open=${this.manifestEditorOpened} @manifestEditorClosed=${() => this.manifestEditorOpened = false}></manifest-editor-frame>
           ${this.publishModalOpened
             ? html` <div class="modal-blur flex-center">
                 <div class="modal flex-col-center">
@@ -1692,7 +1692,7 @@ export class AppReport extends LitElement {
                 </div>
               </div>`
             : html``}
-            <sw-selector .open=${this.swSelectorOpen} @swSelectorClosed=${() => this.swSelectorOpen = false}></sw-selector>
+            <sw-selector .open=${this.swSelectorOpen} @swSelectorClosed=${() => this.swSelectorOpen = false} @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
         </div>
       </div>
     `;

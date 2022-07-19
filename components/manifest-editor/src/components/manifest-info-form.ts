@@ -225,6 +225,8 @@ export class ManifestInfoForm extends LitElement {
         if(!validation){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+          this.errorInTab();
+
         }
       } else {
         /* This handles the case where the field is not in the manifest.. 
@@ -232,9 +234,18 @@ export class ManifestInfoForm extends LitElement {
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+          this.errorInTab();
         }
       }
     }
+  }
+
+  errorInTab(){
+    let errorInTab = new CustomEvent('errorInTab', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorInTab);
   }
 
   initMissingColors(){
@@ -287,7 +298,7 @@ export class ManifestInfoForm extends LitElement {
         input.classList.toggle("error");
       }
     } else {
-      // toggle error class to display error.
+      this.errorInTab();
       input.classList.toggle("error");
     }
 
