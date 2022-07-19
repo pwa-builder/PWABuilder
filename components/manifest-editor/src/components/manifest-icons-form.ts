@@ -363,7 +363,7 @@ export class ManifestIconsForm extends LitElement {
         <div class="form-field">
           <div class="field-header">
             <div class="header-left">
-              <h3>*App Icons</h3>
+              <h3>App Icons</h3>
               <a
                 href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
                 target="_blank"

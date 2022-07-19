@@ -324,7 +324,7 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>*Name</h3>
+                <h3>Name</h3>
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
                   target="_blank"
@@ -345,7 +345,7 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>*Short Name</h3>
+                <h3>Short Name</h3>
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
                   target="_blank"

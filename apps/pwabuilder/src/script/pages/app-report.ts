@@ -107,7 +107,8 @@ export class AppReport extends LitElement {
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
-  @state() canPackage: boolean = true;
+  @state() canPackageList: boolean[] = [];
+  @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
 
@@ -924,9 +925,11 @@ export class AppReport extends LitElement {
 
   async runAllTests(url: string) {
     await this.getManifest(url);
-    this.testManifest();
-    this.testServiceWorker(url);
-    this.testSecurity(url);
+    await this.testManifest();
+    await this.testServiceWorker(url);
+    await this.testSecurity(url);
+
+    this.canPackage = this.canPackageList.every((can: boolean) => can)
     //this.updateTimeLastTested();
   }
 
@@ -962,7 +965,7 @@ export class AppReport extends LitElement {
         let status ="";
         if(test.category === "required"){
           status = "red";
-          this.canPackage = this.canPackage && false;
+          this.canPackageList.push(false);
         } else {
           status = "yellow";
         }
@@ -1019,7 +1022,7 @@ export class AppReport extends LitElement {
         if(result.category === "required"){
           status = "red";
           missing = true;
-          this.canPackage = this.canPackage && false;
+          this.canPackageList.push(false);
           this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
         } else {
           status = "yellow";
@@ -1058,7 +1061,7 @@ export class AppReport extends LitElement {
         let status ="";
         if(result.category === "required"){
           status = "red";
-          this.canPackage = this.canPackage && false;
+          this.canPackageList.push(false);
         } else {
           status = "yellow";
         }
@@ -1104,6 +1107,9 @@ export class AppReport extends LitElement {
     this.manifestDataLoading = true;
     this.swDataLoading = true;
     this.secDataLoading = true;
+
+    // last tested
+    this.lastTested = "Last tested seconds ago"
 
     // hide the detail lists
     let details = this.shadowRoot!.querySelectorAll('sl-details');
@@ -1410,7 +1416,7 @@ export class AppReport extends LitElement {
                     class="alternate"
                     @click=${() => this.toggleManifestEditorModal()}
                   >
-                    Manifest Editor
+                    Edit your Manifest
                   </button>
                   <a
                     class="arrow_anchor"

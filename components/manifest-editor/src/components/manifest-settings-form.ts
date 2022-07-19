@@ -223,7 +223,7 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>*Start URL</h3>
+                <h3>Start URL</h3>
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
                   target="_blank"

@@ -251,7 +251,6 @@ export class ManifestEditorFrame extends LitElement {
                 </a>
             </div>
             <div id="footer-actions">
-              <sl-checkbox id="add-to-pack">Add a service worker to this package</sl-checkbox>
               <button type="button" class="primary" @click=${() => this.downloadManifest()}>Download Manifest</button>
             </div>
           </div>
