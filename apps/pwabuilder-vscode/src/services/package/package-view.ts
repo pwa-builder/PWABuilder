@@ -74,7 +74,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Microsoft Store",
             "https://aka.ms/windows-from-code",
-            "true",
+            "Checklist for publishing your app to the Microsoft Store",
             vscode.TreeItemCollapsibleState.Collapsed
           )
         );
@@ -83,7 +83,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Google Play Store",
             "https://aka.ms/android-from-code",
-            "true",
+            "Checklist for publishing your app to the Google Play Store",
             vscode.TreeItemCollapsibleState.Collapsed
           )
         );
@@ -97,7 +97,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Microsoft Developer Account",
             "https://docs.pwabuilder.com/#/builder/windows?id=prerequisites",
-            "true",
+            "Get a Microsoft Developer Account to publish to the Microsoft Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -106,7 +106,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Reserve Your App",
             "https://docs.pwabuilder.com/#/builder/windows?id=reserve-your-app",
-            "true",
+            "Reserve your app in the Microsoft Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -115,7 +115,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Generate Your Package",
             "https://docs.pwabuilder.com/#/builder/windows?id=packaging",
-            "true",
+            "Generate your package for the Microsoft Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -124,7 +124,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Submit Your PWA",
             "https://docs.pwabuilder.com/#/builder/windows?id=submitting-your-pwa",
-            "true",
+            "Submit your PWA to the Microsoft Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -138,7 +138,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Google Developer Account",
             "https://docs.pwabuilder.com/#/builder/android?id=prerequisites",
-            "true",
+            "Get a Google Developer Account to publish to the Google Play Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -147,7 +147,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Generate Your Package",
             "https://docs.pwabuilder.com/#/builder/android?id=packaging",
-            "true",
+            "Generate your package for the Google Play Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -156,7 +156,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Handle your assetlinks.json",
             "https://docs.pwabuilder.com/#/builder/android?id=_1-deploy-the-assetlinksjson-file",
-            "true",
+            "Handle your assetlinks.json file",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -165,7 +165,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Submit Your PWA",
             "https://docs.pwabuilder.com/#/builder/android?id=_2-upload-your-app-to-the-google-play-store",
-            "true",
+            "Submit your PWA to the Google Play Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -189,7 +189,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
         new ValidationItem(
           "Publish to Stores",
           "",
-          "",
+          "Checklist on how to publish to the app stores",
           vscode.TreeItemCollapsibleState.Expanded
         )
       );
@@ -228,12 +228,29 @@ class ValidationItem extends vscode.TreeItem {
         arguments: [
           vscode.Uri.parse(docsLink)
         ]
+      };
+
+      if (label !== "Published to Web") {
+        this.iconPath = new vscode.ThemeIcon("link");
+      }
+      else {
+        this.iconPath =
+          this.desc.toString() === "true"
+            ? new vscode.ThemeIcon("check")
+            : new vscode.ThemeIcon("warning");
+      }
+    }
+    else {
+      if (label === "Publish to Stores") {
+        this.iconPath = new vscode.ThemeIcon("explorer-view-icon");
+      }
+      else {
+        this.iconPath =
+          this.desc.toString() === "true"
+            ? new vscode.ThemeIcon("check")
+            : new vscode.ThemeIcon("warning");
       }
     }
   }
 
-  iconPath =
-    this.desc.toString() === "true"
-      ? new vscode.ThemeIcon("check")
-      : new vscode.ThemeIcon("warning");
 }
