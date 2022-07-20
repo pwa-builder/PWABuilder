@@ -15,8 +15,6 @@ import { getManifestContext } from '../services/app-info';
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
 
-  @property({type: Boolean}) open: boolean = false;
-
   static get styles() {
     return [
     css`
@@ -220,16 +218,14 @@ export class ManifestEditorFrame extends LitElement {
   }
 
   communicateHide(){
-    let manifestEditorClosed = new CustomEvent('manifestEditorClosed', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestEditorClosed);
+    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    dialog!.hide();
+    document.body.style.height = "unset";
   }
 
   render() {
     return html`
-      <sl-dialog class="dialog" ?open=${this.open} @sl-hide=${() => this.communicateHide()} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-after-hide=${() => this.communicateHide()} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">

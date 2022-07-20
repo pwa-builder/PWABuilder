@@ -160,6 +160,8 @@ export class AppReport extends LitElement {
         * {
           box-sizing: border-box;
         }
+
+        
         #report-wrapper {
           width: 100%;
           display: flex;
@@ -1152,13 +1154,26 @@ export class AppReport extends LitElement {
     }
   }
 
-  toggleManifestEditorModal() {
-    if(this.manifestEditorOpened){
+  async toggleManifestEditorModal() {
+    let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
+
+    if(dialog.open){
+      await dialog!.hide();
       recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
     } else {
+      await dialog!.show();
       recordPWABuilderProcessStep("manifest_editor_opened", AnalyticsBehavior.ProcessCheckpoint);
     }
-    this.manifestEditorOpened = !this.manifestEditorOpened;
+
+  }
+
+  toggleSWSelectorModal() {
+    if(this.manifestEditorOpened){
+      recordPWABuilderProcessStep("sw_selector_closed", AnalyticsBehavior.ProcessCheckpoint);
+    } else {
+      recordPWABuilderProcessStep("sw_selector_opened", AnalyticsBehavior.ProcessCheckpoint);
+    }
+    this.swSelectorOpen = !this.swSelectorOpen;
     this.requestUpdate();
   }
 
@@ -1689,18 +1704,20 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-          <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")} .open=${this.manifestEditorOpened} @manifestEditorClosed=${() => this.manifestEditorOpened = false}></manifest-editor-frame>
-          ${this.publishModalOpened
-            ? html` <div class="modal-blur flex-center">
-                <div class="modal flex-col-center">
-                  <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
-                  <publish-pane></publish-pane>
-                </div>
-              </div>`
-            : html``}
-            <sw-selector .open=${this.swSelectorOpen} @swSelectorClosed=${() => this.swSelectorOpen = false} @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+          
         </div>
       </div>
+      ${this.publishModalOpened
+        ? html` <div class="modal-blur flex-center">
+            <div class="modal flex-col-center">
+              <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
+              <publish-pane></publish-pane>
+            </div>
+          </div>`
+        : html``}
+      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")} @manifestEditorClosed=${() => this.toggleManifestEditorModal()}></manifest-editor-frame>
+      <sw-selector .open=${this.swSelectorOpen} @swSelectorClosed=${() => this.toggleSWSelectorModal()} @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+
     `;
   }
 }

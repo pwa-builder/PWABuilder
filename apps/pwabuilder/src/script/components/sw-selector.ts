@@ -167,11 +167,10 @@ export class SWSelector extends LitElement {
   }
 
   communicateHide(){
-    let swSelectorClosed = new CustomEvent('swSelectorClosed', {
-      bubbles: true,
-      composed: true
-    });
+    let swSelectorClosed = new CustomEvent('swSelectorClosed', {});
     this.dispatchEvent(swSelectorClosed);
+
+    document.body.style.height = "unset";
   }
 
   setSelectedSW(e: any){
@@ -201,7 +200,7 @@ export class SWSelector extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" ?open=${this.open} @sl-hide=${() => this.communicateHide()} noHeader>
+      <sl-dialog class="dialog" ?open=${this.open} @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${() => this.communicateHide()} noHeader>
         <div id="selector-header">
           <h1>Download a Service Worker</h1>
           <p>Download one of our pre-built Service Workers package that utilize Workbox to make building your offline experience easy.</p>
