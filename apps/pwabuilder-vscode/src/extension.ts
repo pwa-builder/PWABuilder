@@ -25,11 +25,11 @@ import { ServiceWorkerProvider } from "./services/validation/sw-view";
 import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
-import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
+import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -47,6 +47,7 @@ const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
 const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
+const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
 
 export let storageManager: LocalStorageService | undefined = undefined;
@@ -128,9 +129,18 @@ export function activate(context: vscode.ExtensionContext) {
   const generateIconsCommand = vscode.commands.registerCommand(
     handleIconsCommmandID,
     async () => {
-      IconGenerationPanel.render(context.extensionUri);
+      // IconGenerationPanel.render(context.extensionUri);
+      await generateIcons();
     }
   );
+
+  const generateScreenshotsCommand = vscode.commands.registerCommand(
+    handleScreenshotsCommandID,
+    async () => {
+      // ScreenshotGenerationPanel.render(context.extensionUri);
+      await generateScreenshots();
+    }
+  )
 
   const helpCommand = vscode.commands.registerCommand(
     helpCommandID,
@@ -246,6 +256,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
   context.subscriptions.push(generateIconsCommand);
+  context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(generateAdvWorkerCommand);
   context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
