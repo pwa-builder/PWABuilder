@@ -141,6 +141,9 @@ export class ManifestEditorFrame extends LitElement {
       .dialog::part(panel) {
         position: relative;
       }
+      .dialog::part(overlay){
+          backdrop-filter: blur(10px);
+        }
       .dialog::part(close-button__base){
         position: absolute;
         top: 5px;

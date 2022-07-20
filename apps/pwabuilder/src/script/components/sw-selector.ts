@@ -56,6 +56,9 @@ export class SWSelector extends LitElement {
       .dialog::part(title){
         display: none;
       }
+      .dialog::part(overlay){
+          backdrop-filter: blur(10px);
+        }
       .dialog::part(panel) {
         position: relative;
       }

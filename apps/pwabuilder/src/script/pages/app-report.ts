@@ -137,6 +137,13 @@ export class AppReport extends LitElement {
   @state() reccMissingFields: any[] = [];
   @state() optMissingFields: any[] = [];
 
+  // Confirm Retest stuff
+  @state() showConfirmationModal: boolean = false;
+  @state() thingToAdd: string = "";
+  @state() retestConfirmed: boolean = false;
+
+
+
  /*  
   So in order to connect the to do items with the things below 
   We can have an object that looks like this
@@ -694,6 +701,39 @@ export class AppReport extends LitElement {
           }
         }
 
+        .dialog::part(body){
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+        .dialog::part(title){
+          display: none;
+        }
+        .dialog::part(panel) {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 65%;
+        }
+        .dialog::part(overlay){
+          backdrop-filter: blur(10px);
+        }
+        .dialog::part(close-button__base){
+          position: absolute;
+          top: 5px;
+          right: 5px;
+        }
+
+        #confirmationButtons {
+          display: flex;
+          justify-content: space-evenly;
+          margin-bottom: 1em;
+        }
+
+        #confirmationButtons > *{
+         width: 45%;
+        }
+
         @media(max-width: 765px){
           .modal {
             max-width: 600px;
@@ -942,8 +982,7 @@ export class AppReport extends LitElement {
     Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can)
-    })
-    //this.updateTimeLastTested();
+    });
   }
 
   // idk if we need the url for this function bc we can just get the manifest context
@@ -1065,8 +1104,6 @@ export class AppReport extends LitElement {
     let details = (this.shadowRoot!.getElementById("sec-details") as any);
     details!.disabled = true;
 
-    console.log("sec-details disabled?", details.disabled)
-
     const securityTests = await testSecurity(url);
     this.securityResults = securityTests;
     this.securityResults.forEach((result: any) => {
@@ -1097,11 +1134,18 @@ export class AppReport extends LitElement {
 
   async retest() {
     recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    this.retestConfirmed = true; 
+    await this.delay(3000);
+    (this.shadowRoot!.querySelector(".dialog") as any)!.hide();
     if (this.siteURL) {
       this.resetData();
       this.runAllTests(this.siteURL);
       sessionStorage.setItem('last_tested', JSON.stringify(new Date()));
     }
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   resetData(){
@@ -1112,6 +1156,10 @@ export class AppReport extends LitElement {
     this.swTotalScore = 0;
     this.secValidCounter = 0;
     this.secTotalScore = 0;
+
+
+    // reset todo lsit
+    this.todoItems = [];
 
     // reset missing lists
     this.requiredMissingFields = [];
@@ -1132,6 +1180,9 @@ export class AppReport extends LitElement {
     details.forEach((detail: any) => {
       detail.hide();
     });
+
+    // reset retest data
+    this.retestConfirmed = false;
   }
 
   async handleDoubleChecks() {
@@ -1244,8 +1295,8 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     if(e.detail.card === "retest"){
-      // pop up a message that confirms they have updated their files
-      // that pop up has the button that can retest
+      this.thingToAdd = e.detail.displayString;
+      this.showConfirmationModal = true;
       return;
     }
 
@@ -1283,7 +1334,8 @@ export class AppReport extends LitElement {
   }
 
   addRetestTodo(toAdd: string){
-    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest"});
+    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest", "displayString": toAdd});
+    this.requestUpdate();
   }
 
 
@@ -1772,6 +1824,22 @@ export class AppReport extends LitElement {
           
         </div>
       </div>
+
+      <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
+        ${this.retestConfirmed ? 
+          html`
+          <p>Retesting your site now!</p>
+          ` :
+          html`
+            <p>Have you added your new ${this.thingToAdd} to your site?</p>
+            <div id="confirmationButtons">
+              <sl-button>No</sl-button>
+              <sl-button @click=${() => this.retest()}>Yes</sl-button>
+            </div>
+          `
+        }
+        
+      </sl-dialog>
       ${this.publishModalOpened
         ? html` <div class="modal-blur flex-center">
             <div class="modal flex-col-center">
