@@ -11,6 +11,7 @@ import {
 
 import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
+import { AnalyticsBehavior, recordPWABuilderProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
@@ -217,15 +218,18 @@ export class ManifestEditorFrame extends LitElement {
     this.dispatchEvent(readyForRetest);
   }
 
-  communicateHide(){
+  async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
-    dialog!.hide();
-    document.body.style.height = "unset";
+    if(e.target === dialog){
+      await dialog!.hide();
+      recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
+      document.body.style.height = "unset";
+    }
   }
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-after-hide=${() => this.communicateHide()} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">

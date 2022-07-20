@@ -324,6 +324,9 @@ export class AppReport extends LitElement {
         #pfs-disabled:hover{
           cursor: no-drop;
         }
+        sl-details:disabled{
+          cursor: no-drop;
+        }
         #hover {
           background-color: rgba(0, 0, 0, 0.75);
         }
@@ -422,6 +425,7 @@ export class AppReport extends LitElement {
           display: flex;
           gap: 1em;
           justify-content: space-between;
+          width: 100%;
         }
         #mh-text {
           width: 50%;
@@ -531,6 +535,7 @@ export class AppReport extends LitElement {
         }
         #swh-top {
           display: flex;
+          justify-content: space-between;
           column-gap: 1em;
         }
         #swh-text {
@@ -591,6 +596,7 @@ export class AppReport extends LitElement {
         #sec-top {
           display: flex;
           column-gap: 1em;
+          justify-content: space-between;
         }
         #sec-text {
           row-gap: 0.5em;
@@ -650,6 +656,13 @@ export class AppReport extends LitElement {
         .summary-skeleton {
           width: 200px;
           --color: #d0d0d3
+        }
+        .desc-skeleton {
+          width: 200px;
+          --color: #d0d0d3
+        }
+        .gap {
+          gap: .5em;
         }
         sl-tooltip::part(base){
           --sl-tooltip-font-size: 14px;
@@ -926,10 +939,10 @@ export class AppReport extends LitElement {
   }
 
   async runAllTests(url: string) {
-    await this.getManifest(url);
-    await this.testManifest();
-    await this.testServiceWorker(url);
-    await this.testSecurity(url);
+    this.getManifest(url);
+    this.testManifest();
+    this.testServiceWorker(url);
+    this.testSecurity(url);
 
     this.canPackage = this.canPackageList.every((can: boolean) => can)
     //this.updateTimeLastTested();
@@ -1054,6 +1067,8 @@ export class AppReport extends LitElement {
     let details = (this.shadowRoot!.getElementById("sec-details") as any);
     details!.disabled = true;
 
+    console.log("sec-details disabled?", details.disabled)
+
     const securityTests = await testSecurity(url);
     this.securityResults = securityTests;
     this.securityResults.forEach((result: any) => {
@@ -1154,27 +1169,18 @@ export class AppReport extends LitElement {
     }
   }
 
-  async toggleManifestEditorModal() {
+  async openManifestEditorModal() {
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
-    if(dialog.open){
-      await dialog!.hide();
-      recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
-    } else {
-      await dialog!.show();
-      recordPWABuilderProcessStep("manifest_editor_opened", AnalyticsBehavior.ProcessCheckpoint);
-    }
-
+    await dialog!.show();
+    recordPWABuilderProcessStep("manifest_editor_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  toggleSWSelectorModal() {
-    if(this.manifestEditorOpened){
-      recordPWABuilderProcessStep("sw_selector_closed", AnalyticsBehavior.ProcessCheckpoint);
-    } else {
-      recordPWABuilderProcessStep("sw_selector_opened", AnalyticsBehavior.ProcessCheckpoint);
-    }
-    this.swSelectorOpen = !this.swSelectorOpen;
-    this.requestUpdate();
+  async openSWSelectorModal() {
+    let dialog: any = this.shadowRoot!.querySelector("sw-selector")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog.show()
+    recordPWABuilderProcessStep("sw_selector_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
   togglePublishModal() {
@@ -1418,35 +1424,54 @@ export class AppReport extends LitElement {
               <div id="mh-content">
                 <div id="mh-text" class="flex-col">
                   <p class="card-header">Manifest</p>
-                  <p class="card-desc">
-                    PWABuilder has analyzed your Web Manifest. You do not have a web
-                    manifest. Use our Manifest editor to generate one. You can
-                    package for the store once you have a valid manifest.
-                  </p>
+                  ${this.manifestDataLoading ? 
+                    html`
+                      <div class="flex-col gap">
+                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                      </div>
+                    ` : 
+                    html`
+                    <p class="card-desc">
+                      PWABuilder has analyzed your Web Manifest. You do not have a web
+                      manifest. Use our Manifest editor to generate one. You can
+                      package for the store once you have a valid manifest.
+                    </p>
+                  `}
                 </div>
 
                 <div id="mh-actions" class="flex-col">
-                  <button
-                    type="button"
-                    class="alternate"
-                    @click=${() => this.toggleManifestEditorModal()}
-                  >
-                    Edit your Manifest
-                  </button>
-                  <a
-                    class="arrow_anchor"
-                    href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
-                    rel="noopener"
-                    target="_blank"
-                    @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-                  >
-                    <p class="arrow_link">Manifest Documentation</p>
-                    <img
-                      src="/assets/new/arrow.svg"
-                      alt="arrow"
-                      role="presentation"
-                    />
-                  </a>
+                  ${this.manifestDataLoading ? 
+                    html`
+                      <div class="flex-col gap">
+                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                      </div>
+                    ` : 
+                    html`
+                      <button
+                        type="button"
+                        class="alternate"
+                        @click=${() => this.openManifestEditorModal()}
+                      >
+                        Edit your Manifest
+                      </button>
+                      <a
+                        class="arrow_anchor"
+                        href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+                        rel="noopener"
+                        target="_blank"
+                        @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+                      >
+                        <p class="arrow_link">Manifest Documentation</p>
+                        <img
+                          src="/assets/new/arrow.svg"
+                          alt="arrow"
+                          role="presentation"
+                        />
+                      </a>
+                  `}
+                  
                 </div>
               </div>
               
@@ -1568,11 +1593,21 @@ export class AppReport extends LitElement {
                 <div id="swh-top">
                   <div id="swh-text" class="flex-col">
                     <p class="card-header">Service Worker</p>
-                    <p class="card-desc">
-                      PWABuilder has analyzed your Service Worker, check out the
-                      results below. Want to add a Service Worker or check out our
-                      pre-built Service Workers? Tap Genereate Service Worker.
-                    </p>
+                    ${this.swDataLoading ? 
+                      html`
+                        <div class="flex-col gap">
+                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                        </div>
+                      ` : 
+                      html`
+                        <p class="card-desc">
+                          PWABuilder has analyzed your Service Worker, check out the
+                          results below. Want to add a Service Worker or check out our
+                          pre-built Service Workers? Tap Genereate Service Worker.
+                        </p>
+                      `
+                        }
                   </div>
                   ${this.swDataLoading ? 
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
@@ -1585,22 +1620,37 @@ export class AppReport extends LitElement {
                   }
                 </div>
                 <div id="sw-actions" class="flex-col">
-                  <button type="button" class="alternate" @click=${() => this.swSelectorOpen = true}>
-                    Generate Service Worker
-                  </button>
-                  <a 
-                    class="arrow_anchor"
-                    href="" rel="noopener" 
-                    target="_blank"
-                    href=""
-                    @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-                    <p class="arrow_link">Service Worker Documentation</p>
-                    <img
-                      src="/assets/new/arrow.svg"
-                      alt="arrow"
-                      role="presentation"
-                    />
-                  </a>
+                  ${this.swDataLoading ? 
+                  html`
+                    <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                  ` : 
+                  html`
+                    <button type="button" class="alternate" @click=${() => this.openSWSelectorModal()}>
+                      Generate Service Worker
+                    </button>
+                  `}
+                  
+                  ${this.swDataLoading ? 
+                    html`
+                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                    ` : 
+                    html`
+                      <a 
+                        class="arrow_anchor"
+                        href="" rel="noopener" 
+                        target="_blank"
+                        href=""
+                        @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+                        <p class="arrow_link">Service Worker Documentation</p>
+                        <img
+                          src="/assets/new/arrow.svg"
+                          alt="arrow"
+                          role="presentation"
+                        />
+                      </a>
+                    `
+                  }
+                  
                 </div>
               </div>
               <sl-details 
@@ -1650,11 +1700,21 @@ export class AppReport extends LitElement {
                 <div id="sec-top">
                   <div id="sec-text" class="flex-col">
                     <p class="card-header">Security</p>
-                    <p class="card-desc">
-                      PWABuilder has done a basic analysis of your HTTPS setup.
+                    ${this.secDataLoading ? 
+                      html`
+                        <div class="flex-col gap">
+                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                        </div>
+                      ` : 
+                      html`
+                        <p class="card-desc">
+                        PWABuilder has done a basic analysis of your HTTPS setup.
                       You can use LetsEncrypt to get a free HTTPS certificate, or
                       publish to Azure to get built-in HTTPS support.
-                    </p>
+                        </p>
+                      `
+                        }
                   </div>
                   ${this.secDataLoading ? 
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
@@ -1668,18 +1728,25 @@ export class AppReport extends LitElement {
                   
                 </div>
                 <div id="sec-actions" class="flex-col">
-                  <a 
-                    class="arrow_anchor" 
-                    href="" rel="noopener" 
-                    target="_blank"
-                    @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-                    <p class="arrow_link">Security Documentation</p>
-                    <img
-                      src="/assets/new/arrow.svg"
-                      alt="arrow"
-                      role="presentation"
-                    />
-                  </a>
+                  ${this.secDataLoading ? 
+                    html`
+                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                    ` : 
+                    html`
+                      <a 
+                        class="arrow_anchor" 
+                        href="" rel="noopener" 
+                        target="_blank"
+                        @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+                        <p class="arrow_link">Security Documentation</p>
+                        <img
+                          src="/assets/new/arrow.svg"
+                          alt="arrow"
+                          role="presentation"
+                        />
+                      </a>
+                    `
+                  }
                 </div>
               </div>
               <sl-details 
@@ -1715,8 +1782,8 @@ export class AppReport extends LitElement {
             </div>
           </div>`
         : html``}
-      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")} @manifestEditorClosed=${() => this.toggleManifestEditorModal()}></manifest-editor-frame>
-      <sw-selector .open=${this.swSelectorOpen} @swSelectorClosed=${() => this.toggleSWSelectorModal()} @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")} @manifestEditorClosed=${() => this.openManifestEditorModal()}></manifest-editor-frame>
+      <sw-selector @swSelectorClosed=${() => this.openSWSelectorModal()} @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;
   }

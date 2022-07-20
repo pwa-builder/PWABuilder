@@ -2,12 +2,12 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/sw-panel'
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { service_workers } from '../utils/service-workers/service-workers';
 
 @customElement('sw-selector')
 export class SWSelector extends LitElement {
 
-  @property({type: Boolean}) open: boolean = false;
   @state() selectedSW: string = "0";
 
   static get styles() {
@@ -166,11 +166,13 @@ export class SWSelector extends LitElement {
     super();
   }
 
-  communicateHide(){
-    let swSelectorClosed = new CustomEvent('swSelectorClosed', {});
-    this.dispatchEvent(swSelectorClosed);
-
-    document.body.style.height = "unset";
+  async hideDialog(e: any){
+    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    if(e.target === dialog){
+      await dialog!.hide();
+      recordPWABuilderProcessStep("sw_selector_closed", AnalyticsBehavior.ProcessCheckpoint);
+      document.body.style.height = "unset";
+    }
   }
 
   setSelectedSW(e: any){
@@ -200,7 +202,7 @@ export class SWSelector extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" ?open=${this.open} @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${() => this.communicateHide()} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="selector-header">
           <h1>Download a Service Worker</h1>
           <p>Download one of our pre-built Service Workers package that utilize Workbox to make building your offline experience easy.</p>
