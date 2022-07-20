@@ -5,7 +5,7 @@ import { getManifest } from "../manifest/manifest-service";
 import { getURL } from "../web-publish";
 
 export class PackageViewProvider implements vscode.TreeDataProvider<any> {
-  constructor(private workspaceRoot: string) {}
+  constructor(private workspaceRoot: string) { }
 
   getTreeItem(element: ValidationItem): vscode.TreeItem {
     return element;
@@ -24,54 +24,172 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
     const pwaUrl = getURL();
 
     if (element) {
-      let items: any[] = [];
-      items.push(
-        new ValidationItem(
-          "Service Worker",
-          "",
-          sw ? "true" : "false",
-          vscode.TreeItemCollapsibleState.None
-        )
-      );
+      if (element.label === "Is a PWA") {
+        let items: ValidationItem[] = [];
 
-      items.push(
-        new ValidationItem(
-          "Web Manifest",
-          "",
-          manifest ? "true" : "false",
-          vscode.TreeItemCollapsibleState.None
-        )
-      );
-
-      if (pwaUrl) {
         items.push(
           new ValidationItem(
-            "Published to Web",
-            pwaUrl,
+            "Service Worker",
+            "",
+            sw ? "true" : "false",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Web Manifest",
+            "",
+            manifest ? "true" : "false",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        if (pwaUrl) {
+          items.push(
+            new ValidationItem(
+              "Published to Web",
+              pwaUrl,
+              "true",
+              vscode.TreeItemCollapsibleState.None
+            )
+          );
+        } else {
+          items.push(
+            new ValidationItem(
+              "Published to Web",
+              "",
+              "false",
+              vscode.TreeItemCollapsibleState.None
+            )
+          );
+        }
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Publish to Stores") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Microsoft Store",
+            "https://aka.ms/windows-from-code",
+            "true",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Google Play Store",
+            "https://aka.ms/android-from-code",
+            "true",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Microsoft Store") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Microsoft Developer Account",
+            "https://docs.pwabuilder.com/#/builder/windows?id=prerequisites",
             "true",
             vscode.TreeItemCollapsibleState.None
           )
         );
-      } else {
+
         items.push(
           new ValidationItem(
-            "Published to Web",
-            "",
-            "false",
+            "Reserve Your App",
+            "https://docs.pwabuilder.com/#/builder/windows?id=reserve-your-app",
+            "true",
             vscode.TreeItemCollapsibleState.None
           )
         );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/windows?id=packaging",
+            "true",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Submit Your PWA",
+            "https://docs.pwabuilder.com/#/builder/windows?id=submitting-your-pwa",
+            "true",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Google Play Store") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Google Developer Account",
+            "https://docs.pwabuilder.com/#/builder/android?id=prerequisites",
+            "true",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/android?id=packaging",
+            "true",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Handle your assetlinks.json",
+            "https://docs.pwabuilder.com/#/builder/android?id=_1-deploy-the-assetlinksjson-file",
+            "true",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Submit Your PWA",
+            "https://docs.pwabuilder.com/#/builder/android?id=_2-upload-your-app-to-the-google-play-store",
+            "true",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
       }
 
-      return Promise.resolve(items);
     } else {
-      let items: any[] = [];
+      let items: ValidationItem[] = [];
 
       items.push(
         new ValidationItem(
-          "Store Ready",
+          "Is a PWA",
           "",
           sw && manifest && pwaUrl ? "true" : "false",
+          vscode.TreeItemCollapsibleState.Expanded
+        )
+      );
+
+      items.push(
+        new ValidationItem(
+          "Publish to Stores",
+          "",
+          "",
           vscode.TreeItemCollapsibleState.Expanded
         )
       );
@@ -100,9 +218,18 @@ class ValidationItem extends vscode.TreeItem {
     public readonly command?: vscode.Command
   ) {
     super(label, collapsibleState);
-    this.tooltip = `${this.label}`;
-    this.description = this.desc;
-    this.command = command;
+    this.tooltip = `${desc}`;
+    this.description = desc;
+
+    if (docsLink && docsLink.length > 0) {
+      this.command = {
+        command: "vscode.open",
+        title: `Open ${docsLink}`,
+        arguments: [
+          vscode.Uri.parse(docsLink)
+        ]
+      }
+    }
   }
 
   iconPath =
