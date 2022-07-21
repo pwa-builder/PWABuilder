@@ -7,8 +7,6 @@ import {
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
 
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/checkbox/checkbox.js';
-
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 
 interface PlatformInformation {

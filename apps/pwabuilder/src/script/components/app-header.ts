@@ -148,7 +148,7 @@ export class AppHeader extends LitElement {
     this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
       // casting here because of type problem described above
       if ((event as KeyboardEvent).key === "Enter") {
-        this.goHome();
+        Router.go("/");
       }
     })
   }
