@@ -454,6 +454,7 @@ export class AppReport extends LitElement {
         }
         #mh-actions {
           row-gap: 1em;
+          align-items: center;
         }
         .arrow_anchor {
           text-decoration: none;
@@ -555,6 +556,7 @@ export class AppReport extends LitElement {
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
+          align-items: center;
         }
         .detail-grid {
           display: flex;
@@ -564,11 +566,18 @@ export class AppReport extends LitElement {
 
         sl-progress-ring {
           height: fit-content;
+          --track-width: 8px;
         }
 
         sl-progress-ring::part(base).progress-ring__track {
           stroke-width: 2px;
         }
+
+        sl-progress-ring::part(label){
+          color: #4F3FB6;
+          font-weight: bold;
+        }
+
         .red {
           --indicator-color: var(--error-color);
         }
@@ -648,6 +657,7 @@ export class AppReport extends LitElement {
           width: 128px;
           border-radius: 50%;
         }
+        
         .test-result {
           display: flex;
           gap: .5em;
@@ -908,6 +918,8 @@ export class AppReport extends LitElement {
     }
 
     setInterval(() => this.pollLastTested(), 120000);
+
+    console.log(this.shadowRoot!.querySelector("sl-progress-ring"));
   }
 
   pollLastTested(){
@@ -981,7 +993,7 @@ export class AppReport extends LitElement {
   async runAllTests(url: string) {
     Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
     {
-      this.canPackage = this.canPackageList.every((can: boolean) => can)
+      this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
   }
 
@@ -1232,14 +1244,11 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("sw_selector_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  togglePublishModal() {
-    if(this.publishModalOpened){
-      recordPWABuilderProcessStep("publish_modal_closed", AnalyticsBehavior.ProcessCheckpoint);
-    } else {
-      recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
-    }
-    this.publishModalOpened = !this.publishModalOpened;
-    this.requestUpdate();
+  async openPublishModal() {
+    let dialog: any = this.shadowRoot!.querySelector("publish-pane")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog.show()
+    recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
   iconSrcListParse() {
@@ -1402,7 +1411,7 @@ export class AppReport extends LitElement {
                       <button
                         type="button"
                         id="pfs"
-                        @click=${() => this.togglePublishModal()}
+                        @click=${() => this.openPublishModal()}
                       >
                         Package for store
                       </button>
@@ -1840,16 +1849,10 @@ export class AppReport extends LitElement {
         }
         
       </sl-dialog>
-      ${this.publishModalOpened
-        ? html` <div class="modal-blur flex-center">
-            <div class="modal flex-col-center">
-              <img class="close_x" alt="close button" src="/assets/Close_desk.png" @click=${() => this.togglePublishModal()} />
-              <publish-pane></publish-pane>
-            </div>
-          </div>`
-        : html``}
-      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")} @manifestEditorClosed=${() => this.openManifestEditorModal()}></manifest-editor-frame>
-      <sw-selector @swSelectorClosed=${() => this.openSWSelectorModal()} @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+      
+      <publish-pane></publish-pane>
+      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>
+      <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;
   }

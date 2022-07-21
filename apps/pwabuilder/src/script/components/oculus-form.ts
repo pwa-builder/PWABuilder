@@ -20,7 +20,14 @@ export class OculusForm extends AppPackageFormBase {
   @state() existingSigningKey = emptyOculusSigningKey();
 
   static get styles() {
-    const localStyles = css``;
+    const localStyles = css`
+    
+      .basic-settings, .adv-settings {
+        display: flex;
+        flex-direction: column;
+        gap: .75em;
+      }
+        `;
     return [super.styles, localStyles];
   }
 
@@ -234,7 +241,7 @@ export class OculusForm extends AppPackageFormBase {
 
         <div id="form-options-actions" class="modal-actions">
           <loading-button .loading="${this.generating}">
-            <input id="generate-submit" type="submit" value="Generate" />
+            <input id="generate-submit" type="submit" value="Generate Package" />
           </loading-button>
         </div>
       </form>

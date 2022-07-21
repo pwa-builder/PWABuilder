@@ -31,9 +31,11 @@ export class WindowsForm extends AppPackageFormBase {
         .form-generate-button {
           width: 135px;
           height: 40px;
+        }
+        .basic-settings, .adv-settings {
           display: flex;
-          align-items: center;
-          justify-content: center;
+          flex-direction: column;
+          gap: .75em;
         }
       `,
     ];
@@ -348,7 +350,7 @@ export class WindowsForm extends AppPackageFormBase {
             .loading="${this.generating}"
             .primary=${true}
           >
-            <input id="generate-submit" type="submit" value="Generate" />
+            <input id="generate-submit" type="submit" value="Generate Package" />
           </loading-button>
         </div>
       </form>

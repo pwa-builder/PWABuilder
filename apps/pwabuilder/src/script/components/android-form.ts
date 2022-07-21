@@ -41,9 +41,12 @@ export class AndroidForm extends AppPackageFormBase {
       .form-generate-button {
         width: 135px;
         height: 40px;
+      }
+
+      .basic-settings, .adv-settings {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+        gap: .75em;
       }
     `;
     
@@ -665,12 +668,12 @@ export class AndroidForm extends AppPackageFormBase {
           html`
           <div id="form-details-block">
             <p>${localeStrings.text.android.description.form_details}</p>
-          </div>` : html`<p style="height: 84px; margin: 0;"></p>`
+          </div>` : html``
         }
 
         <div id="form-options-actions" class="modal-actions">
           <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-            <input id="generate-submit" type="submit" value="Generate" />
+            <input id="generate-submit" type="submit" value="Generate Package" />
           </loading-button>
         </div>
       </form>

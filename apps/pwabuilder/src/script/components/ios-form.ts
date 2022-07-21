@@ -23,9 +23,12 @@ export class IOSForm extends AppPackageFormBase {
       .form-generate-button {
         width: 135px;
         height: 40px;
+      }
+
+      .basic-settings, .adv-settings {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+        gap: .75em;
       }
     `;
     return [
@@ -216,7 +219,7 @@ export class IOSForm extends AppPackageFormBase {
 
         <div id="form-options-actions" class="modal-actions">
           <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-            <input id="generate-submit" type="submit" value="Generate" />
+            <input id="generate-submit" type="submit" value="Generate Package" />
           </loading-button>
         </div>
       </form>

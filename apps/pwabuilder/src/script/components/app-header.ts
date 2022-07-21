@@ -153,16 +153,17 @@ export class AppHeader extends LitElement {
     })
   }
 
-  goHome() {
+  recordGoingHome() {
     recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    Router.go('/');
   }
 
   render() {
     return html`
       <header part="header">
-        <img @click="${this.goHome}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
+        <a href="/" @click=${() => this.recordGoingHome()}>
+          <img tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
           alt="PWABuilder logo" />
+        </a>
       
         <nav id="desktop-nav">
           <fast-anchor

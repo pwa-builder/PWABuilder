@@ -1,6 +1,6 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
@@ -105,7 +105,7 @@ export class PublishPane extends LitElement {
         flex-direction: column;
         row-gap: .5em;
         width: 100%;
-        max-height: 90vh;
+        min-height: 90vh;
       }
       #frame-content {
         display: flex;
@@ -195,7 +195,7 @@ export class PublishPane extends LitElement {
         grid-template-columns: 1fr 1fr;
         grid-gap: .75em;
         padding: 1em;    
-        overflow-y: scroll;
+        overflow-y: auto;
       }
       app-button {
         display: flex;
@@ -300,6 +300,28 @@ export class PublishPane extends LitElement {
         padding: 1em;
       }
 
+      .dialog::part(body){
+        padding: 0;
+        width: 100%;
+      }
+      .dialog::part(title){
+        display: none;
+      }
+      .dialog::part(panel) {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .dialog::part(overlay){
+        backdrop-filter: blur(10px);
+      }
+      .dialog::part(close-button__base){
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
       /* > 1920 */
       ${xxxLargeBreakPoint(css``)}
 
@@ -315,10 +337,11 @@ export class PublishPane extends LitElement {
           display: flex;
           flex-direction: column;
           row-gap: .5em;
-          overflow-y: scroll;
+          overflow-y: auto;
         }
         #frame-header{
           margin-bottom: 10px;
+          padding: 1em 2em 0em 1em;
         }
         #frame-header h1 {
           font-size: 20px;
@@ -557,47 +580,58 @@ export class PublishPane extends LitElement {
     );
   }
 
+  async hideDialog(e: any){
+    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    if(e.target === dialog){
+      await dialog!.hide();
+      recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
+      document.body.style.height = "unset";
+    }
+  }
+
   render() {
     return html`
-      <div id="frame-wrapper">
-        <div id="frame-content">
-        ${this.cardsOrForm ?
-          html`
-          <div id="frame-header">
-            <h1>Awesome! Your PWA is store ready!</h1>
-            <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
-          </div>
-          <div id="store-cards">
-            ${this.renderContentCards()}
-          </div>`
-          :
-          html`
-          <div id="form-header">
-            <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
-            <div id="form-header-content">
-              <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
-              <div id="form-header-text">
-                <h1>${this.selectedStore} Package Options</h1>
-                <p>Customize your ${this.selectedStore} app below!</p>
-              </div>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+        <div id="frame-wrapper">
+          <div id="frame-content">
+          ${this.cardsOrForm ?
+            html`
+            <div id="frame-header">
+              <h1>Awesome! Your PWA is store ready!</h1>
+              <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
             </div>
-          </div> 
-          ${!this.readyToDownload ?   
-            // so if this is false then we wanna show the form  
+            <div id="store-cards">
+              ${this.renderContentCards()}
+            </div>`
+            :
             html`
-              <div id="form-area">
-                ${this.renderForm()}
+            <div id="form-header">
+              <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
+              <div id="form-header-content">
+                <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
+                <div id="form-header-text">
+                  <h1>${this.selectedStore} Package Options</h1>
+                  <p>Customize your ${this.selectedStore} app below!</p>
+                </div>
               </div>
-            ` :
-            // when this becomes true this means that we are ready to download something
-            html`
-              <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
-            `
-          }  
-        `
-        }
+            </div> 
+            ${!this.readyToDownload ?   
+              // so if this is false then we wanna show the form  
+              html`
+                <div id="form-area">
+                  ${this.renderForm()}
+                </div>
+              ` :
+              // when this becomes true this means that we are ready to download something
+              html`
+                <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
+              `
+            }  
+          `
+          }
+          </div>
         </div>
-      </div>
+      </sl-dialog>
         
     `;
   }

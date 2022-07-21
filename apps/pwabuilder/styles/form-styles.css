@@ -1,9 +1,7 @@
 #form-layout {
-  padding-left: 2em;
-  padding-right: 2em;
   overflow-y: auto;
 
-  max-height: 15em;
+  max-height: 18em;
 }
 
 .tooltip {
@@ -34,25 +32,20 @@
 
 #form-options-actions {
   display: flex;
-  justify-content: center;
-  margin-top: 37px;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 #form-details-block {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 #form-details-block p {
-  text-align: center;
   font-weight: 300;
-  font-size: var(--small-font-size);
-
+  font-size: 14px;
   color: rgba(128, 128, 128, 1);
-  line-height: 30px;
-
-  padding-left: 2em;
   padding-right: 2em;
 }
 
