@@ -73,7 +73,7 @@ export class ManifestScreenshotsForm extends LitElement {
         align-items: center;
         column-gap: 5px;
       }
-      ..toolTip {
+      .toolTip {
         visibility: hidden;
         width: 200px;
         background-color: #ffffff;
