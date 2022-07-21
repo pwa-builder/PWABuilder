@@ -37,6 +37,10 @@ export class WindowsForm extends AppPackageFormBase {
           flex-direction: column;
           gap: .75em;
         }
+        .form-extras {
+          display: flex;
+          flex-direction: column;
+        }
       `,
     ];
   }
@@ -341,17 +345,19 @@ export class WindowsForm extends AppPackageFormBase {
             </fast-accordion-item>
           </fast-accordion>
         </div>
-        <div id="form-details-block">
-          <p>${localeStrings.text.publish.windows_platform.p}</p>
-        </div>
-        <div id="form-options-actions" class="modal-actions">
-          <loading-button
-            class="form-generate-button"
-            .loading="${this.generating}"
-            .primary=${true}
-          >
-            <input id="generate-submit" type="submit" value="Generate Package" />
-          </loading-button>
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>${localeStrings.text.publish.windows_platform.p}</p>
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <loading-button
+              class="form-generate-button"
+              .loading="${this.generating}"
+              .primary=${true}
+            >
+              <input id="generate-submit" type="submit" value="Generate Package" />
+            </loading-button>
+          </div>
         </div>
       </form>
     `;

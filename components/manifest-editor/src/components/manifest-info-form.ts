@@ -81,16 +81,17 @@ export class ManifestInfoForm extends LitElement {
       .toolTip {
         visibility: hidden;
         width: 200px;
-        background-color: #f8f8f8;
+        background-color: #ffffff;
         color: black;
         text-align: center;
         border-radius: 6px;
-        padding: 5px;
+        padding: .75em;
         /* Position the tooltip */
         position: absolute;
         top: 10px;
         left: 10px;
         z-index: 1;
+        box-shadow: 0px 2px 20px 0px #0000006c;
       }
       .field-header a {
         display: flex;
@@ -330,7 +331,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the name option in your manifest.
                   </p>
@@ -351,7 +352,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the short name option in your manifest.
                   </p>
@@ -374,7 +375,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the description option in your manifest.
                   </p>
@@ -393,7 +394,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the display option in your manifest.
                   </p>
@@ -416,7 +417,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the background color option in your manifest.
                   </p>
@@ -435,7 +436,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <ion-icon name="information-circle-outline"></ion-icon>
+                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the theme color option in your manifest.
                   </p>

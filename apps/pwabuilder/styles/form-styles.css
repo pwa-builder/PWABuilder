@@ -1,6 +1,6 @@
 #form-layout {
   overflow-y: auto;
-
+  padding-right: .5em;
   max-height: 18em;
 }
 

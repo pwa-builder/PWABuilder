@@ -108,7 +108,7 @@ export class AppReport extends LitElement {
 
   // will be used to control the state of the "Package for store" button.
   @state() canPackageList: boolean[] = [];
-  @state() canPackage: boolean = false;
+  @state() canPackage: boolean = true;
   @state() manifestEditorOpened: boolean = false;
   @state() publishModalOpened: boolean = false;
 
@@ -334,6 +334,11 @@ export class AppReport extends LitElement {
         sl-details:disabled{
           cursor: no-drop;
         }
+
+        sl-details::part(summary-icon){
+          display: none;
+        }
+
         #hover {
           background-color: rgba(0, 0, 0, 0.75);
         }
@@ -403,6 +408,16 @@ export class AppReport extends LitElement {
         }
         sl-details::part(content) {
           padding-top: 0;
+        }
+        .details-summary {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+        .dropdown_icon {
+          transform: rotate(0);  
+          transition: transform .5s;
         }
         #todo-detail::part(base) {
           border-radius: 10px;
@@ -549,10 +564,6 @@ export class AppReport extends LitElement {
         #swh-text {
           row-gap: 0.5em;
         }
-        #sw-ring {
-          --size: 80px;
-          height: fit-content;
-        }
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
@@ -567,10 +578,8 @@ export class AppReport extends LitElement {
         sl-progress-ring {
           height: fit-content;
           --track-width: 8px;
-        }
-
-        sl-progress-ring::part(base).progress-ring__track {
-          stroke-width: 2px;
+          --size: 100px;
+          font-size: 18px;
         }
 
         sl-progress-ring::part(label){
@@ -653,8 +662,8 @@ export class AppReport extends LitElement {
           display: flex;
         }
         .progressRingSkeleton::part(base) {
-          height: 128px;
-          width: 128px;
+          height: 100px;
+          width: 100px;
           border-radius: 50%;
         }
         
@@ -809,6 +818,7 @@ export class AppReport extends LitElement {
 
           sl-progress-ring {
             --size: 75px;
+            --track-width: 4px;
             font-size: 14px;
           }
           .progressRingSkeleton::part(base) {
@@ -827,6 +837,7 @@ export class AppReport extends LitElement {
         
           sl-progress-ring {
             --size: 75px;
+            --track-width: 4px;
             font-size: 14px;
           }
           .progressRingSkeleton::part(base) {
@@ -918,8 +929,6 @@ export class AppReport extends LitElement {
     }
 
     setInterval(() => this.pollLastTested(), 120000);
-
-    console.log(this.shadowRoot!.querySelector("sl-progress-ring"));
   }
 
   pollLastTested(){
@@ -1317,7 +1326,6 @@ export class AppReport extends LitElement {
 
     if(e.detail.field === "Open SW Modal"){
       this.swSelectorOpen = true;
-      console.log("Open SW Modal");
     }
 
     let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
@@ -1345,6 +1353,17 @@ export class AppReport extends LitElement {
   addRetestTodo(toAdd: string){
     this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest", "displayString": toAdd});
     this.requestUpdate();
+  }
+
+  detailsClicked(card: string){
+    recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
+    
+    if(icon!.style.transform === "rotate(90deg)"){
+      icon!.style.transform = "rotate(0deg)";
+    } else {
+      icon!.style.transform = "rotate(90deg)";
+    }
   }
 
 
@@ -1461,9 +1480,12 @@ export class AppReport extends LitElement {
           <div id="todo">
             <sl-details 
               id="todo-detail" 
-              summary="To-do list"
-              @click=${() => recordPWABuilderProcessStep("todo_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}
+              @click=${() => this.detailsClicked("todo")}
               >
+              <div class="details-summary" slot="summary">
+                <p>View Details</p>
+                <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              </div>
              ${this.todoItems.map((todo: any) => 
                 html`
                   <todo-item
@@ -1548,12 +1570,12 @@ export class AppReport extends LitElement {
             <sl-details 
               id="mani-details" 
               class="details"
-              @click=${() => recordPWABuilderProcessStep("manifest_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}
+              @click=${() => this.detailsClicked("manifest")}
               >
-              ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+              ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="manifest" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
               <div id="manifest-detail-grid">
                 <div class="detail-list">
-                  <p class="detail-list-header">*Required</p>
+                  <p class="detail-list-header">Required</p>
                   ${this.validationResults.map((result: Validation) => result.category === "required" ? 
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -1715,11 +1737,11 @@ export class AppReport extends LitElement {
               <sl-details 
                 id="sw-details" 
                 class="details"
-                @click=${() => recordPWABuilderProcessStep("sw_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}>
-                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+                @click=${() => this.detailsClicked("service_worker")}>
+                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="service_worker" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
-                    <p class="detail-list-header">*Required</p>
+                    <p class="detail-list-header">Required</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ? 
                     html`
                       <div class="test-result" data-field=${result.infoString}>
@@ -1811,12 +1833,12 @@ export class AppReport extends LitElement {
               <sl-details 
                 id="sec-details" 
                 class="details"
-                @click=${() => recordPWABuilderProcessStep("security_details_expanded", AnalyticsBehavior.ProcessCheckpoint)}
+                @click=${() => this.detailsClicked("security")}
                 >
-              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div slot="summary">View Details</div>`}
+              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="security" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
-                    <p class="detail-list-header">*Required</p>
+                    <p class="detail-list-header">Required</p>
                     ${this.securityResults.map((result: TestResult) => result.category === "required" ? 
                       html`
                         <div class="test-result" data-field=${result.infoString}>

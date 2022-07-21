@@ -100,32 +100,28 @@ export class PublishPane extends LitElement {
         box-sizing: border-box;
       }
       
-      #frame-wrapper {
-        display: flex;
-        flex-direction: column;
-        row-gap: .5em;
+      #pp-frame-wrapper {
         width: 100%;
         min-height: 90vh;
       }
-      #frame-content {
+      #pp-frame-content {
         display: flex;
         flex-direction: column;
-        max-height: 90vh;
       }
-      #frame-header {
+      #pp-frame-header {
         display: flex;
         flex-direction: column;
         row-gap: .25em;
         padding: 1em;
         padding-bottom: 0;
       }
-      #frame-header > * {
+      #pp-frame-header > * {
         margin: 0;
       }
-      #frame-header h1 {
+      #pp-frame-header h1 {
         font-size: 24px;
       }
-      #frame-header p {
+      #pp-frame-header p {
         font-size: 14px;
       }
       .card-wrapper {
@@ -255,7 +251,7 @@ export class PublishPane extends LitElement {
       .unselected-apk {
         border-bottom: 5px solid transparent;
       }
-      #form-header {
+      #pp-form-header {
         display: flex;
         flex-direction: column;
         background-color: #F2F3FB;
@@ -264,35 +260,35 @@ export class PublishPane extends LitElement {
         padding: 1em;
         gap: .5em;
       }
-      #form-header > img {
+      #pp-form-header > img {
         width: 25px;
       }
-      #form-header > button {
+      #pp-form-header > button {
         all: unset;
       }
-      #form-header > button:hover {
+      #pp-form-header > button:hover {
         cursor: pointer;
       }
-      #form-header-content {
+      #pp-form-header-content {
         display: flex;
         gap: 1em;
       }
-      #form-header-content img {
+      #pp-form-header-content img {
         height: 50px;
       }
-      #form-header-text {
+      #pp-form-header-text {
         display: flex;
         flex-direction: column;
       }
-      #form-header-text > * {
+      #pp-form-header-text > * {
         margin: 0;
       }
-      #form-header-text h1 {
+      #pp-form-header-text h1 {
         font-size: 24px;
         white-space: nowrap;
         line-height: 24px;
       }
-      #form-header-text p {
+      #pp-form-header-text p {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5)
       }
@@ -339,26 +335,26 @@ export class PublishPane extends LitElement {
           row-gap: .5em;
           overflow-y: auto;
         }
-        #frame-header{
+        #pp-frame-header{
           margin-bottom: 10px;
           padding: 1em 2em 0em 1em;
         }
-        #frame-header h1 {
+        #pp-frame-header h1 {
           font-size: 20px;
           line-height: 20px;
         }
-        #frame-header p {
+        #pp-frame-header p {
           font-size: 12px;
         }
-        #form-header-content img {
+        #pp-form-header-content img {
           height: 35px;
         }
-        #form-header-text h1 {
+        #pp-form-header-text h1 {
           font-size: 20px;
           white-space: nowrap;
           line-height: 20px;
         }
-        #form-header-text p {
+        #pp-form-header-text p {
           font-size: 12px;
         }
         #apk-type p {
@@ -592,11 +588,11 @@ export class PublishPane extends LitElement {
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
-        <div id="frame-wrapper">
-          <div id="frame-content">
+        <div id="pp-frame-wrapper">
+          <div id="pp-frame-content">
           ${this.cardsOrForm ?
             html`
-            <div id="frame-header">
+            <div id="pp-frame-header">
               <h1>Awesome! Your PWA is store ready!</h1>
               <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
             </div>
@@ -605,11 +601,11 @@ export class PublishPane extends LitElement {
             </div>`
             :
             html`
-            <div id="form-header">
+            <div id="pp-form-header">
               <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
-              <div id="form-header-content">
+              <div id="pp-form-header-content">
                 <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
-                <div id="form-header-text">
+                <div id="pp-form-header-text">
                   <h1>${this.selectedStore} Package Options</h1>
                   <p>Customize your ${this.selectedStore} app below!</p>
                 </div>
