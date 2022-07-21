@@ -30,6 +30,12 @@ export class ManifestScreenshotsForm extends LitElement {
 
   static get styles() {
     return css`
+      :host {
+        --sl-focus-ring-width: 3px;
+        --sl-input-focus-ring-color: #4f3fb670;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+        --sl-input-border-color-focus: #4F3FB6ac;
+      }
       sl-input::part(base),
       sl-select::part(control),
       sl-button::part(base) {
@@ -130,6 +136,18 @@ export class ManifestScreenshotsForm extends LitElement {
         0% { transform: rotate(-15deg)}
         25% , 75%{ transform: rotate(0deg)}
         100% {  transform: rotate(25deg)}
+      }
+
+      .error::part(base){
+        border-color: #eb5757;
+        --sl-input-focus-ring-color: ##eb575770;
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+        --sl-input-border-color-focus: #eb5757ac;
+      }
+
+      .error::part(control){
+        border-color: #eb5757;
       }
 
       @media(max-width: 765px){

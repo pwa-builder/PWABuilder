@@ -22,8 +22,8 @@ export class ManifestInfoForm extends LitElement {
 
       :host {
         --sl-focus-ring-width: 3px;
-        --sl-focus-ring-color: #4f3fb670;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-focus-ring-color);
+        --sl-input-focus-ring-color: #4f3fb670;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
       }
 
@@ -151,9 +151,9 @@ export class ManifestInfoForm extends LitElement {
 
       .error::part(base){
         border-color: #eb5757;
-
+        --sl-input-focus-ring-color: #eb575770;
         --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #eb575770;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #eb5757ac;
       }
 
