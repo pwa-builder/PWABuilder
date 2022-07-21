@@ -22,7 +22,8 @@ export class ManifestInfoForm extends LitElement {
 
       :host {
         --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) #4f3fb670;
+        --sl-focus-ring-color: #4f3fb670;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
       }
 
@@ -331,7 +332,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the name option in your manifest.
                   </p>
@@ -352,7 +353,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the short name option in your manifest.
                   </p>
@@ -375,7 +376,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the description option in your manifest.
                   </p>
@@ -394,7 +395,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the display option in your manifest.
                   </p>
@@ -417,7 +418,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the background color option in your manifest.
                   </p>
@@ -436,7 +437,7 @@ export class ManifestInfoForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the theme color option in your manifest.
                   </p>

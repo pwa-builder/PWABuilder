@@ -230,7 +230,7 @@ export class ManifestSettingsForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the start url option in your manifest.
                   </p>
@@ -251,7 +251,7 @@ export class ManifestSettingsForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the scope option in your manifest.
                   </p>
@@ -272,7 +272,7 @@ export class ManifestSettingsForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the orientaiton option in your manifest.
                   </p>
@@ -293,7 +293,7 @@ export class ManifestSettingsForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the language option in your manifest.
                   </p>
@@ -316,7 +316,7 @@ export class ManifestSettingsForm extends LitElement {
                   target="_blank"
                   rel="noopener"
                 >
-                  <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
                     Click for more info on the dir option in your manifest.
                   </p>

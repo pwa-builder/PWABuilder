@@ -667,7 +667,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the IARC rating id option in your manifest.
                 </p>
@@ -684,7 +684,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the prefer related applications option in your manifest.
                 </p>
@@ -706,7 +706,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the related applications option in your manifest.
                 </p>
@@ -743,7 +743,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the display override option in your manifest.
                 </p>
@@ -782,7 +782,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the shortcuts option in your manifest.
                 </p>
@@ -818,7 +818,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the protocol handlers option in your manifest.
                 </p>
@@ -852,7 +852,7 @@ export class ManifestPlatformForm extends LitElement {
                 target="_blank"
                 rel="noopener"
               >
-                <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                 <p class="toolTip">
                   Click for more info on the categories option in your manifest.
                 </p>
