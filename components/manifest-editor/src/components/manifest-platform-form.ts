@@ -88,18 +88,22 @@ export class ManifestPlatformForm extends LitElement {
       }
       .toolTip {
         visibility: hidden;
-        width: 200px;
-        background-color: #ffffff;
-        color: black;
+        width: 150px;
+        background: black;
+        color: white;
+        font-weight: 500;
         text-align: center;
         border-radius: 6px;
         padding: .75em;
         /* Position the tooltip */
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 20px;
+        left: -25px;
         z-index: 1;
         box-shadow: 0px 2px 20px 0px #0000006c;
+      }
+      .special-tip {
+        left: -120px;
       }
       .field-header a {
         display: flex;
@@ -215,6 +219,9 @@ export class ManifestPlatformForm extends LitElement {
         #cat-field {
           grid-template-columns: repeat(4, auto);
           grid-auto-flow: unset;
+        }
+        .special-tip {
+          left: -25px;
         }
       }
 
@@ -686,7 +693,7 @@ export class ManifestPlatformForm extends LitElement {
                 rel="noopener"
               >
                 <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
+                <p class="toolTip special-tip">
                   Click for more info on the prefer related applications option in your manifest.
                 </p>
               </a>

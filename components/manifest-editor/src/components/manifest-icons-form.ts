@@ -90,16 +90,17 @@ export class ManifestIconsForm extends LitElement {
       
       .toolTip {
         visibility: hidden;
-        width: 200px;
-        background-color: #ffffff;
-        color: black;
+        width: 150px;
+        background: black;
+        color: white;
+        font-weight: 500;
         text-align: center;
         border-radius: 6px;
         padding: .75em;
         /* Position the tooltip */
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 20px;
+        left: -25px;
         z-index: 1;
         box-shadow: 0px 2px 20px 0px #0000006c;
       }
