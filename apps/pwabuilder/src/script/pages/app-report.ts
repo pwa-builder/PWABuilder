@@ -36,7 +36,6 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { text } from 'express';
 
 /* const possible_messages = {
   overview: {
@@ -108,9 +107,8 @@ export class AppReport extends LitElement {
 
   // will be used to control the state of the "Package for store" button.
   @state() canPackageList: boolean[] = [];
-  @state() canPackage: boolean = false;
+  @state() canPackage: boolean = true;
   @state() manifestEditorOpened: boolean = false;
-  @state() publishModalOpened: boolean = false;
 
   @state() swSelectorOpen: boolean = false;
 
@@ -753,42 +751,7 @@ export class AppReport extends LitElement {
          width: 45%;
         }
 
-        @media(max-width: 765px){
-          .modal {
-            max-width: 600px;
-            max-height: 600px;
-          }
-
-          manifest-editor-frame {
-            max-width: 600px;
-            max-height: 600px;
-            overflow-y: scroll;
-          }
-        }
-
-        @media(max-width: 600px){
-          .modal {
-            max-width: 480px;
-            max-height: 650px;
-          }
-
-          manifest-editor-frame {
-            max-width: 480px;
-            max-height: 650px;
-          }
-        }
-
-        @media(max-width: 480px){
-          .modal {
-            max-width: 320px;
-            max-height: 600px;
-          }
-
-          manifest-editor-frame {
-            max-width: 320px;
-            max-height: 600px;
-          }
-        }
+        
 
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
@@ -807,6 +770,10 @@ export class AppReport extends LitElement {
 
           #mh-content {
             flex-direction: column;
+          }
+          #mh-actions, #sw-actions {
+            align-items: flex-start;
+            width: 50%;
           }
           #mh-text {
             width: 100%;
