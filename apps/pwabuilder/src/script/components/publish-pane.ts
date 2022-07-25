@@ -102,11 +102,12 @@ export class PublishPane extends LitElement {
       
       #pp-frame-wrapper {
         width: 100%;
-        min-height: 90vh;
+        height: 90vh;
       }
       #pp-frame-content {
         display: flex;
         flex-direction: column;
+        height: 100%;
       }
       #pp-frame-header {
         display: flex;
@@ -294,7 +295,14 @@ export class PublishPane extends LitElement {
       }
       #form-area {
         padding: 1em;
+        height: 100%;
       }
+
+      #form-area[data-store="Android"] {
+        padding-top: 0;
+      }
+
+
 
       .dialog::part(body){
         padding: 0;
@@ -614,7 +622,7 @@ export class PublishPane extends LitElement {
             ${!this.readyToDownload ?   
               // so if this is false then we wanna show the form  
               html`
-                <div id="form-area">
+                <div id="form-area" data-store=${this.selectedStore}>
                   ${this.renderForm()}
                 </div>
               ` :

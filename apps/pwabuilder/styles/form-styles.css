@@ -1,7 +1,7 @@
 #form-layout {
   overflow-y: auto;
   padding-right: .5em;
-  max-height: 18em;
+  max-height: 24em;
 }
 
 .tooltip {
@@ -107,10 +107,6 @@ fast-accordion-item::part(icon) {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-form {
-  max-height: 24em;
 }
 
 .form-check {

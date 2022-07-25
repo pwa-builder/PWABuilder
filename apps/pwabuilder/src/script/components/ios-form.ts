@@ -14,6 +14,14 @@ export class IOSForm extends AppPackageFormBase {
 
   static get styles() {
     const localStyles = css`
+
+      #ios-options-form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
        .flipper-button {
         display: flex;
         justify-content: center;
@@ -29,6 +37,10 @@ export class IOSForm extends AppPackageFormBase {
         display: flex;
         flex-direction: column;
         gap: .75em;
+      }
+      #form-extras {
+        display: flex;
+        flex-direction: column;
       }
     `;
     return [
@@ -210,17 +222,19 @@ export class IOSForm extends AppPackageFormBase {
           </fast-accordion>
         </div>
 
-        <div id="form-details-block">
-          <p>
-            Your download will contain
-            <a href="https://blog.pwabuilder.com/docs/build-your-ios-app" target="_blank">instructions</a>
-            for submitting to the App Store.</p>
-        </div>
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>
+              Your download will contain
+              <a href="https://blog.pwabuilder.com/docs/build-your-ios-app" target="_blank">instructions</a>
+              for submitting to the App Store.</p>
+          </div>
 
-        <div id="form-options-actions" class="modal-actions">
-          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-            <input id="generate-submit" type="submit" value="Generate Package" />
-          </loading-button>
+          <div id="form-options-actions" class="modal-actions">
+            <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
+              <input id="generate-submit" type="submit" value="Generate Package" />
+            </loading-button>
+          </div>
         </div>
       </form>
     `;
