@@ -214,7 +214,7 @@ export class PublishPane extends LitElement {
         cursor: pointer;
         background-color: rgba(0, 0, 0, 0.75);
       }
-      #apk-type {
+      #apk-tabs {
         display: flex;
         align-items: baseline;
         width: 100%;
@@ -222,18 +222,24 @@ export class PublishPane extends LitElement {
         margin-top: 20px;
         margin-bottom: 14px;
       }
-      #apk-type p {
+      .tab-holder {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: .5em;
+        justify-content: center;
+      }
+      .tab-holder p {
         font-size: 20px;
         font-weight: 700;
         line-height: 20px;
         letter-spacing: 0px;
         text-align: center;
-        width: 100%;
         margin: 0;
         padding: 10px 0;
         white-space: nowrap;
       }
-      #apk-type p:hover {
+      .tab-holder p:hover {
         cursor: pointer;
       }
       #other-android{
@@ -324,6 +330,31 @@ export class PublishPane extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
+      }
+
+      #unsigned-tooltip{
+        position: relative;
+      }
+
+      .toolTip {
+        visibility: hidden;
+        font-size: 14px;
+        width: 150px;
+        background: black;
+        color: white;
+        font-weight: 500;
+        text-align: center;
+        border-radius: 6px;
+        padding: .75em;
+        /* Position the tooltip */
+        position: absolute;
+        top: 25px;
+        left: -100px;
+        z-index: 1;
+        box-shadow: 0px 2px 20px 0px #0000006c;
+      }
+      #unsigned-tooltip:hover .toolTip {
+        visibility: visible;
       }
 
       /* > 1920 */
@@ -424,12 +455,19 @@ export class PublishPane extends LitElement {
         this.generate('windows', ev.detail as WindowsPackageOptions)}"></windows-form>`
     } else if(this.selectedStore === "Android"){
       return html`
-      <div id="apk-type">
-        <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
-        <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
-          Other Android
-          <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
-        </p> 
+      <div id="apk-tabs">
+        <div class="tab-holder selected-apk">
+          <p class="apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
+        </div>
+        <div class="tab-holder unselected-apk">
+          <p class="apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p> 
+          <div id="unsigned-tooltip">
+            <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+            <span class="toolTip">
+              Generates an unsigned APK.
+            </span>
+          </div>
+        </div>
       </div>
       ${this.isGooglePlay ?
         html`<android-form .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
@@ -464,7 +502,7 @@ export class PublishPane extends LitElement {
   toggleApkType(event: any){
     let old = this.shadowRoot!.querySelector(".selected-apk");
     old?.classList.replace("selected-apk", "unselected-apk");
-    let next = event.target;
+    let next = event.target.parentNode;
     next.classList.replace("unselected-apk", "selected-apk");
 
     if(event.target.innerHTML === "Google Play"){
