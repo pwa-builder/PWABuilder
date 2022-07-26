@@ -1,4 +1,5 @@
-import { LitElement, css, html } from 'lit';
+import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
   Icon,
@@ -8,6 +9,8 @@ import {
 import { resolveUrl } from '../utils/urls';
 
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+
+let manifestInitialized = false;
 
 interface PlatformInformation {
   label: string;
@@ -152,6 +155,9 @@ export class ManifestIconsForm extends LitElement {
         flex-direction: column;
         row-gap: 5px;
       }
+      .error {
+        color: #eb5757
+      }
 
       @media(max-width: 765px){
         sl-checkbox::part(base),
@@ -201,6 +207,44 @@ export class ManifestIconsForm extends LitElement {
 
   constructor() {
     super();
+  }
+
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+      manifestInitialized = true;
+      
+      await this.validateAllFields();
+    }
+  }
+
+  async validateAllFields(){
+    let field = "icons";
+
+    if(this.manifest[field]){
+      const validation = await validateSingleField(field, this.manifest[field]);
+
+      if(!validation){
+        let title = this.shadowRoot!.querySelector('h3');
+        title!.classList.add("error");
+        this.errorInTab();
+      }
+    } else {
+      /* This handles the case where the field is not in the manifest.. 
+      we only want to make it red if its REQUIRED. */
+      if(required_fields.includes(field)){
+        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+        input!.classList.add("error");
+        this.errorInTab();
+      }
+    }
+  }
+
+  errorInTab(){
+    let errorInTab = new CustomEvent('errorInTab', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorInTab);
   }
 
 

@@ -156,6 +156,7 @@ export class ManifestSettingsForm extends LitElement {
       manifestInitialized = true;
       
       await this.validateAllFields();
+      
     }
   }
 
@@ -165,10 +166,12 @@ export class ManifestSettingsForm extends LitElement {
 
       if(this.manifest[field]){
         const validation = await validateSingleField(field, this.manifest[field]);
-        //console.log(field, validation);
+        
         if(!validation){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+
+          this.errorInTab();
         }
       } else {
         /* This handles the case where the field is not in the manifest.. 
@@ -179,6 +182,14 @@ export class ManifestSettingsForm extends LitElement {
         }
       }
     }
+  }
+
+  errorInTab(){
+    let errorInTab = new CustomEvent('errorInTab', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorInTab);
   }
 
   async handleInputChange(event: InputEvent){

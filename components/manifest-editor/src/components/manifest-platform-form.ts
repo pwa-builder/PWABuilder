@@ -198,7 +198,7 @@ export class ManifestPlatformForm extends LitElement {
 
       .error::part(base){
         border-color: #eb5757;
-        --sl-input-focus-ring-color: ##eb575770;
+        --sl-input-focus-ring-color: #eb575770;
         --sl-focus-ring-width: 3px;
         --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #eb5757ac;
@@ -277,9 +277,7 @@ export class ManifestPlatformForm extends LitElement {
      to reset when it changes. It triggers an update event which would cause all of this to
      run again. Its true purpose is to keep the view aligned with the manifest. */
      
-    if(_changedProperties.has("manifest") &&
-      manifestInitialized && this.manifest.name){
-
+    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
       await this.validateAllFields();
       this.reset();
@@ -296,7 +294,15 @@ export class ManifestPlatformForm extends LitElement {
         const validation = await validateSingleField(field, this.manifest[field]);
         if(!validation){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          input!.classList.add("error");
+
+          // COME BACK AND FIX THIS: I HAVE NO CLUE WHY ITS WORKING THIS WAY?
+          if(field === "prefer_related_applications"){
+            input!.classList.add(".error")
+          } else {
+            input!.classList.add("error");
+          }
+
+          this.errorInTab();
         }
       } else {
         /* This handles the case where the field is not in the manifest.. 
@@ -307,6 +313,14 @@ export class ManifestPlatformForm extends LitElement {
         }
       }
     }
+  }
+
+  errorInTab(){
+    let errorInTab = new CustomEvent('errorInTab', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorInTab);
   }
 
   reset() {

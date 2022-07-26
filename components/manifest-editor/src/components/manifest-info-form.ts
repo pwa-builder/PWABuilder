@@ -150,6 +150,10 @@ export class ManifestInfoForm extends LitElement {
         --height: 22px;
       }
 
+      .error-color-field{
+        border: 1px solid #eb5757 !important;
+      }
+
       .error::part(base){
         border-color: #eb5757;
         --sl-input-focus-ring-color: #eb575770;
@@ -227,7 +231,12 @@ export class ManifestInfoForm extends LitElement {
 
         if(!validation){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          input!.classList.add("error");
+          if(field === "theme_color" || field === "background_color"){
+            input!.classList.add("error-color-field");
+          } else{
+            input!.classList.add("error");
+          }
+          
           this.errorInTab();
 
         }
