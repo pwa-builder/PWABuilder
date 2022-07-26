@@ -459,7 +459,7 @@ export const maniTests: Array<Validation> = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0 && value === "ltr" || value === "rtl"
+                value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
     },
     {
         member: "description",

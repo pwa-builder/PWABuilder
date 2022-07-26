@@ -294,13 +294,7 @@ export class ManifestPlatformForm extends LitElement {
         const validation = await validateSingleField(field, this.manifest[field]);
         if(!validation){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-
-          // COME BACK AND FIX THIS: I HAVE NO CLUE WHY ITS WORKING THIS WAY?
-          if(field === "prefer_related_applications"){
-            input!.classList.add(".error")
-          } else {
-            input!.classList.add("error");
-          }
+          input!.classList.add("error");
 
           this.errorInTab();
         }
