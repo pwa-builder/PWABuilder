@@ -1,3 +1,4 @@
+import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
@@ -139,16 +140,8 @@ export class ManifestScreenshotsForm extends LitElement {
         100% {  transform: rotate(25deg)}
       }
 
-      .error::part(base){
-        border-color: #eb5757;
-        --sl-input-focus-ring-color: ##eb575770;
-        --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #eb5757ac;
-      }
-
-      .error::part(control){
-        border-color: #eb5757;
+      .error {
+        color: #eb5757;
       }
 
       @media(max-width: 765px){
@@ -186,15 +179,46 @@ export class ManifestScreenshotsForm extends LitElement {
     super();
   }
 
-  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
+      await this.validateAllFields();
       if(this.manifest.screenshots && this.initialScreenshotLength == -1){
         this.initialScreenshotLength = this.manifest.screenshots.length;
       } else {
         this.initialScreenshotLength = 0;
       }
     }
+  }
+
+  async validateAllFields(){
+    let field = "screenshots";
+
+    if(this.manifest[field]){
+      const validation = await validateSingleField(field, this.manifest[field]);
+
+      if(!validation){
+        let title = this.shadowRoot!.querySelector('h3');
+        title!.classList.add("error");
+        this.errorInTab();
+      }
+    } else {
+      /* This handles the case where the field is not in the manifest.. 
+      we only want to make it red if its REQUIRED. */
+      if(required_fields.includes(field)){
+        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+        input!.classList.add("error");
+        this.errorInTab();
+      }
+    }
+  }
+
+  errorInTab(){
+    let errorInTab = new CustomEvent('errorInTab', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorInTab);
   }
 
   handleInputChange(event: InputEvent){
