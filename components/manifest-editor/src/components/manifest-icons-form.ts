@@ -435,6 +435,7 @@ export class ManifestIconsForm extends LitElement {
               class="file-input hidden"
               type="file"
               aria-hidden="true"
+              accept="image/png"
               @change=${() => this.handleModalInputFileChange()}
             />
           </div>
