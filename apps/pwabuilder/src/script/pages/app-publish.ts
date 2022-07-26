@@ -51,6 +51,7 @@ export class AppPublish extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  @state() generatedPlatform = '';
 
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -585,13 +586,13 @@ export class AppPublish extends LitElement {
     recordProcessStep(
       'analyze-and-package-pwa',
       `create-${platform}-package`,
-      AnalyticsBehavior.CompleteProcess,
+      AnalyticsBehavior.ProcessCheckpoint,
       { url: getURL() });
 
       recordProcessStep(
         'pwa-builder',
         `create-${platform}-package`,
-        AnalyticsBehavior.CompleteProcess,
+        AnalyticsBehavior.ProcessCheckpoint,
         { url: getURL() });
 
     try {
@@ -600,6 +601,7 @@ export class AppPublish extends LitElement {
 
       if (packageData) {
         this.downloadFileName = `${packageData.appName}.zip`;
+        this.generatedPlatform = platform;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
@@ -632,11 +634,45 @@ export class AppPublish extends LitElement {
   }
 
   async download() {
+
+    recordProcessStep(
+    'analyze-and-package-pwa',
+    `download-${this.generatedPlatform}-package`,
+    AnalyticsBehavior.CompleteProcess,
+    { url: getURL() });
+
+    recordProcessStep(
+      'pwa-builder',
+      `download-${this.generatedPlatform}-package`,
+      AnalyticsBehavior.CompleteProcess,
+      { url: getURL() });
+
     if (this.blob || this.testBlob) {
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+      try{
+        await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+          fileName: this.downloadFileName || 'your_pwa.zip',
+          extensions: ['.zip'],
+        });
+      } catch(error){
+        console.log(error);
+        recordProcessStep(
+          'analyze-and-package-pwa',
+          `download-${this.generatedPlatform}-package-stopped`,
+          AnalyticsBehavior.ProcessCheckpoint,
+          {
+            url: getURL(),
+            error: error
+          });
+    
+        recordProcessStep(
+          'pwa-builder',
+          `download-${this.generatedPlatform}-package-stopped`,
+          AnalyticsBehavior.ProcessCheckpoint,
+          {
+            url: getURL(),
+            error: error
+          }); 
+      }
 
       this.blob = undefined;
       this.testBlob = undefined;
