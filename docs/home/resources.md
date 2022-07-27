@@ -18,7 +18,7 @@ You can start from the very beginning [here](https://microsoft.github.io/win-stu
 
 ## PWA Starter Workshop
 
-If you want a hands on route to learning about PWAs, checkout [this workshop](https://github.com/beth-panx/pwa-workshop-student/blob/main/workshop/0-setup.md) hosted on GitHub.
+If you want a hands-on alternative to learning about PWAs, checkout [this workshop](https://github.com/beth-panx/pwa-workshop-student/blob/main/workshop/0-setup.md) hosted on GitHub.
 
 The workshop is a guided walk through of building a sample application with the PWA Starter.
 
