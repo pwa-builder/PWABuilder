@@ -195,7 +195,7 @@ export class ManifestScreenshotsForm extends LitElement {
     let field = "screenshots";
 
     if(this.manifest[field]){
-      const validation: singleFieldValdation = await validateSingleField(field, this.manifest[field]);
+      const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
       let passed = validation!.valid;
 
       if(!passed){
