@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 import {
   smallBreakPoint,
@@ -11,6 +11,7 @@ import {
 
 import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
+import { AnalyticsBehavior, recordPWABuilderProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
@@ -127,6 +128,28 @@ export class ManifestEditorFrame extends LitElement {
         white-space: nowrap;
       }
 
+      .dialog {
+        --footer-spacing: 0;
+      }
+      
+      .dialog::part(body){
+        padding: 0;
+      }
+      .dialog::part(title){
+        display: none;
+      }
+      .dialog::part(panel) {
+        position: relative;
+      }
+      .dialog::part(overlay){
+          backdrop-filter: blur(10px);
+        }
+      .dialog::part(close-button__base){
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
       @media(max-width: 600px){  
         
         #frame-footer {
@@ -190,36 +213,52 @@ export class ManifestEditorFrame extends LitElement {
   downloadManifest(){
     let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
     editor.downloadManifest();
+
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
+  }
+
+  async hideDialog(e: any){
+    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    if(e.target === dialog){
+      await dialog!.hide();
+      recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
+      document.body.style.height = "unset";
+    }
   }
 
   render() {
     return html`
-      <div id="frame-wrapper">
-        <div id="frame-content">
-          <div id="frame-header">
-            <h1>Generate Manifest</h1>
-            <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url to make sure your PWA is ready for stores!</p>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+        <div id="frame-wrapper">
+          <div id="frame-content">
+            <div id="frame-header">
+              <h1>Generate Manifest</h1>
+              <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url to make sure your PWA is ready for stores!</p>
+            </div>
+            <pwa-manifest-editor .initialManifest=${getManifestContext().manifest} .manifestURL=${getManifestContext().manifestUrl}></pwa-manifest-editor>
+            
           </div>
-          <pwa-manifest-editor .initialManifest=${getManifestContext().manifest} .manifestURL=${getManifestContext().manifestUrl}></pwa-manifest-editor>
-          
+          <div id="frame-footer" slot="footer">
+            <div id="footer-links">
+                <a class="arrow_anchor" href="https://aka.ms/install-pwa-studio" rel="noopener" target="_blank">
+                  <p class="arrow_link">VS Code Extension</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+                <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
+                  <p class="arrow_link">Manifest Documentation</p> 
+                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                </a>
+            </div>
+            <div id="footer-actions">
+              <button type="button" class="primary" @click=${() => this.downloadManifest()}>Download Manifest</button>
+            </div>
+          </div>
         </div>
-        <div id="frame-footer">
-          <div id="footer-links">
-              <a class="arrow_anchor" href="https://aka.ms/install-pwa-studio" rel="noopener" target="_blank">
-                <p class="arrow_link">VS Code Extension</p> 
-                <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-              </a>
-              <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
-                <p class="arrow_link">Manifest Documentation</p> 
-                <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-              </a>
-          </div>
-          <div id="footer-actions">
-            <sl-checkbox id="add-to-pack">Add a service worker to this package</sl-checkbox>
-            <button type="button" class="primary" @click=${() => this.downloadManifest()}>Download Manifest</button>
-          </div>
-        </div>
-      </div>
+      </sl-dialog>
     `;
   }
 }

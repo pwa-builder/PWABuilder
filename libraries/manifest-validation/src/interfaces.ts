@@ -115,3 +115,8 @@ export interface Manifest {
     name: string;
     accept: string[];
   }
+
+  export interface singleFieldValidation {
+    valid: Boolean;
+    error?: string;
+  }

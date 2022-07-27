@@ -1,4 +1,5 @@
-import { LitElement, css, html } from 'lit';
+import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
   Icon,
@@ -7,9 +8,9 @@ import {
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
 
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/checkbox/checkbox.js';
-
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+
+let manifestInitialized = false;
 
 interface PlatformInformation {
   label: string;
@@ -76,24 +77,35 @@ export class ManifestIconsForm extends LitElement {
         font-size: 14px;
         margin: 0;
       }
+
       .field-header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 5px;
+      }
+
+      .header-left{
         display: flex;
         align-items: center;
         column-gap: 5px;
       }
+      
       .toolTip {
         visibility: hidden;
-        width: 200px;
-        background-color: #f8f8f8;
-        color: black;
+        width: 150px;
+        background: black;
+        color: white;
+        font-weight: 500;
         text-align: center;
         border-radius: 6px;
-        padding: 5px;
+        padding: .75em;
         /* Position the tooltip */
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 20px;
+        left: -25px;
         z-index: 1;
+        box-shadow: 0px 2px 20px 0px #0000006c;
       }
       .field-header a {
         display: flex;
@@ -142,6 +154,9 @@ export class ManifestIconsForm extends LitElement {
         display: flex;
         flex-direction: column;
         row-gap: 5px;
+      }
+      .error {
+        color: #eb5757
       }
 
       @media(max-width: 765px){
@@ -192,6 +207,45 @@ export class ManifestIconsForm extends LitElement {
 
   constructor() {
     super();
+  }
+
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+      manifestInitialized = true;
+      
+      await this.validateAllFields();
+    }
+  }
+
+  async validateAllFields(){
+    let field = "icons";
+
+    if(this.manifest[field]){
+      const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+      let passed = validation!.valid;
+
+      if(!passed){
+        let title = this.shadowRoot!.querySelector('h3');
+        title!.classList.add("error");
+        this.errorInTab();
+      }
+    } else {
+      /* This handles the case where the field is not in the manifest.. 
+      we only want to make it red if its REQUIRED. */
+      if(required_fields.includes(field)){
+        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+        input!.classList.add("error");
+        this.errorInTab();
+      }
+    }
+  }
+
+  errorInTab(){
+    let errorInTab = new CustomEvent('errorInTab', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorInTab);
   }
 
 
@@ -353,17 +407,21 @@ export class ManifestIconsForm extends LitElement {
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
-            <h3>*App Icons</h3>
-            <a
-              href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
-              target="_blank"
-              rel="noopener"
-            >
-              <ion-icon name="information-circle-outline"></ion-icon>
-              <p class="toolTip">
-                Click for more info on the icons option in your manifest.
-              </p>
-            </a>
+            <div class="header-left">
+              <h3>App Icons</h3>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
+                target="_blank"
+                rel="noopener"
+              >
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                <p class="toolTip">
+                  Click for more info on the icons option in your manifest.
+                </p>
+              </a>
+            </div>
+
+            <p>(required)</p>
           </div>
           <p>Below are the current Icons in your apps Manifest</p>
           <div class="icon-gallery">
@@ -378,6 +436,7 @@ export class ManifestIconsForm extends LitElement {
               class="file-input hidden"
               type="file"
               aria-hidden="true"
+              accept="image/png"
               @change=${() => this.handleModalInputFileChange()}
             />
           </div>

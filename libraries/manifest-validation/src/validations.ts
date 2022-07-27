@@ -1,5 +1,5 @@
 import { Validation } from "./interfaces";
-import { containsStandardCategory, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
+import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -65,6 +65,111 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have atleast one icon with purpose any",
+        category: "required",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        errorString: "Need atleast one icon with purpose set to any",
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const anyIcon = value.find(icon => icon.purpose === "any");
+
+                return anyIcon ? true : false;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have atleast one PNG icon 512x512 or larger",
+        category: "required",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        errorString: "Need atleast one PNG icon 512x512 or larger",
+        quickFix: false,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const anyIcon = value.find(icon => isAtLeast(icon.sizes, 512, 512) && (icon.type === 'image/png' || icon.src.endsWith(".png")));
+
+                return anyIcon ? true : false;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons should have one icon with purpose set to any, and one for maskable",
+        category: "required",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        errorString: "Seperate Icons are needed for both maskable and any",
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const wrongIcon = value.find(icon => icon.purpose === "any maskable");
+
+                return wrongIcon ? false : true;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
         infoString: "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
         displayString: "Manifest has a scope field",
         category: "optional",
@@ -86,7 +191,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -95,17 +200,17 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Manifest has short name field",
+        displayString: "Short name is the correct minimum length (2 characters)",
         category: "required",
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
         errorString:
-            "short_name is required and should be a string with a length >= 2 and should not have any whitespace",
+            "short_name is required and should be a string with a length >= 2",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && typeof value === "string" && value.length >= 2 && value.trim() === value;
+          const existsAndLength = value && value.length >= 2;
           return existsAndLength;
         },
     },
@@ -118,7 +223,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -278,6 +383,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
         quickFix: true,
+        errorString: "iarc_rating_id must be a string with a length > 0",
         test: (value: string) => {
             // should exist
             return value && typeof value === "string" && value.length > 0;
@@ -354,7 +460,7 @@ export const maniTests: Array<Validation> = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0 && value === "ltr" || value === "rtl"
+                value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
     },
     {
         member: "description",
@@ -379,7 +485,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -395,6 +501,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
         quickFix: true,
+        errorString: "protocol_handlers should be a non-empty array.",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
@@ -410,10 +517,36 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
         quickFix: true,
+        errorString: "display_override should be a non-empty array.",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
             return isArray;
+        }
+    },
+    {
+        member: "id",
+        displayString: "Manifest has an app ID",
+        infoString: "The id member is a string that represents the unique identifier of your PWA to the browser.",
+        category: "recommended",
+        defaultValue: "/",
+        docsLink: "https://developer.chrome.com/blog/pwa-manifest-id",
+        errorString: "id should be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) =>
+            value && typeof value === "string" && value.length > 0,
+    },
+    {
+        member: "launch_handler",
+        displayString: "Manifest has launch handler field",
+        infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
+        category: "recommended",
+        defaultValue: "",
+        docsLink: "https://developer.chrome.com/docs/web-platform/launch-handler/",
+        errorString: "launch_handler should be defined",
+        quickFix: false,
+        test: (value: any) => {
+            return value && typeof value === "object";
         }
     }
 ];

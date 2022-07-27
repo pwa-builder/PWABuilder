@@ -1,4 +1,4 @@
-import { Manifest, Validation } from "../interfaces";
+import { Manifest, singleFieldValidation, Validation } from "../interfaces";
 import { langCodes, languageCodes } from "../locales";
 import { maniTests } from "../validations";
 
@@ -123,19 +123,34 @@ export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array
   })
 }
 
-export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
   return new Promise(async (resolve) => {
-    let singleField = undefined;
+
+    // For && operations, true is the base.
+    let singleField = true;
+    let failedTest: string | undefined = "";
 
     maniTests.forEach((test) => {
       if (test.member === field && test.test) {
         const testResult = test.test(value);
 
-        singleField = testResult;
+        if(!testResult){
+          failedTest = test.errorString;
+        }
+
+        // If the test passes true && true = true.
+        // If the test fails true && false = false
+        // If a field has MULTIPLE tests, they will stack
+        // ie: true (base) && true (test 1) && false (ie test 2 fails).
+        singleField = singleField && testResult;
       }
     });
 
-    resolve(singleField);
+    if(singleField){
+      resolve({"valid": singleField})
+    }
+
+    resolve({"valid": singleField, "error": failedTest});
   })
 }
 
@@ -186,6 +201,23 @@ export function isValidLanguageCode(code: string){
     }
   })
   return flag;
+}
+
+function getDimensions(sizes: string){
+  return (sizes || '0x0')
+    .split(' ')
+    .map(size => {
+      const dimensions = size.split('x');
+      return {
+        width: Number.parseInt(dimensions[0] || '0', 10),
+        height: Number.parseInt(dimensions[1] || '0', 10),
+      };
+    });
+}
+
+export function isAtLeast(sizes: string, width: number, height: number): boolean {
+  const dimensions = getDimensions(sizes);
+  return dimensions.some(i => i.width >= width && i.height >= height);
 }
 
 export const required_fields = ["icons", "name", "short_name", "start_url"];

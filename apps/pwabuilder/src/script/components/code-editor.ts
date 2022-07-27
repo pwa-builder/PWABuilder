@@ -45,6 +45,10 @@ export class CodeEditor extends LitElement {
           justify-content: flex-end;
           margin-bottom: 10px;
         }
+
+        .editor-container {
+          font-size: 14px;
+        }
       `,
     ];
   }
@@ -126,7 +130,7 @@ export class CodeEditor extends LitElement {
         </slot>
       </div>
 
-      <div id=${this.editorId} class="editor-container ${this.className}"></div>
+      <div id=${this.editorId} class="editor-container ${this.className}" ></div>
     `;
   }
 
@@ -139,7 +143,7 @@ export class CodeEditor extends LitElement {
       this.editorView = new EditorView({
         state: this.editorState,
         root: this.shadowRoot || undefined,
-        parent: this.shadowRoot?.getElementById(this.editorId) || undefined,
+        parent: this.shadowRoot?.getElementById(this.editorId) || undefined
       });
     }
   }, 2000);

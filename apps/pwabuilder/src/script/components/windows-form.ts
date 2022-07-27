@@ -23,6 +23,13 @@ export class WindowsForm extends AppPackageFormBase {
       super.styles,
       localStyles,
       css`
+        #windows-options-form {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
         .flipper-button {
           display: flex;
           justify-content: center;
@@ -31,9 +38,15 @@ export class WindowsForm extends AppPackageFormBase {
         .form-generate-button {
           width: 135px;
           height: 40px;
+        }
+        .basic-settings, .adv-settings {
           display: flex;
-          align-items: center;
-          justify-content: center;
+          flex-direction: column;
+          gap: .75em;
+        }
+        #form-extras {
+          display: flex;
+          flex-direction: column;
         }
       `,
     ];
@@ -339,17 +352,19 @@ export class WindowsForm extends AppPackageFormBase {
             </fast-accordion-item>
           </fast-accordion>
         </div>
-        <div id="form-details-block">
-          <p>${localeStrings.text.publish.windows_platform.p}</p>
-        </div>
-        <div id="form-options-actions" class="modal-actions">
-          <loading-button
-            class="form-generate-button"
-            .loading="${this.generating}"
-            .primary=${true}
-          >
-            <input id="generate-submit" type="submit" value="Generate" />
-          </loading-button>
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>${localeStrings.text.publish.windows_platform.p}</p>
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <loading-button
+              class="form-generate-button"
+              .loading="${this.generating}"
+              .primary=${true}
+            >
+              <input id="generate-submit" type="submit" value="Generate Package" />
+            </loading-button>
+          </div>
         </div>
       </form>
     `;

@@ -1,5 +1,5 @@
-import { Manifest, Validation } from "./interfaces";
-export { Manifest, Validation } from "./interfaces";
+import { Manifest, singleFieldValidation, Validation } from "./interfaces";
+export { Manifest, Validation, singleFieldValidation } from "./interfaces";
 import { findMissingKeys, findSingleField, isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
 export { required_fields, reccommended_fields, optional_fields } from "./utils/validation-utils";
 import { maniTests } from "./validations";
@@ -18,7 +18,7 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
     });
 }
 
-export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+export async function validateSingleField(field: string, value: any): Promise<singleFieldValidation> {
     return new Promise(async (resolve, reject) => {
         try {
             const data = await findSingleField(field, value);

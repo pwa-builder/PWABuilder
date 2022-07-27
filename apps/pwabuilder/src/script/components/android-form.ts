@@ -20,10 +20,21 @@ export class AndroidForm extends AppPackageFormBase {
   static get styles() {
     
     const localStyles = css`
+    
 
       :host {
         width: 100%;
       }
+
+      #android-options-form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-height: 27em;
+      }
+
       .signing-key-fields {
         margin-left: 30px;
       }
@@ -41,9 +52,16 @@ export class AndroidForm extends AppPackageFormBase {
       .form-generate-button {
         width: 135px;
         height: 40px;
+      }
+
+      .basic-settings, .adv-settings {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+        gap: .75em;
+      }
+      #form-extras {
+        display: flex;
+        flex-direction: column;
       }
     `;
     
@@ -661,17 +679,19 @@ export class AndroidForm extends AppPackageFormBase {
           </fast-accordion>
         </div>
 
-        ${this.isGooglePlayApk ?
-          html`
-          <div id="form-details-block">
-            <p>${localeStrings.text.android.description.form_details}</p>
-          </div>` : html`<p style="height: 84px; margin: 0;"></p>`
-        }
+        <div id="form-extras">
+          ${this.isGooglePlayApk ?
+            html`
+            <div id="form-details-block">
+              <p>${localeStrings.text.android.description.form_details}</p>
+            </div>` : html``
+          }
 
-        <div id="form-options-actions" class="modal-actions">
-          <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-            <input id="generate-submit" type="submit" value="Generate" />
-          </loading-button>
+          <div id="form-options-actions" class="modal-actions">
+            <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
+              <input id="generate-submit" type="submit" value="Generate Package" />
+            </loading-button>
+          </div>
         </div>
       </form>
     `;
