@@ -7,6 +7,7 @@
   - [About](/ "PWABuilder Suite Documentation")
   - [PWA Overview](/home/pwa-intro "Beginner's Guide to PWA")
   - [Service Workers](/home/sw-intro "Introduction to Service Workers")
+  - [Resources](/home/resources "Resources")
 
 - **PWA Starter** 
   - [Quick Start](/starter/quick-start "PWA Starter - Quick Start")
