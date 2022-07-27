@@ -191,7 +191,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -383,6 +383,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
         quickFix: true,
+        errorString: "iarc_rating_id must be a string with a length > 0",
         test: (value: string) => {
             // should exist
             return value && typeof value === "string" && value.length > 0;
@@ -484,7 +485,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -500,6 +501,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
         quickFix: true,
+        errorString: "protocol_handlers should be a non-empty array.",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
@@ -515,6 +517,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
         quickFix: true,
+        errorString: "display_override should be a non-empty array.",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 

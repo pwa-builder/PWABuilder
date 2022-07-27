@@ -1,4 +1,4 @@
-import { Manifest, Validation } from "../interfaces";
+import { Manifest, singleFieldValidation, Validation } from "../interfaces";
 import { langCodes, languageCodes } from "../locales";
 import { maniTests } from "../validations";
 
@@ -123,15 +123,20 @@ export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array
   })
 }
 
-export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
   return new Promise(async (resolve) => {
 
     // For && operations, true is the base.
     let singleField = true;
+    let failedTest: string | undefined = "";
 
     maniTests.forEach((test) => {
       if (test.member === field && test.test) {
         const testResult = test.test(value);
+
+        if(!testResult){
+          failedTest = test.errorString;
+        }
 
         // If the test passes true && true = true.
         // If the test fails true && false = false
@@ -141,7 +146,11 @@ export async function findSingleField(field: string, value: any): Promise<Valida
       }
     });
 
-    resolve(singleField);
+    if(singleField){
+      resolve({"valid": singleField})
+    }
+
+    resolve({"valid": singleField, "error": failedTest});
   })
 }
 

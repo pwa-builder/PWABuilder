@@ -1,4 +1,4 @@
-import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
@@ -221,9 +221,10 @@ export class ManifestIconsForm extends LitElement {
     let field = "icons";
 
     if(this.manifest[field]){
-      const validation = await validateSingleField(field, this.manifest[field]);
+      const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+      let passed = validation!.valid;
 
-      if(!validation){
+      if(!passed){
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
         this.errorInTab();

@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
-import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 //import { validateSingleField } from 'manifest-validation';
 
 const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
@@ -131,7 +131,6 @@ export class ManifestPlatformForm extends LitElement {
       #override-list {
         display: flex;
         flex-direction: column;
-        align-items: center;
         row-gap: 5px;
       }
       #override-item {
@@ -291,10 +290,20 @@ export class ManifestPlatformForm extends LitElement {
       let field = platformFields[i];
 
       if(this.manifest[field]){
-        const validation = await validateSingleField(field, this.manifest[field]);
-        if(!validation){
+        const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+        let passed = validation!.valid;
+
+        if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+
+          if(validation.error){
+            let p = document.createElement('p');
+            p.innerText = validation.error;
+            p.style.color = "#eb5757";
+            p.classList.add("error-message");
+            this.insertAfter(p, input!.parentNode!.lastElementChild);
+          }
 
           this.errorInTab();
         }
@@ -304,6 +313,7 @@ export class ManifestPlatformForm extends LitElement {
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+          this.errorInTab();
         }
       }
     }
@@ -352,6 +362,10 @@ export class ManifestPlatformForm extends LitElement {
     });
   }
 
+  insertAfter(newNode: any, existingNode: any) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+  }
+
   async handleInputChange(event: InputEvent){
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
@@ -362,9 +376,10 @@ export class ManifestPlatformForm extends LitElement {
         updatedValue = JSON.parse(updatedValue);
     }
 
-    const validation = await validateSingleField(fieldName!, updatedValue)
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
+    let passed = validation!.valid;
 
-    if(validation){
+    if(passed){
       // Since we already validated, we only send valid updates.
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
@@ -378,8 +393,19 @@ export class ManifestPlatformForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
+
+        let last = input!.parentNode!.lastElementChild
+        input!.parentNode!.removeChild(last!)
       }
     } else {
+      if(validation.error){
+        let p = document.createElement('p');
+        p.innerText = validation.error;
+        p.style.color = "#eb5757";
+        p.classList.add("error-message");
+        this.insertAfter(p, input!.parentNode!.lastElementChild);
+      }
+
       // toggle error class to display error.
       input.classList.toggle("error");
     }
@@ -404,6 +430,8 @@ export class ManifestPlatformForm extends LitElement {
         composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+
   }
 
   toggleOverrideList(label: string){

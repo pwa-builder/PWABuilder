@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
-import { required_fields, validateSingleField } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir"];
 let manifestInitialized: boolean = false;
@@ -165,11 +165,19 @@ export class ManifestSettingsForm extends LitElement {
       let field = settingsFields[i];
 
       if(this.manifest[field]){
-        const validation = await validateSingleField(field, this.manifest[field]);
-        
-        if(!validation){
+        const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+        let passed = validation!.valid;
+
+        if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+
+          if(validation.error){
+            let p = document.createElement('p');
+            p.innerText = validation.error;
+            p.style.color = "#eb5757";
+            this.insertAfter(p, input!.parentNode!.lastElementChild);
+          }
 
           this.errorInTab();
         }
@@ -192,16 +200,21 @@ export class ManifestSettingsForm extends LitElement {
     this.dispatchEvent(errorInTab);
   }
 
+  insertAfter(newNode: any, existingNode: any) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+  }
+
   async handleInputChange(event: InputEvent){
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
-    const validation = await validateSingleField(fieldName!, updatedValue);
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
+    let passed = validation!.valid;
 
 
-    if(validation){
+    if(passed){
       // Since we already validated, we only send valid updates.
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
@@ -215,8 +228,18 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
+
+        let last = input!.parentNode!.lastElementChild
+        input!.parentNode!.removeChild(last!)
       }
     } else {
+      if(validation.error){
+        let p = document.createElement('p');
+        p.innerText = validation.error;
+        p.style.color = "#eb5757";
+        this.insertAfter(p, input!.parentNode!.lastElementChild);
+      }
+
       // toggle error class to display error.
       input.classList.toggle("error");
     }

@@ -322,7 +322,7 @@ export class AppReport extends LitElement {
           border: none;
         }
         #pfs-disabled{
-          background-color: #00000065;
+          background-color: #C3C3C3;
           border: none;
           color: white;
         }
@@ -414,7 +414,7 @@ export class AppReport extends LitElement {
           width: 100%;
         }
         .dropdown_icon {
-          transform: rotate(0);  
+          transform: rotate(0deg);  
           transition: transform .5s;
         }
         #todo-detail::part(base) {
@@ -1287,6 +1287,8 @@ export class AppReport extends LitElement {
 
     let details = this.shadowRoot!.getElementById(e.detail.card);
 
+    //this.detailsClicked(e.detail.card)
+
     await (details as any)!.show();
 
     details!.scrollIntoView({behavior: "smooth"});
@@ -1322,15 +1324,16 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
-  detailsClicked(card: string){
+  rotateZero(card: string){
     recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    
-    if(icon!.style.transform === "rotate(90deg)"){
-      icon!.style.transform = "rotate(0deg)";
-    } else {
-      icon!.style.transform = "rotate(90deg)";
-    }
+    icon!.style.transform = "rotate(0deg)";
+  }
+
+  rotateNinety(card: string){
+    recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
+    icon!.style.transform = "rotate(90deg)";
   }
 
 
@@ -1447,7 +1450,8 @@ export class AppReport extends LitElement {
           <div id="todo">
             <sl-details 
               id="todo-detail" 
-              @click=${() => this.detailsClicked("todo")}
+              @sl-show=${() => this.rotateNinety("todo")}
+              @sl-hide=${() => this.rotateZero("todo")}
               >
               <div class="details-summary" slot="summary">
                 <p>View Details</p>
@@ -1537,9 +1541,10 @@ export class AppReport extends LitElement {
             <sl-details 
               id="mani-details" 
               class="details"
-              @click=${() => this.detailsClicked("manifest")}
+              @sl-show=${() => this.rotateNinety("mani-details")}
+              @sl-hide=${() => this.rotateZero("mani-details")}
               >
-              ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="manifest" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
+              ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
               <div id="manifest-detail-grid">
                 <div class="detail-list">
                   <p class="detail-list-header">Required</p>
@@ -1704,8 +1709,10 @@ export class AppReport extends LitElement {
               <sl-details 
                 id="sw-details" 
                 class="details"
-                @click=${() => this.detailsClicked("service_worker")}>
-                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="service_worker" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
+                @sl-show=${() => this.rotateNinety("sw-details")}
+                @sl-hide=${() => this.rotateZero("sw-details")}
+              >
+                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
                     <p class="detail-list-header">Required</p>
@@ -1800,9 +1807,10 @@ export class AppReport extends LitElement {
               <sl-details 
                 id="sec-details" 
                 class="details"
-                @click=${() => this.detailsClicked("security")}
+                @sl-show=${() => this.rotateNinety("sec-details")}
+                @sl-hide=${() => this.rotateZero("sec-details")}
                 >
-              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="security" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
+              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sec-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
                     <p class="detail-list-header">Required</p>

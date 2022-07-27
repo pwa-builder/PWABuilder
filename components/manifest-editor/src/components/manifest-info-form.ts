@@ -1,7 +1,7 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
-import { validateSingleField, required_fields } from '@pwabuilder/manifest-validation';
+import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
 
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
@@ -76,8 +76,8 @@ export class ManifestInfoForm extends LitElement {
       }
       .color-holder {
         display: flex;
-        align-items: center;
-        column-gap: 10px;
+        flex-direction: column;
+        gap: 10px;
       }
       .toolTip {
         visibility: hidden;
@@ -107,6 +107,10 @@ export class ManifestInfoForm extends LitElement {
       a:visited, a:focus {
         color: black;
       }
+      .color-section {
+        display: flex;
+        gap: .5em;
+      }
       .color_field input[type="radio"]{
         height: 25px;
         width: fit-content;
@@ -131,7 +135,7 @@ export class ManifestInfoForm extends LitElement {
       .color_field input[type="color"]:hover {
         cursor: pointer;
       }
-      .color-holder p {
+      .color-section p {
         font-size: 16px;
         color: #808080;
       }
@@ -227,15 +231,30 @@ export class ManifestInfoForm extends LitElement {
       let field = infoFields[i];
 
       if(this.manifest[field]){
-        const validation = await validateSingleField(field, this.manifest[field]);
+        const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+        let passed = validation!.valid;
 
-        if(!validation){
+        if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           if(field === "theme_color" || field === "background_color"){
             input!.classList.add("error-color-field");
+            if(validation.error){
+              let p = document.createElement('p');
+              p.innerText = validation.error;
+              p.style.color = "#eb5757";
+              this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+            }
           } else{
             input!.classList.add("error");
-          }
+            if(validation.error){
+              let p = document.createElement('p');
+              p.innerText = validation.error;
+              p.style.color = "#eb5757";
+              this.insertAfter(p, input!.parentNode!.lastElementChild);
+            }
+          } 
+
+          
           
           this.errorInTab();
 
@@ -286,15 +305,20 @@ export class ManifestInfoForm extends LitElement {
 
   }
 
+  insertAfter(newNode: any, existingNode: any) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+  }
+
   async handleInputChange(event: InputEvent){
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
-    const validation = await validateSingleField(fieldName!, updatedValue);
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
+    let passed = validation!.valid;
 
-    if(validation){
+    if(passed){
       // Since we already validated, we only send valid updates.
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
@@ -308,8 +332,18 @@ export class ManifestInfoForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
+
+        let last = input!.parentNode!.lastElementChild
+        input!.parentNode!.removeChild(last!)
       }
     } else {
+      if(validation.error){
+        let p = document.createElement('p');
+        p.innerText = validation.error;
+        p.style.color = "#eb5757";
+        this.insertAfter(p, input!.parentNode!.lastElementChild);
+      }
+      
       this.errorInTab();
       input.classList.toggle("error");
     }
@@ -436,8 +470,13 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>Select a Background color</p>
-              <span class="color-holder"><input type="color" id="background_color_picker" .value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p></span>
-            </div>
+            <span class="color-holder">
+              <div class="color-section">
+                <input type="color" id="background_color_picker" .value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> 
+                <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
+              </div>
+            </span>
+          </div>
           <div class="form-field color_field">
             <div class="field-header">
               <div class="header-left">
@@ -454,8 +493,13 @@ export class ManifestInfoForm extends LitElement {
                 </a>
               </div>
             </div>
-              <p>Select a Theme color</p>
-              <span class="color-holder"><input type="color" id="theme_color_picker" .value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p></span>
+            <p>Select a Theme color</p>
+            <span class="color-holder">
+              <div class="color-section">
+                <input type="color" id="theme_color_picker" .value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> 
+                <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
+              </div>
+            </span>
           </div>
         </div>
       </div>
