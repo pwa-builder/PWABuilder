@@ -1,4 +1,4 @@
-import { required_fields, validateSingleField, singleFieldValdation } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField, singleFieldValadation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {
