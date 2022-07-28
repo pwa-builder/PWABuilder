@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import '../components/code-editor'
+import '@pwabuilder/code-editor';
 
 @customElement('sw-panel')
 export class SWPanel extends LitElement {

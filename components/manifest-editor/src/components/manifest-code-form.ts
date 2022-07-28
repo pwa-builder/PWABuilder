@@ -5,6 +5,8 @@ import { prettyString } from '../utils/pretty-json';
 
 import "./toast";
 
+import '@pwabuilder/code-editor'
+
 @customElement('manifest-code-form')
 export class ManifestCodeForm extends LitElement {
 
@@ -61,8 +63,7 @@ export class ManifestCodeForm extends LitElement {
   render() {
     return html`
       <div id="code-holder">
-        <pre id="code-editor"><code>${prettyString(this.manifest)}</code></pre>
-        <button id="copy-manifest" @click=${() => this.copyToClip()}><ion-icon name="copy"></ion-icon>Copy Manifest</button>
+        <code-editor .startText=${prettyString(this.manifest)}></code-editor>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
     `;

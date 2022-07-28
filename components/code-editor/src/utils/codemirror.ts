@@ -30,7 +30,7 @@ import { json } from '@codemirror/lang-json';
 import {
   CodeEditorEvents,
   CodeEditorUpdateEvent,
-} from './interfaces.codemirror';
+} from './helpers';
 
 type EditorStateType = 'json';
 

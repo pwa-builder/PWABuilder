@@ -30,6 +30,17 @@ export class AppIndex extends LitElement {
         position: relative;
       }
 
+      #wrapper {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      #content {
+        flex: 1;
+        background-color: rgb(242, 243, 251);
+      }
+
       @media (min-width: 1920px) {
         #router-outlet {
           background: var(--primary-purple);
@@ -157,11 +168,11 @@ export class AppIndex extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="wrapper">
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
       
-        <div>
+        <div id="content">
           <div id="router-outlet"></div>
         </div>
         <discord-box></discord-box>

@@ -19,20 +19,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@codemirror/autocomplete": "^0.18.5",
-    "@codemirror/basic-setup": "^0.18.0",
-    "@codemirror/commands": "^0.18.1",
-    "@codemirror/fold": "^0.18.0",
-    "@codemirror/gutter": "^0.18.2",
-    "@codemirror/lang-json": "^0.18.0",
-    "@codemirror/language": "^0.18.1",
-    "@codemirror/lint": "^0.18.2",
-    "@codemirror/matchbrackets": "^0.18.0",
-    "@codemirror/state": "^0.18.6",
-    "@codemirror/text": "^0.18.0",
-    "@codemirror/tooltip": "^0.18.4",
-    "@codemirror/view": "^0.18.10",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
+    "@pwabuilder/code-editor": "file:../../components/code-editor",
     "@pwabuilder/manifest-previewer": "^1.0.21",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/pwainstall": "^1.6.6",
@@ -41,8 +29,7 @@
     "browser-fs-access": "^0.23.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
-    "lit": "^2.0.0",
-    "lodash-es": "^4.17.21"
+    "lit": "^2.0.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",

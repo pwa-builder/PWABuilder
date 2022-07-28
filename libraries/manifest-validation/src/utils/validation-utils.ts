@@ -1,6 +1,5 @@
-import { Manifest, singleFieldValidation, Validation } from "../interfaces";
+import { Manifest } from "../interfaces";
 import { langCodes, languageCodes } from "../locales";
-import { maniTests } from "../validations";
 
 const possibleManiKeys = [
   "background_color",
@@ -49,33 +48,7 @@ export function isValidJSON(json: Manifest): boolean {
   }
 }
 
-export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise((resolve) => {
-      let data: Array<Validation> = [];
 
-      const keys = Object.keys(manifest);
-
-      keys.forEach((key) => {
-          maniTests.forEach(async (test) => {
-              if (test.member === key && test.test) {
-                  const testResult = await test.test(manifest[key]);
-
-  
-                  if(testResult){
-                    test.valid = true;
-                    data.push(test);
-                  }
-                  else {
-                    test.valid = false;
-                    data.push(test);
-                  }
-              }
-          })
-      })
-
-      resolve(data);
-  })
-}
 
 export async function findMissingKeys(manifest: Manifest): Promise<Array<string>> {
   return new Promise((resolve) => {
@@ -92,66 +65,6 @@ export async function findMissingKeys(manifest: Manifest): Promise<Array<string>
 
     resolve(data);
   });
-}
-
-export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise((resolve) => {
-    let data: Array<Validation> = [];
-
-    const keys = Object.keys(manifest);
-
-    keys.forEach((key) => {
-      maniTests.forEach(async (test) => {
-        if (test.category === "required") {
-          if (test.member === key && test.test) {
-            const testResult = await test.test(manifest[key]);
-
-            if (testResult === false) {
-              test.valid = false;
-              data.push(test);
-            }
-            else {
-              test.valid = true;
-              data.push(test);
-            }
-          }
-        }
-      })
-    })
-
-    resolve(data);
-  })
-}
-
-export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
-  return new Promise(async (resolve) => {
-
-    // For && operations, true is the base.
-    let singleField = true;
-    let failedTests: string[] | undefined = [];
-
-    maniTests.forEach((test) => {
-      if (test.member === field && test.test) {
-        const testResult = test.test(value);
-
-        if(!testResult){
-          failedTests!.push(test.errorString!);
-        }
-
-        // If the test passes true && true = true.
-        // If the test fails true && false = false
-        // If a field has MULTIPLE tests, they will stack
-        // ie: true (base) && true (test 1) && false (ie test 2 fails).
-        singleField = singleField && testResult;
-      }
-    });
-
-    if(singleField){
-      resolve({"valid": singleField})
-    }
-
-    resolve({"valid": singleField, "errors": failedTests});
-  })
 }
 
 export function containsStandardCategory(categories: string[]): boolean {

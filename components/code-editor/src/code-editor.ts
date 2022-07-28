@@ -3,18 +3,11 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import debounce from 'lodash-es/debounce';
-import { getEditorState, emitter } from '../utils/codemirror';
-import { resizeObserver } from '../utils/events';
+import { getEditorState, emitter } from './utils/codemirror';
+import { resizeObserver } from './utils/events';
+import { Lazy, CodeEditorEvents, CodeEditorSyncEvent, increment } from './utils/helpers';
 
-import { Lazy } from '../utils/interfaces';
-import {
-  CodeEditorEvents,
-  CodeEditorSyncEvent,
-} from '../utils/interfaces.codemirror';
-import { increment } from '../utils/id';
-
-import './app-button';
-import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+//import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../../apps/pwabuilder/src/script/utils/analytics';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
@@ -99,7 +92,7 @@ export class CodeEditor extends LitElement {
   }
 
   async copyCode() {
-    recordPWABuilderProcessStep("code_editor.copy_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    //recordPWABuilderProcessStep("code_editor.copy_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const doc = this.editorState?.doc;
 
     if (doc) {
@@ -119,13 +112,13 @@ export class CodeEditor extends LitElement {
     return html`
       <div id="copy-block">
         <slot>
-          <app-button
+          <button
             ?disabled="${this.copied}"
             @click="${() => this.copyCode()}"
             appearance="outline"
             class="secondary"
           >
-            ${this.copyText}</app-button
+            ${this.copyText}</button
           >
         </slot>
       </div>
