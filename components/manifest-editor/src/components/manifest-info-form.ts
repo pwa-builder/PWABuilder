@@ -238,19 +238,23 @@ export class ManifestInfoForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           if(field === "theme_color" || field === "background_color"){
             input!.classList.add("error-color-field");
-            if(validation.error){
-              let p = document.createElement('p');
-              p.innerText = validation.error;
-              p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+            if(validation.errors){
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+              });
             }
           } else{
             input!.classList.add("error");
-            if(validation.error){
-              let p = document.createElement('p');
-              p.innerText = validation.error;
-              p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.lastElementChild);
+            if(validation.errors){
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                this.insertAfter(p, input!.parentNode!.lastElementChild);
+              });
             }
           } 
 
@@ -337,11 +341,13 @@ export class ManifestInfoForm extends LitElement {
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(validation.error){
-        let p = document.createElement('p');
-        p.innerText = validation.error;
-        p.style.color = "#eb5757";
-        this.insertAfter(p, input!.parentNode!.lastElementChild);
+      if(validation.errors){
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          this.insertAfter(p, input!.parentNode!.lastElementChild);
+        });
       }
       
       this.errorInTab();

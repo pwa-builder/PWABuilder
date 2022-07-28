@@ -172,11 +172,13 @@ export class ManifestSettingsForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
 
-          if(validation.error){
-            let p = document.createElement('p');
-            p.innerText = validation.error;
-            p.style.color = "#eb5757";
-            this.insertAfter(p, input!.parentNode!.lastElementChild);
+          if(validation.errors){
+            validation.errors.forEach((error: string) => {
+              let p = document.createElement('p');
+              p.innerText = error;
+              p.style.color = "#eb5757";
+              this.insertAfter(p, input!.parentNode!.lastElementChild);
+            });
           }
 
           this.errorInTab();
@@ -233,11 +235,13 @@ export class ManifestSettingsForm extends LitElement {
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(validation.error){
-        let p = document.createElement('p');
-        p.innerText = validation.error;
-        p.style.color = "#eb5757";
-        this.insertAfter(p, input!.parentNode!.lastElementChild);
+      if(validation.errors){
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+        });
       }
 
       // toggle error class to display error.

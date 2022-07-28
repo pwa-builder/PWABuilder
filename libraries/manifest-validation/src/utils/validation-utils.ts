@@ -128,14 +128,14 @@ export async function findSingleField(field: string, value: any): Promise<single
 
     // For && operations, true is the base.
     let singleField = true;
-    let failedTest: string | undefined = "";
+    let failedTests: string[] | undefined = [];
 
     maniTests.forEach((test) => {
       if (test.member === field && test.test) {
         const testResult = test.test(value);
 
         if(!testResult){
-          failedTest = test.errorString;
+          failedTests!.push(test.errorString!);
         }
 
         // If the test passes true && true = true.
@@ -150,7 +150,7 @@ export async function findSingleField(field: string, value: any): Promise<single
       resolve({"valid": singleField})
     }
 
-    resolve({"valid": singleField, "error": failedTest});
+    resolve({"valid": singleField, "errors": failedTests});
   })
 }
 

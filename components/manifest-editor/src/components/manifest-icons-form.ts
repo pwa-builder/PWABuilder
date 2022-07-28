@@ -222,18 +222,22 @@ export class ManifestIconsForm extends LitElement {
 
     if(this.manifest[field]){
       const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+      
       let passed = validation!.valid;
 
       if(!passed){
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
 
-        if(validation.error){
-          let p = document.createElement('p');
-          p.innerText = validation!.error;
-          p.style.color = "#eb5757";
-          p.classList.add("error-message");
-          this.insertAfter(p, title!.parentNode!.parentNode);
+        if(validation.errors){
+          validation.errors.forEach((error: string) => {
+            let p = document.createElement('p');
+            p.innerText = error;
+            p.style.color = "#eb5757";
+            p.classList.add("error-message");
+            this.insertAfter(p, title!.parentNode!.parentNode);
+          });
+          
         }
         
         this.errorInTab();

@@ -202,12 +202,14 @@ export class ManifestScreenshotsForm extends LitElement {
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
 
-        if(validation.error){
-          let p = document.createElement('p');
-          p.innerText = validation!.error;
+        if(validation.errors){
+          validation.errors.forEach((error: string) => {
+            let p = document.createElement('p');
+          p.innerText = error;
           p.style.color = "#eb5757";
           p.classList.add("error-message");
           this.insertAfter(p, title!.parentNode);
+          });
         }
 
         this.errorInTab();

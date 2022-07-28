@@ -118,5 +118,5 @@ export interface Manifest {
 
   export interface singleFieldValidation {
     valid: Boolean;
-    error?: string;
+    errors?: string[];
   }
