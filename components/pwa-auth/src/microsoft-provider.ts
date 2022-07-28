@@ -123,7 +123,7 @@ export enum PromptType {
 }
 
 export class MicrosoftProvider implements SignInProvider {
-  private readonly scopes: string[];
+  private readonly scopes: string[] = ['User.Read'];
   private readonly graphConfig = {
     graphMeEndpoint: 'https://graph.microsoft.com/v1.0/me',
   };
@@ -188,7 +188,6 @@ export class MicrosoftProvider implements SignInProvider {
 
   private signInSucceeded(loginResponse: AuthenticationResult) {
     const loginResult = this.getLoginResult(loginResponse);
-
     // Fetch the user's photo.
     // MS provider supports this for work and edu accounts, but not for personal accounts.
     this.getAccessToken()
@@ -267,7 +266,7 @@ export class MicrosoftProvider implements SignInProvider {
     relativeUrl: string,
     accessToken: string
   ): Promise<Response> {
-    const url = `${this.graphConfig.graphMeEndpoint}${relativeUrl}`;
+    const url = `${this.graphConfig.graphMeEndpoint}`;
     return fetch(url, {
       method: 'GET',
       headers: new Headers({

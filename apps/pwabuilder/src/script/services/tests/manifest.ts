@@ -98,7 +98,7 @@ const default_results: TestResult[] = [
 
 export async function testManifest(
   manifest?: ManifestContext
-): Promise<Array<TestResult> | boolean> {
+): Promise<Array<TestResult>> {
   try {
     if (manifest == null || manifest == undefined) {
       console.warn('No manifest found');

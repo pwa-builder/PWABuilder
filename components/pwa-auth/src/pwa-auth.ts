@@ -338,28 +338,29 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
       this.disabled = true;
       this.loadAllDependencies().finally(() => (this.disabled = false));
     }
-
-    // if (this.doesMicrosoftCookieExist()) {
-    //   this.tryMicrosoftSilentSignIn();
-    // }
-    //this.isLoggedIn = false;
+    if (this.doesMicrosoftCookieExist()) {
+      this.tryMicrosoftSilentSignIn();
+    }
+    this.isLoggedIn = false;
 
     this.tryAutoSignIn();
   }
 
   async tryMicrosoftSilentSignIn() {
     const provider = this.providers.find((p) => p.name === 'Microsoft');
-    console.log('Mirosoft silen sign in ');
     const key = provider?.getKey();
     if (key && provider) {
       const importedProvider = await provider.import(key);
       //@ts-ignore
-      await importedProvider.signIn();
+      const silentLoginResult = await importedProvider.signIn();
+      if (silentLoginResult) {
+        this.signInCompleted(silentLoginResult);
+      }
     }
   }
 
   doesMicrosoftCookieExist(): boolean {
-    const token = localStorage.getItem('pwa-auth-token-Microsoft');
+    const token = localStorage.getItem('pwa-auth-token');
     if (token !== null) {
       return true;
     }
@@ -591,7 +592,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
       console.log('This is the logout response', logOutResponse);
       this.requestUpdate();
     }
-    this.removeAuthTokenLocalStorageKeyName(provider.name);
+    this.removeAuthTokenLocalStorageKeyName();
     this.disabled = false;
     this.signOutCompleted();
   }
@@ -816,9 +817,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
   }
 
   private tryUpdateStoredTokenInfo(signIn: SignInResult) {
-    const localStorageKey = this.getAuthTokenLocalStorageKeyName(
-      signIn.provider
-    );
+    const localStorageKey = this.getAuthTokenLocalStorageKeyName();
     const storedToken: StoredAccessToken = {
       token: signIn.accessToken || null,
       expiration: signIn.accessTokenExpiration || null,
@@ -839,7 +838,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
   private tryReadStoredTokenInfo(
     providerName: ProviderName
   ): StoredAccessToken | null {
-    const localStorageKey = this.getAuthTokenLocalStorageKeyName(providerName);
+    const localStorageKey = this.getAuthTokenLocalStorageKeyName();
     try {
       const tokenJson = localStorage.getItem(localStorageKey);
       return tokenJson ? JSON.parse(tokenJson) : null;
@@ -853,12 +852,12 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
     }
   }
 
-  private getAuthTokenLocalStorageKeyName(providerName: string): string {
-    return `${PwaAuthImpl.authTokenLocalStoragePrefix}-${providerName}`;
+  private getAuthTokenLocalStorageKeyName(): string {
+    return `${PwaAuthImpl.authTokenLocalStoragePrefix}`;
   }
 
-  private removeAuthTokenLocalStorageKeyName(providerName: string): void {
-    localStorage.removeItem(this.getAuthTokenLocalStorageKeyName(providerName));
+  private removeAuthTokenLocalStorageKeyName(): void {
+    localStorage.removeItem(this.getAuthTokenLocalStorageKeyName());
   }
 
   private rehydrateAccessToken(signIn: SignInResult) {

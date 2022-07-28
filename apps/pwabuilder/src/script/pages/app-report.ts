@@ -26,9 +26,11 @@ import {
   ManifestContext,
   RawTestResult,
   ScoreEvent,
+  TestResult,
 } from '../utils/interfaces';
 import { giveOutBadges } from '../services/badges';
 import { fetchOrCreateManifest } from '../services/manifest';
+import { isUserLoggedIn, storeUserProject } from '../services/sign-in';
 
 const possible_messages = {
   overview: {
@@ -613,12 +615,30 @@ export class AppReport extends LitElement {
     }
   }
   async runAllTests(url: string) {
-    this.testManifest(url);
-    this.testServiceWorker(url);
-    this.testSecurity(url);
+    const manifestTestPromise = this.testManifest(url);
+    const serviceWorkerTestPromise = this.testServiceWorker(url);
+    const securityTestPromise = this.testSecurity(url);
+    if (isUserLoggedIn()) {
+      //Save URL, save time last tested
+      const finalResult = [
+        manifestTestPromise,
+        serviceWorkerTestPromise,
+        securityTestPromise,
+      ];
+      const result = await Promise.allSettled(finalResult);
+      console.log('Storing user project', result);
+      storeUserProject({
+        url: url,
+        lastTested: new Date(),
+        maniResult: JSON.stringify(result[0]),
+        swResult: JSON.stringify(result[1]),
+        secResult: JSON.stringify(result[2]),
+      });
+      //storeUserProject({ url: url, lastTested: new Date() });
+    }
   }
 
-  async testManifest(url: string) {
+  async testManifest(url: string): Promise<TestResult[]> {
     //add manifest validation logic
     const manifestContext = await this.getManifest(url);
     const manifestTestResult = await testManifest(manifestContext);
@@ -626,9 +646,10 @@ export class AppReport extends LitElement {
       'manifest_tests',
       JSON.stringify(manifestTestResult)
     );
+    return manifestTestResult;
   }
 
-  async testServiceWorker(url: string) {
+  async testServiceWorker(url: string): Promise<TestResult[]> {
     //call service worker tests
     const serviceWorkerTestResult = await testServiceWorker(url);
     //save serviceworker tests in session storage
@@ -637,14 +658,16 @@ export class AppReport extends LitElement {
       JSON.stringify(serviceWorkerTestResult)
     );
     console.log(serviceWorkerTestResult);
+    return serviceWorkerTestResult;
   }
 
-  async testSecurity(url: string) {
+  async testSecurity(url: string): Promise<TestResult[]> {
     //Call security tests
     const securityTests = await testSecurity(url);
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
     console.log(securityTests);
+    return securityTests;
   }
 
   async retest() {

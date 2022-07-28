@@ -9,6 +9,8 @@ import '../components/app-button';
 import '../components/cookie-banner';
 import '../components/discord-box';
 import { recordPageView } from '../utils/analytics';
+import '@pwabuilder/pwaauth';
+import { signInUser } from '../services/sign-in';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -21,11 +23,11 @@ export class AppIndex extends LitElement {
       #router-outlet > .leaving {
         animation: 160ms fadeOut ease-in-out;
       }
-      
+
       #router-outlet > .entering {
         animation: 160ms fadeIn linear;
       }
- 
+
       #router-outlet {
         position: relative;
       }
@@ -136,9 +138,28 @@ export class AppIndex extends LitElement {
               await import('./portals-publish.js');
             },
           },
+          {
+            path: 'userDashboard',
+            component: 'user-dashboard',
+            action: async () => {
+              await import('./user-dashboard.js');
+            },
+          },
         ] as Route[],
       },
     ]);
+
+    const pwaAuth = this.shadowRoot?.querySelector('#signin');
+    pwaAuth?.addEventListener('signin-completed', async ev => {
+      const signIn = ev;
+      console.log('ev', ev);
+      const token = (signIn as any).detail.providerData.accessToken;
+      signInUser(token);
+    });
+  }
+
+  goToDashboard() {
+    Router.go('/userDashboard');
   }
 
   render() {
@@ -146,7 +167,20 @@ export class AppIndex extends LitElement {
       <div>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
-      
+        <pwa-auth
+          id="signin"
+          microsoftkey="32b653f7-a63a-4ad0-bf58-9e15f5914a34"
+          credentialmode="silent"
+        >
+        </pwa-auth>
+        <button
+          id="dashboard"
+          @click=${() => {
+            this.goToDashboard();
+          }}
+        >
+          User dashboard
+        </button>
         <div>
           <div id="router-outlet"></div>
         </div>
