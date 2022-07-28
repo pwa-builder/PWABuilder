@@ -582,16 +582,22 @@ export class AppPublish extends LitElement {
   }
 
   async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
+    if(platform === 'other-android'){
+      this.generatedPlatform = platform;
+      platform = (platform.split("-")[1] as Platform);
+    } else {
+      this.generatedPlatform = platform;
+    }
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
-      `create-${platform}-package`,
+      `create-${this.generatedPlatform}-package`,
       AnalyticsBehavior.ProcessCheckpoint,
       { url: getURL() });
 
       recordProcessStep(
         'pwa-builder',
-        `create-${platform}-package`,
+        `create-${this.generatedPlatform}-package`,
         AnalyticsBehavior.ProcessCheckpoint,
         { url: getURL() });
 
@@ -601,7 +607,6 @@ export class AppPublish extends LitElement {
 
       if (packageData) {
         this.downloadFileName = `${packageData.appName}.zip`;
-        this.generatedPlatform = platform;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
@@ -613,7 +618,7 @@ export class AppPublish extends LitElement {
       this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
-        `create-${platform}-package-failed`,
+        `create-${this.generatedPlatform}-package-failed`,
         AnalyticsBehavior.CancelProcess,
         {
           url: getURL(),
@@ -621,7 +626,7 @@ export class AppPublish extends LitElement {
         });
         recordProcessStep(
           'pwa-builder',
-          `create-${platform}-package-failed`,
+          `create-${this.generatedPlatform}-package-failed`,
           AnalyticsBehavior.CancelProcess,
           {
             url: getURL(),
@@ -634,7 +639,6 @@ export class AppPublish extends LitElement {
   }
 
   async download() {
-
     recordProcessStep(
     'analyze-and-package-pwa',
     `download-${this.generatedPlatform}-package`,
@@ -654,7 +658,6 @@ export class AppPublish extends LitElement {
           extensions: ['.zip'],
         });
       } catch(error){
-        console.log(error);
         recordProcessStep(
           'analyze-and-package-pwa',
           `download-${this.generatedPlatform}-package-stopped`,
@@ -910,7 +913,7 @@ export class AppPublish extends LitElement {
           html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
             this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
           html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-            this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
+            this.generate('other-android', e.detail as AndroidPackageOptions)}"></android-form>`
         }
     </app-modal>
       
