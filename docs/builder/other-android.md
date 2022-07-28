@@ -28,7 +28,7 @@ The first step is to generate your Android package with PWABuilder:
 4. Click on `Store Package` in the Android section.
 
 <div class="docs-image">
-    <img src="/assets/builder/android/store_package.jpg" width=550>
+    <img src="/assets/builder/android/store_package.jpg" width=550 alt="Image of the Android store package option on pwabuilder.com">
 </div>
 
 5. Select the `Other Android` tab  in the dialog that pops up.
