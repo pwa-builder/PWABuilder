@@ -106,6 +106,7 @@ export class AppReport extends LitElement {
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
+  @state() runningTests: boolean = false;
   @state() canPackageList: boolean[] = [];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
@@ -967,10 +968,13 @@ export class AppReport extends LitElement {
   }
 
   async runAllTests(url: string) {
-    Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
+    this.runningTests = true;
+    await Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
+    
+    this.runningTests = false;
   }
 
   // idk if we need the url for this function bc we can just get the manifest context
@@ -1406,7 +1410,7 @@ export class AppReport extends LitElement {
                       </button>
                       ` : 
                       html`
-                      <sl-tooltip content="Handle all required todo's and retest in order to package!">
+                      <sl-tooltip content=${this.runningTests ? "Running tests..." : "Handle all required todo's and retest in order to package!"}>
                           <button
                             type="button"
                             id="pfs-disabled"
