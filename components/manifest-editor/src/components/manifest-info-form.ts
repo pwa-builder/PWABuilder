@@ -351,7 +351,8 @@ export class ManifestInfoForm extends LitElement {
   }
 
   handleColorSwitch(field: string){
-    let color = (this.shadowRoot!.getElementById(field + "_picker") as HTMLInputElement).value;
+    let input = (this.shadowRoot!.getElementById(field + "_picker") as HTMLInputElement);
+    let color = input.value;
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
           field: field,
@@ -361,6 +362,13 @@ export class ManifestInfoForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    if(input.classList.contains("error-color-field")){
+      input.classList.toggle("error-color-field");
+
+      let last = input!.parentNode!.parentNode!.lastElementChild;
+      input!.parentNode!.parentNode!.removeChild(last!)
+    }
   }
 
   render() {
@@ -447,7 +455,7 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .value=${this.manifest.display! || ""}>
+            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .defaultValue=${this.manifest.display! || ""}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>

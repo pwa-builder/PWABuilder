@@ -10,7 +10,7 @@ const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 
 // How to handle categories field?
-const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "display_override", "shortcuts", "protocol_handlers"];
+const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "display_override", "shortcuts", "protocol_handlers", "categories"];
 let manifestInitialized: boolean = false;
 
 
@@ -430,8 +430,6 @@ export class ManifestPlatformForm extends LitElement {
         composed: true
     });
     this.dispatchEvent(manifestUpdated);
-
-
   }
 
   toggleOverrideList(label: string){
@@ -735,7 +733,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${this.handleInputChange} .value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
+            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${this.handleInputChange} .defaultValue=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
               <sl-menu-item value="true">true</sl-menu-item>
               <sl-menu-item value="false">false</sl-menu-item>
             </sl-select>
@@ -767,7 +765,7 @@ export class ManifestPlatformForm extends LitElement {
                         <h4 class="shortcut-header">Related App #${i + 1}</h4>
                         <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.toggleEditing("related " + i.toString())}></sl-icon-button>
                       </div>
-                      <sl-select placeholder="Select a Platform" placement="bottom" .value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
+                      <sl-select placeholder="Select a Platform" placement="bottom" .defaultValue=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
                         ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
                       </sl-select>
                       <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} disabled></sl-input>
@@ -903,7 +901,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>The categories your PWA fall in to</p>
-              <div id="cat-field">
+              <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
                     this.manifest.categories?.includes(cat) ?
                       html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat} chekced>${cat}</sl-checkbox>`
