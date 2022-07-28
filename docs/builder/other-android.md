@@ -34,7 +34,7 @@ The first step is to generate your Android package with PWABuilder:
 5. Select the `Other Android` tab  in the dialog that pops up.
 
 <div class="docs-image">
-    <img src="/assets/builder/other-android/other-android.png" width=550>
+    <img src="/assets/builder/other-android/other-android.png" width=550 alt="Image of Other Android tab open on PWABuilder.com">
 </div>
 
 6. Customize any options as you see fit. The *Configuration Options* section below covers each setting in detail.
