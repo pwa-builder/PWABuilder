@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - redesign
-  workflow_dispatch:
 
 env:
   NODE_VERSION: '14.x' # set this to the node version to use
@@ -25,4 +24,4 @@ jobs:
         run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
 
       - name: Push
-        run: docker push pwabuilder.azurecr.io/pwa-site-dev:redesign
+        run: docker push pwabuilder.azurecr.io/pwa-site-dev:redesigntest
