@@ -134,7 +134,8 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
 
   static readonly assetBaseUrl =
     'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaauth@latest/assets';
-  static readonly authTokenLocalStoragePrefix = 'pwa-auth-token';
+  static readonly authTokenLocalStorageKey = 'pwa-auth-token';
+  static readonly providerLocalStorageKey = 'provider';
 
   static styles = css`
     :host {
@@ -338,34 +339,40 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
       this.disabled = true;
       this.loadAllDependencies().finally(() => (this.disabled = false));
     }
-    if (this.doesMicrosoftCookieExist()) {
-      this.tryMicrosoftSilentSignIn();
-    }
     this.isLoggedIn = false;
+    if (this.doesAuthTokenExist()) {
+      this.trySilentSignIn();
+    }
 
     this.tryAutoSignIn();
   }
 
-  async tryMicrosoftSilentSignIn() {
-    const provider = this.providers.find((p) => p.name === 'Microsoft');
-    const key = provider?.getKey();
-    if (key && provider) {
-      const importedProvider = await provider.import(key);
-      //@ts-ignore
-      const silentLoginResult = await importedProvider.signIn();
-      if (silentLoginResult) {
-        this.signInCompleted(silentLoginResult);
+  async trySilentSignIn() {
+    const providerName = localStorage.getItem(
+      this.getProviderLocalStorageKeyName()
+    );
+    if (providerName !== undefined && providerName !== null) {
+      const provider = this.providers.find((p) => p.name === providerName);
+      const key = provider?.getKey();
+      if (key && provider) {
+        const importedProvider = await provider.import(key);
+        //@ts-ignore
+        const silentLoginResult = await importedProvider.signIn();
+        if (silentLoginResult) {
+          this.signInCompleted(silentLoginResult);
+        }
       }
     }
   }
 
-  doesMicrosoftCookieExist(): boolean {
+  doesAuthTokenExist(): boolean {
     const token = localStorage.getItem('pwa-auth-token');
     if (token !== null) {
       return true;
     }
     return false;
   }
+
   async tryAutoSignInOnLoad() {
     let credential: FederatedCredential | null = null;
     let provider: ProviderInfo | null = null;
@@ -459,17 +466,14 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
       <div class="dropdown" @focusout="${this.dropdownFocusOut}">
         <button
           class="signin-btn"
+          id="signin-btn"
           part="signInButton"
           ?disabled=${this.disabled}
           @click="${this.isLoggedIn && this.loggedInProvider == 'Microsoft'
-            ? () => {
-                this.signOut('Microsoft');
-              }
+            ? this.signOutClicked
             : this.signInClicked}"
         >
-          ${this.isLoggedIn && this.loggedInProvider == 'Microsoft'
-            ? 'Sign Out'
-            : this.signInButtonText}
+          ${this.signInButtonText}
         </button>
         <div
           class="menu ${this.menuOpened ? 'open' : ''} ${this.menuPlacement ===
@@ -576,8 +580,17 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
     }
   }
 
+  private async signOutClicked() {
+    console.log('Sign out has been clicked');
+    this.toggleSignOutFlyout();
+  }
+
   private toggleMenu() {
     this.menuOpened = !this.menuOpened;
+  }
+
+  private toggleSignOutFlyout() {
+    this.logOutFlyoutOpened = !this.logOutFlyoutOpened;
   }
 
   private async signOutWithProvider(provider: ProviderInfo) {
@@ -589,7 +602,6 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
       const importedProvider = await provider.import(key);
       //@ts-ignore
       const logOutResponse = await importedProvider.signOut();
-      console.log('This is the logout response', logOutResponse);
       this.requestUpdate();
     }
     this.removeAuthTokenLocalStorageKeyName();
@@ -597,7 +609,9 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
     this.signOutCompleted();
   }
 
-  private signInWithProvider(provider: ProviderInfo) {
+  private async signInWithProvider(
+    provider: ProviderInfo
+  ): Promise<SignInResult> {
     const key = provider.getKey();
     if (!key) {
       return Promise.reject('No key specified');
@@ -610,28 +624,27 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
 
     this.disabled = true;
     this.menuOpened = false;
-    return this.trySignInWithStoredCredential(provider.url)
-      .then((storedCredSignInResult) => {
-        // Did we sign in with a stored credential? Good, we're done.
-        if (storedCredSignInResult) {
-          return storedCredSignInResult;
-        }
 
-        // Couldn't sign in with stored credential.
-        // Kick off the provider-specified OAuth flow.
-        return provider
-          .import(key)
-          .then((p) => p.signIn())
-          .catch((error) => {
-            // If the provider sends back an error, consider that a SignInResult
-            const providerError: SignInResult = {
-              error: error,
-              provider: provider.name,
-            };
-            return providerError;
-          });
-      })
-      .finally(() => (this.disabled = false));
+    const storedCredSignInResult = await this.trySignInWithStoredCredential(
+      provider.url
+    );
+    if (storedCredSignInResult) {
+      return storedCredSignInResult;
+    }
+    try {
+      // Couldn't sign in with stored credential.
+      // Kick off the provider-specified OAuth flow.
+      const providerInfo: SignInProvider = await provider.import(key);
+      const signInResult = await providerInfo.signIn();
+      return signInResult;
+    } catch (e) {
+      return {
+        error: e,
+        provider: provider.name,
+      } as SignInResult;
+    } finally {
+      this.disabled = false;
+    }
   }
 
   private signInCompleted(signIn: SignInResult): SignInResult {
@@ -640,7 +653,24 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
     this.tryStoreCredential(signIn);
     this.isLoggedIn = true;
     this.loggedInProvider = signIn.provider;
+    this.setTextInLoginButton(signIn.name);
     return signIn;
+  }
+
+  private setTextInLoginButton(name?: string | undefined | null) {
+    const signInButton = this.shadowRoot?.querySelector(
+      '#signin-btn'
+    ) as HTMLButtonElement;
+    if (signInButton && this.isLoggedIn) {
+      if (name !== undefined && name !== null) {
+        signInButton.innerText = 'Hi, ' + name + '!';
+      } else {
+        signInButton.innerText = 'Hi!';
+      }
+    } else if (signInButton && !this.isLoggedIn) {
+      signInButton.innerText = this.signInButtonText;
+    }
+    this.requestUpdate();
   }
 
   private signOutCompleted(): void {
@@ -648,6 +678,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
     this.isLoggedIn = false;
     this.loggedInProvider = null;
     navigator.credentials.preventSilentAccess();
+    this.setTextInLoginButton();
     this.dispatchEvent(new CustomEvent('signout-completed'));
   }
 
@@ -697,6 +728,9 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
   }
 
   private async tryAutoSignIn(): Promise<FederatedCredential | null> {
+    if (this.isLoggedIn) {
+      return null;
+    }
     // Use the new Credential Management API to login the user automatically.
     // https://developers.google.com/web/fundamentals/security/credential-management/
     // Bail if we don't support Credential Management
@@ -817,18 +851,23 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
   }
 
   private tryUpdateStoredTokenInfo(signIn: SignInResult) {
-    const localStorageKey = this.getAuthTokenLocalStorageKeyName();
+    const authTokenLocalStorageKey = this.getAuthTokenLocalStorageKeyName();
+    const providerLocalStorageKey = this.getProviderLocalStorageKeyName();
     const storedToken: StoredAccessToken = {
       token: signIn.accessToken || null,
       expiration: signIn.accessTokenExpiration || null,
       providerData: signIn.providerData,
     };
     try {
-      localStorage.setItem(localStorageKey, JSON.stringify(storedToken));
+      localStorage.setItem(
+        authTokenLocalStorageKey,
+        JSON.stringify(storedToken)
+      );
+      localStorage.setItem(providerLocalStorageKey, signIn.provider);
     } catch (error) {
       console.warn(
         'Unable to store auth token in local storage',
-        localStorageKey,
+        authTokenLocalStorageKey,
         signIn,
         error
       );
@@ -853,11 +892,16 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
   }
 
   private getAuthTokenLocalStorageKeyName(): string {
-    return `${PwaAuthImpl.authTokenLocalStoragePrefix}`;
+    return `${PwaAuthImpl.authTokenLocalStorageKey}`;
+  }
+
+  private getProviderLocalStorageKeyName(): string {
+    return `${PwaAuthImpl.providerLocalStorageKey}`;
   }
 
   private removeAuthTokenLocalStorageKeyName(): void {
     localStorage.removeItem(this.getAuthTokenLocalStorageKeyName());
+    localStorage.removeItem(this.getProviderLocalStorageKeyName());
   }
 
   private rehydrateAccessToken(signIn: SignInResult) {
