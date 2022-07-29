@@ -1033,22 +1033,6 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
-  async handleMissingFields(manifest: Manifest){
-    let missing = await reportMissing(manifest);
-    
-    missing.forEach((field: string) => {
-      if(required_fields.includes(field)){
-        this.requiredMissingFields.push(field)
-      } else if(reccommended_fields.includes(field)){
-        this.reccMissingFields.push(field)
-      } if(optional_fields.includes(field)){
-        this.optMissingFields.push(field)
-      } 
-      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
-    });
-    return missing.length;
-  }
-
   async testServiceWorker(url: string) {
     //call service worker tests
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
@@ -1122,6 +1106,22 @@ export class AppReport extends LitElement {
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
     //console.log(securityTests);
     this.requestUpdate();
+  }
+
+  async handleMissingFields(manifest: Manifest){
+    let missing = await reportMissing(manifest);
+    
+    missing.forEach((field: string) => {
+      if(required_fields.includes(field)){
+        this.requiredMissingFields.push(field)
+      } else if(reccommended_fields.includes(field)){
+        this.reccMissingFields.push(field)
+      } if(optional_fields.includes(field)){
+        this.optMissingFields.push(field)
+      } 
+      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
+    });
+    return missing.length;
   }
 
   async retest() {

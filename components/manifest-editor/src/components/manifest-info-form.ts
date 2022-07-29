@@ -258,8 +258,6 @@ export class ManifestInfoForm extends LitElement {
             }
           } 
 
-          
-          
           this.errorInTab();
 
         }
