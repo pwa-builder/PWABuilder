@@ -12,6 +12,7 @@ const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store",
 // How to handle categories field?
 const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "display_override", "shortcuts", "protocol_handlers", "categories"];
 let manifestInitialized: boolean = false;
+let fieldsValidated: boolean = false;
 
 
 
@@ -278,7 +279,10 @@ export class ManifestPlatformForm extends LitElement {
      
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
-      await this.validateAllFields();
+      if(!fieldsValidated){
+        await this.validateAllFields();
+        fieldsValidated = true;
+      }
       this.reset();
     } else {
       manifestInitialized = false;
