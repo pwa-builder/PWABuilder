@@ -576,7 +576,8 @@ export class AppReport extends LitElement {
 
         sl-progress-ring {
           height: fit-content;
-          --track-width: 8px;
+          --track-width: 4px;
+          --indicator-width: 8px;
           --size: 100px;
           font-size: 18px;
         }
@@ -1124,10 +1125,12 @@ export class AppReport extends LitElement {
     return missing.length;
   }
 
-  async retest() {
+  async retest(comingFromConfirmation: boolean) {
     recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.retestConfirmed = true; 
-    await this.delay(3000);
+    if(comingFromConfirmation){
+      await this.delay(3000)
+    }
     (this.shadowRoot!.querySelector(".dialog") as any)!.hide();
     if (this.siteURL) {
       this.resetData();
@@ -1380,7 +1383,7 @@ export class AppReport extends LitElement {
                     type="button"
                     id="retest"
                     @click=${() => {
-                      this.retest();
+                      this.retest(false);
                     }}
                   >
                     <img
@@ -1844,7 +1847,7 @@ export class AppReport extends LitElement {
             <p>Have you added your new ${this.thingToAdd} to your site?</p>
             <div id="confirmationButtons">
               <sl-button>No</sl-button>
-              <sl-button @click=${() => this.retest()}>Yes</sl-button>
+              <sl-button @click=${() => this.retest(true)}>Yes</sl-button>
             </div>
           `
         }
