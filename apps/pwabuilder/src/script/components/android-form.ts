@@ -28,11 +28,8 @@ export class AndroidForm extends AppPackageFormBase {
 
       #android-options-form {
         width: 100%;
-        height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        max-height: 27em;
       }
 
       .signing-key-fields {
@@ -62,6 +59,8 @@ export class AndroidForm extends AppPackageFormBase {
       #form-extras {
         display: flex;
         flex-direction: column;
+        margin-top: auto;
+        padding: 1em;
       }
     `;
     
