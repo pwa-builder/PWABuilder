@@ -123,11 +123,16 @@ export class ManifestPlatformForm extends LitElement {
       }
       #cat-field {
         display: grid;
-        grid-template-rows: repeat(6, auto);
+        grid-template-rows: repeat(7, auto);
         grid-auto-flow: column;
         column-gap: 10px;
-        padding: 0 5px 5px 5px;
+        padding: 0 1em 1em 1em;
         background: white;
+      }
+      #cat-field.error {
+        border: 1px solid #eb5757;
+        border-radius: 5px;
+        padding: 1em;
       }
       #override-list {
         display: flex;
@@ -427,18 +432,10 @@ export class ManifestPlatformForm extends LitElement {
         }
     });
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: "categories",
-            change: categories
-        },
-        bubbles: true,
-        composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
+    this.validatePlatformList("categories", categories);
   }
 
-  toggleOverrideList(label: string){
+  async toggleOverrideList(label: string){
     let menuItem = (this.shadowRoot!.querySelector('sl-menu-item[value=' + label + ']') as HTMLElement);
 
     if(menuItem!.dataset.type === 'active'){
@@ -457,21 +454,7 @@ export class ManifestPlatformForm extends LitElement {
       this.activeOverrideItems.push(label);
     }
 
-    // update manifest
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: "display_override",
-          change: [...this.activeOverrideItems]
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
-
-    let input = this.shadowRoot!.querySelector('[data-field=display_override]');
-    if(input!.classList.contains("error")){
-      input!.classList.toggle("error");
-    }  
+    this.validatePlatformList("display_override", this.activeOverrideItems!);
 
     this.requestUpdate();
   }
@@ -527,7 +510,8 @@ export class ManifestPlatformForm extends LitElement {
     this.updateShortcutsInManifest(inputs, -1);
   }
 
-  updateShortcutsInManifest(inputs: any, index: number){
+  async updateShortcutsInManifest(inputs: any, index: number){
+
     let name = inputs.filter((input: any) => input.name === "name")[0].value;
     let url = inputs.filter((input: any) => input.name === "url")[0].value;
     let src = inputs.filter((input: any) => input.name === "src")[0].value;
@@ -566,20 +550,8 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.shortcuts![index] = scObject;
     }
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: "shortcuts",
-          change: this.manifest.shortcuts
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
-
-    let input = this.shadowRoot!.querySelector('[data-field=shortcuts]');
-    if(input!.classList.contains("error")){
-      input!.classList.toggle("error");
-    }    
+    this.validatePlatformList("shortcuts", this.manifest.shortcuts!);
+    
   }
 
   addProtocolToManifest(e: any){
@@ -590,7 +562,8 @@ export class ManifestPlatformForm extends LitElement {
     this.updateProtocolsInManifest(inputs, -1);
   }
 
-  updateProtocolsInManifest(inputs: any, index: number){
+  async updateProtocolsInManifest(inputs: any, index: number){
+
     let protocol: string = inputs.filter((input: any) => input.name === "protocol")[0].value;
     let url: string= inputs.filter((input: any) => input.name === "url")[0].value;
 
@@ -609,20 +582,8 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.protocol_handlers![index] = pObject;
     }
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: "protocol_handlers",
-          change: this.manifest.protocol_handlers
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
+    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!);
 
-    let input = this.shadowRoot!.querySelector('[data-field=protocol_handlers]');
-    if(input!.classList.contains("error")){
-      input!.classList.toggle("error");
-    }  
   }
 
   addRelatedAppToManifest(e: any){
@@ -634,7 +595,8 @@ export class ManifestPlatformForm extends LitElement {
     this.updateRelatedAppsInManifest(inputs, select, -1);
   }
 
-  updateRelatedAppsInManifest(inputs: any, select: any, index: number){
+  async updateRelatedAppsInManifest(inputs: any, select: any, index: number){
+    
     let platform: string = select.value;
     let url: string = inputs.filter((input: any) => input.name === "url")[0].value;
     let id: string = inputs.filter((input: any) => input.name === "id")[0].value;
@@ -644,7 +606,7 @@ export class ManifestPlatformForm extends LitElement {
       url: url,
       id: id
     }
-
+    
     if(index == -1){
       if(!this.manifest.related_applications){
         this.manifest.related_applications = []
@@ -655,21 +617,58 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.related_applications![index] = appObject;
     }
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: "related_applications",
-          change: this.manifest.related_applications
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
-
-    let input = this.shadowRoot!.querySelector('[data-field=related_applications]');
-    if(input!.classList.contains("error")){
-      input!.classList.toggle("error");
-    }  
+    this.validatePlatformList("related_applications", this.manifest.related_applications!);
+    
   }
+
+  async validatePlatformList(field: string, updatedValue: any[]){
+    
+    let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+    const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
+    let passed = validation!.valid;
+
+    if(passed){
+
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: field,
+            change: [...updatedValue]
+        },
+        bubbles: true,
+        composed: true
+      });
+
+      this.dispatchEvent(manifestUpdated);
+
+      if(input!.classList.contains("error")){
+        input!.classList.remove("error");
+        
+        console.log("Removing categories error messages")
+        let last = input!.parentNode!.lastElementChild;
+        last!.parentNode!.removeChild(last!);
+      } 
+    } else {
+      if(input!.classList.contains("error")){
+        // reset error list
+        let last = input!.parentNode!.lastElementChild;
+        last!.parentElement!.removeChild(last!);
+      }
+      
+      // update error list
+      if(validation.errors){
+        let div = document.createElement('div');
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          div.append(p);
+        });
+        this.insertAfter(div, input!.parentNode!.lastElementChild);
+      }
+      
+      this.errorInTab();
+      input!.classList.add("error");
+    }}
 
 
   toggleEditing(tag: string){
@@ -677,7 +676,7 @@ export class ManifestPlatformForm extends LitElement {
     inputs.forEach((input: any) =>  input.disabled = !input.disabled);
 
     let select: any = this.shadowRoot!.querySelector('sl-select[data-tag= \"' + tag + '\"]');
-    console.log(select);
+    
     if(select){
       select.disabled = !select.disabled;
     }

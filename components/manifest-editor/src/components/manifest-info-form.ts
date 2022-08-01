@@ -339,17 +339,27 @@ export class ManifestInfoForm extends LitElement {
         input!.parentNode!.removeChild(last!)
       }
     } else {
+
+      if(input.classList.contains("error")){
+        // reset error list
+        let last = input!.parentNode!.lastElementChild;
+        last!.parentElement!.removeChild(last!);
+      }
+      
+      // update error list
       if(validation.errors){
+        let div = document.createElement('div');
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
-          this.insertAfter(p, input!.parentNode!.lastElementChild);
+          div.append(p);
         });
+        this.insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
       this.errorInTab();
-      input.classList.toggle("error");
+      input.classList.add("error");
     }
 
   }

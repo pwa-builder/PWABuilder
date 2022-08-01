@@ -108,7 +108,7 @@ export class AppReport extends LitElement {
   // will be used to control the state of the "Package for store" button.
   @state() runningTests: boolean = false;
   @state() canPackageList: boolean[] = [];
-  @state() canPackage: boolean = true;
+  @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
 
   @state() swSelectorOpen: boolean = false;
