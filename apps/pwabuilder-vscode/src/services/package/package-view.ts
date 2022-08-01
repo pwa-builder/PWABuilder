@@ -95,7 +95,16 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
             "Checklist for publishing your app to the Apple App Store",
             vscode.TreeItemCollapsibleState.Collapsed
           )
-        )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Meta Quest",
+            "https://aka.ms/quest-from-code",
+            "Checklist for publishing your app to the Meta Quest",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
 
         return Promise.resolve(items);
       }
@@ -125,7 +134,11 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
             "Generate Your Package",
             "https://docs.pwabuilder.com/#/builder/windows?id=packaging",
             "Generate your package for the Microsoft Store",
-            vscode.TreeItemCollapsibleState.None
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
           )
         );
 
@@ -157,7 +170,11 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
             "Generate Your Package",
             "https://docs.pwabuilder.com/#/builder/android?id=packaging",
             "Generate your package for the Google Play Store",
-            vscode.TreeItemCollapsibleState.None
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
           )
         );
 
@@ -198,7 +215,11 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
             "Generate Your Package",
             "https://docs.pwabuilder.com/#/builder/app-store?id=packaging",
             "Generate your package for the Apple App Store",
-            vscode.TreeItemCollapsibleState.None
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
           )
         );
 
@@ -216,6 +237,42 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
             "Submit Your PWA",
             "https://docs.pwabuilder.com/#/builder/app-store?id=publishing",
             "Submit your PWA to the Apple App Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Meta Quest") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Meta Quest Developer Account",
+            "https://docs.pwabuilder.com/#/builder/meta?id=prerequisites",
+            "Get a Meta Quest Developer Account to publish to the Meta Quest",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/meta?id=packaging",
+            "Generate your package for the Meta Quest",
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Sideload and Test",
+            "https://docs.pwabuilder.com/#/builder/meta?id=sideloading-and-testing",
+            "Submit your PWA to the Meta Quest",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -272,13 +329,18 @@ class ValidationItem extends vscode.TreeItem {
     this.description = desc;
 
     if (docsLink && docsLink.length > 0) {
-      this.command = {
-        command: "vscode.open",
-        title: `Open ${docsLink}`,
-        arguments: [
-          vscode.Uri.parse(docsLink)
-        ]
-      };
+      if (!command) {
+        this.command = {
+          command: "vscode.open",
+          title: `Open ${docsLink}`,
+          arguments: [
+            vscode.Uri.parse(docsLink)
+          ]
+        };
+      }
+      else {
+        this.command = command;
+      }
 
       if (label !== "Published to Web") {
         this.iconPath = new vscode.ThemeIcon("link");
