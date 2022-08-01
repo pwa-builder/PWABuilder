@@ -88,6 +88,15 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           )
         );
 
+        items.push(
+          new ValidationItem(
+            "Apple App Store",
+            "https://aka.ms/ios-from-code",
+            "Checklist for publishing your app to the Apple App Store",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        )
+
         return Promise.resolve(items);
       }
       else if (element.label === "Microsoft Store") {
@@ -166,6 +175,47 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
             "Submit Your PWA",
             "https://docs.pwabuilder.com/#/builder/android?id=_2-upload-your-app-to-the-google-play-store",
             "Submit your PWA to the Google Play Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Apple App Store") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Apple Developer Account",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=prerequisites",
+            "Get an Apple Developer Account to publish to the Apple App Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=packaging",
+            "Generate your package for the Apple App Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Build Your App",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=building-your-app",
+            "Build your app with Xcode",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Submit Your PWA",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=publishing",
+            "Submit your PWA to the Apple App Store",
             vscode.TreeItemCollapsibleState.None
           )
         );
