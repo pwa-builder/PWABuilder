@@ -28,7 +28,7 @@ export class WindowsForm extends AppPackageFormBase {
           height: 100%;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+
         }
         .flipper-button {
           display: flex;
@@ -47,6 +47,8 @@ export class WindowsForm extends AppPackageFormBase {
         #form-extras {
           display: flex;
           flex-direction: column;
+          margin-top: auto;
+          padding: 1em;
         }
       `,
     ];

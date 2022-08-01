@@ -300,15 +300,19 @@ export class PublishPane extends LitElement {
         color: rgba(0, 0, 0, 0.5)
       }
       #form-area {
-        padding: 1em;
-        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        overflow: auto
       }
-
       #form-area[data-store="Android"] {
         padding-top: 0;
+        flex-direction: column;
       }
-
-
+      android-form {
+        flex-grow: 1;
+        display: flex;
+        overflow: auto;
+      }
 
       .dialog::part(body){
         padding: 0;
