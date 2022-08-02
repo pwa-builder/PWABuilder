@@ -52,22 +52,6 @@ export class AppPackageFormBase extends LitElement {
           width: 100%;
         }
       }
-
-      ${xxLargeBreakPoint(
-      css`
-          #form-layout {
-            max-height: 17em;
-          }
-        `
-    )}
-
-      ${smallBreakPoint(
-      css`
-          #form-layout {
-            max-height: 20em;
-          }
-        `
-    )}
     `;
 
     return [

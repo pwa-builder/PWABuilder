@@ -308,7 +308,7 @@ export class PublishPane extends LitElement {
         padding-top: 0;
         flex-direction: column;
       }
-      android-form {
+      windows-form, android-form, ios-form, oculus-form {
         flex-grow: 1;
         display: flex;
         overflow: auto;

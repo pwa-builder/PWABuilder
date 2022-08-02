@@ -548,6 +548,12 @@ export class AppReport extends LitElement {
 
         #two-cell-row > * {
           width: 50%;
+          background: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-self: flex-start;
+          border-radius: 10px;
         }
 
         #sw-header {
@@ -555,14 +561,17 @@ export class AppReport extends LitElement {
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
+
         #swh-top {
           display: flex;
           justify-content: space-between;
           column-gap: 1em;
         }
+
         #swh-text {
           row-gap: 0.5em;
         }
+
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
@@ -600,17 +609,7 @@ export class AppReport extends LitElement {
           width: 3em;
           height: auto;
         }
-        .half-width-cards {
-          display: flex;
-          flex-direction: column;
-          border-radius: 10px;
-          background-color: white;
-          align-self: flex-start;
-        }
 
-        #security {
-          height: 100%;
-        }
         #sec-header {
           justify-content: space-between;
           row-gap: .5em;
