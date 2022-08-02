@@ -330,6 +330,33 @@ export class AppReport extends LitElement {
         #pfs-disabled:hover{
           cursor: no-drop;
         }
+        .pfs-tooltip {
+          --sl-tooltip-padding: 0;
+        }
+        .pfs-tooltip::part(base){
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .pfs-tooltip-content {
+          padding: 0;
+          display: flex;
+          max-width: 325px;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          gap: .5em;
+        }
+
+        .pfs-tooltip-content img {
+          align-self: flex-end;
+          justify-self: flex-end;
+          height: 50px;
+          width: auto;
+        }
+        .pfs-tooltip-content p {
+          margin: 0;
+          padding: .5em;
+        }
         sl-details:disabled{
           cursor: no-drop;
         }
@@ -1412,7 +1439,10 @@ export class AppReport extends LitElement {
                       </button>
                       ` : 
                       html`
-                      <sl-tooltip content=${this.runningTests ? "Running tests..." : "Handle all required todo's and retest in order to package!"}>
+                      <sl-tooltip class="pfs-tooltip">
+                      ${this.runningTests ? 
+                        html`<div slot="content" class="pfs-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` : 
+                        html`<div slot="content" class="pfs-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
                           <button
                             type="button"
                             id="pfs-disabled"
