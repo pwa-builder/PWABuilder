@@ -1,7 +1,5 @@
-import { default_timeout } from '../../utils/api';
 import { ManifestContext, TestResult } from '../../utils/interfaces';
 import { runManifestChecks } from '../../utils/manifest-validation';
-import { fetchOrCreateManifest } from '../manifest';
 
 const default_results: TestResult[] = [
   {

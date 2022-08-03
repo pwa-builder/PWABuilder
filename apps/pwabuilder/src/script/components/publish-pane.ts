@@ -376,6 +376,12 @@ export class PublishPane extends LitElement {
 
       /* 480px - 639px */
       ${mediumBreakPoint(css`
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: auto;
+        }
       `)}
       /* < 480 */
       ${smallBreakPoint(css`
