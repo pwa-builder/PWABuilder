@@ -23,55 +23,61 @@ export async function generateScreenshots() {
             "https://pwa-screenshots.azurewebsites.net/screenshotsAsBase64Strings";
 
         // send formdata with http node module
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json',
-                },
-                body: JSON.stringify({
-                    url: [urlToScreenshot]
-                }),
-            });
+        vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+            },
+            async (progress) => {
+                progress.report({ message: "Generating Screenshots..." });
 
-            const data = await response.json();
-
-            const screenshots = await handleScreenshots(data);
-
-            const manifest: vscode.Uri = await findManifest();
-
-            // read manifest file
-            const manifestFile = await vscode.workspace.openTextDocument(
-                manifest
-            );
-
-            const manifestObject: Manifest = JSON.parse(
-                manifestFile.getText()
-            );
-
-            // add icons to manifest
-            manifestObject.screenshots = screenshots.screenshots;
-
-            // write manifest file
-            await writeFile(
-                manifest.fsPath,
-                JSON.stringify(manifestObject, null, 2)
-            );
-
-            // show manifest with vscode
-            await vscode.window.showTextDocument(manifestFile);
-
-            vscode.window.showInformationMessage(
-                'Screenshots generated successfully!'
-            )
-
-
-            resolve(manifestFile);
-
-        } catch (err) {
-            console.error("error", err);
-            reject(err);
-        }
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            url: [urlToScreenshot]
+                        }),
+                    });
+        
+                    const data = await response.json();
+        
+                    const screenshots = await handleScreenshots(data);
+        
+                    const manifest: vscode.Uri = await findManifest();
+        
+                    // read manifest file
+                    const manifestFile = await vscode.workspace.openTextDocument(
+                        manifest
+                    );
+        
+                    const manifestObject: Manifest = JSON.parse(
+                        manifestFile.getText()
+                    );
+        
+                    // add icons to manifest
+                    manifestObject.screenshots = screenshots.screenshots;
+        
+                    // write manifest file
+                    await writeFile(
+                        manifest.fsPath,
+                        JSON.stringify(manifestObject, null, 2)
+                    );
+        
+                    // show manifest with vscode
+                    await vscode.window.showTextDocument(manifestFile);
+        
+                    progress.report({ message: "Screenshots generated successfully!" });
+        
+                    resolve(manifestFile);
+        
+                } catch (err) {
+                    console.error("error", err);
+                    progress.report({ message: `Screenshots could not be generated: ${err}` });
+                    reject(err);
+                }
+            })
     });
 }
 
@@ -98,54 +104,65 @@ export async function generateIcons() {
                 openLabel: 'Select output directory',
             });
 
-            const { savedImages, htmlMeta, manifestJsonContent } = await pwaAssetGenerator.generateImages(
-                screenshotFile ? screenshotFile[0].fsPath : null,
-                outputDir ? outputDir[0].fsPath : null,
-                {
-                    scrape: false,
-                    log: false,
-                    iconOnly: true
-                });
+            // show progress with vscode 
+            vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: 'Generating Icons',
+                cancellable: false,
+            }, async (progress) => {
+                progress.report({ message: "Generating Icons..." });
 
-            console.log(savedImages, htmlMeta, manifestJsonContent);
+                const { savedImages, htmlMeta, manifestJsonContent } = await pwaAssetGenerator.generateImages(
+                    screenshotFile ? screenshotFile[0].fsPath : null,
+                    outputDir ? outputDir[0].fsPath : null,
+                    {
+                        scrape: false,
+                        log: false,
+                        iconOnly: true
+                    });
 
-            const manifest: vscode.Uri = await findManifest();
-            if (manifest) {
-                const manifestFile = await vscode.workspace.openTextDocument(
-                    manifest
-                );
+                console.log(savedImages, htmlMeta, manifestJsonContent);
 
-                const manifestObject: Manifest = JSON.parse(
-                    manifestFile.getText()
-                );
+                const manifest: vscode.Uri = await findManifest();
+                if (manifest) {
+                    const manifestFile = await vscode.workspace.openTextDocument(
+                        manifest
+                    );
 
-                manifestObject.icons = manifestJsonContent;
+                    const manifestObject: Manifest = JSON.parse(
+                        manifestFile.getText()
+                    );
 
-                // transform icons to relative paths
-                manifestObject.icons?.forEach((icon: any) => {
-                    icon.src = vscode.workspace.asRelativePath(icon.src);
-                })
+                    manifestObject.icons = manifestJsonContent;
 
-                // write manifest file
-                await writeFile(
-                    manifest.fsPath,
-                    JSON.stringify(manifestObject, null, 2)
-                );
+                    // transform icons to relative paths
+                    manifestObject.icons?.forEach((icon: any) => {
+                        icon.src = vscode.workspace.asRelativePath(icon.src);
+                    })
 
-                // show manifest with vscode
-                await vscode.window.showTextDocument(manifestFile);
+                    // write manifest file
+                    await writeFile(
+                        manifest.fsPath,
+                        JSON.stringify(manifestObject, null, 2)
+                    );
 
-                vscode.window.showInformationMessage(
-                    'Icons generated successfully!'
-                )
+                    // show manifest with vscode
+                    await vscode.window.showTextDocument(manifestFile);
 
-                resolve(manifestFile);
-            }
-            else {
-                vscode.window.showErrorMessage(
-                    "You first need a Web Manifest. Tap the Generate Manifest button at the bottom to get started."
-                );
-            }
+                    progress.report({ message: "Icons generated successfully!" });
+
+                    resolve(manifestFile);
+                }
+                else {
+                    vscode.window.showErrorMessage(
+                        "You first need a Web Manifest. Tap the Generate Manifest button at the bottom to get started."
+                    );
+
+                    progress.report({ message: "Generate a Web Manifest first" });
+                }
+
+
+            });
 
         }
         catch (err) {
