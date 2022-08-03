@@ -181,8 +181,8 @@ export class AppReport extends LitElement {
           max-width: 1300px;
           width: 100%;
           display: flex;
-          flex-wrap: wrap;
-          gap: 1.5em;
+          flex-flow: row wrap;
+          gap: 1em;
         }
         #header-row {
           width: 100%;
@@ -569,12 +569,13 @@ export class AppReport extends LitElement {
 
         #two-cell-row {
           display: flex;
-          column-gap: 1em;
-          width: 100%;
+          flex-flow: row wrap;
+          align-items: flex-start;
+          justify-content: space-between;
         }
 
         #two-cell-row > * {
-          width: 50%;
+          width: 49%;
           background: white;
           display: flex;
           flex-direction: column;
@@ -587,6 +588,7 @@ export class AppReport extends LitElement {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
+          min-height: 332px;
         }
 
         #swh-top {
@@ -642,7 +644,7 @@ export class AppReport extends LitElement {
           row-gap: .5em;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
-          height: 100%;
+          min-height: 332px;
         }
         #sec-top {
           display: flex;
@@ -710,7 +712,7 @@ export class AppReport extends LitElement {
           --color: #d0d0d3
         }
         .desc-skeleton {
-          width: 200px;
+          width: 250px;
           --color: #d0d0d3
         }
         .gap {
@@ -779,6 +781,16 @@ export class AppReport extends LitElement {
          width: 45%;
         }
 
+        @media(max-width: 750px){
+          #two-cell-row {
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #two-cell-row > * {
+            width: 100%;
+          }
+        }
+
         
 
         ${xxxLargeBreakPoint(css``)}
@@ -820,13 +832,7 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
-          #two-cell-row {
-            flex-direction: column;
-            row-gap: 1em;
-          }
-          #two-cell-row > * {
-            width: 100%;
-          }
+          
         `)}
         ${smallBreakPoint(css`
         
@@ -838,13 +844,6 @@ export class AppReport extends LitElement {
           .progressRingSkeleton::part(base) {
             width: 75px;
             height: 75px;
-          }
-          #two-cell-row {
-            flex-direction: column;
-            row-gap: 1em;
-          }
-          #two-cell-row > * {
-            width: 100%;
           }
 
           #header-row {
@@ -1483,6 +1482,7 @@ export class AppReport extends LitElement {
               </div>
             </div>
           </div>
+
           <div id="todo">
             <sl-details 
               id="todo-detail" 
@@ -1507,6 +1507,7 @@ export class AppReport extends LitElement {
             
             </sl-details>
           </div>
+
           <div id="manifest" class="flex-col">
             <div id="manifest-header">
               <div id="mh-content">
@@ -1676,6 +1677,7 @@ export class AppReport extends LitElement {
               </div>
             </sl-details>
           </div>
+
           <div id="two-cell-row">
             <div id="sw" class="half-width-cards">
               <div id="sw-header" class="flex-col">
