@@ -5,7 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "clean": "rimraf build/ && rimraf dist/",
-    "build": "npm run clean && tsc"
+    "build": "npm run clean && tsc",
+    "build:watch": "tsc --watch"
   },
   "dependencies": {
 

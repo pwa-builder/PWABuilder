@@ -50,6 +50,7 @@ export function isValidJSON(json: Manifest): boolean {
 
 
 
+
 export async function findMissingKeys(manifest: Manifest): Promise<Array<string>> {
   return new Promise((resolve) => {
     let data: string[] = [];
@@ -133,6 +134,25 @@ export function isAtLeast(sizes: string, width: number, height: number): boolean
   return dimensions.some(i => i.width >= width && i.height >= height);
 }
 
+<<<<<<< HEAD
 export const required_fields = ["icons", "name", "short_name", "start_url"];
 export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];
+=======
+export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+  return new Promise(async (resolve) => {
+    let singleField = undefined;
+
+    maniTests.forEach((test) => {
+      if (test.member === field && test.test) {
+        const testResult = test.test(value);
+
+        console.log("testResult", testResult);
+        singleField = testResult;
+      }
+    });
+
+    resolve(singleField);
+  })
+}
+>>>>>>> 3b3b1c8db7ffa72a0be3cb6d1b06bab18af1a987

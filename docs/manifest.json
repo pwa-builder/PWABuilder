@@ -1,0 +1,53 @@
+{
+  "name": "PWABuilder Suite Documentation",
+  "short_name": "PWA Docs",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "description": "Documentation for using PWABuilder tools and building PWAs.",
+  "lang": "en-US",
+  "dir": "auto",
+  "theme_color": "#491576",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name":"Home",
+      "url":"/",
+      "description":"Takes you to main landing page of the PWA Builder Documentation.",
+      "icons": [
+        {
+          "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name":"PWA Starter",
+      "url":"/#/starter/quick-start",
+      "description":"Takes you to documentation on using the PWA Starter.",
+      "icons": [
+        {
+          "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    }
+  ]
+}

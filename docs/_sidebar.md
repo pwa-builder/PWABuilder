@@ -5,6 +5,9 @@
 
 - **Home** 
   - [About](/ "PWABuilder Suite Documentation")
+  - [PWA Overview](/home/pwa-intro "Beginner's Guide to PWA")
+  - [Service Workers](/home/sw-intro "Introduction to Service Workers")
+  - [Resources](/home/resources "Resources")
 
 - **PWA Starter** 
   - [Quick Start](/starter/quick-start "PWA Starter - Quick Start")
@@ -25,6 +28,7 @@
   - [Quick Start](/builder/quick-start "PWABuilder - Quick Start" )
   - [Microsoft Store](/builder/windows "PWABuilder - Packaging for the Microsoft Store")
   - [Google Play Store](/builder/android "PWABuilder - Packaging for the Google Play Store")
+  - [Other Android](/builder/other-android "PWABuilder - Creating Android Packages")
   - [Meta Quest](/builder/meta "PWABuilder - Meta Quest")
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
   - [FAQ](/builder/faq "PWABuilder - FAQ")

@@ -1,4 +1,4 @@
-# Removing the Browser Address Bar
+# Removing the Browser Address Bar <!-- {docsify-ignore} -->
 
 If you're seeing a browser address bar in your PWA Android app, it means you need to update your digital asset links, the `assetlinks.json` file.
 
@@ -6,7 +6,7 @@ This document shows how fix this issue so the browser address bar won't show up.
 
 Please note that a "Chrome is in use" banner is expected the first time your app is run. That is not evidence of a broken asset links. You'll know if your asset links are incorrect when the browser address bar shows up in your Android app. 
 
-## Make sure assetlinks.json is valid and accessible
+## Make sure assetlinks.json is valid and accessible <!-- {docsify-ignore} -->
 
 If you're not sure what asset links are or if you don't have an `assetlinks.json` file, go back and read our [Next Steps page](/Next-steps.md).
 
@@ -14,7 +14,7 @@ Once you have an `assetlinks.json` file deployed to your server, make sure it's 
 
 It's important that this file be in the `/.well-known` subdirectory as shown above. Chrome on Android will look at this URL for your asset links file, and will show the browser addres bar if it's not found.
 
-## Add production fingerprint
+## Add production fingerprint <!-- {docsify-ignore} -->
 
 If you haven't already, you need to add Google Play's production fingerprint to your `assetlinks.json` file.
 
@@ -44,7 +44,7 @@ Paste that fingerprint into your `assetlinks.json` file:
 
 Once you follow these steps, the browser address bar should no longer appear in your app. 😎
 
-## Validate your `assetlinks.json` file
+## Validate your `assetlinks.json` file <!-- {docsify-ignore} -->
 
 If your address bar is still showing up after the above steps, the issue is likely due to incorrect asset links: Android thinking your asset links are different than what your `assetlinks.json` file specifies.
 
@@ -81,7 +81,7 @@ To fix this, we'll check what Android believes is the asset links for your PWA, 
 
 Once you follow these steps, the browser address bar should no longer appear in your app. 😎
 
-## Make sure there are no redirects
+## Make sure there are no redirects <!-- {docsify-ignore} -->
 
 Another common cause of the address bar showing is redirects across origins. (Cosmetic redirects are fine.)
 
@@ -95,6 +95,6 @@ Bottom line: **whatever URL you redirect to, that's the URL you need to put into
 
 See [this issue](https://github.com/GoogleChromeLabs/bubblewrap/issues/310#issuecomment-685505871) for more information.
 
-## Clearing your site's cache
+## Clearing your site's cache <!-- {docsify-ignore} -->
 
 If you had previously installed your PWA on an Android device, your `assetlinks.json` file might be cached. Uninstall isn't enough; you may have to manually clear the browser's cache for your site before Chrome detects an updated `assetlinks.json` file.

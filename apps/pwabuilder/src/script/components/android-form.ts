@@ -1,4 +1,4 @@
-import { css, html, TemplateResult } from 'lit';
+import { css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
@@ -78,24 +78,30 @@ export class AndroidForm extends AppPackageFormBase {
     if (this.manifestContext.isGenerated) {
       this.manifestContext = await fetchOrCreateManifest();
     }
-
+    
     this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
-    if(!this.isGooglePlayApk){
-      this.packageOptions.features.locationDelegation!.enabled = false;
-      this.packageOptions.features.playBilling!.enabled = false;
-      this.packageOptions.isChromeOSOnly = false;
-      this.packageOptions.enableNotifications = false;
-      this.packageOptions.signingMode = "none";
-      this.packageOptions.signing = {
-                                      file: null,
-                                      alias: '',
-                                      fullName: '',
-                                      organization: '',
-                                      organizationalUnit: '',
-                                      countryCode: '',
-                                      keyPassword: '',
-                                      storePassword: ''
-                                    };
+  }
+
+  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if(_changedProperties.has("isGooglePlayApk")){
+      this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+      if(!this.isGooglePlayApk){
+        this.packageOptions.features.locationDelegation!.enabled = false;
+        this.packageOptions.features.playBilling!.enabled = false;
+        this.packageOptions.isChromeOSOnly = false;
+        this.packageOptions.enableNotifications = false;
+        this.packageOptions.signingMode = "none";
+        this.packageOptions.signing = {
+                                        file: null,
+                                        alias: '',
+                                        fullName: '',
+                                        organization: '',
+                                        organizationalUnit: '',
+                                        countryCode: '',
+                                        keyPassword: '',
+                                        storePassword: ''
+                                      };
+      }
     }
   }
 
