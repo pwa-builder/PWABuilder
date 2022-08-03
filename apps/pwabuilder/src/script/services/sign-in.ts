@@ -1,12 +1,5 @@
 import { Router } from '@vaadin/router';
-import { json } from 'express';
-import {
-  Manifest,
-  ManifestContext,
-  RawTestResult,
-  TestResult,
-} from '../utils/interfaces';
-import { getManifestContext } from './app-info';
+import { env } from '../utils/environment';
 
 function setCookie(token: string): void {
   //todo : add expiry
@@ -39,7 +32,7 @@ export async function signInUser(): Promise<void> {
   const jsonToken = getAccessToken();
   if (jsonToken !== null) {
     try {
-      const result = await fetch('http://localhost:7071/api/LoginUser', {
+      await fetch(env.signinFunctionsUrl + '/LoginUser', {
         method: 'POST',
         headers: { Authorization: setHeader(jsonToken) },
       });
@@ -57,14 +50,11 @@ export async function storeUserProject(userProjectObj: any) {
   if (jsonToken !== null) {
     try {
       console.log('User object', userProjectObj);
-      const result = await fetch(
-        'http://localhost:7071/api/CreateOrUpdateUserProject',
-        {
-          method: 'POST',
-          headers: { Authorization: setHeader(jsonToken) },
-          body: JSON.stringify(userProjectObj),
-        }
-      );
+      await fetch(env.signinFunctionsUrl + '/CreateOrUpdateUserProject', {
+        method: 'POST',
+        headers: { Authorization: setHeader(jsonToken) },
+        body: JSON.stringify(userProjectObj),
+      });
     } catch (e) {
       console.log('Error saving user details');
     }
@@ -76,7 +66,7 @@ export async function getUserProjects() {
   console.log('json token', jsonToken);
   if (jsonToken !== null) {
     try {
-      const result = await fetch('http://localhost:7071/api/GetUserProjects', {
+      const result = await fetch(env.signinFunctionsUrl + '/GetUserProjects', {
         method: 'GET',
         headers: { Authorization: setHeader(jsonToken) },
       });

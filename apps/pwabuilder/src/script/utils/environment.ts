@@ -14,6 +14,7 @@ export const env = {
   webPackageGeneratorFormUrl: '',
   ratingUrl: '',
   zipCreatorUrl: '',
+  signinFunctionsUrl: '',
 };
 
 if ((window as any).ENV == 'production') {
@@ -44,6 +45,7 @@ if ((window as any).ENV == 'production') {
   env.ratingUrl =
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
+  env.signinFunctionsUrl = 'http://localhost:7071/api';
 } else {
   env.manifestFinderUrl =
     'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest';
@@ -70,4 +72,5 @@ if ((window as any).ENV == 'production') {
   env.ratingUrl =
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
+  env.signinFunctionsUrl = 'http://localhost:7071/api';
 }

@@ -5,11 +5,13 @@ import { getManifestContext, getManifestUrl } from '../services/app-info';
 import {
   createWindowsPackageOptionsFromManifest,
   emptyWindowsPackageOptions,
+  fetchWindowsPackageOptionsForUser,
 } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
+import { isUserLoggedIn } from '../services/sign-in';
 
 @customElement('windows-form')
 export class WindowsForm extends AppPackageFormBase {
@@ -49,9 +51,10 @@ export class WindowsForm extends AppPackageFormBase {
       manifestContext = await fetchOrCreateManifest();
     }
 
-    this.packageOptions = createWindowsPackageOptionsFromManifest(
-      manifestContext.manifest
-    );
+    //TODO: Add checkbox if user opts to store their info or not
+    this.packageOptions = isUserLoggedIn()
+      ? fetchWindowsPackageOptionsForUser()
+      : createWindowsPackageOptionsFromManifest(manifestContext.manifest);
 
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
   }
