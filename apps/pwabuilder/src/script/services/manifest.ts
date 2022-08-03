@@ -32,7 +32,7 @@ export let emptyManifest: Manifest = {
   screenshots: [],
 };
 
-export function resetInitialManifest(){
+export function resetInitialManifest() {
   initialManifest = undefined;
 }
 
@@ -42,7 +42,7 @@ async function getManifest(
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
   //TODO: Replace with prod
-  const manifestTestUrl = `https://pwabuilder-tests-dev.azurewebsites.net/api/FetchWebManifest?site=${encodedUrl}`;
+  const manifestTestUrl = env.api + `/FetchWebManifest?site=${encodedUrl}`;
   try {
     const response = await fetch(manifestTestUrl, {
       method: 'POST',
@@ -100,7 +100,10 @@ function timeoutAfter(milliseconds: number): Promise<void> {
  * @param url The URL from which to detect the manifest.
  * @returns A manifest detection result.
  */
-async function fetchManifest(url: string, createIfNone = true): Promise<ManifestDetectionResult> {
+async function fetchManifest(
+  url: string,
+  createIfNone = true
+): Promise<ManifestDetectionResult> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 2 techniques to detect the manifest:
   // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
@@ -114,7 +117,7 @@ async function fetchManifest(url: string, createIfNone = true): Promise<Manifest
   try {
     knownGoodUrl = cleanUrl(url);
   } catch (err) {
-    console.warn("URL not valid!")
+    console.warn('URL not valid!');
     reject(err);
     return;
   }
