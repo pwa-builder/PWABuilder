@@ -1,0 +1,32 @@
+<html>
+
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+  <link rel="manifest" href="manifest-lesser.json" />
+
+  
+
+</head>
+
+<body>
+
+  <header>
+    <h1>PWA</h1>
+  </header>
+
+  <pwa-install manifestpath="manifest.json"></pwa-install>
+
+  <script type="module">
+    import '../build/pwa-install.js';
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+
+</html>

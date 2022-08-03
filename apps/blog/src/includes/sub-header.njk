@@ -1,0 +1,112 @@
+<section
+  class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat min-h-64 mb-8"
+  
+>
+  <div class="container mx-auto px-8">
+    <div class="w-full flex justify-left items-center pt-2">
+        {% if isPost or isDocumentation %}
+          {% if isPost %}
+            <a class="inline-flex items-center subheaderA" href="{{ backUrl }}" aria-label="Link back to Blog Home">
+            <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
+          {% else %}
+            <a class="inline-flex items-center subheaderA" href="{{ backUrl }}" aria-label="Link back to Documentation Home">
+              <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
+          {% endif %}
+        {% endif %}
+    </div>
+    {{ page.data }}
+    
+      {% if '/post' in page.url %}
+        <div class="flex flex-col justify-center items-center">
+          <h1 class="mb-2">
+            {{ title }}</h1>
+          {% if excerpt %}
+            <p class="max-w-lg">{{ excerpt }}</p>
+          {% endif %}
+        </div>
+      {% elif '/tags' in page.url %}
+        <div class="flex flex-col justify-center items-center">
+          <h1 class="mb-2">
+            {{ title }}</h1>
+          {% if excerpt %}
+            <p class="max-w-lg">{{ excerpt }}</p>
+          {% endif %}
+        </div>
+      {% elif '/docs' in page.url %}
+        {% if not isDocumentation %}
+          <div>
+            <h1 class="mb-2">
+              PWA Builder Documentation</h1>
+          </div>
+        {% endif %}
+      {% elif '/demos' in page.url %}
+        <div>
+          <h1 class="mb-2">
+              PWA Builder Demos</h1>
+          <p class="max-w-lg">
+            Learn from the great work of others
+          </p>
+        </div>
+      {% else  %}
+        <div>
+          <h1 class="mb-2">
+            {{ site.name }}</h1>
+          <p class="max-w-lg">
+            {{ site.excerpt }}
+          </p>
+        </div>
+      {% endif %}
+  </div>
+</section>
+
+<style>
+  .sub-header {
+    background-image: url("/sub-header-background.png");
+  }
+
+  .min-h-64 {
+    min-height: 1em;
+  }
+
+  a.activeTab::after {    
+    content: "";
+    display: block;
+    height: .1rem;
+    background: #342a6a;
+  }
+
+  a.activeTab:hover {    
+    text-decoration: none;
+  }
+
+  .subheaderA {
+     text-decoration: none;
+     color: rgb(41, 44, 58);
+  }
+
+  .subheaderUl {
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .subheaderUl li {
+    list-style: none;
+  }
+
+  @media (max-width: 800px) {
+    .subheaderUl {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-left: 0;
+      width: 100%;
+    }
+  }
+code {
+  background-color: rgba(27, 31, 35, 0.05) !important;
+}
+
+.limited-max {
+  max-width: 300px;
+}
+</style>

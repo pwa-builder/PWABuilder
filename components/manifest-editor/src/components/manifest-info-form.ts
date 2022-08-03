@@ -238,24 +238,26 @@ export class ManifestInfoForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           if(field === "theme_color" || field === "background_color"){
             input!.classList.add("error-color-field");
-            if(validation.error){
-              let p = document.createElement('p');
-              p.innerText = validation.error;
-              p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+            if(validation.errors){
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+              });
             }
           } else{
             input!.classList.add("error");
-            if(validation.error){
-              let p = document.createElement('p');
-              p.innerText = validation.error;
-              p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.lastElementChild);
+            if(validation.errors){
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                this.insertAfter(p, input!.parentNode!.lastElementChild);
+              });
             }
           } 
 
-          
-          
           this.errorInTab();
 
         }
@@ -337,21 +339,34 @@ export class ManifestInfoForm extends LitElement {
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(validation.error){
-        let p = document.createElement('p');
-        p.innerText = validation.error;
-        p.style.color = "#eb5757";
-        this.insertAfter(p, input!.parentNode!.lastElementChild);
+
+      if(input.classList.contains("error")){
+        // reset error list
+        let last = input!.parentNode!.lastElementChild;
+        last!.parentElement!.removeChild(last!);
+      }
+      
+      // update error list
+      if(validation.errors){
+        let div = document.createElement('div');
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          div.append(p);
+        });
+        this.insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
       this.errorInTab();
-      input.classList.toggle("error");
+      input.classList.add("error");
     }
 
   }
 
   handleColorSwitch(field: string){
-    let color = (this.shadowRoot!.getElementById(field + "_picker") as HTMLInputElement).value;
+    let input = (this.shadowRoot!.getElementById(field + "_picker") as HTMLInputElement);
+    let color = input.value;
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
           field: field,
@@ -361,6 +376,13 @@ export class ManifestInfoForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    if(input.classList.contains("error-color-field")){
+      input.classList.toggle("error-color-field");
+
+      let last = input!.parentNode!.parentNode!.lastElementChild;
+      input!.parentNode!.parentNode!.removeChild(last!)
+    }
   }
 
   render() {
@@ -447,7 +469,7 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .value=${this.manifest.display! || ""}>
+            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .defaultValue=${this.manifest.display! || ""}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>

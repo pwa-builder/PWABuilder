@@ -1,14 +1,34 @@
 # PWABuilder
 The simplest way to create progressive web apps across platforms and devices.
 
-This repo is home to several projects in the PWABuilder family of tools. The main projects are
+This repo is home to several projects in the PWABuilder family of tools. 
 
-| Name  | Overview | Project Root | Docs | Contribute |
-|-------| ----- | --------------- | -------------- | --------|
-| PWABuilder.com | Source code for [pwabuilder.com](https://pwabuilder.com) - the best way to package PWAs for various stores. | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| PWABuilder docs | Source code for [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [TODO: add wiki link] | [TODO: add wiki link]
+## Tools
 
-### Prerequisites
+| Tools  | Overview | Source | Docs | Contribute |
+|-------| ----- | -------- | -------------- | --------|
+| [PWABuilder.com](https://pwabuilder.com) | The best way to package PWAs for various stores. | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| [PWA Studio](https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio) | PWA Studio makes VSCode the BEST developer environment for building Progressive Web Apps. | [/apps/pwabuilder-vscode](/apps/pwabuilder-vscode) | [PWA Studio docs](https://docs.pwabuilder.com/#/studio/quick-start) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| [PWA Starter](https://github.com/pwa-builder/pwa-starter) | Our opinionated and production tested progressive web app (PWA) template for creating new projects. | [Repo](https://github.com/pwa-builder/pwa-starter) | [PWA Starter docs](https://docs.pwabuilder.com/#/starter/quick-start) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+
+## Docs
+
+| Docs | Source | Contribute |
+| -------- | -------------- | --------|
+| [docs.pwabuilder.com](https://docs.pwabuilder.com) | [/docs](/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki/Documentation)
+| [blog.pwabuilder.com](https://blog.pwabuilder.com) | [/apps/blog](/apps/blog) | [/apps/blog](/apps/blog)
+
+## Components
+
+| Components  | Overview | Source | Docs | Contribute |
+|-------| ----- | -------- | -------------- | --------|
+| `<pwa-auth>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaauth.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaauth) | Web component for authenticating users | [/components/pwa-auth](/components/pwa-auth) | [/components/pwa-auth/docs](/components/pwa-auth/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-update>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate) | Web component for great PWA update experience | [/components/pwa-update](/components/pwa-update) | [/components/pwa-update](/components/pwa-update) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-install>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwainstall.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwainstall) | Web component for great PWA install experience | [/components/pwa-install](/components/pwa-install) | [/components/pwa-install](/components/pwa-install) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-inking>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking) | Web component for adding inking to your PWAs | [/components/pwa-inking](/components/pwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+
+
+## Recommended Development setup
 
 You will need the following things properly installed on your computer.
 
@@ -17,7 +37,6 @@ You will need the following things properly installed on your computer.
 
 You should also be familiar with [TypeScript](https://www.typescriptlang.org/) which we use for this project. This helps give you more guidance as you code from [intellisense](https://code.visualstudio.com/docs/editor/intellisense) when using [VSCode](https://code.visualstudio.com/).
 
-### Recommended Development setup
 
 We recommend the following tools for your dev setup:
 

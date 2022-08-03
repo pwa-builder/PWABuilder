@@ -1,0 +1,69 @@
+{
+  "routes" :[
+    {
+      "route": "/docs/build-your-ios-app",
+      "redirect": "https://docs.pwabuilder.com/#/builder/app-store?id=building-your-app",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/publish-your-pwa-to-the-ios-app-store",
+      "redirect": "https://docs.pwabuilder.com/#/builder/app-store?id=publishing",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/ios-faq",
+      "redirect": "https://docs.pwabuilder.com/#/builder/faq?id=ios",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/publish-your-pwa-to-the-ios-app-store#create-your-bundle-id",
+      "redirect": "https://docs.pwabuilder.com/#/builder/app-store?id=_2-create-a-bundle-id",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/ios-platform",
+      "redirect": "https://docs.pwabuilder.com/#/builder/app-store",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/windows-platform",
+      "redirect": "https://docs.pwabuilder.com/#/builder/windows",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/publish-a-new-app-to-the-microsoft-store",
+      "redirect": "https://docs.pwabuilder.com/#/builder/windows?id=submitting-your-pwa",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/finding-your-windows-publisher-info",
+      "redirect": "https://docs.pwabuilder.com/#/builder/windows?id=reserve-your-app",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/fixing-common-errors-in-microsoft-store-app-submissions",
+      "redirect": "https://docs.pwabuilder.com/#/builder/faq?id=windows",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/generating-your-android-package",
+      "redirect": "https://docs.pwabuilder.com/#/builder/android?id=packaging",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/testing-and-publishing-your-android-pwa-to-the-google-play-store",
+      "redirect": "https://docs.pwabuilder.com/#/builder/android?id=publish",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/updating-your-existing-app",
+      "redirect": "https://docs.pwabuilder.com/#/builder/android?id=update-existing-pwa",
+      "statusCode": 301
+    },
+    {
+      "route": "/docs/removing-the-browser-address-bar",
+      "redirect": "https://docs.pwabuilder.com/#/hidden/asset-links-faq",
+      "statusCode": 301
+    }
+  ]
+}

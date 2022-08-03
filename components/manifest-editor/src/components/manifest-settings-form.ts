@@ -172,11 +172,13 @@ export class ManifestSettingsForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
 
-          if(validation.error){
-            let p = document.createElement('p');
-            p.innerText = validation.error;
-            p.style.color = "#eb5757";
-            this.insertAfter(p, input!.parentNode!.lastElementChild);
+          if(validation.errors){
+            validation.errors.forEach((error: string) => {
+              let p = document.createElement('p');
+              p.innerText = error;
+              p.style.color = "#eb5757";
+              this.insertAfter(p, input!.parentNode!.lastElementChild);
+            });
           }
 
           this.errorInTab();
@@ -233,15 +235,26 @@ export class ManifestSettingsForm extends LitElement {
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(validation.error){
-        let p = document.createElement('p');
-        p.innerText = validation.error;
-        p.style.color = "#eb5757";
-        this.insertAfter(p, input!.parentNode!.lastElementChild);
+      if(input.classList.contains("error")){
+        // reset error list
+        let last = input!.parentNode!.lastElementChild;
+        last!.parentElement!.removeChild(last!);
       }
-
-      // toggle error class to display error.
-      input.classList.toggle("error");
+      
+      // update error list
+      if(validation.errors){
+        let div = document.createElement('div');
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          div.append(p);
+        });
+        this.insertAfter(div, input!.parentNode!.lastElementChild);
+      }
+      
+      this.errorInTab();
+      input.classList.add("error");
     }
   }
 
@@ -316,7 +329,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" .value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" .defaultValue=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -337,7 +350,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" .value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" .defaultValue=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -360,7 +373,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The base direction in which to display direction-capable members of the manifest</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" .value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Direction" data-field="dir" .defaultValue=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>

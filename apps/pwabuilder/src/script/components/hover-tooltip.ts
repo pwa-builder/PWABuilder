@@ -45,7 +45,7 @@ export class HoverTooltip extends LitElement {
       }
 
       .tooltip-dialog.show {
-        opacity: 0.8;
+        opacity: 1;
         pointer-events: auto;
         visibility: visible;
       }
@@ -136,11 +136,11 @@ export class HoverTooltip extends LitElement {
   getCumulativeOffset(element: HTMLElement): [left: number, top: number] {
     let top = 0;
     let left = 0;
-    let parent = element.offsetParent as HTMLElement;
+    let parent = element.parentNode as HTMLElement;
     while (parent != null) {
       top += parent.offsetTop;
       left += parent.offsetLeft;
-      parent = parent.offsetParent as HTMLElement;
+      parent = parent.parentNode as HTMLElement;
     }
     
     return [

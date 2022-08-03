@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 import {
   smallBreakPoint,
@@ -11,7 +11,7 @@ import {
 
 import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
-import { AnalyticsBehavior, recordPWABuilderProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {

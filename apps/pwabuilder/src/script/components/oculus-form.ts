@@ -27,7 +27,6 @@ export class OculusForm extends AppPackageFormBase {
           height: 100%;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
         }
     
         .basic-settings, .adv-settings {
@@ -39,6 +38,8 @@ export class OculusForm extends AppPackageFormBase {
         #form-extras {
           display: flex;
           flex-direction: column;
+          margin-top: auto;
+          padding: 1em;
         }
         `;
     return [super.styles, localStyles];

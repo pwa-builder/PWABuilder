@@ -19,7 +19,7 @@ export class AppHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        --header-background: transparent;
+        --header-background: white;
         --header-border: rgba(0, 0, 0, 0.25) solid 1px;
       }
 

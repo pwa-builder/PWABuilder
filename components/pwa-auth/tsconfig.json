@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "ES2018"
+    ],
+    "module": "es2020",
+    "moduleResolution": "node",
+    "target": "es2018",
+    "outDir": "build",
+    "declaration": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "rootDir": "src",
+    "strictNullChecks": true,
+    "importHelpers": true
+  },
+
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src"
+  ]
+}

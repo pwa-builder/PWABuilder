@@ -222,11 +222,24 @@ export class ManifestIconsForm extends LitElement {
 
     if(this.manifest[field]){
       const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+      
       let passed = validation!.valid;
 
       if(!passed){
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
+
+        if(validation.errors){
+          validation.errors.forEach((error: string) => {
+            let p = document.createElement('p');
+            p.innerText = error;
+            p.style.color = "#eb5757";
+            p.classList.add("error-message");
+            this.insertAfter(p, title!.parentNode!.parentNode);
+          });
+          
+        }
+        
         this.errorInTab();
       }
     } else {
@@ -240,6 +253,10 @@ export class ManifestIconsForm extends LitElement {
     }
   }
 
+  insertAfter(newNode: any, existingNode: any) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+  }
+
   errorInTab(){
     let errorInTab = new CustomEvent('errorInTab', {
       bubbles: true,
@@ -249,26 +266,36 @@ export class ManifestIconsForm extends LitElement {
   }
 
 
-  handleInputChange(event: InputEvent){
+  // not currently being used since the user has to manually update the icons
+  /* async handleInputChange(event: InputEvent){
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
-    // Validate using Justin's code
-    // if false, show error logic
-    // else continue
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
+    let passed = validation!.valid;
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: fieldName,
-          change: updatedValue
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
-  }
+    if(passed) {
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: fieldName,
+            change: updatedValue
+        },
+        bubbles: true,
+        composed: true
+      });
+
+      this.dispatchEvent(manifestUpdated);
+
+      if(input.classList.contains("error")){
+        input.classList.toggle("error");
+
+        let last = input!.parentNode!.lastElementChild
+        input!.parentNode!.removeChild(last!)
+      }
+    }
+  } */
 
   enterFileSystem(){
     this.shadowRoot!.getElementById('input-file')?.click();

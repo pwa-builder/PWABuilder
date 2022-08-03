@@ -51,6 +51,7 @@ export class AppPublish extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  @state() generatedPlatform = '';
 
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -411,13 +412,17 @@ export class AppPublish extends LitElement {
           letter-spacing: 0px;
           text-align: center;
           width: 100%;
-          height: 100%;
+          white-space: nowrap;
           margin: 0;
           padding: 10px 0;
         }
 
         #apk-type p:hover {
           cursor: pointer;
+        }
+
+        #apk-type info-circle-tooltip {
+          pointer-events: none
         }
 
         #other-android{
@@ -577,17 +582,23 @@ export class AppPublish extends LitElement {
   }
 
   async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
+    if(platform === 'other-android'){
+      this.generatedPlatform = platform;
+      platform = (platform.split("-")[1] as Platform);
+    } else {
+      this.generatedPlatform = platform;
+    }
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
-      `create-${platform}-package`,
-      AnalyticsBehavior.CompleteProcess,
+      `create-${this.generatedPlatform}-package`,
+      AnalyticsBehavior.ProcessCheckpoint,
       { url: getURL() });
 
       recordProcessStep(
         'pwa-builder',
-        `create-${platform}-package`,
-        AnalyticsBehavior.CompleteProcess,
+        `create-${this.generatedPlatform}-package`,
+        AnalyticsBehavior.ProcessCheckpoint,
         { url: getURL() });
 
     try {
@@ -607,7 +618,7 @@ export class AppPublish extends LitElement {
       this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
-        `create-${platform}-package-failed`,
+        `create-${this.generatedPlatform}-package-failed`,
         AnalyticsBehavior.CancelProcess,
         {
           url: getURL(),
@@ -615,7 +626,7 @@ export class AppPublish extends LitElement {
         });
         recordProcessStep(
           'pwa-builder',
-          `create-${platform}-package-failed`,
+          `create-${this.generatedPlatform}-package-failed`,
           AnalyticsBehavior.CancelProcess,
           {
             url: getURL(),
@@ -623,19 +634,48 @@ export class AppPublish extends LitElement {
           });
     } finally {
       this.generating = false;
-      this.openAndroidOptions = false;
-      this.openWindowsOptions = false;
-      this.openiOSOptions = false;
-      this.openOculusOptions = false;
+      this.storeOptionsCancel();
     }
   }
 
   async download() {
+    recordProcessStep(
+    'analyze-and-package-pwa',
+    `download-${this.generatedPlatform}-package`,
+    AnalyticsBehavior.CompleteProcess,
+    { url: getURL() });
+
+    recordProcessStep(
+      'pwa-builder',
+      `download-${this.generatedPlatform}-package`,
+      AnalyticsBehavior.CompleteProcess,
+      { url: getURL() });
+
     if (this.blob || this.testBlob) {
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+      try{
+        await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+          fileName: this.downloadFileName || 'your_pwa.zip',
+          extensions: ['.zip'],
+        });
+      } catch(error){
+        recordProcessStep(
+          'analyze-and-package-pwa',
+          `download-${this.generatedPlatform}-package-stopped`,
+          AnalyticsBehavior.ProcessCheckpoint,
+          {
+            url: getURL(),
+            error: error
+          });
+    
+        recordProcessStep(
+          'pwa-builder',
+          `download-${this.generatedPlatform}-package-stopped`,
+          AnalyticsBehavior.ProcessCheckpoint,
+          {
+            url: getURL(),
+            error: error
+          }); 
+      }
 
       this.blob = undefined;
       this.testBlob = undefined;
@@ -793,15 +833,14 @@ export class AppPublish extends LitElement {
     this.openAndroidOptions = false;
     this.openiOSOptions = false;
     this.openOculusOptions = false;
-  }
 
-  fetchAndroidNav() {
-    return html`
-      <div id="apk-type">
-        <p>Google Play</p>
-        <p>Other Android</p>
-      </div>
-    `
+    // resetting google play tabs
+    this.isGooglePlay = true;
+
+    let old = this.shadowRoot!.querySelector(".selected-apk");
+    old?.classList.replace("selected-apk", "unselected-apk");
+    let next = this.shadowRoot?.querySelector('[data-type="play"]')
+    next!.classList.replace("unselected-apk", "selected-apk");
   }
 
   toggleApkType(event: any){
@@ -810,7 +849,7 @@ export class AppPublish extends LitElement {
     let next = event.target;
     next.classList.replace("unselected-apk", "selected-apk");
 
-    if(event.target.innerHTML === "Google Play"){
+    if(event.target.dataset.type === "play"){
       this.isGooglePlay = true;
     } else {
       this.isGooglePlay = false;
@@ -864,18 +903,18 @@ export class AppPublish extends LitElement {
         ?open="${this.openAndroidOptions === true}" @app-modal-close="${() => this.storeOptionsCancel()}">
           
         <div id="apk-type" slot="modal-nav">
-            <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
-              <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
-                Other Android
-                <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
-              </p> 
-          </div>
-          ${this.isGooglePlay ?
-            html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
-            html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-              this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
-          }
+          <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)} data-type="play">Google Play</p>
+          <p class="unselected-apk apk-type" id="other-android" data-type="other" @click=${(e: any) => this.toggleApkType(e)}>
+            Other Android
+            <info-circle-tooltip @click=${() => 0} id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
+          </p>
+        </div>
+        ${this.isGooglePlay ?
+          html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
+            this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
+          html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
+            this.generate('other-android', e.detail as AndroidPackageOptions)}"></android-form>`
+        }
     </app-modal>
       
       <!-- ios options modal -->

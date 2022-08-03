@@ -106,6 +106,7 @@ export class AppReport extends LitElement {
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
+  @state() runningTests: boolean = false;
   @state() canPackageList: boolean[] = [];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
@@ -180,8 +181,8 @@ export class AppReport extends LitElement {
           max-width: 1300px;
           width: 100%;
           display: flex;
-          flex-wrap: wrap;
-          gap: 1.5em;
+          flex-flow: row wrap;
+          gap: 1em;
         }
         #header-row {
           width: 100%;
@@ -328,6 +329,33 @@ export class AppReport extends LitElement {
         }
         #pfs-disabled:hover{
           cursor: no-drop;
+        }
+        .pfs-tooltip {
+          --sl-tooltip-padding: 0;
+        }
+        .pfs-tooltip::part(base){
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .pfs-tooltip-content {
+          padding: 0;
+          display: flex;
+          max-width: 325px;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          gap: .5em;
+        }
+
+        .pfs-tooltip-content img {
+          align-self: flex-end;
+          justify-self: flex-end;
+          height: 50px;
+          width: auto;
+        }
+        .pfs-tooltip-content p {
+          margin: 0;
+          padding: .5em;
         }
         sl-details:disabled{
           cursor: no-drop;
@@ -541,27 +569,38 @@ export class AppReport extends LitElement {
 
         #two-cell-row {
           display: flex;
-          column-gap: 1em;
-          width: 100%;
+          flex-flow: row wrap;
+          align-items: flex-start;
+          justify-content: space-between;
         }
 
         #two-cell-row > * {
-          width: 50%;
+          width: 49%;
+          background: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-self: flex-start;
+          border-radius: 10px;
         }
 
         #sw-header {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
+          min-height: 332px;
         }
+
         #swh-top {
           display: flex;
           justify-content: space-between;
           column-gap: 1em;
         }
+
         #swh-text {
           row-gap: 0.5em;
         }
+
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
@@ -575,7 +614,8 @@ export class AppReport extends LitElement {
 
         sl-progress-ring {
           height: fit-content;
-          --track-width: 8px;
+          --track-width: 4px;
+          --indicator-width: 8px;
           --size: 100px;
           font-size: 18px;
         }
@@ -598,23 +638,13 @@ export class AppReport extends LitElement {
           width: 3em;
           height: auto;
         }
-        .half-width-cards {
-          display: flex;
-          flex-direction: column;
-          border-radius: 10px;
-          background-color: white;
-          align-self: flex-start;
-        }
 
-        #security {
-          height: 100%;
-        }
         #sec-header {
           justify-content: space-between;
           row-gap: .5em;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
-          height: 100%;
+          min-height: 332px;
         }
         #sec-top {
           display: flex;
@@ -682,7 +712,7 @@ export class AppReport extends LitElement {
           --color: #d0d0d3
         }
         .desc-skeleton {
-          width: 200px;
+          width: 250px;
           --color: #d0d0d3
         }
         .gap {
@@ -751,6 +781,16 @@ export class AppReport extends LitElement {
          width: 45%;
         }
 
+        @media(max-width: 750px){
+          #two-cell-row {
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #two-cell-row > * {
+            width: 100%;
+          }
+        }
+
         
 
         ${xxxLargeBreakPoint(css``)}
@@ -792,13 +832,7 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
-          #two-cell-row {
-            flex-direction: column;
-            row-gap: 1em;
-          }
-          #two-cell-row > * {
-            width: 100%;
-          }
+          
         `)}
         ${smallBreakPoint(css`
         
@@ -810,13 +844,6 @@ export class AppReport extends LitElement {
           .progressRingSkeleton::part(base) {
             width: 75px;
             height: 75px;
-          }
-          #two-cell-row {
-            flex-direction: column;
-            row-gap: 1em;
-          }
-          #two-cell-row > * {
-            width: 100%;
           }
 
           #header-row {
@@ -967,10 +994,13 @@ export class AppReport extends LitElement {
   }
 
   async runAllTests(url: string) {
-    Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
+    this.runningTests = true;
+    await Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
+    
+    this.runningTests = false;
   }
 
   // idk if we need the url for this function bc we can just get the manifest context
@@ -1027,22 +1057,6 @@ export class AppReport extends LitElement {
     );
     //TODO: Fire event when ready
     this.requestUpdate();
-  }
-
-  async handleMissingFields(manifest: Manifest){
-    let missing = await reportMissing(manifest);
-    
-    missing.forEach((field: string) => {
-      if(required_fields.includes(field)){
-        this.requiredMissingFields.push(field)
-      } else if(reccommended_fields.includes(field)){
-        this.reccMissingFields.push(field)
-      } if(optional_fields.includes(field)){
-        this.optMissingFields.push(field)
-      } 
-      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
-    });
-    return missing.length;
   }
 
   async testServiceWorker(url: string) {
@@ -1120,10 +1134,28 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
-  async retest() {
+  async handleMissingFields(manifest: Manifest){
+    let missing = await reportMissing(manifest);
+    
+    missing.forEach((field: string) => {
+      if(required_fields.includes(field)){
+        this.requiredMissingFields.push(field)
+      } else if(reccommended_fields.includes(field)){
+        this.reccMissingFields.push(field)
+      } if(optional_fields.includes(field)){
+        this.optMissingFields.push(field)
+      } 
+      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
+    });
+    return missing.length;
+  }
+
+  async retest(comingFromConfirmation: boolean) {
     recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.retestConfirmed = true; 
-    await this.delay(3000);
+    if(comingFromConfirmation){
+      await this.delay(3000)
+    }
     (this.shadowRoot!.querySelector(".dialog") as any)!.hide();
     if (this.siteURL) {
       this.resetData();
@@ -1376,7 +1408,7 @@ export class AppReport extends LitElement {
                     type="button"
                     id="retest"
                     @click=${() => {
-                      this.retest();
+                      this.retest(false);
                     }}
                   >
                     <img
@@ -1406,7 +1438,10 @@ export class AppReport extends LitElement {
                       </button>
                       ` : 
                       html`
-                      <sl-tooltip content="Handle all required todo's and retest in order to package!">
+                      <sl-tooltip class="pfs-tooltip">
+                      ${this.runningTests ? 
+                        html`<div slot="content" class="pfs-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` : 
+                        html`<div slot="content" class="pfs-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
                           <button
                             type="button"
                             id="pfs-disabled"
@@ -1447,6 +1482,7 @@ export class AppReport extends LitElement {
               </div>
             </div>
           </div>
+
           <div id="todo">
             <sl-details 
               id="todo-detail" 
@@ -1471,6 +1507,7 @@ export class AppReport extends LitElement {
             
             </sl-details>
           </div>
+
           <div id="manifest" class="flex-col">
             <div id="manifest-header">
               <div id="mh-content">
@@ -1640,6 +1677,7 @@ export class AppReport extends LitElement {
               </div>
             </sl-details>
           </div>
+
           <div id="two-cell-row">
             <div id="sw" class="half-width-cards">
               <div id="sw-header" class="flex-col">
@@ -1840,7 +1878,7 @@ export class AppReport extends LitElement {
             <p>Have you added your new ${this.thingToAdd} to your site?</p>
             <div id="confirmationButtons">
               <sl-button>No</sl-button>
-              <sl-button @click=${() => this.retest()}>Yes</sl-button>
+              <sl-button @click=${() => this.retest(true)}>Yes</sl-button>
             </div>
           `
         }

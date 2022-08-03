@@ -7,6 +7,7 @@ import '../components/app-footer';
 import '../components/app-header';
 import '../components/app-button';
 import '../components/cookie-banner';
+import '../components/summit-banner';
 import '../components/discord-box';
 import { recordPageView } from '../utils/analytics';
 
@@ -28,6 +29,17 @@ export class AppIndex extends LitElement {
  
       #router-outlet {
         position: relative;
+      }
+
+      #wrapper {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      #content {
+        flex: 1;
+        background-color: rgb(242, 243, 251);
       }
 
       @media (min-width: 1920px) {
@@ -157,16 +169,18 @@ export class AppIndex extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="wrapper">
+        <summit-banner></summit-banner>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
       
-        <div>
+        <div id="content">
           <div id="router-outlet"></div>
         </div>
         <discord-box></discord-box>
         <app-footer></app-footer>
       </div>
+
     `;
   }
 }

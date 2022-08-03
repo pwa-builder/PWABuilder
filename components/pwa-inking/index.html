@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>inking web component</title>
+        <script type="module" src="./build/inking-canvas.js"></script>
+        <script type="module" src="./build/inking-toolbar.js"></script>
+        <script type="module" src="./build/inking-toolbar-tools.js"></script>
+    </head>
+    <body>
+        <div class="parent">
+            <div class="child1"></div>
+            <div class="child2">
+                <inking-canvas name="myCanvas" height="" width="">
+                    <inking-toolbar canvas="myCanvas" orientation="" vertical="" horizontal="">
+                        <inking-toolbar-pen></inking-toolbar-pen>
+                        <inking-toolbar-pencil></inking-toolbar-pencil>
+                        <inking-toolbar-highlighter></inking-toolbar-highlighter>
+                        <inking-toolbar-eraser></inking-toolbar-eraser>
+                        <inking-toolbar-copy></inking-toolbar-copy>
+                        <inking-toolbar-save></inking-toolbar-save>
+                    </inking-toolbar>
+                </inking-canvas>
+            </div>
+            <div class="child3">
+                <inking-canvas name="mySecondCanvas" height="400" width="400">
+                    <inking-toolbar canvas="mySecondCanvas" orientation="" vertical="" horizontal="">
+                    </inking-toolbar>
+                </inking-canvas>
+            </div>
+        </div>
+        <script type="module">
+            let myCanvas = document.querySelector("inking-canvas");
+            if (myCanvas) {
+                console.log(myCanvas);
+                let canvas = myCanvas.getCanvas();
+                console.log(canvas);
+            }
+        </script>
+    </body>
+    <style type="text/css" media="screen">
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+        }
+        .parent {
+            /* height: 500px; */
+            height: 100%;
+            background: pink;
+            position: relative;
+        }
+        .child1 {
+            height: 10%;
+            width: 100px;
+            background: purple;
+        }
+        .child2 {
+            /* height: 400px; */
+            height: 40%;
+            /* width: 400px; */
+            background: yellow;
+            position: relative;
+            margin-left: 100px;
+            /* margin-right: 100px; */
+        }
+        inking-canvas::part(canvas) {
+            border: none;
+        }
+        /* inking-toolbar-pen::part(button) {
+            background-color: red;
+        }
+        inking-toolbar-pencil::part(button) {
+            background-color: orange;
+        }
+        inking-toolbar-highlighter::part(button) {
+            background-color: yellow;
+        }
+        inking-toolbar-eraser::part(button) {
+            background-color: green;
+        }
+        inking-toolbar-copy::part(button) {
+            background-color: blue;
+        }
+        inking-toolbar-save::part(button) {
+            background-color: purple;
+        } */
+    </style>
+</html>
