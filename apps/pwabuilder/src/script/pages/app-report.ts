@@ -589,6 +589,7 @@ export class AppReport extends LitElement {
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
           min-height: 332px;
+          justify-content: space-between;
         }
 
         #swh-top {
@@ -788,6 +789,12 @@ export class AppReport extends LitElement {
           }
           #two-cell-row > * {
             width: 100%;
+          }
+          #sw-header {
+            min-height: unset;
+          }
+          #sec-header {
+            min-height: unset;
           }
         }
 
