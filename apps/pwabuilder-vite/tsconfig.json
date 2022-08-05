@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+      "module": "esnext",
+      "target": "esnext",
+      "lib": ["es2017", "esnext", "dom", "dom.iterable"],
+      "declaration": true,
+      "emitDeclarationOnly": true,
+      "outDir": "./types",
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true,
+      "forceConsistentCasingInFileNames": true,
+      "useDefineForClassFields": false,
+      "isolatedModules": true,
+      "types": [
+          "vite-plugin-pwa/client"
+      ]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

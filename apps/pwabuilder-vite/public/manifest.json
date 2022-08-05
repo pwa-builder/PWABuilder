@@ -1,0 +1,87 @@
+{
+  "dir": "ltr",
+  "lang": "EN",
+  "name": "PWABuilder",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "PWABuilder",
+  "theme_color": "#FFFFFF",
+  "description": "All the tools you need to build and deploy your Progressive Web Apps.",
+  "orientation": "any",
+  "background_color": "#FFFFFF",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon_120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon_60.png",
+      "sizes": "60x60",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon_57.png",
+      "sizes": "57x57",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/screen1.png",
+      "sizes": "2880x1800",
+      "type": "image/png",
+      "description": "PWABuilder Home Screen"
+    },
+    {
+      "src": "/assets/screenshots/screen2.png",
+      "sizes": "2880/1800",
+      "type": "image/png",
+      "description": "PWABuilder Report Card"
+    },
+    {
+      "src": "/assets/screenshots/screen3.png",
+      "sizes": "2880x1800",
+      "type": "image/png",
+      "description": "Manifest information on the Report Card"
+    },
+    {
+      "src": "/assets/screenshots/screen4.png",
+      "sizes": "2880x1800",
+      "type": "image/png",
+      "description": "Pick a pre-built Service Worker"
+    },
+    {
+      "src": "/assets/screenshots/screen5.png",
+      "sizes": "2880x1800",
+      "type": "image/png",
+      "description": "Publish your PWA to the App Stores!"
+    },
+    {
+      "src": "/assets/screenshots/mobile.png",
+      "sizes": "1439x2881",
+      "type": "image/png",
+      "description": "PWABuilder also works on your phone!"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "categories": [
+    "utility"
+  ]
+}

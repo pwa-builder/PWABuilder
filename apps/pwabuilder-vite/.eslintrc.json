@@ -1,0 +1,38 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "eslint-plugin-import"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript",
+    "plugin:eslint-plugin-import/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "overrides": [
+    {
+      "files": ["src/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": ["off"],
+        "@typescript-eslint/ban-ts-comment": ["off"],
+        "@typescript-eslint/no-var-requires": ["off"],
+        "@typescript-eslint/prefer-ts-expect-error": ["on"]
+      }
+    },
+    {
+      "files": ["./rollup.config.js", "./rollup.config.dev.js"],
+      "env": {
+        "node": true
+      },
+      "extends": ["eslint:recommended"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": ["off"]
+      }
+    }
+  ]
+}

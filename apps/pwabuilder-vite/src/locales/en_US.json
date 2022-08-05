@@ -1,0 +1,281 @@
+{
+  "button": {
+    "done": "Done",
+    "upload": "Upload",
+    "download": "Download",
+    "generate": "Generate",
+    "add_url": "+ Add URL"
+  },
+  "input": {
+    "home": {
+      "error": {
+        "promises": "There was a problem retrieving the manifest from your site.",
+        "invalidURL": "Invalid URL, please try again."
+      }
+    },
+    "manifest": {
+      "screenshot": {
+        "error": "The url needs to be an absolute url."
+      }
+    },
+    "publish": {
+      "windows": {
+        "test_package": "Want to test your app first before going to the Microsoft Store? Tap Download to get a package you can install and test."
+      },
+      "base_package": {
+        "download": "Download your generated Web Manifest and chosen Service Worker to make your app a PWA!"
+      }
+    },
+    "basepack": {
+      "run_new": "After uploading the above files to your Web App tap Run New Test to test your PWA again!"
+    }
+  },
+  "text": {
+    "publish": {
+      "windows_platform": {
+        "p": "Your download will contain instructions for submitting your app to the Microsoft Store. Your app will be powered by the Chromium-based Edge platform."
+      }
+    },
+    "base_package": {
+      "top_section": {
+        "h1": "Make your app a PWA",
+        "p": "Looks like your web app is not a PWA yet, but you're on your way! Head below to download your base file package and get one step closer to packaging your app for the app stores."
+      },
+      "summary_body": {
+        "h1": "Download PWA Base Files",
+        "p": "Whether you edited your manifest or added a service worker, in your downloaded base package files you will receive a manifest and service worker files ready to be added to your server, along with some helpful documentation."
+      },
+      "next_steps": {
+        "h1": "Next Steps"
+      }
+    },
+    "manifest_options": {
+      "top_section": {
+        "h1": "Manifest"
+      },
+      "summary_body": {
+        "h1": "Summary",
+        "p": "Easily update and upgrade your Web Manifest with our built-in Web Manifest editor"
+      },
+      "info": {
+        "h1": "Info"
+      },
+      "images": {
+        "h1": "Images",
+        "icons": {
+          "h3": "Upload App Icons"
+        },
+        "screenshots": {
+          "h3": "Generate Screenshots",
+          "p": "Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings."
+        }
+      },
+      "settings": {
+        "h1": "Settings",
+        "background_color": {
+          "h3": "Background Color"
+        },
+        "theme_color": {
+          "h3": "Theme Color"
+        }
+      },
+      "view_code": {
+        "h1": "View Code"
+      },
+      "titles": {
+        "name": "Name",
+        "short_name": "Short Name",
+        "description": "Description",
+        "start_url": "Start URL",
+        "scope": "Scope",
+        "display": "Display",
+        "orientation": "Orientation",
+        "language": "Language"
+      },
+      "descriptions": {
+        "short_name": "Used in app launchers",
+        "description": "Used in app storefronts and install dialogs",
+        "start_url": "The relative URL that loads when your app starts",
+        "scope": "Which URLs can load within your app",
+        "display": "The appearance of your app window",
+        "orientation": "The default screen orientation of your app",
+        "language": "The primary language of your app"
+      }
+    },
+    "android": {
+      "titles": {
+        "package_name": "Package Name",
+        "app_name": "App name",
+        "launcher_name": "Launcher name",
+        "all_settings": "All Settings",
+        "app_version": "App version",
+        "app_version_code": "App version code",
+        "host": "Host",
+        "start_url": "Start URL",
+        "theme_color": "Status bar color",
+        "splash_color": "Splash color",
+        "nav_color": "Nav color",
+        "dark_color": "Nav dark color",
+        "div_color": "Nav divider color",
+        "div_dark_color": "Nav divider dark color",
+        "icon_url": "Icon URL",
+        "mask_icon_url": "Maskable icon URL",
+        "mono_icon_url": "Monochrome icon URL",
+        "fallback": "Fallback behavior",
+        "custom": "Custom Tabs",
+        "web_view": "Web View",
+        "display_mode": "Display mode",
+        "standalone": "Standalone",
+        "fullscreen": "Fullscreen",
+        "notification": "Notification delegation",
+        "enable": "Enable",
+        "location_delegation": "Location delegation",
+        "google_play_billing": "Google Play billing",
+        "settings_shortcut": "Settings shortcut",
+        "chromeos_only": "ChromeOS only",
+        "generate": "Generate",
+        "source_code": "Include source code",
+        "none": "None",
+        "signing_key": "Signing key",
+        "key_file": "Key file",
+        "key_alias": "Key alias",
+        "key_fullname": "Key full name",
+        "key_org": "Key organization",
+        "key_org_unit": "Key organizational unit",
+        "key_country_code": "Key country code",
+        "key_pw": "Key password",
+        "key_store_pw": "Key store password"
+      },
+      "description": {
+        "package_name": "The unique identifier of your app. It should contain only letters, numbers, and periods. Example: com.companyname.appname",
+        "launcher_name": "The app name used on the Android launch screen. Typically, this is the short name of the app.",
+        "app_version": "The version of your app displayed to users. This is a string, typically in the form of '1.0.0.0'. Maps to android:versionName.",
+        "app_version_code": "A positive integer used as an internal version number. This is not shown to users. Android uses this value to protect against downgrades. Maps to android:versionCode.",
+        "start_url": "The start path for the TWA. Must be relative to the Host URL. You can specify '/' if you don't have a start URL different from Host.",
+        "start_url_short": "The start path for the TWA. Must be relative to the Host URL.",
+        "theme_color": "Also known as the theme color, this is the color of the Android status bar in your app. Note: the status bar will be hidden if Display Mode is set to fullscreen.",
+        "splash_color": "Also known as background color, this is the color of the splash screen for your app.",
+        "nav_color": "The color of the Android navigation bar in your app. Note: the navigation bar will be hidden if Display Mode is set to fullscreen.",
+        "dark_color": "The color of the Android navigation bar in your app when Android is in dark mode.",
+        "div_color": "The color of the Android navigation bar divider in your app.",
+        "div_dark_color": "The color of the Android navigation navigation bar divider in your app when Android is in dark mode.",
+        "mask_icon_url": "Optional. The URL to an icon with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android platforms.",
+        "mono_icon_url": "Optional. The URL to an icon containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or contrast settings.",
+        "custom": "Use Chrome Custom Tabs as a fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.",
+        "web_view": "Use a web view as the fallback for your PWA when the full trusted web activity (TWA) experience is unavailable.",
+        "standalone": "Your PWA will use the whole screen but keep the Android status bar and navigation bar.",
+        "fullscreen": "Your PWA will use the whole screen and remove the Android status bar and navigation bar. Suitable for immersive experiences such as games or media apps.",
+        "notification": "Whether to enable Push Notification Delegation. If enabled, your PWA can send push notifications without browser permission prompts.",
+        "location_delegation": "Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts.",
+        "google_play_billing": "Whether to enable in-app purchases through Google Play Billing and the Digital Goods API.",
+        "settings_shortcut": "If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.",
+        "chromeos_only": "If enabled, your Android package will only run on ChromeOS devices",
+        "form_details": "Your download will contain instructions for submitting your app to the Google Play Store.",
+        "source_code": "If enabled, your download will include the source code for your Android app.",
+        "signing_key": "PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords.",
+        "unsigned_key": "PWABuilder will generate an unsigned APK. Google Play Store will sign your package. This is Google's recommended approach.",
+        "upload_signing_key": "Upload your existing signing key. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.",
+        "key_country_code": "The 2 letter country code to list on the signing key",
+        "key_pw": "The password for the signing key. Type a new password or leave empty to use a generated password.",
+        "key_store_pw": "The password for the key store. Type a new password or leave empty to use a generated password."
+      }
+    },
+    "resource_hub": {
+      "titles": {
+        "blog": "Blog",
+        "demo": "Demo",
+        "documentation": "Documentation"
+      },
+      "description": {
+        "blog": "Check out the PWABuilder blog for all the latest on PWABuilder and PWAs",
+        "demo": "Check out our demos to see what PWAs are capable of!",
+        "documentation": "Looking for our documentation? Tap View Documentation to get started!"
+      }
+    },
+    "resource_hub_new": {
+      "titles": {
+        "manifest": "Web Manifest",
+        "sw": "Service Worker",
+        "https": "Secure HTTPS"
+      },
+      "description": {
+        "manifest": "A Web App Manifest of a website governs how your Progressive Web App (PWA) looks and behaves when installed on a device.",
+        "sw": "Service Workers are a special type of Web Worker with the ability to intercept, modify, and respond to all offline and online network requests using the Fetch API.",
+        "https": "Having a secure HTTPS endpoint and other user safeguards making the user experience secure from end to end."
+      }
+    },
+    "community_hub": {
+      "titles": {
+        "github": "Contribute on GitHub",
+        "twitter": "Follow us on Twitter!",
+        "discord": "Join us on our Discord Server"
+      },
+      "description": {
+        "github": "Contribute to this Open Source project by joining our PWA community on GitHub.",
+        "twitter": "Meet our fellow PWA enthusiast and follow our latest releases and updates on Twitter.",
+        "discord": "Join the PWABuilder Discord community to connect with the people and resources you need."
+      }
+    },
+    "success_stories": {
+      "stat": {
+        "trivago": "User traffic",
+        "alibaba": "Total conversions",
+        "pintrest": "Ad revenue",
+        "tinder": "Storage efficient"
+      },
+      "value": {
+        "trivago": "+150%",
+        "alibaba": "+76%",
+        "pintrest": "+44%",
+        "tinder": "+90%"
+      },
+      "description": {
+        "trivago": "Engagement for users who add to homescreen has increased by 150%. This increased engagement led to a 97% increase in click outs to hotel offers.",
+        "alibaba": "After upgrading to a PWA, Alibaba saw a 76% increase in total conversions across browsers. And 30% more monthly active users on Android.",
+        "pintrest": "With the new Pinterest PWA they were able to increase user-generated ad revenue by 44% and core engagement by 60%.",
+        "tinder": "The native Tinder application was a whopping 30MB, when Tinder transitioned to PWA they were able to reduce their file size down to 2.8MB. "
+      }
+    }
+  },
+  "tooltip": {
+    "manifest_options": {
+      "upload": "Your app's icon. This is the icon operating systems will use to represent your app. In Windows this is used in the taskbar, start menu etc, launch screen.",
+      "generate": "Screenshots of your PWA can be used in stores and the in-browser install prompt to help promote your PWA.",
+      "background_color": "The background_color member controls the splash screen color of your app.",
+      "theme_color": "The theme_color member defines the default theme color for your app. On Windows, this will be the color of your app's title bar.",
+      "name": "The name of your app as displayed to the user.",
+      "short_name": "The short name for your app. It's used where there is insufficent space to display the full name.",
+      "start_url": "A URL relative to the root of your domain that is opened when your app is launched, e.g. /index.html. Typically this is set to '/', indicating the root of the domain.",
+      "scope": "The scope member is a string that defines the navigation scope of this web application's application context.",
+      "display": "How your app is displayed. Standalone: Recommended. Your PWA appears like a native app, no browser UI is shown. Minimal-ui: similar to standalone but includes a refresh button and back button in your app's title bar. Fullscreen: Typically used in immersive games, your PWA takes up all the available display area without any browser UI or app title bar. Browser: full browser UI is shown.",
+      "orientation": "The default orientation your app should be used in, such as portrait or landscape.",
+      "language": "Specifies the primary language of the app.",
+      "description": "A description of your app. Appears in app listings, app storefronts, and app install UI."
+    }
+  },
+  "values": {
+    "none": "None",
+    "transparent": "Transparent",
+    "custom": "Custom Color"
+  },
+  "imageGenerator": {
+    "windows11": "Windows 11",
+    "windows10": "Windows 10",
+    "android": "Android",
+    "ios": "iOS",
+    "image_generator": "Image Generator",
+    "image_generator_text": "Quickly and easily create app icons for various platforms in the right size and format",
+    "image_details": "Image Details",
+    "image_details_text": "Specify the image details below.",
+    "input_image": "Choose your base image",
+    "input_image_help": "You should choose a 512x512 or larger square PNG image. This image will be used to generate all the images for your chosen platforms.",
+    "padding": "Padding",
+    "padding_text": "0 is no padding, 1 is 100% of the source image. 0.3 is a typical value for most icons. For Windows 11 platform, this value is overriden on individual images based on UX guidelines.",
+    "background_color": "Background Color",
+    "best_guess": "Best guess",
+    "transparent": "Transparent",
+    "custom_color": "Custom color",
+    "platforms": "Platforms",
+    "platforms_text": "Select the platforms to generate images for."
+  }
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+    <title>PWABuilder</title>
+
+    <base href="/" />
+
+    <!-- This meta viewport ensures the webpage's dimensions change according to the device it's on. This is called Responsive Web Design.-->
+    <meta name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <meta name="description" content="All the tools you need to build and deploy your Progressive Web Apps." />
+    <meta name="theme-color" content="#FFFFFF" />
+
+    <!-- These meta tags are Apple-specific, and set the web application to run in full-screen mode with a black status bar. Learn more at https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="PWABuilder" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <!-- for analytics -->
+    <meta name="ms.appid" content="PWABuilder">
+
+    <link rel="preconnect" href="https://az416426.vo.msecnd.net">
+
+    <!-- Imports an icon to represent the document. -->
+    <link rel="icon" href="assets/icons/icon_24.png" type="image/x-icon" />
+
+    <!-- Imports the manifest to represent the web application. A web app must have a manifest to be a PWA. -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Microsoft Fast Components https://www.fast.design/docs/components/getting-started-->
+    <script type="module" src="/fast-components.min.js"></script>
+
+    <!-- A stylesheet to design the pages. -->
+    <link href="./styles/global.css" rel="stylesheet" />
+
+    <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
+    <script type="module" src="/src/app-index.ts"></script>
+
+    <!-- preload font -->
+    <link rel="preload" as="font" href="/assets/fonts/Hind-Bold.ttf" />
+    <link rel="preload" as="font" href="/assets/fonts/Hind-Regular.ttf" />
+
+    <!--Shoelace-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.79/dist/themes/light.css"
+    />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.79/dist/shoelace.js"></script>
+  </head>
+
+<body>
+  <!--Ion Icons-->
+  <script async="true" defer="true" type="module"
+  src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+  <script async="true" defer="true" nomodule=""
+  src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+
+  <app-index></app-index>
+</body>
+
+</html>
