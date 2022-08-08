@@ -160,9 +160,12 @@ export class ManifestPlatformForm extends LitElement {
         flex-direction: column;
       }
       .shortcut-header{
-        margin-bottom: 5px;
-        margin-top: 0;
+        padding: .5em 0;
+        margin: 0;
         font-size: 16px;
+      }
+      sl-icon-button::part(base){
+        padding: 0;
       }
       .field-details::part(content){
         display: flex;
@@ -191,6 +194,7 @@ export class ManifestPlatformForm extends LitElement {
       }
       .items-holder {
         display: flex;
+        align-items: flex-start;
         column-gap: 10px;
         overflow-x: scroll;
         padding-bottom: 10px;
@@ -304,26 +308,40 @@ export class ManifestPlatformForm extends LitElement {
 
         if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          input!.classList.add("error");
-
+          
+          // Remove old erros
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+          
+          // update error list with new erros
           if(validation.errors){
+            let div = document.createElement('div');
+            div.classList.add(`${field}-error-div`);
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.lastElementChild);
+              div.append(p);
             });
+            this.insertAfter(div, input!.parentNode!.lastElementChild);
           }
 
-          this.errorInTab();
-        }
-      } else {
-        /* This handles the case where the field is not in the manifest.. 
-        we only want to make it red if its REQUIRED. */
-        if(required_fields.includes(field)){
-          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          // add red outline
+          console.log("Adding error from validate all, present field is failing test(s)");
           input!.classList.add("error");
           this.errorInTab();
+        } else {
+          /* This handles the case where the field is not in the manifest.. 
+          we only want to make it red if its REQUIRED. */
+          if(required_fields.includes(field)){
+            let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+
+            console.log("adding error from validate all, required field missing.")
+            input!.classList.add("error");
+            this.errorInTab();
+          }
         }
       }
     }
@@ -401,24 +419,38 @@ export class ManifestPlatformForm extends LitElement {
       });
       this.dispatchEvent(manifestUpdated);
 
+      console.log(input);
+
       if(input.classList.contains("error")){
+        console.log("Removing class error from handle input change, test passed!")
         input.classList.toggle("error");
 
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
+        
       }
     } else {
+      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
+        error_div!.parentElement!.removeChild(error_div!);
+      }
+      
+      // update error list
       if(validation.errors){
+        let div = document.createElement('div');
+        div.classList.add(`${fieldName}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
-          this.insertAfter(p, input!.parentNode!.lastElementChild);
+          div.append(p);
         });
+        this.insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       // toggle error class to display error.
-      input.classList.toggle("error");
+      console.log("Update failed, still errors")
+      input.classList.add("error");
     }
 
   }
@@ -641,22 +673,22 @@ export class ManifestPlatformForm extends LitElement {
       this.dispatchEvent(manifestUpdated);
 
       if(input!.classList.contains("error")){
-        input!.classList.remove("error");
+        input!.classList.toggle("error");
         
         console.log("Removing categories error messages")
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
     } else {
-      if(input!.classList.contains("error")){
-        // reset error list
-        let last = input!.parentNode!.lastElementChild;
-        last!.parentElement!.removeChild(last!);
+      if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+        error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
+        div.classList.add(`${field}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
@@ -667,6 +699,8 @@ export class ManifestPlatformForm extends LitElement {
       }
       
       this.errorInTab();
+
+      console.log("Platform list invalid, adding error border.")
       input!.classList.add("error");
     }}
 
@@ -738,7 +772,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${this.handleInputChange} .defaultValue=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
+            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${this.handleInputChange} .value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
               <sl-menu-item value="true">true</sl-menu-item>
               <sl-menu-item value="false">false</sl-menu-item>
             </sl-select>
@@ -770,7 +804,7 @@ export class ManifestPlatformForm extends LitElement {
                         <h4 class="shortcut-header">Related App #${i + 1}</h4>
                         <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.toggleEditing("related " + i.toString())}></sl-icon-button>
                       </div>
-                      <sl-select placeholder="Select a Platform" placement="bottom" .defaultValue=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
+                      <sl-select placeholder="Select a Platform" placement="bottom" .value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
                         ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
                       </sl-select>
                       <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} disabled></sl-input>

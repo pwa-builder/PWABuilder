@@ -617,6 +617,7 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
   
       maniTests.forEach((test) => {
         if (test.member === field && test.test) {
+        
           const testResult = test.test(value);
   
           if(!testResult){

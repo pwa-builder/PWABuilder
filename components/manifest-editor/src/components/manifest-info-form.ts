@@ -234,31 +234,57 @@ export class ManifestInfoForm extends LitElement {
         const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
         let passed = validation!.valid;
 
+        // Validation Failed
         if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+
+          // Structure of these two fields are different so they need their own logic.
           if(field === "theme_color" || field === "background_color"){
-            input!.classList.add("error-color-field");
-            if(validation.errors){
-              validation.errors.forEach((error: string) => {
-                let p = document.createElement('p');
-                p.innerText = error;
-                p.style.color = "#eb5757";
-                this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
-              });
+
+            // Remove exisiting error list if there is one.
+            if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+              let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+              error_div!.parentElement!.removeChild(error_div!);
             }
-          } else{
-            input!.classList.add("error");
+
+            // Update new errors list.
             if(validation.errors){
+              let div = document.createElement('div');
+              div.classList.add(`${field}-error-div`);
               validation.errors.forEach((error: string) => {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
-                this.insertAfter(p, input!.parentNode!.lastElementChild);
+                div.append(p);
               });
+              this.insertAfter(div, input!.parentNode!.parentNode!.lastElementChild);
+            }
+            
+            input!.classList.add("error-color-field");
+          } else { // All other fields
+            
+            // Remove old errors
+            if(this.shadowRoot!.querySelector(".error-div")){
+              let error_div = this.shadowRoot!.querySelector(".error-div");
+              error_div!.parentElement!.removeChild(error_div!);
+            }
+  
+            // Update with new errors.
+            if(validation.errors){
+              let div = document.createElement('div');
+              div.classList.add(`${field}-error-div`);
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                div.append(p);
+              });
+              this.insertAfter(div, input!.parentNode!.lastElementChild);
             }
           } 
 
           this.errorInTab();
+          input!.classList.add("error");
 
         }
       } else {
@@ -340,15 +366,15 @@ export class ManifestInfoForm extends LitElement {
       }
     } else {
 
-      if(input.classList.contains("error")){
-        // reset error list
-        let last = input!.parentNode!.lastElementChild;
-        last!.parentElement!.removeChild(last!);
+      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
+        error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
+        div.classList.add(`${fieldName}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
