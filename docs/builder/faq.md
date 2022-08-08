@@ -166,9 +166,9 @@ For example, here's an invalid icons array in the `shortcuts` field:
 ```json
 "shortcuts": [
     {
-      "name": "Shortcut Link 2",
-      "description": "Shortcut Link 2 Description",
-      "url": "/shortcutlink2",
+      "name": "Shortcut Link",
+      "description": "Shortcut Link Description",
+      "url": "/shortcutlink",
       "icons": [
         []
       ]
