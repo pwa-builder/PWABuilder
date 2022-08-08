@@ -148,4 +148,15 @@ PWABuilder will build a package signed with your existing key. When you upload i
 ?> **Note** If you want more info about quality control on Android, refer to this [article](https://blog.chromium.org/2020/06/changes-to-quality-criteria-for-pwas.html).
 
 
+## Next Steps
+
+Progressive web apps are cross-platform and can be used anywhere! 
+
+After you've sucessfully published your app to the Google Play Store, you can package and publish for other platforms:
+
+- [How to Package for Microsoft Store](/builder/windows)
+
+- [How to Package for Meta Quest](/builder/meta)
+
+- [How to Package for the App Store](/builder/app-store)
 

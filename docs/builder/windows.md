@@ -101,3 +101,15 @@ To submit your PWA through Partner Center:
 It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Micrsoft Store.
 
 If you want to view information about the status of your app, you can check through Partner Center at any time. This will be your go to spot for interacting with your listing.
+
+## Next Steps
+
+Progressive web apps are cross-platform and can be used anywhere! 
+
+After you've sucessfully published your app to the Microsoft Store, you can package and publish for other platforms:
+
+- [How to Package for the App Store](/builder/app-store)
+
+- [How to Package for Meta Quest](/builder/meta)
+
+- [How to Package for the Google Play Store](/builder/android)
