@@ -157,6 +157,23 @@ This is a common error we get when websites use firewall services like Cloudflar
 
 This is likely the result of an incomplete SSL certificate chain. You can test this to be sure here: https://www.ssllabs.com/ssltest/index.html
 
-#### Error: `Failed to download icon [Icon URL]. Responded with status 04`
+#### Error: `Failed to download icon [Icon URL]. Responded with status 404`
 
-This error usually occurs when there is an empty icons array in the `shortcuts` field, which is invalid JSON. Make sure to delete empty arrays when you aren't using icons for your shortcuts.
+This error usually occurs when there is an empty array within another array in a manifest field.
+
+For example, here's an invalid icons array in the `shortcuts` field:
+
+```json
+"shortcuts": [
+    {
+      "name": "Shortcut Link 2",
+      "description": "Shortcut Link 2 Description",
+      "url": "/shortcutlink2",
+      "icons": [
+        []
+      ]
+    }
+  ]
+```
+
+This can happen for any JSON array in your manifest, so make sure you delete any nested arrays.
