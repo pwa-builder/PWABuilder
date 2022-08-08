@@ -63,7 +63,7 @@ export class ManifestCodeForm extends LitElement {
   render() {
     return html`
       <div id="code-holder">
-        <code-editor .startText=${prettyString(this.manifest)}></code-editor>
+        <code-editor .startText=${prettyString(this.manifest)} .readOnly=${false}></code-editor>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
     `;

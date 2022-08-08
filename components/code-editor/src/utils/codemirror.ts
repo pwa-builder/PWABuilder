@@ -43,7 +43,8 @@ export const dispatchEvent = debounce((event: Event) => {
 export function getEditorState(
   text: string,
   editorType: EditorStateType,
-  extensions: Array<Extension> = []
+  extensions: Array<Extension> = [],
+  editable: boolean
 ) {
   setupEditor();
 
@@ -65,6 +66,7 @@ export function getEditorState(
       indentOnInput(),
       history(),
       fromEditorType(editorType),
+      EditorView.editable.of(editable),
       keymap.of([
         ...defaultKeymap,
         ...foldKeymap,
