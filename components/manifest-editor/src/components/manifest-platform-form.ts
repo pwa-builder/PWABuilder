@@ -329,7 +329,6 @@ export class ManifestPlatformForm extends LitElement {
           }
 
           // add red outline
-          console.log("Adding error from validate all, present field is failing test(s)");
           input!.classList.add("error");
           this.errorInTab();
         } else {
@@ -338,7 +337,6 @@ export class ManifestPlatformForm extends LitElement {
           if(required_fields.includes(field)){
             let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
 
-            console.log("adding error from validate all, required field missing.")
             input!.classList.add("error");
             this.errorInTab();
           }
@@ -419,10 +417,8 @@ export class ManifestPlatformForm extends LitElement {
       });
       this.dispatchEvent(manifestUpdated);
 
-      console.log(input);
 
       if(input.classList.contains("error")){
-        console.log("Removing class error from handle input change, test passed!")
         input.classList.toggle("error");
 
         let last = input!.parentNode!.lastElementChild
@@ -449,7 +445,6 @@ export class ManifestPlatformForm extends LitElement {
       }
 
       // toggle error class to display error.
-      console.log("Update failed, still errors")
       input.classList.add("error");
     }
 
@@ -675,7 +670,6 @@ export class ManifestPlatformForm extends LitElement {
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
         
-        console.log("Removing categories error messages")
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
@@ -700,7 +694,6 @@ export class ManifestPlatformForm extends LitElement {
       
       this.errorInTab();
 
-      console.log("Platform list invalid, adding error border.")
       input!.classList.add("error");
     }}
 
