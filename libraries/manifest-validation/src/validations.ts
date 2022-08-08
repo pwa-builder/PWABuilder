@@ -9,7 +9,7 @@ export const maniTests: Array<Validation> = [
         member: "name",
         defaultValue: "placeholder name",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
-        errorString: "name is required and should be a string with a length > 0",
+        errorString: "name is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
@@ -30,7 +30,7 @@ export const maniTests: Array<Validation> = [
               }
         }),
         docsLink: "https://web.dev/web-share-target/",
-        errorString: "share_target should be an object",
+        errorString: "share_target must be an object",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "object";
@@ -56,7 +56,7 @@ export const maniTests: Array<Validation> = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "icons should be an array with a length > 0",
+        errorString: "icons is required and must be non-empty array",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -176,7 +176,7 @@ export const maniTests: Array<Validation> = [
         member: "scope",
         defaultValue: "/",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/scope",
-        errorString: "scope is required and should be a string with a length > 0",
+        errorString: "scope must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
@@ -206,8 +206,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "placeholder",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
-        errorString:
-            "short_name is required and should be a string with a length >= 2",
+        errorString: "short_name is required and must be a string with a length >= 2",
         quickFix: true,
         test: (value: string) => {
           const existsAndLength = value && value.length >= 2;
@@ -238,8 +237,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "/",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
-        errorString:
-            "start_url is required and should be a string with a length > 0",
+        errorString: "start_url is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0
@@ -251,8 +249,7 @@ export const maniTests: Array<Validation> = [
         member: "display",
         defaultValue: "standalone",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
-        errorString:
-            "display is required and should be either fullscreen, standalone, minimal-ui, browser",
+        errorString: "display must be one of the following strings: fullscreen, standalone, minimal-ui, browser",
         quickFix: true,
         test: (value: string) => {
             return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
@@ -308,8 +305,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "any",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
-        errorString:
-            "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
+        errorString: "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
         quickFix: true,
         test: (value: string) => {
             return isStandardOrientation(value);
@@ -342,7 +338,7 @@ export const maniTests: Array<Validation> = [
         ]),
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
-        errorString: "screenshots is required and should be an array with a length > 0",
+        errorString: "screenshots must be an array with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && Array.isArray(value) && value.length > 0 ? true : false,
@@ -355,7 +351,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-        errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
+        errorString: "shortcuts must be a non-empty array and should not include webp images",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -402,7 +398,7 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
             return isArray;
         },
-        errorString: "Related applications should be a non-empty array."
+        errorString: "related_applications must be a non-empty array",
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
@@ -416,7 +412,7 @@ export const maniTests: Array<Validation> = [
         test: (value: any) => {
             return typeof(value)  === "boolean"
         },
-        errorString: "Prefer related applications should be set to a boolean value."
+        errorString: "prefer_related_applications should be set to a boolean value",
     },
     {
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
@@ -435,7 +431,7 @@ export const maniTests: Array<Validation> = [
 
             return false;
         },
-        errorString: "Categories should be a non-empty array."
+        errorString: "categories must be a non-empty array"
     },
     {
         member: "lang",
@@ -454,6 +450,7 @@ export const maniTests: Array<Validation> = [
         member: "dir",
         displayString: "Manifest specifies a default direction of text",
         infoString: "The dir member is a string that represents the default text direction of your PWA.",
+        errorString: "dir must be one of the following strings: ltr, rtl, or auto",
         category: "optional",
         defaultValue: "ltr",
         docsLink:
@@ -470,8 +467,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
-        errorString:
-            "description and should be a string with a length > 0",
+        errorString: "description must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
@@ -501,7 +497,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
         quickFix: true,
-        errorString: "protocol_handlers should be a non-empty array.",
+        errorString: "protocol_handlers must be a non-empty array",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
@@ -517,7 +513,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
         quickFix: true,
-        errorString: "display_override should be a non-empty array.",
+        errorString: "display_override must be a non-empty array",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
@@ -531,7 +527,7 @@ export const maniTests: Array<Validation> = [
         category: "recommended",
         defaultValue: "/",
         docsLink: "https://developer.chrome.com/blog/pwa-manifest-id",
-        errorString: "id should be a string with a length > 0",
+        errorString: "id must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
@@ -639,4 +635,3 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
       resolve({"valid": singleField, "errors": failedTests});
     })
   }
-  
