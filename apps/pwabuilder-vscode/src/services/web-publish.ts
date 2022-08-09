@@ -1,3 +1,4 @@
+import { watch } from "fs";
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
@@ -59,6 +60,34 @@ export async function askForUrl(): Promise<void> {
   }
 }
 
+async function doCLIDeploy(terminal: vscode.Terminal): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    // config file has been created, lets keep going
+
+    // ask user if they want to deploy
+    const answer = await vscode.window
+      .showInformationMessage(
+        "Your Azure Static Web App config has been created. Would you like to continue with deploying?",
+        {
+          title: "Deploy",
+        },
+        {
+          title: "Cancel",
+        }
+      );
+
+    if (answer && answer.title === "Deploy") {
+      terminal.sendText("npx @azure/static-web-apps-cli deploy");
+
+      resolve();
+    }
+    else {
+
+      resolve();
+    }
+  })
+}
+
 async function initPublish(terminal: vscode.Terminal): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
@@ -75,29 +104,25 @@ async function initPublish(terminal: vscode.Terminal): Promise<void> {
           if (uri) {
             watcher.dispose();
 
-            // config file has been created, lets keep going
+            console.log("called");
 
-            // ask user if they want to deploy
-            const answer = await vscode.window
-              .showInformationMessage(
-                "Your Azure Static Web App config has been created. Would you like to continue with deploying?",
-                {
-                  title: "Deploy",
-                },
-                {
-                  title: "Cancel",
-                }
-              );
-
-            if (answer && answer.title === "Deploy") {
-              terminal.sendText("npx @azure/static-web-apps-cli deploy");
-
-              resolve();
-            }
+            await doCLIDeploy(terminal);
 
             resolve();
           }
         });
+
+        watcher.onDidChange(async (uri) => {
+          if (uri) {
+            watcher.dispose();
+
+            console.log("called");
+
+            await doCLIDeploy(terminal);
+
+            resolve();
+          }
+        })
 
         terminal.sendText("npx @azure/static-web-apps-cli init --yes");
       } else {
