@@ -65,10 +65,41 @@ async function initPublish(terminal: vscode.Terminal): Promise<void> {
       const npmCheck = isNpmInstalled();
       if (npmCheck) {
         terminal.show();
-        terminal.sendText("npx @azure/static-web-apps-cli init");
 
-        terminal.sendText("npx @azure/static-web-apps-cli deploy");
-        resolve();
+        // setup file watcher for swa-cli.config.json
+        const watcher = vscode.workspace.createFileSystemWatcher(
+          "**/swa-cli.config.json"
+        );
+
+        watcher.onDidCreate(async (uri) => {
+          if (uri) {
+            watcher.dispose();
+
+            // config file has been created, lets keep going
+
+            // ask user if they want to deploy
+            const answer = await vscode.window
+              .showInformationMessage(
+                "Your Azure Static Web App config has been created. Would you like to continue with deploying?",
+                {
+                  title: "Deploy",
+                },
+                {
+                  title: "Cancel",
+                }
+              );
+
+            if (answer && answer.title === "Deploy") {
+              terminal.sendText("npx @azure/static-web-apps-cli deploy");
+
+              resolve();
+            }
+
+            resolve();
+          }
+        });
+
+        terminal.sendText("npx @azure/static-web-apps-cli init --yes");
       } else {
         noNpmInstalledWarning();
       }
@@ -104,7 +135,7 @@ async function azureCommandWalkthrough(): Promise<void> {
         ["Get Started", "Cancel"],
         {
           placeHolder:
-            "Learn how to using the Azure Static Web Apps CLI",
+            "Deploy with the Azure Static Web Apps CLI",
         }
       );
 
