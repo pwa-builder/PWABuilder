@@ -8,6 +8,7 @@ export interface Validation {
     errorString: string;
     quickFix: boolean;
     test?: Function;
+    testRequired?: boolean;
     testName?: string;
     valid?: boolean;
 }

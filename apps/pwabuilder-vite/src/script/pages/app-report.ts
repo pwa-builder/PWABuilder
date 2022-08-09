@@ -1036,7 +1036,7 @@ export class AppReport extends LitElement {
         this.manifestValidCounter++;
       } else {
         let status ="";
-        if(test.category === "required"){
+        if(test.category === "required" || test.testRequired){
           status = "red";
           this.canPackageList.push(false);
         } else {
@@ -1371,6 +1371,20 @@ export class AppReport extends LitElement {
     icon!.style.transform = "rotate(90deg)";
   }
 
+  sortTodos(){
+    this.todoItems.sort((a, b) => {
+      if(a.status === "red" && b.valid !== "red"){
+        return -1;
+      } else if(b.status === "red" && a.valid !== "red"){
+        return 1;
+      } else {
+        return a.field.localeCompare(b.field);
+      }
+    });
+
+    return this.todoItems;
+  }
+
 
   render() {
     return html`
@@ -1496,7 +1510,7 @@ export class AppReport extends LitElement {
                 <p>View Details</p>
                 <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
               </div>
-             ${this.todoItems.map((todo: any) =>
+             ${this.sortTodos().map((todo: any) =>
                 html`
                   <todo-item
                     .status=${todo.status}
@@ -1588,7 +1602,7 @@ export class AppReport extends LitElement {
               <div id="manifest-detail-grid">
                 <div class="detail-list">
                   <p class="detail-list-header">Required</p>
-                  ${this.validationResults.map((result: Validation) => result.category === "required" ?
+                  ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
                       ${result.valid ?
@@ -1619,7 +1633,7 @@ export class AppReport extends LitElement {
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Recommended</p>
-                  ${this.validationResults.map((result: Validation) => result.category === "recommended" ?
+                  ${this.validationResults.map((result: Validation) => result.category === "recommended"  && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
                       ${result.valid ?
@@ -1648,7 +1662,7 @@ export class AppReport extends LitElement {
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Optional</p>
-                  ${this.validationResults.map((result: Validation) => result.category === "optional" ?
+                  ${this.validationResults.map((result: Validation) => result.category === "optional" && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
                       ${result.valid ?

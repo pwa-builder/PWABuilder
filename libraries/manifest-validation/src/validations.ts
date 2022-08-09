@@ -66,7 +66,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-        displayString: "Icons have atleast one icon with purpose any",
+        displayString: "Icons have at least one icon with purpose any",
         category: "required",
         member: "icons",
         defaultValue: JSON.stringify([
@@ -84,7 +84,7 @@ export const maniTests: Array<Validation> = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "Need atleast one icon with purpose set to any",
+        errorString: "Need at least one icon with purpose set to any",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -101,7 +101,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-        displayString: "Icons have atleast one PNG icon 512x512 or larger",
+        displayString: "Icons have at least one PNG icon 512x512 or larger",
         category: "required",
         member: "icons",
         defaultValue: JSON.stringify([
@@ -119,7 +119,7 @@ export const maniTests: Array<Validation> = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "Need atleast one PNG icon 512x512 or larger",
+        errorString: "Need at least one PNG icon 512x512 or larger",
         quickFix: false,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -402,8 +402,9 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
-        displayString: "Manifest has prefer related applications field",
+        displayString: "Manifest properly sets prefer related applications field",
         category: "optional",
+        testRequired: true,
         member: "prefer_related_applications",
         defaultValue: false,
         docsLink:
