@@ -49,7 +49,6 @@ const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
-// const publishChecklistID = "pwa-studio.publishChecklist";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -261,7 +260,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(generateAdvWorkerCommand);
   context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
-  // context.subscriptions.push(publishChecklistCommand);
 }
 
 export function deactivate() {}
