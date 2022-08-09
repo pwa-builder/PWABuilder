@@ -1,18 +1,19 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
+import { fileSave } from 'browser-fs-access';
 
 import {
   smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xLargeBreakPoint,
+  //xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
@@ -36,9 +37,11 @@ export class PublishPane extends LitElement {
   @state() selectedStore = "";
 
   // Used to download files
+  @state() readyToDownload = false;
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  
 
   readonly platforms: ICardData[] = [
     {
@@ -93,52 +96,44 @@ export class PublishPane extends LitElement {
   static get styles() {
     return [
     css`
-
       * {
         box-sizing: border-box;
       }
       
-      #frame-wrapper {
-        display: flex;
-        flex-direction: column;
-        row-gap: .5em;
+      #pp-frame-wrapper {
         width: 100%;
+        height: 90vh;
       }
-
-      #frame-content {
+      #pp-frame-content {
         display: flex;
         flex-direction: column;
+        height: 100%;
       }
-
-      #frame-header {
+      #pp-frame-header {
         display: flex;
         flex-direction: column;
-        row-gap: .5em;
+        row-gap: .25em;
         padding: 1em;
         padding-bottom: 0;
       }
-
-      #frame-header > * {
+      #pp-frame-header > * {
         margin: 0;
       }
-
-      #frame-header h1 {
+      #pp-frame-header h1 {
         font-size: 24px;
       }
-
-      #frame-header p {
+      #pp-frame-header p {
         font-size: 14px;
       }
-
       .card-wrapper {
         width: 100%;
-        max-height: 330px;
+        height: 100%;
         display: flex;
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
+        padding: 1em;
       }
-
       .packaged-tracker {
         height: max-content;
         width: 33%;
@@ -152,7 +147,6 @@ export class PublishPane extends LitElement {
         top: 0;
         right: 0;
       }
-
       .packaged-tracker p {
         margin: 0;
         text-align: center;
@@ -161,7 +155,6 @@ export class PublishPane extends LitElement {
         line-height: 12px;
         font-weight: bold;
       }
-
       .title-block {
         box-sizing: border-box;
         display: flex;
@@ -169,15 +162,12 @@ export class PublishPane extends LitElement {
         align-items: flex-start;
         justify-content: flex-start;
         width: 100%;
-        padding: 1em 1.5em;
         row-gap: .45em;
       }
-
       .title-block h3 {
         margin: 0;
         font-size: 24px;
       }
-
       .factoids {
         width: 100%;
         height: max-content;
@@ -185,11 +175,9 @@ export class PublishPane extends LitElement {
         margin: 0;
         margin-top: 10px;
       }
-
       .factoids li {
         font-size: 14px;
       }
-
       .platform-actions-block {
         align-self: center;
         display: flex;
@@ -197,73 +185,71 @@ export class PublishPane extends LitElement {
         row-gap: 10px;
         width: 100%;
       }
-
       #store-cards {
         width: 100%;
+        height: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-gap: 1em;
-        padding: 1em;
+        grid-gap: .75em;
+        padding: 1em;    
+        overflow-y: auto;
       }
-
       app-button {
         display: flex;
         justify-content: center;
       }
-
       .package-button {
         all: unset;
         width: 75%;
         background-color: black;
         color: white; 
-        font-size: 16px;
+        font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
         border: none;
         text-align: center;
         font-weight: bold;
       }
-
       .package-button:hover {
         cursor: pointer;
         background-color: rgba(0, 0, 0, 0.75);
       }
-
-      #apk-type {
+      #apk-tabs {
         display: flex;
         align-items: baseline;
         width: 100%;
         border-bottom: 2px solid #5D5DB9;
         margin-top: 20px;
-        margin-bottom: 40px;
+        margin-bottom: 14px;
       }
-
-      #apk-type p {
+      .tab-holder {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: .5em;
+        justify-content: center;
+      }
+      .tab-holder p {
         font-size: 20px;
         font-weight: 700;
         line-height: 20px;
         letter-spacing: 0px;
         text-align: center;
-        width: 100%;
-        height: 100%;
         margin: 0;
         padding: 10px 0;
+        white-space: nowrap;
       }
-
-      #apk-type p:hover {
+      .tab-holder p:hover {
         cursor: pointer;
       }
-
       #other-android{
         display: flex;
         align-items: center;
         justify-content: center;
       }
-
       #info-tooltip {
         height: 20px
       }
-
       .selected-apk {
         border-bottom: 5px solid #5D5DB9;
         color: #5D5DB9;
@@ -272,77 +258,159 @@ export class PublishPane extends LitElement {
       .unselected-apk {
         border-bottom: 5px solid transparent;
       }
-
-      #form-header {
+      #pp-form-header {
         display: flex;
         flex-direction: column;
         background-color: #F2F3FB;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         padding: 1em;
-        gap: 1.5em;
+        gap: .5em;
       }
-
-      #form-header > img {
+      #pp-form-header > img {
         width: 25px;
       }
-
-      #form-header > button {
+      #pp-form-header > button {
         all: unset;
       }
-
-      #form-header > button:hover {
+      #pp-form-header > button:hover {
         cursor: pointer;
       }
-
-      #form-header-content {
+      #pp-form-header-content {
         display: flex;
         gap: 1em;
       }
-
-      #form-header-content img {
+      #pp-form-header-content img {
         height: 50px;
       }
-
-      #form-header-text {
+      #pp-form-header-text {
         display: flex;
         flex-direction: column;
       }
-
-      #form-header-text > * {
+      #pp-form-header-text > * {
         margin: 0;
       }
-
-      #form-header-text h1 {
+      #pp-form-header-text h1 {
         font-size: 24px;
+        white-space: nowrap;
+        line-height: 24px;
       }
-
-      #form-header-text p {
+      #pp-form-header-text p {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5)
       }
-
       #form-area {
         padding: 1em;
+        height: 100%;
       }
-      
-      /* 480px - 639px */
-      ${mediumBreakPoint(css`
-        
-      `)}
 
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
-        
-      `)}
+      #form-area[data-store="Android"] {
+        padding-top: 0;
+      }
 
-      /*1024px - 1365px*/
-      ${xLargeBreakPoint(css`
-      `)}
+
+
+      .dialog::part(body){
+        padding: 0;
+        width: 100%;
+      }
+      .dialog::part(title){
+        display: none;
+      }
+      .dialog::part(panel) {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .dialog::part(overlay){
+        backdrop-filter: blur(10px);
+      }
+      .dialog::part(close-button__base){
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
+      #unsigned-tooltip{
+        position: relative;
+      }
+
+      .toolTip {
+        visibility: hidden;
+        font-size: 14px;
+        width: 150px;
+        background: black;
+        color: white;
+        font-weight: 500;
+        text-align: center;
+        border-radius: 6px;
+        padding: .75em;
+        /* Position the tooltip */
+        position: absolute;
+        top: 25px;
+        left: -100px;
+        z-index: 1;
+        box-shadow: 0px 2px 20px 0px #0000006c;
+      }
+      #unsigned-tooltip:hover .toolTip {
+        visibility: visible;
+      }
+
+      @media(min-height: 900px){
+        #pp-frame-wrapper {
+        width: 100%;
+        height: 70vh;
+      }
+      }
 
       /* > 1920 */
-      ${xxxLargeBreakPoint(css`
-          
+      ${xxxLargeBreakPoint(css``)}
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css``)}
+
+      /* 480px - 639px */
+      ${mediumBreakPoint(css`
+      `)}
+      /* < 480 */
+      ${smallBreakPoint(css`
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: auto;
+        }
+        #pp-frame-header{
+          margin-bottom: 10px;
+          padding: 1em 2em 0em 1em;
+        }
+        #pp-frame-header h1 {
+          font-size: 20px;
+          line-height: 20px;
+        }
+        #pp-frame-header p {
+          font-size: 12px;
+        }
+        #pp-form-header-content img {
+          height: 35px;
+        }
+        #pp-form-header-text h1 {
+          font-size: 20px;
+          white-space: nowrap;
+          line-height: 20px;
+        }
+        #pp-form-header-text p {
+          font-size: 12px;
+        }
+        #apk-type p {
+          font-size: 16px;
+        }
+
+        #info-tooltip {
+          height: 16px
+        }
+
       `)}
     `
     ];
@@ -394,12 +462,19 @@ export class PublishPane extends LitElement {
         this.generate('windows', ev.detail as WindowsPackageOptions)}"></windows-form>`
     } else if(this.selectedStore === "Android"){
       return html`
-      <div id="apk-type">
-        <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
-        <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
-          Other Android
-          <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
-        </p> 
+      <div id="apk-tabs">
+        <div class="tab-holder selected-apk">
+          <p class="apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
+        </div>
+        <div class="tab-holder unselected-apk">
+          <p class="apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p> 
+          <div id="unsigned-tooltip">
+            <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+            <span class="toolTip">
+              Generates an unsigned APK.
+            </span>
+          </div>
+        </div>
       </div>
       ${this.isGooglePlay ?
         html`<android-form .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
@@ -434,7 +509,7 @@ export class PublishPane extends LitElement {
   toggleApkType(event: any){
     let old = this.shadowRoot!.querySelector(".selected-apk");
     old?.classList.replace("selected-apk", "unselected-apk");
-    let next = event.target;
+    let next = event.target.parentNode;
     next.classList.replace("unselected-apk", "selected-apk");
 
     if(event.target.innerHTML === "Google Play"){
@@ -474,17 +549,22 @@ export class PublishPane extends LitElement {
 
     try {
       this.generating = true;
+      console.log("generating files");
       const packageData = await generatePackage(platform, options);
 
       if (packageData) {
+        console.log("succesfully generated files");
         this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
+          console.log("non test blob");
           this.blob = packageData.blob;
+          this.readyToDownload = true;
         }
       }
     } catch (err) {
+      console.log("error");
       console.error(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
@@ -509,6 +589,18 @@ export class PublishPane extends LitElement {
       this.openWindowsOptions = false;
       this.openiOSOptions = false;
       this.openOculusOptions = false; */
+    }
+  }
+
+  async downloadPackage(){
+    if (this.blob || this.testBlob) {
+      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+        fileName: this.downloadFileName || 'your_pwa.zip',
+        extensions: ['.zip'],
+      });
+
+      this.blob = undefined;
+      this.testBlob = undefined;
     }
   }
 
@@ -537,39 +629,58 @@ export class PublishPane extends LitElement {
     );
   }
 
+  async hideDialog(e: any){
+    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    if(e.target === dialog){
+      await dialog!.hide();
+      recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
+      document.body.style.height = "unset";
+    }
+  }
+
   render() {
     return html`
-
-      <div id="frame-wrapper">
-        <div id="frame-content">
-        ${this.cardsOrForm ?
-          html`
-          <div id="frame-header">
-            <h1>Awesome! Your PWA is store ready!</h1>
-            <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
-          </div>
-
-          <div id="store-cards">
-            ${this.renderContentCards()}
-          </div>`
-          :
-          html`
-          <div id="form-header">
-            <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
-            <div id="form-header-content">
-              <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
-              <div id="form-header-text">
-                <h1>${this.selectedStore} Package Options</h1>
-                <p>Customize your ${this.selectedStore} app below!</p>
-              </div>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+        <div id="pp-frame-wrapper">
+          <div id="pp-frame-content">
+          ${this.cardsOrForm ?
+            html`
+            <div id="pp-frame-header">
+              <h1>Awesome! Your PWA is store ready!</h1>
+              <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
             </div>
-          </div>        
-          <div id="form-area">
-            ${this.renderForm()}
-          </div>`
+            <div id="store-cards">
+              ${this.renderContentCards()}
+            </div>`
+            :
+            html`
+            <div id="pp-form-header">
+              <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
+              <div id="pp-form-header-content">
+                <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
+                <div id="pp-form-header-text">
+                  <h1>${this.selectedStore} Package Options</h1>
+                  <p>Customize your ${this.selectedStore} app below!</p>
+                </div>
+              </div>
+            </div> 
+            ${!this.readyToDownload ?   
+              // so if this is false then we wanna show the form  
+              html`
+                <div id="form-area" data-store=${this.selectedStore}>
+                  ${this.renderForm()}
+                </div>
+              ` :
+              // when this becomes true this means that we are ready to download something
+              html`
+                <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
+              `
+            }  
+          `
           }
+          </div>
         </div>
-      </div>
+      </sl-dialog>
         
     `;
   }

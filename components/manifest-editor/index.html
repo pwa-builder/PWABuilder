@@ -6,27 +6,40 @@
 
     <script type="module" src="/dist/index.js"></script>
 
-    <link rel="stylesheet" href="global.css" />
+    <link rel="stylesheet" href="/global.css" />
 
     <link
       rel="stylesheet"
       media="(prefers-color-scheme:light)"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.78/dist/themes/light.css"
     />
     <link
       rel="stylesheet"
       media="(prefers-color-scheme:dark)"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/dark.css"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.78/dist/themes/dark.css"
       onload="document.documentElement.classList.add('sl-theme-dark');"
     />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/shoelace.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.78/dist/shoelace.js"></script>
   </head>
 
   <body>
-    <div id="manifest-editor-modal" class="flex-center">
-      <div id="modal" class="flex-col-center">
-        <pwa-manifest-editor></pwa-manifest-editor>
+    <div id="editor-holder">
+      <div id="close"><ion-icon name="close"></ion-icon></div>
+      <div id="editor-header">
+        <div id="header-text">
+          <h1>Generate a manifest</h1>
+          <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url. Once you are staistifed with you score package your PWA for the stores.</p>
+        </div>
+        <div id="header-actions">
+          <button id="download-button">Download Manifest</button>
+          <button id="reset-button">Reset to original Manifest <ion-icon name="refresh"></ion-icon></button>
+          <div id="actions">
+            <span class="header-action"><a href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio" target="_blank" rel="noopener">VS Code Extension </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
+            <span class="header-action"><a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" target="_blank" rel="noopener">Manifest Documentation </a> <img src="/assets/arrow.svg" alt="arrow" /> </span>
+          </div>
+        </div>
       </div>
+      <pwa-manifest-editor></pwa-manifest-editor>
     </div>
     <!-- Ion Icons -->
     <script type="module" src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.esm.js"></script>
@@ -46,87 +59,88 @@
       }); */
 
       editor.initialManifest = {
-                                "dir": "ltr",
-                                "lang": "en",
-                                "name": "Webboard",
-                                "scope": "/",
-                                "display": "standalone",
-                                "start_url": "/",
-                                "short_name": "Webboard",
-                                "theme_color": "#FFFFFF",
-                                "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
-                                "orientation": "any",
-                                "background_color": "#FFFFFF",
-                                "related_applications": [],
-                                "prefer_related_applications": false,
-                                "screenshots": [
-                                  {
-                                    "src": "assets/screen.png"
-                                  },
-                                  {
-                                    "src": "assets/screen.png"
-                                  },
-                                  {
-                                    "src": "assets/screen.png"
-                                  }
-                                ],
-                                "features": [
-                                  "Cross Platform",
-                                  "low-latency inking",
-                                  "fast",
-                                  "useful AI"
-                                ],
-                                "icons": [
-                                  {
-                                    "src": "icons/android/android-launchericon-64-64.png",
-                                    "sizes": "64x64"
-                                  },
-                                  {
-                                    "src": "icons/android/maskable_icon_192.png",
-                                    "sizes": "192x192",
-                                    "purpose": "maskable"
-                                  },
-                                  {
-                                    "src": "icons/android/android-launchericon-48-48.png",
-                                    "sizes": "48x48"
-                                  },
-                                  {
-                                    "src": "icons/android/android-launchericon-512-512.png",
-                                    "sizes": "512x512"
-                                  },
-                                  {
-                                    "src": "icons/android/android-launchericon-28-28.png",
-                                    "sizes": "28x28"
-                                  }
-                                ],
-                                "categories": ["magazines", "productivity"],
-                                "shortcuts" : [
-                                  {
-                                    "name": "Today's agenda",
-                                    "url": "/today",
-                                    "description": "List of events planned for today"
-                                  },
-                                  {
-                                    "name": "Today's agenda",
-                                    "url": "/today",
-                                    "description": "List of events planned for today"
-                                  }
-                                ],
-                                "protocol_handlers" : [
-                                  {
-                                    "protocol": "Today's agenda",
-                                    "url": "/today"
-                                  }
-                                ],
-                                "related_applications": [
-                                  {
-                                    "platform": "play",
-                                    "url": "https://play.google.com/store/apps/details?id=com.example.app1",
-                                    "id": "com.example.app1"
-                                  }
-                                ]
-                            }; //load an initial manifest
-      editor.manifestURL = "https://webboard.app/manifest.json"
+  "name": "T2C - Tram & Bus",
+  "short_name": "T2",
+  "orientation": "upside down",
+  "lang": "en-US",
+  "related_applications": [],
+  "prefer_related_applications": "false",
+  "icons": [
+    {
+      "src": "images/192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "images/2251x2251.png",
+      "type": "image/png",
+      "sizes": "2251x2251"
+    },
+    {
+      "src": "images/512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/?utm_source=launcher",
+  "display": "abc",
+  "display_override": [],
+  "protocol_handlers": [],
+  "background_color": "none",
+  "theme_color": "none",
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "icons": [
+        {
+          "src": "/images/shortcuts/a.png",
+          "sizes": "96x96"
+        }
+      ],
+      "short_name": "Jaude - A",
+      "name": "Jaude Ligne A",
+      "url": "https://t2c.app/A/Jaude/Les%20Vergnes?utm_source=launcher_shortcuts",
+      "description": "Horaire de la ligne A à l'arrêt Jaude"
+    },
+    {
+      "icons": [
+        {
+          "src": "/images/shortcuts/b.png",
+          "sizes": "96x96"
+        }
+      ],
+      "short_name": "Jaude - B",
+      "name": "Jaude Ligne B",
+      "url": "https://t2c.app/B/Jaude/Royat%20Pl.%20Allard?utm_source=launcher_shortcuts",
+      "description": "Horaire de la ligne B à l'arrêt Jaude"
+    },
+    {
+      "icons": [
+        {
+          "src": "/images/shortcuts/c.png",
+          "sizes": "96x96"
+        }
+      ],
+      "short_name": "Jaude - C",
+      "name": "Jaude Ligne C",
+      "url": "https://t2c.app/C/Jaude/Tamaris?utm_source=launcher_shortcuts",
+      "description": "Horaire de la ligne C à l'arrêt Jaude"
+    },
+    {
+      "icons": [
+        {
+          "src": "/images/shortcuts/a.png",
+          "sizes": "96x96"
+        }
+      ],
+      "short_name": "Université - A",
+      "name": "Université Ligne A",
+      "url": "https://t2c.app/A/Universités/Les Vergnes?utm_source=launcher_shortcuts",
+      "description": "Horaire de la ligne A à l'arrêt Université"
+    }
+  ]
+}; //load an initial manifest
+      editor.manifestURL = "https://t2c.app/manifest.json"
 
       let editedManifest = editor.manifest; // get edited or generated manifest
       //console.log(editedManifest);

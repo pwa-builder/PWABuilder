@@ -20,7 +20,27 @@ export class OculusForm extends AppPackageFormBase {
   @state() existingSigningKey = emptyOculusSigningKey();
 
   static get styles() {
-    const localStyles = css``;
+    const localStyles = css`
+
+        #oculus-options-form {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+    
+        .basic-settings, .adv-settings {
+          display: flex;
+          flex-direction: column;
+          gap: .75em;
+        }
+
+        #form-extras {
+          display: flex;
+          flex-direction: column;
+        }
+        `;
     return [super.styles, localStyles];
   }
 
@@ -226,16 +246,18 @@ export class OculusForm extends AppPackageFormBase {
           </fast-accordion>
         </div>
 
-        <div id="form-details-block">
-          <p>
-            Your download will have instructions about sideloading the app on Meta Quest.
-          </p>
-        </div>
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>
+              Your download will have instructions about sideloading the app on Meta Quest.
+            </p>
+          </div>
 
-        <div id="form-options-actions" class="modal-actions">
-          <loading-button .loading="${this.generating}">
-            <input id="generate-submit" type="submit" value="Generate" />
-          </loading-button>
+          <div id="form-options-actions" class="modal-actions">
+            <loading-button .loading="${this.generating}">
+              <input id="generate-submit" type="submit" value="Generate Package" />
+            </loading-button>
+          </div>
         </div>
       </form>
     `;

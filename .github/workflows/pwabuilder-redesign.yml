@@ -7,7 +7,9 @@ on:
   push:
     branches:
       - redesign
-  workflow_dispatch:
+
+env:
+  NODE_VERSION: '14.x' # set this to the node version to use
 
 jobs:
   build:
@@ -15,43 +17,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-site-dev:redesign
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v1
-        with:
-          node-version: '16.x'
+      - name: Login
+        run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm start
-        working-directory: "/apps/pwabuilder"
-        
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: node-app
-          path: "/apps/pwabuilder/"
-
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: node-app
-
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'pwabuilder-redesign'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F6B865326BEE43B69611CD2A34DC0AA1 }}
+      - name: Push
+        run: docker push pwabuilder.azurecr.io/pwa-site-dev:redesign

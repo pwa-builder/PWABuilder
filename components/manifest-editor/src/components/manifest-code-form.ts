@@ -31,7 +31,6 @@ export class ManifestCodeForm extends LitElement {
           position: absolute;
           top: 5px;
           right: 5px;
-
           display: flex;
           align-items: center;
         }
@@ -66,7 +65,6 @@ export class ManifestCodeForm extends LitElement {
         <button id="copy-manifest" @click=${() => this.copyToClip()}><ion-icon name="copy"></ion-icon>Copy Manifest</button>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
-
     `;
   }
 }

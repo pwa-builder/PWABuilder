@@ -108,9 +108,15 @@ Next, we need to create our new service worker.
 
 #### Create a Service Worker
 
-Create a `sw.js` file in our `src` directory, and let's add some example functionality to it. We can tell our custom service worker to listen for push events and display a notification:
+Create a `sw.js` file in our `src` directory, and let's add some Workbox boilerplate and some example functionality to it. We can tell our custom service worker to listen for push events and display a notification:
 
 ```typescript
+importScripts(
+  'https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js'
+);
+
+workbox.precaching.cleanupOutdatedCaches();
+
 self.addEventListener('push', () => {
   event.waitUntil(
     registration.showNotification("Hello!", {
@@ -118,9 +124,14 @@ self.addEventListener('push', () => {
     })
   );
 });
+
+workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
 ```
 
 VitePWA and Workbox will inject our precaching information alongside our custom code at build time, and now you have a service worker with custom functionality!
+
+?> **Note** Workbox uses a "precache manifest" to track what files need to be precached and when they need to be updated. 
+In this instance, Workbox is injecting this manifest in the last line, where we see the `self.__WB_MANIFEST` placeholder.
 
 It is important to note that our custom service worker uses the same name as the generated service worker, so we don't have to update our registration in `index.html`:
 

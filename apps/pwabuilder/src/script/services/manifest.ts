@@ -42,7 +42,7 @@ async function getManifest(
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
   //TODO: Replace with prod
-  const manifestTestUrl = `https://pwabuilder-tests.azurewebsites.net/api/FetchWebManifest?site=${encodedUrl}`;
+  const manifestTestUrl = env.api + `/FetchWebManifest?site=${encodedUrl}`;
   try {
     const response = await fetch(manifestTestUrl, {
       method: 'POST',
@@ -117,6 +117,7 @@ async function fetchManifest(
   try {
     knownGoodUrl = cleanUrl(url);
   } catch (err) {
+    console.warn('URL not valid!');
     reject(err);
     return;
   }
@@ -157,8 +158,7 @@ async function fetchManifest(
  * @returns The manifest context.
  */
 export async function fetchOrCreateManifest(
-  url?: string | null | undefined,
-  createIfNone = true
+  url?: string | null | undefined
 ): Promise<ManifestContext> {
   const siteUrl = url || getSiteUrlFromManifestOrQueryString();
   if (!siteUrl) {
@@ -166,7 +166,7 @@ export async function fetchOrCreateManifest(
   }
 
   setURL(siteUrl);
-  const detectionResult = await fetchManifest(siteUrl, createIfNone);
+  const detectionResult = await fetchManifest(siteUrl);
   // Update our global manifest state.
   const context = {
     manifest: detectionResult.content,

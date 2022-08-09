@@ -35,6 +35,7 @@
     "@pwabuilder/pwaauth": "file:../../components/pwa-auth",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
     "@pwabuilder/manifest-previewer": "^1.0.21",
+    "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/pwainstall": "^1.6.6",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@vaadin/router": "^1.7.4",
