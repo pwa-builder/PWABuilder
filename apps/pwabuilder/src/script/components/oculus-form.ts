@@ -102,7 +102,9 @@ export class OculusForm extends AppPackageFormBase {
                 required: true,
                 spellcheck: false,
                 minLength: 3,
-                // pattern: // NOTE: avoid using a regex pattern here, as it often has unintended consequences, such as blocking non-English names
+                pattern: '^[a-zA-Z0-9_ ]*$',
+                validationErrorMessage:
+                  'App name must not include special characters and be between 1 and 256 characters',
                 inputHandler: (val: string) => (this.packageOptions.name = val),
               })}
             </div>
