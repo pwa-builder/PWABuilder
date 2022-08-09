@@ -50,7 +50,7 @@ export async function askForUrl(): Promise<void> {
         title: "Learn How",
       },
       {
-        title: "OK",
+        title: "Cancel",
       }
     );
 
@@ -104,8 +104,6 @@ async function initPublish(terminal: vscode.Terminal): Promise<void> {
           if (uri) {
             watcher.dispose();
 
-            console.log("called");
-
             await doCLIDeploy(terminal);
 
             resolve();
@@ -115,8 +113,6 @@ async function initPublish(terminal: vscode.Terminal): Promise<void> {
         watcher.onDidChange(async (uri) => {
           if (uri) {
             watcher.dispose();
-
-            console.log("called");
 
             await doCLIDeploy(terminal);
 
