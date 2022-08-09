@@ -28,6 +28,7 @@
     "onCommand:pwa-studio.chooseManifest",
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
+    "onCommand:pwa-studio.generateScreenshots",
     "onCommand:pwa-studio.updateAdvWorker",
     "onView:validationPanel",
     "onView:serviceWorkerPanel",
@@ -174,6 +175,11 @@
         "icon": "$(settings-edit)"
       },
       {
+        "command": "pwa-studio.generateScreenshots",
+        "title": "PWA Studio: Generate Screenshots",
+        "icon": "$(gear)"
+      },
+      {
         "command": "pwa-studio.updateAdvWorker",
         "title": "PWA Studio: Update Service Worker",
         "icon": "$(sync)"
@@ -182,11 +188,6 @@
         "command": "pwa-studio.help",
         "title": "PWA Studio: Help",
         "icon": "$(note)"
-      },
-      {
-        "command": "pwa-studio.publishChecklist",
-        "title": "PWA Studio: Publish Checklist",
-        "icon": "$(info)"
       }
     ],
     "viewsWelcome": [
@@ -224,7 +225,7 @@
         },
         {
           "id": "packagePanel",
-          "name": "Store Ready Checklist"
+          "name": "Publish Checklist"
         }
       ]
     },
@@ -324,8 +325,8 @@
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "@vscode/test-electron": "^1.6.2",
-    "esbuild": "^0.14.28",
     "copyfiles": "^2.4.1",
+    "esbuild": "^0.14.28",
     "eslint": "^8.1.0",
     "glob": "^7.1.7",
     "hint": "^6.1.9",
@@ -339,6 +340,7 @@
     "formdata-node": "^4.3.2",
     "formdata-polyfill": "^4.0.10",
     "node-fetch": "^2.6.6",
+    "pwa-asset-generator": "^6.1.1",
     "shelljs": "^0.8.5",
     "workbox-build": "^6.4.2"
   }

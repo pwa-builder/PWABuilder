@@ -285,3 +285,15 @@ The last thing you need to do is submit your app for review:
 5. Once you've set and reviewed the metadata for your app, hit `Submit for Review` to complete your submission.
 
 Your PWA still has to be approved, but if it is, it will appear in the App Store typically within 24-48 hours.
+
+## Next Steps
+
+Progressive web apps are cross-platform and can be used anywhere! 
+
+After you've sucessfully published your app to the App Store, you can package and publish for other platforms:
+
+- [How to Package for Microsoft Store](/builder/windows)
+
+- [How to Package for Meta Quest](/builder/meta)
+
+- [How to Package for the Google Play Store](/builder/android)
