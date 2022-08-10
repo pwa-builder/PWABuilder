@@ -229,8 +229,9 @@ export class ManifestScreenshotsForm extends LitElement {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
   }
 
-  errorInTab(){
+  errorInTab(areThereErrors: boolean = false){
     let errorInTab = new CustomEvent('errorInTab', {
+      detail: { areThereErrors: areThereErrors, panel: "screenshots" },
       bubbles: true,
       composed: true
     });

@@ -16,6 +16,7 @@ export class ManifestInfoForm extends LitElement {
 
   @state() bgText: string = '';
   @state() themeText: string = '';
+  @state() errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -218,7 +219,7 @@ export class ManifestInfoForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
       this.initMissingColors();
       
@@ -256,6 +257,7 @@ export class ManifestInfoForm extends LitElement {
                 p.innerText = error;
                 p.style.color = "#eb5757";
                 div.append(p);
+                this.errorCount++;
               });
               this.insertAfter(div, input!.parentNode!.parentNode!.lastElementChild);
             }
@@ -278,12 +280,12 @@ export class ManifestInfoForm extends LitElement {
                 p.innerText = error;
                 p.style.color = "#eb5757";
                 div.append(p);
+                this.errorCount++;
               });
               this.insertAfter(div, input!.parentNode!.lastElementChild);
             }
           } 
 
-          this.errorInTab();
           input!.classList.add("error");
 
         }
@@ -292,15 +294,20 @@ export class ManifestInfoForm extends LitElement {
         we only want to make it red if its REQUIRED. */
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          // need to put the error message that this field is req.
+          this.errorCount++;
           input!.classList.add("error");
-          this.errorInTab();
         }
       }
     }
+    if(this.errorCount > 0){
+      this.errorInTab(true);
+    }
   }
 
-  errorInTab(){
+  errorInTab(areThereErrors: boolean){
     let errorInTab = new CustomEvent('errorInTab', {
+      detail: { areThereErrors: areThereErrors, panel: "info" },
       bubbles: true,
       composed: true
     });
@@ -338,7 +345,6 @@ export class ManifestInfoForm extends LitElement {
   }
 
   async handleInputChange(event: InputEvent){
-
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
@@ -360,7 +366,7 @@ export class ManifestInfoForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-
+        this.errorCount--;
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -380,14 +386,19 @@ export class ManifestInfoForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
+          this.errorCount++;
         });
         this.insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
-      this.errorInTab();
       input.classList.add("error");
     }
 
+    if(this.errorCount == 0){
+      this.errorInTab(false);
+    } else {
+      this.errorInTab(true);
+    }
   }
 
   handleColorSwitch(field: string){
@@ -405,7 +416,10 @@ export class ManifestInfoForm extends LitElement {
 
     if(input.classList.contains("error-color-field")){
       input.classList.toggle("error-color-field");
-
+      this.errorCount--;
+      if(this.errorCount == 0){
+        this.errorInTab(false);
+      }
       let last = input!.parentNode!.parentNode!.lastElementChild;
       input!.parentNode!.parentNode!.removeChild(last!)
     }
@@ -434,7 +448,7 @@ export class ManifestInfoForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The name of your app as displayed to the user</p>
-            <sl-input placeholder="PWA Name" .value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Name" .value=${this.manifest.name! || ""} data-field="name" @sl-change=${() => this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -455,7 +469,7 @@ export class ManifestInfoForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>Used in app launchers</p>
-            <sl-input placeholder="PWA Short Name" .value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Short Name" .value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${() => this.handleInputChange}></sl-input>
           </div>
         </div>
         <div class="form-row">
@@ -476,7 +490,7 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>Used in app storefronts and install dialogs</p>
-            <sl-input placeholder="PWA Description" .value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Description" .value=${this.manifest.description! || ""} data-field="description" @sl-change=${() => this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -495,7 +509,7 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .defaultValue=${this.manifest.display! || ""}>
+            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${(e: InputEvent) => this.handleInputChange(e)} .value=${this.manifest.display! || ""}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>

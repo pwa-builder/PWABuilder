@@ -257,8 +257,9 @@ export class ManifestIconsForm extends LitElement {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
   }
 
-  errorInTab(){
+  errorInTab(areThereErrors: boolean = false){
     let errorInTab = new CustomEvent('errorInTab', {
+      detail: { areThereErrors: areThereErrors, panel: "icons" },
       bubbles: true,
       composed: true
     });

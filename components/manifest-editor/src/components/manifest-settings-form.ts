@@ -1,5 +1,5 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
@@ -11,6 +11,7 @@ let manifestInitialized: boolean = false;
 export class ManifestSettingsForm extends LitElement {
 
   @property({type: Object}) manifest: Manifest = {};
+  @state() errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -170,7 +171,6 @@ export class ManifestSettingsForm extends LitElement {
 
         if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          input!.classList.add("error");
 
           if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
@@ -186,25 +186,32 @@ export class ManifestSettingsForm extends LitElement {
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
+              this.errorCount++;
             });
             this.insertAfter(div, input!.parentNode!.lastElementChild);
           }
-
-          this.errorInTab();
+          
+          input!.classList.add("error");
         }
       } else {
         /* This handles the case where the field is not in the manifest.. 
         we only want to make it red if its REQUIRED. */
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+          // need to put the error message that this field is req.
+          this.errorCount++;
           input!.classList.add("error");
         }
       }
     }
+    if(this.errorCount > 0){
+      this.errorInTab(true);
+    }
   }
 
-  errorInTab(){
+  errorInTab(areThereErrors: boolean){
     let errorInTab = new CustomEvent('errorInTab', {
+      detail: { areThereErrors: areThereErrors, panel: "settings" },
       bubbles: true,
       composed: true
     });
@@ -216,14 +223,12 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   async handleInputChange(event: InputEvent){
-
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
     const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
     let passed = validation!.valid;
-
 
     if(passed){
       // Since we already validated, we only send valid updates.
@@ -239,7 +244,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-
+        this.errorCount--;
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -258,13 +263,20 @@ export class ManifestSettingsForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
+          this.errorCount++;
         });
         this.insertAfter(div, input!.parentNode!.lastElementChild);
       }
-      
-      this.errorInTab();
+
       input.classList.add("error");
     }
+
+    if(this.errorCount == 0){
+      this.errorInTab(false);
+    } else {
+      this.errorInTab(true);
+    }
+    
   }
 
   // temporary fix that helps with codes like en-US that we don't cover.
@@ -298,7 +310,7 @@ export class ManifestSettingsForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The relative URL that loads when your app starts</p>
-            <sl-input placeholder="PWA Start URL" .value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Start URL" .value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${() => this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -317,7 +329,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>Which URLs can load within your app</p>
-            <sl-input placeholder="PWA Scope" data-field="scope" .value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Scope" data-field="scope" .value=${this.manifest.scope! || ""} @sl-change=${() => this.handleInputChange}></sl-input>
           </div>
         </div>
         <div class="form-row">
@@ -338,7 +350,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" .value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" value=${this.manifest.orientation! || ""} @sl-change=${(e: InputEvent) => this.handleInputChange(e)}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -359,7 +371,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" .value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${() => this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -382,7 +394,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The base direction in which to display direction-capable members of the manifest</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" .value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Direction" data-field="dir" value=${this.manifest.dir! || ""} @sl-change=${() => this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>

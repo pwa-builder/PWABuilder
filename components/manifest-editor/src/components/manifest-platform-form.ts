@@ -345,8 +345,9 @@ export class ManifestPlatformForm extends LitElement {
     }
   }
 
-  errorInTab(){
+  errorInTab(areThereErrors: boolean = false){
     let errorInTab = new CustomEvent('errorInTab', {
+      detail: { areThereErrors: areThereErrors, panel: "platform" },
       bubbles: true,
       composed: true
     });
@@ -748,7 +749,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Displays what ages are suitable for your PWA</p>
-            <sl-input placeholder="PWA IARC Rating ID" .value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA IARC Rating ID" .value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${() => this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -765,7 +766,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${this.handleInputChange} .value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
+            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${() => this.handleInputChange} .value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
               <sl-menu-item value="true">true</sl-menu-item>
               <sl-menu-item value="false">false</sl-menu-item>
             </sl-select>
