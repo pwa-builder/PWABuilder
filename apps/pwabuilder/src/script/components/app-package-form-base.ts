@@ -1,6 +1,5 @@
 import { css, html, LitElement, TemplateResult } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { smallBreakPoint, xxLargeBreakPoint } from '../utils/css/breakpoints';
 //@ts-ignore
 import style from '../../../styles/form-styles.css';
 //@ts-ignore
@@ -52,22 +51,6 @@ export class AppPackageFormBase extends LitElement {
           width: 100%;
         }
       }
-
-      ${xxLargeBreakPoint(
-      css`
-          #form-layout {
-            max-height: 17em;
-          }
-        `
-    )}
-
-      ${smallBreakPoint(
-      css`
-          #form-layout {
-            max-height: 20em;
-          }
-        `
-    )}
     `;
 
     return [

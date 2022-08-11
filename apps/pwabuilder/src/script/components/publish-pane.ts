@@ -10,11 +10,12 @@ import { generatePackage, Platform } from '../services/publish';
 import { fileSave } from 'browser-fs-access';
 
 import {
-  smallBreakPoint,
+  // smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
   //xLargeBreakPoint,
   xxxLargeBreakPoint,
+  smallBreakPoint,
 } from '../utils/css/breakpoints';
 
 import './windows-form';
@@ -300,15 +301,19 @@ export class PublishPane extends LitElement {
         color: rgba(0, 0, 0, 0.5)
       }
       #form-area {
-        padding: 1em;
-        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        overflow: auto
       }
-
       #form-area[data-store="Android"] {
         padding-top: 0;
+        flex-direction: column;
       }
-
-
+      windows-form, android-form, ios-form, oculus-form {
+        flex-grow: 1;
+        display: flex;
+        overflow: auto;
+      }
 
       .dialog::part(body){
         padding: 0;
@@ -372,6 +377,12 @@ export class PublishPane extends LitElement {
 
       /* 480px - 639px */
       ${mediumBreakPoint(css`
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: auto;
+        }
       `)}
       /* < 480 */
       ${smallBreakPoint(css`

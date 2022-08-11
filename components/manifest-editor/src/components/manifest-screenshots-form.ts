@@ -201,6 +201,17 @@ export class ManifestScreenshotsForm extends LitElement {
       if(!passed){
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
+
+        if(validation.errors){
+          validation.errors.forEach((error: string) => {
+            let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          p.classList.add("error-message");
+          this.insertAfter(p, title!.parentNode);
+          });
+        }
+
         this.errorInTab();
       }
     } else {
@@ -214,6 +225,10 @@ export class ManifestScreenshotsForm extends LitElement {
     }
   }
 
+  insertAfter(newNode: any, existingNode: any) {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+  }
+
   errorInTab(){
     let errorInTab = new CustomEvent('errorInTab', {
       bubbles: true,
@@ -222,25 +237,36 @@ export class ManifestScreenshotsForm extends LitElement {
     this.dispatchEvent(errorInTab);
   }
 
-  handleInputChange(event: InputEvent){
+  async handleInputChange(event: InputEvent){
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
-    // Validate using Justin's code
-    // if false, show error logic
-    // else continue
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
+    let passed = validation!.valid;
 
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: fieldName,
-          change: updatedValue
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
+    if(passed) {
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: fieldName,
+            change: updatedValue
+        },
+        bubbles: true,
+        composed: true
+      });
+
+      this.dispatchEvent(manifestUpdated);
+
+      console.log(input.classList)
+
+      if(input.classList.contains("error")){
+        input.classList.toggle("error");
+
+        let last = input!.parentNode!.lastElementChild
+        input!.parentNode!.removeChild(last!)
+      }
+    }
   }
 
 
@@ -338,6 +364,14 @@ export class ManifestScreenshotsForm extends LitElement {
             composed: true
           });
           this.dispatchEvent(screenshotsUpdated);
+
+          let title = this.shadowRoot!.querySelector('h3');
+          if(title!.classList.contains("error")){
+            title!.classList.toggle("error");
+    
+            let errorMessage = this.shadowRoot!.querySelector(".error-message");
+            errorMessage?.parentNode?.removeChild(errorMessage);
+          }
           // In the future if we wanna show some message it can be tied to this bool
           this.showSuccessMessage = true;
         }

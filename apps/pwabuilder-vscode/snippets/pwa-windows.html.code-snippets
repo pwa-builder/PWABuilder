@@ -1,0 +1,37 @@
+{
+    // web manifest link
+    "link_Web_Manifest": {
+        "scope": "html",
+        "prefix": "web-manifest-link",
+        "body": [
+            "<link rel=\"manifest\" href=\"${0:manifest.json}\" />"
+        ],
+        "description": "To link your Web Manifest to your application, add this snippet to your index.html file",
+    },
+    "link_Service_Worker": {
+        "scope": "html",
+        "prefix": "service-worker-link",
+        "body": [
+            "<script>",
+            "\t// Register a service worker to control app caching.",
+            "\t\t// Check if service workers are supported.",
+            "\t\tif ('serviceWorker' in navigator) {",
+            "\t\t\t// Use the window load event to keep the page load performant.",
+            "\t\t\twindow.addEventListener('load', () => {",
+            "\t\t\t\tnavigator.serviceWorker.register('${0:service-worker.js}')",
+            "\t\t\t\t\t.then(registration => {",
+            "\t\t\t\t\t\t// Registration was successful.",
+            "\t\t\t\t\t\tconsole.log('ServiceWorker registration successful with scope: ', registration.scope);",
+            "\t\t\t\t\t})",
+            "\t\t\t\t\t.catch(err => {",
+            "\t\t\t\t\t\t// registration failed :(",
+            "\t\t\t\t\t\tconsole.log('ServiceWorker registration failed: ', err);",
+            "\t\t\t\t\t});",
+            "\t\t\t});",
+            "\t\t};",
+            "</script>"
+
+        ],
+        "description": "To link your Service Worker to your application, add this snippet to your index.html file",
+    },
+}

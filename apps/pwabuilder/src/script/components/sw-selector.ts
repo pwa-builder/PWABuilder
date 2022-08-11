@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import '../components/sw-panel'
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';

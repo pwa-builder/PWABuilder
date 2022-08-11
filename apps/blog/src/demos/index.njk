@@ -1,0 +1,15 @@
+---
+pagination:
+  data: collections.docs
+  size: 12
+  alias: demos
+  reverse: true
+permalink: "/demos/{% if pagination.pageNumber > 0 %}page/{{ pagination.pageNumber + 1 }}/{% endif %}"
+image: demo-card.webp
+title: PWABuilder Demos
+---
+
+{% extends 'layouts/home.njk' %}
+{% block body %}
+  {% include "demos.njk" %}
+{% endblock %}

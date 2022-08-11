@@ -1,0 +1,36 @@
+{
+    "Web Manifest": {
+        "scope": "json",
+        "prefix": "pwa-manifest",
+        "body": [
+            "{",
+            "\"name\": \"${1:The name of your application}\"," ,
+            "\"short_name\": \"${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}\"," ,
+            "\"start_url\": \"${3:The URL that should be loaded when your application is opened}\",",
+            "\"display\": \"${4|standalone,fullscreen,minimal-ui,browser|}\",",
+            "\"description\": \"${5:A description for your application}\",",
+            "\"lang\": \"${6: The default language of your application}\",",
+            "\"dir\": \"${7|auto, ltr, rtl|}\",",
+            "\"theme_color\": \"${8:This controls the color your apps titlebar}\",",
+            "\"background_color\": \"${9:This controls the color your apps background and splash screen on supported platforms}\",",
+            "\"orientation\": \"${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}\",",
+            "\"icons\": \"${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}\",",
+            "\"related_applications\": [",
+            "\t{",
+            "\t\t\"platform\":\"${12|windows,play|}\",",
+            "\t\t\"url\": \"${13: The URL to your app in that app store}\"",
+            "\t}",
+            "],",
+            "\"prefer_related_applications\": \"${14|false, true|}\",",
+            "\"Shortcuts\": [",
+            "\t{",
+            "\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",",
+            "\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",",
+            "\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"",
+            "\t}",
+            "]",
+            "}"
+        ],
+        "description": "To generate a Web App Manifest"
+    }
+}

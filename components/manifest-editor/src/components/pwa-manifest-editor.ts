@@ -65,8 +65,16 @@ export class PWAManifestEditor extends LitElement {
       sl-tab-group {
         --indicator-color: #4F3FB6;
       }
+      sl-tab::part(base){
+        display: flex;
+        gap: .5em;
+      }
       sl-tab[active]::part(base) {
         color: #4F3FB6;
+      }
+      sl-tab::part(base){
+        display: flex;
+        gap: .5em;
       }
       sl-tab::part(base):hover {
         color: #4F3FB6;
@@ -160,9 +168,9 @@ export class PWAManifestEditor extends LitElement {
       if(temp.panel === panel){
         tab = temp;
       }
-    })
-    if(!tab.innerHTML.endsWith(" !")){
-      tab.innerHTML += " !";
+    });
+    if(tab.childElementCount == 0){
+      tab.innerHTML = `${tab.innerHTML}<span style='color: #eb5757'>!</span>`;
     }
   }
 
