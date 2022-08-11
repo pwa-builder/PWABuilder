@@ -183,7 +183,7 @@ async function azureCommandWalkthrough(): Promise<void> {
         title: "Learn How",
       },
       {
-        title: "OK",
+        title: "Cancel",
       }
     );
 
