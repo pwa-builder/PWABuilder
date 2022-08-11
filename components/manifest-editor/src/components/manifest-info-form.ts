@@ -252,7 +252,7 @@ export class ManifestInfoForm extends LitElement {
     for(let i = 0; i < infoFields.length; i++){
       let field = infoFields[i];
 
-      if(this.manifest[field]){
+      if(field in this.manifest){
         const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
         let passed = validation!.valid;
 
@@ -316,7 +316,21 @@ export class ManifestInfoForm extends LitElement {
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+
+          let div = document.createElement('div');
+          div.classList.add(`${field}-error-div`);
+          let p = document.createElement('p');
+          p.innerText = `${field} is required and is missing from your manifest.`;
+          p.style.color = "#eb5757";
+          div.append(p);
           this.errorCount++;
+          insertAfter(div, input!.parentNode!.lastElementChild);
+          
         }
       }
     }

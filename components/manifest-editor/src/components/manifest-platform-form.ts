@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { errorInTab, insertAfter } from '../utils/helpers';
 //import { validateSingleField } from 'manifest-validation';
 
 const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
@@ -27,6 +28,10 @@ export class ManifestPlatformForm extends LitElement {
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
   @state() relatedAppsHTML: TemplateResult[] = [];
+
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -286,16 +291,33 @@ export class ManifestPlatformForm extends LitElement {
      to reset when it changes. It triggers an update event which would cause all of this to
      run again. Its true purpose is to keep the view aligned with the manifest. */
      
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
       if(!fieldsValidated){
-        await this.validateAllFields();
+        this.requestValidateAllFields();
         fieldsValidated = true;
       }
       this.reset();
     } else {
       manifestInitialized = false;
     }
+  }
+
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
+    }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
   }
 
   async validateAllFields(){
@@ -324,33 +346,23 @@ export class ManifestPlatformForm extends LitElement {
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
+              this.errorCount++;
+              console.log("Adding errors for", field)
             });
-            this.insertAfter(div, input!.parentNode!.lastElementChild);
+            insertAfter(div, input!.parentNode!.lastElementChild);
           }
 
           // add red outline
           input!.classList.add("error");
-          this.errorInTab();
-        } else {
-          /* This handles the case where the field is not in the manifest.. 
-          we only want to make it red if its REQUIRED. */
-          if(required_fields.includes(field)){
-            let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-
-            input!.classList.add("error");
-            this.errorInTab();
-          }
         }
       }
     }
-  }
-
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(errorInTab);
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "platform"));
+    }
   }
 
   reset() {
@@ -388,11 +400,12 @@ export class ManifestPlatformForm extends LitElement {
     });
   }
 
-  insertAfter(newNode: any, existingNode: any) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-  }
 
   async handleInputChange(event: InputEvent){
+
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
@@ -420,7 +433,8 @@ export class ManifestPlatformForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-
+        this.errorCount--;
+        console.log("Minus errors for", fieldName)
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
         
@@ -440,14 +454,21 @@ export class ManifestPlatformForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
+          this.errorCount++;
+          console.log("Adding errors for", fieldName)
         });
-        this.insertAfter(div, input!.parentNode!.lastElementChild);
+        insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       // toggle error class to display error.
       input.classList.add("error");
     }
 
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "platform"));
+    }
   }
 
   updateCategories(){
@@ -649,6 +670,10 @@ export class ManifestPlatformForm extends LitElement {
   }
 
   async validatePlatformList(field: string, updatedValue: any[]){
+
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
     
     let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
@@ -669,7 +694,7 @@ export class ManifestPlatformForm extends LitElement {
 
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
-        
+        this.errorCount--;
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
@@ -688,14 +713,21 @@ export class ManifestPlatformForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
+          this.errorCount++;
+          console.log("adding errors for", field)
         });
-        this.insertAfter(div, input!.parentNode!.lastElementChild);
+        insertAfter(div, input!.parentNode!.lastElementChild);
       }
-      
-      this.errorInTab();
 
       input!.classList.add("error");
-    }}
+    }
+    console.log(this.errorCount);
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "platform"));
+    }
+  }
 
 
   toggleEditing(tag: string){

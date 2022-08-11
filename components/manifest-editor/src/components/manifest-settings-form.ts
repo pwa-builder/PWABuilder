@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { errorInTab, insertAfter } from '../utils/helpers';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir"];
 let manifestInitialized: boolean = false;
@@ -11,6 +12,10 @@ let manifestInitialized: boolean = false;
 export class ManifestSettingsForm extends LitElement {
 
   @property({type: Object}) manifest: Manifest = {};
+
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -152,19 +157,37 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
       
-      await this.validateAllFields();
+      this.requestValidateAllFields();
       
     }
   }
 
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
+    }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
+  }
+
   async validateAllFields(){
+    
     for(let i = 0; i < settingsFields.length; i++){
       let field = settingsFields[i];
 
-      if(this.manifest[field]){
+      if(field in this.manifest){
         const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
         let passed = validation!.valid;
 
@@ -186,11 +209,10 @@ export class ManifestSettingsForm extends LitElement {
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
+              this.errorCount++;
             });
-            this.insertAfter(div, input!.parentNode!.lastElementChild);
+            insertAfter(div, input!.parentNode!.lastElementChild);
           }
-
-          this.errorInTab();
         }
       } else {
         /* This handles the case where the field is not in the manifest.. 
@@ -198,24 +220,38 @@ export class ManifestSettingsForm extends LitElement {
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+
+          let div = document.createElement('div');
+          div.classList.add(`${field}-error-div`);
+          let p = document.createElement('p');
+          p.innerText = `${field} is required and is missing from your manifest.`;
+          p.style.color = "#eb5757";
+          div.append(p);
+          this.errorCount++;
+          insertAfter(div, input!.parentNode!.lastElementChild);
+          
         }
       }
     }
-  }
 
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(errorInTab);
-  }
-
-  insertAfter(newNode: any, existingNode: any) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "settings"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "settings"));
+    }
   }
 
   async handleInputChange(event: InputEvent){
+
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
@@ -239,7 +275,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-
+        this.errorCount--;
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -258,12 +294,17 @@ export class ManifestSettingsForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
+          this.errorCount++;
         });
-        this.insertAfter(div, input!.parentNode!.lastElementChild);
+        insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
-      this.errorInTab();
       input.classList.add("error");
+    }
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "settings"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "settings"));
     }
   }
 

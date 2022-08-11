@@ -61,23 +61,21 @@ export class PWAManifestEditor extends LitElement {
         --sl-font-size-small: 14px;
         --sl-spacing-medium: .75rem;
         --sl-space-large: 1rem;
+        position: relative;
+      }
+      .error-indicator {
+        position: absolute;
+        right: .5em;
       }
       sl-tab-group {
         --indicator-color: #4F3FB6;
       }
-      sl-tab::part(base){
-        display: flex;
-        gap: .5em;
+      sl-tab::part(base):hover {
+        color: #4F3FB6;
       }
       sl-tab[active]::part(base) {
         color: #4F3FB6;
-      }
-      sl-tab::part(base){
-        display: flex;
-        gap: .5em;
-      }
-      sl-tab::part(base):hover {
-        color: #4F3FB6;
+        font-weight: bold;
       }
       sl-tab-panel::part(base){
         overflow-y: auto;
@@ -126,7 +124,7 @@ export class PWAManifestEditor extends LitElement {
 
     this.manifest = {...this.manifest, [field]: change};
 
-    console.log("Manifest Successfuly Updated.")
+    //console.log("Manifest Successfuly Updated.")
 
     //console.log(`updated manifest with new field ${field}`, this.manifest);
   }
@@ -176,7 +174,7 @@ export class PWAManifestEditor extends LitElement {
     });
     if(areThereErrors){
       if(tab.childElementCount == 0){
-        tab.innerHTML = `${tab.innerHTML}<span style='color: #eb5757'>!</span>`;
+        tab.innerHTML = `${tab.innerHTML}<span class="error-indicator" style='color: #eb5757'>!</span>`;
       }
     } else {
       tab.innerHTML = tab.innerHTML.split("<")[0];
@@ -188,16 +186,16 @@ export class PWAManifestEditor extends LitElement {
     return html`
       <sl-tab-group id="editor-tabs">
         <sl-tab slot="nav" panel="info">Info</sl-tab>
-        <!-- <sl-tab slot="nav" panel="settings">Settings</sl-tab>
+        <sl-tab slot="nav" panel="settings">Settings</sl-tab>
         <sl-tab slot="nav" panel="platform">Platform</sl-tab>
-        <sl-tab slot="nav" panel="icons">Icons</sl-tab>
+        <!-- <sl-tab slot="nav" panel="icons">Icons</sl-tab>
         <sl-tab slot="nav" panel="screenshots">Screenshots</sl-tab>
         <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
         <sl-tab slot="nav" panel="code">Code</sl-tab>
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-info-form></sl-tab-panel>
-        <!-- <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${() => this.errorInTab("settings")}></manifest-settings-form></sl-tab-panel>
-        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${() => this.errorInTab("platform")}></manifest-platform-form></sl-tab-panel>
-        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${() => this.errorInTab("icons")}></manifest-icons-form></sl-tab-panel>
+        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-settings-form></sl-tab-panel>
+        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-platform-form></sl-tab-panel>
+        <!-- <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${() => this.errorInTab("icons")}></manifest-icons-form></sl-tab-panel>
         <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${() => this.errorInTab("screenshots")}></manifest-screenshots-form></sl-tab-panel>
         <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-preview-form></sl-tab-panel> -->
         <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-code-form></sl-tab-panel>
