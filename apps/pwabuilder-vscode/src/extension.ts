@@ -2,13 +2,18 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
-import {
+/*import {
   handleServiceWorkerCommand,
   generateServiceWorker,
   chooseServiceWorker,
   handleAdvServiceWorkerCommand,
   updateAdvServiceWorker,
-} from "./services/service-worker";
+} from "./services/service-worker";*/
+import { 
+  handleServiceWorkerCommand, 
+  generateServiceWorker,
+  chooseServiceWorker,
+} from "./services/simple-service-worker";
 import {
   chooseManifest,
   generateManifest,
@@ -170,20 +175,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const generateAdvWorkerCommand = vscode.commands.registerCommand(
-    generateADVWorkerCommandID,
-    async () => {
-      handleAdvServiceWorkerCommand();
-    }
-  );
-
-  const updateAdvWorkerCommand = vscode.commands.registerCommand(
-    updateADVWorkerCommandID,
-    async () => {
-      updateAdvServiceWorker();
-    }
-  );
-
   let packageAppCommand = vscode.commands.registerCommand(
     packageCommandId,
     packageApp
@@ -257,8 +248,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(setAppURLCommand);
   context.subscriptions.push(generateIconsCommand);
   context.subscriptions.push(generateScreenshotsCommand);
-  context.subscriptions.push(generateAdvWorkerCommand);
-  context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
 }
 

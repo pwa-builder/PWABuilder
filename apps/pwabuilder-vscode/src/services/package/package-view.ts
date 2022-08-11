@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-import * as path from "path";
-import { getWorker } from "../service-worker";
+import { getWorker } from "../simple-service-worker";
 import { getManifest } from "../manifest/manifest-service";
 import { getURL } from "../web-publish";
 

@@ -29,7 +29,6 @@
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
     "onCommand:pwa-studio.generateScreenshots",
-    "onCommand:pwa-studio.updateAdvWorker",
     "onView:validationPanel",
     "onView:serviceWorkerPanel",
     "onView:packagePanel"
@@ -178,11 +177,6 @@
         "command": "pwa-studio.generateScreenshots",
         "title": "PWA Studio: Generate Screenshots",
         "icon": "$(gear)"
-      },
-      {
-        "command": "pwa-studio.updateAdvWorker",
-        "title": "PWA Studio: Update Service Worker",
-        "icon": "$(sync)"
       },
       {
         "command": "pwa-studio.help",
