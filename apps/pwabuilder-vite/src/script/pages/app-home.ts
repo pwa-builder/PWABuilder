@@ -484,33 +484,7 @@ export class AppHome extends LitElement {
       });
 
       if (isValidUrl) {
-        try {
-          const manifestContext = await fetchOrCreateManifest(this.siteURL);
-          this.errorGettingURL = false;
-
-          const progress = getProgress();
-          this.updateProgress(progress);
-
-          const goodURL = manifestContext.siteUrl;
-
-          if (goodURL !== undefined) {
-            Router.go(`/reportcard?site=${goodURL}`);
-          }
-        } catch (err) {
-          // couldnt get manifest
-          // continue forward with zeroed out results
-          // and use generated manifest
-          this.errorGettingURL = false;
-
-          const progress = getProgress();
-          this.updateProgress(progress);
-
-          const goodURL = getURL();
-
-          if (goodURL !== undefined) {
-            Router.go(`/testing?site=${goodURL}`);
-          }
-        }
+        Router.go(`/reportcard?site=${this.siteURL}`);
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;

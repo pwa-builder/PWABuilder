@@ -29,7 +29,7 @@ import {
   TestResult
 } from '../utils/interfaces';
 
-import { fetchOrCreateManifest } from '../services/manifest';
+import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
@@ -137,6 +137,8 @@ export class AppReport extends LitElement {
   @state() showConfirmationModal: boolean = false;
   @state() thingToAdd: string = "";
   @state() retestConfirmed: boolean = false;
+
+  @state() createdManifest: boolean = false;
 
 
 
@@ -950,14 +952,23 @@ export class AppReport extends LitElement {
 
   async getManifest(url: string): Promise<ManifestContext> {
     this.isAppCardInfoLoading = true;
-    const manifestContext = await fetchOrCreateManifest(url);
+    let manifestContext: ManifestContext | undefined;
+
+    manifestContext = await fetchOrCreateManifest(url);
+    this.createdManifest = false;
+
+    if(!manifestContext){
+      this.createdManifest = true;
+      manifestContext = await createManifestContextFromEmpty(url);
+    }
+
     this.isAppCardInfoLoading = false;
-    this.populateAppCard(manifestContext, url);
-    return manifestContext;
+    this.populateAppCard(manifestContext!, url);
+    return manifestContext!;
   }
 
   populateAppCard(manifestContext: ManifestContext, url: string) {
-    if (manifestContext) {
+    if (manifestContext && !this.createdManifest) {
       const parsedManifestContext = manifestContext;
 
       let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
@@ -998,7 +1009,8 @@ export class AppReport extends LitElement {
 
   async runAllTests(url: string) {
     this.runningTests = true;
-    await Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
+    await this.getManifest(url);
+    await Promise.allSettled([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
