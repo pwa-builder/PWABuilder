@@ -1,4 +1,3 @@
-import { watch } from "fs";
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
@@ -42,21 +41,7 @@ export async function askForUrl(): Promise<void> {
 
     await setURL(url);
   } else {
-    // let user know they need to publish their PWA
-    // and open docs
-    const answer = await vscode.window.showInformationMessage(
-      "You need to publish your PWA to the web. Would you like to get a tutorial of how to do this with the Azure Static Web Apps VSCode extension?",
-      {
-        title: "Learn How",
-      },
-      {
-        title: "Cancel",
-      }
-    );
-
-    if (answer && answer.title === "Learn How") {
-      azureCommandWalkthrough();
-    }
+    azureCommandWalkthrough();
   }
 }
 
@@ -64,26 +49,31 @@ async function doCLIDeploy(terminal: vscode.Terminal): Promise<void> {
   return new Promise(async (resolve, reject) => {
     // config file has been created, lets keep going
 
-    // ask user if they want to deploy
-    const answer = await vscode.window
-      .showInformationMessage(
-        "Your Azure Static Web App config has been created. Would you like to continue with deploying?",
-        {
-          title: "Deploy",
-        },
-        {
-          title: "Cancel",
-        }
-      );
+    try {
+      // ask user if they want to deploy
+      const answer = await vscode.window
+        .showInformationMessage(
+          "Your Azure Static Web App config has been created. Would you like to continue with deploying?",
+          {
+            title: "Deploy",
+          },
+          {
+            title: "Cancel",
+          }
+        );
 
-    if (answer && answer.title === "Deploy") {
-      terminal.sendText("npx @azure/static-web-apps-cli deploy");
+      if (answer && answer.title === "Deploy") {
+        terminal.sendText("npx @azure/static-web-apps-cli deploy");
 
-      resolve();
+        resolve();
+      }
+      else {
+
+        resolve();
+      }
     }
-    else {
-
-      resolve();
+    catch (err) {
+      reject(err);
     }
   })
 }
