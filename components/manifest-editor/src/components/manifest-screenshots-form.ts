@@ -1,6 +1,7 @@
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { errorInTab, insertAfter } from '../utils/helpers';
 import {
   Screenshot,
   Manifest,
@@ -28,6 +29,10 @@ export class ManifestScreenshotsForm extends LitElement {
   // Generation Status
   @state() protected showSuccessMessage = false;
   @state() protected showErrorMessage = false;
+
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -182,13 +187,30 @@ export class ManifestScreenshotsForm extends LitElement {
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
       manifestInitialized = true;
-      await this.validateAllFields();
+      this.requestValidateAllFields();
       if(this.manifest.screenshots && this.initialScreenshotLength == -1){
         this.initialScreenshotLength = this.manifest.screenshots.length;
       } else {
         this.initialScreenshotLength = 0;
       }
     }
+  }
+
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
+    }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
   }
 
   async validateAllFields(){
@@ -208,11 +230,11 @@ export class ManifestScreenshotsForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           p.classList.add("error-message");
-          this.insertAfter(p, title!.parentNode);
+          insertAfter(p, title!.parentNode);
+          this.errorCount++;
           });
         }
 
-        this.errorInTab();
       }
     } else {
       /* This handles the case where the field is not in the manifest.. 
@@ -220,52 +242,13 @@ export class ManifestScreenshotsForm extends LitElement {
       if(required_fields.includes(field)){
         let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
         input!.classList.add("error");
-        this.errorInTab();
       }
     }
-  }
-
-  insertAfter(newNode: any, existingNode: any) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-  }
-
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(errorInTab);
-  }
-
-  async handleInputChange(event: InputEvent){
-
-    const input = <HTMLInputElement | HTMLSelectElement>event.target;
-    let updatedValue = input.value;
-    const fieldName = input.dataset['field'];
-
-    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
-    let passed = validation!.valid;
-
-    if(passed) {
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: fieldName,
-            change: updatedValue
-        },
-        bubbles: true,
-        composed: true
-      });
-
-      this.dispatchEvent(manifestUpdated);
-
-      console.log(input.classList)
-
-      if(input.classList.contains("error")){
-        input.classList.toggle("error");
-
-        let last = input!.parentNode!.lastElementChild
-        input!.parentNode!.removeChild(last!)
-      }
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "screenshots"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "screenshots"));
     }
   }
 
@@ -337,6 +320,11 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   async generateScreenshots() {
+
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
+
     try {
       this.awaitRequest = true;
 
@@ -368,7 +356,7 @@ export class ManifestScreenshotsForm extends LitElement {
           let title = this.shadowRoot!.querySelector('h3');
           if(title!.classList.contains("error")){
             title!.classList.toggle("error");
-    
+            this.errorCount--;
             let errorMessage = this.shadowRoot!.querySelector(".error-message");
             errorMessage?.parentNode?.removeChild(errorMessage);
           }
@@ -383,6 +371,11 @@ export class ManifestScreenshotsForm extends LitElement {
     }
 
     this.awaitRequest = false;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "screenshots"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "screenshots"));
+    }
   }
 
   screenshotSrcListParse(): string[] {

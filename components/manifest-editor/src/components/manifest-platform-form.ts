@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
-import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
 //import { validateSingleField } from 'manifest-validation';
 
@@ -347,7 +347,6 @@ export class ManifestPlatformForm extends LitElement {
               p.style.color = "#eb5757";
               div.append(p);
               this.errorCount++;
-              console.log("Adding errors for", field)
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
           }
@@ -434,7 +433,6 @@ export class ManifestPlatformForm extends LitElement {
       if(input.classList.contains("error")){
         input.classList.toggle("error");
         this.errorCount--;
-        console.log("Minus errors for", fieldName)
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
         
@@ -455,7 +453,6 @@ export class ManifestPlatformForm extends LitElement {
           p.style.color = "#eb5757";
           div.append(p);
           this.errorCount++;
-          console.log("Adding errors for", fieldName)
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
@@ -469,18 +466,6 @@ export class ManifestPlatformForm extends LitElement {
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
     }
-  }
-
-  updateCategories(){
-    let categories: string[] = [];
-    let checks = this.shadowRoot!.querySelectorAll(".cat-check");
-    checks.forEach((cat: any) => {
-        if(cat.checked){
-            categories.push(cat.value);
-        }
-    });
-
-    this.validatePlatformList("categories", categories);
   }
 
   async toggleOverrideList(label: string){
@@ -669,6 +654,18 @@ export class ManifestPlatformForm extends LitElement {
     
   }
 
+  updateCategories(){
+    let categories: string[] = [];
+    let checks = this.shadowRoot!.querySelectorAll(".cat-check");
+    checks.forEach((cat: any) => {
+        if(cat.checked){
+            categories.push(cat.value);
+        }
+    });
+
+    this.validatePlatformList("categories", categories);
+  }
+
   async validatePlatformList(field: string, updatedValue: any[]){
 
     if(this.validationPromise){
@@ -714,14 +711,12 @@ export class ManifestPlatformForm extends LitElement {
           p.style.color = "#eb5757";
           div.append(p);
           this.errorCount++;
-          console.log("adding errors for", field)
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       input!.classList.add("error");
     }
-    console.log(this.errorCount);
     if(this.errorCount == 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
@@ -967,11 +962,9 @@ export class ManifestPlatformForm extends LitElement {
             <p>The categories your PWA fall in to</p>
               <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
-                    this.manifest.categories?.includes(cat) ?
-                      html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat} chekced>${cat}</sl-checkbox>`
-                    :
-                      html`<sl-checkbox class="cat-check" @click=${() => this.updateCategories()} value=${cat}>${cat}</sl-checkbox>`
+                    html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?chekced=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
                   )}
+                    
               </div>
           </div>
         </div>
