@@ -106,9 +106,8 @@ export class IOSForm extends AppPackageFormBase {
                 required: true,
                 spellcheck: false,
                 minLength: 3,
-                pattern: '^[a-zA-Z0-9_ ]*$',
-                validationErrorMessage:
-                  'App name must not include special characters and be between 1 and 256 characters',
+                pattern: "[^|]*$",
+                // pattern: // NOTE: avoid using a regex pattern here, as it often has unintended consequences, such as blocking non-English names
                 inputHandler: (val: string) => this.packageOptions.name = val
               })}
             </div>
