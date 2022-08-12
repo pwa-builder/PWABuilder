@@ -34,41 +34,9 @@ import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
-/* const possible_messages = {
-  overview: {
-    heading: "Your PWA's report card.",
-    supporting:
-      'Check out the the Overview below to see if your PWA is store-ready! If not, tap the section that needs work to begin upgrading your PWA.',
-  },
-  mani: {
-    heading: 'Manifest great PWAs.',
-    supporting:
-      'PWABuilder has analyzed your Web Manifest, check out the results below. If you are missing something, tap Manifest Options to update your Manifest.',
-  },
-  sw: {
-    heading: 'Secret Ingredient: A Service Worker',
-    supporting:
-      'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
-  },
-}; */
 
-const error_messages = {
-  icon: {
-    message:
-      'Your app is missing a 512x512 or larger PNG icon. Because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color#define-icons',
-  },
-  start_url: {
-    message:
-      'Your app is missing a start_url, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
-  },
-  name: {
-    message:
-      'Your app is missing a name, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/name',
-  },
-};
+
+
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -104,7 +72,7 @@ export class AppReport extends LitElement {
 
   // will be used to control the state of the "Package for store" button.
   @state() runningTests: boolean = false;
-  @state() canPackageList: boolean[] = [];
+  @state() canPackageList: boolean[] = [false, false, false];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
 
@@ -117,17 +85,23 @@ export class AppReport extends LitElement {
   @state() validationResults: Validation[] = [];
   @state() manifestTotalScore: number = 0;
   @state() manifestValidCounter: number = 0;
+  @state() manifestRequiredCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
+  @state() manifestMessage: string = "";
 
   @state() serviceWorkerResults: any[] = [];
   @state() swTotalScore: number = 0;
   @state() swValidCounter: number = 0;
+  @state() swRequiredCounter: number = 0;
   @state() swDataLoading: boolean = true;
+  @state() swMessage: string = "";
 
   @state() securityResults: any[] = [];
   @state() secTotalScore: number = 0;
   @state() secValidCounter: number = 0;
+  @state() secRequiredCounter: number = 0;
   @state() secDataLoading: boolean = true;
+  @state() secMessage: string = "";
 
   @state() requiredMissingFields: any[] = [];
   @state() reccMissingFields: any[] = [];
@@ -139,6 +113,30 @@ export class AppReport extends LitElement {
   @state() retestConfirmed: boolean = false;
 
   @state() createdManifest: boolean = false;
+
+  private possible_messages = [
+    {"messages": {
+                  "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great Job you have a perfect score!",
+                  "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommeneded and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
+                  "blocked": "PWABuilder has analyzed your Web Manifest. You have a one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
+                  "none": "PWABuilder has analyzed your site and did not find a Web Manifest. Use our Manifest Editor to generate one. You can package for the store once you have a valid manifest.",
+                  }
+    },
+    {"messages": {
+                      "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great Job you have a perfect score!",
+                      "yellow": "PWABuilder has analyzed your Service Worker, and has identified additonal features you can add, like offline support, to make your app feel more robust.",
+                      "blocked": "",
+                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is required to package for the stores. You can genereate a Service Worker below or use our documentation to make your own.",
+                  },
+     },
+      {"messages": {
+                    "green": "PWABuilder has done a basic analysis of your HTTPS setup and found no issues! Great Job you have a perfect score!",
+                    "yellow": "",
+                    "blocked": "",
+                    "none": "PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.",
+                  }
+      }
+    ];
 
 
 
@@ -328,14 +326,14 @@ export class AppReport extends LitElement {
         #pfs-disabled:hover{
           cursor: no-drop;
         }
-        .pfs-tooltip {
+        .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
-        .pfs-tooltip::part(base){
+        .mani-tooltip::part(base){
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .pfs-tooltip-content {
+        .mani-tooltip-content {
           padding: 0;
           display: flex;
           max-width: 325px;
@@ -345,13 +343,13 @@ export class AppReport extends LitElement {
           gap: .5em;
         }
 
-        .pfs-tooltip-content img {
+        .mani-tooltip-content img {
           align-self: flex-end;
           justify-self: flex-end;
           height: 50px;
           width: auto;
         }
-        .pfs-tooltip-content p {
+        .mani-tooltip-content p {
           margin: 0;
           padding: .5em;
         }
@@ -968,10 +966,10 @@ export class AppReport extends LitElement {
   }
 
   populateAppCard(manifestContext: ManifestContext, url: string) {
+    let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
+
     if (manifestContext && !this.createdManifest) {
       const parsedManifestContext = manifestContext;
-
-      let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
 
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
@@ -988,6 +986,12 @@ export class AppReport extends LitElement {
         this.styles.color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
 
       }
+    } else {
+        this.appCard = {
+          siteName: "Missing Name",
+          siteUrl: cleanURL,
+          description: "Your manifest description is missing.",
+        };
     }
   }
 
@@ -1010,7 +1014,7 @@ export class AppReport extends LitElement {
   async runAllTests(url: string) {
     this.runningTests = true;
     await this.getManifest(url);
-    await Promise.allSettled([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
+    await Promise.all([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
@@ -1050,7 +1054,7 @@ export class AppReport extends LitElement {
         let status ="";
         if(test.category === "required" || test.testRequired){
           status = "red";
-          this.canPackageList.push(false);
+          this.manifestRequiredCounter++;
         } else {
           status = "yellow";
         }
@@ -1058,6 +1062,12 @@ export class AppReport extends LitElement {
         this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
       }
     });
+
+    if(this.manifestRequiredCounter > 0){
+      this.canPackageList[0] = false;
+    } else {
+      this.canPackageList[0] = true;
+    }
 
     let amt_missing = await this.handleMissingFields(manifest);
 
@@ -1083,6 +1093,7 @@ export class AppReport extends LitElement {
 
     const serviceWorkerTestResult = await testServiceWorker(url);
     this.serviceWorkerResults = serviceWorkerTestResult;
+
     this.serviceWorkerResults.forEach((result: any) => {
       if(result.result){
         this.swValidCounter++;
@@ -1091,7 +1102,7 @@ export class AppReport extends LitElement {
         if(result.category === "required"){
           status = "red";
           missing = true;
-          this.canPackageList.push(false);
+          this.swRequiredCounter++;
           this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
         } else {
           status = "yellow";
@@ -1102,6 +1113,13 @@ export class AppReport extends LitElement {
         }
       }
     })
+
+    if(this.swRequiredCounter > 0){
+      this.canPackageList[1] = false;
+    } else {
+      this.canPackageList[1] = true;
+    }
+
     this.swTotalScore = this.serviceWorkerResults.length;
 
     this.swDataLoading = false;
@@ -1123,6 +1141,7 @@ export class AppReport extends LitElement {
 
     const securityTests = await testSecurity(url);
     this.securityResults = securityTests;
+
     this.securityResults.forEach((result: any) => {
       if(result.result){
         this.secValidCounter++;
@@ -1130,7 +1149,7 @@ export class AppReport extends LitElement {
         let status ="";
         if(result.category === "required"){
           status = "red";
-          this.canPackageList.push(false);
+          this.secRequiredCounter++;
         } else {
           status = "yellow";
         }
@@ -1138,6 +1157,13 @@ export class AppReport extends LitElement {
         this.todoItems.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
       }
     })
+
+    if(this.secRequiredCounter > 0){
+      this.canPackageList[2] = false;
+    } else {
+      this.canPackageList[2] = true;
+    }
+
     this.secTotalScore = this.securityResults.length;
 
     this.secDataLoading = false;
@@ -1220,39 +1246,6 @@ export class AppReport extends LitElement {
     this.retestConfirmed = false;
   }
 
-  async handleDoubleChecks() {
-    const maniContext = getManifestContext();
-
-    // If we couldn't find the manifest and we instead generated one,
-    // punt back; no need to do additional manifest checks.
-    if (maniContext.isGenerated) {
-      return;
-    }
-
-    const doubleCheckResults = await doubleCheckManifest(maniContext);
-    if (doubleCheckResults) {
-      if (!doubleCheckResults.icon) {
-        this.errorMessage = error_messages.icon.message;
-        this.errorLink = error_messages.icon.link;
-
-        this.errored = true;
-        return;
-      } else if (!doubleCheckResults.name || !doubleCheckResults.shortName) {
-        this.errorMessage = error_messages.name.message;
-        this.errorLink = error_messages.name.link;
-
-        this.errored = true;
-        return;
-      } else if (!doubleCheckResults.startURL) {
-        this.errorMessage = error_messages.start_url.message;
-        this.errorLink = error_messages.start_url.link;
-
-        this.errored = true;
-        return;
-      }
-    }
-  }
-
   async openManifestEditorModal() {
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
@@ -1310,15 +1303,56 @@ export class AppReport extends LitElement {
     return undefined;
   }
 
-  decideColor(valid: number, total: number){
+
+  decideColor(valid: number, total: number, card: string){
+
+    let instantRed = false;
+    if(card === "manifest"){
+      instantRed = this.manifestRequiredCounter > 0;
+    } else if(card === "sw"){
+      instantRed = this.swRequiredCounter > 0;
+    } else {
+      instantRed = this.secRequiredCounter > 0;
+    }
+
     let ratio = parseFloat(JSON.stringify(valid)) / total;
 
-    if(ratio == 1){
-      return {"green": true, "red": false, "yellow": false};
-    } else if(ratio < 1.0/3) {
+    if(instantRed){
       return {"green": false, "red": true, "yellow": false};
-    } else {
+    } else if(ratio != 1){
       return {"green": false, "red": false, "yellow": true};
+    } else {
+      return {"green": true, "red": false, "yellow": false};
+    }
+
+  }
+
+  decideMessage(valid: number, total: number, card: string){
+
+    let instantRed = false;
+    let index = 0;
+    if(card === "manifest"){
+      instantRed = this.manifestRequiredCounter > 0;
+    } else if(card === "sw"){
+      index = 1;
+      instantRed = this.swRequiredCounter > 0;
+    } else {
+      index = 2;
+      instantRed = this.secRequiredCounter > 0;
+    }
+
+    let ratio = parseFloat(JSON.stringify(valid)) / total;
+
+    let messages = this.possible_messages[index].messages;
+
+    if(this.createdManifest || ratio == 0 || (card ==="sec" && ratio != 1)){
+      return messages["none"];
+    } else if(instantRed){
+      return messages["blocked"];
+    } else if(ratio != 1){
+      return messages["yellow"];
+    } else {
+      return messages["green"];
     }
   }
 
@@ -1418,10 +1452,10 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${styleMap(this.styles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#C3C3C3' }) : styleMap(this.styles)}>
               <div id="card-header">
                 <div id="pwa-image-holder">
-                  <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
+                  ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
@@ -1467,10 +1501,10 @@ export class AppReport extends LitElement {
                       </button>
                       ` :
                       html`
-                      <sl-tooltip class="pfs-tooltip">
+                      <sl-tooltip class="mani-tooltip">
                       ${this.runningTests ?
-                        html`<div slot="content" class="pfs-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
-                        html`<div slot="content" class="pfs-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
+                        html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
+                        html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
                           <button
                             type="button"
                             id="pfs-disabled"
@@ -1551,9 +1585,7 @@ export class AppReport extends LitElement {
                     ` :
                     html`
                     <p class="card-desc">
-                      PWABuilder has analyzed your Web Manifest. You do not have a web
-                      manifest. Use our Manifest editor to generate one. You can
-                      package for the store once you have a valid manifest.
+                      ${this.decideMessage(this.manifestValidCounter, this.manifestTotalScore, "manifest")}
                     </p>
                   `}
                 </div>
@@ -1567,13 +1599,15 @@ export class AppReport extends LitElement {
                       </div>
                     ` :
                     html`
-                      <button
-                        type="button"
-                        class="alternate"
-                        @click=${() => this.openManifestEditorModal()}
-                      >
-                        Edit your Manifest
-                      </button>
+                      ${this.createdManifest ?
+                      html`
+                          <sl-tooltip class="mani-tooltip" open>
+                            <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We have created a manifest for you! <br> Click here to customize it!</p></div>
+                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>
+                          </sl-tooltip>` :
+                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>`
+                      }
+
                       <a
                         class="arrow_anchor"
                         href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
@@ -1598,9 +1632,9 @@ export class AppReport extends LitElement {
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                             id="manifestProgressRing"
-                            class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore))}
-                            value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.manifestValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
+                            class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore, "manifest"))}
+                            value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
                 }
               </div>
             </div>
@@ -1722,9 +1756,7 @@ export class AppReport extends LitElement {
                       ` :
                       html`
                         <p class="card-desc">
-                          PWABuilder has analyzed your Service Worker, check out the
-                          results below. Want to add a Service Worker or check out our
-                          pre-built Service Workers? Tap Genereate Service Worker.
+                          ${this.decideMessage(this.swValidCounter, this.swTotalScore, "sw")}
                         </p>
                       `
                         }
@@ -1733,7 +1765,7 @@ export class AppReport extends LitElement {
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                     id="swProgressRing"
-                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
+                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore, "sw"))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
                     >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`${this.swValidCounter} / ${this.swTotalScore}`}</sl-progress-ring>
                     `
@@ -1831,9 +1863,7 @@ export class AppReport extends LitElement {
                       ` :
                       html`
                         <p class="card-desc">
-                        PWABuilder has done a basic analysis of your HTTPS setup.
-                      You can use LetsEncrypt to get a free HTTPS certificate, or
-                      publish to Azure to get built-in HTTPS support.
+                          ${this.decideMessage(this.secValidCounter, this.secTotalScore, "sec")}
                         </p>
                       `
                         }
@@ -1842,7 +1872,7 @@ export class AppReport extends LitElement {
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                     id="secProgressRing"
-                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
+                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore, "sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
                     >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`${this.secValidCounter} / ${this.secTotalScore}`}</sl-progress-ring>
                     `

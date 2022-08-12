@@ -11,7 +11,7 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
-import { isValidURL } from '../utils/url';
+import { cleanUrl, isValidURL } from '../utils/url';
 
 import '../components/content-header';
 import '../components/loading-button';
@@ -475,6 +475,7 @@ export class AppHome extends LitElement {
 
     if (this.siteURL) {
       this.gettingManifest = true;
+      this.siteURL = cleanUrl(this.siteURL);
       const isValidUrl = isValidURL(this.siteURL);
 
       recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
