@@ -211,7 +211,9 @@ export class AndroidForm extends AppPackageFormBase {
                 minLength: 3,
                 maxLength: 50,
                 spellcheck: false,
-                validationErrorMessage: "App name must be between 3 and 50 characters in length",
+                pattern: "[^|$@#><)(!&%*]*$",
+                validationErrorMessage:
+                  'App name must not include special characters and be between 3 and 50 characters',
                 inputHandler: (val: string) => this.packageOptions.name = val
               })}
             </div>
