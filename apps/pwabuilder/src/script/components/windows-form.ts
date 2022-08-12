@@ -210,7 +210,7 @@ export class WindowsForm extends AppPackageFormBase {
                     maxLength: 256,
                     value: this.packageOptions.name,
                     placeholder: 'My Awesome PWA',
-                    pattern: "[^|]*$",
+                    pattern: "[^|$@#><)(!&%*]*$",
                     validationErrorMessage:
                       'App name must not include special characters and be between 1 and 256 characters',
                     inputHandler: (val: string) =>

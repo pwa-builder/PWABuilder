@@ -102,7 +102,7 @@ export class OculusForm extends AppPackageFormBase {
                 required: true,
                 spellcheck: false,
                 minLength:  3,
-                pattern: "[^|]*$",
+                pattern: "[^|$@#><)(!&%*]*$",
                 // pattern: // NOTE: avoid using a regex pattern here, as it often has unintended consequences, such as blocking non-English names
                 inputHandler: (val: string) => (this.packageOptions.name = val),
               })}
