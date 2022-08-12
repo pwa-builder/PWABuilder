@@ -54,7 +54,6 @@ export function isValidJSON(json: Manifest): boolean {
 export async function findMissingKeys(manifest: Manifest): Promise<Array<string>> {
   return new Promise((resolve) => {
     let data: string[] = [];
-
     const keys = Object.keys(manifest);
 
     // find missing possible keys in manifest

@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { doubleCheckManifest, getManifestContext } from '../services/app-info';
+import { getManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
@@ -33,10 +33,6 @@ import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../servic
 import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-
-
-
-
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1028,7 +1024,6 @@ export class AppReport extends LitElement {
     // note: wrap in try catch (can fail if invalid json)
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
     details!.disabled = true;
-
     let manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
 
     this.validationResults = await validateManifest(manifest);
@@ -1044,7 +1039,6 @@ export class AppReport extends LitElement {
         return a.member.localeCompare(b.member);
       }
     });
-
     this.manifestTotalScore = this.validationResults.length;
 
     this.validationResults.forEach((test: Validation) => {
@@ -1130,7 +1124,6 @@ export class AppReport extends LitElement {
       'service_worker_tests',
       JSON.stringify(serviceWorkerTestResult)
     );
-    //console.log(serviceWorkerTestResult);
     this.requestUpdate();
   }
 
@@ -1171,7 +1164,6 @@ export class AppReport extends LitElement {
 
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
-    //console.log(securityTests);
     this.requestUpdate();
   }
 
