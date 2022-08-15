@@ -36,6 +36,8 @@ export async function reportMissing(manifest: Manifest): Promise<Array<string>> 
         const data = await findMissingKeys(manifest);
         if (data && data.length > 0) {
             resolve(data);
+        } else {
+            resolve([]);
         }
     })
 }
