@@ -300,19 +300,19 @@ export class PublishPane extends LitElement {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5)
       }
-      #form-area {
-        flex-grow: 1;
-        display: flex;
-        overflow: auto
+
+      windows-form, android-form, ios-form, oculus-form {
+        height: 100%;
       }
+
+      #form-area {
+        height: 100%;
+        width: 100%;
+      }
+
       #form-area[data-store="Android"] {
         padding-top: 0;
         flex-direction: column;
-      }
-      windows-form, android-form, ios-form, oculus-form {
-        flex-grow: 1;
-        display: flex;
-        overflow: auto;
       }
 
       .dialog::part(body){
@@ -365,7 +365,7 @@ export class PublishPane extends LitElement {
       @media(min-height: 900px){
         #pp-frame-wrapper {
         width: 100%;
-        height: 70vh;
+        height: 80vh;
       }
       }
 
@@ -560,22 +560,19 @@ export class PublishPane extends LitElement {
 
     try {
       this.generating = true;
-      console.log("generating files");
       const packageData = await generatePackage(platform, options);
 
       if (packageData) {
-        console.log("succesfully generated files");
         this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
-          console.log("non test blob");
           this.blob = packageData.blob;
           this.readyToDownload = true;
+          this.downloadPackage()
         }
       }
     } catch (err) {
-      console.log("error");
       console.error(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
@@ -675,18 +672,9 @@ export class PublishPane extends LitElement {
                 </div>
               </div>
             </div>
-            ${!this.readyToDownload ?
-              // so if this is false then we wanna show the form
-              html`
-                <div id="form-area" data-store=${this.selectedStore}>
-                  ${this.renderForm()}
-                </div>
-              ` :
-              // when this becomes true this means that we are ready to download something
-              html`
-                <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
-              `
-            }
+            <div id="form-area" data-store=${this.selectedStore}>
+              ${this.renderForm()}
+            </div>
           `
           }
           </div>

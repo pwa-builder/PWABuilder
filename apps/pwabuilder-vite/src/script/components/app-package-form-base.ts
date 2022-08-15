@@ -53,7 +53,6 @@ export class AppPackageFormBase extends LitElement {
       #form-layout {
         overflow-y: auto;
         padding: 1em 1.5em 0 1em;
-        max-height: 24em;
       }
 
       .tooltip {
@@ -84,21 +83,26 @@ export class AppPackageFormBase extends LitElement {
 
       #form-options-actions {
         display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: .25em;
       }
 
       #form-details-block {
         display: flex;
-        align-items: center;
-        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 55%;
+        gap: .25em;
       }
 
       #form-details-block p {
         font-weight: 300;
         font-size: 14px;
-        color: rgba(128, 128, 128, 1);
-        padding-right: 2em;
+        color: #808080;
+        margin: 0;
       }
 
       .select-group {
