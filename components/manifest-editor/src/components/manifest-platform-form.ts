@@ -817,7 +817,7 @@ export class ManifestPlatformForm extends LitElement {
             <sl-details class="field-details" summary="Click to edit related apps" data-field="related_applications">
               <sl-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</sl-button>
               <div class="items-holder">
-                ${ this.manifest.related_applications ? this.manifest.related_applications.map((app: any, i: number) =>
+                ${ this.manifest.related_applications && Array.isArray(this.manifest.related_applications) ? this.manifest.related_applications.map((app: any, i: number) =>
                   html`
                     <div class="field-holder">
                       <div class="editable">
@@ -893,7 +893,7 @@ export class ManifestPlatformForm extends LitElement {
             <sl-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts">
               <sl-button @click=${() => this.addFieldToHTML("shortcuts")} ?disabled=${this.shortcutHTML.length != 0}>Add Shortcut</sl-button>
               <div class="items-holder">
-                ${this.manifest.shortcuts ? this.manifest.shortcuts!.map((sc: any, i: number) =>
+                ${this.manifest.shortcuts && Array.isArray(this.manifest.shortcuts) ? this.manifest.shortcuts!.map((sc: any, i: number) =>
                   html`
                     <div class="field-holder">
                       <div class="editable">
@@ -929,7 +929,7 @@ export class ManifestPlatformForm extends LitElement {
             <sl-details class="field-details" summary="Click to edit protocol handlers" data-field="protocol_handlers">
               <sl-button @click=${() => this.addFieldToHTML("protocol_handlers")} ?disabled=${this.protocolHTML.length != 0}>Add Protocol</sl-button>
               <div class="items-holder">
-                ${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.map((p: any, i: number) =>
+                ${this.manifest.protocol_handlers  && Array.isArray(this.manifest.protocol_handlers) ? this.manifest.protocol_handlers.map((p: any, i: number) =>
                   html`
                     <div class="field-holder">
                       <div class="editable">
@@ -962,7 +962,7 @@ export class ManifestPlatformForm extends LitElement {
             <p>The categories your PWA fall in to</p>
               <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
-                    html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?chekced=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
+                    html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
                   )}
                     
               </div>
