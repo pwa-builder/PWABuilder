@@ -51,45 +51,8 @@
         editor.downloadManifest();
       }); */
 
-      editor.initialManifest = {
-  "name": "T2C - Tram & Bus",
-  "short_name": "T2",
-  "orientation": "upside down",
-  "lang": "sdfdf",
-  "dir": "asdasd",
-  "prefer_related_applications": "false",
-  "icons": [
-    {
-      "src": "images/192x192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "images/2251x2251.png",
-      "type": "image/png",
-      "sizes": "2251x2251"
-    },
-    {
-      "src": "images/512x512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": "",
-  "display": "invalid",
-  "background_color": "none",
-  "theme_color": "none",
-  "screenshots": [],
-  "categories": [],
-  "shortcuts": [{
-        "name": "Start Live Session",
-        "short_name": "Start Live",
-        "description": "Jump direction into starting or joining a live session",
-        "url": "/?startLive",
-        "icons": [{ "src": "icons/android/maskable_icon_192.png", "sizes": "192x192" }]
-      }]
-}; //load an initial manifest
-      editor.manifestURL = "https://t2c.app/manifest.json"
+      editor.initialManifest = {"name":"TREGO","short_name":"TREGO","start_url":"https:\/\/tregoo.xyz\/","display":"fullscreen","theme_color":"#000000","background_color":"#1252A1","orientation":"any","status_bar":"black","splash":{"640x1136":"\/images\/icons\/splash-640x1136.png","750x1334":"\/images\/icons\/splash-750x1334.png","828x1792":"\/images\/icons\/splash-828x1792.png","1125x2436":"\/images\/icons\/splash-1125x2436.png","1242x2208":"\/images\/icons\/splash-1242x2208.png","1242x2688":"\/images\/icons\/splash-1242x2688.png","1536x2048":"\/images\/icons\/splash-1536x2048.png","1668x2224":"\/images\/icons\/splash-1668x2224.png","1668x2388":"\/images\/icons\/splash-1668x2388.png","2048x2732":"\/images\/icons\/splash-2048x2732.png"},"icons":[{"src":"\/images\/icons\/icon-72x72.png","type":"image\/png","sizes":"72x72","purpose":"any"},{"src":"\/images\/icons\/icon-96x96.png","type":"image\/png","sizes":"96x96","purpose":"any"},{"src":"\/images\/icons\/icon-128x128.png","type":"image\/png","sizes":"128x128","purpose":"any"},{"src":"\/images\/icons\/icon-144x144.png","type":"image\/png","sizes":"144x144","purpose":"any"},{"src":"\/images\/icons\/icon-152x152.png","type":"image\/png","sizes":"152x152","purpose":"any"},{"src":"\/images\/icons\/icon-192x192.png","type":"image\/png","sizes":"192x192","purpose":"any"},{"src":"\/images\/icons\/icon-384x384.png","type":"image\/png","sizes":"384x384","purpose":"any"},{"src":"\/images\/icons\/icon-512x512.png","type":"image\/png","sizes":"512x512","purpose":"maskable"}],"shortcuts":[{"name":"Shortcut Link 1","description":"Shortcut Link 1 Description","url":"","icons":[{"src":"\/images\/icons\/icon-72x72.png","type":"image\/png","purpose":"any"}]},{"name":"Shortcut Link 2","description":"Shortcut Link 2 Description","url":"","icons":[[]]}]}; //load an initial manifest
+      editor.manifestURL = "tregoo.xyz/"
 
       let editedManifest = editor.manifest; // get edited or generated manifest
       //console.log(editedManifest);
