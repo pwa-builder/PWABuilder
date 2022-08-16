@@ -28,6 +28,7 @@ import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
 import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
+import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -41,6 +42,7 @@ const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
+const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
@@ -166,6 +168,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const updateAdvWorkerCommand = vscode.commands.registerCommand(
+    updateADVWorkerCommandID,
+    async () => {
+      updateAdvServiceWorker();
+    }
+  );
+
   let packageAppCommand = vscode.commands.registerCommand(
     packageCommandId,
     packageApp
@@ -234,6 +243,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
   context.subscriptions.push(generateWorker);
+  context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
