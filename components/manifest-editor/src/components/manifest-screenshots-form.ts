@@ -127,6 +127,7 @@ export class ManifestScreenshotsForm extends LitElement {
         align-items: center;
         justify-content: center;
         gap: 5px;
+        font-size: 16px;
       }
 
       .screenshots-actions button {

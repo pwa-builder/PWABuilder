@@ -222,6 +222,10 @@ export class ManifestPlatformForm extends LitElement {
         border-color: #eb5757;
       }
 
+      sl-menu-label::part(base) {
+        font-size: 16px;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
