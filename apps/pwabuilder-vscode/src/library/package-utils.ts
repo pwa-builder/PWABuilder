@@ -1,5 +1,5 @@
 import { writeFile } from "fs/promises";
-import fetch from "node-fetch";
+const fetch = require('node-fetch');
 import { Headers, Response } from "node-fetch";
 import { Manifest, MsixInfo } from "../interfaces";
 

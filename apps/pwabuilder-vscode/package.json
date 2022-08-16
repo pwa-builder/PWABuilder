@@ -25,6 +25,7 @@
     "onCommand:pwa-studio.manifest",
     "onCommand:pwa-studio.packageApp",
     "onCommand:pwa-studio.generateWorker",
+    "onCommand:pwa-studio.updateAdvWorker",
     "onCommand:pwa-studio.chooseManifest",
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
@@ -182,6 +183,11 @@
         "command": "pwa-studio.help",
         "title": "PWA Studio: Help",
         "icon": "$(note)"
+      },
+      {
+        "command": "pwa-studio.updateAdvWorker",
+        "title": "PWA Studio: Update Service Worker",
+        "icon": "$(sync)"
       }
     ],
     "viewsWelcome": [
@@ -333,7 +339,7 @@
     "dotenv": "^16.0.1",
     "formdata-node": "^4.3.2",
     "formdata-polyfill": "^4.0.10",
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^2.6.7",
     "pwa-asset-generator": "^6.1.1",
     "shelljs": "^0.8.5",
     "workbox-build": "^6.4.2"
