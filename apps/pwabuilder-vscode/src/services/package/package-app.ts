@@ -19,7 +19,7 @@ import {
   windowsProdQuestions,
 } from "../../questions";
 import { getManifest } from "../manifest/manifest-service";
-import { getWorker } from "../simple-service-worker";
+import { getWorker } from "../service-workers/simple-service-worker";
 import { getURL } from "../web-publish";
 import {
   AndroidDocsURL,

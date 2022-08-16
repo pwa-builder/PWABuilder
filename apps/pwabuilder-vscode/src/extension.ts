@@ -2,18 +2,11 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
-/*import {
-  handleServiceWorkerCommand,
-  generateServiceWorker,
-  chooseServiceWorker,
-  handleAdvServiceWorkerCommand,
-  updateAdvServiceWorker,
-} from "./services/service-worker";*/
 import { 
-  handleServiceWorkerCommand, 
   generateServiceWorker,
   chooseServiceWorker,
-} from "./services/simple-service-worker";
+} from "./services/service-workers/simple-service-worker";
+import { handleSW } from "./services/service-workers/service-worker";
 import {
   chooseManifest,
   generateManifest,
@@ -48,8 +41,6 @@ const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
-const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
-const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
@@ -164,7 +155,7 @@ export function activate(context: vscode.ExtensionContext) {
   const addServiceWorker = vscode.commands.registerCommand(
     serviceWorkerCommandId,
     async () => {
-      await handleServiceWorkerCommand();
+      await handleSW();
     }
   );
 
