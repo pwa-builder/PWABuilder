@@ -42,7 +42,7 @@ export class OculusForm extends AppPackageFormBase {
           display: flex;
           overflow: auto;
           flex-direction: column;
-          max-height: 400px;
+          height: 54vh;
         }
 
         #form-extras {

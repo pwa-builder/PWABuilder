@@ -45,7 +45,7 @@ export class IOSForm extends AppPackageFormBase {
         display: flex;
         overflow: auto;
         flex-direction: column;
-        max-height: 400px;
+        height: 54vh;
       }
 
       #form-extras {
@@ -212,7 +212,6 @@ export class IOSForm extends AppPackageFormBase {
     recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(0deg)";
-    console.log("hello?")
   }
 
   rotateNinety(){

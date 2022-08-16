@@ -62,7 +62,13 @@ export class AndroidForm extends AppPackageFormBase {
         display: flex;
         overflow: auto;
         flex-direction: column;
-        max-height: 370px;
+        height: 52vh;
+      }
+
+      @media(max-height: 900px){
+        #form-layout {
+          height: 43vh;
+        }
       }
 
       #form-extras {
@@ -322,7 +328,6 @@ export class AndroidForm extends AppPackageFormBase {
     recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(0deg)";
-    console.log("hello?")
   }
 
   rotateNinety(){

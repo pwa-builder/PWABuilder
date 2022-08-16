@@ -52,7 +52,7 @@ export class AppPackageFormBase extends LitElement {
 
       #form-layout {
         overflow-y: auto;
-        padding: 1em 1.5em 0 1em;
+        padding: 0em 1.5em 0 1em;
       }
 
       .tooltip {

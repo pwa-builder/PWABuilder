@@ -364,9 +364,9 @@ export class PublishPane extends LitElement {
 
       @media(min-height: 900px){
         #pp-frame-wrapper {
-        width: 100%;
-        height: 80vh;
-      }
+          width: 100%;
+          height: 80vh;
+        }
       }
 
       /* > 1920 */
@@ -601,11 +601,19 @@ export class PublishPane extends LitElement {
   }
 
   async downloadPackage(){
-    if (this.blob || this.testBlob) {
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+    let blob = (this.blob || this.testBlob);
+    if (blob) {
+      let filename = this.downloadFileName || 'your_pwa.zip';
+      var element = document.createElement('a');
+      element.href = URL.createObjectURL(blob!)
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
 
       this.blob = undefined;
       this.testBlob = undefined;

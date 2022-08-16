@@ -69,7 +69,7 @@ export class AppReport extends LitElement {
   // will be used to control the state of the "Package for store" button.
   @state() runningTests: boolean = false;
   @state() canPackageList: boolean[] = [false, false, false];
-  @state() canPackage: boolean = true;
+  @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
 
   @state() swSelectorOpen: boolean = false;
@@ -294,6 +294,10 @@ export class AppReport extends LitElement {
           align-items: center;
           column-gap: 10px;
           border: none;
+        }
+        #retest:disabled{
+          background-color: #4f3fb6a2;
+          cursor: no-drop;
         }
         #last-edited {
           color: #808080;
@@ -1465,6 +1469,7 @@ export class AppReport extends LitElement {
                     @click=${() => {
                       this.retest(false);
                     }}
+                    ?disabled=${this.runningTests}
                   >
                     <img
                       src="/assets/new/retest.svg"
