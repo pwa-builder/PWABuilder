@@ -295,7 +295,7 @@ export async function buildAndroidOptions(): Promise<
   if (manifestUrl && packageId) {
     // fetch manifest from manifestUrl using node-fetch
 
-    let manifestData: Manifest | undefined;
+    let manifestData: Manifest | undefined | unknown;
     let manifest: Manifest | undefined;
     try {
       manifestData = await (await fetch(manifestUrl)).json();
