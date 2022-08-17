@@ -9,6 +9,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import { ManifestContext } from '../utils/interfaces';
 
 @customElement('ios-form')
+// @ts-ignore
 export class IOSForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAllSettings = false;

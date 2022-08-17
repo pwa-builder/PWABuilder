@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getManifestContext, setManifestContext } from '../services/app-info';
+import { getManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,

@@ -7,7 +7,6 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
-import { fileSave } from 'browser-fs-access';
 
 import {
   // smallBreakPoint,

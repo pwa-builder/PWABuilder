@@ -11,6 +11,7 @@ import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 @customElement('android-form')
+// @ts-ignore
 export class AndroidForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating = false;
   @property({ type: Boolean }) isGooglePlayApk = false;
@@ -21,8 +22,6 @@ export class AndroidForm extends AppPackageFormBase {
   static get styles() {
 
     const localStyles = css`
-
-
       :host {
         width: 100%;
       }

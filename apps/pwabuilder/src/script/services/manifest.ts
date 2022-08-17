@@ -1,7 +1,7 @@
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { env } from '../utils/environment';
 import {
   AppEvents,
-  Manifest,
   ManifestContext,
   ManifestDetectionResult,
 } from '../utils/interfaces';
@@ -54,7 +54,7 @@ async function getManifest(
         `Unable to fetch response using ${manifestTestUrl}. Response status  ${response}`
       );
     }
-    const responseData = await response.json<PuppeteerManifestFinderResult>();
+    const responseData = await response.json();
     if (!responseData) {
       console.warn(
         'Fetching manifest failed due to no response data',
@@ -89,18 +89,12 @@ async function getManifest(
   return null;
 }
 
-function timeoutAfter(milliseconds: number): Promise<void> {
-  return new Promise<void>(resolve => {
-    setTimeout(() => resolve(), milliseconds);
-  });
-}
-
 /**
  * Fetches the manifest from our manifest detection services. If no manifest could be detected, a manifest will be generated from the page.
  * @param url The URL from which to detect the manifest.
  * @returns A manifest detection result.
  */
-async function fetchManifest(url: string, createIfNone = true): Promise<ManifestDetectionResult | undefined> {
+async function fetchManifest(url: string): Promise<ManifestDetectionResult | undefined> {
   // Manifest detection is surprisingly tricky due to redirects, dynamic code generation, SSL problems, and other issues.
   // We have 2 techniques to detect the manifest:
   // 1. An Azure function that uses Chrome Puppeteer to fetch the manifest
@@ -114,6 +108,7 @@ async function fetchManifest(url: string, createIfNone = true): Promise<Manifest
   try {
     knownGoodUrl = cleanUrl(url);
   } catch (err) {
+    //@ts-ignore
     reject(err);
     return;
   }
@@ -225,7 +220,7 @@ export async function createManifestContextFromEmpty(url: string): Promise<Manif
       headers: new Headers({ 'content-type': 'application/json' }),
     });
 
-    createdManifest = await response.json<Manifest>();
+    createdManifest = await response.json();
   } catch (err) {
     console.error(
       `Manifest creation service failed to create the manifest. Falling back to empty manifest.`,
@@ -310,7 +305,7 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
   };
 }
 
-type HtmlParseManifestFinderResult = {
+/* type HtmlParseManifestFinderResult = {
   manifestUrl: string | null;
   manifestContents: Manifest | null;
   error: string | null;
@@ -326,3 +321,4 @@ type PuppeteerManifestFinderResult = {
   } | null;
   error?: any;
 };
+ */

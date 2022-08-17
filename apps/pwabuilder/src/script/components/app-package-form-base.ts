@@ -14,8 +14,7 @@ import { customElement } from 'lit/decorators.js';
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
   static get styles() {
-    return [
-    css`
+    const localStyles =  css`
       #form-layout input {
         border: 1px solid rgba(194, 201, 209, 1);
         border-radius: var(--input-radius);
@@ -172,7 +171,8 @@ export class AppPackageFormBase extends LitElement {
           width: 100%;
         }
       }
-    `];
+    `
+    return [localStyles];
   }
 
   constructor() {

@@ -1,4 +1,5 @@
-import { Manifest } from "./interfaces";
+import { Manifest } from "@pwabuilder/manifest-validation";
+
 
 /**
  * Package options for PWABuilder's iOS platform. Should match https://github.com/pwa-builder/pwabuilder-ios/blob/main/Microsoft.PWABuilder.IOS.Web/Models/IOSAppPackageOptions.cs

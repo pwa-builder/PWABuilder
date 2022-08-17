@@ -13,10 +13,6 @@ import {
 } from '../utils/css/breakpoints';
 import { cleanUrl, isValidURL } from '../utils/url';
 
-import '../components/content-header';
-import '../components/loading-button';
-import '../components/dropdown-menu';
-import '../components/app-sidebar';
 import '../components/companies-packaged';
 import '../components/resource-hub-new';
 import '../components/success-stories';
@@ -25,9 +21,9 @@ import '../components/community-hub';
 // For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
 import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
-import { getProgress, getURL, setProgress } from '../services/app-info';
+import { setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
-import { fetchOrCreateManifest, resetInitialManifest } from '../services/manifest';
+import { resetInitialManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-home')

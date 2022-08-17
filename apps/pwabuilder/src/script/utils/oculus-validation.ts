@@ -1,5 +1,5 @@
+import { Manifest } from "@pwabuilder/manifest-validation";
 import { validateAndroidPackageId } from "./android-validation";
-import { Manifest } from "./interfaces";
 
 /**
  * Package options for PWABuilder's Oculus platform. Should match https://github.com/pwa-builder/pwabuilder-oculus/blob/main/Microsoft.PWABuilder.Oculus/Models/OculusAppPackageOptions.cs

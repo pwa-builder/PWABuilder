@@ -1,4 +1,4 @@
-import { Manifest } from './interfaces';
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { validateUrl } from './url';
 
 /**

@@ -15,6 +15,7 @@ import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analyti
 import { ManifestContext } from '../utils/interfaces';
 
 @customElement('oculus-form')
+// @ts-ignore
 export class OculusForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAllSettings = false;

@@ -17,8 +17,10 @@
       "forceConsistentCasingInFileNames": true,
       "useDefineForClassFields": false,
       "isolatedModules": true,
+      "resolveJsonModule": true,
       "types": [
-          "vite-plugin-pwa/client"
+          "vite-plugin-pwa/client",
+          "node"
       ]
   },
   "include": ["src/**/*.ts"],
