@@ -101,6 +101,7 @@ export class CodeEditor extends LitElement {
         await navigator.clipboard.writeText(doc.toString());
         this.copyText = 'Copied';
         this.copied = true;
+        setTimeout(() => {this.copyText = "Copy Manifest"; this.copied = false;}, 3000);
       } catch (err) {
         // We should never really end up here but just in case
         // lets put the error in the console

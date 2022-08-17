@@ -301,7 +301,7 @@ export class AppReport extends LitElement {
           cursor: no-drop;
         }
         #last-edited {
-          color: #808080;
+          color: #727272;
           font-size: 12px;
           line-height: 12px;
           white-space: nowrap;
@@ -777,6 +777,36 @@ export class AppReport extends LitElement {
 
         #confirmationButtons > *{
          width: 45%;
+        }
+
+        .loader {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          display: block;
+          margin:15px auto;
+          position: relative;
+          color: #4F3FB6;
+          box-sizing: border-box;
+          animation: animloader 2s linear infinite;
+        }
+
+        @keyframes animloader {
+          0% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
+          }
+          25% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 2px;
+          }
+          50% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 2px,  -38px 0 0 -2px;
+          }
+          75% {
+            box-shadow: 14px 0 0 2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
+          }
+          100% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
+          }
         }
 
         @media(max-width: 750px){
@@ -1557,7 +1587,7 @@ export class AppReport extends LitElement {
                 <p>View Details</p>
                 <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
               </div>
-             ${this.sortTodos().map((todo: any) =>
+             ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.sortTodos().map((todo: any) =>
                 html`
                   <todo-item
                     .status=${todo.status}
@@ -1567,7 +1597,7 @@ export class AppReport extends LitElement {
                     .displayString=${todo.displayString}
                     @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
                   </todo-item>`
-              )}
+              ) : html`<span class="loader"></span>`}
 
             </sl-details>
           </div>
