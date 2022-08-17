@@ -5,6 +5,8 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { AppPackageFormBase } from './app-package-form-base';
 import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';
 import { getManifestContext } from '../services/app-info';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { ManifestContext } from '../utils/interfaces';
 
 @customElement('ios-form')
 export class IOSForm extends AppPackageFormBase {
@@ -37,12 +39,143 @@ export class IOSForm extends AppPackageFormBase {
         flex-direction: column;
         gap: .75em;
       }
+
+      #form-layout {
+        flex-grow: 1;
+        display: flex;
+        overflow: auto;
+        flex-direction: column;
+        height: 54vh;
+      }
+
       #form-extras {
         display: flex;
-        flex-direction: column;
-        margin-top: auto;
-        padding: 1em;
+        justify-content: space-between;
+        padding: 1em 1.5em;
+        background-color: #F2F3FB;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
       }
+
+      sl-details {
+        margin-top: 1em;
+      }
+
+      sl-details::part(base){
+        border: none;
+      }
+
+      sl-details::part(summary-icon){
+        display: none;
+      }
+
+      .dropdown_icon {
+        transform: rotate(0deg);
+        transition: transform .5s;
+        height: 30px;
+      }
+
+      #generate-submit::part(base) {
+        background-color: black;
+        color: white;
+        font-size: 14px;
+        height: 3em;
+        width: 100%;
+        border-radius: 50px;
+    }
+
+      sl-details::part(header){
+        padding: 0 10px;
+      }
+
+      .details-summary {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      .details-summary p {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      #form-holder{
+          display: flex;
+          flex-direction: column;
+          border-radius: 10px;
+          justify-content: spacve-between;
+          height: 100%;
+        }
+
+        sl-button::part(label){
+          font-size: 16px;
+          padding: .5em 2em;
+        }
+
+        .arrow_link {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          font-weight: bold;
+          margin-bottom: .25em;
+          font-size: 14px;
+        }
+        .arrow_link a {
+          text-decoration: none;
+          border-bottom: 1px solid rgb(79, 63, 182);
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0px 0.5em 0px 0px;
+          line-height: 1em;
+          color: rgb(79, 63, 182);
+        }
+        .arrow_link a:visited {
+          color: #4F3FB6;
+        }
+        .arrow_link:hover {
+          cursor: pointer;
+        }
+        .arrow_link:hover img {
+          animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+              transform: translateX(5px);
+          }
+        }
+
+        #tou-link{
+          color: 757575;
+          font-size: 14px;
+        }
+
+        @media(max-width: 640px){
+          #form-extras {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1em;
+          }
+          #form-details-block {
+            flex-direction: column;
+            gap: .75em;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+          }
+          #form-options-actions {
+            flex-direction: column;
+          }
+        }
+
     `;
     return [
       super.styles,
@@ -55,12 +188,12 @@ export class IOSForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    let manifestContext = getManifestContext();
+    let manifestContext: ManifestContext | undefined = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
     }
-    
-    this.packageOptions = createIOSPackageOptionsFromManifest(manifestContext);
+
+    this.packageOptions = createIOSPackageOptionsFromManifest(manifestContext!);
   }
 
   initGenerate(ev: InputEvent) {
@@ -75,18 +208,21 @@ export class IOSForm extends AppPackageFormBase {
     );
   }
 
-  toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
-    if (settingsToggleValue === 'advanced') {
-      this.showAllSettings = true;
-    } else if (settingsToggleValue === 'basic') {
-      this.showAllSettings = false;
-    } else {
-      this.showAllSettings = false;
-    }
+  rotateZero(){
+    recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(0deg)";
+  }
+
+  rotateNinety(){
+    recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(90deg)";
   }
 
   render() {
     return html`
+    <div id="form-holder">
       <form
         id="ios-options-form"
         slot="modal-form"
@@ -140,104 +276,97 @@ export class IOSForm extends AppPackageFormBase {
             </div>
           </div>
 
-          <fast-accordion>
-            <fast-accordion-item
-              @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
-            >
-              <div id="all-settings-header" slot="heading">
-                <span>All Settings</span>
-
-                <div class="flipper-button" aria-label="caret dropdown" role="button">
-                  <ion-icon name="caret-forward-outline"></ion-icon>
-                </div>
-              </div>
-
-              <div class="adv-settings">
-                <div>
-                  <div class="">
-                    <div class="form-group">
-                      ${this.renderFormInput({
-                        label: 'Image URL',
-                        inputId: 'imageUrlInput',
-                        tooltip: `The URL of a square 512x512 or larger PNG image from which to generate your iOS app icons. This can be an absolute URL or a URL relative to your web manifest.`,
-                        placeholder: '/images/512x512.png',
-                        value: this.packageOptions.imageUrl,
-                        required: true,
-                        inputHandler: (val: string) => this.packageOptions.imageUrl = val
-                      })}
-                    </div>
+          <sl-details @click="${(ev: Event) => this.toggleAccordion(ev.target)}" @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+            <div class="details-summary" slot="summary">
+              <p>All Settings</p>
+              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+            </div>
+            <div class="adv-settings">
+              <div>
+                <div class="">
+                  <div class="form-group">
+                    ${this.renderFormInput({
+                      label: 'Image URL',
+                      inputId: 'imageUrlInput',
+                      tooltip: `The URL of a square 512x512 or larger PNG image from which to generate your iOS app icons. This can be an absolute URL or a URL relative to your web manifest.`,
+                      placeholder: '/images/512x512.png',
+                      value: this.packageOptions.imageUrl,
+                      required: true,
+                      inputHandler: (val: string) => this.packageOptions.imageUrl = val
+                    })}
                   </div>
                 </div>
-              </div>             
-
-              <div class="form-group">
-                ${this.renderFormInput({
-                    label: 'Status bar color',
-                    inputId: 'statusBarColorInput',
-                    tooltip: `The background color of the iOS status bar while your app is running. We recommend using your manifest's theme_color or background_color.`,
-                    type: 'color',
-                    placeholder: '#ffffff',
-                    value: this.packageOptions.statusBarColor,
-                    required: true,
-                    inputHandler: (val: string) => this.packageOptions.statusBarColor = val
-                  })}
               </div>
+            </div>
 
-              <div class="form-group">
-                ${this.renderFormInput({
-                    label: 'Splash screen color',
-                    inputId: 'splashColorInput',
-                    tooltip: `The background color of the splash screen shown while your PWA is launching. We recommend using your manifest's background_color.`,
-                    type: 'color',
-                    placeholder: '#ffffff',
-                    value: this.packageOptions.splashColor,
-                    required: true,
-                    inputHandler: (val: string) => this.packageOptions.splashColor = val
-                  })}
-              </div>
+            <div class="form-group">
+              ${this.renderFormInput({
+                  label: 'Status bar color',
+                  inputId: 'statusBarColorInput',
+                  tooltip: `The background color of the iOS status bar while your app is running. We recommend using your manifest's theme_color or background_color.`,
+                  type: 'color',
+                  placeholder: '#ffffff',
+                  value: this.packageOptions.statusBarColor,
+                  required: true,
+                  inputHandler: (val: string) => this.packageOptions.statusBarColor = val
+                })}
+            </div>
 
-              <div class="form-group">
-                ${this.renderFormInput({
-                    label: 'Progress bar color',
-                    inputId: 'progressBarColorInput',
-                    tooltip: `The color of the progress bar shown on your app's splash screen while your PWA is loaded. We recommend using your manifest's theme_color.`,
-                    type: 'color',
-                    placeholder: '#000000',
-                    value: this.packageOptions.progressBarColor,
-                    required: true,
-                    inputHandler: (val: string) => this.packageOptions.progressBarColor = val
-                  })}
-              </div>
+            <div class="form-group">
+              ${this.renderFormInput({
+                  label: 'Splash screen color',
+                  inputId: 'splashColorInput',
+                  tooltip: `The background color of the splash screen shown while your PWA is launching. We recommend using your manifest's background_color.`,
+                  type: 'color',
+                  placeholder: '#ffffff',
+                  value: this.packageOptions.splashColor,
+                  required: true,
+                  inputHandler: (val: string) => this.packageOptions.splashColor = val
+                })}
+            </div>
 
-              <div class="form-group">
-                ${this.renderFormInput({
-                    label: 'Permitted URLs',
-                    inputId: 'permittedUrlsInput',
-                    tooltip: `Optional. A comma-separated list of URLs or hosts that your PWA should be allowed to navigate to. You don't need to add your PWA's domain, as it's automatically included.`,
-                    placeholder: 'account.google.com, login.microsoft.com',
-                    value: this.packageOptions.permittedUrls.join(', '),
-                    inputHandler: (val: string) => this.packageOptions.permittedUrls = val.split(',').map(i => i.trim()).filter(i => !!i)
-                  })}
-              </div>
-            </fast-accordion-item>
-          </fast-accordion>
-        </div>
+            <div class="form-group">
+              ${this.renderFormInput({
+                  label: 'Progress bar color',
+                  inputId: 'progressBarColorInput',
+                  tooltip: `The color of the progress bar shown on your app's splash screen while your PWA is loaded. We recommend using your manifest's theme_color.`,
+                  type: 'color',
+                  placeholder: '#000000',
+                  value: this.packageOptions.progressBarColor,
+                  required: true,
+                  inputHandler: (val: string) => this.packageOptions.progressBarColor = val
+                })}
+            </div>
 
-        <div id="form-extras">
-          <div id="form-details-block">
-            <p>
-              Your download will contain
-              <a href="https://blog.pwabuilder.com/docs/build-your-ios-app" target="_blank">instructions</a>
-              for submitting to the App Store.</p>
-          </div>
-
-          <div id="form-options-actions" class="modal-actions">
-            <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-              <input id="generate-submit" type="submit" value="Generate Package" />
-            </loading-button>
-          </div>
+            <div class="form-group">
+              ${this.renderFormInput({
+                  label: 'Permitted URLs',
+                  inputId: 'permittedUrlsInput',
+                  tooltip: `Optional. A comma-separated list of URLs or hosts that your PWA should be allowed to navigate to. You don't need to add your PWA's domain, as it's automatically included.`,
+                  placeholder: 'account.google.com, login.microsoft.com',
+                  value: this.packageOptions.permittedUrls.join(', '),
+                  inputHandler: (val: string) => this.packageOptions.permittedUrls = val.split(',').map(i => i.trim()).filter(i => !!i)
+                })}
+            </div>
+            </sl-details>
         </div>
       </form>
+      <div id="form-extras">
+        <div id="form-details-block">
+          <p> Click below for instructions for submitting to the App Store.</p>
+          <div class="arrow_link">
+            <a @click=${() => recordPWABuilderProcessStep("ios_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/app-store" target="_blank" rel="noopener">Packaging Instructions</a>
+            <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+          </div>
+        </div>
+        <div id="form-options-actions" class="modal-actions">
+          <sl-button  id="generate-submit" type="submit" form="ios-options-form" ?loading="${this.generating}" >
+            Download Package
+          </sl-button>
+          <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" id="tou-link">Terms of Use</a>
+        </div>
+      </div>
+    </div>
     `;
   }
 

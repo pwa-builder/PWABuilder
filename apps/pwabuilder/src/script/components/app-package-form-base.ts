@@ -4,7 +4,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
-import { styles as ToolTipStyles } from '../components/tooltip';
 import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 
@@ -15,7 +14,8 @@ import { customElement } from 'lit/decorators.js';
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
   static get styles() {
-    const localStyles = css`
+    return [
+    css`
       #form-layout input {
         border: 1px solid rgba(194, 201, 209, 1);
         border-radius: var(--input-radius);
@@ -31,34 +31,148 @@ export class AppPackageFormBase extends LitElement {
         font-style: italic;
       }
 
-      #generate-submit {
-        background: transparent;
-        color: var(--button-font-color);
-        font-weight: bold;
-        border: none;
-        cursor: pointer;
-
-        height: var(--desktop-button-height);
-        width: var(--button-width);
-      }
 
       info-circle-tooltip {
         margin-top: 4px;
       }
+
+      sl-button::part(base) {
+        background-color: black;
+        color: white;
+        font-size: 14px;
+        height: 3em;
+        width: 25%;
+        border-radius: 50px;
+      }
+
+      sl-button::part(label){
+        display: flex;
+        align-items: center;
+      }
+
+      #form-layout {
+        overflow-y: auto;
+        padding: 0em 1.5em 0 1em;
+      }
+
+      .tooltip {
+        margin-left: 10px;
+      }
+
+      .form-group .tooltip a {
+        color: #fff;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        font-size: var(--small-medium-font-size);
+        font-weight: bold;
+        line-height: 40px;
+        display: flex;
+        align-items: center;
+      }
+
+      .form-group label a {
+        text-decoration: none;
+        color: var(--font-color);
+      }
+
+      #form-options-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: .25em;
+      }
+
+      #form-details-block {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 55%;
+        gap: .25em;
+      }
+
+      #form-details-block p {
+        font-weight: 300;
+        font-size: 14px;
+        color: #808080;
+        margin: 0;
+      }
+
+      .select-group {
+        display: flex;
+        margin-bottom: 10px;
+        padding-left: 2em;
+      }
+
+      #all-settings-header {
+        color: var(--font-color);
+        font-weight: var(--font-bold);
+        font-size: 18px;
+
+        display: flex;
+        align-items: center;
+      }
+
+      .flipper-button {
+        background: white;
+        box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
+        border-radius: 50%;
+        color: #5231a7;
+
+        height: 16px;
+        min-width: 16px;
+
+        margin-left: 5px;
+      }
+
+      .flipper-button ion-icon {
+        pointer-events: none;
+
+        height: 10px;
+        width: 10px;
+      }
+
+      .flipper-button::part(control) {
+        font-size: 18px;
+        padding: 0;
+      }
+
+      .flipper-button::part(content) {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .form-check {
+        display: flex;
+        align-items: center;
+      }
+
+      .form-check label {
+        font-weight: normal;
+        margin-left: 8px;
+      }
+
+      #form-layout input:invalid {
+        color: var(--error-color);
+        border: 1px solid var(--error-color);
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
           width: 100%;
         }
       }
-    `;
-
-    return [
-      style,
-      ModalStyles,
-      ToolTipStyles,
-      localStyles
-    ];
+    `];
   }
 
   constructor() {

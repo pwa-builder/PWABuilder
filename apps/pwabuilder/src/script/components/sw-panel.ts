@@ -35,7 +35,7 @@ export class SWPanel extends LitElement {
         gap: .75em;
       }
 
-      
+
     `;
   }
 
@@ -59,6 +59,7 @@ export class SWPanel extends LitElement {
           <code-editor
             copyText="Copy Service Worker"
             .startText=${this.sw.code}
+            .readOnly=${true}
           >
         </code-editor>
         </div>

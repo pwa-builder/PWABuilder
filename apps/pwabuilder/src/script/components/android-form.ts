@@ -8,6 +8,7 @@ import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
+import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 @customElement('android-form')
 export class AndroidForm extends AppPackageFormBase {
@@ -15,12 +16,12 @@ export class AndroidForm extends AppPackageFormBase {
   @property({ type: Boolean }) isGooglePlayApk = false;
   @state() showAdvanced = false;
   @state() packageOptions = emptyAndroidPackageOptions();
-  @state() manifestContext: ManifestContext = getManifestContext();
+  @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
   static get styles() {
-    
+
     const localStyles = css`
-    
+
 
       :host {
         width: 100%;
@@ -39,7 +40,7 @@ export class AndroidForm extends AppPackageFormBase {
       #signing-key-file-input {
         border: none;
       }
-    
+
       .flipper-button {
         display: flex;
         justify-content: center;
@@ -56,14 +57,150 @@ export class AndroidForm extends AppPackageFormBase {
         flex-direction: column;
         gap: .75em;
       }
+      #form-layout {
+        flex-grow: 1;
+        display: flex;
+        overflow: auto;
+        flex-direction: column;
+        height: 52vh;
+      }
+
+      @media(max-height: 900px){
+        #form-layout {
+          height: 43vh;
+        }
+      }
+
       #form-extras {
         display: flex;
+        justify-content: space-between;
+        padding: 1em 1.5em;
+        background-color: #F2F3FB;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+
+
+      sl-details {
+        margin-top: 1em;
+      }
+
+      sl-details::part(base){
+        border: none;
+      }
+
+      sl-details::part(summary-icon){
+        display: none;
+      }
+
+      .dropdown_icon {
+        transform: rotate(0deg);
+        transition: transform .5s;
+        height: 30px;
+      }
+
+      #generate-submit::part(base) {
+        background-color: black;
+        color: white;
+        font-size: 14px;
+        height: 3em;
+        width: 100%;
+        border-radius: 50px;
+    }
+
+      sl-details::part(header){
+        padding: 0 10px;
+      }
+
+      .details-summary {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      .details-summary p {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      #form-holder{
+        display: flex;
         flex-direction: column;
-        margin-top: auto;
-        padding: 1em;
+        border-radius: 10px;
+        justify-content: space-between;
+        height: calc(100% - 81px);
+      }
+
+      sl-button::part(label){
+        font-size: 16px;
+        padding: .5em 2em;
+      }
+
+      .arrow_link {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-weight: bold;
+        margin-bottom: .25em;
+        font-size: 14px;
+      }
+      .arrow_link a {
+        text-decoration: none;
+        border-bottom: 1px solid rgb(79, 63, 182);
+        font-size: 1em;
+        font-weight: bold;
+        margin: 0px 0.5em 0px 0px;
+        line-height: 1em;
+        color: rgb(79, 63, 182);
+      }
+      .arrow_link a:visited {
+        color: #4F3FB6;
+      }
+      .arrow_link:hover {
+        cursor: pointer;
+      }
+      .arrow_link:hover img {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+          transform: translateX(-5px);
+        }
+        60% {
+            transform: translateX(5px);
+        }
+      }
+
+      #tou-link{
+        color: 757575;
+        font-size: 14px;
+      }
+
+      @media(max-width: 640px){
+        #form-extras {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1em;
+        }
+        #form-details-block {
+          flex-direction: column;
+          gap: .75em;
+          align-items: center;
+          text-align: center;
+          width: 100%;
+        }
+        #form-options-actions {
+          flex-direction: column;
+        }
       }
     `;
-    
+
     return [
       super.styles,
       localStyles
@@ -75,16 +212,16 @@ export class AndroidForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    if (this.manifestContext.isGenerated) {
+    if (this.manifestContext!.isGenerated) {
       this.manifestContext = await fetchOrCreateManifest();
     }
-    
-    this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+
+    this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext!);
   }
 
   protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     if(_changedProperties.has("isGooglePlayApk")){
-      this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
+      this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext!);
       if(!this.isGooglePlayApk){
         this.packageOptions.features.locationDelegation!.enabled = false;
         this.packageOptions.features.playBilling!.enabled = false;
@@ -113,7 +250,7 @@ export class AndroidForm extends AppPackageFormBase {
       composed: true,
       bubbles: true,
     });
-    this.dispatchEvent(eventArgs);      
+    this.dispatchEvent(eventArgs);
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -143,8 +280,8 @@ export class AndroidForm extends AppPackageFormBase {
       this.packageOptions.signing.storePassword = '';
     } else if (mode === 'new') {
       this.packageOptions.signing.alias = 'my-key-alias';
-      this.packageOptions.signing.fullName = (this.manifestContext.manifest.short_name || this.manifestContext.manifest.name || 'My PWA') + ' Admin';
-      this.packageOptions.signing.organization = this.manifestContext.manifest.name || 'PWABuilder';
+      this.packageOptions.signing.fullName = (this.manifestContext!.manifest.short_name || this.manifestContext!.manifest.name || 'My PWA') + ' Admin';
+      this.packageOptions.signing.organization = this.manifestContext!.manifest.name || 'PWABuilder';
       this.packageOptions.signing.organizationalUnit = 'Engineering';
       this.packageOptions.signing.countryCode = 'US';
       this.packageOptions.signing.keyPassword = '';
@@ -187,8 +324,21 @@ export class AndroidForm extends AppPackageFormBase {
     }
   }
 
+  rotateZero(){
+    recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(0deg)";
+  }
+
+  rotateNinety(){
+    recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(90deg)";
+  }
+
   render() {
     return html`
+    <div id="form-holder">
       <form
         id="android-options-form"
         slot="modal-form"
@@ -197,7 +347,7 @@ export class AndroidForm extends AppPackageFormBase {
       >
         <div id="form-layout">
           <div class="basic-settings">
-            
+
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Package ID',
@@ -252,17 +402,11 @@ export class AndroidForm extends AppPackageFormBase {
           </div>
 
           <!-- The "all settings" section of the options dialog -->
-          <fast-accordion>
-            <fast-accordion-item
-              @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
-            >
-              <div id="all-settings-header" slot="heading">
-                <span>All Settings</span>
-
-                <div class="flipper-button" aria-label="caret dropdown" role="button">
-                  <ion-icon name="caret-forward-outline"></ion-icon>
-                </div>
-              </div>
+          <sl-details @click="${(ev: Event) => this.toggleAccordion(ev.target)}" @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+            <div class="details-summary" slot="summary">
+              <p>All Settings</p>
+              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+            </div>
 
               <div class="adv-settings">
                 <div class="form-group">
@@ -278,7 +422,7 @@ export class AndroidForm extends AppPackageFormBase {
                     inputHandler: (val: string) => this.packageOptions.appVersion = val
                   })}
                 </div>
-                
+
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Version code',
@@ -528,7 +672,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.notification}</label>
@@ -545,7 +689,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>` : html``}
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label
@@ -564,7 +708,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>` : html``}
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label
@@ -600,8 +744,8 @@ export class AndroidForm extends AppPackageFormBase {
                     })}
                   </div>
                 </div>
-                  
-                ${this.isGooglePlayApk ? 
+
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label>
@@ -633,7 +777,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.signing_key}</label>
@@ -677,28 +821,28 @@ export class AndroidForm extends AppPackageFormBase {
 
                 ${this.renderSigningKeyFields()}` :
                 html``}
-                
+
               </div>
-
-            </fast-accordion-item>
-          </fast-accordion>
-        </div>
-
-        <div id="form-extras">
-          ${this.isGooglePlayApk ?
-            html`
-            <div id="form-details-block">
-              <p>${localeStrings.text.android.description.form_details}</p>
-            </div>` : html``
-          }
-
-          <div id="form-options-actions" class="modal-actions">
-            <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-              <input id="generate-submit" type="submit" value="Generate Package" />
-            </loading-button>
-          </div>
+          </sl-details>
         </div>
       </form>
+      <div id="form-extras">
+        <div id="form-details-block">
+        ${this.isGooglePlayApk ? html`<p>${localeStrings.text.android.description.form_details}</p>` : html`<p>Click below of packaging instructions.</p>`}
+          <div class="arrow_link">
+            <a @click=${() => recordPWABuilderProcessStep("android_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlayApk ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
+            <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+          </div>
+        </div>
+        <div id="form-options-actions" class="modal-actions">
+          <sl-button  id="generate-submit" type="submit" form="android-options-form" ?loading="${this.generating}" >
+            Download Package
+          </sl-button>
+          <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" id="tou-link">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+    </div>
     `;
   }
 

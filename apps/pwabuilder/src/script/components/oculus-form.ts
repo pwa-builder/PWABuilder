@@ -11,6 +11,8 @@ import {
 import { getManifestContext } from '../services/app-info';
 import { SigningMode } from '../utils/oculus-validation';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
+import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { ManifestContext } from '../utils/interfaces';
 
 @customElement('oculus-form')
 export class OculusForm extends AppPackageFormBase {
@@ -28,18 +30,147 @@ export class OculusForm extends AppPackageFormBase {
           display: flex;
           flex-direction: column;
         }
-    
+
         .basic-settings, .adv-settings {
           display: flex;
           flex-direction: column;
           gap: .75em;
         }
 
+        #form-layout {
+          flex-grow: 1;
+          display: flex;
+          overflow: auto;
+          flex-direction: column;
+          height: 54vh;
+        }
+
         #form-extras {
           display: flex;
+          justify-content: space-between;
+          padding: 1em 1.5em;
+          background-color: #F2F3FB;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+        }
+
+        sl-details {
+          margin-top: 1em;
+        }
+
+        sl-details::part(base){
+          border: none;
+        }
+
+        sl-details::part(summary-icon){
+          display: none;
+        }
+
+        .dropdown_icon {
+          transform: rotate(0deg);
+          transition: transform .5s;
+          height: 30px;
+        }
+
+        #generate-submit::part(base) {
+          background-color: black;
+          color: white;
+          font-size: 14px;
+          height: 3em;
+          width: 100%;
+          border-radius: 50px;
+      }
+
+        sl-details::part(header){
+          padding: 0 10px;
+        }
+
+        .details-summary {
+          display: flex;
+          align-items: center;
+          width: 100%;
+        }
+
+        .details-summary p {
+          margin: 0;
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        #form-holder{
+          display: flex;
           flex-direction: column;
-          margin-top: auto;
-          padding: 1em;
+          border-radius: 10px;
+          justify-content: spacve-between;
+          height: 100%;
+        }
+
+        sl-button::part(label){
+          font-size: 16px;
+          padding: .5em 2em;
+        }
+
+        .arrow_link {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          font-weight: bold;
+          margin-bottom: .25em;
+          font-size: 14px;
+        }
+        .arrow_link a {
+          text-decoration: none;
+          border-bottom: 1px solid rgb(79, 63, 182);
+          font-size: 1em;
+          font-weight: bold;
+          margin: 0px 0.5em 0px 0px;
+          line-height: 1em;
+          color: rgb(79, 63, 182);
+        }
+        .arrow_link a:visited {
+          color: #4F3FB6;
+        }
+        .arrow_link:hover {
+          cursor: pointer;
+        }
+        .arrow_link:hover img {
+          animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+              transform: translateX(5px);
+          }
+        }
+
+        #tou-link{
+          color: 757575;
+          font-size: 14px;
+        }
+
+        @media(max-width: 640px){
+          #form-extras {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1em;
+          }
+          #form-details-block {
+            flex-direction: column;
+            gap: .75em;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+          }
+          #form-options-actions {
+            flex-direction: column;
+          }
         }
         `;
     return [super.styles, localStyles];
@@ -50,13 +181,13 @@ export class OculusForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    let manifestContext = getManifestContext();
+    let manifestContext: ManifestContext | undefined = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
     }
 
     this.packageOptions =
-      createOculusPackageOptionsFromManifest(manifestContext);
+      createOculusPackageOptionsFromManifest(manifestContext!);
   }
 
   initGenerate(ev: InputEvent) {
@@ -71,18 +202,21 @@ export class OculusForm extends AppPackageFormBase {
     );
   }
 
-  toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
-    if (settingsToggleValue === 'advanced') {
-      this.showAllSettings = true;
-    } else if (settingsToggleValue === 'basic') {
-      this.showAllSettings = false;
-    } else {
-      this.showAllSettings = false;
-    }
+  rotateZero(){
+    recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(0deg)";
+  }
+
+  rotateNinety(){
+    recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(90deg)";
   }
 
   render() {
     return html`
+    <div id="form-holder">
       <form
         id="oculus-options-form"
         slot="modal-form"
@@ -163,18 +297,12 @@ export class OculusForm extends AppPackageFormBase {
             </div>
           </div>
 
-          <fast-accordion>
-            <fast-accordion-item
-              @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
-            >
-              <div id="all-settings-header" slot="heading">
-                <span>All Settings</span>
 
-                <fast-button class="flipper-button" mode="stealth">
-                  <ion-icon name="caret-forward-outline"></ion-icon>
-                </fast-button>
-              </div>
-
+          <sl-details @click="${(ev: Event) => this.toggleAccordion(ev.target)}" @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+            <div class="details-summary" slot="summary">
+              <p>All Settings</p>
+              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+            </div>
               <div class="adv-settings">
                 <div class="form-group">
                   ${this.renderFormInput({
@@ -243,24 +371,25 @@ export class OculusForm extends AppPackageFormBase {
                   ${this.renderSigningKeyFields()}
                 </div>
               </div>
-            </fast-accordion-item>
-          </fast-accordion>
-        </div>
-
-        <div id="form-extras">
-          <div id="form-details-block">
-            <p>
-              Your download will have instructions about sideloading the app on Meta Quest.
-            </p>
-          </div>
-
-          <div id="form-options-actions" class="modal-actions">
-            <loading-button .loading="${this.generating}">
-              <input id="generate-submit" type="submit" value="Generate Package" />
-            </loading-button>
-          </div>
+            </sl-details>
         </div>
       </form>
+      <div id="form-extras">
+        <div id="form-details-block">
+          <p>Click below for packaging instructions for the Meta Quest Store.</p>
+          <div class="arrow_link">
+            <a @click=${() => recordPWABuilderProcessStep("meta_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/meta" target="_blank" rel="noopener">Packaging Instructions</a>
+            <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+          </div>
+        </div>
+        <div id="form-options-actions" class="modal-actions">
+          <sl-button  id="generate-submit" type="submit" form="oculus-options-form" ?loading="${this.generating}" >
+            Download Package
+          </sl-button>
+          <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" id="tou-link">Terms of Use</a>
+        </div>
+      </div>
+    </div>
     `;
   }
 

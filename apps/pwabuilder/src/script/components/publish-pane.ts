@@ -42,7 +42,7 @@ export class PublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
-  
+
 
   readonly platforms: ICardData[] = [
     {
@@ -68,7 +68,7 @@ export class PublishPane extends LitElement {
       icon: '/assets/Publish_Android.svg',
       renderDownloadButton: () => this.renderAndroidDownloadButton()
     },
-    
+
     {
       title: 'iOS',
       factoids: [
@@ -100,7 +100,7 @@ export class PublishPane extends LitElement {
       * {
         box-sizing: border-box;
       }
-      
+
       #pp-frame-wrapper {
         width: 100%;
         height: 90vh;
@@ -192,7 +192,7 @@ export class PublishPane extends LitElement {
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: .75em;
-        padding: 1em;    
+        padding: 1em;
         overflow-y: auto;
       }
       app-button {
@@ -203,7 +203,7 @@ export class PublishPane extends LitElement {
         all: unset;
         width: 75%;
         background-color: black;
-        color: white; 
+        color: white;
         font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
@@ -255,7 +255,7 @@ export class PublishPane extends LitElement {
         border-bottom: 5px solid #5D5DB9;
         color: #5D5DB9;
       }
-      
+
       .unselected-apk {
         border-bottom: 5px solid transparent;
       }
@@ -300,19 +300,19 @@ export class PublishPane extends LitElement {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5)
       }
-      #form-area {
-        flex-grow: 1;
-        display: flex;
-        overflow: auto
+
+      windows-form, android-form, ios-form, oculus-form {
+        height: 100%;
       }
+
+      #form-area {
+        height: 100%;
+        width: 100%;
+      }
+
       #form-area[data-store="Android"] {
         padding-top: 0;
         flex-direction: column;
-      }
-      windows-form, android-form, ios-form, oculus-form {
-        flex-grow: 1;
-        display: flex;
-        overflow: auto;
       }
 
       .dialog::part(body){
@@ -364,9 +364,9 @@ export class PublishPane extends LitElement {
 
       @media(min-height: 900px){
         #pp-frame-wrapper {
-        width: 100%;
-        height: 70vh;
-      }
+          width: 100%;
+          height: 80vh;
+        }
       }
 
       /* > 1920 */
@@ -432,7 +432,7 @@ export class PublishPane extends LitElement {
   }
 
   firstUpdated(){
-   
+
   }
 
   renderWindowsDownloadButton(): TemplateResult {
@@ -478,9 +478,9 @@ export class PublishPane extends LitElement {
           <p class="apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
         </div>
         <div class="tab-holder unselected-apk">
-          <p class="apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p> 
+          <p class="apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p>
           <div id="unsigned-tooltip">
-            <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+            <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
             <span class="toolTip">
               Generates an unsigned APK.
             </span>
@@ -500,7 +500,7 @@ export class PublishPane extends LitElement {
     } else {
       return html`<ios-form .generating=${this.generating} @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}"></ios-form>`
     }
-    
+
   }
 
   showWindowsOptions() {
@@ -560,22 +560,19 @@ export class PublishPane extends LitElement {
 
     try {
       this.generating = true;
-      console.log("generating files");
       const packageData = await generatePackage(platform, options);
 
       if (packageData) {
-        console.log("succesfully generated files");
         this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
-          console.log("non test blob");
           this.blob = packageData.blob;
           this.readyToDownload = true;
+          this.downloadPackage()
         }
       }
     } catch (err) {
-      console.log("error");
       console.error(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
@@ -604,11 +601,19 @@ export class PublishPane extends LitElement {
   }
 
   async downloadPackage(){
-    if (this.blob || this.testBlob) {
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+    let blob = (this.blob || this.testBlob);
+    if (blob) {
+      let filename = this.downloadFileName || 'your_pwa.zip';
+      var element = document.createElement('a');
+      element.href = URL.createObjectURL(blob!)
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
 
       this.blob = undefined;
       this.testBlob = undefined;
@@ -623,7 +628,7 @@ export class PublishPane extends LitElement {
             html`
             <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
             <p>Packaged Previously</p>
-            </div>` 
+            </div>`
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
@@ -674,25 +679,16 @@ export class PublishPane extends LitElement {
                   <p>Customize your ${this.selectedStore} app below!</p>
                 </div>
               </div>
-            </div> 
-            ${!this.readyToDownload ?   
-              // so if this is false then we wanna show the form  
-              html`
-                <div id="form-area" data-store=${this.selectedStore}>
-                  ${this.renderForm()}
-                </div>
-              ` :
-              // when this becomes true this means that we are ready to download something
-              html`
-                <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
-              `
-            }  
+            </div>
+            <div id="form-area" data-store=${this.selectedStore}>
+              ${this.renderForm()}
+            </div>
           `
           }
           </div>
         </div>
       </sl-dialog>
-        
+
     `;
   }
 }
@@ -705,7 +701,7 @@ interface ICardData {
   renderDownloadButton: () => TemplateResult;
 }
 
-const logoMap: any = { 
+const logoMap: any = {
   "Windows": "/assets/windows_icon.svg",
   "Android": "/assets/android_icon.svg",
   "iOS": "/assets/apple_icon.svg",
