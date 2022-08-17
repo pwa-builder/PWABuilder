@@ -51,6 +51,7 @@ export class AppPublish extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  @state() generatedPlatform = '';
 
   @state() mql = window.matchMedia(
     `(min-width: ${BreakpointValues.largeUpper}px)`
@@ -581,17 +582,23 @@ export class AppPublish extends LitElement {
   }
 
   async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
+    if(platform === 'other-android'){
+      this.generatedPlatform = platform;
+      platform = (platform.split("-")[1] as Platform);
+    } else {
+      this.generatedPlatform = platform;
+    }
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
-      `create-${platform}-package`,
-      AnalyticsBehavior.CompleteProcess,
+      `create-${this.generatedPlatform}-package`,
+      AnalyticsBehavior.ProcessCheckpoint,
       { url: getURL() });
 
       recordProcessStep(
         'pwa-builder',
-        `create-${platform}-package`,
-        AnalyticsBehavior.CompleteProcess,
+        `create-${this.generatedPlatform}-package`,
+        AnalyticsBehavior.ProcessCheckpoint,
         { url: getURL() });
 
     try {
@@ -611,7 +618,7 @@ export class AppPublish extends LitElement {
       this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
-        `create-${platform}-package-failed`,
+        `create-${this.generatedPlatform}-package-failed`,
         AnalyticsBehavior.CancelProcess,
         {
           url: getURL(),
@@ -619,7 +626,7 @@ export class AppPublish extends LitElement {
         });
         recordProcessStep(
           'pwa-builder',
-          `create-${platform}-package-failed`,
+          `create-${this.generatedPlatform}-package-failed`,
           AnalyticsBehavior.CancelProcess,
           {
             url: getURL(),
@@ -632,11 +639,43 @@ export class AppPublish extends LitElement {
   }
 
   async download() {
+    recordProcessStep(
+    'analyze-and-package-pwa',
+    `download-${this.generatedPlatform}-package`,
+    AnalyticsBehavior.CompleteProcess,
+    { url: getURL() });
+
+    recordProcessStep(
+      'pwa-builder',
+      `download-${this.generatedPlatform}-package`,
+      AnalyticsBehavior.CompleteProcess,
+      { url: getURL() });
+
     if (this.blob || this.testBlob) {
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+      try{
+        await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+          fileName: this.downloadFileName || 'your_pwa.zip',
+          extensions: ['.zip'],
+        });
+      } catch(error){
+        recordProcessStep(
+          'analyze-and-package-pwa',
+          `download-${this.generatedPlatform}-package-stopped`,
+          AnalyticsBehavior.ProcessCheckpoint,
+          {
+            url: getURL(),
+            error: error
+          });
+    
+        recordProcessStep(
+          'pwa-builder',
+          `download-${this.generatedPlatform}-package-stopped`,
+          AnalyticsBehavior.ProcessCheckpoint,
+          {
+            url: getURL(),
+            error: error
+          }); 
+      }
 
       this.blob = undefined;
       this.testBlob = undefined;
@@ -874,7 +913,7 @@ export class AppPublish extends LitElement {
           html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
             this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
           html`<android-form slot="modal-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-            this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
+            this.generate('other-android', e.detail as AndroidPackageOptions)}"></android-form>`
         }
     </app-modal>
       

@@ -57,7 +57,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -89,7 +89,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;
@@ -296,7 +296,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
-                return value.trim();
+                return false;
             }
             else {
                 return true;

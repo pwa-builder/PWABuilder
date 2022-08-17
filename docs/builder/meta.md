@@ -71,3 +71,15 @@ In order to test your PWA, you'll need:
 
 
 Once you have checked off all the prerequisites, follow the instructions [here](https://developer.oculus.com/documentation/web/pwa-packaging/#sideload-your-pwa-to-test) to sideload and test your app on your Meta Quest!
+
+## Next Steps
+
+Progressive web apps are cross-platform and can be used anywhere! 
+
+After you've sucessfully packaged your app for Meta Quest, you can package and publish for other platforms:
+
+- [How to Package for the App Store](/builder/app-store)
+
+- [How to Package for Microsoft Store](/builder/windows)
+
+- [How to Package for the Google Play Store](/builder/android)

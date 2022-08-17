@@ -11,7 +11,7 @@ import {
   generateWindowsPackage,
 } from './windows-publish';
 
-export type Platform = 'windows' | 'android' | 'ios' | 'oculus';
+export type Platform = 'windows' | 'android' | 'other-android' | 'ios' | 'oculus';
 
 type PackageInfo = {
   appName: string;
