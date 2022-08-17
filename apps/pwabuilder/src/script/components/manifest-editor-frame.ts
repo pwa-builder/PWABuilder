@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import {
   smallBreakPoint,
@@ -12,9 +12,13 @@ import {
 import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { Manifest } from '@pwabuilder/manifest-validation';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
+
+  @state() manifest: Manifest = {};
+  @state() manifestURL: string = '';
 
   static get styles() {
     return [
@@ -208,6 +212,8 @@ export class ManifestEditorFrame extends LitElement {
   }
 
   firstUpdated(){
+    this.manifest = getManifestContext().manifest;
+    this.manifestURL = getManifestContext().manifestUrl;
   }
 
   downloadManifest(){
@@ -239,7 +245,7 @@ export class ManifestEditorFrame extends LitElement {
               <h1>Generate Manifest</h1>
               <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url to make sure your PWA is ready for stores!</p>
             </div>
-            <pwa-manifest-editor .initialManifest=${getManifestContext().manifest} .manifestURL=${getManifestContext().manifestUrl}></pwa-manifest-editor>
+            <pwa-manifest-editor .initialManifest=${this.manifest} .manifestURL=${this.manifestURL}></pwa-manifest-editor>
             
           </div>
           <div id="frame-footer" slot="footer">

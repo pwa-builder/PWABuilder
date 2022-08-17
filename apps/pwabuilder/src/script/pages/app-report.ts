@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getManifestContext } from '../services/app-info';
+import { getManifestContext, setManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
@@ -108,7 +108,8 @@ export class AppReport extends LitElement {
   @state() thingToAdd: string = "";
   @state() retestConfirmed: boolean = false;
 
-  @state() createdManifest: boolean = false;
+  @state() createdManifest: boolean = false;  
+  @state() manifestContext: ManifestContext | undefined;
 
   private possible_messages = [
     {"messages": {
@@ -960,6 +961,8 @@ export class AppReport extends LitElement {
       manifestContext = await createManifestContextFromEmpty(url);
     }
 
+    this.manifestContext = manifestContext;
+
     this.isAppCardInfoLoading = false;
     this.populateAppCard(manifestContext!, url);
     return manifestContext!;
@@ -1026,6 +1029,7 @@ export class AppReport extends LitElement {
   async testManifest() {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
+    this.manifestDataLoading = true;
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
     details!.disabled = true;
     let manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
@@ -1942,7 +1946,7 @@ export class AppReport extends LitElement {
       </sl-dialog>
 
       <publish-pane></publish-pane>
-      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;
