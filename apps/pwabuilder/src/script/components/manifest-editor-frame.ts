@@ -211,7 +211,8 @@ export class ManifestEditorFrame extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  connectedCallback(): void {
+    super.connectedCallback();
     this.manifest = getManifestContext().manifest;
     this.manifestURL = getManifestContext().manifestUrl;
   }

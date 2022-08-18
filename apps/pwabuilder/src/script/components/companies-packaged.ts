@@ -176,7 +176,8 @@ export class ComapniesPackaged extends LitElement {
     super();
   }
 
-  firstUpdated() {
+  connectedCallback(): void {
+    super.connectedCallback();
     const shuffled = this.shuffle(this.companies);
     this.companies = [...shuffled];
   }

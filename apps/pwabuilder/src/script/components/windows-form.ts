@@ -14,7 +14,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import { ManifestContext } from '../utils/interfaces';
 
 @customElement('windows-form')
-// @ts-ignore
+
 export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAdvanced = false;
@@ -22,7 +22,7 @@ export class WindowsForm extends AppPackageFormBase {
 
   static get styles() {
     return [
-      super.styles,
+      ...super.styles,
       css`
         #windows-options-form {
           width: 100%;

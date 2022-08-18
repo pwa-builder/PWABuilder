@@ -947,7 +947,8 @@ export class AppReport extends LitElement {
     });
   }
 
-  async firstUpdated() {
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {

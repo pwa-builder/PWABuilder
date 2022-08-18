@@ -72,7 +72,8 @@ export class CodeEditor extends LitElement {
     resizeObserver.observe(this);
   }
 
-  firstUpdated() {
+  connectedCallback(): void {
+    super.connectedCallback();
     this.updateEditor();
   }
 

@@ -66,7 +66,8 @@ export class SuccessCard extends LitElement {
     super();
   }
 
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected connectedCallback(): void {
+    super.connectedCallback();
     let splitString = this.fix.split("~");
 
     if(splitString.length > 1){

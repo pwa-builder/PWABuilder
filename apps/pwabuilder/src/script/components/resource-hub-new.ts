@@ -112,7 +112,8 @@ export class ResourceHubNew extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  connectedCallback(): void {
+    super.connectedCallback();
     this.cards = landingCards();
   }
 
