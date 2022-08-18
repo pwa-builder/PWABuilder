@@ -98,14 +98,14 @@
           },
           {
             "id": "packageApps",
-            "title": "Package your PWA to the Microsoft Store",
+            "title": "Package your PWA for the Microsoft Store",
             "description": "Package your PWA for the Microsoft Store! \n[Package App](command:pwa-studio.packageApp)",
             "media": {
               "image": "/resources/package.png",
               "altText": "Package your app for the Microsoft Store"
             },
             "completionEvents": [
-              "onCommand:getting-started-sample.runCommand"
+              "onCommand:pwa-studio.packageApp"
             ]
           }
         ]
