@@ -40,7 +40,7 @@ All notable changes to the "pwa-studio" extension will be documented in this fil
 ## [v0.2.5]
 
 - Added better usage analytics. No personal information is handled, only command usage. This will allow
-us to better scope our work in the future to what is being used the most in PWA Studio.
+us to better scope our work in the future to what is being used the most in PWABuilder Studio.
 
 ## [v0.2.4]
 

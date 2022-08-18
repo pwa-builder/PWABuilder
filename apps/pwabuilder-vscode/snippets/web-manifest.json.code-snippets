@@ -14,7 +14,7 @@
             "\"theme_color\": \"${8:This controls the color your apps titlebar}\",",
             "\"background_color\": \"${9:This controls the color your apps background and splash screen on supported platforms}\",",
             "\"orientation\": \"${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}\",",
-            "\"icons\": \"${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}\",",
+            "\"icons\": \"${11:Run PWABuilder Studio: Generate Icons in your command pallete (ctrl + p)}\",",
             "\"related_applications\": [",
             "\t{",
             "\t\t\"platform\":\"${12|windows,play|}\",",

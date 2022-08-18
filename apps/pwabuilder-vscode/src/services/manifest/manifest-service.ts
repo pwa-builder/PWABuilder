@@ -14,7 +14,7 @@ export async function generateManifest(context: vscode.ExtensionContext) {
   // open information message about generating manifest
   // with an ok button
   const maniAnswer = await vscode.window.showInformationMessage(
-    "PWA Studio will generate your Web Manifest, first, you will need to choose where to save your manifest.json file.",
+    "PWABuilder Studio will generate your Web Manifest, first, you will need to choose where to save your manifest.json file.",
     {
       title: "Ok",
     },
