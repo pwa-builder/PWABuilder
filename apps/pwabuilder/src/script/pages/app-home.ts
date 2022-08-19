@@ -517,7 +517,7 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://github.com/pwa-builder/pwa-starter/wiki/Getting-Started" target="_blank" rel="noopener">Start a new PWA</a>
+                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener">Start a new PWA</a>
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                   
                 </div>
