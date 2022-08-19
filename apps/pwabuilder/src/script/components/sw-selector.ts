@@ -213,7 +213,9 @@ export class SWSelector extends LitElement {
         <sl-tab-group id="sw-tabs" @sl-tab-show=${(e: any) => this.setSelectedSW(e)}>
           ${service_workers.map((sw: any, index: number) => 
             html`
-            <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>
+            <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>`)}
+          ${service_workers.map((sw: any, index: number) => 
+            html`
             <sl-tab-panel name=${index}><sw-panel .sw=${sw} ></sw-panel></sl-tab-panel>`)}
         </sl-tab-group>
 

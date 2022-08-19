@@ -113,21 +113,21 @@ export class AppReport extends LitElement {
 
   private possible_messages = [
     {"messages": {
-                  "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great Job you have a perfect score!",
+                  "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
                   "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommeneded and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
                   "blocked": "PWABuilder has analyzed your Web Manifest. You have a one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
                   "none": "PWABuilder has analyzed your site and did not find a Web Manifest. Use our Manifest Editor to generate one. You can package for the store once you have a valid manifest.",
                   }
     },
     {"messages": {
-                      "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great Job you have a perfect score!",
+                      "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great job you have a perfect score!",
                       "yellow": "PWABuilder has analyzed your Service Worker, and has identified additonal features you can add, like offline support, to make your app feel more robust.",
                       "blocked": "",
                       "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is required to package for the stores. You can genereate a Service Worker below or use our documentation to make your own.",
                   },
      },
       {"messages": {
-                    "green": "PWABuilder has done a basic analysis of your HTTPS setup and found no issues! Great Job you have a perfect score!",
+                    "green": "PWABuilder has done a basic analysis of your HTTPS setup and found no issues! Great job you have a perfect score!",
                     "yellow": "",
                     "blocked": "",
                     "none": "PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.",
@@ -1642,7 +1642,7 @@ export class AppReport extends LitElement {
 
                       <a
                         class="arrow_anchor"
-                        href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
                         rel="noopener"
                         target="_blank"
                         @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
@@ -1821,9 +1821,9 @@ export class AppReport extends LitElement {
                     html`
                       <a
                         class="arrow_anchor"
-                        href="" rel="noopener"
+                        rel="noopener"
                         target="_blank"
-                        href=""
+                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=service-workers"
                         @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                         <p class="arrow_link">Service Worker Documentation</p>
                         <img
@@ -1919,7 +1919,8 @@ export class AppReport extends LitElement {
                     html`
                       <a
                         class="arrow_anchor"
-                        href="" rel="noopener"
+                        href="" 
+                        rel="noopener"
                         target="_blank"
                         @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                         <p class="arrow_link">Security Documentation</p>
