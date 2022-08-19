@@ -151,7 +151,7 @@ This usually is a result of the fields `background_color` or `theme_color` being
   
 #### Error: `Failed to download Web Manifest [URL to Web Manifest]. Responded with status 503`
 
-This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that your pause your firewall service while packaging with PWABuilder and you can enable it again after your have your package.
+This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that you pause your firewall service while packaging with PWABuilder and you can enable it again after you have your package.
   
 #### Error: `request to [URL] failed, reason: unable to verify the first certificate`
 
