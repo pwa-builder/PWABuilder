@@ -25,13 +25,13 @@
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
   - [FAQ](/builder/faq "PWABuilder - FAQ")
   
-- **PWA Studio**
-  - [Quick Start](/studio/quick-start "PWA Studio - Quick Start")
-  - [Create a New PWA](/studio/create-new "PWA Studio - Create a New PWA")
-  - [Converting Existing Apps](/studio/existing-app "PWA Studio - Converting Existing Apps")
-  - [Package Your PWA](/studio/package "PWA Studio - Package Your PWA For Stores")
-  - [Code Snippets](/studio/snippets "PWA Studio - Code Snippets")
-  - [FAQ](/studio/faq "PWA Studio - FAQ")
+- **PWABuilder Studio**
+  - [Quick Start](/studio/quick-start "PWABuilder Studio - Quick Start")
+  - [Create a New PWA](/studio/create-new "PWABuilder Studio - Create a New PWA")
+  - [Converting Existing Apps](/studio/existing-app "PWABuilder Studio - Converting Existing Apps")
+  - [Package Your PWA](/studio/package "PWABuilder Studio - Package Your PWA For Stores")
+  - [Code Snippets](/studio/snippets "PWABuilder Studio - Code Snippets")
+  - [FAQ](/studio/faq "PWABuilder Studio - FAQ")
 
 - **Release Notes**
   - [2022](/release-notes/2022 "Release Notes - 2022")
