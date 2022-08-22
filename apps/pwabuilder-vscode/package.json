@@ -10,7 +10,7 @@
     "url": "https://github.com/pwa-builder/pwabuilder-vscode"
   },
   "engines": {
-    "vscode": "^1.62.0"
+    "vscode": "^1.63.0"
   },
   "categories": [
     "Other",
