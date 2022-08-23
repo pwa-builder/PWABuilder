@@ -20,7 +20,7 @@ There are just a few things you will need before getting started:
 
 ## Cloning the Starter
 
-?> **Note** You can also use our VSCode Extension, PWABuilder Studio, to generate a starter project. Go [here](#/studio/quick-start) for more info.
+?> **Note** You can also use our VSCode Extension, PWABuilder Studio, to generate a starter project. Go [here](/studio/quick-start) for more info.
 
 To use the starter:
 
