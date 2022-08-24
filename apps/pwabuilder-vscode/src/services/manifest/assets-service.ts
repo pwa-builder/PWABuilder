@@ -91,7 +91,7 @@ export async function generateIcons() {
                 canSelectFiles: true,
                 canSelectMany: false,
                 filters: {
-                    'Images': ['png']
+                    'Images': ['png', 'jpg', 'jpeg'],
                 },
                 openLabel: 'Select your Icon file, 512x512 is preferred'
             });
