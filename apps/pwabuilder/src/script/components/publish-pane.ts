@@ -402,6 +402,10 @@ export class PublishPane extends LitElement {
         cursor: pointer;
       }
 
+      .close_error:hover {
+        cursor: pointer;
+      }
+
       @media(min-height: 900px){
         #pp-frame-wrapper {
           width: 100%;
@@ -659,7 +663,7 @@ export class PublishPane extends LitElement {
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
-        <img id="desk_close" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.errorMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
       </div>
     `
     this.errorMessages.push(error);
