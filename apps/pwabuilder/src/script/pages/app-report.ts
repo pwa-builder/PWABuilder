@@ -453,6 +453,29 @@ export class AppReport extends LitElement {
           font-size: 20px;
           font-weight: bold;
         }
+        #todo-summary-right {
+          display: flex;
+          align-items: center;
+          gap: .5em;
+        }
+        #indicators-holder {
+          display: flex;
+          gap: .5em;
+          align-items: center;
+        }
+        .indicator {
+          display: flex;
+          gap: .5em;
+          align-items: center;
+          background-color: #F1F2FA;
+          padding: .25em .5em;
+          border-radius: 10px;
+        }
+        .indicator p {
+          line-height: 20px;
+          margin: 0;
+        }
+
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: white;
@@ -1450,9 +1473,9 @@ export class AppReport extends LitElement {
 
   sortTodos(){
     this.todoItems.sort((a, b) => {
-      if(a.status === "red" && b.valid !== "red"){
+      if(a.status === "red" && b.status !== "red"){
         return -1;
-      } else if(b.status === "red" && a.valid !== "red"){
+      } else if(b.status === "red" && a.status !== "red"){
         return 1;
       } else {
         return a.field.localeCompare(b.field);
@@ -1460,6 +1483,29 @@ export class AppReport extends LitElement {
     });
 
     return this.todoItems;
+  }
+
+  renderIndicators(){
+    let yellow = 0;
+    let red = 0;
+
+    this.todoItems.forEach((todo: any) => {
+      if(todo.status == "red"){
+        red++;
+      } else {
+        yellow++;
+      }
+    })
+
+    if(yellow + red != 0){
+      return html`
+      <div id="indicators-holder">
+        ${red != 0 ? html`<div class="indicator"><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
+        ${yellow != 0 ? html`<div class="indicator"><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
+      </div>`
+    }
+    return html``
+    
   }
 
 
@@ -1585,8 +1631,11 @@ export class AppReport extends LitElement {
               @sl-hide=${() => this.rotateZero("todo")}
               >
               <div class="details-summary" slot="summary">
-                <p>View Details</p>
-                <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                <p>Action Items</p>
+                <div id="todo-summary-right">
+                  ${this.renderIndicators()}
+                  <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                </div>
               </div>
              ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.sortTodos().map((todo: any) =>
                 html`
