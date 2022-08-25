@@ -67,7 +67,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
         displayString: "Icons have at least one icon with purpose any",
-        category: "required",
+        category: "recommended",
         member: "icons",
         defaultValue: JSON.stringify([
             {
