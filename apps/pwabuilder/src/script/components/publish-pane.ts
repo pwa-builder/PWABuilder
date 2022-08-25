@@ -41,6 +41,7 @@ export class PublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  @state() errorMessages: TemplateResult[] = [];
 
 
   readonly platforms: ICardData[] = [
@@ -361,6 +362,46 @@ export class PublishPane extends LitElement {
         visibility: visible;
       }
 
+      .error-holder {
+        display: flex;
+        gap: .5em;
+        align-items: flex-start;
+        background-color: #FAEDF1;
+        padding: .5em;
+        position: absolute;
+        bottom: 100px;
+        border-left: 4px solid #EB5757;
+        border-radius: 3px;
+        margin: 0 1em;
+      }
+
+      .error-holder p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .error-title {
+        font-weight: bold;
+      }
+
+      .error-actions {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+        margin-top: .25em;
+      }
+
+      .error-actions > * {
+        all: unset;
+        color: black;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .error-actions > *:hover {
+        cursor: pointer;
+      }
+
       @media(min-height: 900px){
         #pp-frame-wrapper {
           width: 100%;
@@ -571,8 +612,9 @@ export class PublishPane extends LitElement {
           this.downloadPackage()
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      this.renderErrorMessage(err.response);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
@@ -597,6 +639,34 @@ export class PublishPane extends LitElement {
       this.openiOSOptions = false;
       this.openOculusOptions = false; */
     }
+  }
+
+  renderErrorMessage(response: any){
+    let stack_trace = "";
+    let message = "";
+    if(this.selectedStore === "Android"){
+      message = response.stack_trace.split("stack:")[0];
+      stack_trace = response.stack_trace.split("stack:")[1];
+    }
+    let error = html`
+      <div class="error-holder">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">${response.statusText}</p>
+          <p class="error-desc">Status code: ${response.status}. ${message}</p>
+          <div class="error-actions">
+            <button class="copy_stack" @click=${this.copyText(stack_trace)}>Copy stack trace</button>
+            <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
+          </div>
+        </div>
+        <img id="desk_close" src="assets/images/Close_desk.png" alt="close icon"/>
+      </div>
+    `
+    this.errorMessages.push(error);
+  }
+
+  copyText(text: string){
+    navigator.clipboard.writeText(text);
   }
 
   async downloadPackage(){
@@ -681,6 +751,7 @@ export class PublishPane extends LitElement {
             </div>
             <div id="form-area" data-store=${this.selectedStore}>
               ${this.renderForm()}
+              <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
             </div>
           `
           }

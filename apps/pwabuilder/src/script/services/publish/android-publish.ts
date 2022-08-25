@@ -49,9 +49,12 @@ export async function generateAndroidPackage(androidOptions: AndroidPackageOptio
       const updatedOptions = updateAndroidOptionsWithSafeUrls(androidOptions);
       await generateAndroidPackage(updatedOptions);
     } else {
-      throw new Error(
+      let err = new Error(
         `Error generating Android package.\nStatus code: ${response.status}\nError: ${response.statusText}\nDetails: ${responseText}`
       );
+      Object.defineProperty(response, "stack_trace", {value: responseText});
+      err.response = response;
+      throw err;
     }
   }
 
