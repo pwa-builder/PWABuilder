@@ -16,6 +16,7 @@ import '../components/app-header';
 import '../components/todo-list-item';
 import '../components/manifest-editor-frame';
 import '../components/publish-pane';
+import '../components/test-publish-pane';
 import '../components/sw-selector';
 
 
@@ -1321,6 +1322,13 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  async openTestPublishModal() {
+    let dialog: any = this.shadowRoot!.querySelector("test-publish-pane")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog.show()
+    recordPWABuilderProcessStep("test_publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   iconSrcListParse() {
 
     let manifest = getManifestContext().manifest;
@@ -1592,7 +1600,7 @@ export class AppReport extends LitElement {
                           </button>
                       </sl-tooltip>
                       `}
-                  <button type="button" id="test-download">
+                  <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
                     <p class="arrow_link">Download test package</p>
                     <img
                       src="/assets/new/arrow.svg"
@@ -2027,6 +2035,7 @@ export class AppReport extends LitElement {
       </sl-dialog>
 
       <publish-pane></publish-pane>
+      <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
