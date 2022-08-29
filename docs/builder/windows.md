@@ -2,6 +2,8 @@
 
 You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the <a href="https://partner.microsoft.com/en-us"> Microsoft Partner Center </a> to create your app submission.
 
+!> In order to package for Windows and submit to the Microsoft Store, you will need a [Partner Center Account](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership).
+
 #### How does it work?
 
 The PWABuilder service creates both a `.msixbundle` and a `.classic.appxbundle`. 
@@ -14,7 +16,7 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 
-- A Microsoft Developer account (which are available for a one-time fee of $19)
+- A Microsoft Developer account with Partner Center (which are available for a one-time fee of $19). Create one [here.](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership)
 
 ## Reserve Your App
 
@@ -39,6 +41,8 @@ In order to create a proper package of your PWA, you'll first need to reserve a 
 You will need **all three** to package with PWABuilder.
 
 ## Packaging
+
+!> The packaging process requires data from Partner Center to properly create your package. Unless you are creating a test package, you will need to use [Partner Center](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership) prior to packaging.
 
 Before you can submit your PWA to the Microsoft Store, you'll need to create the proper packages with PWABuilder.
 
