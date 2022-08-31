@@ -204,13 +204,13 @@ export class OculusForm extends AppPackageFormBase {
   }
 
   rotateZero(){
-    recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("meta_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(0deg)";
   }
 
   rotateNinety(){
-    recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("meta_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(90deg)";
   }
@@ -299,7 +299,7 @@ export class OculusForm extends AppPackageFormBase {
           </div>
 
 
-          <sl-details @click="${(ev: Event) => this.toggleAccordion(ev.target)}" @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
             <div class="details-summary" slot="summary">
               <p>All Settings</p>
               <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
@@ -387,7 +387,13 @@ export class OculusForm extends AppPackageFormBase {
           <sl-button  id="generate-submit" type="submit" form="oculus-options-form" ?loading="${this.generating}" >
             Download Package
           </sl-button>
-          <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" id="tou-link">Terms of Use</a>
+          <a 
+            target="_blank" 
+            rel="noopener" 
+            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+            id="tou-link"
+            @click=${() => recordPWABuilderProcessStep("meta_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+            >Terms of Use</a>
         </div>
       </div>
     </div>

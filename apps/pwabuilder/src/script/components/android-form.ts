@@ -401,7 +401,7 @@ export class AndroidForm extends AppPackageFormBase {
           </div>
 
           <!-- The "all settings" section of the options dialog -->
-          <sl-details @click="${(ev: Event) => this.toggleAccordion(ev.target)}" @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
             <div class="details-summary" slot="summary">
               <p>All Settings</p>
               <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
@@ -827,7 +827,7 @@ export class AndroidForm extends AppPackageFormBase {
       </form>
       <div id="form-extras">
         <div id="form-details-block">
-        ${this.isGooglePlayApk ? html`<p>${localeStrings.text.android.description.form_details}</p>` : html`<p>Click below of packaging instructions.</p>`}
+        ${this.isGooglePlayApk ? html`<p>${localeStrings.text.android.description.form_details}</p>` : html`<p>Click below for packaging instructions.</p>`}
           <div class="arrow_link">
             <a @click=${() => recordPWABuilderProcessStep("android_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlayApk ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
             <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
@@ -837,7 +837,13 @@ export class AndroidForm extends AppPackageFormBase {
           <sl-button  id="generate-submit" type="submit" form="android-options-form" ?loading="${this.generating}" >
             Download Package
           </sl-button>
-          <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" id="tou-link">Terms of Use</a>
+          <a 
+            target="_blank" 
+            rel="noopener" 
+            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+            id="tou-link"
+            @click=${() => recordPWABuilderProcessStep("android_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+            >Terms of Use</a>
         </div>
       </div>
     </div>

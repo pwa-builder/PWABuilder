@@ -548,14 +548,14 @@ export class PublishPane extends LitElement {
   }
 
   showWindowsOptions() {
-    //recordPWABuilderProcessStep("windows_store_page_opened", AnalyticsBehavior.ProcessCheckpoint)
+    recordPWABuilderProcessStep("windows_store_form_opened", AnalyticsBehavior.ProcessCheckpoint)
     this.selectedStore = "Windows";
     this.cardsOrForm = false;
     this.requestUpdate();
   }
 
   showAndroidOptions() {
-    //recordPWABuilderProcessStep("android_store_page_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("android_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedStore = "Android";
     this.cardsOrForm = false;
     this.requestUpdate();
@@ -575,14 +575,14 @@ export class PublishPane extends LitElement {
   }
 
   showiOSOptions() {
-    //recordPWABuilderProcessStep("ios_store_page_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("ios_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedStore = "iOS";
     this.cardsOrForm = false;
     this.requestUpdate();
   }
 
   showMetaOptions() {
-    //recordPWABuilderProcessStep("meta_store_page_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("meta_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedStore = "Meta";
     this.cardsOrForm = false;
     this.requestUpdate();
@@ -638,10 +638,6 @@ export class PublishPane extends LitElement {
           });
     } finally {
       this.generating = false;
-      /* this.openAndroidOptions = false;
-      this.openWindowsOptions = false;
-      this.openiOSOptions = false;
-      this.openOculusOptions = false; */
     }
   }
 
@@ -727,6 +723,11 @@ export class PublishPane extends LitElement {
     }
   }
 
+  backToCards(){
+    this.cardsOrForm = !this.cardsOrForm;
+    recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
@@ -744,7 +745,7 @@ export class PublishPane extends LitElement {
             :
             html`
             <div id="pp-form-header">
-              <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
+              <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.backToCards()} /></button>
               <div id="pp-form-header-content">
                 <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
                 <div id="pp-form-header-text">

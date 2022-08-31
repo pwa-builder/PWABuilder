@@ -236,51 +236,6 @@ export class AppPackageFormBase extends LitElement {
     `;
   }
 
-  protected toggleAccordion(targetEl: EventTarget | null) {
-    if (targetEl) {
-      const flipperButton = (targetEl as Element).classList.contains(
-        'flipper-button'
-      )
-        ? (targetEl as Element)
-        : (targetEl as Element).querySelector('.flipper-button');
-
-      if (flipperButton) {
-        if (flipperButton.classList.contains('opened')) {
-          flipperButton.animate(
-            [
-              {
-                transform: 'rotate(0deg)',
-              },
-            ],
-            {
-              duration: 200,
-              fill: 'forwards',
-            }
-          );
-
-          flipperButton.classList.remove('opened');
-        } else {
-          flipperButton.classList.add('opened');
-
-          flipperButton.animate(
-            [
-              {
-                transform: 'rotate(0deg)',
-              },
-              {
-                transform: 'rotate(90deg)',
-              },
-            ],
-            {
-              duration: 200,
-              fill: 'forwards',
-            }
-          );
-        }
-      }
-    }
-  }
-
   private inputChanged(e: UIEvent, formInput: FormInput) {
     const inputElement = e.target as HTMLInputElement | null;
     if (inputElement) {
