@@ -257,6 +257,15 @@ export class ManifestSettingsForm extends LitElement {
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: fieldName,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
     let passed = validation!.valid;
 

@@ -322,6 +322,13 @@ export class ManifestScreenshotsForm extends LitElement {
 
   async generateScreenshots() {
 
+    let generateScreenshotsAttempted = new CustomEvent('generateScreenshotsAttempted', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(generateScreenshotsAttempted);
+    
+
     if(this.validationPromise){
       await this.validationPromise;
     }

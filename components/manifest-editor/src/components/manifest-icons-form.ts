@@ -293,6 +293,12 @@ export class ManifestIconsForm extends LitElement {
   }
 
   enterFileSystem(){
+    let uploadIcons = new CustomEvent('uploadIcons', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(uploadIcons);
+
     this.shadowRoot!.getElementById('input-file')?.click();
   }
 
@@ -369,6 +375,17 @@ export class ManifestIconsForm extends LitElement {
   }
 
   async generateZip() {
+
+    let platformsForEvent: string[] = [];
+    this.selectedPlatforms.forEach((plat: any) => platformsForEvent.push(plat.label))
+    let generateIconsAttempted = new CustomEvent('generateIconsAttempted', {
+      detail: {
+        selectedPlatforms: platformsForEvent
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(generateIconsAttempted);
 
     this.generatingZip = true;
 

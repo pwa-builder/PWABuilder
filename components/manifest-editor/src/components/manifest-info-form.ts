@@ -379,6 +379,15 @@ export class ManifestInfoForm extends LitElement {
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: fieldName,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
     let passed = validation!.valid;
 
@@ -441,6 +450,15 @@ export class ManifestInfoForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: field,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
 
     if(input.classList.contains("error-color-field")){
       input.classList.toggle("error-color-field");

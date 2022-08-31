@@ -94,7 +94,13 @@ export class CodeEditor extends LitElement {
   }
 
   async copyCode() {
-    //recordPWABuilderProcessStep("code_editor.copy_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    
+    let editorCopied = new CustomEvent('editorCopied', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(editorCopied);
+
     const doc = this.editorState?.doc;
 
     if (doc) {

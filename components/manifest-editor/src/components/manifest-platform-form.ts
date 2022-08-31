@@ -414,6 +414,15 @@ export class ManifestPlatformForm extends LitElement {
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
 
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: fieldName,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     if(fieldName === "prefer_related_applications"){
         updatedValue = JSON.parse(updatedValue);
     }
@@ -473,6 +482,16 @@ export class ManifestPlatformForm extends LitElement {
   }
 
   async toggleOverrideList(label: string){
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: "display_override",
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     let menuItem = (this.shadowRoot!.querySelector('sl-menu-item[value=' + label + ']') as HTMLElement);
 
     if(menuItem!.dataset.type === 'active'){
@@ -541,6 +560,16 @@ export class ManifestPlatformForm extends LitElement {
 
   addShortcutToManifest(e: any){
     e.preventDefault();
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: "shortcuts",
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     this.shortcutHTML = [];
     const inputs = [...e.target.querySelectorAll('sl-input')];
 
@@ -593,6 +622,16 @@ export class ManifestPlatformForm extends LitElement {
 
   addProtocolToManifest(e: any){
     e.preventDefault();
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: "protocol_handlers",
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     this.protocolHTML = [];
     const inputs = [...e.target.querySelectorAll('sl-input')];
 
@@ -629,7 +668,18 @@ export class ManifestPlatformForm extends LitElement {
     const inputs = [...e.target.querySelectorAll('sl-input')];
     const select = e.target.querySelector('sl-select');
 
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: "related_applications",
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
     this.updateRelatedAppsInManifest(inputs, select, -1);
+
+    
   }
 
   async updateRelatedAppsInManifest(inputs: any, select: any, index: number){
@@ -666,6 +716,15 @@ export class ManifestPlatformForm extends LitElement {
             categories.push(cat.value);
         }
     });
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: "categories",
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
 
     this.validatePlatformList("categories", categories);
   }

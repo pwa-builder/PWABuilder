@@ -13,7 +13,7 @@ import "./manifest-code-form"
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-//import { validateRequiredFields } from '@pwabuilder/manifest-validation';
+/* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
  * @since 0.1
@@ -54,6 +54,7 @@ export class PWAManifestEditor extends LitElement {
   @property({type: String}) manifestURL: string = '';
 
   @state() manifest: Manifest = {};
+  @state() selectedTab: string = "info";
 
   static get styles() {
     return css`
@@ -151,6 +152,12 @@ export class PWAManifestEditor extends LitElement {
 
     document.body.removeChild(element);
 
+    let manifestDownloaded = new CustomEvent('manifestDownloaded', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(manifestDownloaded);
+
   }
 
   // Think about what this function should actually return?
@@ -217,9 +224,22 @@ export class PWAManifestEditor extends LitElement {
     );
     return !!pattern.test(str);
   }
+
+  setSelectedTab(e: any){
+    this.selectedTab = e.detail.name;
+    let tabSwitched = new CustomEvent('tabSwitched', {
+      detail: {
+          tab: this.selectedTab,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(tabSwitched);
+  }
+
   render() {
     return html`
-      <sl-tab-group id="editor-tabs">
+      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)}>
         <sl-tab slot="nav" panel="info">Info</sl-tab>
         <sl-tab slot="nav" panel="settings">Settings</sl-tab>
         <sl-tab slot="nav" panel="platform">Platform</sl-tab>

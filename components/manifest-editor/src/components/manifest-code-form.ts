@@ -50,16 +50,6 @@ export class ManifestCodeForm extends LitElement {
   firstUpdated() {
   }
 
-  copyToClip(){
-     /* Copy the text inside the text field */
-     navigator.clipboard.writeText(prettyString(this.manifest));
-     this.showCopyToast = true;
-     setTimeout(() => {
-         this.showCopyToast = false;
-     }, 3000)
-
-  }
-
   render() {
     return html`
       <div id="code-holder">
