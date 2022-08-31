@@ -240,38 +240,30 @@ export class ManifestEditorFrame extends LitElement {
   /* Next functions are for analytics */
 
   handleTabSwitch(e: CustomEvent){
-    console.log(`recording: manifest_editor.${e.detail.tab}_tab_selected`)
     recordPWABuilderProcessStep(`manifest_editor.${e.detail.tab}_tab_selected`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   handleManifestDownloaded(){
-    console.log(`recording: manifest_editor.download_manifest_clicked`)
     recordPWABuilderProcessStep(`manifest_editor.download_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   handleFieldChange(e: CustomEvent){
-    console.log(`recording: manifest_editor.field_change_attempted. Field: ${e.detail.field}`)
-
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
   }
 
   handleManifestCopied(){
-    console.log(`recording: manifest_editor.copy_manifest_clicked`);
     recordPWABuilderProcessStep(`manifest_editor.copy_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   handleImageGeneration(e: CustomEvent, field: string){
     if(field === "icons"){
-      console.log(`recording: manifest_editor.icon_generation_attempted. platforms: ${e.detail.selectedPlatforms}`)
       recordPWABuilderProcessStep(`manifest_editor.icon_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint, { platforms: [...e.detail.selectedPlatforms] });
     } else {
-      console.log(`recording: manifest_editor.screenshot_generation_attempted`);
       recordPWABuilderProcessStep(`manifest_editor.screenshot_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint);
     }
   }
 
   handleUploadIcon(){
-    console.log(`recording: manifest_editor.upload_icon_clicked`);
     recordPWABuilderProcessStep(`manifest_editor.upload_icon_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
