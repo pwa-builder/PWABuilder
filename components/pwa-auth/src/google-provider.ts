@@ -85,7 +85,7 @@ export class GoogleProvider implements SignInProvider {
           const z = await matchingEvent('message', { t: e => JP(e.data), p: d => d?.params?.type == 'authResult', signal });
           const id_token = z.params.authResult.id_token;
           const j = await fetch(`https://oauth2.googleapis.com/tokeninfo?${new URLSearchParams({ id_token })}`).then(f => f.json());
-          let   x = {
+          const x = {
             email: j.email,
             idToken: id_token,
             provider: 'Google',
