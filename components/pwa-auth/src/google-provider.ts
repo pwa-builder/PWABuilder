@@ -101,7 +101,7 @@ export class GoogleProvider implements SignInProvider {
           throw new Error('User cancelled the flow!');
         };
         let    E; const C = new AbortController();
-        let    R; try { R = await Promise.race([ Y(C.signal), N(C.signal) ]); } catch(e) { E = e; }; C.abort(); if (E !== undefined) throw E;
+        let    R; try { R = await Promise.race([ Y(C.signal), N(C.signal) ]); } catch (e) { E = e; }; C.abort(); if (E !== undefined) throw E;
         return R;
     }
 
