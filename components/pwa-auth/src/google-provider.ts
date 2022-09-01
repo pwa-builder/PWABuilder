@@ -3,10 +3,11 @@ import { SignInProvider } from "./signin-provider";
 
 const JP = (...a) => { try { return JSON.parse(...a); } catch (_) { return undefined; } };
 
-const any = AbortSignal.any ?? (S => { // TODO: define on ~[] and UN
+const any = AbortSignal.any ?? (S => {
   const  C = new AbortController(); for (const s of S) { if (s === undefined) continue; if (s.aborted) { C.abort(); break; } s.addEventListener('abort', () => C.abort(), { once: true, signal: C.signal }); }
   return C.signal; 
 });
+
 const matchingEvent = (n, { o = globalThis, t = x => x, p = e => true, x = e => e, signal, d, e } = {}) => new Promise(async (Y, N) => { const s = signal; const A = new AbortController();
   const a = async () => (d === undefined ? N(e)        :            Y(await   d )  ); if (s?.aborted) return (A.abort(), a()); s?.addEventListener?.('abort', a, {   once: true });
   const l = async e  => { e = t(e);   if (!p(e)) return; A.abort(); Y(await x(e)); };                                          o .addEventListener  (n,       l, { signal: any([ s, A.signal ]) });
