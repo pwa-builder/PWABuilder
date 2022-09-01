@@ -5,7 +5,8 @@ import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
+import { PackageOptions } from '../utils/interfaces';
 
 /**
  * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.
@@ -13,6 +14,7 @@ import { customElement } from 'lit/decorators.js';
  */
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
+
   static get styles() {
     const localStyles =  css`
       #form-layout input {
@@ -177,6 +179,10 @@ export class AppPackageFormBase extends LitElement {
 
   constructor() {
     super();
+  }
+
+  getPackageOptions(): PackageOptions {
+    return {};
   }
 
   protected renderFormInput(formInput: FormInput): TemplateResult {

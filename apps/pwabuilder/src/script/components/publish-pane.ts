@@ -21,6 +21,9 @@ import './windows-form';
 import './android-form';
 import './ios-form';
 import './oculus-form';
+import { localeStrings } from '../../locales';
+import { AppPackageFormBase } from './app-package-form-base';
+import { PackageOptions } from '../utils/interfaces';
 
 @customElement('publish-pane')
 export class PublishPane extends LitElement {
@@ -308,6 +311,7 @@ export class PublishPane extends LitElement {
       #form-area {
         height: 100%;
         width: 100%;
+        overflow: auto;
       }
 
       #form-area[data-store="Android"] {
@@ -404,6 +408,112 @@ export class PublishPane extends LitElement {
 
       .close_error:hover {
         cursor: pointer;
+      }
+
+      #form-extras {
+        display: flex;
+        justify-content: space-between;
+        padding: 1em 1.5em;
+        background-color: #F2F3FB;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+
+      #form-details-block {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      #form-details-block p {
+        font-size: 14px;
+        color: #808080;
+      }
+
+      #form-options-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .5em;
+      }
+
+      #generate-submit::part(base) {
+        background-color: black;
+        color: white;
+        height: 3em;
+        width: 100%;
+        border-radius: 50px;
+      }
+
+      #form-extras sl-button::part(label){
+        font-size: 16px;
+        padding: .5em 2em;
+        display: flex;
+        align-items: center;
+      }
+
+      .arrow_link {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-weight: bold;
+        margin-bottom: .25em;
+        font-size: 14px;
+      }
+      .arrow_link a {
+        text-decoration: none;
+        border-bottom: 1px solid rgb(79, 63, 182);
+        font-size: 1em;
+        font-weight: bold;
+        margin: 0px 0.5em 0px 0px;
+        line-height: 1em;
+        color: rgb(79, 63, 182);
+      }
+      .arrow_link a:visited {
+        color: #4F3FB6;
+      }
+      .arrow_link:hover {
+        cursor: pointer;
+      }
+      .arrow_link:hover img {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+          transform: translateX(-5px);
+        }
+        60% {
+            transform: translateX(5px);
+        }
+      }
+
+      #tou-link{
+        color: 757575;
+        font-size: 14px;
+      }
+
+      @media(max-width: 640px){
+        #form-extras {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1em;
+        }
+        #form-details-block {
+          flex-direction: column;
+          gap: .75em;
+          align-items: center;
+          text-align: center;
+          width: 100%;
+        }
+        #form-options-actions {
+          flex-direction: column;
+        }
       }
 
       @media(min-height: 900px){
@@ -513,8 +623,7 @@ export class PublishPane extends LitElement {
 
   renderForm(){
     if(this.selectedStore === "Windows"){
-      return html`<windows-form .generating=${this.generating} @init-windows-gen="${(ev: CustomEvent) =>
-        this.generate('windows', ev.detail as WindowsPackageOptions)}"></windows-form>`
+      return html`<windows-form id="packaging-form" .generating=${this.generating}></windows-form>`
     } else if(this.selectedStore === "Android"){
       return html`
       <div id="apk-tabs">
@@ -532,17 +641,14 @@ export class PublishPane extends LitElement {
         </div>
       </div>
       ${this.isGooglePlay ?
-        html`<android-form .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-          this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
-        html`<android-form .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-          this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
+        html`<android-form id="packaging-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay}></android-form>` :
+        html`<android-form id="packaging-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay}></android-form>`
       }`
     } else if(this.selectedStore === "Meta"){
-      return html`<oculus-form .generating=${this.generating}
-          @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
+      return html`<oculus-form id="packaging-form" .generating=${this.generating}>
       </oculus-form>`
     } else {
-      return html`<ios-form .generating=${this.generating} @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}"></ios-form>`
+      return html`<ios-form id="packaging-form" .generating=${this.generating}></ios-form>`
     }
 
   }
@@ -588,7 +694,7 @@ export class PublishPane extends LitElement {
     this.requestUpdate();
   }
 
-  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
+  async generate(platform: Platform, options?: PackageOptions) {
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
@@ -728,6 +834,113 @@ export class PublishPane extends LitElement {
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  renderFormFooter(){
+    if(this.selectedStore === "Android"){
+      return html`
+        <div id="form-extras">
+          <div id="form-details-block">
+          ${this.isGooglePlay ? html`<p>${localeStrings.text.android.description.form_details}</p>` : html`<p>Click below for packaging instructions.</p>`}
+            <div class="arrow_link">
+              <a @click=${() => recordPWABuilderProcessStep("android_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlay ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+            </div>
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+              Download Package
+            </sl-button>
+            <a 
+              target="_blank" 
+              rel="noopener" 
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+              id="tou-link"
+              @click=${() => recordPWABuilderProcessStep("android_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              >Terms of Use</a>
+          </div>
+        </div>
+      `
+    } else if(this.selectedStore === "Windows"){
+      return html`
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>${localeStrings.text.publish.windows_platform.p}</p>
+            <div class="arrow_link">
+              <a @click=${() => recordPWABuilderProcessStep("windows_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/windows" target="_blank" rel="noopener">Packaging Instructions</a>
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+            </div>
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+              Download Package
+            </sl-button>
+            <a 
+              target="_blank" 
+              rel="noopener" 
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+              id="tou-link"
+              @click=${() => recordPWABuilderProcessStep("windows_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              >Terms of Use</a>
+          </div>
+        </div>
+      `
+    } else if(this.selectedStore === "iOS"){
+      return html`
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p> Click below for instructions for submitting to the App Store.</p>
+            <div class="arrow_link">
+              <a @click=${() => recordPWABuilderProcessStep("ios_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/app-store" target="_blank" rel="noopener">Packaging Instructions</a>
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+            </div>
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+              Download Package
+            </sl-button>
+            <a 
+              target="_blank" 
+              rel="noopener" 
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+              id="tou-link"
+              @click=${() => recordPWABuilderProcessStep("ios_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              >Terms of Use</a>
+          </div>
+        </div>
+      `
+    } else {
+      return html`
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>Click below for packaging instructions for the Meta Quest Store.</p>
+            <div class="arrow_link">
+              <a @click=${() => recordPWABuilderProcessStep("meta_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/meta" target="_blank" rel="noopener">Packaging Instructions</a>
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+            </div>
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+              Download Package
+            </sl-button>
+            <a 
+              target="_blank" 
+              rel="noopener" 
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+              id="tou-link"
+              @click=${() => recordPWABuilderProcessStep("meta_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              >Terms of Use</a>
+          </div>
+        </div>
+      `
+    }
+  }
+
+  submitForm(){
+    let form = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase);
+    let packagingOptions = form!.getPackageOptions();
+
+    this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions)
+  }
+
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
@@ -758,6 +971,7 @@ export class PublishPane extends LitElement {
               ${this.renderForm()}
               <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
             </div>
+            ${this.renderFormFooter()}
           `
           }
           </div>

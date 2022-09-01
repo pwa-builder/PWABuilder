@@ -14,6 +14,10 @@ export enum AppEvents {
   manifestUpdate = 'MANIFEST_UPDATE',
 }
 
+export interface PackageOptions{
+  
+}
+
 /* export interface Manifest {
   background_color?: string;
   description?: string;
