@@ -312,6 +312,7 @@ export class PublishPane extends LitElement {
         height: 100%;
         width: 100%;
         overflow: auto;
+        position: relative;
       }
 
       #form-area[data-store="Android"] {
@@ -366,14 +367,17 @@ export class PublishPane extends LitElement {
         visibility: visible;
       }
 
+      #errors {
+        position: absolute;
+        bottom: .5em;
+      }
+
       .error-holder {
         display: flex;
         gap: .5em;
         align-items: flex-start;
         background-color: #FAEDF1;
         padding: .5em;
-        position: absolute;
-        bottom: 100px;
         border-left: 4px solid #EB5757;
         border-radius: 3px;
         margin: 0 1em;
@@ -831,6 +835,7 @@ export class PublishPane extends LitElement {
 
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
+    this.errorMessages = [];
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
@@ -972,6 +977,7 @@ export class PublishPane extends LitElement {
               <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
             </div>
             ${this.renderFormFooter()}
+            
           `
           }
           </div>
