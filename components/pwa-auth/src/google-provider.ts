@@ -78,6 +78,8 @@ export class GoogleProvider implements SignInProvider {
             return Promise.resolve(this.getSignInResultFromUser(user));
         }
 
+        // Otherwise, kick off the OAuth flow.
+        // (Use only a reduced response when people Block third-party cookies or use InPrivate browsing.)
         const I = auth.signIn();
         const Y = async signal => {
           const z = await matchingEvent('message', { t: e => JP(e.data), p: d => d?.params?.type == 'authResult', signal });
@@ -85,7 +87,6 @@ export class GoogleProvider implements SignInProvider {
           const j = await fetch(`https://oauth2.googleapis.com/tokeninfo?${new URLSearchParams({ id_token })}`).then(f => f.json());
           let   x = {
             email: j.email,
-            name:  j.name,
             idToken: id_token,
             provider: 'Google',
             error: null,
