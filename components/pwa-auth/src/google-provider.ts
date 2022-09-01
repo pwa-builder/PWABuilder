@@ -13,6 +13,8 @@ const matchingEvent = (n, { o = globalThis, t = x => x, p = e => true, x = e => 
   const l = async e  => { e = t(e);   if (!p(e)) return; A.abort(); Y(await x(e)); };                                          o .addEventListener  (n,       l, { signal: any([ s, A.signal ]) });
 });
 
+const run = {};
+
 
 export class GoogleProvider implements SignInProvider {
 
@@ -95,9 +97,8 @@ export class GoogleProvider implements SignInProvider {
           try       { return this.getSignInResultFromUser(await I); }
           catch (q) { return                                    x ; }
         };
-        const N = async signal => { let e;
-          e = await matchingEvent('error', { signal });
-          e = await matchingEvent('error', { signal });
+        const N = async signal => { let e;  e = await matchingEvent('error', { signal });
+          if (!run.once) { run.once = true; e = await matchingEvent('error', { signal }); }
           throw new Error('User cancelled the flow!');
         };
         let    E; const C = new AbortController();
