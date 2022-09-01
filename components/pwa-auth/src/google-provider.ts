@@ -77,7 +77,7 @@ export class GoogleProvider implements SignInProvider {
             return Promise.resolve(this.getSignInResultFromUser(user));
         }
 
-        const I = e.signIn();
+        const I = auth.signIn();
         const Y = async signal => {
           const z = await matchingEvent('message', { t: e => JP(e.data), p: d => d?.params?.type == 'authResult', signal });
           const id_token = z.params.authResult.id_token;
