@@ -1,6 +1,18 @@
 import { SignInResult } from "./signin-result";
 import { SignInProvider } from "./signin-provider";
 
+const JP = (...a) => { try { return JSON.parse(...a); } catch (_) { return undefined; } };
+
+const any = AbortSignal.any ?? (S => { // TODO: define on ~[] and UN
+  const  C = new AbortController(); for (const s of S) { if (s === undefined) continue; if (s.aborted) { C.abort(); break; } s.addEventListener('abort', () => C.abort(), { once: true, signal: C.signal }); }
+  return C.signal; 
+});
+const matchingEvent = (n, { o = globalThis, t = x => x, p = e => true, x = e => e, signal, d, e } = {}) => new Promise(async (Y, N) => { const s = signal; const A = new AbortController();
+  const a = async () => (d === undefined ? N(e)        :            Y(await   d )  ); if (s?.aborted) return (A.abort(), a()); s?.addEventListener?.('abort', a, {   once: true });
+  const l = async e  => { e = t(e);   if (!p(e)) return; A.abort(); Y(await x(e)); };                                          o .addEventListener  (n,       l, { signal: any([ s, A.signal ]) });
+});
+
+
 export class GoogleProvider implements SignInProvider {
 
     static readonly apiUrl = "https://apis.google.com/js/api:client.js";
@@ -65,9 +77,30 @@ export class GoogleProvider implements SignInProvider {
             return Promise.resolve(this.getSignInResultFromUser(user));
         }
 
-        // Otherwise, kick off the OAuth flow.
-        return auth.signIn()
-            .then(user => this.getSignInResultFromUser(user));
+        const I = e.signIn();
+        const Y = async signal => {
+          const z = await matchingEvent('message', { t: e => JP(e.data), p: d => d?.params?.type == 'authResult', signal });
+          const id_token = z.params.authResult.id_token;
+          const j = await fetch(`https://oauth2.googleapis.com/tokeninfo?${new URLSearchParams({ id_token })}`).then(f => f.json());
+          let   x = {
+            email: j.email,
+            name:  j.name,
+            idToken: id_token,
+            provider: 'Google',
+            error: null,
+            providerData: j
+          };
+          try       { return this.getSignInResultFromUser(await I); }
+          catch (q) { return                                    x ; }
+        };
+        const N = async signal => { let e;
+          e = await matchingEvent('error', { signal });
+          e = await matchingEvent('error', { signal });
+          throw new Error('User cancelled the flow!');
+        };
+        let    E; const C = new AbortController();
+        let    R; try { R = await Promise.race([ Y(C.signal), N(C.signal) ]); } catch(e) { E = e; }; C.abort(); if (E !== undefined) throw E;
+        return R;
     }
 
     private getSignInResultFromUser(user: gapi.auth2.GoogleUser): SignInResult {
