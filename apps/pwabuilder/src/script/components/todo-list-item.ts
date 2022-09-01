@@ -1,4 +1,4 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import {
@@ -10,7 +10,7 @@ import {
 } from '../utils/css/breakpoints';
 
 @customElement('todo-item')
-export class SuccessCard extends LitElement {
+export class TodoItem extends LitElement {
   @property({ type: String }) field: string = "";
   @property({ type: String }) card: string = "";
   @property({ type: String }) fix: string = "";
@@ -66,7 +66,7 @@ export class SuccessCard extends LitElement {
     super();
   }
 
-  protected connectedCallback(): void {
+  connectedCallback(): void {
     super.connectedCallback();
     let splitString = this.fix.split("~");
 

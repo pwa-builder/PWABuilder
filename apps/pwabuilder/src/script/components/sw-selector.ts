@@ -213,7 +213,7 @@ export class SWSelector extends LitElement {
           <p>Download one of our pre-built Service Workers package that utilize Workbox to make building your offline experience easy.</p>
         </div>
         <sl-tab-group id="sw-tabs" @sl-tab-show=${(e: any) => this.setSelectedSW(e)}>
-          ${service_workers.map((sw: any, index: number) => 
+          ${service_workers.map((_sw: any, index: number) => 
             html`
             <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>`)}
           ${service_workers.map((sw: any, index: number) => 

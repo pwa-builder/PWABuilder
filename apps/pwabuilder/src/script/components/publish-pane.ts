@@ -2,10 +2,6 @@ import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
-import { IOSAppPackageOptions } from '../utils/ios-validation';
-import { WindowsPackageOptions } from '../utils/win-validation';
-import { AndroidPackageOptions } from '../utils/android-validation';
-import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
 
 import {
@@ -404,10 +400,12 @@ export class PublishPane extends LitElement {
         color: black;
         font-weight: bold;
         font-size: 14px;
+        border-bottom: 1px solid transparent;
       }
 
       .error-actions > *:hover {
         cursor: pointer;
+        border-bottom: 1px solid black;
       }
 
       .close_error:hover {

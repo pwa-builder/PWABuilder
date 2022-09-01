@@ -7,7 +7,6 @@ import {
   emptyWindowsPackageOptions,
 } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
-import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';

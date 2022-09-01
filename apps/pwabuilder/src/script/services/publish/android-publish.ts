@@ -53,6 +53,7 @@ export async function generateAndroidPackage(androidOptions: AndroidPackageOptio
         `Error generating Android package.\nStatus code: ${response.status}\nError: ${response.statusText}\nDetails: ${responseText}`
       );
       Object.defineProperty(response, "stack_trace", {value: responseText});
+      //@ts-ignore
       err.response = response;
       throw err;
     }

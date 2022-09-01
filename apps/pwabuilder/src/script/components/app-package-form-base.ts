@@ -5,7 +5,7 @@ import style from '../../../styles/form-styles.css';
 //@ts-ignore
 import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { PackageOptions } from '../utils/interfaces';
 
 /**
