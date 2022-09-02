@@ -13,7 +13,7 @@ const event = (name, { source: on = globalThis, map = x => x, find = e => true, 
   const l = async e  => { e = map(e); if (!find(e)) return; A.abort(); Y(await e); };                                          on.addEventListener  (name,    l, { signal: any([ s, A.signal ]) });
 });
 
-const run = {};
+const wait = {};
 
 
 export class GoogleProvider implements SignInProvider {
@@ -97,8 +97,9 @@ export class GoogleProvider implements SignInProvider {
           try       { return this.getSignInResultFromUser(await I); }
           catch (q) { return                                    x ; }
         };
-        const N = async signal => { let e;  e = await event('error', { signal });
-          if (!run.once) { run.once = true; e = await event('error', { signal }); }
+        const N = async signal => {                       event('message', { signal, map: e => JP(e.data), find: d => d?.params?.type == 'idpError' }).then(_ => wait.twice = true);
+          /**/                           let e; e = await event('error',   { signal }); console.warn('intercept', 'err', 0, wait, e);
+          if (wait.twice) { wait.twice = false; e = await event('error',   { signal }); console.warn('intercept', 'err', 1, wait, e); }
           throw new Error('User cancelled the flow!');
         };
         let    E; const C = new AbortController();
