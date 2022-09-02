@@ -98,8 +98,8 @@ export class GoogleProvider implements SignInProvider {
           catch (q) { return                                    x ; }
         };
         const N = async signal => {                       event('message', { signal, map: e => JP(e.data), find: d => d?.params?.type == 'idpError' }).then(_ => wait.twice = true);
-          /**/                           let e; e = await event('error',   { signal }); console.warn('intercept', 'err', 0, wait, e);
-          if (wait.twice) { wait.twice = false; e = await event('error',   { signal }); console.warn('intercept', 'err', 1, wait, e); }
+          /**/                           let e; e = await event('error',   { signal });
+          if (wait.twice) { wait.twice = false; e = await event('error',   { signal }); }
           throw new Error('User cancelled the flow!');
         };
         let    E; const C = new AbortController();
