@@ -42,6 +42,33 @@ export class PublishPane extends LitElement {
   @state() downloadFileName: string | null = null;
   @state() errorMessages: TemplateResult[] = [];
 
+  
+  @state() storeMap: any = {
+  "Windows": 
+    {
+      "logo": "/assets/windows_icon.svg",
+      "packaging_text": localeStrings.text.publish.windows_platform.p,
+      "package_instructions": "https://docs.pwabuilder.com/#/builder/windows"
+    },
+  "Android": 
+    {
+      "logo": "/assets/android_icon.svg"
+      /* Android packaging text is handle in the function so that it will update on apk toggle */
+    },
+  "iOS": 
+    {
+      "logo": "/assets/apple_icon.svg",
+      "packaging_text": "Click below for instructions for submitting to the App Store.",
+      "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
+    },
+  "Meta": 
+    {
+      "logo": "/assets/meta_icon.svg",
+      "packaging_text": "Click below for packaging instructions for the Meta Quest Store.",
+      "package_instructions": "https://docs.pwabuilder.com/#/builder/meta"
+    }
+}
+
 
   readonly platforms: ICardData[] = [
     {
@@ -763,7 +790,7 @@ export class PublishPane extends LitElement {
           <p class="error-title">${response.statusText}</p>
           <p class="error-desc">Status code: ${response.status}. ${message}</p>
           <div class="error-actions">
-            <button class="copy_stack" @click=${this.copyText(stack_trace)}>Copy stack trace</button>
+            <button class="copy_stack" @click=${() => this.copyText(stack_trace)}>Copy stack trace</button>
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
@@ -838,13 +865,14 @@ export class PublishPane extends LitElement {
   }
 
   renderFormFooter(){
+    // Special case for Android since we have to toggle some info due to the "Other Android" scenario
     if(this.selectedStore === "Android"){
       return html`
         <div id="form-extras">
           <div id="form-details-block">
-          ${this.isGooglePlay ? html`<p>${localeStrings.text.android.description.form_details}</p>` : html`<p>Click below for packaging instructions.</p>`}
+            <p>${this.isGooglePlay ? localeStrings.text.android.description.form_details : "Click below for packaging instructions"}</p>
             <div class="arrow_link">
-              <a @click=${() => recordPWABuilderProcessStep("android_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlay ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
+              <a @click=${() => recordPWABuilderProcessStep(`${this.isGooglePlay ? this.selectedStore.toLowerCase() : `other_${this.selectedStore.toLowerCase()}` }_packaging_instructions_clicked`, AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlay ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
               <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
             </div>
           </div>
@@ -857,84 +885,35 @@ export class PublishPane extends LitElement {
               rel="noopener" 
               href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
               id="tou-link"
-              @click=${() => recordPWABuilderProcessStep("android_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
               >Terms of Use</a>
           </div>
         </div>
-      `
-    } else if(this.selectedStore === "Windows"){
-      return html`
-        <div id="form-extras">
-          <div id="form-details-block">
-            <p>${localeStrings.text.publish.windows_platform.p}</p>
-            <div class="arrow_link">
-              <a @click=${() => recordPWABuilderProcessStep("windows_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/windows" target="_blank" rel="noopener">Packaging Instructions</a>
-              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-            </div>
-          </div>
-          <div id="form-options-actions" class="modal-actions">
-            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
-              Download Package
-            </sl-button>
-            <a 
-              target="_blank" 
-              rel="noopener" 
-              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
-              id="tou-link"
-              @click=${() => recordPWABuilderProcessStep("windows_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-              >Terms of Use</a>
-          </div>
-        </div>
-      `
-    } else if(this.selectedStore === "iOS"){
-      return html`
-        <div id="form-extras">
-          <div id="form-details-block">
-            <p> Click below for instructions for submitting to the App Store.</p>
-            <div class="arrow_link">
-              <a @click=${() => recordPWABuilderProcessStep("ios_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/app-store" target="_blank" rel="noopener">Packaging Instructions</a>
-              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-            </div>
-          </div>
-          <div id="form-options-actions" class="modal-actions">
-            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
-              Download Package
-            </sl-button>
-            <a 
-              target="_blank" 
-              rel="noopener" 
-              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
-              id="tou-link"
-              @click=${() => recordPWABuilderProcessStep("ios_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-              >Terms of Use</a>
-          </div>
-        </div>
-      `
-    } else {
-      return html`
-        <div id="form-extras">
-          <div id="form-details-block">
-            <p>Click below for packaging instructions for the Meta Quest Store.</p>
-            <div class="arrow_link">
-              <a @click=${() => recordPWABuilderProcessStep("meta_packaging_instructions_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/builder/meta" target="_blank" rel="noopener">Packaging Instructions</a>
-              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-            </div>
-          </div>
-          <div id="form-options-actions" class="modal-actions">
-            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
-              Download Package
-            </sl-button>
-            <a 
-              target="_blank" 
-              rel="noopener" 
-              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
-              id="tou-link"
-              @click=${() => recordPWABuilderProcessStep("meta_form_TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-              >Terms of Use</a>
-          </div>
-        </div>
-      `
+    `
     }
+    return html`
+      <div id="form-extras">
+        <div id="form-details-block">
+          <p>${this.storeMap[this.selectedStore].packaging_text}</p>
+          <div class="arrow_link">
+            <a @click=${() => recordPWABuilderProcessStep(`${this.selectedStore.toLowerCase()}_packaging_instructions_clicked`, AnalyticsBehavior.ProcessCheckpoint)} href=${this.storeMap[this.selectedStore].package_instructions} target="_blank" rel="noopener">Packaging Instructions</a>
+            <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+          </div>
+        </div>
+        <div id="form-options-actions" class="modal-actions">
+          <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+            Download Package
+          </sl-button>
+          <a 
+            target="_blank" 
+            rel="noopener" 
+            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+            id="tou-link"
+            @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+            >Terms of Use</a>
+        </div>
+      </div>
+    `
   }
 
   submitForm(){
@@ -951,32 +930,32 @@ export class PublishPane extends LitElement {
           <div id="pp-frame-content">
           ${this.cardsOrForm ?
             html`
-            <div id="pp-frame-header">
-              <h1>Awesome! Your PWA is store ready!</h1>
-              <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
-            </div>
-            <div id="store-cards">
-              ${this.renderContentCards()}
-            </div>`
+              <div id="pp-frame-header">
+                <h1>Awesome! Your PWA is store ready!</h1>
+                <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
+              </div>
+              <div id="store-cards">
+                ${this.renderContentCards()}
+              </div>
+            `
             :
             html`
-            <div id="pp-form-header">
-              <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.backToCards()} /></button>
-              <div id="pp-form-header-content">
-                <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
-                <div id="pp-form-header-text">
-                  <h1>${this.selectedStore} Package Options</h1>
-                  <p>Customize your ${this.selectedStore} app below!</p>
+              <div id="pp-form-header">
+                <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.backToCards()} /></button>
+                <div id="pp-form-header-content">
+                  <img src="${this.storeMap[this.selectedStore].logo}" alt="${this.selectedStore} logo" />
+                  <div id="pp-form-header-text">
+                    <h1>${this.selectedStore} Package Options</h1>
+                    <p>Customize your ${this.selectedStore} app below!</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div id="form-area" data-store=${this.selectedStore}>
-              ${this.renderForm()}
-              <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
-            </div>
-            ${this.renderFormFooter()}
-            
-          `
+              <div id="form-area" data-store=${this.selectedStore}>
+                ${this.renderForm()}
+                <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
+              </div>
+              ${this.renderFormFooter()}
+            `
           }
           </div>
         </div>
@@ -992,11 +971,4 @@ interface ICardData {
   isActionCard: boolean;
   icon: string;
   renderDownloadButton: () => TemplateResult;
-}
-
-const logoMap: any = {
-  "Windows": "/assets/windows_icon.svg",
-  "Android": "/assets/android_icon.svg",
-  "iOS": "/assets/apple_icon.svg",
-  "Meta": "/assets/meta_icon.svg"
 }
