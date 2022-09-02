@@ -8,9 +8,9 @@ const any = AbortSignal.any ?? (S => {
   return C.signal; 
 });
 
-const matchingEvent = (n, { o = globalThis, t = x => x, p = e => true, x = e => e, signal, d, e } = {}) => new Promise(async (Y, N) => { const s = signal; const A = new AbortController();
-  const a = async () => (d === undefined ? N(e)        :            Y(await   d )  ); if (s?.aborted) return (A.abort(), a()); s?.addEventListener?.('abort', a, {   once: true });
-  const l = async e  => { e = t(e);   if (!p(e)) return; A.abort(); Y(await x(e)); };                                          o .addEventListener  (n,       l, { signal: any([ s, A.signal ]) });
+const event = (name, { source: on = globalThis, map = x => x, find = e => true, signal, default: { value: V, error: E } = {} } = {}) => new Promise(async (Y, N) => { const s = signal; const A = new AbortController();
+  const a = async () => (V === undefined ?    N(E)        :            Y(await V)  ); if (s?.aborted) return (A.abort(), a()); s?.addEventListener?.('abort', a, {   once: true });
+  const l = async e  => { e = map(e); if (!find(e)) return; A.abort(); Y(await e); };                                          on.addEventListener  (name,    l, { signal: any([ s, A.signal ]) });
 });
 
 const run = {};
@@ -84,7 +84,7 @@ export class GoogleProvider implements SignInProvider {
         // (Use only a reduced response when people Block third-party cookies or use InPrivate browsing.)
         const I = auth.signIn();
         const Y = async signal => {
-          const z = await matchingEvent('message', { t: e => JP(e.data), p: d => d?.params?.type == 'authResult', signal });
+          const z = await event('message', { signal, map: e => JP(e.data), find: d => d?.params?.type == 'authResult' });
           const id_token = z.params.authResult.id_token;
           const j = await fetch(`https://oauth2.googleapis.com/tokeninfo?${new URLSearchParams({ id_token })}`).then(f => f.json());
           const x = {
@@ -97,8 +97,8 @@ export class GoogleProvider implements SignInProvider {
           try       { return this.getSignInResultFromUser(await I); }
           catch (q) { return                                    x ; }
         };
-        const N = async signal => { let e;  e = await matchingEvent('error', { signal });
-          if (!run.once) { run.once = true; e = await matchingEvent('error', { signal }); }
+        const N = async signal => { let e;  e = await event('error', { signal });
+          if (!run.once) { run.once = true; e = await event('error', { signal }); }
           throw new Error('User cancelled the flow!');
         };
         let    E; const C = new AbortController();
