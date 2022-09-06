@@ -47,5 +47,3 @@ export function recordPageAction(actionName: string, type: analytics.AnalyticsAc
     analytics.recordPageAction(actionName, type, behavior, properties);
   }
 }
-
-export {AnalyticsBehavior} from "@pwabuilder/site-analytics";
