@@ -1,7 +1,11 @@
 import * as vscode from "vscode";
-import { getWorker } from "../service-workers/simple-service-worker";
 import { getManifest } from "../manifest/manifest-service";
+import { findWorker } from "../service-workers/service-worker";
 import { getURL } from "../web-publish";
+import { pathExists } from "../../library/file-utils";
+
+let serviceWorkerId: vscode.Uri | undefined;
+let serviceWorkerExists: boolean | undefined;
 
 export class PackageViewProvider implements vscode.TreeDataProvider<any> {
   constructor(private workspaceRoot: string) { }
@@ -18,9 +22,13 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
       return Promise.resolve([]);
     }
 
-    const sw = getWorker();
-    const manifest = getManifest();
-    const pwaUrl = getURL();
+    serviceWorkerId= await findWorker();
+    if (serviceWorkerId) {
+      serviceWorkerExists = await pathExists(serviceWorkerId);
+    }
+
+    const manifest = await getManifest();
+    const pwaUrl = await getURL();
 
     if (element) {
       if (element.label === "Is a PWA") {
@@ -30,7 +38,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
           new ValidationItem(
             "Service Worker",
             "",
-            sw ? "true" : "false",
+            serviceWorkerExists ? "true" : "false",
             vscode.TreeItemCollapsibleState.None
           )
         );
@@ -286,7 +294,7 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
         new ValidationItem(
           "Is a PWA",
           "",
-          sw && manifest && pwaUrl ? "true" : "false",
+          serviceWorkerExists && manifest && pwaUrl ? "true" : "false",
           vscode.TreeItemCollapsibleState.Expanded
         )
       );
