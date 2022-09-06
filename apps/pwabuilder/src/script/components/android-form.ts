@@ -191,7 +191,7 @@ export class AndroidForm extends AppPackageFormBase {
                 placeholder: 'MyCompany.MyApp',
                 value: this.packageOptions.packageId,
                 minLength: 3,
-                maxLength: 50,
+                maxLength: Number.MAX_SAFE_INTEGER,
                 spellcheck: false,
                 pattern: "[a-zA-Z0-9.-_]*$",
                 validationErrorMessage: "Package ID must contain only letters, numbers, periods, hyphens, and underscores.",
