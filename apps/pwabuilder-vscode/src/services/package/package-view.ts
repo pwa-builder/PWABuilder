@@ -22,9 +22,12 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
       return Promise.resolve([]);
     }
 
-    serviceWorkerId= await findWorker();
-    if (serviceWorkerId) {
-      serviceWorkerExists = await pathExists(serviceWorkerId);
+    // only need to set these once
+    if (!serviceWorkerId) {
+      serviceWorkerId = await findWorker();
+      if (serviceWorkerId) {
+        serviceWorkerExists = await pathExists(serviceWorkerId);
+      }
     }
 
     const manifest = await getManifest();
