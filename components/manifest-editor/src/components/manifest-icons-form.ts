@@ -1,6 +1,7 @@
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { errorInTab, insertAfter } from '../utils/helpers';
 import {
   Icon,
   Lazy,
@@ -42,6 +43,9 @@ export class ManifestIconsForm extends LitElement {
   @state() uploadImageObjectUrl: string = '';
   @state() errored: boolean = false;
   @state() selectedPlatforms: PlatformInformation[] = [...platformsData];
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -210,11 +214,28 @@ export class ManifestIconsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
       
-      await this.validateAllFields();
+      this.requestValidateAllFields();
     }
+  }
+
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
+    }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
   }
 
   async validateAllFields(){
@@ -235,12 +256,10 @@ export class ManifestIconsForm extends LitElement {
             p.innerText = error;
             p.style.color = "#eb5757";
             p.classList.add("error-message");
-            this.insertAfter(p, title!.parentNode!.parentNode);
+            insertAfter(p, title!.parentNode!.parentNode);
+            this.errorCount++;
           });
-          
         }
-        
-        this.errorInTab();
       }
     } else {
       /* This handles the case where the field is not in the manifest.. 
@@ -248,56 +267,38 @@ export class ManifestIconsForm extends LitElement {
       if(required_fields.includes(field)){
         let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
         input!.classList.add("error");
-        this.errorInTab();
+
+        if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+          let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+          error_div!.parentElement!.removeChild(error_div!);
+        }
+
+        let div = document.createElement('div');
+        div.classList.add(`${field}-error-div`);
+        let p = document.createElement('p');
+        p.innerText = `${field} is required and is missing from your manifest.`;
+        p.style.color = "#eb5757";
+        div.append(p);
+        this.errorCount++;
+        insertAfter(div, input!.parentNode!.lastElementChild);
+        
       }
+    }
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "icons"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "icons"));
     }
   }
 
-  insertAfter(newNode: any, existingNode: any) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-  }
-
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
+  enterFileSystem(){
+    let uploadIcons = new CustomEvent('uploadIcons', {
       bubbles: true,
       composed: true
     });
-    this.dispatchEvent(errorInTab);
-  }
+    this.dispatchEvent(uploadIcons);
 
-
-  // not currently being used since the user has to manually update the icons
-  /* async handleInputChange(event: InputEvent){
-
-    const input = <HTMLInputElement | HTMLSelectElement>event.target;
-    let updatedValue = input.value;
-    const fieldName = input.dataset['field'];
-
-    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
-    let passed = validation!.valid;
-
-    if(passed) {
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: fieldName,
-            change: updatedValue
-        },
-        bubbles: true,
-        composed: true
-      });
-
-      this.dispatchEvent(manifestUpdated);
-
-      if(input.classList.contains("error")){
-        input.classList.toggle("error");
-
-        let last = input!.parentNode!.lastElementChild
-        input!.parentNode!.removeChild(last!)
-      }
-    }
-  } */
-
-  enterFileSystem(){
     this.shadowRoot!.getElementById('input-file')?.click();
   }
 
@@ -374,6 +375,17 @@ export class ManifestIconsForm extends LitElement {
   }
 
   async generateZip() {
+
+    let platformsForEvent: string[] = [];
+    this.selectedPlatforms.forEach((plat: any) => platformsForEvent.push(plat.label))
+    let generateIconsAttempted = new CustomEvent('generateIconsAttempted', {
+      detail: {
+        selectedPlatforms: platformsForEvent
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(generateIconsAttempted);
 
     this.generatingZip = true;
 

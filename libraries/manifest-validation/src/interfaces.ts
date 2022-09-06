@@ -5,9 +5,10 @@ export interface Validation {
     member: string;
     defaultValue?: string | boolean | any[]; // prefer related apps is a boolean
     docsLink?: string;
-    errorString?: string;
+    errorString: string;
     quickFix: boolean;
     test?: Function;
+    testRequired?: boolean;
     testName?: string;
     valid?: boolean;
 }

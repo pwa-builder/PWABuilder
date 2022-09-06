@@ -180,6 +180,7 @@ export class SWSelector extends LitElement {
 
   setSelectedSW(e: any){
     this.selectedSW = e.detail.name;
+    recordPWABuilderProcessStep(`${this.selectedSW}_tab_clicked`, AnalyticsBehavior.ProcessCheckpoint)
   }
 
   downloadSW(){
@@ -195,12 +196,13 @@ export class SWSelector extends LitElement {
 
     document.body.removeChild(element);
 
+    recordPWABuilderProcessStep(`sw_modal.${this.selectedSW}_downloaded`, AnalyticsBehavior.ProcessCheckpoint);
+
     let readyForRetest = new CustomEvent('readyForRetest', {
       bubbles: true,
       composed: true
     });
     this.dispatchEvent(readyForRetest);
-
   }
 
   render() {
@@ -211,19 +213,32 @@ export class SWSelector extends LitElement {
           <p>Download one of our pre-built Service Workers package that utilize Workbox to make building your offline experience easy.</p>
         </div>
         <sl-tab-group id="sw-tabs" @sl-tab-show=${(e: any) => this.setSelectedSW(e)}>
+          ${service_workers.map((_sw: any, index: number) => 
+            html`
+            <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>`)}
           ${service_workers.map((sw: any, index: number) => 
             html`
-            <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>
             <sl-tab-panel name=${index}><sw-panel .sw=${sw} ></sw-panel></sl-tab-panel>`)}
         </sl-tab-group>
 
         <div id="frame-footer" slot="footer">
             <div id="footer-links">
-                <a class="arrow_anchor" href="https://aka.ms/install-pwa-studio" rel="noopener" target="_blank">
+                <a 
+                  class="arrow_anchor" 
+                  href="https://aka.ms/install-pwa-studio" 
+                  rel="noopener" 
+                  target="_blank"
+                  @click=${() => recordPWABuilderProcessStep("sw_modal.vscode_extension_link_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+                  >
                   <p class="arrow_link">VS Code Extension</p> 
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </a>
-                <a class="arrow_anchor" href="" rel="noopener" target="_blank">
+                <a 
+                  class="arrow_anchor" 
+                  href="" 
+                  rel="noopener" 
+                  target="_blank"
+                  @click=${() => recordPWABuilderProcessStep("sw_modal.sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                   <p class="arrow_link">Service Worker Documentation</p> 
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </a>

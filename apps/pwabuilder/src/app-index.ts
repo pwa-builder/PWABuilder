@@ -1,15 +1,15 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { Router, Route } from '@vaadin/router';
-import './app-home';
+import './script/pages/app-home';
 
-import '../components/app-footer';
-import '../components/app-header';
-import '../components/app-button';
-import '../components/cookie-banner';
-import '../components/summit-banner';
-import '../components/discord-box';
-import { recordPageView } from '../utils/analytics';
+import './script/components/app-footer';
+import './script/components/app-header';
+import './script/components/app-button';
+import './script/components/cookie-banner';
+import './script/components/summit-banner';
+import './script/components/discord-box';
+import { recordPageView } from './script/utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -22,11 +22,11 @@ export class AppIndex extends LitElement {
       #router-outlet > .leaving {
         animation: 160ms fadeOut ease-in-out;
       }
-      
+
       #router-outlet > .entering {
         animation: 160ms fadeIn linear;
       }
- 
+
       #router-outlet {
         position: relative;
       }
@@ -114,54 +114,19 @@ export class AppIndex extends LitElement {
         children: [
           { path: '/', component: 'app-home' },
           {
-            path: '/testing',
-            component: 'app-testing',
-            action: async () => {
-              await import('./app-testing.js');
-            },
-          },
-          {
             path: '/reportcard',
             component: 'app-report',
             action: async () => {
-              await import('./app-report.js');
-            },
-          },
-          {
-            path: '/publish',
-            component: 'app-publish',
-            action: async () => {
-              await import('./app-publish.js');
-            },
-          },
-          {
-            path: '/basepackage',
-            component: 'app-basepack',
-            action: async () => {
-              await import('./app-basepack.js');
-            },
-          },
-          {
-            path: '/congrats',
-            component: 'app-congrats',
-            action: async () => {
-              await import('./app-congrats.js');
+              await import('./script/pages/app-report.js');
             },
           },
           {
             path: 'imageGenerator',
             component: 'image-generator',
             action: async () => {
-              await import('./image-generator.js');
+              await import('./script/pages/image-generator.js');
             },
-          },
-          {
-            path: '/portals',
-            component: 'portals-publish',
-            action: async () => {
-              await import('./portals-publish.js');
-            },
-          },
+          }
         ] as Route[],
       },
     ]);
@@ -173,7 +138,7 @@ export class AppIndex extends LitElement {
         <summit-banner></summit-banner>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
-      
+
         <div id="content">
           <div id="router-outlet"></div>
         </div>

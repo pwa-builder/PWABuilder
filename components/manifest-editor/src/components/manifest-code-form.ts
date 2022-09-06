@@ -50,20 +50,10 @@ export class ManifestCodeForm extends LitElement {
   firstUpdated() {
   }
 
-  copyToClip(){
-     /* Copy the text inside the text field */
-     navigator.clipboard.writeText(prettyString(this.manifest));
-     this.showCopyToast = true;
-     setTimeout(() => {
-         this.showCopyToast = false;
-     }, 3000)
-
-  }
-
   render() {
     return html`
       <div id="code-holder">
-        <code-editor .startText=${prettyString(this.manifest)}></code-editor>
+        <code-editor .startText=${prettyString(this.manifest)} .readOnly=${false}></code-editor>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
     `;

@@ -1,10 +1,10 @@
-import { ShareTarget, ShortcutItem } from './interfaces';
+import { PackageOptions, ShareTarget, ShortcutItem } from './interfaces';
 
 /**
  * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
  * It should match the CloudApk service's AndroidPackageOptions interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/androidPackageOptions.ts
  */
-export interface AndroidPackageOptions {
+export interface AndroidPackageOptions  extends PackageOptions {
   appVersion: string;
   appVersionCode: number;
   backgroundColor: string;

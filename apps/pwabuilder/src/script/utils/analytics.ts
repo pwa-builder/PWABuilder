@@ -1,4 +1,6 @@
 import * as analytics from "@pwabuilder/site-analytics"
+export { AnalyticsBehavior } from '@pwabuilder/site-analytics';
+
 import { env } from "./environment";
 
 export function recordPageView(uri: string, name?: string, properties?: any) {

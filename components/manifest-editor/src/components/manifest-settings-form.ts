@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { errorInTab, insertAfter } from '../utils/helpers';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir"];
 let manifestInitialized: boolean = false;
@@ -11,6 +12,10 @@ let manifestInitialized: boolean = false;
 export class ManifestSettingsForm extends LitElement {
 
   @property({type: Object}) manifest: Manifest = {};
+
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -152,19 +157,37 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
+    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
       
-      await this.validateAllFields();
+      this.requestValidateAllFields();
       
     }
   }
 
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
+    }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
+  }
+
   async validateAllFields(){
+    
     for(let i = 0; i < settingsFields.length; i++){
       let field = settingsFields[i];
 
-      if(this.manifest[field]){
+      if(field in this.manifest){
         const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
         let passed = validation!.valid;
 
@@ -172,16 +195,24 @@ export class ManifestSettingsForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
 
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+          
+          // update error list
           if(validation.errors){
+            let div = document.createElement('div');
+            div.classList.add(`${field}-error-div`);
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.lastElementChild);
+              div.append(p);
+              this.errorCount++;
             });
+            insertAfter(div, input!.parentNode!.lastElementChild);
           }
-
-          this.errorInTab();
         }
       } else {
         /* This handles the case where the field is not in the manifest.. 
@@ -189,28 +220,51 @@ export class ManifestSettingsForm extends LitElement {
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
+
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+
+          let div = document.createElement('div');
+          div.classList.add(`${field}-error-div`);
+          let p = document.createElement('p');
+          p.innerText = `${field} is required and is missing from your manifest.`;
+          p.style.color = "#eb5757";
+          div.append(p);
+          this.errorCount++;
+          insertAfter(div, input!.parentNode!.lastElementChild);
+          
         }
       }
     }
-  }
 
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(errorInTab);
-  }
-
-  insertAfter(newNode: any, existingNode: any) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "settings"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "settings"));
+    }
   }
 
   async handleInputChange(event: InputEvent){
 
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
+
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: fieldName,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
 
     const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
     let passed = validation!.valid;
@@ -230,31 +284,36 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-
+        this.errorCount--;
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(input.classList.contains("error")){
-        // reset error list
-        let last = input!.parentNode!.lastElementChild;
-        last!.parentElement!.removeChild(last!);
+      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
+        error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
+        div.classList.add(`${fieldName}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
+          this.errorCount++;
         });
-        this.insertAfter(div, input!.parentNode!.lastElementChild);
+        insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
-      this.errorInTab();
       input.classList.add("error");
+    }
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "settings"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "settings"));
     }
   }
 
@@ -289,7 +348,7 @@ export class ManifestSettingsForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The relative URL that loads when your app starts</p>
-            <sl-input placeholder="PWA Start URL" .value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -308,7 +367,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>Which URLs can load within your app</p>
-            <sl-input placeholder="PWA Scope" data-field="scope" .value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
           </div>
         </div>
         <div class="form-row">
@@ -329,7 +388,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" .defaultValue=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -350,7 +409,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" .defaultValue=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -373,7 +432,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The base direction in which to display direction-capable members of the manifest</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" .defaultValue=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Direction" data-field="dir" value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>

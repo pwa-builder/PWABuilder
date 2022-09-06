@@ -52,40 +52,82 @@
       }); */
 
       editor.initialManifest = {
-  "name": "T2C - Tram & Bus",
-  "short_name": "T2",
-  "orientation": "upside down",
-  "lang": "en-US",
-  "related_applications": [],
-  "prefer_related_applications": "false",
+  "name": "Sync'd - a Social Calendar App",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "sync'd",
+  "theme_color": "#E1477E",
+  "description": "An easy to use event calendar for busy groups to plan time with one another!",
+  "orientation": "any",
+  "background_color": "#DDBDD5",
+  "related_applications": [
+    {
+    "platform": "windows",
+    "url": "https://play.google.com/store/apps/details?id=works.jubilee.timetree",
+    "id": "works.jubilee.timetree"
+  }
+],
+  "prefer_related_applications": false,
+  "display_override" : ["window-controls-overlay"],
   "icons": [
     {
-      "src": "images/192x192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "assets/icons/logo_64.png",
+      "sizes": "64x64",
+      "type":"image/png"
     },
     {
-      "src": "images/2251x2251.png",
-      "type": "image/png",
-      "sizes": "2251x2251"
+      "src": "assets/icons/logo_128.png",
+      "sizes": "128x128",
+      "type":"image/png"
     },
     {
-      "src": "images/512x512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "assets/icons/logo_512.png",
+      "sizes": "512x512",
+      "type":"image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/logo_1024.png",
+      "sizes": "1024x1024",
+      "type":"image/png"
     }
   ],
-  "start_url": "/?utm_source=launcher",
-  "display": "abc",
-  "display_override": [],
-  "protocol_handlers": [],
-  "background_color": "none",
-  "theme_color": "none",
-  "screenshots": [],
-  "categories": [],
-  "shortcuts": []
-}; //load an initial manifest
-      editor.manifestURL = "https://t2c.app/manifest.json"
+  "screenshots": [
+    {
+      "src": "assets/screenshots/login_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/calendar_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/addevent_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/mobile_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/tablet_screenshot.png"
+    }
+  ],
+  "categories": [
+    "utility",
+    "productivity",
+    "social"
+  ],
+  "dir": "ltr",
+  "lang": "en-US",
+  "iarc_rating_id": "465b8cee-af02-4012-8d4b-bcd3ebec0f3b",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "login",
+      "url": "/login",
+      "description": "Login to Sync'd"
+    }
+  ],
+  "share_target": {}
+};
+      editor.manifestURL = "https://friendship-calendar-c0efc.web.app/manifest.json"
 
       let editedManifest = editor.manifest; // get edited or generated manifest
       //console.log(editedManifest);

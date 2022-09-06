@@ -1,4 +1,4 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import {
@@ -10,7 +10,7 @@ import {
 } from '../utils/css/breakpoints';
 
 @customElement('todo-item')
-export class SuccessCard extends LitElement {
+export class TodoItem extends LitElement {
   @property({ type: String }) field: string = "";
   @property({ type: String }) card: string = "";
   @property({ type: String }) fix: string = "";
@@ -38,25 +38,25 @@ export class SuccessCard extends LitElement {
       #item-wrapper img {
         height: 17px;
       }
-      
+
       /* < 480px */
       ${smallBreakPoint(css`
-        
+
       `)}
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-        
+
       `)}
       /* 640px - 1023px */
       ${largeBreakPoint(css`
-          
+
       `)}
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
       `)}
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
-        
+
       `)}
     `
     ];
@@ -66,9 +66,10 @@ export class SuccessCard extends LitElement {
     super();
   }
 
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  connectedCallback(): void {
+    super.connectedCallback();
     let splitString = this.fix.split("~");
-    
+
     if(splitString.length > 1){
       this.fix = splitString.join(" "+ this.field + " ");
     } else {
@@ -82,7 +83,8 @@ export class SuccessCard extends LitElement {
           field: this.field,
           card: this.card,
           fix: this.fix,
-          displayString: this.displayString
+          displayString: this.displayString,
+          errorString: this.fix
       }
     });
     this.dispatchEvent(event);
@@ -92,7 +94,7 @@ export class SuccessCard extends LitElement {
     return html`
       <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
         ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-        
+
         ${this.fix}
       </div>
     `;

@@ -16,6 +16,7 @@ export class CodeEditor extends LitElement {
   })
   startText: Lazy<string>;
   @property({ type: String }) copyText = 'Copy Manifest';
+  @property({ type: Boolean }) readOnly = false;
 
   @state()
   editorState: Lazy<EditorState>;
@@ -71,13 +72,14 @@ export class CodeEditor extends LitElement {
     resizeObserver.observe(this);
   }
 
-  firstUpdated() {
+  connectedCallback(): void {
+    super.connectedCallback();
     this.updateEditor();
   }
 
   updated(changedProperties: Map<string, any>) {
     if (changedProperties.has('startText')) {
-      this.editorState = getEditorState(this.startText || '', 'json');
+      this.editorState = getEditorState(this.startText || '', 'json', [], !this.readOnly);
 
       if (this.editorView) {
         this.editorView.setState(this.editorState);
@@ -92,7 +94,13 @@ export class CodeEditor extends LitElement {
   }
 
   async copyCode() {
-    //recordPWABuilderProcessStep("code_editor.copy_code_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    
+    let editorCopied = new CustomEvent('editorCopied', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(editorCopied);
+
     const doc = this.editorState?.doc;
 
     if (doc) {
@@ -100,6 +108,7 @@ export class CodeEditor extends LitElement {
         await navigator.clipboard.writeText(doc.toString());
         this.copyText = 'Copied';
         this.copied = true;
+        setTimeout(() => {this.copyText = "Copy Manifest"; this.copied = false;}, 3000);
       } catch (err) {
         // We should never really end up here but just in case
         // lets put the error in the console
@@ -128,7 +137,7 @@ export class CodeEditor extends LitElement {
   }
 
   updateEditor = debounce(() => {
-    this.editorState = getEditorState(this.startText || '', 'json');
+    this.editorState = getEditorState(this.startText || '', 'json', [], !this.readOnly);
 
     if (this.editorView) {
       this.editorView.setState(this.editorState);

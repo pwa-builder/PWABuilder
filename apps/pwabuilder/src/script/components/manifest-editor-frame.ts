@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 import {
   smallBreakPoint,
@@ -12,9 +12,13 @@ import {
 import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { Manifest } from '@pwabuilder/manifest-validation';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
+
+  @state() manifest: Manifest = {};
+  @state() manifestURL: string = '';
 
   static get styles() {
     return [
@@ -207,7 +211,10 @@ export class ManifestEditorFrame extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.manifest = getManifestContext().manifest;
+    this.manifestURL = getManifestContext().manifestUrl;
   }
 
   downloadManifest(){
@@ -230,6 +237,36 @@ export class ManifestEditorFrame extends LitElement {
     }
   }
 
+  /* Next functions are for analytics */
+
+  handleTabSwitch(e: CustomEvent){
+    recordPWABuilderProcessStep(`manifest_editor.${e.detail.tab}_tab_selected`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
+  handleManifestDownloaded(){
+    recordPWABuilderProcessStep(`manifest_editor.download_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
+  handleFieldChange(e: CustomEvent){
+    recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
+  }
+
+  handleManifestCopied(){
+    recordPWABuilderProcessStep(`manifest_editor.copy_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
+  handleImageGeneration(e: CustomEvent, field: string){
+    if(field === "icons"){
+      recordPWABuilderProcessStep(`manifest_editor.icon_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint, { platforms: [...e.detail.selectedPlatforms] });
+    } else {
+      recordPWABuilderProcessStep(`manifest_editor.screenshot_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint);
+    }
+  }
+
+  handleUploadIcon(){
+    recordPWABuilderProcessStep(`manifest_editor.upload_icon_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
@@ -239,7 +276,17 @@ export class ManifestEditorFrame extends LitElement {
               <h1>Generate Manifest</h1>
               <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url to make sure your PWA is ready for stores!</p>
             </div>
-            <pwa-manifest-editor .initialManifest=${getManifestContext().manifest} .manifestURL=${getManifestContext().manifestUrl}></pwa-manifest-editor>
+            <pwa-manifest-editor 
+              .initialManifest=${this.manifest} 
+              .manifestURL=${this.manifestURL} 
+              @tabSwitched=${(e: CustomEvent) => this.handleTabSwitch(e)}
+              @manifestDownloaded=${() => this.handleManifestDownloaded()}
+              @fieldChangeAttempted=${(e: CustomEvent) => this.handleFieldChange(e)}
+              @editorCopied=${() => this.handleManifestCopied()}
+              @generateScreenshotsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "screenshots")}
+              @uploadIcons=${() => this.handleUploadIcon()}
+              @generateIconsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "icons")}
+            ></pwa-manifest-editor>
             
           </div>
           <div id="frame-footer" slot="footer">

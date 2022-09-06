@@ -24,7 +24,7 @@ export async function finalCheckForPublish(): Promise<checkResults> {
     const testURL = getURL();
 
     const manifestContext = await fetchOrCreateManifest();
-    const manifest = manifestContext.manifest;
+    const manifest = manifestContext!.manifest;
     const possible_icons = manifest ? manifest.icons : [];
     const icon = findBestAppIcon(possible_icons);
     if (results && testURL) {
