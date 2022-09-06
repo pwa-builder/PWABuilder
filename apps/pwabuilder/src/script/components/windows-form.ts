@@ -10,11 +10,11 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { isUserLoggedIn } from '../services/sign-in';
 
 @customElement('windows-form')
 export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
+  @property() userProject: any;
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
@@ -29,7 +29,6 @@ export class WindowsForm extends AppPackageFormBase {
           height: 100%;
           display: flex;
           flex-direction: column;
-
         }
         .flipper-button {
           display: flex;
@@ -66,12 +65,15 @@ export class WindowsForm extends AppPackageFormBase {
       manifestContext = await fetchOrCreateManifest();
     }
 
-    //TODO: Add checkbox if user opts to store their info or not
-    this.packageOptions = createWindowsPackageOptionsFromManifest(
-      manifestContext.manifest
-    );
-
-    this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
+    if (this.userProject && this.userProject.windowsPackageOptions) {
+      this.packageOptions = this.userProject
+        .windowsPackageOptions as WindowsPackageOptions;
+    } else {
+      //TODO: Add checkbox if user opts to store their info or not
+      this.packageOptions = createWindowsPackageOptionsFromManifest(
+        manifestContext.manifest
+      );
+    }
   }
 
   initGenerate(ev: InputEvent) {
@@ -156,6 +158,9 @@ export class WindowsForm extends AppPackageFormBase {
                 placeholder: 'MyCompany.MyApp',
                 minLength: 3,
                 maxLength: 50,
+                value: this.userProject
+                  ? this.packageOptions.packageId
+                  : undefined,
                 spellcheck: false,
                 pattern: '[a-zA-Z0-9.-]*$',
                 validationErrorMessage:
@@ -173,6 +178,9 @@ export class WindowsForm extends AppPackageFormBase {
                 inputId: 'publisher-display-name-input',
                 required: true,
                 minLength: 3,
+                value: this.userProject
+                  ? this.packageOptions.publisher.displayName
+                  : undefined,
                 spellcheck: false,
                 validationErrorMessage:
                   'Publisher display name must be at least 3 characters. Get this value from Windows Partner Center.',
@@ -195,6 +203,9 @@ export class WindowsForm extends AppPackageFormBase {
                 required: true,
                 spellcheck: false,
                 minLength: 4,
+                value: this.userProject
+                  ? this.packageOptions.publisher.commonName
+                  : undefined,
                 inputHandler: (val: string) =>
                   (this.packageOptions.publisher.commonName = val),
               })}
@@ -314,7 +325,11 @@ export class WindowsForm extends AppPackageFormBase {
                         'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
                       inputId: 'device-family-input-desktop',
                       type: 'checkbox',
-                      checked: true,
+                      checked: this.userProject
+                        ? this.packageOptions.targetDeviceFamilies?.includes(
+                            'Desktop'
+                          )
+                        : true,
                       inputHandler: (val: string, checked: boolean) => {
                         this.addOrRemoveDeviceFamily(val, checked);
                       },
@@ -330,7 +345,11 @@ export class WindowsForm extends AppPackageFormBase {
                         'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
                       inputId: 'device-family-input-holographic',
                       type: 'checkbox',
-                      checked: true,
+                      checked: this.userProject
+                        ? this.packageOptions.targetDeviceFamilies?.includes(
+                            'Holographic'
+                          )
+                        : true,
                       inputHandler: (val: string, checked: boolean) => {
                         this.addOrRemoveDeviceFamily(val, checked);
                       },
@@ -346,7 +365,11 @@ export class WindowsForm extends AppPackageFormBase {
                         'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
                       inputId: 'device-family-input-team',
                       type: 'checkbox',
-                      checked: false,
+                      checked: this.userProject
+                        ? this.packageOptions.targetDeviceFamilies?.includes(
+                            'Team'
+                          )
+                        : false,
                       inputHandler: (val: string, checked: boolean) => {
                         this.addOrRemoveDeviceFamily(val, checked);
                       },

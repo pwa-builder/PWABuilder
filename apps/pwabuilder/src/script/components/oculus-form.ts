@@ -9,39 +9,43 @@ import {
   emptyOculusSigningKey,
 } from '../services/publish/oculus-publish';
 import { getManifestContext } from '../services/app-info';
-import { SigningMode } from '../utils/oculus-validation';
+import {
+  OculusAppPackageOptions,
+  SigningMode,
+} from '../utils/oculus-validation';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 
 @customElement('oculus-form')
 export class OculusForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
+  @property() userProject: any;
   @state() showAllSettings = false;
   @state() packageOptions = emptyOculusPackageOptions();
   @state() existingSigningKey = emptyOculusSigningKey();
 
   static get styles() {
     const localStyles = css`
+      #oculus-options-form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
 
-        #oculus-options-form {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-        }
-    
-        .basic-settings, .adv-settings {
-          display: flex;
-          flex-direction: column;
-          gap: .75em;
-        }
+      .basic-settings,
+      .adv-settings {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75em;
+      }
 
-        #form-extras {
-          display: flex;
-          flex-direction: column;
-          margin-top: auto;
-          padding: 1em;
-        }
-        `;
+      #form-extras {
+        display: flex;
+        flex-direction: column;
+        margin-top: auto;
+        padding: 1em;
+      }
+    `;
     return [super.styles, localStyles];
   }
 
@@ -55,8 +59,13 @@ export class OculusForm extends AppPackageFormBase {
       manifestContext = await fetchOrCreateManifest();
     }
 
-    this.packageOptions =
-      createOculusPackageOptionsFromManifest(manifestContext);
+    if (this.userProject && this.userProject.oculusPackageOptions) {
+      this.packageOptions = this.userProject
+        .oculusPackageOptions as OculusAppPackageOptions;
+    } else {
+      this.packageOptions =
+        createOculusPackageOptionsFromManifest(manifestContext);
+    }
   }
 
   initGenerate(ev: InputEvent) {
@@ -250,13 +259,18 @@ export class OculusForm extends AppPackageFormBase {
         <div id="form-extras">
           <div id="form-details-block">
             <p>
-              Your download will have instructions about sideloading the app on Meta Quest.
+              Your download will have instructions about sideloading the app on
+              Meta Quest.
             </p>
           </div>
 
           <div id="form-options-actions" class="modal-actions">
             <loading-button .loading="${this.generating}">
-              <input id="generate-submit" type="submit" value="Generate Package" />
+              <input
+                id="generate-submit"
+                type="submit"
+                value="Generate Package"
+              />
             </loading-button>
           </div>
         </div>

@@ -1,7 +1,11 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+  AnalyticsBehavior,
+  recordPWABuilderProcessStep,
+} from '../utils/analytics';
+import { signInUser, signOutUser } from '../services/sign-in';
 
 import {
   xxxLargeBreakPoint,
@@ -73,8 +77,8 @@ export class AppHeader extends LitElement {
         height: 18px;
         border-bottom: 1px solid transparent;
       }
-    
-      .nav_link:hover span{
+
+      .nav_link:hover span {
         border-color: var(--font-color);
       }
 
@@ -92,9 +96,7 @@ export class AppHeader extends LitElement {
         }
       }
 
-      ${smallBreakPoint(css`
-
-      `)}
+      ${smallBreakPoint(css``)}
 
       ${mediumBreakPoint(css`
         header nav {
@@ -104,7 +106,6 @@ export class AppHeader extends LitElement {
         #desktop-nav {
           display: flex;
         }
-
       `)}
       
 
@@ -112,7 +113,6 @@ export class AppHeader extends LitElement {
         #desktop-nav {
           display: flex;
         }
-
       `)}
 
       ${xLargeBreakPoint(css`
@@ -145,26 +145,65 @@ export class AppHeader extends LitElement {
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
-    this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
-      // casting here because of type problem described above
-      if ((event as KeyboardEvent).key === "Enter") {
-        Router.go("/");
-      }
-    })
+    this.shadowRoot
+      ?.querySelector('#header-icon')
+      ?.addEventListener('keydown', event => {
+        // casting here because of type problem described above
+        if ((event as KeyboardEvent).key === 'Enter') {
+          Router.go('/');
+        }
+      });
+
+    this.shadowRoot
+      ?.querySelector('#signin')
+      ?.addEventListener('signin-completed', async ev => {
+        signInUser();
+      });
+
+      this.shadowRoot
+      ?.querySelector('#signin')
+      ?.addEventListener('signout-completed', async ev => {
+        signOutUser();
+      });
   }
 
   recordGoingHome() {
-    recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(
+      `.header.logo_clicked`,
+      AnalyticsBehavior.ProcessCheckpoint
+    );
+  }
+
+  goToDashboard() {
+    Router.go('/userDashboard');
   }
 
   render() {
     return html`
       <header part="header">
         <a href="/" @click=${() => this.recordGoingHome()}>
-          <img tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
-          alt="PWABuilder logo" />
+          <img
+            tabindex="0"
+            id="header-icon"
+            src="/assets/images/header_logo.svg"
+            alt="PWABuilder logo"
+          />
         </a>
-      
+
+        <pwa-auth
+          id="signin"
+          microsoftkey="32b653f7-a63a-4ad0-bf58-9e15f5914a34"
+          credentialmode="silent"
+        >
+        </pwa-auth>
+        <button
+          id="dashboard"
+          @click=${() => {
+            this.goToDashboard();
+          }}
+        >
+          User dashboard
+        </button>
         <nav id="desktop-nav">
           <fast-anchor
             class="nav_link"
@@ -173,18 +212,26 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="PWABuilder Docs, will open in separate tab"
             rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            @click=${() =>
+              recordPWABuilderProcessStep(
+                `.header.docs_clicked`,
+                AnalyticsBehavior.ProcessCheckpoint
+              )}
             ><span>Docs</span></fast-anchor
           >
 
           <fast-anchor
-          class="nav_link"
+            class="nav_link"
             appearance="hypertext"
             href="https://blog.pwabuilder.com"
             target="__blank"
             aria-label="PWABuilder Blog, will open in separate tab"
             rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            @click=${() =>
+              recordPWABuilderProcessStep(
+                `.header.blog_clicked`,
+                AnalyticsBehavior.ProcessCheckpoint
+              )}
             ><span>Blog</span></fast-anchor
           >
 
@@ -194,12 +241,21 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="Github repo, will open in separate tab"
             rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            @click=${() =>
+              recordPWABuilderProcessStep(
+                `.header.github_clicked`,
+                AnalyticsBehavior.ProcessCheckpoint
+              )}
           >
-            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github" title="View source on GitHub"></ion-icon>
+            <ion-icon
+              role="presentation"
+              aria-hidden="true"
+              tab-index="-1"
+              name="logo-github"
+              title="View source on GitHub"
+            ></ion-icon>
           </fast-anchor>
         </nav>
       </header>
     `;
   }
-}

@@ -4,11 +4,15 @@ import { LitElement, css, html } from 'lit';
 import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { customElement, state } from 'lit/decorators.js';
-import { getUserProjects, isUserLoggedIn } from '../services/sign-in';
+import {
+  getUserProjects,
+  isUserLoggedIn,
+  UserProject,
+} from '../services/sign-in';
 
 @customElement('user-dashboard')
 export class UserDashboard extends LitElement {
-  userProjects: any[] = [];
+  userProjects: UserProject[] = [];
   constructor() {
     super();
   }
@@ -58,8 +62,8 @@ export class UserDashboard extends LitElement {
     return dateString.toDateString() + ' ' + dateString.toTimeString();
   }
   async firstUpdated() {
-    const userResp = await getUserProjects();
-    this.userProjects = await userResp?.json();
+    this.userProjects = (await getUserProjects()) as UserProject[];
+
     this.requestUpdate();
   }
   renderProjectCards(): any[] {
@@ -72,7 +76,8 @@ export class UserDashboard extends LitElement {
                 ${userProject.url}
               </app-button>
               <p>
-                Date Tested: ${this.convertToDateString(userProject.lastTested)}
+                Date Tested:
+                ${this.convertToDateString(userProject.lastTested!)}
               </p>
             </h3>
           </div>
@@ -83,7 +88,6 @@ export class UserDashboard extends LitElement {
 
   render() {
     return html`
-      <app-header></app-header>
       <h2>
         Your projects
         <h2>

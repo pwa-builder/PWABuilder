@@ -44,7 +44,7 @@ if ((window as any).ENV == 'production') {
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl =
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
-  env.signinFunctionsUrl = 'https://pwabuilder-auth-api.azurewebsites.net/api';
+  env.signinFunctionsUrl = 'http://localhost:7071/api';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 } else {
   env.manifestFinderUrl =
@@ -71,6 +71,6 @@ if ((window as any).ENV == 'production') {
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl =
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
-  env.signinFunctionsUrl = 'https://pwabuilder-auth-api.azurewebsites.net/api';
+  env.signinFunctionsUrl = 'http://localhost:7071/api';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 }

@@ -6,7 +6,6 @@ import { smallBreakPoint } from '../utils/css/breakpoints';
 
 import { runAllTests } from '../services/tests';
 
-import '../components/app-header';
 import '../components/app-modal';
 
 // have to use ts-ignore here as typescript does not understand
@@ -217,9 +216,7 @@ export class AppTesting extends LitElement {
   };
 
   render() {
-    return html` <app-header></app-header>
-
-      <app-modal
+    return html` <app-modal
         heading="Uh Oh!"
         .body="${this.errorMessage ||
         'There was an error running the tests. Please open an issue using the below link.'}"

@@ -17,7 +17,6 @@ import { resizeObserver } from '../utils/events';
 // @ts-ignore
 import style from '../../../styles/layout-defaults.css';
 
-import '../components/app-header';
 import '../components/app-sidebar';
 import '../components/content-header';
 import '../components/app-modal';
@@ -507,7 +506,13 @@ export class AppCongrats extends LitElement {
     }
   }
 
-  async generateApp(type: Platform, packageOptions?: AndroidPackageOptions | WindowsPackageOptions | IOSAppPackageOptions) {
+  async generateApp(
+    type: Platform,
+    packageOptions?:
+      | AndroidPackageOptions
+      | WindowsPackageOptions
+      | IOSAppPackageOptions
+  ) {
     try {
       this.generating = true;
       const packageData = await generatePackage(type, packageOptions);
@@ -571,7 +576,9 @@ export class AppCongrats extends LitElement {
         />
 
         <div slot="modal-actions">
-          <app-button id="return-to-manifest-button" @click="${() => this.returnToFix()}"
+          <app-button
+            id="return-to-manifest-button"
+            @click="${() => this.returnToFix()}"
             >Return to Manifest Options</app-button
           >
         </div>
@@ -651,7 +658,7 @@ export class AppCongrats extends LitElement {
           slot="modal-form"
           .generating=${this.generating}
           @init-ios-gen="${(ev: CustomEvent) =>
-          this.generateApp('ios', ev.detail)}"
+            this.generateApp('ios', ev.detail)}"
         ></ios-form>
       </app-modal>
 
@@ -665,13 +672,11 @@ export class AppCongrats extends LitElement {
           slot="modal-form"
           .generating=${this.generating}
           @init-oculus-gen="${(ev: CustomEvent) =>
-          this.generateApp('oculus', ev.detail)}"
+            this.generateApp('oculus', ev.detail)}"
         ></oculus-form>
       </app-modal>
 
       <div id="congrats-wrapper">
-        <app-header></app-header>
-
         <div
           id="grid"
           class="${classMap({
@@ -694,11 +699,9 @@ export class AppCongrats extends LitElement {
               <h2>Publish your PWA to other stores?</h2>
 
               <ul>
-                ${this.renderWindowsPlatform()}
-                ${this.renderAndroidPlatform()}
+                ${this.renderWindowsPlatform()} ${this.renderAndroidPlatform()}
                 ${this.renderiOSPlatform()}
               </ul>
-
             </section>
 
             <section id="blog-section">
@@ -773,25 +776,26 @@ export class AppCongrats extends LitElement {
     // If we already generated windows package, skip this.
     if (this.generatedPlatforms.windows) {
       return html``;
-    }      
-      
+    }
+
     return html`
       <li>
         <div id="title-block">
           <h3>Windows</h3>
           <p>
-            <a href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/">
+            <a
+              href="https://blog.pwabuilder.com/posts/bringing-chromium-edge-pwas-to-the-microsoft-store/"
+            >
               PWAs work great on Windows!
             </a>
-            Tap Test Package to test your PWA on a Windows
-            device, or if you're ready, tap Publish to generate
-            a Microsoft Store-ready package for your PWA.
+            Tap Test Package to test your PWA on a Windows device, or if you're
+            ready, tap Publish to generate a Microsoft Store-ready package for
+            your PWA.
           </p>
         </div>
 
         <div id="platform-actions-block">
-          <app-button
-            @click="${() => this.openWindowsOptions = true}">
+          <app-button @click="${() => (this.openWindowsOptions = true)}">
             Publish
           </app-button>
 
@@ -800,9 +804,10 @@ export class AppCongrats extends LitElement {
             id="test-package-button"
             class="navigation test-package-button secondary"
             .secondary=${true}
-            @click="${() => this.generateApp('windows')}">
+            @click="${() => this.generateApp('windows')}"
+          >
             Test Package
-            </loading-button>
+          </loading-button>
         </div>
       </li>
     `;
@@ -819,17 +824,18 @@ export class AppCongrats extends LitElement {
         <div id="title-block">
           <h3>Android</h3>
           <p>
-            Want to ship your PWA to Android? PWAs also work great
-            on Android and are accepted in the Google Play Store.
-            Tap publish to generate a package you can both test
-            on a Android device and submit to the Google Play Store.
+            Want to ship your PWA to Android? PWAs also work great on Android
+            and are accepted in the Google Play Store. Tap publish to generate a
+            package you can both test on a Android device and submit to the
+            Google Play Store.
           </p>
         </div>
 
         <div id="platform-actions-block">
           <app-button
             id="android-publish-button"
-            @click="${() => this.openAndroidOptions = true}">
+            @click="${() => (this.openAndroidOptions = true)}"
+          >
             Publish
           </app-button>
         </div>
@@ -848,13 +854,13 @@ export class AppCongrats extends LitElement {
         <div id="title-block">
           <h3>iOS</h3>
           <p>
-            Your PWA can run on iOS and be published to the iOS App Store. 
-            Tab publish to generate your iOS app package.
+            Your PWA can run on iOS and be published to the iOS App Store. Tab
+            publish to generate your iOS app package.
           </p>
         </div>
-      
+
         <div id="platform-actions-block">
-          <app-button @click="${() => this.openIOSOptions = true}">
+          <app-button @click="${() => (this.openIOSOptions = true)}">
             Publish
           </app-button>
         </div>
@@ -862,5 +868,3 @@ export class AppCongrats extends LitElement {
     `;
   }
 }
-
-

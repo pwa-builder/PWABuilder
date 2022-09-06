@@ -11,7 +11,6 @@ import '../components/summit-banner';
 import '../components/discord-box';
 import { recordPageView } from '../utils/analytics';
 import '@pwabuilder/pwaauth';
-import { signInUser } from '../services/sign-in';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -174,18 +173,6 @@ export class AppIndex extends LitElement {
         ] as Route[],
       },
     ]);
-
-    const pwaAuth = this.shadowRoot?.querySelector('#signin');
-    pwaAuth?.addEventListener('signin-completed', async ev => {
-      const signIn = ev;
-      console.log('ev', ev);
-      const token = (signIn as any).detail.providerData.accessToken;
-      signInUser(token);
-    });
-  }
-
-  goToDashboard() {
-    Router.go('/userDashboard');
   }
 
   render() {
@@ -194,20 +181,7 @@ export class AppIndex extends LitElement {
         <summit-banner></summit-banner>
         <!--required cookie banner-->
         <cookie-banner></cookie-banner>
-        <pwa-auth
-          id="signin"
-          microsoftkey="32b653f7-a63a-4ad0-bf58-9e15f5914a34"
-          credentialmode="silent"
-        >
-        </pwa-auth>
-        <button
-          id="dashboard"
-          @click=${() => {
-            this.goToDashboard();
-          }}
-        >
-          User dashboard
-        </button>
+        <app-header></app-header>
         <div>
           <div id="content">
             <div id="router-outlet"></div>

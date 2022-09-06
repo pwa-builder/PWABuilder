@@ -1,7 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-import '../components/app-header';
 import '../components/app-card';
 import '../components/app-modal';
 import '../components/app-button';
@@ -363,7 +362,13 @@ export class PortalsPublish extends LitElement {
     ];
   }
 
-  async generate(type: Platform, options?: AndroidPackageOptions | WindowsPackageOptions | IOSAppPackageOptions) {
+  async generate(
+    type: Platform,
+    options?:
+      | AndroidPackageOptions
+      | WindowsPackageOptions
+      | IOSAppPackageOptions
+  ) {
     try {
       this.generating = true;
 
@@ -425,7 +430,11 @@ export class PortalsPublish extends LitElement {
       platform =>
         html`<li>
           <div id="title-block">
-            <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
+            <img
+              class="platform-icon"
+              src="${platform.icon}"
+              alt="platform icon"
+            />
             <h4>${platform.title}</h4>
             <p>${platform.description}</p>
           </div>
@@ -445,11 +454,13 @@ export class PortalsPublish extends LitElement {
                       ?loading=${this.generating}
                       id="test-package-button"
                       .secondary=${true}
-                      @click="${() => this.generate('windows')}">
+                      @click="${() => this.generate('windows')}"
+                    >
                       Test Package
-                      <info-circle-tooltip 
+                      <info-circle-tooltip
                         text="Generate a package you can use to test your app on your Windows Device before going to the Microsoft Store."
-                        link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine">
+                        link="https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/next-steps.md#1-test-your-app-on-your-windows-machine"
+                      >
                       </info-circle-tooltip>
                     </loading-button>
                   </div>
@@ -602,12 +613,12 @@ export class PortalsPublish extends LitElement {
         <android-form
           slot="modal-form"
           .generating=${this.generating}
-          @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}">
+          @init-ios-gen="${(ev: CustomEvent) =>
+            this.generate('ios', ev.detail)}">
         </android-form>
       </app-modal>
 
       <div id="publish-wrapper">
-        <app-header></app-header>
         <section id="summary-block">
           <h3>Publish your PWA to stores</h3>
 
@@ -664,5 +675,5 @@ const platforms: ICardData[] = [
       'Publish your PWA to the Google Play Store to make your app more discoverable for Android users.',
     isActionCard: true,
     icon: '/assets/android_icon.svg',
-  }
+  },
 ];

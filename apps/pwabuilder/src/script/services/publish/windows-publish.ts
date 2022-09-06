@@ -23,7 +23,7 @@ export async function generateWindowsPackage(
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
       'Invalid Windows options. ' +
-      validationErrors.map(a => a.error).join('\n')
+        validationErrors.map(a => a.error).join('\n')
     );
   }
 
@@ -57,12 +57,12 @@ export function emptyWindowsPackageOptions(): WindowsPackageOptions {
     classicPackage: {
       generate: true,
       version: '1.0.0.0',
-      url: ''
+      url: '',
     },
     publisher: {
       displayName: '',
-      commonName: ''
-    }
+      commonName: '',
+    },
   };
 }
 
@@ -108,59 +108,60 @@ export function createWindowsPackageOptionsFromManifest(
     manifest: manifest,
     images: {
       baseImage: icon?.src || '',
-      backgroundColor: manifest.background_color || "transparent",
+      backgroundColor: manifest.background_color || 'transparent',
       padding: 0.0,
     },
     resourceLanguage: manifest?.lang,
+    targetDeviceFamilies: ['Desktop', 'Holographic'],
   };
 
   return options;
 }
 
-export async function createWindowsPackageOptionsFromForm(
-  form: HTMLFormElement
-): Promise<WindowsPackageOptions> {
-  let manifest: Manifest;
-  try {
-    const manifestContext = await fetchOrCreateManifest();
-    manifest = manifestContext.manifest;
-  } catch {
-    return createEmptyPackageOptions();
-  }
+// export async function createWindowsPackageOptionsFromForm(
+//   form: HTMLFormElement
+// ): Promise<WindowsPackageOptions> {
+//   let manifest: Manifest;
+//   try {
+//     const manifestContext = await fetchOrCreateManifest();
+//     manifest = manifestContext.manifest;
+//   } catch {
+//     return createEmptyPackageOptions();
+//   }
 
-  const name = form.appName.value || manifest.short_name || manifest.name;
-  const packageID = form.packageId.value;
-  const manifestIcons = manifest.icons || [];
-  const icon = findBestAppIcon(manifestIcons);
-  return {
-    name: name,
-    packageId: packageID,
-    url: form.url.value || getURL(),
-    version: form.appVersion.value || '1.0.1',
-    allowSigning: true,
-    publisher: {
-      displayName: form.publisherDisplayName.value,
-      commonName: form.publisherId.value,
-    },
-    generateModernPackage: true,
-    classicPackage: {
-      generate: true,
-      version: form.classicVersion.value || '1.0.0',
-      url: form.url.value || getURL(),
-    },
-    edgeHtmlPackage: {
-      generate: false,
-    },
-    manifestUrl: form.manifestUrl.value || getManifestUrl(),
-    manifest: manifest,
-    images: {
-      baseImage: form.iconUrl.value || icon,
-      backgroundColor: "transparent", // TODO: should we let the user specify image background color in the form?
-      padding: 0.0,
-    },
-    resourceLanguage: form.windowsLanguageInput.value || 'EN-US',
-  };
-}
+//   const name = form.appName.value || manifest.short_name || manifest.name;
+//   const packageID = form.packageId.value;
+//   const manifestIcons = manifest.icons || [];
+//   const icon = findBestAppIcon(manifestIcons);
+//   return {
+//     name: name,
+//     packageId: packageID,
+//     url: form.url.value || getURL(),
+//     version: form.appVersion.value || '1.0.1',
+//     allowSigning: true,
+//     publisher: {
+//       displayName: form.publisherDisplayName.value,
+//       commonName: form.publisherId.value,
+//     },
+//     generateModernPackage: true,
+//     classicPackage: {
+//       generate: true,
+//       version: form.classicVersion.value || '1.0.0',
+//       url: form.url.value || getURL(),
+//     },
+//     edgeHtmlPackage: {
+//       generate: false,
+//     },
+//     manifestUrl: form.manifestUrl.value || getManifestUrl(),
+//     manifest: manifest,
+//     images: {
+//       baseImage: form.iconUrl.value || icon,
+//       backgroundColor: "transparent", // TODO: should we let the user specify image background color in the form?
+//       padding: 0.0,
+//     },
+//     resourceLanguage: form.windowsLanguageInput.value || 'EN-US',
+//   };
+// }
 
 function createEmptyPackageOptions(): WindowsPackageOptions {
   return {
