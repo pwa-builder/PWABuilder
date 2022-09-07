@@ -36,7 +36,12 @@ export class TodoItem extends LitElement {
       }
 
       #item-wrapper img {
-        height: 17px;
+        height: 16px;
+      }
+
+      #item-wrapper p {
+        margin: 0;
+        vertical-align: middle;
       }
 
       /* < 480px */
@@ -95,7 +100,7 @@ export class TodoItem extends LitElement {
       <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
         ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
-        ${this.fix}
+        <p>${this.fix}</p>
       </div>
     `;
   }
