@@ -4,6 +4,8 @@ import { Manifest } from '../utils/interfaces';
 import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { insertAfter, errorInTab } from '../utils/helpers';
 
+import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.82/dist/components/color-picker/color-picker.js';
+
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
@@ -34,10 +36,13 @@ export class ManifestInfoForm extends LitElement {
 
       sl-input::part(base),
       sl-select::part(control),
-      sl-menu-item::part(base) {
+      sl-menu-item::part(base),
+      sl-color-picker::part(base),
+      sl-button::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
+        --sl-button-font-size-medium: 16px;
       }
       #form-holder {
         display: flex;
@@ -128,6 +133,11 @@ export class ManifestInfoForm extends LitElement {
         display: flex;
         align-items: center;
       }
+
+      sl-color-picker {
+        --grid-width: 315px;
+      }
+
       sl-color-picker::part(trigger){
         border-radius: 0;
         height: 25px;
@@ -135,17 +145,6 @@ export class ManifestInfoForm extends LitElement {
       }
       sl-menu {
         width: 100%;
-      }
-      .switch_box {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .switch_box p {
-        font-size: 16px;
-      }
-      sl-switch {
-        --height: 22px;
       }
 
       .error-color-field{
@@ -570,7 +569,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Background color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} data-field="background_color" @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
+                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} data-field="background_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
                 <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
@@ -594,7 +593,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Theme color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
+                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
                 <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
