@@ -116,33 +116,22 @@ export class ManifestInfoForm extends LitElement {
         display: flex;
         gap: .5em;
       }
-      .color_field input[type="radio"]{
-        height: 25px;
-        width: fit-content;
-        margin: 5px;
-      }
+      
       .color_selection {
         display: flex;
         align-items: center;
         justify-content: flex-start;
       }
-      .color_field input[type="color"]{
-        width: 75px;
-        height: 25px;
-        padding: 0;
-        border-radius: 0;
-        border: 1px solid #808080;
-        outline: none;
-      }
-      .color_field input[type="color"]::-webkit-color-swatch-wrapper {
-        padding: 0;
-      }
-      .color_field input[type="color"]:hover {
-        cursor: pointer;
-      }
       .color-section p {
         font-size: 16px;
         color: #808080;
+        display: flex;
+        align-items: center;
+      }
+      sl-color-picker::part(trigger){
+        border-radius: 0;
+        height: 25px;
+        width: 75px;
       }
       sl-menu {
         width: 100%;
@@ -581,7 +570,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Background color</p>
             <span class="color-holder">
               <div class="color-section">
-                <input type="color" id="background_color_picker" value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> 
+                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} data-field="background_color" @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
                 <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
@@ -605,7 +594,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Theme color</p>
             <span class="color-holder">
               <div class="color-section">
-                <input type="color" id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> 
+                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
                 <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
