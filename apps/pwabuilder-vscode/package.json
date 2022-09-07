@@ -309,7 +309,7 @@
     "test-compile": "tsc -p ./",
     "compile": "tsc -p ./ && npm run copy",
     "watch": "npm run copy && tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "npm run compile",
     "lint": "eslint src --ext ts",
     "copy": "copyfiles .env out",
     "test": "node ./out/test/runTest.js"

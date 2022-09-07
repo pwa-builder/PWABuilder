@@ -197,7 +197,7 @@ export function activate(context: vscode.ExtensionContext) {
   let manifestCommand = vscode.commands.registerCommand(
     manifestCommandID,
     async () => {
-      await generateManifest(context);
+      await generateManifest();
     }
   );
 
