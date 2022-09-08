@@ -660,10 +660,15 @@ export class AppPublish extends LitElement {
   async download() {
     if (this.blob || this.testBlob) {
       console.info('Inside filesave', this.downloadFileName);
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+      const blobOfInterest = (this.blob as Blob) || (this.testBlob as Blob);
+      // await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
+      //   fileName: this.downloadFileName || 'your_pwa.zip',
+      //   extensions: ['.zip'],
+      // });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blobOfInterest);
+      link.download = this.downloadFileName || 'your_pwa.zip';
+      link.click();
 
       this.blob = undefined;
       this.testBlob = undefined;
