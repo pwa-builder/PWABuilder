@@ -46,6 +46,7 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
+import { download } from '../utils/download';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -657,19 +658,14 @@ export class AppPublish extends LitElement {
     }
   }
 
-  async download() {
+  async downloadZip() {
     if (this.blob || this.testBlob) {
-      console.info('Inside filesave', this.downloadFileName);
-      const blobOfInterest = (this.blob as Blob) || (this.testBlob as Blob);
-      // await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-      //   fileName: this.downloadFileName || 'your_pwa.zip',
-      //   extensions: ['.zip'],
-      // });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blobOfInterest);
-      link.download = this.downloadFileName || 'your_pwa.zip';
-      link.click();
-
+      const blobToDownload = (this.blob as Blob) || (this.testBlob as Blob);
+      const config = {
+        fileName: this.downloadFileName || 'your_pwa.zip',
+        blob: blobToDownload,
+      };
+      download(config);
       this.blob = undefined;
       this.testBlob = undefined;
     }
@@ -935,7 +931,7 @@ export class AppPublish extends LitElement {
         />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.download()}">Download</app-button>
+          <app-button @click="${() => this.downloadZip()}">Download</app-button>
         </div>
       </app-modal>
 
@@ -955,7 +951,7 @@ export class AppPublish extends LitElement {
         />
 
         <div slot="modal-actions">
-          <app-button @click="${() => this.download()}">Download</app-button>
+          <app-button @click="${() => this.downloadZip()}">Download</app-button>
         </div>
       </app-modal>
 
