@@ -34,9 +34,11 @@ export class ManifestSettingsForm extends LitElement {
 
       sl-input::part(base),
       sl-select::part(control),
-      sl-menu-item::part(base) {
+      sl-menu-item::part(base),
+      sl-menu-label::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-font-size-medium: 16px;
+        --sl-font-size-small: 14px;
         --sl-input-height-medium: 3em;
       }
       #form-holder {
@@ -139,6 +141,18 @@ export class ManifestSettingsForm extends LitElement {
         display: flex;
         align-items: center;
         column-gap: 10px;
+      }
+
+      sl-details {
+        width: 100%;
+      }
+      sl-details::part(base){
+        width: 100%;
+        max-height: fit-content
+      }
+      sl-details::part(header){
+        padding: 10px 15px;
+        font-size: 16px;
       }
 
       @media(max-width: 765px){
@@ -479,6 +493,29 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
+                <h3>Dir</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the dir option in your manifest.
+                  </p>
+                </a>
+              </div>
+            </div>
+            <p>The base direction in which to display direction-capable members of the manifest</p>
+            <sl-select placeholder="Select a Direction" data-field="dir" value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+              ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
+            </sl-select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-header">
+              <div class="header-left">
                 <h3>Scope</h3>
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
@@ -495,29 +532,7 @@ export class ManifestSettingsForm extends LitElement {
             <p>Which URLs can load within your app</p>
             <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <div class="field-header">
-              <div class="header-left">
-                <h3>Orientation</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the orientaiton option in your manifest.
-                  </p>
-                </a>
-              </div>
-            </div>
-            <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
-              ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
-            </sl-select>
-          </div>
+          
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
@@ -544,22 +559,22 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Dir</h3>
+                <h3>Orientation</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
                   target="_blank"
                   rel="noopener"
                 >
                   <img src="/assets/tooltip.svg" alt="info circle tooltip" />
                   <p class="toolTip">
-                    Click for more info on the dir option in your manifest.
+                    Click for more info on the orientaiton option in your manifest.
                   </p>
                 </a>
               </div>
             </div>
-            <p>The base direction in which to display direction-capable members of the manifest</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
-              ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
+            <p>The default screen orientation of your app</p>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+              ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
           <div class="form-field">
