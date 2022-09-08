@@ -98,8 +98,6 @@ body {
   padding: 0;
   margin: 0;
   background: var(--primary-background-color);
-
-  overflow-x: hidden;
 }
 
 p,

@@ -70,7 +70,7 @@ export class AppHome extends LitElement {
           width: 1000px;
         }
         app-header::part(header) {
-          background: transparent;
+          background-color: transparent;
           position: absolute;
           left: 0;
           right: 0;

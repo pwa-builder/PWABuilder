@@ -161,6 +161,11 @@ export class AppReport extends LitElement {
           box-sizing: border-box;
         }
 
+        app-header::part(header) {
+          position: sticky;
+          top: 0;
+        }
+
 
         #report-wrapper {
           width: 100%;
