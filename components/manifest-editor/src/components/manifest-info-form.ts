@@ -4,11 +4,10 @@ import { Manifest } from '../utils/interfaces';
 import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { insertAfter, errorInTab } from '../utils/helpers';
 
-const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
 
-let infoFields = ["name", "short_name", "description", "display", "background_color", "theme_color"];
+let infoFields = ["name", "short_name", "description", "background_color", "theme_color"];
 
 @customElement('manifest-info-form')
 export class ManifestInfoForm extends LitElement {
@@ -33,6 +32,7 @@ export class ManifestInfoForm extends LitElement {
       }
 
       sl-input::part(base),
+      sl-textarea::part(base),
       sl-select::part(control),
       sl-menu-item::part(base),
       sl-color-picker::part(base),
@@ -58,6 +58,9 @@ export class ManifestInfoForm extends LitElement {
       .form-row p {
         font-size: 14px;
         margin: 0;
+      }
+      .long .form-field {
+        width: 100%;
       }
       .form-field {
         width: 50%;
@@ -505,7 +508,7 @@ export class ManifestInfoForm extends LitElement {
             <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
         </div>
-        <div class="form-row">
+        <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
@@ -523,29 +526,9 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>Used in app storefronts and install dialogs</p>
-            <sl-input placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-textarea placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange} resize="none"></sl-textarea>
           </div>
-          <div class="form-field">
-            <div class="field-header">
-              <div class="header-left">
-                <h3>Display</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the display option in your manifest.
-                  </p>
-                </a>
-              </div>
-            </div>
-            <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
-              ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
-            </sl-select>
-          </div>
+          
         </div>
         <div class="form-row color-row">
           <div class="form-field color_field">

@@ -1,11 +1,13 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
 
-const settingsFields = ["start_url", "scope", "orientation", "lang", "dir"];
+const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
+const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
+const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
 let manifestInitialized: boolean = false;
 
 @customElement('manifest-settings-form')
@@ -16,6 +18,9 @@ export class ManifestSettingsForm extends LitElement {
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
   private errorCount: number = 0;
+
+  @state() activeOverrideItems: string[] = [];
+  @state() inactiveOverrideItems: string[] = [];
 
   static get styles() {
     return css`
@@ -50,6 +55,9 @@ export class ManifestSettingsForm extends LitElement {
       .form-row p {
         font-size: 14px;
         margin: 0;
+      }
+      .long .form-field {
+        width: 100%;
       }
       .form-field {
         width: 50%;
@@ -122,6 +130,17 @@ export class ManifestSettingsForm extends LitElement {
         border-color: #eb5757;
       }
 
+      #override-list {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
+      }
+      #override-item {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
@@ -161,6 +180,7 @@ export class ManifestSettingsForm extends LitElement {
       manifestInitialized = true;
       
       this.requestValidateAllFields();
+      this.initOverrideList();
       
     }
   }
@@ -183,7 +203,7 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   async validateAllFields(){
-    
+
     for(let i = 0; i < settingsFields.length; i++){
       let field = settingsFields[i];
 
@@ -245,6 +265,22 @@ export class ManifestSettingsForm extends LitElement {
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
     }
+  }
+
+  initOverrideList() {
+    this.activeOverrideItems = [];
+    this.inactiveOverrideItems = [];
+
+    if(this.manifest.display_override){
+      this.manifest.display_override!.forEach((item: string) => {
+        this.activeOverrideItems.push(item);
+      });
+    }
+    overrideOptions.forEach((item) => {
+      if(!this.activeOverrideItems.includes(item)){
+        this.inactiveOverrideItems.push(item);
+      }
+    });
   }
 
   async handleInputChange(event: InputEvent){
@@ -323,6 +359,96 @@ export class ManifestSettingsForm extends LitElement {
       return code.split("-")[0];
     } 
     return "";
+  }
+
+  async toggleOverrideList(label: string, active: boolean){
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: "display_override",
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+    
+    if(active){
+      // remove from active list
+      let remIndex = this.activeOverrideItems.indexOf(label);
+      this.activeOverrideItems.splice(remIndex, 1);
+
+      // push to inactive list
+      this.inactiveOverrideItems.push(label);
+    } else {
+      // remove from inactive list
+      let remIndex = this.inactiveOverrideItems.indexOf(label);
+      this.inactiveOverrideItems.splice(remIndex, 1);
+
+      // push to active list
+      this.activeOverrideItems.push(label);
+    }
+
+    this.validatePlatformList("display_override", this.activeOverrideItems!);
+
+    this.requestUpdate();
+  }
+
+  async validatePlatformList(field: string, updatedValue: any[]){
+
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
+    
+    let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+    const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
+    let passed = validation!.valid;
+
+    if(passed){
+
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: field,
+            change: [...updatedValue]
+        },
+        bubbles: true,
+        composed: true
+      });
+
+      this.dispatchEvent(manifestUpdated);
+
+      if(input!.classList.contains("error")){
+        input!.classList.toggle("error");
+        this.errorCount--;
+        let last = input!.parentNode!.lastElementChild;
+        last!.parentNode!.removeChild(last!);
+      } 
+    } else {
+      if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+        error_div!.parentElement!.removeChild(error_div!);
+      }
+      
+      // update error list
+      if(validation.errors){
+        let div = document.createElement('div');
+        div.classList.add(`${field}-error-div`);
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          div.append(p);
+          this.errorCount++;
+        });
+        insertAfter(div, input!.parentNode!.lastElementChild);
+      }
+
+      input!.classList.add("error");
+    }
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "platform"));
+    }
   }
 
   render() {
@@ -435,6 +561,68 @@ export class ManifestSettingsForm extends LitElement {
             <sl-select placeholder="Select a Direction" data-field="dir" value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
+          </div>
+          <div class="form-field">
+            <div class="field-header">
+              <div class="header-left">
+                <h3>Display</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the display option in your manifest.
+                  </p>
+                </a>
+              </div>
+            </div>
+            <p>The appearance of your app window</p>
+            <sl-select placeholder="Select a Display" data-field="display" value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
+              ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
+            </sl-select>
+          </div>
+        </div>
+        <div class="form-row long">
+          <div class="form-field">
+            <div class="field-header">
+              <h3>Display Override</h3>
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override"
+                target="_blank"
+                rel="noopener"
+              >
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                <p class="toolTip">
+                  Click for more info on the display override option in your manifest.
+                </p>
+              </a>
+            </div>
+            <p>Used to determine the preferred display mode</p>
+            <div id="override-list">
+            <sl-details summary="Click to edit display override" data-field="display_override">
+              <sl-menu>
+                <sl-menu-label>Active Override Items</sl-menu-label>
+                ${this.activeOverrideItems.length != 0 ?
+                this.activeOverrideItems.map((item: string) =>
+                  html`
+                    <sl-menu-item class="override-item" value=${item}" @click=${() => this.toggleOverrideList(item, true)} checked>
+                      ${item}
+                    </sl-menu-item>
+                  `) :
+                html`<sl-menu-item disabled>-</sl-menu-item>`}
+              <sl-divider></sl-divider>
+              <sl-menu-label>Inactive Override Items</sl-menu-label>
+              ${this.inactiveOverrideItems.map((item: string) =>
+                  html`
+                    <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, false)}>
+                      ${item}
+                    </sl-menu-item>
+                  `)}
+              </sl-menu>
+              </sl-details>
+            </div>
           </div>
         </div>
       </div>

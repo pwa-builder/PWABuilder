@@ -6,12 +6,11 @@ import { validateSingleField, singleFieldValidation } from '@pwabuilder/manifest
 import { errorInTab, insertAfter } from '../utils/helpers';
 //import { validateSingleField } from 'manifest-validation';
 
-const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 
 // How to handle categories field?
-const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "display_override", "shortcuts", "protocol_handlers", "categories"];
+const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories"];
 let manifestInitialized: boolean = false;
 let fieldsValidated: boolean = false;
 
@@ -22,8 +21,7 @@ export class ManifestPlatformForm extends LitElement {
 
   @property({type: Object}) manifest: Manifest = {};
 
-  @state() activeOverrideItems: string[] = [];
-  @state() inactiveOverrideItems: string[] = [];
+ 
 
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
@@ -139,16 +137,7 @@ export class ManifestPlatformForm extends LitElement {
         border-radius: 5px;
         padding: 1em;
       }
-      #override-list {
-        display: flex;
-        flex-direction: column;
-        row-gap: 5px;
-      }
-      #override-item {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
+      
       sl-details {
         width: 100%;
       }
@@ -370,7 +359,6 @@ export class ManifestPlatformForm extends LitElement {
 
   reset() {
     this.initCatGrid();
-    this.initOverrideList();
     this.requestUpdate();
   }
 
@@ -387,21 +375,7 @@ export class ManifestPlatformForm extends LitElement {
     }
   }
 
-  initOverrideList() {
-    this.activeOverrideItems = [];
-    this.inactiveOverrideItems = [];
-
-    if(this.manifest.display_override){
-      this.manifest.display_override!.forEach((item: string) => {
-        this.activeOverrideItems.push(item);
-      });
-    }
-    overrideOptions.forEach((item) => {
-      if(!this.activeOverrideItems.includes(item)){
-        this.inactiveOverrideItems.push(item);
-      }
-    });
-  }
+  
 
 
   async handleInputChange(event: InputEvent){
@@ -481,39 +455,7 @@ export class ManifestPlatformForm extends LitElement {
     }
   }
 
-  async toggleOverrideList(label: string){
-
-    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
-      detail: {
-          field: "display_override",
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(fieldChangeAttempted);
-
-    let menuItem = (this.shadowRoot!.querySelector('sl-menu-item[value=' + label + ']') as HTMLElement);
-
-    if(menuItem!.dataset.type === 'active'){
-      // remove from active list
-      let remIndex = this.activeOverrideItems.indexOf(label);
-      this.activeOverrideItems.splice(remIndex, 1);
-
-      // push to inactive list
-      this.inactiveOverrideItems.push(label);
-    } else {
-      // remove from inactive list
-      let remIndex = this.inactiveOverrideItems.indexOf(label);
-      this.inactiveOverrideItems.splice(remIndex, 1);
-
-      // push to active list
-      this.activeOverrideItems.push(label);
-    }
-
-    this.validatePlatformList("display_override", this.activeOverrideItems!);
-
-    this.requestUpdate();
-  }
+  
 
   addFieldToHTML(field: string){
     if(field === "shortcuts"){
@@ -898,45 +840,6 @@ export class ManifestPlatformForm extends LitElement {
                 ${this.relatedAppsHTML ? this.relatedAppsHTML.map((ele: TemplateResult) => ele) : html``}
               </div>
             </sl-details>
-          </div>
-          <div class="form-field">
-            <div class="field-header">
-              <h3>Display Override</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the display override option in your manifest.
-                </p>
-              </a>
-            </div>
-            <p>Used to determine the preferred display mode</p>
-            <div id="override-list">
-            <sl-details summary="Click to edit display override" data-field="display_override">
-              <sl-menu>
-                <sl-menu-label>Active Override Items</sl-menu-label>
-                ${this.activeOverrideItems.length != 0 ?
-                this.activeOverrideItems.map((item: string) =>
-                  html`
-                    <sl-menu-item class="override-item" value=${item} data-type="active" @click=${() => this.toggleOverrideList(item)} checked>
-                      ${item}
-                    </sl-menu-item>
-                  `) :
-                html`<sl-menu-item disabled>-</sl-menu-item>`}
-              <sl-divider></sl-divider>
-              <sl-menu-label>Inactive Override Items</sl-menu-label>
-              ${this.inactiveOverrideItems.map((item: string) =>
-                  html`
-                    <sl-menu-item class="override-item" value=${item} data-type="inactive" @click=${() => this.toggleOverrideList(item)}>
-                      ${item}
-                    </sl-menu-item>
-                  `)}
-              </sl-menu>
-              </sl-details>
-            </div>
           </div>
           <div class="form-field">
             <div class="field-header">
