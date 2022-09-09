@@ -351,10 +351,10 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-        errorString: "shortcuts must be a non-empty array and should not include webp images",
+        errorString: "shortcuts should be a non-empty array and should not include webp images",
         quickFix: true,
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
             if (isArray === true) {
                 // check image types dont include webp
                 const hasWebp = value.some(icon => icon.type === "image/webp");
@@ -395,10 +395,10 @@ export const maniTests: Array<Validation> = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
         quickFix: true,
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
             return isArray;
         },
-        errorString: "related_applications must be a non-empty array",
+        errorString: "related_applications should be a non-empty array",
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
@@ -432,7 +432,7 @@ export const maniTests: Array<Validation> = [
 
             return false;
         },
-        errorString: "categories must be a non-empty array"
+        errorString: "categories should be a non-empty array"
     },
     {
         member: "lang",
@@ -498,9 +498,9 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
         quickFix: true,
-        errorString: "protocol_handlers must be a non-empty array",
+        errorString: "protocol_handlers should be a non-empty array",
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
 
             return isArray;
         }
