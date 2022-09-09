@@ -606,17 +606,19 @@ export class ManifestSettingsForm extends LitElement {
         <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
-              <h3>Display Override</h3>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the display override option in your manifest.
-                </p>
-              </a>
+              <div class="header-left">
+                <h3>Display Override</h3>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the display override option in your manifest.
+                  </p>
+                </a>
+              </div>
             </div>
             <p>Used to determine the preferred display mode</p>
             <div id="override-list">
