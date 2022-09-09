@@ -149,6 +149,11 @@ export class ManifestPlatformForm extends LitElement {
         padding: 10px 15px;
         font-size: 16px;
       }
+
+      [data-field] {
+        margin-top: auto;
+      }
+
       .field-holder {
         display: flex;
         flex-direction: column;
@@ -487,7 +492,7 @@ export class ManifestPlatformForm extends LitElement {
         html`
           <form class="field-holder" @submit=${(e: any) => this.addRelatedAppToManifest(e)}>
             <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
-            <sl-select placeholder="Select a Platform" placement="bottom">
+            <sl-select placeholder="Select a Platform" hoist=${true} placement="bottom">
               ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
             </sl-select>
             <sl-input class="field-input" name="url" placeholder="App URL" /></sl-input>
@@ -515,51 +520,45 @@ export class ManifestPlatformForm extends LitElement {
     this.shortcutHTML = [];
     const inputs = [...e.target.querySelectorAll('sl-input')];
 
-    this.updateShortcutsInManifest(inputs, -1);
+    this.updateShortcutsInManifest(inputs, true);
   }
 
-  async updateShortcutsInManifest(inputs: any, index: number){
+  async updateShortcutsInManifest(inputs: any, push: boolean){
+    if(push){
+      let name = inputs.filter((input: any) => input.name === "name")[0].value;
+      let url = inputs.filter((input: any) => input.name === "url")[0].value;
+      let src = inputs.filter((input: any) => input.name === "src")[0].value;
+      let desc = inputs.filter((input: any) => input.name === "desc")[0].value;
 
-    let name = inputs.filter((input: any) => input.name === "name")[0].value;
-    let url = inputs.filter((input: any) => input.name === "url")[0].value;
-    let src = inputs.filter((input: any) => input.name === "src")[0].value;
-    let desc = inputs.filter((input: any) => input.name === "desc")[0].value;
+      let scObject: ShortcutItem;
 
-    let scObject: ShortcutItem;
-
-    if(src.length == 0){
-      scObject = {
-        name: name,
-        url: url,
-        description: desc
+      if(src.length == 0){
+        scObject = {
+          name: name,
+          url: url,
+          description: desc
+        }
+      } else {
+        scObject = {
+          name: name,
+          url: url,
+          icons: [
+            {
+              src: src
+            }
+          ],
+          description: desc
+        }
       }
-    } else {
-      scObject = {
-        name: name,
-        url: url,
-        icons: [
-          {
-            src: src
-          }
-        ],
-        description: desc
-      }
-    }
-    
-
-    if(index == -1){
-
+      
       if(!this.manifest.shortcuts){
         this.manifest.shortcuts = []
       }
 
       this.manifest.shortcuts?.push(scObject)
-    } else {
-      this.manifest.shortcuts![index] = scObject;
     }
 
     this.validatePlatformList("shortcuts", this.manifest.shortcuts!);
-    
   }
 
   addProtocolToManifest(e: any){
@@ -577,31 +576,28 @@ export class ManifestPlatformForm extends LitElement {
     this.protocolHTML = [];
     const inputs = [...e.target.querySelectorAll('sl-input')];
 
-    this.updateProtocolsInManifest(inputs, -1);
+    this.updateProtocolsInManifest(inputs, true);
   }
 
-  async updateProtocolsInManifest(inputs: any, index: number){
+  async updateProtocolsInManifest(inputs: any, push: boolean){
 
-    let protocol: string = inputs.filter((input: any) => input.name === "protocol")[0].value;
-    let url: string= inputs.filter((input: any) => input.name === "url")[0].value;
-
-    const pObject: ProtocolHandler  = {
-      protocol: protocol,
-      url: url
-    }
-
-    if(index === -1){
+    if(push){
+      let protocol: string = inputs.filter((input: any) => input.name === "protocol")[0].value;
+      let url: string= inputs.filter((input: any) => input.name === "url")[0].value;
+  
+      const pObject: ProtocolHandler  = {
+        protocol: protocol,
+        url: url
+      }
+  
       if(!this.manifest.protocol_handlers){
         this.manifest.protocol_handlers = []
       }
   
       this.manifest.protocol_handlers?.push(pObject);
-    } else {
-      this.manifest.protocol_handlers![index] = pObject;
     }
 
     this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!);
-
   }
 
   addRelatedAppToManifest(e: any){
@@ -619,35 +615,33 @@ export class ManifestPlatformForm extends LitElement {
     });
     this.dispatchEvent(fieldChangeAttempted);
 
-    this.updateRelatedAppsInManifest(inputs, select, -1);
+    this.updateRelatedAppsInManifest(inputs, select, true);
 
     
   }
 
-  async updateRelatedAppsInManifest(inputs: any, select: any, index: number){
+  async updateRelatedAppsInManifest(inputs: any, select: any, push: boolean){
     
-    let platform: string = select.value;
-    let url: string = inputs.filter((input: any) => input.name === "url")[0].value;
-    let id: string = inputs.filter((input: any) => input.name === "id")[0].value;
-
-    const appObject: RelatedApplication  = {
-      platform: platform,
-      url: url,
-      id: id
-    }
-    
-    if(index == -1){
+    if(push){
+      console.log("hitting push");
+      let platform: string = select.value;
+      let url: string = inputs.filter((input: any) => input.name === "url")[0].value;
+      let id: string = inputs.filter((input: any) => input.name === "id")[0].value;
+  
+      const appObject: RelatedApplication  = {
+        platform: platform,
+        url: url,
+        id: id
+      }
+      
       if(!this.manifest.related_applications){
         this.manifest.related_applications = []
       }
-  
-      this.manifest.related_applications?.push(appObject);
-    } else {
-      this.manifest.related_applications![index] = appObject;
-    }
-
-    this.validatePlatformList("related_applications", this.manifest.related_applications!);
     
+      this.manifest.related_applications?.push(appObject);
+    }
+    
+    this.validatePlatformList("related_applications", this.manifest.related_applications!);
   }
 
   updateCategories(){
@@ -730,34 +724,21 @@ export class ManifestPlatformForm extends LitElement {
   }
 
 
-  toggleEditing(tag: string){
-    let inputs = [...this.shadowRoot!.querySelectorAll('[data-tag= \"' + tag + '\"]:not(sl-icon-button):not(sl-select)')];
-    inputs.forEach((input: any) =>  input.disabled = !input.disabled);
+  removeData(tag: string){
+    const split_tag = tag.split(" ");
+    const field = split_tag[0]
+    const index = parseInt(split_tag[1]);
 
-    let select: any = this.shadowRoot!.querySelector('sl-select[data-tag= \"' + tag + '\"]');
-    
-    if(select){
-      select.disabled = !select.disabled;
-    }
-
-    let button: any = this.shadowRoot!.querySelector('sl-icon-button[data-tag= \"' + tag + '\"]');
-    
-    if(button!.name === "pencil"){
-      button.name = "save";
+    if(field === "shortcuts"){
+      this.manifest.shortcuts = this.manifest.shortcuts!.filter((_item: any, i: number) => i != index );
+      console.log(this.manifest.shortcuts);
+      this.updateShortcutsInManifest([], false);
+    } else if(field === "protocol"){
+      this.manifest.protocol_handlers = this.manifest.protocol_handlers!.filter((_item: any, i: number) => i != index);
+      this.updateProtocolsInManifest([], false);
     } else {
-      button.name = "pencil";
-
-      const split_tag = tag.split(" ");
-      const field = split_tag[0]
-      const index = split_tag[1];
-
-      if(field === "shortcuts"){
-        this.updateShortcutsInManifest(inputs, parseInt(index));
-      } else if(field === "protocol"){
-        this.updateProtocolsInManifest(inputs, parseInt(index));
-      } else {
-        this.updateRelatedAppsInManifest(inputs, select, parseInt(index));
-      }
+      this.manifest.related_applications = this.manifest.related_applications!.filter((_item: any, i: number) => i != index);
+      this.updateRelatedAppsInManifest([], [], false);
     }
   }
 
@@ -797,7 +778,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
+            <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
               <sl-menu-item value="true">true</sl-menu-item>
               <sl-menu-item value="false">false</sl-menu-item>
             </sl-select>
@@ -827,9 +808,9 @@ export class ManifestPlatformForm extends LitElement {
                     <div class="field-holder">
                       <div class="editable">
                         <h4 class="shortcut-header">Related App #${i + 1}</h4>
-                        <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.toggleEditing("related " + i.toString())}></sl-icon-button>
+                        <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.removeData("related " + i.toString())}></sl-icon-button>
                       </div>
-                      <sl-select placeholder="Select a Platform" placement="bottom" value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
+                      <sl-select placeholder="Select a Platform" placement="bottom" hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} disabled>
                         ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
                       </sl-select>
                       <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} disabled></sl-input>
@@ -864,7 +845,7 @@ export class ManifestPlatformForm extends LitElement {
                     <div class="field-holder">
                       <div class="editable">
                         <h4 class="shortcut-header">Shortcut #${i + 1}</h4>
-                        <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"shortcut " + i.toString()} @click=${() => this.toggleEditing("shortcut " + i.toString())}></sl-icon-button>
+                        <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"shortcuts " + i.toString()} @click=${() => this.removeData("shortcuts " + i.toString())}></sl-icon-button>                      
                       </div>
                       <sl-input class="field-input" name="name" placeholder="Shortcut name" value=${sc.name || ""} data-tag=${"shortcut " + i.toString()} disabled></sl-input>
                       <sl-input class="field-input" name="url" placeholder="Shortcut url" value=${sc.url || ""} data-tag=${"shortcut " + i.toString()} disabled></sl-input>
@@ -900,7 +881,7 @@ export class ManifestPlatformForm extends LitElement {
                     <div class="field-holder">
                       <div class="editable">
                         <h4 class="shortcut-header">Protocol Handler #${i + 1}</h4>
-                        <sl-icon-button name="pencil" label="Edit" style="font-size: 1rem;" data-tag=${"protocol " + i.toString()} @click=${() => this.toggleEditing("protocol " + i.toString())}></sl-icon-button>
+                        <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"protocol " + i.toString()} @click=${() => this.removeData("protocol " + i.toString())}></sl-icon-button>                      
                       </div>
                       <sl-input class="field-input" name="protocol" placeholder="Protocol" value=${p.protocol || ""} data-tag=${"protocol " + i.toString()} disabled></sl-input>
                       <sl-input class="field-input" name="url" placeholder="URL" value=${p.url || ""} data-tag=${"protocol " + i.toString()} disabled></sl-input>

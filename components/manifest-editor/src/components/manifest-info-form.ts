@@ -33,7 +33,6 @@ export class ManifestInfoForm extends LitElement {
 
       sl-input::part(base),
       sl-textarea::part(base),
-      sl-select::part(control),
       sl-menu-item::part(base),
       sl-color-picker::part(base),
       sl-button::part(base) {
@@ -79,6 +78,10 @@ export class ManifestInfoForm extends LitElement {
         display: flex;
         align-items: center;
         column-gap: 5px;
+      }
+
+      [data-field] {
+        margin-top: auto;
       }
 
       .color_field {
@@ -180,7 +183,6 @@ export class ManifestInfoForm extends LitElement {
 
       @media(max-width: 480px){
         sl-input::part(base),
-        sl-select::part(control),
         sl-menu-item::part(base) {
           --sl-input-font-size-medium: 14px;
           --sl-font-size-medium: 14px;

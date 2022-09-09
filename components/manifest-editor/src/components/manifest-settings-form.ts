@@ -74,6 +74,10 @@ export class ManifestSettingsForm extends LitElement {
         column-gap: 5px;
       }
 
+      [data-field] {
+        margin-top: auto;
+      }
+
       .header-left{
         display: flex;
         align-items: center;
@@ -507,7 +511,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The base direction in which to display direction-capable members of the manifest</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -550,7 +554,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -573,7 +577,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -594,7 +598,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
