@@ -685,37 +685,6 @@ export class AppReport extends LitElement {
           row-gap: 1em;
           width: 66%;
         }
-        .close_x {
-          position: absolute;
-          top: 1em;
-          right: 1em;
-          height: 20px;
-          width: auto;
-          z-index: 10;
-        }
-        .close_x:hover {
-          cursor: pointer;
-        }
-        .modal-blur {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: transparent;
-          backdrop-filter: blur(10px);
-          z-index: 3;
-        }
-        .modal {
-          background: white;
-          max-width: 765px;
-          max-height: 840px;
-          border-radius: 10px;
-          box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
-          position: relative;
-          z-index: 4;
-          display: flex;
-        }
         .progressRingSkeleton::part(base) {
           height: 100px;
           width: 100px;
@@ -783,7 +752,6 @@ export class AppReport extends LitElement {
           display: none;
         }
         .dialog::part(panel) {
-          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -954,9 +922,7 @@ export class AppReport extends LitElement {
             font-size: 16px;
           }
 
-          .modal {
-            max-width: 90vw;
-          }
+          
           .half-width-cards {
             width: 100%;
           }
@@ -1273,10 +1239,13 @@ export class AppReport extends LitElement {
     // reset scores
     this.manifestValidCounter = 0;
     this.manifestTotalScore = 0;
+    this.manifestRequiredCounter = 0;
     this.swValidCounter = 0;
     this.swTotalScore = 0;
+    this.swRequiredCounter = 0;
     this.secValidCounter = 0;
     this.secTotalScore = 0;
+    this.secRequiredCounter = 0;
 
 
     // reset todo lsit
@@ -1885,7 +1854,7 @@ export class AppReport extends LitElement {
                         class="arrow_anchor"
                         rel="noopener"
                         target="_blank"
-                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=service-workers"
+                        href="https://docs.pwabuilder.com/#/home/sw-intro"
                         @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                         <p class="arrow_link">Service Worker Documentation</p>
                         <img
