@@ -1005,10 +1005,13 @@ export class AppPublish extends LitElement {
       <app-modal
         id="windows-options-modal"
         heading="Windows App Options"
-        body="Customize your Windows app below"
+        body="Customize your Windows app below. Need help finding these values? Visit "
         ?open="${this.openWindowsOptions}"
         @app-modal-close="${() => this.storeOptionsCancel()}"
       >
+        
+      <a slot="modal-docs-link" href="https://docs.pwabuilder.com/#/builder/windows?id=reserve-your-app"> our documentation. </a>
+
         <windows-form
           slot="modal-form"
           .generating=${this.generating}
