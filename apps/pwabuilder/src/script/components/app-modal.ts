@@ -241,7 +241,10 @@ export class AppModal extends LitElement implements AppModalElement {
             </section>
         
             <section id="modal-body" part="modal-body">
-              <p part="modal-body-contents">${this.body}</p>
+              <p part="modal-body-contents">
+                ${this.body}
+                <slot name="modal-docs-link"></slot>
+              </p>
             </section>
 
             <slot id="modal-nav" name="modal-nav"></slot>
@@ -252,7 +255,7 @@ export class AppModal extends LitElement implements AppModalElement {
         
             <section id="modal-tou">
               <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
-                id="tou-link">Terms of Use</a>
+                id="tou-link">Terms of Use 2</a>
             </section>
           </div>
         </div>
