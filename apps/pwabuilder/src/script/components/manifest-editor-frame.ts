@@ -138,6 +138,7 @@ export class ManifestEditorFrame extends LitElement {
       
       .dialog::part(body){
         padding: 0;
+        border-radius: 10px;
       }
       .dialog::part(title){
         display: none;
