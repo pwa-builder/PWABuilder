@@ -255,7 +255,7 @@ export class AppModal extends LitElement implements AppModalElement {
         
             <section id="modal-tou">
               <a target="_blank" rel="noopener" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
-                id="tou-link">Terms of Use 2</a>
+                id="tou-link">Terms of Use</a>
             </section>
           </div>
         </div>

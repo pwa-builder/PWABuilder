@@ -1020,7 +1020,6 @@ export class AppPublish extends LitElement {
         ></windows-form>
       </app-modal>
 
-
       <!-- android options modal -->
       <app-modal
         id="android-options-modal"
