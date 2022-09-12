@@ -752,7 +752,6 @@ export class AppReport extends LitElement {
           display: none;
         }
         .dialog::part(panel) {
-          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -1240,10 +1239,13 @@ export class AppReport extends LitElement {
     // reset scores
     this.manifestValidCounter = 0;
     this.manifestTotalScore = 0;
+    this.manifestRequiredCounter = 0;
     this.swValidCounter = 0;
     this.swTotalScore = 0;
+    this.swRequiredCounter = 0;
     this.secValidCounter = 0;
     this.secTotalScore = 0;
+    this.secRequiredCounter = 0;
 
 
     // reset todo lsit
@@ -1852,7 +1854,7 @@ export class AppReport extends LitElement {
                         class="arrow_anchor"
                         rel="noopener"
                         target="_blank"
-                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=service-workers"
+                        href="https://docs.pwabuilder.com/#/home/sw-intro"
                         @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                         <p class="arrow_link">Service Worker Documentation</p>
                         <img

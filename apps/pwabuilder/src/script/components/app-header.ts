@@ -34,6 +34,7 @@ export class AppHeader extends LitElement {
         height: 71px;
 
         border-bottom: var(--header-border);
+        z-index: 1;
       }
 
       header img {

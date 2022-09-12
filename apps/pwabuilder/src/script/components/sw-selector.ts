@@ -222,31 +222,31 @@ export class SWSelector extends LitElement {
         </sl-tab-group>
 
         <div id="frame-footer" slot="footer">
-            <div id="footer-links">
-                <a 
-                  class="arrow_anchor" 
-                  href="https://aka.ms/install-pwa-studio" 
-                  rel="noopener" 
-                  target="_blank"
-                  @click=${() => recordPWABuilderProcessStep("sw_modal.vscode_extension_link_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-                  >
-                  <p class="arrow_link">VS Code Extension</p> 
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                </a>
-                <a 
-                  class="arrow_anchor" 
-                  href="" 
-                  rel="noopener" 
-                  target="_blank"
-                  @click=${() => recordPWABuilderProcessStep("sw_modal.sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-                  <p class="arrow_link">Service Worker Documentation</p> 
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                </a>
-            </div>
-            <div id="footer-actions">
-              <button type="button" class="primary" @click=${() => this.downloadSW()}>Download Service Worker</button>
-            </div>
+          <div id="footer-links">
+            <a 
+              class="arrow_anchor" 
+              href="https://aka.ms/install-pwa-studio" 
+              rel="noopener" 
+              target="_blank"
+              @click=${() => recordPWABuilderProcessStep("sw_modal.vscode_extension_link_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              >
+              <p class="arrow_link">VS Code Extension</p> 
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+            </a>
+            <a 
+              class="arrow_anchor" 
+              href="https://docs.pwabuilder.com/#/home/sw-intro" 
+              rel="noopener" 
+              target="_blank"
+              @click=${() => recordPWABuilderProcessStep("sw_modal.sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+              <p class="arrow_link">Service Worker Documentation</p> 
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+            </a>
           </div>
+          <div id="footer-actions">
+            <button type="button" class="primary" @click=${() => this.downloadSW()}>Download Service Worker</button>
+          </div>
+        </div>
       </sl-dialog>
     `;
   }
