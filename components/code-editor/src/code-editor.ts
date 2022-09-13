@@ -34,10 +34,22 @@ export class CodeEditor extends LitElement {
   static get styles() {
     return [
       css`
+
+        :host {
+          position: relative;
+        }
+
+        sl-button::part(base) {
+          --sl-button-font-size-medium: 14px;
+        }
+        
         #copy-block {
           display: flex;
           justify-content: flex-end;
           margin-bottom: 10px;
+          position: sticky;
+          top: 0;
+          z-index: 1;
         }
 
         .editor-container {
@@ -121,13 +133,12 @@ export class CodeEditor extends LitElement {
     return html`
       <div id="copy-block">
         <slot>
-          <button
+          <sl-button
             ?disabled="${this.copied}"
             @click="${() => this.copyCode()}"
-            appearance="outline"
-            class="secondary"
+            class="copy-button"
           >
-            ${this.copyText}</button
+            ${this.copyText}</sl-button
           >
         </slot>
       </div>

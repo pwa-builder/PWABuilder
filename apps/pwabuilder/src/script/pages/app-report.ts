@@ -78,6 +78,10 @@ export class AppReport extends LitElement {
   // Controls the last tested section
   @state() lastTested: string = "Last tested seconds ago";
 
+  @state() todoWindow: any[] = [];
+  private pageNumber: number = 1;
+  private pageSize: number = 5;
+
   // validation
   @state() validationResults: Validation[] = [];
   @state() manifestTotalScore: number = 0;
@@ -459,10 +463,31 @@ export class AppReport extends LitElement {
           font-size: 20px;
           font-weight: bold;
         }
-        #todo-summary-right {
+        #todo-summary-left {
           display: flex;
           align-items: center;
           gap: .5em;
+        }
+        #pagination-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          justify-self: center;
+          gap: .25em;
+        }
+        #dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: .25em;
+        }
+        #dots img {
+          height: 10px;
+          width: auto;
+        }
+        #pagination-actions > sl-icon:hover{
+          cursor:pointer
         }
         #indicators-holder {
           display: flex;
@@ -955,6 +980,10 @@ export class AppReport extends LitElement {
     setInterval(() => this.pollLastTested(), 120000);
   }
 
+  firstUpdated() {
+    this.rotateNinety("todo");
+  }
+
   pollLastTested(){
     let last = new Date(JSON.parse(sessionStorage.getItem('last_tested')!));
     let now = new Date();
@@ -1268,7 +1297,11 @@ export class AppReport extends LitElement {
     let details = this.shadowRoot!.querySelectorAll('sl-details');
 
     details.forEach((detail: any) => {
-      detail.hide();
+      if(detail.id != "todo-detail"){
+        detail.hide();
+      } else {
+        detail.show()
+      }
     });
 
     // reset retest data
@@ -1467,6 +1500,31 @@ export class AppReport extends LitElement {
     return this.todoItems;
   }
 
+  paginate() {
+    let array = this.sortTodos();
+    return array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+  }
+
+  switchPage(up: boolean){
+    if(up && this.pageNumber * this.pageSize < this.todoItems.length){
+      this.pageNumber++;
+    } else if(!up && this.pageNumber != 1){
+      this.pageNumber--;
+    }
+    this.requestUpdate();
+  }
+
+  getDots(){
+    let dots: any[] = [];
+
+    let totalPages = Math.ceil(this.todoItems.length / this.pageSize);
+
+    for(let i = 0; i < totalPages; i++){
+      dots.push("dot");
+    }
+    return dots;
+  }
+
   renderIndicators(){
     let yellow = 0;
     let red = 0;
@@ -1511,7 +1569,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#C3C3C3' }) : styleMap(this.styles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.styles)}>
               <div id="card-header">
                 <div id="pwa-image-holder">
                   ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
@@ -1611,15 +1669,17 @@ export class AppReport extends LitElement {
               id="todo-detail"
               @sl-show=${() => this.rotateNinety("todo")}
               @sl-hide=${() => this.rotateZero("todo")}
+              open
               >
               <div class="details-summary" slot="summary">
-                <p>Action Items</p>
-                <div id="todo-summary-right">
-                  ${this.renderIndicators()}
-                  <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                <div id="todo-summary-left">
+                  <p>Action Items</p>
+                  ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.renderIndicators() : html``}
                 </div>
+                  <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                
               </div>
-             ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.sortTodos().map((todo: any) =>
+             ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
                 html`
                   <todo-item
                     .status=${todo.status}
@@ -1631,6 +1691,22 @@ export class AppReport extends LitElement {
                   </todo-item>`
               ) : html`<span class="loader"></span>`}
 
+            ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ?
+              html`
+              <div id="pagination-actions">
+                <sl-icon name="chevron-left" @click=${() => this.switchPage(false)}></sl-icon>
+                <div id="dots">
+                  ${this.getDots().map((_dot: any, index: number) => 
+                    this.pageNumber == index + 1 ? 
+                      html`
+                        <img src="/assets/new/active_dot.svg" alt="active dot" />
+                      ` :
+                      html`
+                        <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
+                      `)}
+                </div>
+                <sl-icon name="chevron-right" @click=${() => this.switchPage(true)}></sl-icon>
+              </div>` : html``}
             </sl-details>
           </div>
 
@@ -1711,6 +1787,20 @@ export class AppReport extends LitElement {
               <div id="manifest-detail-grid">
                 <div class="detail-list">
                   <p class="detail-list-header">Required</p>
+
+                  ${this.requiredMissingFields.length > 0 ?
+                  html`
+                    ${this.requiredMissingFields.map((field: string) =>
+                    html`<div class="test-result" data-field=${field}>
+                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
+                            <img src=${stop_src} alt="invalid result icon"/>
+                          </sl-tooltip>
+                      <p>Manifest includes ${field} field</p>
+                    </div>`
+                    )}
+                  ` :
+                  html``}
+                  
                   ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -1724,24 +1814,21 @@ export class AppReport extends LitElement {
                     </div>
                   ` :
                   html``)}
-
-                  ${this.requiredMissingFields.length > 0 ?
+                </div>
+                <div class="detail-list">
+                  <p class="detail-list-header">Recommended</p>
+                  ${this.reccMissingFields.length > 0 ?
                   html`
-                    <p class="missing">-- Missing Required Fields --</p>
-                    ${this.requiredMissingFields.map((field: string) =>
+                    ${this.reccMissingFields.map((field: string) =>
                     html`<div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
-                            <img src=${stop_src} alt="invalid result icon"/>
+                            <img src=${yield_src} alt="yield result icon"/>
                           </sl-tooltip>
                       <p>Manifest includes ${field} field</p>
                     </div>`
                     )}
                   ` :
                   html``}
-
-                </div>
-                <div class="detail-list">
-                  <p class="detail-list-header">Recommended</p>
                   ${this.validationResults.map((result: Validation) => result.category === "recommended"  && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -1754,23 +1841,23 @@ export class AppReport extends LitElement {
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
-
-                  ${this.reccMissingFields.length > 0 ?
-                  html`
-                    <p class="missing">-- Missing Recommended Fields --</p>
-                    ${this.reccMissingFields.map((field: string) =>
-                    html`<div class="test-result" data-field=${field}>
-                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
-                            <img src=${yield_src} alt="yield result icon"/>
-                          </sl-tooltip>
-                      <p>Manifest includes ${field} field</p>
-                    </div>`
-                    )}
-                  ` :
-                  html``}
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Optional</p>
+                  ${this.optMissingFields.length > 0 ?
+                  html`
+                    ${this.optMissingFields.map((field: string) =>
+                    html`
+                        <div class="test-result" data-field=${field}>
+                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
+                            <img src=${yield_src} alt="yield result icon"/>
+                          </sl-tooltip>
+                          <p>Manifest includes ${field} field</p>
+                        </div>`
+                    )}
+                  ` :
+                  html``}
+
                   ${this.validationResults.map((result: Validation) => result.category === "optional" && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -1784,21 +1871,6 @@ export class AppReport extends LitElement {
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
-
-                  ${this.optMissingFields.length > 0 ?
-                  html`
-                    <p class="missing">-- Missing Optional Fields --</p>
-                    ${this.optMissingFields.map((field: string) =>
-                    html`
-                        <div class="test-result" data-field=${field}>
-                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
-                            <img src=${yield_src} alt="yield result icon"/>
-                          </sl-tooltip>
-                          <p>Manifest includes ${field} field</p>
-                        </div>`
-                    )}
-                  ` :
-                  html``}
                 </div>
               </div>
             </sl-details>
