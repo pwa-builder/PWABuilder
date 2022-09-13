@@ -50,7 +50,7 @@ export async function generateScreenshots(skipPrompts?: boolean) {
 
                     const data = await response.json();
 
-                    const screenshots = await handleScreenshots(data);
+                    const screenshots = await handleScreenshots(data, skipPrompts ? true : false);
 
                     const manifest: vscode.Uri = await findManifest();
 
@@ -202,17 +202,26 @@ export async function generateIcons(skipPrompts?: boolean) {
     })
 }
 
-async function handleScreenshots(data: any): Promise<{ path: string; screenshots: Array<any> }> {
+async function handleScreenshots(data: any, skipPrompts?: boolean): Promise<{ path: string; screenshots: Array<any> }> {
     return new Promise(async (resolve, reject) => {
         if (data.images) {
             // ask user to choose a directory to save files to
-            const uri = await vscode.window.showSaveDialog({
-                defaultUri: vscode.Uri.file(
+            let uri: vscode.Uri | undefined;
+
+            if (!skipPrompts) {
+                uri = await vscode.window.showSaveDialog({
+                    defaultUri: vscode.Uri.file(
+                        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/screenshots`
+                    ),
+                    saveLabel: "Save Screenshots",
+                    title: "Choose a directory to save generated Screenshots to",
+                });
+            }
+            else {
+                uri = vscode.Uri.file(
                     `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/screenshots`
-                ),
-                saveLabel: "Save Screenshots",
-                title: "Choose a directory to save generated Screenshots to",
-            });
+                );
+            }
 
             if (uri) {
                 // create directory based on uri
@@ -225,21 +234,23 @@ async function handleScreenshots(data: any): Promise<{ path: string; screenshots
                 newScreenshotsList = data.images.map((screenshot: any) => {
                     return new Promise(async (resolve) => {
                         // create file path to write file to
-                        const screenshotFile = vscode.Uri.file(
-                            `${uri.fsPath}/${screenshot.sizes}-screenshot.${screenshot.type.substring(
-                                screenshot.type.indexOf("/") + 1
-                            )}`
-                        );
-
-                        // create buffer from icon base64 data
-                        const buff: Buffer = Buffer.from(screenshot.src, "base64");
-
-                        // write file to disk
-                        await vscode.workspace.fs.writeFile(screenshotFile, buff);
-
-                        screenshot.src = vscode.workspace.asRelativePath(screenshotFile.fsPath);
-
-                        resolve(screenshot);
+                        if (uri) {
+                            const screenshotFile = vscode.Uri.file(
+                                `${uri.fsPath}/${screenshot.sizes}-screenshot.${screenshot.type.substring(
+                                    screenshot.type.indexOf("/") + 1
+                                )}`
+                            );
+    
+                            // create buffer from icon base64 data
+                            const buff: Buffer = Buffer.from(screenshot.src, "base64");
+    
+                            // write file to disk
+                            await vscode.workspace.fs.writeFile(screenshotFile, buff);
+    
+                            screenshot.src = vscode.workspace.asRelativePath(screenshotFile.fsPath);
+    
+                            resolve(screenshot);
+                        }
                     });
                 });
 
