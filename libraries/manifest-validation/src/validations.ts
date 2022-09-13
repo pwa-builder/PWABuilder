@@ -516,7 +516,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         errorString: "display_override must be a non-empty array",
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
 
             return isArray;
         }

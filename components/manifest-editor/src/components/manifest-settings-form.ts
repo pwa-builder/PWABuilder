@@ -74,10 +74,6 @@ export class ManifestSettingsForm extends LitElement {
         column-gap: 5px;
       }
 
-      [data-field] {
-        margin-top: auto;
-      }
-
       .header-left{
         display: flex;
         align-items: center;
@@ -634,7 +630,6 @@ export class ManifestSettingsForm extends LitElement {
                   `) :
                 html`<sl-menu-item disabled>-</sl-menu-item>`}
               <sl-divider></sl-divider>
-              <sl-menu-label>Inactive Override Items</sl-menu-label>
               ${this.inactiveOverrideItems.map((item: string) =>
                   html`
                     <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, false)}>

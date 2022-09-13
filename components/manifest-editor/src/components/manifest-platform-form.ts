@@ -150,10 +150,6 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 16px;
       }
 
-      [data-field] {
-        margin-top: auto;
-      }
-
       .field-holder {
         display: flex;
         flex-direction: column;

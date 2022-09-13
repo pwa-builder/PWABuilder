@@ -80,10 +80,6 @@ export class ManifestInfoForm extends LitElement {
         column-gap: 5px;
       }
 
-      [data-field] {
-        margin-top: auto;
-      }
-
       .color_field {
         display: flex;
         flex-direction: column;
@@ -124,28 +120,28 @@ export class ManifestInfoForm extends LitElement {
       .color-section {
         display: flex;
         gap: .5em;
-      }
-      
-      .color_selection {
-        display: flex;
         align-items: center;
         justify-content: flex-start;
       }
+
       .color-section p {
-        font-size: 16px;
+        font-size: 18px;
         color: #808080;
         display: flex;
         align-items: center;
+        height: fit-content;
       }
 
       sl-color-picker {
         --grid-width: 315px;
+        height: 25px;
       }
 
       sl-color-picker::part(trigger){
         border-radius: 0;
         height: 25px;
         width: 75px;
+        display: flex;
       }
       sl-menu {
         width: 100%;
@@ -166,6 +162,7 @@ export class ManifestInfoForm extends LitElement {
       .error::part(control){
         border-color: #eb5757;
       }
+
 
       @media(max-width: 765px){
         .form-row:not(.color-row) {

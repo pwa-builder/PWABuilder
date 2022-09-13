@@ -42,6 +42,8 @@ export class TodoItem extends LitElement {
       #item-wrapper p {
         margin: 0;
         vertical-align: middle;
+        line-height: 16px;
+        padding-top: 3px;
       }
 
       /* < 480px */

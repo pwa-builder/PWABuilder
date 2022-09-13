@@ -9,6 +9,7 @@ import { service_workers } from '../utils/service-workers/service-workers';
 export class SWSelector extends LitElement {
 
   @state() selectedSW: string = "0";
+  private swNameList: string[] = ["Offline Pages", "Offline Page Copy of Pages", "Offline Copy with Backup Offline Page"]
 
   static get styles() {
     return css`
@@ -16,10 +17,17 @@ export class SWSelector extends LitElement {
       sl-tab-group {
         --indicator-color: #4F3FB6;
       }
+      sl-tab {
+        display: flex;
+      }
       sl-tab::part(base) {
         --sl-font-size-small: 14px;
         --sl-spacing-medium: .75rem;
         --sl-space-large: 1rem;
+        max-width: 190px;
+        white-space: unset;
+        text-align: center;
+        align-self: flex-end;
       }
       sl-tab[active]::part(base) {
         color: #4F3FB6;
@@ -215,7 +223,7 @@ export class SWSelector extends LitElement {
         <sl-tab-group id="sw-tabs" @sl-tab-show=${(e: any) => this.setSelectedSW(e)}>
           ${service_workers.map((_sw: any, index: number) => 
             html`
-            <sl-tab slot="nav" panel=${index}>SW #${index + 1}</sl-tab>`)}
+            <sl-tab slot="nav" panel=${index}>${this.swNameList[index]}</sl-tab>`)}
           ${service_workers.map((sw: any, index: number) => 
             html`
             <sl-tab-panel name=${index}><sw-panel .sw=${sw} ></sw-panel></sl-tab-panel>`)}
