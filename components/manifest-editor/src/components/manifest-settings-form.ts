@@ -143,6 +143,10 @@ export class ManifestSettingsForm extends LitElement {
         column-gap: 10px;
       }
 
+      #override-item::part(label){
+        font-size: 16px;
+      }
+
       sl-details {
         width: 100%;
       }
@@ -153,6 +157,26 @@ export class ManifestSettingsForm extends LitElement {
       sl-details::part(header){
         padding: 10px 15px;
         font-size: 16px;
+      }
+
+      .menu-prefix {
+        padding: 0 .5em;
+        font-weight: 600;
+        padding-top: 3px;
+      }
+
+      #override-options-grid{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: .25em .5em;
+      }
+
+      #override-options-grid sl-checkbox::part(label) {
+        font-size: 16px;
+        line-height: 16px;
+        margin-left: .25em;
       }
 
       @media(max-width: 765px){
@@ -375,7 +399,7 @@ export class ManifestSettingsForm extends LitElement {
     return "";
   }
 
-  async toggleOverrideList(label: string, active: boolean){
+  async toggleOverrideList(label: string, e: any){
 
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
@@ -385,6 +409,8 @@ export class ManifestSettingsForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(fieldChangeAttempted);
+
+    let active = !e.path[0].checked;
     
     if(active){
       // remove from active list
@@ -394,10 +420,6 @@ export class ManifestSettingsForm extends LitElement {
       // push to inactive list
       this.inactiveOverrideItems.push(label);
     } else {
-      // remove from inactive list
-      let remIndex = this.inactiveOverrideItems.indexOf(label);
-      this.inactiveOverrideItems.splice(remIndex, 1);
-
       // push to active list
       this.activeOverrideItems.push(label);
     }
@@ -622,22 +644,26 @@ export class ManifestSettingsForm extends LitElement {
               <sl-menu>
                 <sl-menu-label>Active Override Items</sl-menu-label>
                 ${this.activeOverrideItems.length != 0 ?
-                this.activeOverrideItems.map((item: string) =>
+                this.activeOverrideItems.map((item: string, index: number) =>
                   html`
-                    <sl-menu-item class="override-item" value=${item}" @click=${() => this.toggleOverrideList(item, true)} checked>
+                    <sl-menu-item class="override-item" value=${item} @click=${(e: CustomEvent) => this.toggleOverrideList(item, e)}>
+                      <p slot="prefix" class="menu-prefix">${index + 1}</p>
                       ${item}
                     </sl-menu-item>
                   `) :
-                html`<sl-menu-item disabled>-</sl-menu-item>`}
-              <sl-divider></sl-divider>
-              ${this.inactiveOverrideItems.map((item: string) =>
-                  html`
-                    <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, false)}>
-                      ${item}
-                    </sl-menu-item>
-                  `)}
+                  html`<sl-menu-item disabled>-</sl-menu-item>`
+                }
+                <sl-divider></sl-divider>
+                <div id="override-options-grid">
+                  ${overrideOptions.map((item: string) =>
+                      html`
+                        <sl-checkbox class="override-item" value=${item} @sl-change=${(e: CustomEvent) => this.toggleOverrideList(item, e)} ?checked=${this.activeOverrideItems.includes(item)}>
+                          ${item}
+                        </sl-checkbox>
+                      `)}
+                  </div>
               </sl-menu>
-              </sl-details>
+            </sl-details>
             </div>
           </div>
         </div>
