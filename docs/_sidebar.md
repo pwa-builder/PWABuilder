@@ -11,9 +11,11 @@
 
 - **PWA Starter** 
   - [Quick Start](/starter/quick-start "PWA Starter - Quick Start")
-  - [Add Content](/starter/adding-content "PWA Starter - Add Content To Your PWA")
+  - [Add Content](/starter/adding-content "PWA Starter - Routing and Navigation")
   - [Service Workers](/starter/service-worker "PWA Starter - Using Service Workers")
   - [Publish Your PWA](/starter/publish "PWA Starter - Publish Your PWA to the Web")
+  - [Tech Overview](/starter/tech-overview "PWA Starter - Tech Overview")
+  - [Folder Structure](/starter/folder-structure "PWA Starter - Folder Structure")
   - [FAQ](/starter/faq "PWA Starter - FAQ")
 
 - **PWABuilder**
