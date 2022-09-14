@@ -73,17 +73,6 @@ export class TodoItem extends LitElement {
     super();
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-    let splitString = this.fix.split("~");
-
-    if(splitString.length > 1){
-      this.fix = splitString.join(" "+ this.field + " ");
-    } else {
-      this.fix = splitString.join(" ");
-    }
-  }
-
   bubbleEvent(){
     let event = new CustomEvent('todo-clicked', {
       detail: {
@@ -102,7 +91,11 @@ export class TodoItem extends LitElement {
       <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
         ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
-        <p>${this.fix}</p>
+        <p>${this.fix.split("~").length > 1 ? 
+            this.fix.split("~").join(" "+ this.field + " ") :
+            this.fix
+            } 
+        </p>
       </div>
     `;
   }
