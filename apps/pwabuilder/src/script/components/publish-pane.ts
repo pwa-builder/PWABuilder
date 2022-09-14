@@ -920,7 +920,7 @@ export class PublishPane extends LitElement {
     let form = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase);
     let packagingOptions = form!.getPackageOptions();
 
-    this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions)
+    this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
   }
 
   render() {
