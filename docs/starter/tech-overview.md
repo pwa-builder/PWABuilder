@@ -1,4 +1,4 @@
-## Technologies Used
+# Technologies Used
 
 The PWA Starter uses only a handful of libraries in order to remain lightweight and performant, but also while remaining easy and efficient to develop on. 
 
