@@ -917,10 +917,15 @@ export class PublishPane extends LitElement {
   }
 
   submitForm(){
-    let form = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase);
-    let packagingOptions = form!.getPackageOptions();
-
-    this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
+    let platForm = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase); // windows-form | android-form | ios-form | oculus-form
+    let form = platForm.getForm(); // the actual form element inside the platform form.
+    
+    if(form!.checkValidity()){
+      let packagingOptions = platForm!.getPackageOptions();
+      this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
+    } else {
+      form!.reportValidity();
+    }
   }
 
   render() {

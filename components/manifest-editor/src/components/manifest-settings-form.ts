@@ -20,7 +20,6 @@ export class ManifestSettingsForm extends LitElement {
   private errorCount: number = 0;
 
   @state() activeOverrideItems: string[] = [];
-  @state() inactiveOverrideItems: string[] = [];
 
   static get styles() {
     return css`
@@ -35,11 +34,13 @@ export class ManifestSettingsForm extends LitElement {
       sl-input::part(base),
       sl-select::part(control),
       sl-menu-item::part(base),
-      sl-menu-label::part(base) {
+      sl-menu-label::part(base),
+      sl-checkbox::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-font-size-medium: 16px;
         --sl-font-size-small: 14px;
         --sl-input-height-medium: 3em;
+        --sl-toggle-size: 16px;
       }
       #form-holder {
         display: flex;
@@ -216,7 +217,6 @@ export class ManifestSettingsForm extends LitElement {
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
-      
       this.requestValidateAllFields();
       this.initOverrideList();
       
@@ -307,18 +307,13 @@ export class ManifestSettingsForm extends LitElement {
 
   initOverrideList() {
     this.activeOverrideItems = [];
-    this.inactiveOverrideItems = [];
 
     if(this.manifest.display_override){
       this.manifest.display_override!.forEach((item: string) => {
         this.activeOverrideItems.push(item);
       });
     }
-    overrideOptions.forEach((item) => {
-      if(!this.activeOverrideItems.includes(item)){
-        this.inactiveOverrideItems.push(item);
-      }
-    });
+
   }
 
   async handleInputChange(event: InputEvent){
@@ -417,8 +412,6 @@ export class ManifestSettingsForm extends LitElement {
       let remIndex = this.activeOverrideItems.indexOf(label);
       this.activeOverrideItems.splice(remIndex, 1);
 
-      // push to inactive list
-      this.inactiveOverrideItems.push(label);
     } else {
       // push to active list
       this.activeOverrideItems.push(label);

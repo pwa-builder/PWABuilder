@@ -129,6 +129,10 @@ export class IOSForm extends AppPackageFormBase {
     return this.packageOptions;
   }
 
+  public getForm(): HTMLFormElement {
+    return this.shadowRoot!.querySelector("form")!;
+  }
+
   render() {
     return html`
     <div id="form-holder">

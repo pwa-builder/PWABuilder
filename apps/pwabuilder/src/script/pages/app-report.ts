@@ -623,6 +623,7 @@ export class AppReport extends LitElement {
           flex-flow: row wrap;
           align-items: flex-start;
           justify-content: space-between;
+          width: 100%;
         }
 
         #two-cell-row > * {
@@ -1095,9 +1096,9 @@ export class AppReport extends LitElement {
     // and the invalid things show after.
     this.validationResults.sort((a, b) => {
       if(a.valid && !b.valid){
-        return -1;
-      } else if(b.valid && !a.valid){
         return 1;
+      } else if(b.valid && !a.valid){
+        return -1;
       } else {
         return a.member.localeCompare(b.member);
       }
@@ -1388,7 +1389,7 @@ export class AppReport extends LitElement {
 
     if(instantRed){
       return {"green": false, "red": true, "yellow": false};
-    } else if(ratio != 1){
+    } else if(ratio < .7){
       return {"green": false, "red": false, "yellow": true};
     } else {
       return {"green": true, "red": false, "yellow": false};
@@ -1572,7 +1573,7 @@ export class AppReport extends LitElement {
             <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.styles)}>
               <div id="card-header">
                 <div id="pwa-image-holder">
-                  ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
+                  ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} ialt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
@@ -1691,7 +1692,7 @@ export class AppReport extends LitElement {
                   </todo-item>`
               ) : html`<span class="loader"></span>`}
 
-            ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ?
+            ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
               html`
               <div id="pagination-actions">
                 <sl-icon name="chevron-left" @click=${() => this.switchPage(false)}></sl-icon>
@@ -2082,7 +2083,7 @@ export class AppReport extends LitElement {
 
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;

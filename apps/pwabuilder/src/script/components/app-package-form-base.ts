@@ -185,6 +185,10 @@ export class AppPackageFormBase extends LitElement {
     return {};
   }
 
+  getForm(): HTMLFormElement | undefined {
+    return undefined;
+  }
+
   protected renderFormInput(formInput: FormInput): TemplateResult {
     // If it's a checkbox or radio, the label comes after the check
     if (formInput.type === 'checkbox' || formInput.type === 'radio') {
