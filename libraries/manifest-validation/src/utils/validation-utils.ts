@@ -1,4 +1,4 @@
-import { Manifest } from "../interfaces";
+import { Manifest, RelatedApplication } from "../interfaces";
 import { langCodes, languageCodes } from "../locales";
 
 const possibleManiKeys = [
@@ -132,6 +132,33 @@ export function isAtLeast(sizes: string, width: number, height: number): boolean
   const dimensions = getDimensions(sizes);
   return dimensions.some(i => i.width >= width && i.height >= height);
 }
+
+export function validateSingleRelatedApp(ra: RelatedApplication){
+  if(!platformOptions.includes(ra.platform)){
+    return "platform";
+  }
+
+  if(!isValidURL(ra.url!)){
+    return "url";
+  }
+
+  return "valid";
+}
+
+function isValidURL(str: string) {
+  // from https://stackoverflow.com/a/14582229 but removed the ip address section
+  var pattern = new RegExp(
+    '^((https?:)?\\/\\/)?' + // protocol
+    '(?:\\S+(?::\\S*)?@)?(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}' + // domain name
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    '(\\\\#[-a-z\\\\d_]*)?', // fragment locator
+    'i' // case insensitive
+  );
+  return !!pattern.test(str);
+}
+
+const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 
 export const required_fields = ["icons", "name", "short_name", "start_url"];
 export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
