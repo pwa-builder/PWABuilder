@@ -4,7 +4,7 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     "rootDir": "./src",
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
-    "removeComments": true,                           /* Disable emitting comments. */
+    "removeComments": false,                           /* Disable emitting comments. */
     "moduleResolution": "node",
     "esModuleInterop": true,
     "module": "CommonJS",
