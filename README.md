@@ -10,7 +10,6 @@ This repo is home to several projects in the PWABuilder family of tools.
 | [PWABuilder.com](https://pwabuilder.com) | The best way to package PWAs for various stores. | [/apps/pwabuilder](/apps/pwabuilder) | [PWABuilder docs](https://docs.pwabuilder.com) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 | [PWA Studio](https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio) | PWA Studio makes VSCode the BEST developer environment for building Progressive Web Apps. | [/apps/pwabuilder-vscode](/apps/pwabuilder-vscode) | [PWA Studio docs](https://docs.pwabuilder.com/#/studio/quick-start) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
 | [PWA Starter](https://github.com/pwa-builder/pwa-starter) | Our opinionated and production tested progressive web app (PWA) template for creating new projects. | [Repo](https://github.com/pwa-builder/pwa-starter) | [PWA Starter docs](https://docs.pwabuilder.com/#/starter/quick-start) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| [PWABuilder Chromium Extension]() | Hackathon Project - An experiment, not officially supported.... for now 😊. | [/apps/pwabuilder-chromium-extension](/apps/pwabuilder-chromium-extension)
 
 ## Docs
 
