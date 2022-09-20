@@ -10,7 +10,7 @@ import "./manifest-screenshots-form"
 import "./manifest-preview-form"
 import "./manifest-code-form"
 
-import 'https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/components/tab-group/tab-group.js';
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
