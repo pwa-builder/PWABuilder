@@ -6,7 +6,6 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
-        console.log("manifest", manifest);
 
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
