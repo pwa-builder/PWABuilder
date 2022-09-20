@@ -136,16 +136,27 @@ export async function handleServiceWorkerCommand() {
     }
 }
 
-export async function generateServiceWorker(): Promise<vscode.Uri | undefined> {
+export async function generateServiceWorker(skipPrompts?: boolean): Promise<vscode.Uri | undefined> {
     // ask user where they want to save the service worker
-    const save_location = await vscode.window.showSaveDialog({
-        defaultUri: vscode.Uri.file("service-worker.js"),
-        filters: {
-            "Javascript": ["js"],
-            "Typescript": ["ts"]
-        },
-        saveLabel: "Save your Service Worker?"
-    });
+    let save_location: vscode.Uri | undefined;
+
+    if (!skipPrompts) {
+        save_location = await vscode.window.showSaveDialog({
+            defaultUri: vscode.Uri.file(
+                `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/service-worker.js`
+              ),
+            filters: {
+                "Javascript": ["js"],
+                "Typescript": ["ts"]
+            },
+            saveLabel: "Save your Service Worker?"
+        });
+    }
+    else {
+        save_location = vscode.Uri.file(
+            `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/service-worker.js`
+          )
+    }
 
     if (!save_location) {
         // user cancelled, so we should cancel

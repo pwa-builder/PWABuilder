@@ -7,13 +7,20 @@ import { findManifest } from './manifest-service';
 
 const pwaAssetGenerator = require('pwa-asset-generator');
 
-export async function generateScreenshots() {
+export async function generateScreenshots(skipPrompts?: boolean) {
     return new Promise(async (resolve, reject) => {
 
-        // ask user for the url they would like to have a screenshot of
-        const urlToScreenshot = await vscode.window.showInputBox({
-            prompt: 'Enter the URL you would like to screenshot',
-        });
+        let urlToScreenshot: string | undefined;
+
+        if (!skipPrompts) {
+            // ask user for the url they would like to have a screenshot of
+            urlToScreenshot = await vscode.window.showInputBox({
+                prompt: 'Enter the URL you would like to screenshot',
+            });
+        }
+        else {
+            urlToScreenshot = "https://webboard.app";
+        }
 
         if (!urlToScreenshot) {
             reject('No URL was provided');
@@ -40,38 +47,38 @@ export async function generateScreenshots() {
                             url: [urlToScreenshot]
                         }),
                     });
-        
+
                     const data = await response.json();
-        
-                    const screenshots = await handleScreenshots(data);
-        
+
+                    const screenshots = await handleScreenshots(data, skipPrompts ? true : false);
+
                     const manifest: vscode.Uri = await findManifest();
-        
+
                     // read manifest file
                     const manifestFile = await vscode.workspace.openTextDocument(
                         manifest
                     );
-        
+
                     const manifestObject: Manifest = JSON.parse(
                         manifestFile.getText()
                     );
-        
+
                     // add icons to manifest
                     manifestObject.screenshots = screenshots.screenshots;
-        
+
                     // write manifest file
                     await writeFile(
                         manifest.fsPath,
                         JSON.stringify(manifestObject, null, 2)
                     );
-        
+
                     // show manifest with vscode
                     await vscode.window.showTextDocument(manifestFile);
-        
+
                     progress.report({ message: "Screenshots generated successfully!" });
-        
+
                     resolve(manifestFile);
-        
+
                 } catch (err) {
                     console.error("error", err);
                     progress.report({ message: `Screenshots could not be generated: ${err}` });
@@ -81,28 +88,48 @@ export async function generateScreenshots() {
     });
 }
 
-export async function generateIcons() {
+export async function generateIcons(skipPrompts?: boolean) {
     return new Promise(async (resolve, reject) => {
         try {
             trackEvent("generate", { type: "icons" });
 
-            // ask user for icon file
-            const screenshotFile = await vscode.window.showOpenDialog({
-                canSelectFiles: true,
-                canSelectMany: false,
-                filters: {
-                    'Images': ['png', 'jpg', 'jpeg'],
-                },
-                openLabel: 'Select your Icon file, 512x512 is preferred'
-            });
+            let screenshotFile: vscode.Uri[] | undefined;
 
+            if (!skipPrompts) {
+                // ask user for icon file
+                screenshotFile = await vscode.window.showOpenDialog({
+                    canSelectFiles: true,
+                    canSelectMany: false,
+                    filters: {
+                        'Images': ['png', 'jpg', 'jpeg'],
+                    },
+                    openLabel: 'Select your Icon file, 512x512 is preferred',
+                });
+            }
+            else {
+                screenshotFile = [vscode.Uri.file(
+                    `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icon-512.png`
+                )];
+            }
+
+            let outputDir: vscode.Uri[] | undefined;
             // ask user for output directory
-            const outputDir = await vscode.window.showOpenDialog({
-                canSelectFiles: false,
-                canSelectMany: false,
-                canSelectFolders: true,
-                openLabel: 'Select output directory',
-            });
+            if (!skipPrompts) {
+                outputDir = await vscode.window.showOpenDialog({
+                    canSelectFiles: false,
+                    canSelectMany: false,
+                    canSelectFolders: true,
+                    openLabel: 'Select output directory',
+                    defaultUri: vscode.Uri.file(
+                        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icons`
+                    ),
+                });
+            }
+            else {
+                outputDir = [vscode.Uri.file(
+                    `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icons`
+                )]
+            }
 
             // show progress with vscode 
             vscode.window.withProgress({
@@ -175,17 +202,26 @@ export async function generateIcons() {
     })
 }
 
-async function handleScreenshots(data: any): Promise<{ path: string; screenshots: Array<any> }> {
+async function handleScreenshots(data: any, skipPrompts?: boolean): Promise<{ path: string; screenshots: Array<any> }> {
     return new Promise(async (resolve, reject) => {
         if (data.images) {
             // ask user to choose a directory to save files to
-            const uri = await vscode.window.showSaveDialog({
-                defaultUri: vscode.Uri.file(
+            let uri: vscode.Uri | undefined;
+
+            if (!skipPrompts) {
+                uri = await vscode.window.showSaveDialog({
+                    defaultUri: vscode.Uri.file(
+                        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/screenshots`
+                    ),
+                    saveLabel: "Save Screenshots",
+                    title: "Choose a directory to save generated Screenshots to",
+                });
+            }
+            else {
+                uri = vscode.Uri.file(
                     `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/screenshots`
-                ),
-                saveLabel: "Save Screenshots",
-                title: "Choose a directory to save generated Screenshots to",
-            });
+                );
+            }
 
             if (uri) {
                 // create directory based on uri
@@ -198,21 +234,23 @@ async function handleScreenshots(data: any): Promise<{ path: string; screenshots
                 newScreenshotsList = data.images.map((screenshot: any) => {
                     return new Promise(async (resolve) => {
                         // create file path to write file to
-                        const screenshotFile = vscode.Uri.file(
-                            `${uri.fsPath}/${screenshot.sizes}-screenshot.${screenshot.type.substring(
-                                screenshot.type.indexOf("/") + 1
-                            )}`
-                        );
-
-                        // create buffer from icon base64 data
-                        const buff: Buffer = Buffer.from(screenshot.src, "base64");
-
-                        // write file to disk
-                        await vscode.workspace.fs.writeFile(screenshotFile, buff);
-
-                        screenshot.src = vscode.workspace.asRelativePath(screenshotFile.fsPath);
-
-                        resolve(screenshot);
+                        if (uri) {
+                            const screenshotFile = vscode.Uri.file(
+                                `${uri.fsPath}/${screenshot.sizes}-screenshot.${screenshot.type.substring(
+                                    screenshot.type.indexOf("/") + 1
+                                )}`
+                            );
+    
+                            // create buffer from icon base64 data
+                            const buff: Buffer = Buffer.from(screenshot.src, "base64");
+    
+                            // write file to disk
+                            await vscode.workspace.fs.writeFile(screenshotFile, buff);
+    
+                            screenshot.src = vscode.workspace.asRelativePath(screenshotFile.fsPath);
+    
+                            resolve(screenshot);
+                        }
                     });
                 });
 
