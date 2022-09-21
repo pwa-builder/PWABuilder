@@ -2,28 +2,14 @@ import { LitElement, html, css } from "lit";
 import {customElement, state} from 'lit/decorators.js';
 import { Manifest } from "../interfaces/manifest";
 import { classMap } from "lit/directives/class-map.js";
-
-import {
-  provideFluentDesignSystem,
-  fluentButton,
-  fluentTextField,
-  fluentSelect,
-  fluentOption,
-  fluentDivider,
-  fluentTextArea,
-} from "@fluentui/web-components";
-
-import "@shoelace-style/shoelace/dist/components/color-picker/color-picker";
 import { getManifestInfo } from "../checks/manifest";
 
-provideFluentDesignSystem().register(
-  fluentButton(),
-  fluentTextField(),
-  fluentSelect(),
-  fluentOption(),
-  fluentDivider(),
-  fluentTextArea(),
-);
+import "@shoelace-style/shoelace/dist/components/color-picker/color-picker";
+import '@shoelace-style/shoelace/dist/components/divider/divider';
+import '@shoelace-style/shoelace/dist/components/button/button';
+import '@shoelace-style/shoelace/dist/components/select/select';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item';
+import '@shoelace-style/shoelace/dist/components/textarea/textarea';
 
 interface InputItem {
   title: string;
@@ -224,9 +210,8 @@ export class ManifestDesigner extends LitElement {
         width: 100%;
       }
 
-      .input-field fluent-text-field,
-      .input-field fluent-text-area,
-      .input-field fluent-select {
+      .input-field sl-textfield,
+      .input-field sl-select {
         width: 95%;
         margin-bottom: 0.75em;
         left: auto;
@@ -234,7 +219,7 @@ export class ManifestDesigner extends LitElement {
         margin-right: auto;
       }
 
-      fluent-divider {
+      sl-divider {
         margin: 1em 0;
       }
 
@@ -242,7 +227,7 @@ export class ManifestDesigner extends LitElement {
         position: relative;
       }
 
-      fluent-button.button-copy {
+      sl-button.button-copy {
         position: absolute;
         top: 28px;
         right: 8px;
@@ -301,18 +286,18 @@ export class ManifestDesigner extends LitElement {
         <form id="form" class="row">
           <h5>Application Information</h5>
           <div class="input-field-group">${this.renderInputItems(infoItems)}</div>
-          <fluent-divider></fluent-divider>
+          <sl-divider></sl-divider>
 
           <h5>Application Settings</h5>
           <div class="input-field-group">${this.renderInputItems(settingsItems)}</div>
-          <fluent-divider></fluent-divider>
+          <sl-divider></sl-divider>
 
           <h5>Application Images</h5>
-          <fluent-divider></fluent-divider>
+          <sl-divider></sl-divider>
 
           <h5>Advanced Capabilities</h5>
           <div class="input-field-group">${this.renderInputItems(capabilityItems)}</div>
-          <fluent-divider></fluent-divider>
+          <sl-divider></sl-divider>
 
         </form>
         <!-- TODO: Copy manifest JSON-->
@@ -321,7 +306,7 @@ export class ManifestDesigner extends LitElement {
         <section class="row">
           <h5>manifest.json</h5>
           <div id="output-container" class="output-container">
-            <fluent-button id="copy" class="button-copy" appearance="accent">Copy</fluent-button>
+            <sl-button id="copy" class="button-copy" appearance="accent">Copy</sl-button>
             ${this.renderOutput(infoItems)}
           </div>
         </section>
@@ -348,14 +333,14 @@ export class ManifestDesigner extends LitElement {
 
         field = html`
           <p>${item.title}</p>
-          <fluent-select title="Select ${item.title}">
+          <sl-select title="Select ${item.title}">
             ${item.menuItems.map(menuItem => {
               return html`
-                <fluent-option value="${menuItem}">${menuItem}</fluent-option>
+                <sl-menu-item value="${menuItem}">${menuItem}</sl-menu-item>
               `;
             }
           )}
-          </fluent-select>
+          </sl-select>
         `;
       } else if (item.type === 'color-picker') {
         classes = {'input-field': true, 'color-picker': true};
@@ -366,11 +351,11 @@ export class ManifestDesigner extends LitElement {
       } else if (item.type === 'text-area') {
         field = html`
           <p>${item.title}</p>
-          <fluent-text-area value="${value}" placeholder=""></fluent-textarea>
+          <sl-textarea value="${value}" placeholder=""></sl-textarea>
         `;
       } else {
         field = html`
-          <fluent-text-field appearance="outline" placeholder="${item.title}" value="${value}">${item.title}</fluent-text-field>
+          <sl-textarea appearance="outline" placeholder="${item.title}" value="${value}">${item.title}</sl-textarea>
         `;
       }
 

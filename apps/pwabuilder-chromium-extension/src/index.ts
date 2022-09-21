@@ -5,18 +5,9 @@ import './components/package-windows';
 // import './components/manifest-designer';
 import '@pwabuilder/manifest-editor';
 
-import {
-  provideFluentDesignSystem,
-  fluentTabs,
-  fluentTab,
-  fluentTabPanel
-} from "@fluentui/web-components";
-
-provideFluentDesignSystem().register(
-  fluentTabs(),
-  fluentTab(),
-  fluentTabPanel()
-);
+import "@shoelace-style/shoelace/dist/components/tab-group/tab-group";
+import "@shoelace-style/shoelace/dist/components/tab/tab";
+import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel";
 
 
 @customElement("pwa-extension")
@@ -24,23 +15,23 @@ export class PwaExtension extends LitElement {
 
   render() {
     return html`
-    <fluent-tabs>
-      <fluent-tab id="validate">Validate</fluent-tab>
-      <fluent-tab id="manifest">Manifest</fluent-tab>
-      <fluent-tab id="package">Package</fluent-tab>
+    <sl-tab-group>
+      <sl-tab slot="nav" panel="validate">Validate</sl-tab>
+      <sl-tab slot="nav" panel="manifest">Manifest</sl-tab>
+      <sl-tab slot="nav" panel="package">Package</sl-tab>
 
-      <fluent-tab-panel id="validatePanel">
+      <sl-tab-panel name="validate">
         <pwa-scanner></pwa-scanner>
-      </fluent-tab-panel>
+      </sl-tab-panel>
 
-      <fluent-tab-panel id="validatePanel">
+      <sl-tab-panel name="manifest">
         <pwa-manifest-editor></pwa-manifest-editor>
-      </fluent-tab-panel>
+      </sl-tab-panel>
 
-      <fluent-tab-panel id="validatePanel">
+      <sl-tab-panel name="package">
         <package-windows></package-windows>
-      </fluent-tab-panel>
-    </fluent-tabs>
+      </sl-tab-panel>
+    </sl-tab-group>
     `
     ;
   }
