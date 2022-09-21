@@ -3,6 +3,11 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { validateSingleField } from '@pwabuilder/manifest-validation';
 
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;

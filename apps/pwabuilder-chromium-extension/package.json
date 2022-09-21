@@ -4,8 +4,9 @@
   "description": "Hackathon Project - An experiment, not officially supported.... for now 😊",
   "main": "background.js",
   "scripts": {
-    "dev": "webpack --config webpack.config.js",
-    "preinstall": "node ../../scripts/setupDeps.js"
+    "dev": "webpack --config webpack.config.js --watch",
+    "preinstall": "node ../../scripts/setupDeps.js",
+    "build": "webpack --config webpack.config.js"
   },
   "repository": {
     "type": "git",
