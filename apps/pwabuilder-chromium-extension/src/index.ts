@@ -3,7 +3,7 @@ import {customElement} from 'lit/decorators.js';
 import './components/scanner';
 import './components/package-windows';
 // import './components/manifest-designer';
-// import '@pwabuilder/manifest-editor';
+import '@pwabuilder/manifest-editor';
 
 import "@shoelace-style/shoelace/dist/components/tab-group/tab-group";
 import "@shoelace-style/shoelace/dist/components/tab/tab";
@@ -25,7 +25,7 @@ export class PwaExtension extends LitElement {
       </sl-tab-panel>
 
       <sl-tab-panel name="manifest">
-        <!-- <pwa-manifest-editor></pwa-manifest-editor> -->
+        <pwa-manifest-editor></pwa-manifest-editor>
       </sl-tab-panel>
 
       <sl-tab-panel name="package">
