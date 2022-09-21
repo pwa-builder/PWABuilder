@@ -2,22 +2,11 @@ import { LitElement, html, css } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { windowsEndpoint } from "../endpoints";
 import { WindowsOptions } from "../interfaces/windowsOptions";
-
-import {
-  provideFluentDesignSystem,
-  fluentTextField,
-  fluentButton,
-  fluentTooltip,
-  fluentAnchor,
-} from "@fluentui/web-components";
 import { getManifestInfo } from "../checks/manifest";
 
-provideFluentDesignSystem().register(
-  fluentTextField(),
-  fluentButton(),
-  fluentTooltip(),
-  fluentAnchor()
-);
+import "@shoelace-style/shoelace/dist/components/input/input";
+import '@shoelace-style/shoelace/dist/components/button/button';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
 
 @customElement("package-windows")
 export class PackageWindows extends LitElement {
@@ -41,12 +30,12 @@ export class PackageWindows extends LitElement {
         flex-direction: column;
       }
 
-      form fluent-button {
+      form sl-button {
         width: 8em;
         justify-self: flex-end;
       }
 
-      fluent-tooltip p {
+      sl-tooltip p {
         white-space: pre-wrap;
         width: 20em;
       }
@@ -192,88 +181,87 @@ export class PackageWindows extends LitElement {
     return html`
       <div id="header-block">
         <h1>Package for The Microsoft Store</h1>
-        <fluent-anchor href="https://blog.pwabuilder.com/docs/windows-platform/">Documentation</fluent-anchor>
+        <a href="https://blog.pwabuilder.com/docs/windows-platform/">Documentation</a>
       </div>
 
       <form @submit="${($event: SubmitEvent) => this.handleSubmit($event)}">
         <!-- label for packageId input -->
-        <fluent-tooltip id="tooltip" anchor="packageId">
-          <p>
+        <sl-tooltip id="tooltip" anchor="packageId">
+          <div slot="content">
             The Package ID uniquely identifying your app in the Microsoft Store.
             Get this value from Windows Partner Center.
-          </p>
-        </fluent-tooltip>
-
-        <label for="packageId"
+          </div>
+          
+          <label for="packageId"
           >Package Id
-
-          <fluent-text-field
-            type="text"
-            id="packageId"
-            name="packageId"
-            placeholder="MyCompany.MyApp"
-            required
-            max-length="50"
-            min-length="3"
-            pattern="[a-zA-Z0-9.-]*$"
-          ></fluent-text-field>
+          
+          <sl-input
+          type="text"
+          id="packageId"
+          name="packageId"
+          placeholder="MyCompany.MyApp"
+          required
+          max-length="50"
+          min-length="3"
+          pattern="[a-zA-Z0-9.-]*$"
+          ></sl-input>
         </label>
+      </sl-tooltip>
 
         <!-- label for publisherDisplayName input -->
-        <fluent-tooltip id="tooltip" anchor="publisherDisplayName">
-          <p>
+        <sl-tooltip id="tooltip" anchor="publisherDisplayName">
+          <div slot="content">
             The display name of your app's publisher. Get this value from
             Windows Partner Center.
-          </p>
-        </fluent-tooltip>
-        <label for="publisherDisplayName"
+          </div>
+          <label for="publisherDisplayName"
           >Publisher Display Name
-          <fluent-text-field
-            type="text"
-            id="publisherDisplayName"
-            name="publisherDisplayName"
-            placeholder="Contoso Inc."
-            required
-            min-length="3"
-            spellcheck="false"
-          ></fluent-text-field>
+          <sl-input
+          type="text"
+          id="publisherDisplayName"
+          name="publisherDisplayName"
+          placeholder="Contoso Inc."
+          required
+          min-length="3"
+          spellcheck="false"
+          ></sl-input>
         </label>
+      </sl-tooltip>
 
         <!-- label for publisherCommonName input -->
-        <fluent-tooltip id="tooltip" anchor="publisherCommonName">
-          <p>
+        <sl-tooltip id="tooltip" anchor="publisherCommonName">
+          <div slot="content">
             The ID of your app's publisher. Get this value from Windows Partner
             Center.
-          </p>
-        </fluent-tooltip>
-        <label for="publisherCommonName"
+          </div>
+          <label for="publisherCommonName"
           >Publisher Common Name
-          <fluent-text-field
-            type="text"
-            id="publisherCommonName"
-            name="publisherCommonName"
-            placeholder="Publisher Common Name"
-            pattern="CN=.+"
-            required
-            spellcheck="false"
-            ,
-            min-length="4"
-            ,
-          ></fluent-text-field>
+          <sl-input
+          type="text"
+          id="publisherCommonName"
+          name="publisherCommonName"
+          placeholder="Publisher Common Name"
+          pattern="CN=.+"
+          required
+          spellcheck="false"
+          ,
+          min-length="4"
+          ,
+          ></sl-input>
         </label>
+      </sl-tooltip>
 
         <!-- label for version input -->
-        <fluent-tooltip id="tooltip" anchor="version">
-          <p>
+        <sl-tooltip id="tooltip" anchor="version">
+          <div slot="content">
             Your app version in the form of '1.0.0'. It must not start with zero
             and must be greater than classic package version. For new apps, this
             should be set to 1.0.1
-          </p>
-        </fluent-tooltip>
-
-        <label for="version"
-          >Version
-          <fluent-text-field
+          </div>
+          
+          <label for="version"
+            >Version
+            <sl-input
             type="text"
             id="version"
             name="version"
@@ -282,34 +270,35 @@ export class PackageWindows extends LitElement {
             placeholder="1.0.1"
             spellcheck="false"
             pattern="^[^0]+\\d*.\\d+.\\d+$"
-          ></fluent-text-field>
-        </label>
+            ></sl-input>
+          </label>
+        </sl-tooltip>
 
         <!-- label for classicVersion input -->
-        <fluent-tooltip id="tooltip" anchor="classicVersion">
-          <p>
+        <sl-tooltip id="tooltip" anchor="classicVersion">
+          <div slot="content">
             The version of your app that runs on older versions of Windows. Must
             be in the form of '1.0.0', it cannot start with zero, and must be
             less than app version. For new apps, this should be set to 1.0.0
-          </p>
-        </fluent-tooltip>
-        <label for="classicVersion"
-          >Classic Version
-          <fluent-text-field
-            type="text"
-            id="classicVersion"
-            name="classicVersion"
-            required
-            min-length="5"
-            placeholder="1.0.0"
-            spellcheck="false"
-            pattern="^[^0]+\\d*.\\d+.\\d+$"
-          ></fluent-text-field>
-        </label>
+          </div>
+          <label for="classicVersion"
+            >Classic Version
+            <sl-input
+              type="text"
+              id="classicVersion"
+              name="classicVersion"
+              required
+              min-length="5"
+              placeholder="1.0.0"
+              spellcheck="false"
+              pattern="^[^0]+\\d*.\\d+.\\d+$"
+            ></sl-input>
+          </label>
+        </sl-tooltip>
 
         <!-- submit button -->
-        <fluent-button appearance="accent" type="submit"
-          >Generate</fluent-button
+        <sl-button appearance="accent" type="submit"
+          >Generate</sl-button
         >
       </form>
     `;
