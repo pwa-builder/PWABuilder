@@ -16,6 +16,10 @@ import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
 //import { validateRequiredFields } from '@pwabuilder/manifest-validation';
 
+import '@shoelace-style/shoelace/dist/components/tab/tab.js';
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
+import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
+
 /**
  * @since 0.1
  * @status stable
