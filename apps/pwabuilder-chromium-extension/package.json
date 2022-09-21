@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/chrome": "0.0.180",
     "copy-webpack-plugin": "^10.2.4",
-    "lit": "^2.2.1",
+    "lit": "^2.3.1",
     "ts-loader": "^9.2.8",
     "typescript": "^4.5.4",
     "webpack": "^5.70.0",
@@ -31,6 +31,8 @@
   "dependencies": {
     "@fluentui/web-components": "^2.3.1",
     "@lottiefiles/lottie-player": "^1.5.6",
-    "@shoelace-style/shoelace": "^2.0.0-beta.72"
+    "@shoelace-style/shoelace": "^2.0.0-beta.83",
+    "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
+    "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation"
   }
 }

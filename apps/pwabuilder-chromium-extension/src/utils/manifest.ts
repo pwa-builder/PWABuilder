@@ -2,8 +2,7 @@ import { testWebsiteUrl } from "./regex";
 import { findBestAppIcon } from "./icons";
 import { IconInfo } from "../interfaces/IconInfo";
 import { ManifestContext, TestResult } from "../interfaces/manifest";
-import { Validation } from "../../dist/dist/interfaces";
-import { validateManifest } from "../../dist/dist";
+import { Validation, validateManifest } from "@pwabuilder/manifest-validation";
 
 export function validateScreenshotUrlsList(urls: Array<string | undefined>) {
   const results: Array<boolean> = [];

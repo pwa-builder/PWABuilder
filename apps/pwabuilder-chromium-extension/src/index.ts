@@ -34,7 +34,7 @@ export class PwaExtension extends LitElement {
       </fluent-tab-panel>
 
       <fluent-tab-panel id="validatePanel">
-        <manifest-editor></manifest-editor>
+        <pwa-manifest-editor></pwa-manifest-editor>
       </fluent-tab-panel>
 
       <fluent-tab-panel id="validatePanel">
