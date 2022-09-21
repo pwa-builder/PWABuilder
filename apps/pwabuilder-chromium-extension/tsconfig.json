@@ -10,6 +10,7 @@
     "outDir": "dist/js",
     "noEmitOnError": true,
     "experimentalDecorators": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "useDefineForClassFields": false
   }
 }
