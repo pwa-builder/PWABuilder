@@ -91,3 +91,5 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
 
     return validations.length === 0;
 }
+
+export * from './interfaces';

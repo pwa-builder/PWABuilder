@@ -96,6 +96,7 @@ export class PWAScanner extends LitElement {
 
   async firstUpdated() {
     let url = await chrome.tabs.query({ active: true, currentWindow: true });
+    console.log("url -", url)
     if (url.length > 0) {
       this.currentUrl = url[0].url || "";
     }
@@ -106,6 +107,7 @@ export class PWAScanner extends LitElement {
   }
 
   private async runManifestChecks() {
+    console.log("runManifestChecks")
     this.manifestTestsLoading = true;
     let manifestInfo = await getManifestInfo();
 
@@ -129,7 +131,8 @@ export class PWAScanner extends LitElement {
     }
 
     this.manifestTestsLoading = false;
-
+    console.log("runManifestChecks done", this.manifestTestResults)
+    this.requestUpdate();
 
   }
 
@@ -148,6 +151,8 @@ export class PWAScanner extends LitElement {
     }
 
     this.swTestsLoading = false;
+    this.requestUpdate();
+
   }
 
   private async runSecurityChecks() {
@@ -164,11 +169,14 @@ export class PWAScanner extends LitElement {
     }
 
     this.securityTestsLoading = false;
+    this.requestUpdate();
+
   }
 
 
 
   render() {
+    console.log('rendering');
     return html`
       <div class="root">
         <div>Current Url = ${this.currentUrl}</div>
