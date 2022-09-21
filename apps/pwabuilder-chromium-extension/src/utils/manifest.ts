@@ -1,8 +1,8 @@
 import { testWebsiteUrl } from "./regex";
-import { findBestAppIcon } from "./icons";
-import { IconInfo } from "../interfaces/IconInfo";
-import { ManifestContext, TestResult } from "../interfaces/manifest";
+import { Manifest, ManifestContext, TestResult } from "../interfaces/manifest";
 import { Validation, validateManifest } from "@pwabuilder/manifest-validation";
+
+let currentManifest: Manifest | undefined;
 
 export function validateScreenshotUrlsList(urls: Array<string | undefined>) {
   const results: Array<boolean> = [];
@@ -115,6 +115,8 @@ export async function runManifestChecks(
   if (context.isGenerated === true || !context.manifest) {
     return default_results;
   } else {
+    currentManifest = context.manifest;
+
     const manifestTests: Validation[] = await validateManifest((context.manifest as any));
 
     let results = [];
@@ -134,4 +136,8 @@ export async function runManifestChecks(
 
     return (results as TestResult[]);
   }
+}
+
+export function getCurrentManifest(): Manifest | undefined {
+  return currentManifest;
 }

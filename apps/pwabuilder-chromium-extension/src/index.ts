@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import {customElement} from 'lit/decorators.js';
+import {customElement, state} from 'lit/decorators.js';
 import './components/scanner';
 import './components/package-windows';
 // import './components/manifest-designer';
@@ -8,10 +8,21 @@ import '@pwabuilder/manifest-editor';
 import "@shoelace-style/shoelace/dist/components/tab-group/tab-group";
 import "@shoelace-style/shoelace/dist/components/tab/tab";
 import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel";
+import { getCurrentManifest } from "./utils/manifest";
+import { Manifest } from "./interfaces/manifest";
 
 
 @customElement("pwa-extension")
 export class PwaExtension extends LitElement {
+
+  @state() currentMani: Manifest | undefined;
+
+  firstUpdated() {
+    const currentManifest = getCurrentManifest();
+    if (currentManifest) {
+      this.currentMani = currentManifest;
+    }
+  }
 
   render() {
     return html`
@@ -25,7 +36,7 @@ export class PwaExtension extends LitElement {
       </sl-tab-panel>
 
       <sl-tab-panel name="manifest">
-        <pwa-manifest-editor></pwa-manifest-editor>
+        <pwa-manifest-editor .initialManifest="${this.currentMani}"></pwa-manifest-editor>
       </sl-tab-panel>
 
       <sl-tab-panel name="package">
