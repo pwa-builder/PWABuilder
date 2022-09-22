@@ -130,7 +130,17 @@
       "description": "Login to Sync'd"
     }
   ],
-  "share_target": {}
+  "share_target": {},
+  "protocol_handlers": [
+    {
+      "protocol": "web+jngl",
+      "url": "/lookup?type=%s"
+    },
+    {
+      "protocol": "web+jnglstore",
+      "url": "//shop?for=%s"
+    }
+  ]
 };
       editor.manifestURL = "https://friendship-calendar-c0efc.web.app/manifest.json"
 

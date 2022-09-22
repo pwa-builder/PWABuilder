@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
-import { validateSingleField, singleFieldValidation, validateSingleRelatedApp } from '@pwabuilder/manifest-validation';
+import { validateSingleField, singleFieldValidation, validateSingleRelatedApp, validateSingleProtocol } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
 //import { validateSingleField } from 'manifest-validation';
 
@@ -327,6 +327,13 @@ export class ManifestPlatformForm extends LitElement {
         if(field === "related_applications"){
           this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
             let part = validateSingleRelatedApp(app);
+            if(part !== "valid"){
+              broken_inner.push({ part: part, index: index })
+            }
+          })
+        } else if(field === "protocol_handlers"){
+          this.manifest[field]!.forEach((app: any, index: number) => {
+            let part = validateSingleProtocol(app);
             if(part !== "valid"){
               broken_inner.push({ part: part, index: index })
             }
@@ -731,7 +738,7 @@ export class ManifestPlatformForm extends LitElement {
           let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
           error_div!.parentElement!.removeChild(error_div!);
         }
-        
+
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
         broken_inner.forEach((error: any) => {

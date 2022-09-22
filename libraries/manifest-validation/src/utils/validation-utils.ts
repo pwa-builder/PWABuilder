@@ -158,8 +158,32 @@ function isValidURL(str: string) {
   return !!pattern.test(str);
 }
 
-const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
+function isValidRelativeURL(str: string){
+  var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+  return !!pattern.test(str);
+}
 
+export function validateSingleProtocol(proto: any){
+  let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
+  if(!validProtocol){
+    return "protocol";
+  }
+
+  // i guess more importantly we should check if its in the scope of the site.
+
+  let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
+
+  if(!validURL){
+    return "url";
+  }
+
+  return "valid";
+}
+
+
+
+const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
+const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "geo", "gopher", "im", "ipfs", "ipns", "irc", "ircs", "magnet", "mailto", "matrix", "mms", "news", "nntp", "sip", "sms", "smsto", "ssb", "ssh", "tel", "urn", "webcal", "wtai", "xmpp"];
 export const required_fields = ["icons", "name", "short_name", "start_url"];
 export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];
