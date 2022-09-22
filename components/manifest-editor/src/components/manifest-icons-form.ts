@@ -7,7 +7,7 @@ import {
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
 
-import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
+// import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 

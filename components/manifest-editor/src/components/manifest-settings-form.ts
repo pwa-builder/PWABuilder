@@ -4,8 +4,8 @@ import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 
 // import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
+// import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+// import '@shoelace-style/shoelace/dist/components/select/select.js';
 
 @customElement('manifest-settings-form')
 export class ManifestSettingsForm extends LitElement {
