@@ -141,3 +141,8 @@ export async function runManifestChecks(
 export function getCurrentManifest(): Manifest | undefined {
   return currentManifest;
 }
+
+export function setCurrentManifest(manifest: Manifest) {
+  currentManifest = manifest;
+  return currentManifest;
+}

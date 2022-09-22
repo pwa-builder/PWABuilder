@@ -6,11 +6,12 @@ import "@shoelace-style/shoelace/dist/components/badge/badge";
 import "@shoelace-style/shoelace/dist/components/spinner/spinner";
 import "@shoelace-style/shoelace/dist/components/details/details";
 
-import { runManifestChecks } from "../utils/manifest";
+import { runManifestChecks, setCurrentManifest } from "../utils/manifest";
 import { TestResult } from "../interfaces/manifest";
 import { testSecurity } from "../checks/security";
 import { getManifestTestResults, getSwInfo } from "../checks/sw";
 import { getManifestInfo } from "../checks/manifest";
+import { ManifestDetectionResult } from "../interfaces/validation";
 
 interface ValidationTests {
   passedTests: Array<TestResult>;
@@ -83,14 +84,21 @@ export class PWAScanner extends LitElement {
       this.currentUrl = url[0].url || "";
     }
 
-    this.runManifestChecks();
+    let manifestInfo = await getManifestInfo();
+
+    // emit custom event with manifestInfo
+    const event = new CustomEvent('got-manifest', { detail: manifestInfo, bubbles: true, composed: true });
+    this.dispatchEvent(event);
+
+    this.runManifestChecks(manifestInfo);
     this.runSwChecks();
     this.runSecurityChecks();
   }
 
-  private async runManifestChecks() {
+  private async runManifestChecks(manifestInfo: ManifestDetectionResult) {
     this.manifestTestsLoading = true;
-    let manifestInfo = await getManifestInfo();
+
+    setCurrentManifest(manifestInfo.manifest!);
 
     const tests = await runManifestChecks({
       manifestUrl: manifestInfo.manifestUri!,
@@ -177,17 +185,18 @@ export class PWAScanner extends LitElement {
       return html`
         <div class="test-wrapper">
           <div class="test-header">${tests.category}</div>
-            ${[...tests.failedTests, ...tests.passedTests].map(t => html`
-            <sl-details>
-              <div slot="summary" .className=${t.result ? 'item-passed' : t.category==='required' ? 'item-failed' : 'item-recommended' }>
-                <sl-badge variant="${t.result ? 'success' : t.category === 'required' ? 'danger' : 'warning'}">
-                  ${t.result ? 'Passed' : t.category === 'required' ? 'Failed' : 'Recommended'}
-                </sl-badge>
-                ${t.infoString}
-              </div>
-              <div class="panel">${(t as any).description}</div>
-            </sl-details>
-            `)}
+          ${[...tests.failedTests, ...tests.passedTests].map(t => html`
+          <sl-details>
+            <div slot="summary" .className=${t.result ? 'item-passed' : t.category === 'required' ? 'item-failed'
+              : 'item-recommended'}>
+              <sl-badge variant="${t.result ? 'success' : t.category === 'required' ? 'danger' : 'warning'}">
+                ${t.result ? 'Passed' : t.category === 'required' ? 'Failed' : 'Recommended'}
+              </sl-badge>
+              ${t.infoString}
+            </div>
+            <div class="panel">${(t as any).description}</div>
+          </sl-details>
+          `)}
         </div>
       `;
     }
