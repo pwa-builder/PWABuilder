@@ -178,8 +178,10 @@ export class ComapniesPackaged extends LitElement {
   }
 
   firstUpdated() {
-    const shuffled = this.shuffle(this.companies);
-    this.companies = [...shuffled];
+    // commenting out the code that randomizes the order
+    // so that we can control which companies appear in what order.
+    /* const shuffled = this.shuffle(this.companies);
+    this.companies = [...shuffled]; */
   }
 
   shuffle(array: any) {
