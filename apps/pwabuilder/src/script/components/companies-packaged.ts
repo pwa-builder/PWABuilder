@@ -5,7 +5,7 @@ import { customElement, state } from 'lit/decorators.js';
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
-  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "twitter"];
+  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "glass", "twitter"];
   @state() paused: boolean = false;
   
   static get styles() {
@@ -75,13 +75,14 @@ export class ComapniesPackaged extends LitElement {
 
       @keyframes scroll {
         0% { transform: translateX(0); }
-        14% { transform: translateX(calc(var(--slide-width) * -1)); }
-        28% { transform: translateX(calc(var(--slide-width) * -2)); }
-        42% { transform: translateX(calc(var(--slide-width) * -3)); }
-        56% { transform: translateX(calc(var(--slide-width) * -4)); }
-        70% { transform: translateX(calc(var(--slide-width) * -5)); }
-        84% { transform: translateX(calc(var(--slide-width) * -6)); }
-        100% { transform: translateX(calc(var(--slide-width) * -7)); }
+        12% { transform: translateX(calc(var(--slide-width) * -1)); }
+        24% { transform: translateX(calc(var(--slide-width) * -2)); }
+        36% { transform: translateX(calc(var(--slide-width) * -3)); }
+        48% { transform: translateX(calc(var(--slide-width) * -4)); }
+        60% { transform: translateX(calc(var(--slide-width) * -5)); }
+        72% { transform: translateX(calc(var(--slide-width) * -6)); }
+        84% { transform: translateX(calc(var(--slide-width) * -7)); }
+        100% { transform: translateX(calc(var(--slide-width) * -8)); }
       }
 
       .slider {
@@ -116,7 +117,7 @@ export class ComapniesPackaged extends LitElement {
         animation: scroll 21s infinite ease;
         animation-delay: 3s;
         display: flex;
-        width: calc(var(--slide-width) * 14);
+        width: calc(var(--slide-width) * 16);
       }
       
       .slide {
