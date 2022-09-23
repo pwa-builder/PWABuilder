@@ -8,7 +8,7 @@
     "preinstall": "node ../../scripts/setupDeps.js",
     "build": "webpack --config webpack.config.js",
     "build:components": "webpack --config webpack.config.components.js",
-    "build:components:Watch": "webpack --config webpack.config.components.js --watch",
+    "build:components:watch": "webpack --config webpack.config.components.js --watch",
     "serve:components": "web-dev-server --node-resolve --open --watch --app-index components-test/index.html",
     "start:components": "run-p build:components:watch serve:components"
   },

@@ -4,7 +4,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   mode: "production",
   entry: {
-    scanner: path.resolve(__dirname, "src", "components/scanner.ts"),
+    "pwabuilder-components": path.resolve(__dirname, "src", "components/index.ts"),
   },
   output: {
     path: path.join(__dirname, "components-dist"),

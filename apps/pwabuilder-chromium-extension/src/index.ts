@@ -50,7 +50,7 @@ export class PwaExtension extends LitElement {
       </sl-tab-panel>
 
       <sl-tab-panel name="package">
-        <package-windows></package-windows>
+        <package-windows .siteData=${this.siteData}></package-windows>
       </sl-tab-panel>
     </sl-tab-group>
     `

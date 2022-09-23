@@ -11,6 +11,7 @@ import { TestResult } from "../interfaces/manifest";
 import { testSecurity } from "../checks/security";
 import { getManifestTestResults } from "../checks/sw";
 import { SiteData } from "../interfaces/validation";
+import { deepEqual } from "../utils/utils";
 
 interface ValidationTests {
   passedTests: Array<TestResult>;
@@ -74,13 +75,29 @@ export class PWAScanner extends LitElement {
   }
 
   set siteData(val: SiteData) {
+    const oldValue = this._siteData;
     this._siteData = val;
 
     if (this._siteData) {
-      this.runManifestChecks();
-      this.runSwChecks();
-      this.runSecurityChecks();
+      if (oldValue) {
+        if (!deepEqual(oldValue.manifest, this._siteData.manifest)) {
+          this.runManifestChecks();
+        }
+        if (!deepEqual(oldValue.sw, this._siteData.sw)) {
+          this.runSwChecks();
+        }
+        // if (!deepEqual(oldValue.security, this._siteData.security)) {
+        if (this._siteData.currentUrl && oldValue.currentUrl !== this._siteData.currentUrl) {
+          this.runSecurityChecks();
+        }
+      } else {
+        this.runManifestChecks();
+        this.runSwChecks();
+        this.runSecurityChecks();
+      }
     }
+
+    this.requestUpdate();
   }
 
   @state() private manifestTestResults!: ValidationTests;
@@ -131,6 +148,9 @@ export class PWAScanner extends LitElement {
   }
 
   private async runSecurityChecks() {
+    if (!this.siteData.currentUrl) {
+      return;
+    }
     this.securityTestsLoading = true;
     let tests = await testSecurity(this.siteData.currentUrl);
 
