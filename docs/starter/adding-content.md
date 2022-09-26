@@ -33,7 +33,7 @@ router.setRoutes([
         path: '/about', // while this route will take us to the app-about component
         component: 'app-about',
         action: async () => { // load our component asynchronously
-          await import('./script/pages/app-about.js'); 
+          await import('./pages/app-about.js'); 
         },
       },
     ],
@@ -74,7 +74,7 @@ To add a new page to your PWA, you will need to create a new component, and then
 
 #### Creating the Page Component
 
-1. Navigate to the `src/script/pages/` directory.
+1. Navigate to the `src/pages/` directory.
 
 2. Create a new typscript file called `new-page.ts`
 
@@ -113,7 +113,7 @@ We can add to our existing list of paths in our `chlildren` property:
   path: '/new-page',
   component: 'new-page',
   action: async () => { 
-    await import('./script/pages/new-page.js'); 
+    await import('./pages/new-page.js'); 
   },
 }
 ```
@@ -132,14 +132,14 @@ router.setRoutes([
         path: '/about', // while this route will take us to the app-about component
         component: 'app-about',
         action: async () => { // load our component asynchronously
-          await import('./script/pages/app-about.js'); 
+          await import('./script/app-about.js'); 
         },
       },
       {
         path: '/new-page',
         component: 'new-page',
         action: async () => { 
-          await import('./script/pages/new-page.js'); 
+          await import('./script/new-page.js'); 
         },
       }
     ],
