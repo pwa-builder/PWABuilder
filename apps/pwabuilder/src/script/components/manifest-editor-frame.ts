@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, state, property } from 'lit/decorators.js';
 
 import {
   smallBreakPoint,
@@ -19,6 +19,7 @@ export class ManifestEditorFrame extends LitElement {
 
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
+  @property({type: Boolean}) isGenerated: boolean = false;
 
   static get styles() {
     return [
@@ -274,8 +275,8 @@ export class ManifestEditorFrame extends LitElement {
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">
-              <h1>Generate Manifest</h1>
-              <p>Generate your Manifest Base Files Package below by editing the required fields. Once you have added the updated maifest to your PWA, re-test the url to make sure your PWA is ready for stores!</p>
+              <h1>${this.isGenerated ? "Generate manifest" : "Edit your manifest"}</h1>
+              <p>Update your app name and description, add or update your icons, enable platform capabilities and more by editing the fields below. Once you are done with your changes, download or copy the generated manifest and/or icons and upload them to your site. Once done, re-test the url to make sure your PWA is ready for stores!</p>
             </div>
             <pwa-manifest-editor 
               .initialManifest=${this.manifest} 

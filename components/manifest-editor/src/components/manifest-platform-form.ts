@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
-import { validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { validateSingleField, singleFieldValidation, validateSingleRelatedApp, validateSingleProtocol } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
 //import { validateSingleField } from 'manifest-validation';
 
@@ -19,9 +19,13 @@ let fieldsValidated: boolean = false;
 @customElement('manifest-platform-form')
 export class ManifestPlatformForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
-
- 
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
 
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
@@ -285,15 +289,13 @@ export class ManifestPlatformForm extends LitElement {
      to reset when it changes. It triggers an update event which would cause all of this to
      run again. Its true purpose is to keep the view aligned with the manifest. */
      
-    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
-      manifestInitialized = true;
+    if(manifestInitialized){
+      manifestInitialized = false;
       if(!fieldsValidated){
         this.requestValidateAllFields();
         fieldsValidated = true;
       }
       this.reset();
-    } else {
-      manifestInitialized = false;
     }
   }
 
@@ -321,17 +323,41 @@ export class ManifestPlatformForm extends LitElement {
       if(this.manifest[field]){
         const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
         let passed = validation!.valid;
+        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+
+        let broken_inner: any[] = [];
+        if(field === "related_applications"){
+          this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
+            let part = validateSingleRelatedApp(app);
+            if(part !== "valid"){
+              broken_inner.push({ part: part, index: index })
+            }
+          })
+        } else if(field === "protocol_handlers"){
+          this.manifest[field]!.forEach((app: any, index: number) => {
+            let part = validateSingleProtocol(app);
+            if(part !== "valid"){
+              broken_inner.push({ part: part, index: index })
+            }
+          })
+        }
+
+        if(broken_inner.length > 0){
+          let div = document.createElement('div');
+          div.classList.add(`${field}-error-div`);
+          broken_inner.forEach((error: any) => {
+            let p = document.createElement('p');
+            p.innerText = `There is an issue with ${field} #${error.index + 1}: ${error.part} is invalid`;
+            p.style.color = "#eb5757";
+            div.append(p);
+            this.errorCount++;
+          });
+          input!.classList.add("error");
+          insertAfter(div, input!.parentNode!.lastElementChild);
+        }
 
         if(!passed){
-          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          
-          // Remove old erros
-          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-            error_div!.parentElement!.removeChild(error_div!);
-          }
-          
-          // update error list with new erros
+          // update error list with new errors
           if(validation.errors){
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
@@ -660,6 +686,20 @@ export class ManifestPlatformForm extends LitElement {
     this.validatePlatformList("categories", categories);
   }
 
+  validatePlatformEntries(field: string){
+    let broken_inner: any[] = [];
+    if(field === "related_applications"){
+      this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
+        let part = validateSingleRelatedApp(app);
+        if(part !== "valid"){
+          broken_inner.push({ part: part, index: index })
+        }
+      })
+    }
+
+    return broken_inner;
+  }
+
   async validatePlatformList(field: string, updatedValue: any[]){
 
     if(this.validationPromise){
@@ -669,6 +709,8 @@ export class ManifestPlatformForm extends LitElement {
     let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
+
+
 
     if(passed){
 
@@ -683,7 +725,34 @@ export class ManifestPlatformForm extends LitElement {
 
       this.dispatchEvent(manifestUpdated);
 
-      if(input!.classList.contains("error")){
+      let broken_inner: any[] = [];
+      if(field === "related_applications"){
+        this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
+          let part = validateSingleRelatedApp(app);
+          if(part !== "valid"){
+            broken_inner.push({ part: part, index: index })
+          }
+        })
+      }
+
+      if(broken_inner.length > 0){
+        if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+          let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+          error_div!.parentElement!.removeChild(error_div!);
+        }
+
+        let div = document.createElement('div');
+        div.classList.add(`${field}-error-div`);
+        broken_inner.forEach((error: any) => {
+          let p = document.createElement('p');
+          p.innerText = `There is an issue with ${field} #${error.index + 1}: ${error.part} is invalid`;
+          p.style.color = "#eb5757";
+          div.append(p);
+          this.errorCount++;
+        });
+        input!.classList.add("error");
+        insertAfter(div, input!.parentNode!.lastElementChild);
+      } else if(input!.classList.contains("error")){
         input!.classList.toggle("error");
         this.errorCount--;
         let last = input!.parentNode!.lastElementChild;
@@ -693,6 +762,23 @@ export class ManifestPlatformForm extends LitElement {
       if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
         let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
         error_div!.parentElement!.removeChild(error_div!);
+      }
+
+      if(field === "related_applications" || "shortcuts" || "protocol_handlers"){
+        let broken_inner = this.validatePlatformEntries(field);
+        if(broken_inner.length > 0){
+          let div = document.createElement('div');
+          div.classList.add(`${field}-error-div`);
+          broken_inner.forEach((error: any) => {
+            let p = document.createElement('p');
+            p.innerText = `There is an issue with ${field} #${error.index + 1}: ${error.part} is invalid`;
+            p.style.color = "#eb5757";
+            div.append(p);
+            this.errorCount++;
+          });
+          input!.classList.add("error");
+          insertAfter(div, input!.parentNode!.lastElementChild);
+        }
       }
       
       // update error list

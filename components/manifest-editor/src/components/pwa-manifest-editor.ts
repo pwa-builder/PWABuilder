@@ -53,6 +53,8 @@ export class PWAManifestEditor extends LitElement {
 
   @property({type: String}) manifestURL: string = '';
 
+  @property({type: String}) startingTab: string = "info";
+
   @state() manifest: Manifest = {};
   @state() selectedTab: string = "info";
 
@@ -240,11 +242,11 @@ export class PWAManifestEditor extends LitElement {
   render() {
     return html`
       <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)}>
-        <sl-tab slot="nav" panel="info">Info</sl-tab>
-        <sl-tab slot="nav" panel="settings">Settings</sl-tab>
-        <sl-tab slot="nav" panel="platform">Platform</sl-tab>
-        <sl-tab slot="nav" panel="icons">Icons</sl-tab>
-        <sl-tab slot="nav" panel="screenshots">Screenshots</sl-tab>
+        <sl-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</sl-tab>
+        <sl-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</sl-tab>
+        <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
+        <sl-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</sl-tab>
+        <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
         <!-- <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
         <sl-tab slot="nav" panel="code">Code</sl-tab>
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-info-form></sl-tab-panel>

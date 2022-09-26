@@ -15,7 +15,13 @@ let manifestInitialized = false;
 @customElement('manifest-screenshots-form')
 export class ManifestScreenshotsForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
   @property({type: String}) manifestURL: string = "";
 
   @state() screenshotUrlList: Array<string | undefined> = [undefined];
@@ -186,8 +192,8 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
-      manifestInitialized = true;
+    if(manifestInitialized){
+      manifestInitialized = false;
       this.requestValidateAllFields();
       if(this.manifest.screenshots && this.initialScreenshotLength == -1){
         this.initialScreenshotLength = this.manifest.screenshots.length;

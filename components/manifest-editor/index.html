@@ -62,12 +62,17 @@
   "background_color": "#DDBDD5",
   "related_applications": [
     {
-    "platform": "windows",
-    "url": "https://play.google.com/store/apps/details?id=works.jubilee.timetree",
-    "id": "works.jubilee.timetree"
-  }
-],
-  "prefer_related_applications": false,
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=works.jubilee.timetree",
+      "id": "works.jubilee.timetree"
+    },
+    {
+      "platform": "windowss",
+      "url": "https://play.google.com/store/apps/details?id=works.jubilee.timetree",
+      "id": "works.jubilee.timetree"
+    }
+  ],
+  "prefer_related_applications": "false",
   "display_override" : ["window-controls-overlay"],
   "icons": [
     {
@@ -125,7 +130,17 @@
       "description": "Login to Sync'd"
     }
   ],
-  "share_target": {}
+  "share_target": {},
+  "protocol_handlers": [
+    {
+      "protocol": "web+jngl",
+      "url": "/lookup?type=%s"
+    },
+    {
+      "protocol": "web+jnglstore",
+      "url": "//shop?for=%s"
+    }
+  ]
 };
       editor.manifestURL = "https://friendship-calendar-c0efc.web.app/manifest.json"
 

@@ -32,7 +32,14 @@ const platformsData: Array<PlatformInformation> = [
 @customElement('manifest-icons-form')
 export class ManifestIconsForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
+
   @property({type: String}) manifestURL: string = "";
 
   // Icon state vars
@@ -214,9 +221,8 @@ export class ManifestIconsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
-      manifestInitialized = true;
-      
+    if(manifestInitialized){
+      manifestInitialized = false;
       this.requestValidateAllFields();
     }
   }
