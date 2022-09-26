@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import '../components/code-editor'
+import '@pwabuilder/code-editor';
 
 @customElement('sw-panel')
 export class SWPanel extends LitElement {
@@ -35,7 +35,7 @@ export class SWPanel extends LitElement {
         gap: .75em;
       }
 
-      
+
     `;
   }
 
@@ -59,6 +59,7 @@ export class SWPanel extends LitElement {
           <code-editor
             copyText="Copy Service Worker"
             .startText=${this.sw.code}
+            .readOnly=${true}
           >
         </code-editor>
         </div>

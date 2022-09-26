@@ -1,4 +1,6 @@
 import * as analytics from "@pwabuilder/site-analytics"
+export { AnalyticsBehavior } from '@pwabuilder/site-analytics';
+
 import { env } from "./environment";
 
 export function recordPageView(uri: string, name?: string, properties?: any) {
@@ -45,5 +47,3 @@ export function recordPageAction(actionName: string, type: analytics.AnalyticsAc
     analytics.recordPageAction(actionName, type, behavior, properties);
   }
 }
-
-export {AnalyticsBehavior} from "@pwabuilder/site-analytics";

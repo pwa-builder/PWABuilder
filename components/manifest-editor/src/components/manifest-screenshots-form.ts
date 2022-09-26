@@ -1,6 +1,7 @@
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { errorInTab, insertAfter } from '../utils/helpers';
 import {
   Screenshot,
   Manifest,
@@ -14,7 +15,13 @@ let manifestInitialized = false;
 @customElement('manifest-screenshots-form')
 export class ManifestScreenshotsForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
   @property({type: String}) manifestURL: string = "";
 
   @state() screenshotUrlList: Array<string | undefined> = [undefined];
@@ -28,6 +35,10 @@ export class ManifestScreenshotsForm extends LitElement {
   // Generation Status
   @state() protected showSuccessMessage = false;
   @state() protected showErrorMessage = false;
+
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -122,6 +133,7 @@ export class ManifestScreenshotsForm extends LitElement {
         align-items: center;
         justify-content: center;
         gap: 5px;
+        font-size: 16px;
       }
 
       .screenshots-actions button {
@@ -180,15 +192,32 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
-      manifestInitialized = true;
-      await this.validateAllFields();
+    if(manifestInitialized){
+      manifestInitialized = false;
+      this.requestValidateAllFields();
       if(this.manifest.screenshots && this.initialScreenshotLength == -1){
         this.initialScreenshotLength = this.manifest.screenshots.length;
       } else {
         this.initialScreenshotLength = 0;
       }
     }
+  }
+
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
+    }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
   }
 
   async validateAllFields(){
@@ -201,7 +230,18 @@ export class ManifestScreenshotsForm extends LitElement {
       if(!passed){
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
-        this.errorInTab();
+
+        if(validation.errors){
+          validation.errors.forEach((error: string) => {
+            let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          p.classList.add("error-message");
+          insertAfter(p, title!.parentNode);
+          this.errorCount++;
+          });
+        }
+
       }
     } else {
       /* This handles the case where the field is not in the manifest.. 
@@ -209,38 +249,14 @@ export class ManifestScreenshotsForm extends LitElement {
       if(required_fields.includes(field)){
         let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
         input!.classList.add("error");
-        this.errorInTab();
       }
     }
-  }
-
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(errorInTab);
-  }
-
-  handleInputChange(event: InputEvent){
-
-    const input = <HTMLInputElement | HTMLSelectElement>event.target;
-    let updatedValue = input.value;
-    const fieldName = input.dataset['field'];
-
-    // Validate using Justin's code
-    // if false, show error logic
-    // else continue
-
-    let manifestUpdated = new CustomEvent('manifestUpdated', {
-      detail: {
-          field: fieldName,
-          change: updatedValue
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(manifestUpdated);
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "screenshots"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "screenshots"));
+    }
   }
 
 
@@ -311,6 +327,18 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   async generateScreenshots() {
+
+    let generateScreenshotsAttempted = new CustomEvent('generateScreenshotsAttempted', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(generateScreenshotsAttempted);
+    
+
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
+
     try {
       this.awaitRequest = true;
 
@@ -338,6 +366,14 @@ export class ManifestScreenshotsForm extends LitElement {
             composed: true
           });
           this.dispatchEvent(screenshotsUpdated);
+
+          let title = this.shadowRoot!.querySelector('h3');
+          if(title!.classList.contains("error")){
+            title!.classList.toggle("error");
+            this.errorCount--;
+            let errorMessage = this.shadowRoot!.querySelector(".error-message");
+            errorMessage?.parentNode?.removeChild(errorMessage);
+          }
           // In the future if we wanna show some message it can be tied to this bool
           this.showSuccessMessage = true;
         }
@@ -349,6 +385,11 @@ export class ManifestScreenshotsForm extends LitElement {
     }
 
     this.awaitRequest = false;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "screenshots"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "screenshots"));
+    }
   }
 
   screenshotSrcListParse(): string[] {

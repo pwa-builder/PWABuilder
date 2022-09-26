@@ -1,4 +1,4 @@
-import { Validation } from "./interfaces";
+import { Manifest, singleFieldValidation, Validation } from "./interfaces";
 import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
@@ -9,7 +9,7 @@ export const maniTests: Array<Validation> = [
         member: "name",
         defaultValue: "placeholder name",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
-        errorString: "name is required and should be a string with a length > 0",
+        errorString: "name is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
@@ -30,7 +30,7 @@ export const maniTests: Array<Validation> = [
               }
         }),
         docsLink: "https://web.dev/web-share-target/",
-        errorString: "share_target should be an object",
+        errorString: "share_target must be an object",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "object";
@@ -56,7 +56,7 @@ export const maniTests: Array<Validation> = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "icons should be an array with a length > 0",
+        errorString: "icons is required and must be non-empty array",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -66,8 +66,8 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-        displayString: "Icons have atleast one icon with purpose any",
-        category: "required",
+        displayString: "Icons have at least one icon with purpose any",
+        category: "recommended",
         member: "icons",
         defaultValue: JSON.stringify([
             {
@@ -84,7 +84,7 @@ export const maniTests: Array<Validation> = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "Need atleast one icon with purpose set to any",
+        errorString: "Need at least one icon with purpose set to any",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -101,7 +101,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-        displayString: "Icons have atleast one PNG icon 512x512 or larger",
+        displayString: "Icons have at least one PNG icon 512x512 or larger",
         category: "required",
         member: "icons",
         defaultValue: JSON.stringify([
@@ -119,7 +119,7 @@ export const maniTests: Array<Validation> = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "Need atleast one PNG icon 512x512 or larger",
+        errorString: "Need at least one PNG icon 512x512 or larger",
         quickFix: false,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
@@ -176,7 +176,7 @@ export const maniTests: Array<Validation> = [
         member: "scope",
         defaultValue: "/",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/scope",
-        errorString: "scope is required and should be a string with a length > 0",
+        errorString: "scope must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
@@ -206,8 +206,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "placeholder",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
-        errorString:
-            "short_name is required and should be a string with a length >= 2",
+        errorString: "short_name is required and must be a string with a length >= 2",
         quickFix: true,
         test: (value: string) => {
           const existsAndLength = value && value.length >= 2;
@@ -238,8 +237,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "/",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
-        errorString:
-            "start_url is required and should be a string with a length > 0",
+        errorString: "start_url is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0
@@ -251,8 +249,7 @@ export const maniTests: Array<Validation> = [
         member: "display",
         defaultValue: "standalone",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
-        errorString:
-            "display is required and should be either fullscreen, standalone, minimal-ui, browser",
+        errorString: "display must be one of the following strings: fullscreen, standalone, minimal-ui, browser",
         quickFix: true,
         test: (value: string) => {
             return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
@@ -308,8 +305,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "any",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
-        errorString:
-            "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
+        errorString: "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
         quickFix: true,
         test: (value: string) => {
             return isStandardOrientation(value);
@@ -342,7 +338,7 @@ export const maniTests: Array<Validation> = [
         ]),
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
-        errorString: "screenshots is required and should be an array with a length > 0",
+        errorString: "screenshots must be an array with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && Array.isArray(value) && value.length > 0 ? true : false,
@@ -355,10 +351,10 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-        errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
+        errorString: "shortcuts should be a non-empty array and should not include webp images",
         quickFix: true,
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
             if (isArray === true) {
                 // check image types dont include webp
                 const hasWebp = value.some(icon => icon.type === "image/webp");
@@ -399,15 +395,16 @@ export const maniTests: Array<Validation> = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
         quickFix: true,
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
             return isArray;
         },
-        errorString: "Related applications should be a non-empty array."
+        errorString: "related_applications should be a non-empty array",
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
-        displayString: "Manifest has prefer related applications field",
+        displayString: "Manifest properly sets prefer related applications field",
         category: "optional",
+        testRequired: true,
         member: "prefer_related_applications",
         defaultValue: false,
         docsLink:
@@ -416,7 +413,7 @@ export const maniTests: Array<Validation> = [
         test: (value: any) => {
             return typeof(value)  === "boolean"
         },
-        errorString: "Prefer related applications should be set to a boolean value."
+        errorString: "prefer_related_applications should be set to a boolean value",
     },
     {
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
@@ -435,7 +432,7 @@ export const maniTests: Array<Validation> = [
 
             return false;
         },
-        errorString: "Categories should be a non-empty array."
+        errorString: "categories should be a non-empty array"
     },
     {
         member: "lang",
@@ -454,6 +451,7 @@ export const maniTests: Array<Validation> = [
         member: "dir",
         displayString: "Manifest specifies a default direction of text",
         infoString: "The dir member is a string that represents the default text direction of your PWA.",
+        errorString: "dir must be one of the following strings: ltr, rtl, or auto",
         category: "optional",
         defaultValue: "ltr",
         docsLink:
@@ -470,8 +468,7 @@ export const maniTests: Array<Validation> = [
         defaultValue: "",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
-        errorString:
-            "description and should be a string with a length > 0",
+        errorString: "description must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
@@ -501,9 +498,9 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
         quickFix: true,
-        errorString: "protocol_handlers should be a non-empty array.",
+        errorString: "protocol_handlers should be a non-empty array",
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
 
             return isArray;
         }
@@ -517,9 +514,9 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
         quickFix: true,
-        errorString: "display_override should be a non-empty array.",
+        errorString: "display_override must be a non-empty array",
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
 
             return isArray;
         }
@@ -531,7 +528,7 @@ export const maniTests: Array<Validation> = [
         category: "recommended",
         defaultValue: "/",
         docsLink: "https://developer.chrome.com/blog/pwa-manifest-id",
-        errorString: "id should be a string with a length > 0",
+        errorString: "id must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
@@ -550,3 +547,92 @@ export const maniTests: Array<Validation> = [
         }
     }
 ];
+
+export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
+    return new Promise((resolve) => {
+        let data: Array<Validation> = [];
+  
+        const keys = Object.keys(manifest);
+  
+        keys.forEach((key) => {
+            maniTests.forEach(async (test) => {
+                if (test.member === key && test.test) {
+                    const testResult = await test.test(manifest[key]);
+  
+    
+                    if(testResult){
+                      test.valid = true;
+                      data.push(test);
+                    }
+                    else {
+                      test.valid = false;
+                      data.push(test);
+                    }
+                }
+            })
+        })
+  
+        resolve(data);
+    })
+  }
+  
+  export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
+    return new Promise((resolve) => {
+      let data: Array<Validation> = [];
+  
+      const keys = Object.keys(manifest);
+  
+      keys.forEach((key) => {
+        maniTests.forEach(async (test) => {
+          if (test.category === "required") {
+            if (test.member === key && test.test) {
+              const testResult = await test.test(manifest[key]);
+  
+              if (testResult === false) {
+                test.valid = false;
+                data.push(test);
+              }
+              else {
+                test.valid = true;
+                data.push(test);
+              }
+            }
+          }
+        })
+      })
+  
+      resolve(data);
+    })
+  }
+  
+  export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
+    return new Promise(async (resolve) => {
+  
+      // For && operations, true is the base.
+      let singleField = true;
+      let failedTests: string[] | undefined = [];
+  
+      maniTests.forEach((test) => {
+        if (test.member === field && test.test) {
+        
+          const testResult = test.test(value);
+  
+          if(!testResult){
+            failedTests!.push(test.errorString!);
+          }
+  
+          // If the test passes true && true = true.
+          // If the test fails true && false = false
+          // If a field has MULTIPLE tests, they will stack
+          // ie: true (base) && true (test 1) && false (ie test 2 fails).
+          singleField = singleField && testResult;
+        }
+      });
+  
+      if(singleField){
+        resolve({"valid": singleField})
+      }
+  
+      resolve({"valid": singleField, "errors": failedTests});
+    })
+  }

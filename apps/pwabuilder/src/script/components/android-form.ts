@@ -1,38 +1,35 @@
-import { css, html, TemplateResult } from 'lit';
+import { css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest, emptyAndroidPackageOptions } from '../services/publish/android-publish';
-import { ManifestContext } from '../utils/interfaces';
+import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
+import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 @customElement('android-form')
+
 export class AndroidForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating = false;
   @property({ type: Boolean }) isGooglePlayApk = false;
   @state() showAdvanced = false;
   @state() packageOptions = emptyAndroidPackageOptions();
-  @state() manifestContext: ManifestContext = getManifestContext();
+  @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
   static get styles() {
-    
-    const localStyles = css`
-    
 
+    const localStyles = css`
       :host {
         width: 100%;
       }
 
       #android-options-form {
         width: 100%;
-        height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        max-height: 27em;
       }
 
       .signing-key-fields {
@@ -42,7 +39,7 @@ export class AndroidForm extends AppPackageFormBase {
       #signing-key-file-input {
         border: none;
       }
-    
+
       .flipper-button {
         display: flex;
         justify-content: center;
@@ -59,14 +56,51 @@ export class AndroidForm extends AppPackageFormBase {
         flex-direction: column;
         gap: .75em;
       }
-      #form-extras {
+      #form-layout {
+        flex-grow: 1;
         display: flex;
+        overflow: auto;
         flex-direction: column;
       }
+
+      sl-details {
+        margin-top: 1em;
+      }
+
+      sl-details::part(base){
+        border: none;
+      }
+
+      sl-details::part(summary-icon){
+        display: none;
+      }
+
+      .dropdown_icon {
+        transform: rotate(0deg);
+        transition: transform .5s;
+        height: 30px;
+      }
+
+      sl-details::part(header){
+        padding: 0 10px;
+      }
+      .details-summary {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+      .details-summary p {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      
+
     `;
-    
+
     return [
-      super.styles,
+      ...super.styles,
       localStyles
     ];
   }
@@ -76,39 +110,34 @@ export class AndroidForm extends AppPackageFormBase {
   }
 
   async firstUpdated() {
-    if (this.manifestContext.isGenerated) {
+    if (this.manifestContext!.isGenerated) {
       this.manifestContext = await fetchOrCreateManifest();
     }
 
-    this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext);
-    if(!this.isGooglePlayApk){
-      this.packageOptions.features.locationDelegation!.enabled = false;
-      this.packageOptions.features.playBilling!.enabled = false;
-      this.packageOptions.isChromeOSOnly = false;
-      this.packageOptions.enableNotifications = false;
-      this.packageOptions.signingMode = "none";
-      this.packageOptions.signing = {
-                                      file: null,
-                                      alias: '',
-                                      fullName: '',
-                                      organization: '',
-                                      organizationalUnit: '',
-                                      countryCode: '',
-                                      keyPassword: '',
-                                      storePassword: ''
-                                    };
-    }
+    this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext!);
   }
 
-  initGenerate(ev: InputEvent) {
-    ev.preventDefault();
-
-    const eventArgs = new CustomEvent('init-android-gen', {
-      detail: this.packageOptions,
-      composed: true,
-      bubbles: true,
-    });
-    this.dispatchEvent(eventArgs);      
+  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if(_changedProperties.has("isGooglePlayApk")){
+      this.packageOptions = createAndroidPackageOptionsFromManifest(this.manifestContext!);
+      if(!this.isGooglePlayApk){
+        this.packageOptions.features.locationDelegation!.enabled = false;
+        this.packageOptions.features.playBilling!.enabled = false;
+        this.packageOptions.isChromeOSOnly = false;
+        this.packageOptions.enableNotifications = false;
+        this.packageOptions.signingMode = "none";
+        this.packageOptions.signing = {
+                                        file: null,
+                                        alias: '',
+                                        fullName: '',
+                                        organization: '',
+                                        organizationalUnit: '',
+                                        countryCode: '',
+                                        keyPassword: '',
+                                        storePassword: ''
+                                      };
+      }
+    }
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -138,8 +167,8 @@ export class AndroidForm extends AppPackageFormBase {
       this.packageOptions.signing.storePassword = '';
     } else if (mode === 'new') {
       this.packageOptions.signing.alias = 'my-key-alias';
-      this.packageOptions.signing.fullName = (this.manifestContext.manifest.short_name || this.manifestContext.manifest.name || 'My PWA') + ' Admin';
-      this.packageOptions.signing.organization = this.manifestContext.manifest.name || 'PWABuilder';
+      this.packageOptions.signing.fullName = (this.manifestContext!.manifest.short_name || this.manifestContext!.manifest.name || 'My PWA') + ' Admin';
+      this.packageOptions.signing.organization = this.manifestContext!.manifest.name || 'PWABuilder';
       this.packageOptions.signing.organizationalUnit = 'Engineering';
       this.packageOptions.signing.countryCode = 'US';
       this.packageOptions.signing.keyPassword = '';
@@ -182,17 +211,37 @@ export class AndroidForm extends AppPackageFormBase {
     }
   }
 
+  rotateZero(){
+    recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(0deg)";
+  }
+
+  rotateNinety(){
+    recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
+    icon!.style.transform = "rotate(90deg)";
+  }
+
+  public getPackageOptions(): PackageOptions {
+    return this.packageOptions;
+  }
+
+  public getForm(): HTMLFormElement {
+    return this.shadowRoot!.querySelector("form")!;
+  }
+
   render() {
     return html`
+    <div id="form-holder">
       <form
         id="android-options-form"
         slot="modal-form"
         style="width: 100%"
-        @submit="${(ev: InputEvent) => this.initGenerate(ev)}"
       >
         <div id="form-layout">
           <div class="basic-settings">
-            
+
             <div class="form-group">
               ${this.renderFormInput({
                 label: 'Package ID',
@@ -247,17 +296,11 @@ export class AndroidForm extends AppPackageFormBase {
           </div>
 
           <!-- The "all settings" section of the options dialog -->
-          <fast-accordion>
-            <fast-accordion-item
-              @click="${(ev: Event) => this.toggleAccordion(ev.target)}"
-            >
-              <div id="all-settings-header" slot="heading">
-                <span>All Settings</span>
-
-                <div class="flipper-button" aria-label="caret dropdown" role="button">
-                  <ion-icon name="caret-forward-outline"></ion-icon>
-                </div>
-              </div>
+          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+            <div class="details-summary" slot="summary">
+              <p>All Settings</p>
+              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+            </div>
 
               <div class="adv-settings">
                 <div class="form-group">
@@ -273,7 +316,7 @@ export class AndroidForm extends AppPackageFormBase {
                     inputHandler: (val: string) => this.packageOptions.appVersion = val
                   })}
                 </div>
-                
+
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Version code',
@@ -523,7 +566,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.notification}</label>
@@ -540,7 +583,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>` : html``}
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label
@@ -559,7 +602,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>` : html``}
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label
@@ -595,8 +638,8 @@ export class AndroidForm extends AppPackageFormBase {
                     })}
                   </div>
                 </div>
-                  
-                ${this.isGooglePlayApk ? 
+
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label>
@@ -628,7 +671,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
-                ${this.isGooglePlayApk ? 
+                ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.signing_key}</label>
@@ -672,28 +715,14 @@ export class AndroidForm extends AppPackageFormBase {
 
                 ${this.renderSigningKeyFields()}` :
                 html``}
-                
+
               </div>
-
-            </fast-accordion-item>
-          </fast-accordion>
-        </div>
-
-        <div id="form-extras">
-          ${this.isGooglePlayApk ?
-            html`
-            <div id="form-details-block">
-              <p>${localeStrings.text.android.description.form_details}</p>
-            </div>` : html``
-          }
-
-          <div id="form-options-actions" class="modal-actions">
-            <loading-button class="form-generate-button" .loading="${this.generating}" .primary=${true}>
-              <input id="generate-submit" type="submit" value="Generate Package" />
-            </loading-button>
-          </div>
+          </sl-details>
         </div>
       </form>
+      
+    </div>
+    </div>
     `;
   }
 

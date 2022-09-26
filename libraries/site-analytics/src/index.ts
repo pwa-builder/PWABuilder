@@ -266,7 +266,7 @@ export const enum AnalyticsActionType {
 }
 
 // See https://martech.azurewebsites.net/website-tools/oneds/references/behavior-dictionary
-export const enum AnalyticsBehavior {
+export enum AnalyticsBehavior {
   ContentUpdate = 0,
   NavigationBack = 1,
   NavigationSelectionJump = 2,

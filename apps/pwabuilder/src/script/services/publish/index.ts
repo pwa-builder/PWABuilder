@@ -1,4 +1,5 @@
 import { AndroidPackageOptions } from '../../utils/android-validation';
+import { PackageOptions } from '../../utils/interfaces';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';
 import { OculusAppPackageOptions } from '../../utils/oculus-validation';
 import { WindowsPackageOptions } from '../../utils/win-validation';
@@ -11,7 +12,7 @@ import {
   generateWindowsPackage,
 } from './windows-publish';
 
-export type Platform = 'windows' | 'android' | 'ios' | 'oculus';
+export type Platform = 'windows' | 'android' | 'other-android' | 'ios' | 'meta';
 
 type PackageInfo = {
   appName: string;
@@ -21,7 +22,7 @@ type PackageInfo = {
 
 export async function generatePackage(
   type: Platform,
-  packageOptions?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions
+  packageOptions?: PackageOptions
 ): Promise<PackageInfo | null> {
   switch (type) {
     case 'windows':
@@ -30,7 +31,7 @@ export async function generatePackage(
       return await tryGenerateAndroidPackage(packageOptions as AndroidPackageOptions);
     case 'ios':
       return await tryGenerateIOSPackage(packageOptions as IOSAppPackageOptions);
-    case 'oculus':
+    case 'meta':
       return await tryGenerateOculusPackage(packageOptions as OculusAppPackageOptions);
     default:
       throw new Error(

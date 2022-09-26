@@ -5,7 +5,7 @@ on:
     branches:
       - redesign
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     branches:
       - redesign
 

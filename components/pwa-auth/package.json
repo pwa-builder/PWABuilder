@@ -1,0 +1,33 @@
+{
+  "name": "@pwabuilder/pwaauth",
+  "version": "0.10.0",
+  "description": "Web component that lets your users sign-in/sign-up using their Microsoft, Google, Facebook, or Apple account. Your app receives their email address, name, and profile picture.",
+  "main": "dist/pwa-auth.js",
+  "module": "dist/pwa-auth.js",
+  "types": "build/pwa-auth.d.ts",
+  "author": "PWABuilder Team",
+  "license": "MIT",
+  "scripts": {
+    "start": "concurrently \"tsc --watch\" \"npx es-dev-server --node-resolve --compatibility none --open www/\"",
+    "build": "tsc && rollup -c"
+  },
+  "dependencies": {
+    "lit": "^2.2.5",
+    "msal": "^1.4.16",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-strip": "^2.1.0",
+    "@types/apple-signin-api": "^1.5.1",
+    "@types/facebook-js-sdk": "^3.3.5",
+    "@types/gapi.auth2": "0.0.56",
+    "concurrently": "^7.2.1",
+    "deepmerge": "^4.2.2",
+    "es-dev-server": "^2.1.0",
+    "rollup": "^2.75.6",
+    "rollup-plugin-minify-html-literals": "^1.2.6",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.6.3"
+  }
+}

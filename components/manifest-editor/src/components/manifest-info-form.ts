@@ -2,20 +2,30 @@ import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { insertAfter, errorInTab } from '../utils/helpers';
 
-const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
 
-let infoFields = ["name", "short_name", "description", "display", "background_color", "theme_color"];
+let infoFields = ["name", "short_name", "description", "background_color", "theme_color"];
 
 @customElement('manifest-info-form')
 export class ManifestInfoForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
 
   @state() bgText: string = '';
   @state() themeText: string = '';
+
+  private shouldValidateAllFields: boolean = true;
+  private validationPromise: Promise<void> | undefined;
+  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -28,11 +38,14 @@ export class ManifestInfoForm extends LitElement {
       }
 
       sl-input::part(base),
-      sl-select::part(control),
-      sl-menu-item::part(base) {
+      sl-textarea::part(base),
+      sl-menu-item::part(base),
+      sl-color-picker::part(base),
+      sl-button::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
+        --sl-button-font-size-medium: 16px;
       }
       #form-holder {
         display: flex;
@@ -50,6 +63,9 @@ export class ManifestInfoForm extends LitElement {
       .form-row p {
         font-size: 14px;
         margin: 0;
+      }
+      .long .form-field {
+        width: 100%;
       }
       .form-field {
         width: 50%;
@@ -110,48 +126,31 @@ export class ManifestInfoForm extends LitElement {
       .color-section {
         display: flex;
         gap: .5em;
-      }
-      .color_field input[type="radio"]{
-        height: 25px;
-        width: fit-content;
-        margin: 5px;
-      }
-      .color_selection {
-        display: flex;
         align-items: center;
         justify-content: flex-start;
       }
-      .color_field input[type="color"]{
-        width: 75px;
-        height: 25px;
-        padding: 0;
-        border-radius: 0;
-        border: 1px solid #808080;
-        outline: none;
-      }
-      .color_field input[type="color"]::-webkit-color-swatch-wrapper {
-        padding: 0;
-      }
-      .color_field input[type="color"]:hover {
-        cursor: pointer;
-      }
+
       .color-section p {
-        font-size: 16px;
+        font-size: 18px;
         color: #808080;
+        display: flex;
+        align-items: center;
+        height: fit-content;
+      }
+
+      sl-color-picker {
+        --grid-width: 315px;
+        height: 25px;
+      }
+
+      sl-color-picker::part(trigger){
+        border-radius: 0;
+        height: 25px;
+        width: 75px;
+        display: flex;
       }
       sl-menu {
         width: 100%;
-      }
-      .switch_box {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .switch_box p {
-        font-size: 16px;
-      }
-      sl-switch {
-        --height: 22px;
       }
 
       .error-color-field{
@@ -170,6 +169,7 @@ export class ManifestInfoForm extends LitElement {
         border-color: #eb5757;
       }
 
+
       @media(max-width: 765px){
         .form-row:not(.color-row) {
           flex-direction: column;
@@ -186,7 +186,6 @@ export class ManifestInfoForm extends LitElement {
 
       @media(max-width: 480px){
         sl-input::part(base),
-        sl-select::part(control),
         sl-menu-item::part(base) {
           --sl-input-font-size-medium: 14px;
           --sl-font-size-medium: 14px;
@@ -218,45 +217,90 @@ export class ManifestInfoForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && !manifestInitialized && this.manifest.name){
-      manifestInitialized = true;
+    if(manifestInitialized){ // _changedProperties.has("manifest") && _changedProperties.get("manifest") && 
+      manifestInitialized = false;
       this.initMissingColors();
-      
-      await this.validateAllFields();
+      this.requestValidateAllFields();
+    } 
+  }
+
+  private async requestValidateAllFields() {
+    
+    this.shouldValidateAllFields = true;
+
+    if (this.validationPromise) {
+      return;
     }
+    
+    while (this.shouldValidateAllFields) {
+      this.shouldValidateAllFields = false;
+
+      this.validationPromise = this.validateAllFields();
+      await this.validationPromise;
+    }
+
   }
 
   async validateAllFields(){
     for(let i = 0; i < infoFields.length; i++){
       let field = infoFields[i];
 
-      if(this.manifest[field]){
+      if(field in this.manifest){
         const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
         let passed = validation!.valid;
 
+        // Validation Failed
         if(!passed){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+
+          // Structure of these two fields are different so they need their own logic.
           if(field === "theme_color" || field === "background_color"){
-            input!.classList.add("error-color-field");
-            if(validation.error){
-              let p = document.createElement('p');
-              p.innerText = validation.error;
-              p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.parentNode!.lastElementChild);
+
+            // Remove exisiting error list if there is one.
+            if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+              let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+              error_div!.parentElement!.removeChild(error_div!);
             }
-          } else{
-            input!.classList.add("error");
-            if(validation.error){
-              let p = document.createElement('p');
-              p.innerText = validation.error;
-              p.style.color = "#eb5757";
-              this.insertAfter(p, input!.parentNode!.lastElementChild);
+
+            // Update new errors list.
+            if(validation.errors){
+              let div = document.createElement('div');
+              div.classList.add(`${field}-error-div`);
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                div.append(p);
+                this.errorCount++;
+              });
+              insertAfter(div, input!.parentNode!.parentNode!.lastElementChild);
+            }
+            
+            input!.classList.add("error-color-field");
+          } else { // All other fields
+            
+            // Remove old errors
+            if(this.shadowRoot!.querySelector(".error-div")){
+              let error_div = this.shadowRoot!.querySelector(".error-div");
+              error_div!.parentElement!.removeChild(error_div!);
+            }
+  
+            // Update with new errors.
+            if(validation.errors){
+              let div = document.createElement('div');
+              div.classList.add(`${field}-error-div`);
+              validation.errors.forEach((error: string) => {
+                let p = document.createElement('p');
+                p.innerText = error;
+                p.style.color = "#eb5757";
+                div.append(p);
+                this.errorCount++;
+              });
+              insertAfter(div, input!.parentNode!.lastElementChild);
             }
           } 
 
-          
-          
-          this.errorInTab();
+          input!.classList.add("error");
 
         }
       } else {
@@ -265,19 +309,33 @@ export class ManifestInfoForm extends LitElement {
         if(required_fields.includes(field)){
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
-          this.errorInTab();
+
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+
+          let div = document.createElement('div');
+          div.classList.add(`${field}-error-div`);
+          let p = document.createElement('p');
+          p.innerText = `${field} is required and is missing from your manifest.`;
+          p.style.color = "#eb5757";
+          div.append(p);
+          this.errorCount++;
+          insertAfter(div, input!.parentNode!.lastElementChild);
+          
         }
       }
     }
+    this.validationPromise = undefined;
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "info"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "info"));
+    }
   }
 
-  errorInTab(){
-    let errorInTab = new CustomEvent('errorInTab', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(errorInTab);
-  }
+  
 
   initMissingColors(){
     if(!this.manifest.theme_color){
@@ -305,15 +363,23 @@ export class ManifestInfoForm extends LitElement {
 
   }
 
-  insertAfter(newNode: any, existingNode: any) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-  }
-
   async handleInputChange(event: InputEvent){
+    if(this.validationPromise){
+      await this.validationPromise;
+    }
 
     const input = <HTMLInputElement | HTMLSelectElement>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: fieldName,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
 
     const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
     let passed = validation!.valid;
@@ -332,26 +398,42 @@ export class ManifestInfoForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-
+        this.errorCount--;
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(validation.error){
-        let p = document.createElement('p');
-        p.innerText = validation.error;
-        p.style.color = "#eb5757";
-        this.insertAfter(p, input!.parentNode!.lastElementChild);
+
+      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
+        error_div!.parentElement!.removeChild(error_div!);
       }
       
-      this.errorInTab();
-      input.classList.toggle("error");
+      // update error list
+      if(validation.errors){
+        let div = document.createElement('div');
+        div.classList.add(`${fieldName}-error-div`);
+        validation.errors.forEach((error: string) => {
+          let p = document.createElement('p');
+          p.innerText = error;
+          p.style.color = "#eb5757";
+          div.append(p);
+          this.errorCount++;
+        });
+        insertAfter(div, input!.parentNode!.lastElementChild);
+      }
+      input.classList.add("error");
     }
-
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "info"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "info"));
+    }
   }
 
   handleColorSwitch(field: string){
-    let color = (this.shadowRoot!.getElementById(field + "_picker") as HTMLInputElement).value;
+    let input = (this.shadowRoot!.getElementById(field + "_picker") as HTMLInputElement);
+    let color = input.value;
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
           field: field,
@@ -361,6 +443,26 @@ export class ManifestInfoForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+
+    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+      detail: {
+          field: field,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(fieldChangeAttempted);
+
+    if(input.classList.contains("error-color-field")){
+      input.classList.toggle("error-color-field");
+      this.errorCount--;
+      let last = input!.parentNode!.parentNode!.lastElementChild;
+      input!.parentNode!.parentNode!.removeChild(last!)
+    }
+
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "info"));
+    }
   }
 
   render() {
@@ -386,7 +488,7 @@ export class ManifestInfoForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The name of your app as displayed to the user</p>
-            <sl-input placeholder="PWA Name" .value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -407,10 +509,10 @@ export class ManifestInfoForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>Used in app launchers</p>
-            <sl-input placeholder="PWA Short Name" .value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
         </div>
-        <div class="form-row">
+        <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
@@ -428,29 +530,9 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>Used in app storefronts and install dialogs</p>
-            <sl-input placeholder="PWA Description" .value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-textarea placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange} resize="none"></sl-textarea>
           </div>
-          <div class="form-field">
-            <div class="field-header">
-              <div class="header-left">
-                <h3>Display</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the display option in your manifest.
-                  </p>
-                </a>
-              </div>
-            </div>
-            <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" @sl-change=${this.handleInputChange} .value=${this.manifest.display! || ""}>
-              ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
-            </sl-select>
-          </div>
+          
         </div>
         <div class="form-row color-row">
           <div class="form-field color_field">
@@ -472,7 +554,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Background color</p>
             <span class="color-holder">
               <div class="color-section">
-                <input type="color" id="background_color_picker" .value=${this.manifest.background_color! || defaultColor} data-field="background_color" @change=${() => this.handleColorSwitch("background_color")} /> 
+                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} hoist=${true} data-field="background_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
                 <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
@@ -496,7 +578,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Theme color</p>
             <span class="color-holder">
               <div class="color-section">
-                <input type="color" id="theme_color_picker" .value=${this.manifest.theme_color! || defaultColor} data-field="theme_color" @change=${() => this.handleColorSwitch("theme_color")} /> 
+                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} hoist=${true} data-field="theme_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
                 <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>

@@ -161,7 +161,8 @@ export class SuccessStories extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  connectedCallback(): void {
+    super.connectedCallback();
     this.cards = getCards();
   }
 

@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { doubleCheckManifest, getManifestContext } from '../services/app-info';
+import { getManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
@@ -13,18 +13,16 @@ import {classMap} from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
 import '../components/app-header';
-import '../components/app-modal';
 import '../components/todo-list-item';
 import '../components/manifest-editor-frame';
 import '../components/publish-pane';
+import '../components/test-publish-pane';
 import '../components/sw-selector';
 
 
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
 
-//@ts-ignore
-import style from '../../../styles/layout-defaults.css';
 import {
   Icon,
   ManifestContext,
@@ -32,46 +30,10 @@ import {
   TestResult
 } from '../utils/interfaces';
 
-import { fetchOrCreateManifest } from '../services/manifest';
+import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-
-/* const possible_messages = {
-  overview: {
-    heading: "Your PWA's report card.",
-    supporting:
-      'Check out the the Overview below to see if your PWA is store-ready! If not, tap the section that needs work to begin upgrading your PWA.',
-  },
-  mani: {
-    heading: 'Manifest great PWAs.',
-    supporting:
-      'PWABuilder has analyzed your Web Manifest, check out the results below. If you are missing something, tap Manifest Options to update your Manifest.',
-  },
-  sw: {
-    heading: 'Secret Ingredient: A Service Worker',
-    supporting:
-      'PWABuilder has analyzed your Service Worker, check out the results below. Want to add a Service Worker or check out our pre-built Service Workers? Tap Service Worker Options.',
-  },
-}; */
-
-const error_messages = {
-  icon: {
-    message:
-      'Your app is missing a 512x512 or larger PNG icon. Because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color#define-icons',
-  },
-  start_url: {
-    message:
-      'Your app is missing a start_url, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
-  },
-  name: {
-    message:
-      'Your app is missing a name, because of this your PWA cannot currently be packaged. Please visit the documentation below for how to fix this.',
-    link: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/name',
-  },
-};
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -85,7 +47,7 @@ export class AppReport extends LitElement {
     description: "Your site's description",
     siteUrl: 'Site URL',
   };
-  @property({ type: Object }) styles = { backgroundColor: 'white', color: 'black' };
+  @property({ type: Object }) styles = { backgroundColor: 'white', color: 'black'};
   @property() manifestCard = {};
   @property() serviceWorkerCard = {};
   @property() securityCard = {};
@@ -106,30 +68,42 @@ export class AppReport extends LitElement {
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
-  @state() canPackageList: boolean[] = [];
+  @state() runningTests: boolean = false;
+  @state() canPackageList: boolean[] = [false, false, false];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
+  @state() retestPath: string = "/assets/new/retest-black.svg";
 
   @state() swSelectorOpen: boolean = false;
 
   // Controls the last tested section
   @state() lastTested: string = "Last tested seconds ago";
 
+  @state() todoWindow: any[] = [];
+  private pageNumber: number = 1;
+  private pageSize: number = 5;
+
   // validation
   @state() validationResults: Validation[] = [];
   @state() manifestTotalScore: number = 0;
   @state() manifestValidCounter: number = 0;
+  @state() manifestRequiredCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
+  @state() manifestMessage: string = "";
 
   @state() serviceWorkerResults: any[] = [];
   @state() swTotalScore: number = 0;
   @state() swValidCounter: number = 0;
+  @state() swRequiredCounter: number = 0;
   @state() swDataLoading: boolean = true;
+  @state() swMessage: string = "";
 
   @state() securityResults: any[] = [];
   @state() secTotalScore: number = 0;
   @state() secValidCounter: number = 0;
+  @state() secRequiredCounter: number = 0;
   @state() secDataLoading: boolean = true;
+  @state() secMessage: string = "";
 
   @state() requiredMissingFields: any[] = [];
   @state() reccMissingFields: any[] = [];
@@ -140,10 +114,37 @@ export class AppReport extends LitElement {
   @state() thingToAdd: string = "";
   @state() retestConfirmed: boolean = false;
 
+  @state() createdManifest: boolean = false;  
+  @state() manifestContext: ManifestContext | undefined;
+
+  private possible_messages = [
+    {"messages": {
+                  "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
+                  "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommeneded and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
+                  "blocked": "PWABuilder has analyzed your Web Manifest. You have a one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
+                  "none": "PWABuilder has analyzed your site and did not find a Web Manifest. Use our Manifest Editor to generate one. You can package for the store once you have a valid manifest.",
+                  }
+    },
+    {"messages": {
+                      "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great job you have a perfect score!",
+                      "yellow": "PWABuilder has analyzed your Service Worker, and has identified additonal features you can add, like offline support, to make your app feel more robust.",
+                      "blocked": "",
+                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is required to package for the stores. You can genereate a Service Worker below or use our documentation to make your own.",
+                  },
+     },
+      {"messages": {
+                    "green": "PWABuilder has done a basic analysis of your HTTPS setup and found no issues! Great job you have a perfect score!",
+                    "yellow": "",
+                    "blocked": "",
+                    "none": "PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.",
+                  }
+      }
+    ];
 
 
- /*  
-  So in order to connect the to do items with the things below 
+
+ /*
+  So in order to connect the to do items with the things below
   We can have an object that looks like this
   {
     card: id to the details card (manifest, sw, sec)
@@ -160,13 +161,17 @@ export class AppReport extends LitElement {
 
   static get styles() {
     return [
-      style,
       css`
         * {
           box-sizing: border-box;
         }
 
-        
+        app-header::part(header) {
+          position: sticky;
+          top: 0;
+        }
+
+
         #report-wrapper {
           width: 100%;
           display: flex;
@@ -180,8 +185,8 @@ export class AppReport extends LitElement {
           max-width: 1300px;
           width: 100%;
           display: flex;
-          flex-wrap: wrap;
-          gap: 1.5em;
+          flex-flow: row wrap;
+          gap: 1em;
         }
         #header-row {
           width: 100%;
@@ -191,24 +196,23 @@ export class AppReport extends LitElement {
           column-gap: 1em;
         }
         #app-card {
-          width: 30%;
-          height: 180px;
+          width: 60%;
+          height: 100%;
           border-radius: 10px;
           background-color: white;
-          padding: 1em;
-          row-gap: 10px;
+          justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
         .flex-col {
           display: flex;
           flex-direction: column;
         }
-        #card-header {
+        #app-card-header {
           display: flex;
           column-gap: 10px;
           align-items: center;
           font-size: 14px;
-          font-weight: bold;
+          padding: 1em;
           width: 100%;
         }
         #pwa-image-holder {
@@ -219,9 +223,9 @@ export class AppReport extends LitElement {
           justify-content: center;
           background-color: white;
           border-radius: 10px;
-          box-shadow: rgb(0 0 0 / 20%) 0px 4px 30px 0px;
+          box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
-        #card-header img {
+        #app-card-header img {
           height: 85px;
           width: auto;
           padding: 10px;
@@ -230,14 +234,15 @@ export class AppReport extends LitElement {
           font-size: 24px;
         }
         #card-info {
-          width: 100%;
+          width: 50%;
           overflow: hidden;
           white-space: nowrap;
         }
         #card-info p {
           margin: 0;
+          font-weight: bold;
         }
-        #card-desc {
+        #app-card-desc {
           margin: 0;
           font-size: 14px;
           width: 100%;
@@ -245,11 +250,27 @@ export class AppReport extends LitElement {
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box !important;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 6;
           -webkit-box-orient: vertical;
+          margin-left: 1em;
+        }
+        #app-card-footer {
+          padding: .5em 1em;
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: flex-end;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          border-top: 1px solid #f2f3fb;
+        }
+        #last-edited {
+          font-size: 12px;
+          margin: 0;
         }
         #app-actions {
-          width: 70%;
+          width: 40%;
+          height: 100%;
           border-radius: 10px;
           background-color: white;
           align-items: center;
@@ -263,13 +284,6 @@ export class AppReport extends LitElement {
           border-radius: 50px;
           font-size: 16px;
         }
-        #actions {
-          display: flex;
-          align-items: flex-start;
-          padding: 1em;
-          width: 100%;
-          gap: .5em;
-        }
         #app-image-skeleton {
           height: 85px;
           width: 130px;
@@ -279,9 +293,16 @@ export class AppReport extends LitElement {
           width: 100%;
           margin-bottom: 10px;
         }
+        .app-info-skeleton-half {
+          width: 25%;
+          height: 20px;
+          margin: 10px 0;
+        }
         #test {
-          row-gap: 1em;
-          width: 45%;
+          font-size: 10px;
+        }
+        #test img {
+          height: 18px;
         }
         .flex-col-center {
           display: flex;
@@ -295,26 +316,19 @@ export class AppReport extends LitElement {
           justify-content: center;
         }
         #retest {
-          background-color: #4f3fb6;
-          color: white;
           display: flex;
           align-items: center;
           column-gap: 10px;
           border: none;
+          background-color: transparent;
         }
-        #last-edited {
-          color: #808080;
-          font-size: 12px;
-          line-height: 12px;
-          white-space: nowrap;
-          margin: 0;
-          display: flex;
-          align-items: center;
-          column-gap: .5em;
+        #retest:disabled{
+          cursor: no-drop;
         }
         #package {
-          row-gap: 20px;
-          width: 55%;
+          row-gap: .5em;
+          width: 100%;
+          padding: 1em;
         }
         #pfs {
           background-color: black;
@@ -328,6 +342,33 @@ export class AppReport extends LitElement {
         }
         #pfs-disabled:hover{
           cursor: no-drop;
+        }
+        .mani-tooltip {
+          --sl-tooltip-padding: 0;
+        }
+        .mani-tooltip::part(base){
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .mani-tooltip-content {
+          padding: 0;
+          display: flex;
+          max-width: 325px;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          gap: .5em;
+        }
+
+        .mani-tooltip-content img {
+          align-self: flex-end;
+          justify-self: flex-end;
+          height: 50px;
+          width: auto;
+        }
+        .mani-tooltip-content p {
+          margin: 0;
+          padding: .5em;
         }
         sl-details:disabled{
           cursor: no-drop;
@@ -385,7 +426,7 @@ export class AppReport extends LitElement {
           column-gap: 0.75em;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
-          padding: .75em 1em;
+          padding: .5em 1em;
         }
         #actions-footer img {
           height: 20px;
@@ -414,7 +455,7 @@ export class AppReport extends LitElement {
           width: 100%;
         }
         .dropdown_icon {
-          transform: rotate(0deg);  
+          transform: rotate(0deg);
           transition: transform .5s;
         }
         #todo-detail::part(base) {
@@ -428,6 +469,54 @@ export class AppReport extends LitElement {
           font-size: 20px;
           font-weight: bold;
         }
+        #todo-summary-left {
+          display: flex;
+          align-items: center;
+          gap: .5em;
+        }
+        #pagination-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          justify-self: center;
+          gap: .25em;
+        }
+        .pageToggles {
+          height: 15px;
+          color: #CBCDEB;
+        }
+        #dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: .25em;
+        }
+        #dots img {
+          height: 10px;
+          width: auto;
+        }
+        #pagination-actions > sl-icon:hover{
+          cursor:pointer
+        }
+        #indicators-holder {
+          display: flex;
+          gap: .5em;
+          align-items: center;
+        }
+        .indicator {
+          display: flex;
+          gap: .5em;
+          align-items: center;
+          background-color: #F1F2FA;
+          padding: .25em .5em;
+          border-radius: 10px;
+        }
+        .indicator p {
+          line-height: 20px;
+          margin: 0;
+        }
+
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: white;
@@ -522,7 +611,7 @@ export class AppReport extends LitElement {
           font-size: 14px;
           margin: 0;
           font-weight: bold;
-          white-space: no-wrap; 
+          white-space: no-wrap;
         }
         .details::part(base) {
           border-radius: 0;
@@ -541,27 +630,41 @@ export class AppReport extends LitElement {
 
         #two-cell-row {
           display: flex;
-          column-gap: 1em;
+          flex-flow: row wrap;
+          align-items: flex-start;
+          justify-content: space-between;
           width: 100%;
         }
 
         #two-cell-row > * {
-          width: 50%;
+          width: 49%;
+          background: white;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-self: flex-start;
+          border-radius: 10px;
         }
 
         #sw-header {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
+          min-height: 332px;
+          justify-content: space-between;
         }
+
         #swh-top {
           display: flex;
           justify-content: space-between;
           column-gap: 1em;
         }
+
         #swh-text {
+          width: 100%;
           row-gap: 0.5em;
         }
+
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
@@ -575,7 +678,8 @@ export class AppReport extends LitElement {
 
         sl-progress-ring {
           height: fit-content;
-          --track-width: 8px;
+          --track-width: 4px;
+          --indicator-width: 8px;
           --size: 100px;
           font-size: 18px;
         }
@@ -598,23 +702,13 @@ export class AppReport extends LitElement {
           width: 3em;
           height: auto;
         }
-        .half-width-cards {
-          display: flex;
-          flex-direction: column;
-          border-radius: 10px;
-          background-color: white;
-          align-self: flex-start;
-        }
 
-        #security {
-          height: 100%;
-        }
         #sec-header {
           justify-content: space-between;
           row-gap: .5em;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
-          height: 100%;
+          min-height: 332px;
         }
         #sec-top {
           display: flex;
@@ -622,49 +716,19 @@ export class AppReport extends LitElement {
           justify-content: space-between;
         }
         #sec-text {
+          width: 100%;
           row-gap: 0.5em;
         }
         #sec-actions {
           row-gap: 1em;
           width: 66%;
         }
-        .close_x {
-          position: absolute;
-          top: 1em;
-          right: 1em;
-          height: 20px;
-          width: auto;
-          z-index: 10;
-        }
-        .close_x:hover {
-          cursor: pointer;
-        }
-        .modal-blur {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: transparent;
-          backdrop-filter: blur(10px);
-          z-index: 3;
-        }
-        .modal {
-          background: white;
-          max-width: 765px;
-          max-height: 840px;
-          border-radius: 10px;
-          box-shadow: 0px 16px 24px rgba(0, 0, 0, 0.12);
-          position: relative;
-          z-index: 4;
-          display: flex;
-        }
         .progressRingSkeleton::part(base) {
           height: 100px;
           width: 100px;
           border-radius: 50%;
         }
-        
+
         .test-result {
           display: flex;
           gap: .5em;
@@ -682,7 +746,6 @@ export class AppReport extends LitElement {
           --color: #d0d0d3
         }
         .desc-skeleton {
-          width: 200px;
           --color: #d0d0d3
         }
         .gap {
@@ -704,7 +767,7 @@ export class AppReport extends LitElement {
           10%, 90% {
             transform: translate3d(-1px, 0, 0);
           }
-          
+
           20%, 80% {
             transform: translate3d(2px, 0, 0);
           }
@@ -726,7 +789,6 @@ export class AppReport extends LitElement {
           display: none;
         }
         .dialog::part(panel) {
-          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -751,7 +813,53 @@ export class AppReport extends LitElement {
          width: 45%;
         }
 
-        
+        .loader {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          display: block;
+          margin:15px auto;
+          position: relative;
+          color: #4F3FB6;
+          box-sizing: border-box;
+          animation: animloader 2s linear infinite;
+        }
+
+        @keyframes animloader {
+          0% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
+          }
+          25% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 2px;
+          }
+          50% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 -2px,  -14px 0 0 2px,  -38px 0 0 -2px;
+          }
+          75% {
+            box-shadow: 14px 0 0 2px,  38px 0 0 -2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
+          }
+          100% {
+            box-shadow: 14px 0 0 -2px,  38px 0 0 2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
+          }
+        }
+
+        @media(max-width: 750px){
+          #two-cell-row {
+            flex-direction: column;
+            row-gap: 1em;
+          }
+          #two-cell-row > * {
+            width: 100%;
+          }
+          #sw-header {
+            min-height: unset;
+          }
+          #sec-header {
+            min-height: unset;
+          }
+        }
+
+
 
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
@@ -792,16 +900,10 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
-          #two-cell-row {
-            flex-direction: column;
-            row-gap: 1em;
-          }
-          #two-cell-row > * {
-            width: 100%;
-          }
+
         `)}
         ${smallBreakPoint(css`
-        
+
           sl-progress-ring {
             --size: 75px;
             --track-width: 4px;
@@ -810,13 +912,6 @@ export class AppReport extends LitElement {
           .progressRingSkeleton::part(base) {
             width: 75px;
             height: 75px;
-          }
-          #two-cell-row {
-            flex-direction: column;
-            row-gap: 1em;
-          }
-          #two-cell-row > * {
-            width: 100%;
           }
 
           #header-row {
@@ -836,9 +931,7 @@ export class AppReport extends LitElement {
           #retest img {
             height: 14px;
           }
-          #last-edited {
-            font-size: 10px;
-          }
+          
 
           #test {
             width: 50%;
@@ -864,9 +957,7 @@ export class AppReport extends LitElement {
             font-size: 16px;
           }
 
-          .modal {
-            max-width: 90vw;
-          }
+          
           .half-width-cards {
             width: 100%;
           }
@@ -886,7 +977,8 @@ export class AppReport extends LitElement {
     });
   }
 
-  async firstUpdated() {
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -898,11 +990,15 @@ export class AppReport extends LitElement {
     setInterval(() => this.pollLastTested(), 120000);
   }
 
+  firstUpdated() {
+    this.rotateNinety("todo");
+  }
+
   pollLastTested(){
     let last = new Date(JSON.parse(sessionStorage.getItem('last_tested')!));
     let now = new Date();
     let diff = now.getTime() - last.getTime();
-    
+
     if(diff < 60000){
       this.lastTested = "Last tested seconds ago";
     } else if (diff < 3600000) {
@@ -920,17 +1016,28 @@ export class AppReport extends LitElement {
 
   async getManifest(url: string): Promise<ManifestContext> {
     this.isAppCardInfoLoading = true;
-    const manifestContext = await fetchOrCreateManifest(url);
+    let manifestContext: ManifestContext | undefined;
+
+    manifestContext = await fetchOrCreateManifest(url);
+    this.createdManifest = false;
+
+    if(!manifestContext){
+      this.createdManifest = true;
+      manifestContext = await createManifestContextFromEmpty(url);
+    }
+
+    this.manifestContext = manifestContext;
+
     this.isAppCardInfoLoading = false;
-    this.populateAppCard(manifestContext, url);
-    return manifestContext;
+    this.populateAppCard(manifestContext!, url);
+    return manifestContext!;
   }
 
   populateAppCard(manifestContext: ManifestContext, url: string) {
-    if (manifestContext) {
-      const parsedManifestContext = manifestContext;
+    let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
 
-      let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
+    if (manifestContext && !this.createdManifest) {
+      const parsedManifestContext = manifestContext;
 
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
@@ -944,17 +1051,33 @@ export class AppReport extends LitElement {
       if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
         this.styles.backgroundColor = manifestContext.manifest.theme_color;
         // calculate whether is best to use white or black
-        this.styles.color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
+        let color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
+        this.styles.color = color;
+        color === "#ffffff" ? this.retestPath = "/assets/new/retest-white.svg" : "/assets/new/retest-black.svg"
 
       }
+    } else {
+        this.appCard = {
+          siteName: "Missing Name",
+          siteUrl: cleanURL,
+          description: "Your manifest description is missing.",
+        };
     }
   }
 
   pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
     var color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
-    var r = parseInt(color.substring(0, 2), 16); // hexToR
-    var g = parseInt(color.substring(2, 4), 16); // hexToG
-    var b = parseInt(color.substring(4, 6), 16); // hexToB
+    if(color.startsWith("rgb")){
+      let split = color.substring(3).split(",");
+      var r = parseInt(split[0].substring(1, 2));
+      var g = parseInt(split[1]);
+      var b = parseInt(split[2].substring(0, split[2].length - 1));
+    } else {
+      var r = parseInt(color.substring(0, 2), 16); // hexToR
+      var g = parseInt(color.substring(2, 4), 16); // hexToG
+      var b = parseInt(color.substring(4, 6), 16); // hexToB
+    }
+    
     var uicolors = [r / 255, g / 255, b / 255];
     var c = uicolors.map((col) => {
       if (col <= 0.03928) {
@@ -967,35 +1090,38 @@ export class AppReport extends LitElement {
   }
 
   async runAllTests(url: string) {
-    Promise.all([this.getManifest(url), this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() => 
+    this.runningTests = true;
+    await this.getManifest(url);
+    await Promise.all([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
+
+    this.runningTests = false;
   }
 
   // idk if we need the url for this function bc we can just get the manifest context
   async testManifest() {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
+    this.manifestDataLoading = true;
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
     details!.disabled = true;
-
     let manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
-    
+
     this.validationResults = await validateManifest(manifest);
 
     //  This just makes it so that the valid things are first
     // and the invalid things show after.
     this.validationResults.sort((a, b) => {
       if(a.valid && !b.valid){
-        return -1;
-      } else if(b.valid && !a.valid){
         return 1;
+      } else if(b.valid && !a.valid){
+        return -1;
       } else {
         return a.member.localeCompare(b.member);
       }
     });
-    
     this.manifestTotalScore = this.validationResults.length;
 
     this.validationResults.forEach((test: Validation) => {
@@ -1003,9 +1129,9 @@ export class AppReport extends LitElement {
         this.manifestValidCounter++;
       } else {
         let status ="";
-        if(test.category === "required"){
+        if(test.category === "required" || test.testRequired){
           status = "red";
-          this.canPackageList.push(false);
+          this.manifestRequiredCounter++;
         } else {
           status = "yellow";
         }
@@ -1013,6 +1139,12 @@ export class AppReport extends LitElement {
         this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
       }
     });
+
+    if(this.manifestRequiredCounter > 0){
+      this.canPackageList[0] = false;
+    } else {
+      this.canPackageList[0] = true;
+    }
 
     let amt_missing = await this.handleMissingFields(manifest);
 
@@ -1029,22 +1161,6 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
-  async handleMissingFields(manifest: Manifest){
-    let missing = await reportMissing(manifest);
-    
-    missing.forEach((field: string) => {
-      if(required_fields.includes(field)){
-        this.requiredMissingFields.push(field)
-      } else if(reccommended_fields.includes(field)){
-        this.reccMissingFields.push(field)
-      } if(optional_fields.includes(field)){
-        this.optMissingFields.push(field)
-      } 
-      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
-    });
-    return missing.length;
-  }
-
   async testServiceWorker(url: string) {
     //call service worker tests
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
@@ -1054,6 +1170,7 @@ export class AppReport extends LitElement {
 
     const serviceWorkerTestResult = await testServiceWorker(url);
     this.serviceWorkerResults = serviceWorkerTestResult;
+
     this.serviceWorkerResults.forEach((result: any) => {
       if(result.result){
         this.swValidCounter++;
@@ -1062,7 +1179,7 @@ export class AppReport extends LitElement {
         if(result.category === "required"){
           status = "red";
           missing = true;
-          this.canPackageList.push(false);
+          this.swRequiredCounter++;
           this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
         } else {
           status = "yellow";
@@ -1073,8 +1190,15 @@ export class AppReport extends LitElement {
         }
       }
     })
+
+    if(this.swRequiredCounter > 0){
+      this.canPackageList[1] = false;
+    } else {
+      this.canPackageList[1] = true;
+    }
+
     this.swTotalScore = this.serviceWorkerResults.length;
-    
+
     this.swDataLoading = false;
     details!.disabled = false;
 
@@ -1083,7 +1207,6 @@ export class AppReport extends LitElement {
       'service_worker_tests',
       JSON.stringify(serviceWorkerTestResult)
     );
-    //console.log(serviceWorkerTestResult);
     this.requestUpdate();
   }
 
@@ -1094,6 +1217,7 @@ export class AppReport extends LitElement {
 
     const securityTests = await testSecurity(url);
     this.securityResults = securityTests;
+
     this.securityResults.forEach((result: any) => {
       if(result.result){
         this.secValidCounter++;
@@ -1101,7 +1225,7 @@ export class AppReport extends LitElement {
         let status ="";
         if(result.category === "required"){
           status = "red";
-          this.canPackageList.push(false);
+          this.secRequiredCounter++;
         } else {
           status = "yellow";
         }
@@ -1109,6 +1233,13 @@ export class AppReport extends LitElement {
         this.todoItems.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
       }
     })
+
+    if(this.secRequiredCounter > 0){
+      this.canPackageList[2] = false;
+    } else {
+      this.canPackageList[2] = true;
+    }
+
     this.secTotalScore = this.securityResults.length;
 
     this.secDataLoading = false;
@@ -1116,14 +1247,31 @@ export class AppReport extends LitElement {
 
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
-    //console.log(securityTests);
     this.requestUpdate();
   }
 
-  async retest() {
+  async handleMissingFields(manifest: Manifest){
+    let missing = await reportMissing(manifest);
+
+    missing.forEach((field: string) => {
+      if(required_fields.includes(field)){
+        this.requiredMissingFields.push(field)
+      } else if(reccommended_fields.includes(field)){
+        this.reccMissingFields.push(field)
+      } if(optional_fields.includes(field)){
+        this.optMissingFields.push(field)
+      }
+      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
+    });
+    return missing.length;
+  }
+
+  async retest(comingFromConfirmation: boolean) {
     recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    this.retestConfirmed = true; 
-    await this.delay(3000);
+    this.retestConfirmed = true;
+    if(comingFromConfirmation){
+      await this.delay(3000)
+    }
     (this.shadowRoot!.querySelector(".dialog") as any)!.hide();
     if (this.siteURL) {
       this.resetData();
@@ -1140,10 +1288,13 @@ export class AppReport extends LitElement {
     // reset scores
     this.manifestValidCounter = 0;
     this.manifestTotalScore = 0;
+    this.manifestRequiredCounter = 0;
     this.swValidCounter = 0;
     this.swTotalScore = 0;
+    this.swRequiredCounter = 0;
     this.secValidCounter = 0;
     this.secTotalScore = 0;
+    this.secRequiredCounter = 0;
 
 
     // reset todo lsit
@@ -1166,44 +1317,15 @@ export class AppReport extends LitElement {
     let details = this.shadowRoot!.querySelectorAll('sl-details');
 
     details.forEach((detail: any) => {
-      detail.hide();
+      if(detail.id != "todo-detail"){
+        detail.hide();
+      } else {
+        detail.show()
+      }
     });
 
     // reset retest data
     this.retestConfirmed = false;
-  }
-
-  async handleDoubleChecks() {
-    const maniContext = getManifestContext();
-
-    // If we couldn't find the manifest and we instead generated one,
-    // punt back; no need to do additional manifest checks.
-    if (maniContext.isGenerated) {
-      return;
-    }
-
-    const doubleCheckResults = await doubleCheckManifest(maniContext);
-    if (doubleCheckResults) {
-      if (!doubleCheckResults.icon) {
-        this.errorMessage = error_messages.icon.message;
-        this.errorLink = error_messages.icon.link;
-
-        this.errored = true;
-        return;
-      } else if (!doubleCheckResults.name || !doubleCheckResults.shortName) {
-        this.errorMessage = error_messages.name.message;
-        this.errorLink = error_messages.name.link;
-
-        this.errored = true;
-        return;
-      } else if (!doubleCheckResults.startURL) {
-        this.errorMessage = error_messages.start_url.message;
-        this.errorLink = error_messages.start_url.link;
-
-        this.errored = true;
-        return;
-      }
-    }
   }
 
   async openManifestEditorModal() {
@@ -1225,6 +1347,13 @@ export class AppReport extends LitElement {
 
     await dialog.show()
     recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }
+
+  async openTestPublishModal() {
+    let dialog: any = this.shadowRoot!.querySelector("test-publish-pane")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog.show()
+    recordPWABuilderProcessStep("test_publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
   iconSrcListParse() {
@@ -1263,15 +1392,56 @@ export class AppReport extends LitElement {
     return undefined;
   }
 
-  decideColor(valid: number, total: number){
-    let ratio = parseFloat(JSON.stringify(valid)) / total;
-    
-    if(ratio == 1){      
-      return {"green": true, "red": false, "yellow": false};
-    } else if(ratio < 1.0/3) {
-      return {"green": false, "red": true, "yellow": false};
+
+  decideColor(valid: number, total: number, card: string){
+
+    let instantRed = false;
+    if(card === "manifest"){
+      instantRed = this.manifestRequiredCounter > 0;
+    } else if(card === "sw"){
+      instantRed = this.swRequiredCounter > 0;
     } else {
+      instantRed = this.secRequiredCounter > 0;
+    }
+
+    let ratio = parseFloat(JSON.stringify(valid)) / total;
+
+    if(instantRed){
+      return {"green": false, "red": true, "yellow": false};
+    } else if(ratio < .7){
       return {"green": false, "red": false, "yellow": true};
+    } else {
+      return {"green": true, "red": false, "yellow": false};
+    }
+
+  }
+
+  decideMessage(valid: number, total: number, card: string){
+
+    let instantRed = false;
+    let index = 0;
+    if(card === "manifest"){
+      instantRed = this.manifestRequiredCounter > 0;
+    } else if(card === "sw"){
+      index = 1;
+      instantRed = this.swRequiredCounter > 0;
+    } else {
+      index = 2;
+      instantRed = this.secRequiredCounter > 0;
+    }
+
+    let ratio = parseFloat(JSON.stringify(valid)) / total;
+
+    let messages = this.possible_messages[index].messages;
+
+    if(this.createdManifest || ratio == 0 || (card ==="sec" && ratio != 1)){
+      return messages["none"];
+    } else if(instantRed){
+      return messages["blocked"];
+    } else if(ratio != 1){
+      return messages["yellow"];
+    } else {
+      return messages["green"];
     }
   }
 
@@ -1336,6 +1506,68 @@ export class AppReport extends LitElement {
     icon!.style.transform = "rotate(90deg)";
   }
 
+  sortTodos(){
+    this.todoItems.sort((a, b) => {
+      if(a.status === "red" && b.status !== "red"){
+        return -1;
+      } else if(b.status === "red" && a.status !== "red"){
+        return 1;
+      } else {
+        return a.field.localeCompare(b.field);
+      }
+    });
+
+    return this.todoItems;
+  }
+
+  paginate() {
+    let array = this.sortTodos();
+    return array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+  }
+
+  switchPage(up: boolean){
+    if(up && this.pageNumber * this.pageSize < this.todoItems.length){
+      this.pageNumber++;
+    } else if(!up && this.pageNumber != 1){
+      this.pageNumber--;
+    }
+    this.requestUpdate();
+  }
+
+  getDots(){
+    let dots: any[] = [];
+
+    let totalPages = Math.ceil(this.todoItems.length / this.pageSize);
+
+    for(let i = 0; i < totalPages; i++){
+      dots.push("dot");
+    }
+    return dots;
+  }
+
+  renderIndicators(){
+    let yellow = 0;
+    let red = 0;
+
+    this.todoItems.forEach((todo: any) => {
+      if(todo.status == "red"){
+        red++;
+      } else {
+        yellow++;
+      }
+    })
+
+    if(yellow + red != 0){
+      return html`
+      <div id="indicators-holder">
+        ${red != 0 ? html`<div class="indicator"><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
+        ${yellow != 0 ? html`<div class="indicator"><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
+      </div>`
+    }
+    return html``
+    
+  }
+
 
   render() {
     return html`
@@ -1346,85 +1578,87 @@ export class AppReport extends LitElement {
           ${this.isAppCardInfoLoading ?
           html`
             <div id="app-card" class="flex-col skeleton-effects">
-              <div id="card-header">
+              <div id="app-card-header">
                 <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
                 <div id="card-info" class="flex-col">
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                 </div>
+                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
               </div>
-              <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+              <div id="app-card-footer">
+                <sl-skeleton class="app-info-skeleton-half" effect="pulse"></sl-skeleton>
+              </div>
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${styleMap(this.styles)}>
-              <div id="card-header">
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.styles)}>
+              <div id="app-card-header">
                 <div id="pwa-image-holder">
-                  <img src=${this.iconSrcListParse()![0]} alt="Your sites logo" />
+                  ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} ialt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
                   <p>${this.appCard.siteUrl}</p>
                 </div>
+                <p id="app-card-desc">${this.appCard.description}</p>
               </div>
-              <p id="card-desc">${this.appCard.description}</p>
-            </div>`}
-            <div id="app-actions" class="flex-col">
-              <div id="actions">
-                <div id="test" class="flex-col-center">
+              <div id="app-card-footer">
+                <div id="test" style=${styleMap(this.styles)}>
                   <button
                     type="button"
                     id="retest"
                     @click=${() => {
-                      this.retest();
+                      this.retest(false);
                     }}
+                    ?disabled=${this.runningTests}
                   >
                     <img
-                      src="/assets/new/retest.svg"
+                      src=${this.retestPath}
                       alt="retest site"
                       role="presentation"
-                    />Retest Site
-                  </button>
-                  <p id="last-edited">
-                    <img
-                      src="/assets/new/last-edited.png"
-                      alt="pencil icon"
-                      role="presentation"
-                    />${this.lastTested}
-                  </p>
-                </div>
-                <img src="/assets/new/vertical-divider.png" role="presentation" />
-                <div id="package" class="flex-col-center">
-                    ${this.canPackage ?
-                      html`
-                      <button
-                        type="button"
-                        id="pfs"
-                        @click=${() => this.openPublishModal()}
-                      >
-                        Package for store
-                      </button>
-                      ` : 
-                      html`
-                      <sl-tooltip content="Handle all required todo's and retest in order to package!">
-                          <button
-                            type="button"
-                            id="pfs-disabled"
-                            aria-disabled="true"
-                          >
-                            Package for store
-                          </button>
-                      </sl-tooltip>
-                      `}
-                  <button type="button" id="test-download">
-                    <p class="arrow_link">Download test package</p>
-                    <img
-                      src="/assets/new/arrow.svg"
-                      alt="arrow"
-                      role="presentation"
                     />
+                  
+                    <p id="last-edited" style=${styleMap(this.styles)}>${this.lastTested}</p>
                   </button>
                 </div>
+              </div>
+              
+            </div>`}
+            <div id="app-actions" class="flex-col">
+              <div id="package" class="flex-col-center">
+                  ${this.canPackage ?
+                    html`
+                    <button
+                      type="button"
+                      id="pfs"
+                      @click=${() => this.openPublishModal()}
+                    >
+                      Package for store
+                    </button>
+                    ` :
+                    html`
+                    <sl-tooltip class="mani-tooltip">
+                    ${this.runningTests ?
+                      html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
+                      html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
+                        <button
+                          type="button"
+                          id="pfs-disabled"
+                          aria-disabled="true"
+                        >
+                          Package for store
+                        </button>
+                    </sl-tooltip>
+                    `}
+                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
+                  <p class="arrow_link">Download test package</p>
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
+                </button>
               </div>
               <div id="actions-footer" class="flex-center">
                 <p>Available stores:</p>
@@ -1447,17 +1681,23 @@ export class AppReport extends LitElement {
               </div>
             </div>
           </div>
+
           <div id="todo">
-            <sl-details 
-              id="todo-detail" 
+            <sl-details
+              id="todo-detail"
               @sl-show=${() => this.rotateNinety("todo")}
               @sl-hide=${() => this.rotateZero("todo")}
+              open
               >
               <div class="details-summary" slot="summary">
-                <p>View Details</p>
-                <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                <div id="todo-summary-left">
+                  <p>Action Items</p>
+                  ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.renderIndicators() : html``}
+                </div>
+                  <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                
               </div>
-             ${this.todoItems.map((todo: any) => 
+             ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
                 html`
                   <todo-item
                     .status=${todo.status}
@@ -1467,50 +1707,67 @@ export class AppReport extends LitElement {
                     .displayString=${todo.displayString}
                     @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
                   </todo-item>`
-              )}
-            
+              ) : html`<span class="loader"></span>`}
+
+            ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
+              html`
+              <div id="pagination-actions">
+                <sl-icon class="pageToggles" name="chevron-left" @click=${() => this.switchPage(false)}></sl-icon>
+                <div id="dots">
+                  ${this.getDots().map((_dot: any, index: number) => 
+                    this.pageNumber == index + 1 ? 
+                      html`
+                        <img src="/assets/new/active_dot.svg" alt="active dot" />
+                      ` :
+                      html`
+                        <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
+                      `)}
+                </div>
+                <sl-icon class="pageToggles" name="chevron-right" @click=${() => this.switchPage(true)}></sl-icon>
+              </div>` : html``}
             </sl-details>
           </div>
+
           <div id="manifest" class="flex-col">
             <div id="manifest-header">
               <div id="mh-content">
                 <div id="mh-text" class="flex-col">
                   <p class="card-header">Manifest</p>
-                  ${this.manifestDataLoading ? 
+                  ${this.manifestDataLoading ?
                     html`
                       <div class="flex-col gap">
                         <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                         <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                       </div>
-                    ` : 
+                    ` :
                     html`
                     <p class="card-desc">
-                      PWABuilder has analyzed your Web Manifest. You do not have a web
-                      manifest. Use our Manifest editor to generate one. You can
-                      package for the store once you have a valid manifest.
+                      ${this.decideMessage(this.manifestValidCounter, this.manifestTotalScore, "manifest")}
                     </p>
                   `}
                 </div>
 
                 <div id="mh-actions" class="flex-col">
-                  ${this.manifestDataLoading ? 
+                  ${this.manifestDataLoading ?
                     html`
                       <div class="flex-col gap">
                         <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                         <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                       </div>
-                    ` : 
+                    ` :
                     html`
-                      <button
-                        type="button"
-                        class="alternate"
-                        @click=${() => this.openManifestEditorModal()}
-                      >
-                        Edit your Manifest
-                      </button>
+                      ${this.createdManifest ?
+                      html`
+                          <sl-tooltip class="mani-tooltip" open>
+                            <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We have created a manifest for you! <br> Click here to customize it!</p></div>
+                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>
+                          </sl-tooltip>` :
+                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>`
+                      }
+
                       <a
                         class="arrow_anchor"
-                        href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
+                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
                         rel="noopener"
                         target="_blank"
                         @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
@@ -1523,23 +1780,23 @@ export class AppReport extends LitElement {
                         />
                       </a>
                   `}
-                  
+
                 </div>
               </div>
-              
+
               <div id="mh-right">
-                ${this.manifestDataLoading ? 
+                ${this.manifestDataLoading ?
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
-                    html`<sl-progress-ring 
-                            id="manifestProgressRing" 
-                            class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore))}
-                            value="${(parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.manifestValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
+                    html`<sl-progress-ring
+                            id="manifestProgressRing"
+                            class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore, "manifest"))}
+                            value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
                 }
               </div>
             </div>
-            <sl-details 
-              id="mani-details" 
+            <sl-details
+              id="mani-details"
               class="details"
               @sl-show=${() => this.rotateNinety("mani-details")}
               @sl-hide=${() => this.rotateZero("mani-details")}
@@ -1548,23 +1805,9 @@ export class AppReport extends LitElement {
               <div id="manifest-detail-grid">
                 <div class="detail-list">
                   <p class="detail-list-header">Required</p>
-                  ${this.validationResults.map((result: Validation) => result.category === "required" ? 
-                  html`
-                    <div class="test-result" data-field=${result.member}>
-                      ${result.valid ? 
-                        html`<img src=${valid_src} alt="passing result icon"/>` : 
-                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
-                                <img src=${stop_src} alt="invalid result icon"/>
-                              </sl-tooltip>`
-                      }
-                      <p>${result.displayString}</p>
-                    </div>
-                  ` : 
-                  html``)}
 
                   ${this.requiredMissingFields.length > 0 ?
                   html`
-                    <p class="missing">-- Missing Required Fields --</p>
                     ${this.requiredMissingFields.map((field: string) =>
                     html`<div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
@@ -1576,25 +1819,24 @@ export class AppReport extends LitElement {
                   ` :
                   html``}
                   
+                  ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
+                  html`
+                    <div class="test-result" data-field=${result.member}>
+                      ${result.valid ?
+                        html`<img src=${valid_src} alt="passing result icon"/>` :
+                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                                <img src=${stop_src} alt="invalid result icon"/>
+                              </sl-tooltip>`
+                      }
+                      <p>${result.displayString}</p>
+                    </div>
+                  ` :
+                  html``)}
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Recommended</p>
-                  ${this.validationResults.map((result: Validation) => result.category === "recommended" ? 
-                  html`
-                    <div class="test-result" data-field=${result.member}>
-                      ${result.valid ? 
-                        html`<img src=${valid_src} alt="passing result icon"/>` : 
-                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
-                                <img src=${yield_src} alt="yield result icon"/>
-                              </sl-tooltip>
-                        `}
-                      <p>${result.displayString}</p>
-                    </div>
-                  ` : html``)}
-
                   ${this.reccMissingFields.length > 0 ?
                   html`
-                    <p class="missing">-- Missing Recommended Fields --</p>
                     ${this.reccMissingFields.map((field: string) =>
                     html`<div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
@@ -1605,26 +1847,23 @@ export class AppReport extends LitElement {
                     )}
                   ` :
                   html``}
-                </div>
-                <div class="detail-list">
-                  <p class="detail-list-header">Optional</p>
-                  ${this.validationResults.map((result: Validation) => result.category === "optional" ? 
+                  ${this.validationResults.map((result: Validation) => result.category === "recommended"  && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
-                      ${result.valid ? 
-                        html`<img src=${valid_src} alt="passing result icon"/>` : 
-                        html`
-                          <sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
-                            <img src=${yield_src} alt="yield result icon"/>
-                          </sl-tooltip>
+                      ${result.valid ?
+                        html`<img src=${valid_src} alt="passing result icon"/>` :
+                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                                <img src=${yield_src} alt="yield result icon"/>
+                              </sl-tooltip>
                         `}
                       <p>${result.displayString}</p>
                     </div>
                   ` : html``)}
-
+                </div>
+                <div class="detail-list">
+                  <p class="detail-list-header">Optional</p>
                   ${this.optMissingFields.length > 0 ?
                   html`
-                    <p class="missing">-- Missing Optional Fields --</p>
                     ${this.optMissingFields.map((field: string) =>
                     html`
                         <div class="test-result" data-field=${field}>
@@ -1636,63 +1875,76 @@ export class AppReport extends LitElement {
                     )}
                   ` :
                   html``}
+
+                  ${this.validationResults.map((result: Validation) => result.category === "optional" && ((result.testRequired && result.valid) || !result.testRequired) ?
+                  html`
+                    <div class="test-result" data-field=${result.member}>
+                      ${result.valid ?
+                        html`<img src=${valid_src} alt="passing result icon"/>` :
+                        html`
+                          <sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                            <img src=${yield_src} alt="yield result icon"/>
+                          </sl-tooltip>
+                        `}
+                      <p>${result.displayString}</p>
+                    </div>
+                  ` : html``)}
                 </div>
               </div>
             </sl-details>
           </div>
+
           <div id="two-cell-row">
             <div id="sw" class="half-width-cards">
               <div id="sw-header" class="flex-col">
                 <div id="swh-top">
                   <div id="swh-text" class="flex-col">
                     <p class="card-header">Service Worker</p>
-                    ${this.swDataLoading ? 
+                    ${this.swDataLoading ?
                       html`
                         <div class="flex-col gap">
                           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                         </div>
-                      ` : 
+                      ` :
                       html`
                         <p class="card-desc">
-                          PWABuilder has analyzed your Service Worker, check out the
-                          results below. Want to add a Service Worker or check out our
-                          pre-built Service Workers? Tap Genereate Service Worker.
+                          ${this.decideMessage(this.swValidCounter, this.swTotalScore, "sw")}
                         </p>
                       `
                         }
                   </div>
-                  ${this.swDataLoading ? 
+                  ${this.swDataLoading ?
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                     id="swProgressRing"
-                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore))}
+                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore, "sw"))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
                     >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`${this.swValidCounter} / ${this.swTotalScore}`}</sl-progress-ring>
                     `
                   }
                 </div>
                 <div id="sw-actions" class="flex-col">
-                  ${this.swDataLoading ? 
+                  ${this.swDataLoading ?
                   html`
                     <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                  ` : 
+                  ` :
                   html`
                     <button type="button" class="alternate" @click=${() => this.openSWSelectorModal()}>
                       Generate Service Worker
                     </button>
                   `}
-                  
-                  ${this.swDataLoading ? 
+
+                  ${this.swDataLoading ?
                     html`
                       <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                    ` : 
+                    ` :
                     html`
-                      <a 
+                      <a
                         class="arrow_anchor"
-                        href="" rel="noopener" 
+                        rel="noopener"
                         target="_blank"
-                        href=""
+                        href="https://docs.pwabuilder.com/#/home/sw-intro"
                         @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                         <p class="arrow_link">Service Worker Documentation</p>
                         <img
@@ -1703,11 +1955,11 @@ export class AppReport extends LitElement {
                       </a>
                     `
                   }
-                  
+
                 </div>
               </div>
-              <sl-details 
-                id="sw-details" 
+              <sl-details
+                id="sw-details"
                 class="details"
                 @sl-show=${() => this.rotateNinety("sw-details")}
                 @sl-hide=${() => this.rotateZero("sw-details")}
@@ -1716,35 +1968,35 @@ export class AppReport extends LitElement {
                 <div class="detail-grid">
                   <div class="detail-list">
                     <p class="detail-list-header">Required</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ? 
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
                     html`
                       <div class="test-result" data-field=${result.infoString}>
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
-                    ` : 
+                    ` :
                     html``)}
                   </div>
                   <div class="detail-list">
                     <p class="detail-list-header">Recommended</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ? 
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ?
                     html`
                     <div class="test-result" data-field=${result.infoString}>
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
-                    ` : 
+                    ` :
                     html``)}
                   </div>
                   <div class="detail-list">
                     <p class="detail-list-header">Optional</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ? 
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ?
                     html`
                       <div class="test-result" data-field=${result.infoString}>
                         ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
-                    ` : 
+                    ` :
                     html``)}
                   </div>
                 </div>
@@ -1755,42 +2007,41 @@ export class AppReport extends LitElement {
                 <div id="sec-top">
                   <div id="sec-text" class="flex-col">
                     <p class="card-header">Security</p>
-                    ${this.secDataLoading ? 
+                    ${this.secDataLoading ?
                       html`
                         <div class="flex-col gap">
                           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
                         </div>
-                      ` : 
+                      ` :
                       html`
                         <p class="card-desc">
-                        PWABuilder has done a basic analysis of your HTTPS setup.
-                      You can use LetsEncrypt to get a free HTTPS certificate, or
-                      publish to Azure to get built-in HTTPS support.
+                          ${this.decideMessage(this.secValidCounter, this.secTotalScore, "sec")}
                         </p>
                       `
                         }
                   </div>
-                  ${this.secDataLoading ? 
+                  ${this.secDataLoading ?
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                     id="secProgressRing"
-                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore))}
+                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore, "sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
                     >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`${this.secValidCounter} / ${this.secTotalScore}`}</sl-progress-ring>
                     `
                   }
-                  
+
                 </div>
                 <div id="sec-actions" class="flex-col">
-                  ${this.secDataLoading ? 
+                  ${this.secDataLoading ?
                     html`
                       <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                    ` : 
+                    ` :
                     html`
-                      <a 
-                        class="arrow_anchor" 
-                        href="" rel="noopener" 
+                      <a
+                        class="arrow_anchor"
+                        href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" 
+                        rel="noopener"
                         target="_blank"
                         @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
                         <p class="arrow_link">Security Documentation</p>
@@ -1804,8 +2055,8 @@ export class AppReport extends LitElement {
                   }
                 </div>
               </div>
-              <sl-details 
-                id="sec-details" 
+              <sl-details
+                id="sec-details"
                 class="details"
                 @sl-show=${() => this.rotateNinety("sec-details")}
                 @sl-hide=${() => this.rotateZero("sec-details")}
@@ -1814,25 +2065,25 @@ export class AppReport extends LitElement {
                 <div class="detail-grid">
                   <div class="detail-list">
                     <p class="detail-list-header">Required</p>
-                    ${this.securityResults.map((result: TestResult) => result.category === "required" ? 
+                    ${this.securityResults.map((result: TestResult) => result.category === "required" ?
                       html`
                         <div class="test-result" data-field=${result.infoString}>
                           ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                           <p>${result.infoString}</p>
                         </div>
-                      ` : 
+                      ` :
                       html``)}
                   </div>
                 </div>
               </sl-details>
             </div>
           </div>
-          
+
         </div>
       </div>
 
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
-        ${this.retestConfirmed ? 
+        ${this.retestConfirmed ?
           html`
           <p>Retesting your site now!</p>
           ` :
@@ -1840,15 +2091,16 @@ export class AppReport extends LitElement {
             <p>Have you added your new ${this.thingToAdd} to your site?</p>
             <div id="confirmationButtons">
               <sl-button>No</sl-button>
-              <sl-button @click=${() => this.retest()}>Yes</sl-button>
+              <sl-button @click=${() => this.retest(true)}>Yes</sl-button>
             </div>
           `
         }
-        
+
       </sl-dialog>
-      
+
       <publish-pane></publish-pane>
-      <manifest-editor-frame @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>
+      <test-publish-pane></test-publish-pane>
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;
