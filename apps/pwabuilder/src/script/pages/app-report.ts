@@ -47,7 +47,7 @@ export class AppReport extends LitElement {
     description: "Your site's description",
     siteUrl: 'Site URL',
   };
-  @property({ type: Object }) styles = { backgroundColor: 'white', color: 'black' };
+  @property({ type: Object }) styles = { backgroundColor: 'white', color: 'black'};
   @property() manifestCard = {};
   @property() serviceWorkerCard = {};
   @property() securityCard = {};
@@ -72,6 +72,7 @@ export class AppReport extends LitElement {
   @state() canPackageList: boolean[] = [false, false, false];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
+  @state() retestPath: string = "/assets/new/retest-black.svg";
 
   @state() swSelectorOpen: boolean = false;
 
@@ -195,24 +196,23 @@ export class AppReport extends LitElement {
           column-gap: 1em;
         }
         #app-card {
-          width: 30%;
+          width: 60%;
           height: 100%;
           border-radius: 10px;
           background-color: white;
-          padding: 1em;
-          row-gap: 10px;
+          justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
         .flex-col {
           display: flex;
           flex-direction: column;
         }
-        #card-header {
+        #app-card-header {
           display: flex;
           column-gap: 10px;
           align-items: center;
           font-size: 14px;
-          font-weight: bold;
+          padding: 1em;
           width: 100%;
         }
         #pwa-image-holder {
@@ -223,9 +223,9 @@ export class AppReport extends LitElement {
           justify-content: center;
           background-color: white;
           border-radius: 10px;
-          box-shadow: rgb(0 0 0 / 20%) 0px 4px 30px 0px;
+          box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
-        #card-header img {
+        #app-card-header img {
           height: 85px;
           width: auto;
           padding: 10px;
@@ -234,14 +234,15 @@ export class AppReport extends LitElement {
           font-size: 24px;
         }
         #card-info {
-          width: 100%;
+          width: 50%;
           overflow: hidden;
           white-space: nowrap;
         }
         #card-info p {
           margin: 0;
+          font-weight: bold;
         }
-        #card-desc {
+        #app-card-desc {
           margin: 0;
           font-size: 14px;
           width: 100%;
@@ -249,11 +250,26 @@ export class AppReport extends LitElement {
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box !important;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 6;
           -webkit-box-orient: vertical;
+          margin-left: 1em;
+        }
+        #app-card-footer {
+          padding: .5em 1em;
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: flex-end;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          border-top: 1px solid #f2f3fb;
+        }
+        #last-edited {
+          font-size: 12px;
+          margin: 0;
         }
         #app-actions {
-          width: 70%;
+          width: 40%;
           height: 100%;
           border-radius: 10px;
           background-color: white;
@@ -268,13 +284,6 @@ export class AppReport extends LitElement {
           border-radius: 50px;
           font-size: 16px;
         }
-        #actions {
-          display: flex;
-          align-items: flex-start;
-          padding: 1em;
-          width: 100%;
-          gap: .5em;
-        }
         #app-image-skeleton {
           height: 85px;
           width: 130px;
@@ -284,9 +293,16 @@ export class AppReport extends LitElement {
           width: 100%;
           margin-bottom: 10px;
         }
+        .app-info-skeleton-half {
+          width: 25%;
+          height: 20px;
+          margin: 10px 0;
+        }
         #test {
-          row-gap: 1em;
-          width: 45%;
+          font-size: 10px;
+        }
+        #test img {
+          height: 18px;
         }
         .flex-col-center {
           display: flex;
@@ -300,30 +316,19 @@ export class AppReport extends LitElement {
           justify-content: center;
         }
         #retest {
-          background-color: #4f3fb6;
-          color: white;
           display: flex;
           align-items: center;
           column-gap: 10px;
           border: none;
+          background-color: transparent;
         }
         #retest:disabled{
-          background-color: #4f3fb6a2;
           cursor: no-drop;
         }
-        #last-edited {
-          color: #727272;
-          font-size: 12px;
-          line-height: 12px;
-          white-space: nowrap;
-          margin: 0;
-          display: flex;
-          align-items: center;
-          column-gap: .5em;
-        }
         #package {
-          row-gap: 20px;
-          width: 55%;
+          row-gap: .5em;
+          width: 100%;
+          padding: 1em;
         }
         #pfs {
           background-color: black;
@@ -421,7 +426,7 @@ export class AppReport extends LitElement {
           column-gap: 0.75em;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
-          padding: .75em 1em;
+          padding: .5em 1em;
         }
         #actions-footer img {
           height: 20px;
@@ -476,6 +481,10 @@ export class AppReport extends LitElement {
           width: 100%;
           justify-self: center;
           gap: .25em;
+        }
+        .pageToggles {
+          height: 15px;
+          color: #CBCDEB;
         }
         #dots {
           display: flex;
@@ -922,9 +931,7 @@ export class AppReport extends LitElement {
           #retest img {
             height: 14px;
           }
-          #last-edited {
-            font-size: 10px;
-          }
+          
 
           #test {
             width: 50%;
@@ -1044,7 +1051,9 @@ export class AppReport extends LitElement {
       if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
         this.styles.backgroundColor = manifestContext.manifest.theme_color;
         // calculate whether is best to use white or black
-        this.styles.color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
+        let color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
+        this.styles.color = color;
+        color === "#ffffff" ? this.retestPath = "/assets/new/retest-white.svg" : "/assets/new/retest-black.svg"
 
       }
     } else {
@@ -1569,19 +1578,22 @@ export class AppReport extends LitElement {
           ${this.isAppCardInfoLoading ?
           html`
             <div id="app-card" class="flex-col skeleton-effects">
-              <div id="card-header">
+              <div id="app-card-header">
                 <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
                 <div id="card-info" class="flex-col">
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                 </div>
+                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
               </div>
-              <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+              <div id="app-card-footer">
+                <sl-skeleton class="app-info-skeleton-half" effect="pulse"></sl-skeleton>
+              </div>
             </div>`
             :
             html`
             <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.styles)}>
-              <div id="card-header">
+              <div id="app-card-header">
                 <div id="pwa-image-holder">
                   ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} ialt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
                 </div>
@@ -1589,12 +1601,10 @@ export class AppReport extends LitElement {
                   <p id="site-name">${this.appCard.siteName}</p>
                   <p>${this.appCard.siteUrl}</p>
                 </div>
+                <p id="app-card-desc">${this.appCard.description}</p>
               </div>
-              <p id="card-desc">${this.appCard.description}</p>
-            </div>`}
-            <div id="app-actions" class="flex-col">
-              <div id="actions">
-                <div id="test" class="flex-col-center">
+              <div id="app-card-footer">
+                <div id="test" style=${styleMap(this.styles)}>
                   <button
                     type="button"
                     id="retest"
@@ -1604,54 +1614,51 @@ export class AppReport extends LitElement {
                     ?disabled=${this.runningTests}
                   >
                     <img
-                      src="/assets/new/retest.svg"
+                      src=${this.retestPath}
                       alt="retest site"
                       role="presentation"
-                    />Retest Site
-                  </button>
-                  <p id="last-edited">
-                    <img
-                      src="/assets/new/last-edited.png"
-                      alt="pencil icon"
-                      role="presentation"
-                    />${this.lastTested}
-                  </p>
-                </div>
-                <img src="/assets/new/vertical-divider.png" role="presentation" />
-                <div id="package" class="flex-col-center">
-                    ${this.canPackage ?
-                      html`
-                      <button
-                        type="button"
-                        id="pfs"
-                        @click=${() => this.openPublishModal()}
-                      >
-                        Package for store
-                      </button>
-                      ` :
-                      html`
-                      <sl-tooltip class="mani-tooltip">
-                      ${this.runningTests ?
-                        html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
-                        html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
-                          <button
-                            type="button"
-                            id="pfs-disabled"
-                            aria-disabled="true"
-                          >
-                            Package for store
-                          </button>
-                      </sl-tooltip>
-                      `}
-                  <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
-                    <p class="arrow_link">Download test package</p>
-                    <img
-                      src="/assets/new/arrow.svg"
-                      alt="arrow"
-                      role="presentation"
                     />
+                  
+                    <p id="last-edited" style=${styleMap(this.styles)}>${this.lastTested}</p>
                   </button>
                 </div>
+              </div>
+              
+            </div>`}
+            <div id="app-actions" class="flex-col">
+              <div id="package" class="flex-col-center">
+                  ${this.canPackage ?
+                    html`
+                    <button
+                      type="button"
+                      id="pfs"
+                      @click=${() => this.openPublishModal()}
+                    >
+                      Package for store
+                    </button>
+                    ` :
+                    html`
+                    <sl-tooltip class="mani-tooltip">
+                    ${this.runningTests ?
+                      html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
+                      html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
+                        <button
+                          type="button"
+                          id="pfs-disabled"
+                          aria-disabled="true"
+                        >
+                          Package for store
+                        </button>
+                    </sl-tooltip>
+                    `}
+                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
+                  <p class="arrow_link">Download test package</p>
+                  <img
+                    src="/assets/new/arrow.svg"
+                    alt="arrow"
+                    role="presentation"
+                  />
+                </button>
               </div>
               <div id="actions-footer" class="flex-center">
                 <p>Available stores:</p>
@@ -1705,7 +1712,7 @@ export class AppReport extends LitElement {
             ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
               html`
               <div id="pagination-actions">
-                <sl-icon name="chevron-left" @click=${() => this.switchPage(false)}></sl-icon>
+                <sl-icon class="pageToggles" name="chevron-left" @click=${() => this.switchPage(false)}></sl-icon>
                 <div id="dots">
                   ${this.getDots().map((_dot: any, index: number) => 
                     this.pageNumber == index + 1 ? 
@@ -1716,7 +1723,7 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <sl-icon name="chevron-right" @click=${() => this.switchPage(true)}></sl-icon>
+                <sl-icon class="pageToggles" name="chevron-right" @click=${() => this.switchPage(true)}></sl-icon>
               </div>` : html``}
             </sl-details>
           </div>
@@ -2033,7 +2040,7 @@ export class AppReport extends LitElement {
                     html`
                       <a
                         class="arrow_anchor"
-                        href="" 
+                        href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" 
                         rel="noopener"
                         target="_blank"
                         @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
