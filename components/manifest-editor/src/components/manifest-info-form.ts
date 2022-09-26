@@ -211,10 +211,10 @@ export class ManifestInfoForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+    // if i remove this if, it works on the site but not standalone.
     if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
       manifestInitialized = true;
       this.initMissingColors();
-      
       this.requestValidateAllFields();
     }
   }
