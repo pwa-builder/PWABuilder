@@ -5,7 +5,7 @@ import { customElement, state } from 'lit/decorators.js';
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
-  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "glass", "twitter"];
+  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "glass", "tiktok",  "twitter"];
   @state() paused: boolean = false;
   
   static get styles() {
