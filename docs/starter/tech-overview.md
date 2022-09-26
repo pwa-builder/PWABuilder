@@ -11,10 +11,10 @@ All of our pages are components themselves, and are built using Lit.
 
 Learn more about Lit [here.](https://lit.dev/)
 
-#### Fluent Web Components
+#### Shoelace
 In addition to custom components built with Lit, the Starter also makes use of prebuilt UI components.
 
-The starter uses [Fluent Web Components](https://docs.microsoft.com/en-us/fluent-ui/web-components/) for its user interface.
+The starter uses [Shoelace](https://shoelace.style/) for its user interface.
 
 #### Vite
 The Starter uses Vite as part of its build process. 
