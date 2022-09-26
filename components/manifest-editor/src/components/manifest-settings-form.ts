@@ -13,7 +13,13 @@ let manifestInitialized: boolean = false;
 @customElement('manifest-settings-form')
 export class ManifestSettingsForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
@@ -215,11 +221,10 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
-      manifestInitialized = true;
+    if(manifestInitialized){
+      manifestInitialized = false;
       this.requestValidateAllFields();
       this.initOverrideList();
-      
     }
   }
 

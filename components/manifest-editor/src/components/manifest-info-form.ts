@@ -12,7 +12,13 @@ let infoFields = ["name", "short_name", "description", "background_color", "them
 @customElement('manifest-info-form')
 export class ManifestInfoForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
 
   @state() bgText: string = '';
   @state() themeText: string = '';
@@ -211,12 +217,11 @@ export class ManifestInfoForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    // if i remove this if, it works on the site but not standalone.
-    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
-      manifestInitialized = true;
+    if(manifestInitialized){ // _changedProperties.has("manifest") && _changedProperties.get("manifest") && 
+      manifestInitialized = false;
       this.initMissingColors();
       this.requestValidateAllFields();
-    }
+    } 
   }
 
   private async requestValidateAllFields() {

@@ -19,9 +19,13 @@ let fieldsValidated: boolean = false;
 @customElement('manifest-platform-form')
 export class ManifestPlatformForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
-
- 
+  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+    if(value !== oldValue && value.name){
+      manifestInitialized = true;
+      return value !== oldValue;
+    }
+    return value !== oldValue;
+  }}) manifest: Manifest = {};
 
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
@@ -285,15 +289,13 @@ export class ManifestPlatformForm extends LitElement {
      to reset when it changes. It triggers an update event which would cause all of this to
      run again. Its true purpose is to keep the view aligned with the manifest. */
      
-    if(_changedProperties.has("manifest") && _changedProperties.get("manifest") && !manifestInitialized){
-      manifestInitialized = true;
+    if(manifestInitialized){
+      manifestInitialized = false;
       if(!fieldsValidated){
         this.requestValidateAllFields();
         fieldsValidated = true;
       }
       this.reset();
-    } else {
-      manifestInitialized = false;
     }
   }
 
