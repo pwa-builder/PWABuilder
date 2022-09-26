@@ -196,7 +196,7 @@ export class AppReport extends LitElement {
         }
         #app-card {
           width: 30%;
-          height: 180px;
+          height: 100%;
           border-radius: 10px;
           background-color: white;
           padding: 1em;
@@ -254,6 +254,7 @@ export class AppReport extends LitElement {
         }
         #app-actions {
           width: 70%;
+          height: 100%;
           border-radius: 10px;
           background-color: white;
           align-items: center;
@@ -651,6 +652,7 @@ export class AppReport extends LitElement {
         }
 
         #swh-text {
+          width: 100%;
           row-gap: 0.5em;
         }
 
@@ -705,6 +707,7 @@ export class AppReport extends LitElement {
           justify-content: space-between;
         }
         #sec-text {
+          width: 100%;
           row-gap: 0.5em;
         }
         #sec-actions {
