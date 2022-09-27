@@ -198,6 +198,7 @@ export class AppHeader extends LitElement {
           </a>
 
           <a
+            class="nav_link"
             href="https://github.com/pwa-builder/PWABuilder"
             target="__blank"
             aria-label="Github repo, will open in separate tab"
