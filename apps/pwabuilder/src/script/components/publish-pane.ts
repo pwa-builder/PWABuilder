@@ -17,7 +17,6 @@ import './windows-form';
 import './android-form';
 import './ios-form';
 import './oculus-form';
-import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
 
@@ -47,7 +46,7 @@ export class PublishPane extends LitElement {
   "Windows": 
     {
       "logo": "/assets/windows_icon.svg",
-      "packaging_text": localeStrings.text.publish.windows_platform.p,
+      "packaging_text": "Click below for instructions on how to submit to the Windows Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/windows"
     },
   "Android": 
@@ -58,13 +57,13 @@ export class PublishPane extends LitElement {
   "iOS": 
     {
       "logo": "/assets/apple_icon.svg",
-      "packaging_text": "Click below for instructions for submitting to the App Store.",
+      "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
     },
   "Meta": 
     {
       "logo": "/assets/meta_icon.svg",
-      "packaging_text": "Click below for packaging instructions for the Meta Quest Store.",
+      "packaging_text": "Click below for instructions on how to submit to the Meta Quest Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/meta"
     }
 }
@@ -870,7 +869,7 @@ export class PublishPane extends LitElement {
       return html`
         <div id="form-extras">
           <div id="form-details-block">
-            <p>${this.isGooglePlay ? localeStrings.text.android.description.form_details : "Click below for packaging instructions"}</p>
+            <p>${this.isGooglePlay ? "Click below for instructions on how to submit to the Google Play Store." : "Click below for instructions on how to submit to other Android stores."}</p>
             <div class="arrow_link">
               <a @click=${() => recordPWABuilderProcessStep(`${this.isGooglePlay ? this.selectedStore.toLowerCase() : `other_${this.selectedStore.toLowerCase()}` }_packaging_instructions_clicked`, AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlay ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
               <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>

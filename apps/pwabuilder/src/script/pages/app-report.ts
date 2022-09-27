@@ -117,6 +117,8 @@ export class AppReport extends LitElement {
   @state() createdManifest: boolean = false;  
   @state() manifestContext: ManifestContext | undefined;
 
+  @state() todoItems: any[] = [];
+
   private possible_messages = [
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
@@ -140,24 +142,6 @@ export class AppReport extends LitElement {
                   }
       }
     ];
-
-
-
- /*
-  So in order to connect the to do items with the things below
-  We can have an object that looks like this
-  {
-    card: id to the details card (manifest, sw, sec)
-    field: the manifest field name, security check or sw check
-    fix: the string that will surround the field name ie "Add ~ to your manfiest!"
-  }
-  We can use the card to expand the details (details.show())
-  and then we can use a data-field on each validation to connect to the field
-  and then do some shake animation via that.
-  We can use the field, split on the ~, and then rejoin to slot the word in.
-  */
-  @state() todoItems: any[] = [];
-
 
   static get styles() {
     return [
@@ -843,6 +827,20 @@ export class AppReport extends LitElement {
           }
         }
 
+        @media(max-width: 900px){
+          #header-row {
+            flex-direction: column-reverse;
+            row-gap: 1em;
+          }
+
+          #app-card{
+            width: 100%;
+          }
+          #app-actions {
+            width: 100%;
+          }
+        }
+
         @media(max-width: 750px){
           #two-cell-row {
             flex-direction: column;
@@ -861,20 +859,12 @@ export class AppReport extends LitElement {
 
 
 
+
+
         ${xxxLargeBreakPoint(css``)}
         ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
-          #header-row {
-            flex-direction: column-reverse;
-            row-gap: 1.5em;
-          }
-
-          #app-card{
-            width: 100%;
-          }
-          #app-actions {
-            width: 100%;
-          }
+          
 
           #mh-content {
             flex-direction: column;
@@ -930,11 +920,6 @@ export class AppReport extends LitElement {
           }
           #retest img {
             height: 14px;
-          }
-          
-
-          #test {
-            width: 50%;
           }
           #package{
             width: 50%;
@@ -1066,17 +1051,11 @@ export class AppReport extends LitElement {
   }
 
   pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
-    var color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
-    if(color.startsWith("rgb")){
-      let split = color.substring(3).split(",");
-      var r = parseInt(split[0].substring(1, 2));
-      var g = parseInt(split[1]);
-      var b = parseInt(split[2].substring(0, split[2].length - 1));
-    } else {
-      var r = parseInt(color.substring(0, 2), 16); // hexToR
-      var g = parseInt(color.substring(2, 4), 16); // hexToG
-      var b = parseInt(color.substring(4, 6), 16); // hexToB
-    }
+    var color: any = new color(bgColor).coords;
+    
+    var r = color[0];
+    var g = color[1];
+    var b = color[2];
     
     var uicolors = [r / 255, g / 255, b / 255];
     var c = uicolors.map((col) => {
