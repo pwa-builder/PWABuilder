@@ -1053,21 +1053,16 @@ export class AppReport extends LitElement {
   pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
 
     //@ts-ignore:next-line
-    var color: any = new Color(bgColor).coords;
-    
-    var r = color[0];
-    var g = color[1];
-    var b = color[2];
-    
-    var uicolors = [r / 255, g / 255, b / 255];
-    var c = uicolors.map((col) => {
-      if (col <= 0.03928) {
-        return col / 12.92;
+    var colors: any = new Color(bgColor).coords;
+
+    var c = colors.map((num: number) => {
+      if (num <= 0.03928) {
+        return num / 12.92;
       }
-      return Math.pow((col + 0.055) / 1.055, 2.4);
+      return Math.pow((num + 0.055) / 1.055, 2.4);
     });
     var L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-    return (L > 0.3) ?  lightColor : darkColor;
+    return (L > 0.3) ?  darkColor : lightColor;
   }
 
   async runAllTests(url: string) {
