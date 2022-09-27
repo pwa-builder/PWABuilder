@@ -1051,7 +1051,9 @@ export class AppReport extends LitElement {
   }
 
   pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
-    var color: any = new color(bgColor).coords;
+
+    //@ts-ignore:next-line
+    var color: any = new Color(bgColor).coords;
     
     var r = color[0];
     var g = color[1];
