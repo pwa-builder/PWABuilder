@@ -327,6 +327,9 @@ export class AppReport extends LitElement {
         #pfs-disabled:hover{
           cursor: no-drop;
         }
+        #pfs:focus, #pfs:hover {
+          outline: rgb(79 63 182 / 70%) solid 2px;
+        }
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -482,6 +485,14 @@ export class AppReport extends LitElement {
         }
         #pagination-actions > sl-icon:hover{
           cursor:pointer
+        }
+        .pagination-buttons{
+          background-color: transparent;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: fit-content;
         }
         #indicators-holder {
           display: flex;
@@ -1076,7 +1087,6 @@ export class AppReport extends LitElement {
     this.runningTests = false;
   }
 
-  // idk if we need the url for this function bc we can just get the manifest context
   async testManifest() {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
@@ -1100,6 +1110,10 @@ export class AppReport extends LitElement {
     });
     this.manifestTotalScore = this.validationResults.length;
 
+     if(this.createdManifest){
+      this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
+    }
+
     this.validationResults.forEach((test: Validation) => {
       if(test.valid){
         this.manifestValidCounter++;
@@ -1112,7 +1126,9 @@ export class AppReport extends LitElement {
           status = "yellow";
         }
 
-        this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+        if(!this.createdManifest){
+          this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+        }
       }
     });
 
@@ -1156,7 +1172,7 @@ export class AppReport extends LitElement {
           status = "red";
           missing = true;
           this.swRequiredCounter++;
-          this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package", "status": status});
+          this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
         } else {
           status = "yellow";
         }
@@ -1237,7 +1253,9 @@ export class AppReport extends LitElement {
       } if(optional_fields.includes(field)){
         this.optMissingFields.push(field)
       }
-      this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
+      if(!this.createdManifest){
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
+      }
     });
     return missing.length;
   }
@@ -1688,7 +1706,7 @@ export class AppReport extends LitElement {
             ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
               html`
               <div id="pagination-actions">
-                <sl-icon class="pageToggles" name="chevron-left" @click=${() => this.switchPage(false)}></sl-icon>
+                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
                 <div id="dots">
                   ${this.getDots().map((_dot: any, index: number) => 
                     this.pageNumber == index + 1 ? 
@@ -1699,7 +1717,7 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <sl-icon class="pageToggles" name="chevron-right" @click=${() => this.switchPage(true)}></sl-icon>
+                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon></button>
               </div>` : html``}
             </sl-details>
           </div>
@@ -1735,7 +1753,7 @@ export class AppReport extends LitElement {
                       ${this.createdManifest ?
                       html`
                           <sl-tooltip class="mani-tooltip" open>
-                            <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We have created a manifest for you! <br> Click here to customize it!</p></div>
+                            <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
                             <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>
                           </sl-tooltip>` :
                       html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>`

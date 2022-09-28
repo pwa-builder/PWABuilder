@@ -19,6 +19,7 @@ export class ManifestEditorFrame extends LitElement {
 
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
+  @state() baseURL: string = '';
   @property({type: Boolean}) isGenerated: boolean = false;
 
   static get styles() {
@@ -217,6 +218,7 @@ export class ManifestEditorFrame extends LitElement {
     super.connectedCallback();
     this.manifest = getManifestContext().manifest;
     this.manifestURL = getManifestContext().manifestUrl;
+    this.baseURL = sessionStorage.getItem("current_url")!;
   }
 
   downloadManifest(){
@@ -281,6 +283,7 @@ export class ManifestEditorFrame extends LitElement {
             <pwa-manifest-editor 
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
+              .baseURL=${this.baseURL}
               @tabSwitched=${(e: CustomEvent) => this.handleTabSwitch(e)}
               @manifestDownloaded=${() => this.handleManifestDownloaded()}
               @fieldChangeAttempted=${(e: CustomEvent) => this.handleFieldChange(e)}

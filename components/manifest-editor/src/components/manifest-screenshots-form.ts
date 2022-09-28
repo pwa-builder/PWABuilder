@@ -23,6 +23,7 @@ export class ManifestScreenshotsForm extends LitElement {
     return value !== oldValue;
   }}) manifest: Manifest = {};
   @property({type: String}) manifestURL: string = "";
+  @property({type: String}) baseURL: string = "";
 
   @state() screenshotUrlList: Array<string | undefined> = [undefined];
   @state() screenshotListValid: Array<boolean> = [];
@@ -261,11 +262,11 @@ export class ManifestScreenshotsForm extends LitElement {
 
 
   renderScreenshotInputUrlList() {
-    const renderFn = (url: string | undefined, index: number) => {
+    const renderFn = (_url: string | undefined, index: number) => {
 
       return html`<sl-input
           placeholder="https://www.example.com/screenshot"
-          value="${url || ''}"
+          value="${this.baseURL || ''}"
           @input=${this.handleScreenshotButtonEnabled}
           @sl-change=${this.handleScreenshotUrlChange}
           data-index=${index}
