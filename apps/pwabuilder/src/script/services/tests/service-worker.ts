@@ -94,7 +94,7 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
   // We'll run both and see if we get success on either.
   // Additionally, we time box this to 10 seconds because we've witnessed very long timeouts or hangs for some sites.
 
-  return new Promise<boolean>(resolve => {
+  return new Promise<boolean>((resolve) => {
     const resolveIfOfflineDetected = (offlineDetected: boolean) => {
       if (offlineDetected) {
         resolve(true);
@@ -104,12 +104,12 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
     // Race to success: if any test returns offline = true, use that.
     // Otherwise, punt if we timeout, or if the test returns false.
     const puppeteerCheck = detectOfflineSupportPuppeteer(url);
-    const timeout = new Promise(resolve => {
+    const timeout = new Promise((resolve) => {
       setTimeout(() => resolve(false), 10000);
     });
     puppeteerCheck.then(
-      result => resolveIfOfflineDetected(result),
-      puppeteerError =>
+      (result) => resolveIfOfflineDetected(result),
+      (puppeteerError) =>
         console.warn(
           'Service worker offline check via Puppeteer failed',
           puppeteerError
