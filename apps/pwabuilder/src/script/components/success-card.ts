@@ -68,6 +68,13 @@ export class SuccessCard extends LitElement {
         color: var(--secondary-font-color);
       }
 
+      @media screen and (-ms-high-contrast: white-on-black) {
+        .success-card:focus{
+          border: 4px solid white;
+          border-radius: 5px;
+        }
+      }
+
       /* < 480px */
       ${smallBreakPoint(css`
         .success-card {
