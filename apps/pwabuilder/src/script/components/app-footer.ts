@@ -82,14 +82,6 @@ export class AppFooter extends LitElement {
           }
       } 
 
-      @media screen and (-ms-high-contrast: white-on-black) {
-          /* All high contrast styling rules */
-          ion-icon {
-            color: black;
-          }
-          
-      } 
-
       ${xxxLargeBreakPoint(
         css`
           footer {
