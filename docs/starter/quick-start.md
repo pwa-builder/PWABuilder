@@ -10,7 +10,7 @@ There are just a few things you will need before getting started:
 - [Node.js](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-## Start a new App
+## Start a New App
 
 ?> **Note** You can also use our VSCode Extension, PWABuilder Studio, to generate a starter project. Go [here](/studio/quick-start) for more info.
 
