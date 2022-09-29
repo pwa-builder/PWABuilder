@@ -41,6 +41,7 @@ export class AppFooter extends LitElement {
       ion-icon {
         font-size: var(--font-size);
         color: white;
+        pointer-events: none;
       }
 
       span {
@@ -192,7 +193,7 @@ export class AppFooter extends LitElement {
             aria-label="Contribute to our Github"
             @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-github" role="presentation"></ion-icon>
+            <span title="Contribute to our Github"><ion-icon name="logo-github" role="presentation"></ion-icon></span>
           </fast-anchor>
 
           <fast-anchor
@@ -203,7 +204,7 @@ export class AppFooter extends LitElement {
             aria-label="Follow us on Twitter"
             @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-twitter" role="presentation"></ion-icon>
+            <span title="Follow us on Twitter"><ion-icon name="logo-twitter" role="presentation"></ion-icon></span>
           </fast-anchor>
 
           <fast-anchor
@@ -214,7 +215,7 @@ export class AppFooter extends LitElement {
             aria-label="Subscribe to our Youtube"
             @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-youtube" role="presentation"></ion-icon>
+            <span title="Subscribe to our Youtube"><ion-icon name="logo-youtube" role="presentation"></ion-icon></span>
           </fast-anchor>
         </div>
       </footer>
