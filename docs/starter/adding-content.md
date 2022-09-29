@@ -1,4 +1,4 @@
-# Adding New Pages / Routing
+# Adding New Pages and Routing
 
 The PWA Starter is a [Single-Page Application](https://developer.mozilla.org/en-US/docs/Glossary/SPA) and uses a client-side router to navigate between pages. 
 
