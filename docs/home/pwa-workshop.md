@@ -1,31 +1,41 @@
 # Progressive Web App Workshop
 
-This is an in-depth introduction to PWA Development using the PWABuilder toolchain. This workshop is hands on and may take a while to complete - feel free to complete it in pieces or jump around from section to section. If you are complete new to Progressive Web Apps, take a look at the [*Beginner's Guide to Progressive Web Apps*](/home/pwa-intro) before starting here.
+This is an in-depth introduction to PWA development using the PWABuilder toolchain. This workshop is hands on and may take 1 to 1.5 hours to complete. If you are new to Progressive Web Apps, take a look at the [*Beginner's Guide to Progressive Web Apps*](/home/pwa-intro) before starting here.
 
-The workshop will walk you through turning the PWA Starter template into a simple web app, deploying that app, and then adding some basic PWA functionality to that app.
+The workshop will walk you through turning the PWA Starter template into a simple web app, deploying the app, and then adding some basic PWA functionality to the app.
 
-The source code and solutions for this workshop are available on [GitHub.](https://github.com/pwa-builder/pwa-journal-workshop) The solutions are broken into three sections for various checkpoints in the workshop.
+The source code and solutions for this workshop are available on [GitHub](https://github.com/pwa-builder/pwa-journal-workshop). The solutions are broken into three sections for various checkpoints in the workshop.
+
+### Prerequisites
+
+- Basic knowledge of HTML, CSS, and JavaScript.
+- A modern web browser like [Microsoft Edge](https://aka.ms/learn-pwa/workshop/edge). PWAs are supported on most modern browsers but to facilitate this workshop we will be using [Microsoft Edge](https://aka.ms/learn-pwa/workshop/edge).
+- A code editor such as [Visual Studio Code](https://aka.ms/learn-pwa/workshop/vscode).
+- An [Azure account](https://aka.ms/learn-pwa/workshop/azure.microsoft.com/free/students/) if you want to deploy your app to a secure endpoint.
+- [Git](https://git-scm.com/downloads) to clone sample solutions.
+- [Node.js](https://nodejs.org/en/) to run the sample solutions.
+- A [Microsoft account](https://aka.ms/learn-pwa/workshop/outlook.live.com/owa) that you can register as a developer account to publish your app to the Microsoft Store. You will need to pay $19 for account services to publish your app to the Microsoft Store. Note that if you have Visual Studio Enterprise subscription, you get a promo code to publish your apps for free.
 
 ### Workshop Outline
 
-* **Setting Up:** Set up your environment for development and download the tools you'll need.
+[**Step 0 - Setting Up:**](/home/pwa-workshop?id=_0%ef%b8%8f%e2%83%a3-setting-up) Set up your environment for development and download the tools you'll need.
 
-* **Create a New PWA:** Learn how to use PWA Studio to create a new PWA with a development-ready template.
+[**Step 1 - Create a New PWA:**](/home/pwa-workshop?id=_1%ef%b8%8f%e2%83%a3-create-a-new-pwa) Learn how to use PWABuilder Studio to create a new PWA with a development-ready template.
 
-* **Add Content:** Turn the PWA Starter template into a simple journaling app.
+[**Step 2 - Add Content:**](/home/pwa-workshop?id=_2%ef%b8%8f%e2%83%a3-add-content) Turn the PWA Starter template into a journaling app.
 
-* **Deploy Your PWA:** Deploy your PWA to Azure.
+[**Step 3 - Deploy Your PWA:**](/home/pwa-workshop?id=_3%ef%b8%8f%e2%83%a3-deploy-your-pwa) Deploy your PWA to Azure.
 
-* **Edit Your Manifest:** Take a look at and edit the PWA Starter's default web manifest.
+[**Step 4 - Edit Your Manifest:**](/home/pwa-workshop?id=_4%ef%b8%8f%e2%83%a3-working-with-manifests) Take a look at and edit the PWA Starter's default web manifest.
 
-* **Learn about Service Workers:** Learn about the lifecycle of service workers and how they can enable offline capabilites.
+[**Step 5 - Learn about Service Workers:**](/home/pwa-workshop?id=_5%ef%b8%8f%e2%83%a3-service-workers) Learn about the lifecycle of service workers and how they can enable offline capabilities.
 
-* **Enable Push Notifications:** Add a web capability to your PWA by enabling push notifications.
+[**Step 6 - Enable Push Notifications:**](/home/pwa-workshop?id=_6%ef%b8%8f%e2%83%a3-enable-push-notifications) Add a web capability to your PWA by enabling push notifications.
 
-* **Package Your PWA:** See how to package your finalized PWA for app stores.
+[**Step 7 - Package Your PWA:**](/home/pwa-workshop?id=_7%ef%b8%8f%e2%83%a3-package-your-pwa) See how to package your finalized PWA for app stores.
 
 
-## Setting Up
+## 0️⃣ Setting Up
 
 First things first, let's get your development environment ready. You will be installing the tools needed to build the Progressive Web App. And you will create a repository to keep track our coding progress.
 
@@ -44,23 +54,25 @@ Make sure you go to the following resources to install the tools you need:
 
 2. You will push the directory created in the next step to this repository.
 
-## Create A New PWA
+## 1️⃣ Create A New PWA
 
-In this step, we will first talk about what is a PWA, and then we will create a new PWA using PWA studio.
+In this step, we will first talk about what is a PWA, and then we will create a new PWA using PWABuilder Studio.
 
 ### What is a PWA?
 
 A [Progressive Web App (PWA)](/home/pwa-intro) is a traditional web app that is progressively enhanced using open web technologies, to make sure it delivers the best possible experience on every device, based on available capabilities.
 
-Progressive Web Apps use [service workers](/home/sw-intro), [manifests](https://aka.ms/learn-pwa/workshop/docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests), and other web platform features in combination with [progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement) to give users an experience on par with platform-specific (Windows, Andriod, etc.) apps.
+Progressive Web Apps use [service workers](/home/sw-intro), [manifests](https://aka.ms/learn-pwa/workshop/docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests), and other web platform features in combination with [progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement) to give users an experience on par with platform-specific (Windows, Android, etc.) apps.
 
-### Create a PWA using PWA Studio
+You can learn more about PWAs in the [Beginner's Guide to Progressive Web Apps](/home/pwa-intro).
 
-There are many ways to create a new web app. However, if you are designing your web app with progressive enhancement and platform-specific features in mind, you should consider using a template with ready-to-go configurations that can help you quickly get started. Enter [PWA Studio](/studio/quick-start) VSCode Extension!
+### Create a PWA using PWABuilder Studio
+
+There are many ways to create a new web app. However, if you are designing your web app with progressive enhancement and platform-specific features in mind, you should consider using a template with ready-to-go configurations that can help you quickly get started. Enter [PWABuilder Studio](/studio/quick-start) VSCode Extension!
 
 Let's install the extension and follow these [steps](/studio/quick-start) to create a new PWA.
 
-1. Tap on the PWA Studio icon on the left side of the VSCode Window
+1. Tap on the PWABuilder Studio icon on the left side of the VSCode Window
 
 1. Click the Start new PWA button on the bottom bar of VSCode.
 
@@ -74,7 +86,7 @@ Let's install the extension and follow these [steps](/studio/quick-start) to cre
 
 ### Exploring the generated solution
 
-Before you start coding, let's explore the generated solution. The PWA Studio extension was created based on the PWABuilder [pwa-starter](https://aka.ms/learn-pwa/workshop/github.com/pwa-builder/pwa-starter) project. It uses the following tech stack:
+Before you start coding, let's explore the generated solution. The PWABuilder Studio extension was created based on the PWABuilder [pwa-starter](https://aka.ms/learn-pwa/workshop/github.com/pwa-builder/pwa-starter) project. It uses the following tech stack:
 
 - [**lit**](https://lit.dev/): PWABuilder team's framework of choice. This means you will also be using lit as a web component framework to build your PWA.
 - [**@fluent/web-components**](https://aka.ms/learn-pwa/workshop/docs.microsoft.com/fluent-ui/web-components/): The Fluent Web Components are a set of UI components, like [Ionic](https://ionicframework.com/), or the [Material Design Web Components](https://material.io/develop/web). This provides a set of modern UI components that are ready to use and can be easily customized.
@@ -122,7 +134,7 @@ You can double check your project push/pull remote configuration by using the fo
 git remote -v
 ```
 
-## Add Content
+## 2️⃣ Add Content
 
 In this step, we will update the source files of the generated solution to add core functionalities such as mood tracking and journaling. 
 
@@ -331,7 +343,7 @@ Let's do a quick recap of what you did in this step:
 
 Something to consider for the next steps if you are building a production ready app: Instead of using `localforage`, which stores journal entries in indexDB of your local browser's storage, you should consider using a more persistent storage solution.
 
-## Deploy Your PWA
+## 3️⃣ Deploy Your PWA
 
 In this step, we will deploy our PWA to an HTTPS endpoint.
 
@@ -375,7 +387,7 @@ Let's first talk about the three core building blocks for PWA development:
 
 **Note:** A `.yml` file will be added to `.github/workflows` folder in your repository root to enable continuos deployment to Azure Static Web Apps after you completed the above steps.
 
-## Working With Manifests
+## 4️⃣ Working With Manifests
 
 In this step, we will modify the `manifest.json` file in the `public` folder to make our PWA installable.
 
@@ -465,7 +477,7 @@ To read more about the members of a manifest file. You can refer to [MDN docs](h
 
 #### Deploying the manifest
 
-Web app manifests are deployed in HTML pages using a `<link>` element in the `<head>` of a document. This was taken care of during the PWA generation process by PWA Studio so that you don't have to manually add it. You can find this `<link rel="manifest" href="/manifest.json" />` element in `index.html` file.
+Web app manifests are deployed in HTML pages using a `<link>` element in the `<head>` of a document. This was taken care of during the PWA generation process by PWABuilder Studio so that you don't have to manually add it. You can find this `<link rel="manifest" href="/manifest.json" />` element in `index.html` file.
 
 #### See it in action
 
@@ -475,7 +487,7 @@ After saving the manifest file and deploying it to your Azure static web app, yo
    <img src="assets/home/workshop/4-install.png" alt="Install Repose PWA">
 </div>
 
-## Service Workers
+## 5️⃣ Service Workers
 
 In this step, we will take a look at how service worker is registered. Note that you don't need to make any code changes in this step. Make sure you open the [`vite.config.ts` file](./solution/03-repose-PWA/vite.config.ts) as we walk through the configurations.
 
@@ -499,11 +511,11 @@ Like all Web Workers, the Service Worker must be authored in its own file. The l
 
 3. Activation: The browser sends the `activate` event to indicate that the service worker has been installed. This service worker can now do clean up actions (e.g., remove old caches from prior version) and ready itself to handle functional events. If there is an old service worker in play, you can use `clients.claim()` to immediately replace the old service worker with your new one.
 
-### How is service worker registered in PWA Studio generated projects?
+### How is service worker registered in PWABuilder Studio generated projects?
 
-Good news! With PWA Studio, you don't need to create or register a service worker. The service worker is automatically created and registered for you based on the configuration you provide in the `vite.config.ts` file. PWA Studio utilizes [`vite-plugin-pwa` to setup `workbox`](https://vite-plugin-pwa.netlify.app/workbox/) with [a few lines of code](./solution/03-repose-PWA/vite.config.ts).
+Good news! With PWABuilder Studio, you don't need to create or register a service worker. The service worker is automatically created and registered for you based on the configuration you provide in the `vite.config.ts` file. PWABuilder Studio utilizes [`vite-plugin-pwa` to setup `workbox`](https://vite-plugin-pwa.netlify.app/workbox/) with [a few lines of code](./solution/03-repose-PWA/vite.config.ts).
 
-**Default PWA Studio VitePWA plugin config:**
+**Default PWABuilder Studio VitePWA plugin config:**
 
 | property | value | description |
 | --- | --- | --- |
@@ -515,7 +527,7 @@ Behind the scenes, `vite-plugin-pwa` is using [workbox-build](https://developer.
 
 ### What is `CacheFirst` strategy?
 
-There are a handful of `handler` options you can pass into `runtimeCaching` as part of `VitePWA` configuration. The `CacheFirst` strategy is one of them. PWA Studio uses this strategy by default and it enables offline support. The `CacheFirst` strategy is an implementation of a [cache-first](https://developer.chrome.com/docs/workbox/caching-strategies-overview/#cache-first-falling-back-to-network) request strategy. It is useful for assets that have been revisioned, such as URLs like `/styles/example.a8f5f1.css`, since they can be cached for long periods of time.
+There are a handful of `handler` options you can pass into `runtimeCaching` as part of `VitePWA` configuration. The `CacheFirst` strategy is one of them. PWABuilder Studio uses this strategy by default and it enables offline support. The `CacheFirst` strategy is an implementation of a [cache-first](https://developer.chrome.com/docs/workbox/caching-strategies-overview/#cache-first-falling-back-to-network) request strategy. It is useful for assets that have been revisioned, such as URLs like `/styles/example.a8f5f1.css`, since they can be cached for long periods of time.
 
 For matching requests, the process goes like this:
 
@@ -531,7 +543,7 @@ You can see the minified version of service worker code in the `dist` and `dev-d
 
 To get a closer look at the full file, head over to Source tab in your browser. Expand folder `@vite-plugin-pwa` and you will see `virtual:pwa-register` that contains some of the lifecycle events we talked about in the previous section.
 
-## Enable Notifications
+## 6️⃣ Enable Push Notifications
 
 In this step, we will talk about how to add advanced capabilities such as notifications to our PWA.
 
@@ -584,27 +596,27 @@ Once you know that the API is supported and the user has accepted notifications,
 
 Make sure you add the image to `./public/assets/` folder. And take a look at the sample code in the solution [03-notifications](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solutions/03-add-notifications) to add notification component to the Repose app.
 
-## Package Your PWA
+## 7️⃣ Package Your PWA
 
 In this step, we will audit the PWA to make sure it is installable and ready for publishing. We will also package the PWA to make it ready for distribution to app stores.
 
-### Audit with PWA Studio
+### Audit with PWABuilder Studio
 
-You can do this directly in VSCode with the PWA Studio extension. Navigate to the extension pane and checkout each section - web manifest, service worker, and store ready checklist. It looks like this:
+You can do this directly in VSCode with the PWABuilder Studio extension. Navigate to the extension pane and checkout each section - web manifest, service worker, and store ready checklist. It looks like this:
 
 <div class="docs-image">
-   <img src="assets/home/workshop/7-checklist.png" alt="PWA Studio checklist">
+   <img src="assets/home/workshop/7-checklist.png" alt="PWABuilder Studio checklist">
 </div>
 
 You can also perform the audit through other tools such as [PWABuilder](https://aka.ms/learn-pwa/workshop/30days-3.5?id=audit-with-pwabuilder) and [Lighthouse in Edge dev tools](https://aka.ms/learn-pwa/workshop/30days-3.5?id=audit-performance-with-lighthouse-and-devtools).
 
 ### Packaging
 
-There are a couple of ways to package your PWAs. You can follow the steps below to package with PWA Studio extension:
+There are a couple of ways to package your PWAs. You can follow the steps below to package with PWABuilder Studio extension:
 
-1. First, associate your PWA with a URL. Hit `ctrl-shift-P` in VS Code. Search for `PWA Studio: Set App URL`. Select `Yes` and provide the URL of the Azure Static Web App you deployed in step 3.
+1. First, associate your PWA with a URL. Hit `ctrl-shift-P` in VS Code. Search for `PWABuilder: Set App URL`. Select `Yes` and provide the URL of the Azure Static Web App you deployed in step 3.
 
-2. Hit `ctrl-shift-P` in VS Code again. Search for `PWA Studio: Package your PWA`. Select the platform you would like to package your PWA for and follow the prompts. Congratulations, your PWA package will be generated!
+2. Hit `ctrl-shift-P` in VS Code again. Search for `PWABuilder: Package your PWA`. Select the platform you would like to package your PWA for and follow the prompts. Congratulations, your PWA package will be generated!
 
 You can also package your PWA via [pwabuilder.com](https://aka.ms/learn-pwa/workshop/pwabuilder.com) site. Here are the [steps of packaging from PWABuilder docs](/builder/windows#packaging).
 
@@ -654,7 +666,7 @@ Let's use Microsoft Store as an example and see how you can submit your app!
 
 1. Provide the name of your app. **Make sure this name is the same you listed in your manifest. When it comes time to upload your app bundles, it will check if the bundle matches the name of the registered app.**
 
-1. Once the name is reserved, you will be able to access your package information via `Product Identity` tab. Record `Package ID`, `Publisher ID`, and `Publisher Display Name` as these will be required either you are packaging through PWA Studio or PWABuilder site.
+1. Once the name is reserved, you will be able to access your package information via `Product Identity` tab. Record `Package ID`, `Publisher ID`, and `Publisher Display Name` as these will be required either you are packaging through PWABuilder Studio or PWABuilder site.
 
 #### Submit to the Store
 
