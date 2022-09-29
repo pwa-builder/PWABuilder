@@ -69,9 +69,12 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         if (indexFileExists) {
           const indexContents = await readFile(indexFile.fsPath, "utf8");
 
+          console.log('indexContents', indexContents);
+
+          // second check here after the or is specific to pwa-starter apps
           if (
             indexContents &&
-            indexContents.includes("serviceWorker.register")
+            indexContents.includes("serviceWorker.register") || indexContents && indexContents.includes('<script src="registerSW.js"></script>')
           ) {
             items.push(
               new ValidationItem(

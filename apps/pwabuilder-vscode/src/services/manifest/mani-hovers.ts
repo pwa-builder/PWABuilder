@@ -24,7 +24,7 @@ class ManiHoverProvider implements vscode.HoverProvider {
         resolve(
           new vscode.Hover(
             new vscode.MarkdownString(
-              `**PWA Studio**: ${hoverInfo.infoString} [Learn More](${hoverInfo.docsLink})`
+              `**PWABuilder Studio**: ${hoverInfo.infoString} [Learn More](${hoverInfo.docsLink})`
             )
           )
         );
