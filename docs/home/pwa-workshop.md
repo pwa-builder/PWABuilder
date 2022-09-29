@@ -369,23 +369,13 @@ Let's first talk about the three core building blocks for PWA development:
 
 1. Build the distributable package by running this command `npm run build`. This will create a `dist` directory with all necessary files.
 
-2. Install [Azure Static Web Apps VSCode extension](https://aka.ms/learn-pwa/workshop/azure-static-web-apps-vscode-extension)
+2. The Starter comes with a deploy script that will trigger the static web app CLI. Run this command: `npm run deploy`.
 
-3. Create a new Azure Static Web App following [steps 1-5 in this tutorial](https://aka.ms/learn-pwa/workshop/azure-create-a-static-web-app).
+3. Log in to your Azure account when prompted.
 
-4. When asked to select the presets that match your application type. Select "Custom" option.
+4. Ensure you use the default settings for your app, which can be found in the swa-cli.config.json file in the root of your app.
 
-<div class="docs-image">
-   <img src="/assets/home/workshop/3-extension-presets-no-framework.png" alt="Custom selection in application type.">
-</div>
-
-5. For the app location prompt, enter `/`.
-
-6. For build output location, enter `dist`.
-
-7. Follow the rest of the steps in the [previous tutorial](https://aka.ms/learn-pwa/workshop/azure-create-a-static-web-app) to finish creating the Azure Static Web App and see the resource.
-
-**Note:** A `.yml` file will be added to `.github/workflows` folder in your repository root to enable continuos deployment to Azure Static Web Apps after you completed the above steps.
+5. Once the deployment is complete, you will see a URL to your deployed app. Open the URL in a new browser tab and you should see your deployed Repose app!
 
 ## 4️⃣ Working With Manifests
 
