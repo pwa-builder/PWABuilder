@@ -1,6 +1,14 @@
 const test = require('node:test');
 const assert = require('node:assert').strict;
 
+// test('includes missing fields', async () => {
+//   assert.equal(1, 2);
+// });
+
+// test('includes', async () => {
+//   assert.notEqual(1, 2);
+// })
+
 const maniLib = require('../dist/index');
 
 const test_manifest = JSON.stringify({
@@ -72,11 +80,19 @@ const test_manifest = JSON.stringify({
   * Test validateManifest method
 */
 test('can validate whole manifest', async () => {
-  assert.doesNotReject(maniLib.validateManifest(test_manifest));
+  const info = await maniLib.validateManifest(test_manifest);
+
+  assert.ok(info, "Manifest Validation Info is not null");
 });
 
 test('Should reject because of improper JSON', async () => {
-  assert.rejects(maniLib.validateManifest('{'));
+  try {
+    await maniLib.validateManifest('{');
+    assert.fail("Should have thrown an error");
+  }
+  catch (err) {
+    assert.ok(err, "Rejected as it should");
+  }
 });
 
 // should include missing fields
