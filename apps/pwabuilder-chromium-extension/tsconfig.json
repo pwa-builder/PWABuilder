@@ -11,6 +11,8 @@
     "noEmitOnError": true,
     "experimentalDecorators": true,
     "typeRoots": ["node_modules/@types"],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "declaration": true,
+    "declarationMap": true
   }
 }

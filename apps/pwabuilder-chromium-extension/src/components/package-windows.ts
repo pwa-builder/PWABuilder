@@ -1,8 +1,8 @@
 import { LitElement, html, css } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { windowsEndpoint } from "../endpoints";
 import { WindowsOptions } from "../interfaces/windowsOptions";
-import { getManifestInfo } from "../checks/manifest";
+import { SiteData } from "../interfaces/validation";
 
 import "@shoelace-style/shoelace/dist/components/input/input";
 import '@shoelace-style/shoelace/dist/components/button/button';
@@ -12,59 +12,60 @@ import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
 export class PackageWindows extends LitElement {
   @state() currentManiUrl: string | undefined = undefined;
   @state() windowsOptions: WindowsOptions | undefined = undefined;
-  @state() currentUrl: string = "";
-
+  
   static styles = [
     css`
       :host {
         display: block;
       }
-
+      
       form {
         display: grid;
         gap: 10px;
       }
-
+      
       label {
         display: flex;
         flex-direction: column;
       }
-
+      
       form sl-button {
         width: 8em;
         justify-self: flex-end;
       }
-
+      
       sl-tooltip p {
         white-space: pre-wrap;
         width: 20em;
       }
-
+      
       #header-block {
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
-    `,
+      `,
   ];
 
-  public async firstUpdated() {
-    const manifestInfo = await getManifestInfo();
-        
-    if (manifestInfo) {
-      this.currentManiUrl = manifestInfo.manifestUri;
-      const manifest = manifestInfo.manifest;
+  private _siteData!: SiteData;
 
-      // get current url
-      let url = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (url.length > 0) {
-        this.currentUrl = url[0].url || "";
-      }
+  @property() 
+  get siteData(): SiteData {
+    return this._siteData;
+  }
+
+  set siteData(val: SiteData) {
+    const oldValue = this._siteData;
+    this._siteData = val;
+
+    if (this._siteData && this._siteData.currentUrl && this._siteData.manifest.hasManifest) {
+      this.currentManiUrl = this._siteData.manifest.manifestUri;
+      const manifest = this._siteData.manifest.manifest;
 
       if (manifest) {
         // set options we can find in manifest
         this.setUpOptions(
-          this.currentUrl,
+          this._siteData.currentUrl,
           manifest.name || manifest.short_name || "My App",
           "",
           "",
@@ -75,7 +76,10 @@ export class PackageWindows extends LitElement {
         );
       }
     }
+
+    this.requestUpdate();
   }
+  
 
   private async packageForWindows(options: any): Promise<Response | undefined> {
     let response: Response | undefined;
