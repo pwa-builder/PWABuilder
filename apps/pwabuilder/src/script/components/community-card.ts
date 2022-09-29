@@ -163,7 +163,7 @@ export class CommunityCard extends LitElement {
             ${this.links && this.links.map((link: any) =>
               html`
               <div class="card-link-box">
-                <a @click=${() => recordPWABuilderProcessStep("home.bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener">${link.text}</a>
+                <a @click=${() => recordPWABuilderProcessStep("home.bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener" aria-label="${link.text}, will open in separate tab">${link.text}</a>
                 <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
               </div>
               `
