@@ -1,4 +1,4 @@
-import { Validation } from "./interfaces";
+import { ShortcutItem, Validation } from "./interfaces";
 import { isStandardOrientation } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
@@ -76,8 +76,8 @@ export const maniTests: Array<Validation> = [
             "short_name is required and should be a string with a length > 0 and should not have any whitespace",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && typeof value === "string" && value.length > 0 && value.trim() === value;
-          return existsAndLength;
+            const existsAndLength = value && typeof value === "string" && value.length > 0 && value.trim() === value;
+            return existsAndLength;
         },
     },
     {
@@ -231,6 +231,78 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
+        member: "shortcuts",
+        infoString: "The shortcut should have an icon atleast 96x96 pixels to be displayed correctly",
+        displayString: "Shortcut has atleast a 96x96 pixels icon",
+        category: "recommended",
+        defaultValue: "",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+        errorString: "Shortcut should have an icon atleast 96x96 pixels",
+        quickFix: false,
+        test: (value: Array<ShortcutItem>) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            console.log("shortcutIconValue isArray", isArray);
+
+            return new Promise(async (resolve, reject) => {
+                if (isArray === true) {
+                    console.log("shortcutIconValue", value, value[0]?.icons);
+                    const test = await new Promise((resolve) => {
+                        // loop through each shortcut
+                        value.forEach((shortcut) => {
+                            // loop through each shortcut.icons array and check if any are smaller than 96x96
+                            shortcut.icons?.forEach((icon) => {
+                                const sizes = icon.sizes?.split("x");
+                                const width = parseInt(sizes![0]!);
+                                const height = parseInt(sizes![1]!);
+    
+                                if (width < 96 || height < 96) {
+                                    resolve(false);
+                                }
+                            });
+                        });
+    
+                        // we never resolved false, so we must be good
+                        resolve(true);
+    
+                        // shortcut.icons?.forEach((icon) => {
+                        //     const sizes = icon.sizes?.split("x");
+                        //     console.log("sizes", sizes);
+                        //     // sizes should both be larger than 96)
+                        //     if (sizes && parseInt((sizes[0] as string)) >= 96 && parseInt((sizes[1] as string)) >= 96) {
+                        //         resolve(true);
+                        //     }
+                        //     else {
+                        //         resolve(true);
+                        //     }
+                        // });
+                    });
+    
+                    console.log("shortcutIconValue test", test);
+                    resolve(test);
+                }
+                else {
+                    reject("Shortcuts is not an array");
+                }
+            });
+        
+            // value.map((shortcut) => {
+            //     return new Promise((resolve) => {
+            //         shortcut["icons"].map((icon: any) => {
+            //             const sizes = icon.sizes.split("x");
+            //             console.log("sizes", sizes);
+            //             // sizes should both be larger than 96
+            //             if (parseInt(sizes[0]) >= 96 && parseInt(sizes[1]) >= 96) {
+            //                 resolve(true);
+            //             }
+            //             else {
+            //                 resolve(true);
+            //             }
+            //         });
+            //     });
+            // });
+        }
+    },
+    {
         infoString: "The iarc_rating_id member is a string that represents the International Age Rating Coalition (IARC) certification code of the web application. It is intended to be used to determine which ages the web application is appropriate for.",
         displayString: "Manifest has IARC Rating ID field",
         category: "optional",
@@ -261,7 +333,7 @@ export const maniTests: Array<Validation> = [
         errorString: "lang is required and should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0
+            value && typeof value === "string" && value.length > 0
     },
     {
         member: "dir",

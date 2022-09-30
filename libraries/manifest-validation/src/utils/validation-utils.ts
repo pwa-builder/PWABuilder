@@ -49,36 +49,51 @@ export function isValidJSON(json: Manifest): boolean {
 }
 
 export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     let data: Array<Validation> = [];
 
     const keys = Object.keys(manifest);
+    console.log("keys", keys);
 
-    keys.forEach((key) => {
-      maniTests.forEach(async (test) => {
-        if (test.member === key && test.test) {
-          const testResult = await test.test(manifest[key]);
+    const testResults: Array<Validation> = (await testWholeManifest(manifest, keys, data) as Array<Validation>);
 
-          if (testResult === false) {
-            test.valid = false;
-            data.push(test);
-          }
-          else {
-            test.valid = true;
-            data.push(test);
-          }
-        }
-        else {
-          test.valid = false;
-          data.push(test);
-        }
-      })
-    })
-
-    resolve(data);
+    resolve(testResults);
   })
 }
 
+
+async function testWholeManifest(manifest: Manifest, keys: string[], data: Validation[]) {
+  return new Promise((resolve) => {
+    maniTests.forEach(async (test) => {
+      const key = test.member;
+      const value = manifest[key];
+  
+      if (keys.includes(key) && test.test) {
+        const testResult = await test.test(value);
+        if (testResult === true) {
+          data.push({
+            ...test,
+            valid: true,
+          });
+        } else {
+          data.push({
+            ...test,
+            valid: false
+          });
+        }
+      } else {
+        data.push({
+          ...test,
+          valid: false
+        });
+      }
+    });
+
+    resolve(data);
+  });
+
+
+}
 
 export async function findMissingKeys(manifest: Manifest): Promise<Array<string>> {
   return new Promise((resolve) => {

@@ -52,27 +52,27 @@ const test_manifest = JSON.stringify({
     }
   ],
   "icons": [
-      {
-          "src": "icons/android/android-launchericon-64-64.png",
-          "sizes": "64x64"
-      },
-      {
-          "src": "icons/android/maskable_icon_192.png",
-          "sizes": "192x192",
-          "purpose": "maskable"
-      },
-      {
-          "src": "icons/android/android-launchericon-48-48.png",
-          "sizes": "48x48"
-      },
-      {
-          "src": "icons/android/android-launchericon-512-512.png",
-          "sizes": "512x512"
-      },
-      {
-          "src": "icons/android/android-launchericon-28-28.png",
-          "sizes": "28x28"
-      }
+    {
+      "src": "icons/android/android-launchericon-64-64.png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "icons/android/maskable_icon_192.png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/android/android-launchericon-48-48.png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "icons/android/android-launchericon-512-512.png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "icons/android/android-launchericon-28-28.png",
+      "sizes": "28x28"
+    }
   ]
 });
 
@@ -82,7 +82,8 @@ const test_manifest = JSON.stringify({
 test('can validate whole manifest', async () => {
   const info = await maniLib.validateManifest(test_manifest);
 
-  assert.ok(info, "Manifest Validation Info is not null");
+  assert.ok(info.length  === 21);
+  // assert.ok(info, "Manifest Validation Info is not null");
 });
 
 test('Should reject because of improper JSON', async () => {
@@ -146,4 +147,35 @@ test('should reject because of missing required field', async () => {
 // should reject because of improper json
 test('should reject because of improper json', async () => {
   assert.rejects(maniLib.validateRequiredFields('{'));
+});
+
+
+// should fail because of shortcuts having a wrong sized icon
+test('should fail because of shortcuts having a wrong sized icon', async () => {
+  const manifest = JSON.parse(test_manifest);
+ // manifest.shortcuts[0].icons[0].sizes = "50x50";
+  const newMani = JSON.stringify(manifest);
+
+  const data = await maniLib.validateManifest(newMani);
+  // data should have a validation for shortcuts and it should be false
+  data.map((item) => {
+    if (item.member === "shortcuts") {
+      assert.strictEqual(item.valid, false);
+    }
+  })
+});
+
+// should pass because of shortcuts having a correct sized icon
+test('should pass because of shortcuts having a correct sized icon', async () => {
+  const manifest = JSON.stringify(test_manifest);
+  // manifest.shortcuts[0].icons[0].sizes = "192x192";
+  //const newMani = JSON.stringify(manifest);
+
+  const data = await maniLib.validateManifest(manifest);
+  // data should have a validation for shortcuts and it should be true
+  data.map((item) => {
+    if (item.member === "shortcuts") {
+      assert.equal(item.valid, true);
+    }
+  })
 });
