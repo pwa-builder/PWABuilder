@@ -950,7 +950,7 @@ export class ManifestPlatformForm extends LitElement {
                 </p>
               </a>
             </div>
-            <p>related apps desc</p>
+            <p>Applications that provide similar functionality to your PWA</p>
             <sl-details class="field-details" summary="Click to edit related apps" data-field="related_applications">
               <sl-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</sl-button>
               <div class="items-holder">
@@ -987,7 +987,7 @@ export class ManifestPlatformForm extends LitElement {
                 </p>
               </a>
             </div>
-            <p>Links to key tasks or pages within a web app</p>
+            <p>Links to key tasks or pages within your PWA</p>
             <sl-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts">
               <sl-button @click=${() => this.addFieldToHTML("shortcuts")} ?disabled=${this.shortcutHTML.length != 0}>Add Shortcut</sl-button>
               <div class="items-holder">
@@ -1057,7 +1057,7 @@ export class ManifestPlatformForm extends LitElement {
                 </p>
               </a>
             </div>
-            <p>The categories your PWA fall in to</p>
+            <p>The categories your PWA belongs to</p>
               <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
                     html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`

@@ -148,6 +148,7 @@ export class AppReport extends LitElement {
       css`
         * {
           box-sizing: border-box;
+          font-family: inherit;
         }
 
         app-header::part(header) {
@@ -196,7 +197,7 @@ export class AppReport extends LitElement {
           column-gap: 10px;
           align-items: center;
           font-size: 14px;
-          padding: 1em;
+          padding: 2em;
           width: 100%;
         }
         #pwa-image-holder {
@@ -246,7 +247,7 @@ export class AppReport extends LitElement {
           justify-content: flex-end;
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
-          border-top: 1px solid #f2f3fb;
+          border-top: 1px solid rgb(242 243 251 / 20%);
         }
         #last-edited {
           font-size: 12px;
@@ -312,7 +313,7 @@ export class AppReport extends LitElement {
         #package {
           row-gap: .5em;
           width: 100%;
-          padding: 1em;
+          padding: 2em;
         }
         #pfs {
           background-color: black;
@@ -416,7 +417,7 @@ export class AppReport extends LitElement {
           padding: .5em 1em;
         }
         #actions-footer img {
-          height: 20px;
+          height: 15px;
           width: auto;
         }
         #actions-footer p {
@@ -433,7 +434,8 @@ export class AppReport extends LitElement {
           width: 100%;
         }
         sl-details::part(content) {
-          padding-top: 0;
+          padding-top: .75em;
+          padding-bottom: 1.5em;
         }
         .details-summary {
           display: flex;
@@ -510,6 +512,7 @@ export class AppReport extends LitElement {
         .indicator p {
           line-height: 20px;
           margin: 0;
+          font-size: 15px;
         }
 
         #manifest {
@@ -592,7 +595,7 @@ export class AppReport extends LitElement {
         .detail-list {
           display: flex;
           flex-direction: column;
-          row-gap: 10px;
+          row-gap: 18px;
         }
         .detail-list-header {
           font-size: 18px;
@@ -620,7 +623,7 @@ export class AppReport extends LitElement {
         }
         .details::part(header) {
           height: 40px;
-          padding: 1.5em .75em;
+          padding: 1em .75em;
         }
 
         #two-cell-row {
@@ -645,7 +648,7 @@ export class AppReport extends LitElement {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
-          min-height: 332px;
+          min-height: 280px;
           justify-content: space-between;
         }
 
@@ -703,7 +706,7 @@ export class AppReport extends LitElement {
           row-gap: .5em;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
-          min-height: 332px;
+          min-height: 280px;
         }
         #sec-top {
           display: flex;
@@ -852,7 +855,7 @@ export class AppReport extends LitElement {
           }
         }
 
-        @media(max-width: 750px){
+        @media(max-width: 900px){
           #two-cell-row {
             flex-direction: column;
             row-gap: 1em;

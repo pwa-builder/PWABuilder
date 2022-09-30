@@ -127,6 +127,12 @@ export class SWSelector extends LitElement {
         row-gap: 1em;
         width: 50%;
       }
+      #footer-links #instructions {
+        font-size: 14px;
+        color: #808080;
+        text-align: left;
+        margin: 0;
+      }
       #footer-actions {
         display: flex;
         flex-direction: column;
@@ -231,23 +237,14 @@ export class SWSelector extends LitElement {
 
         <div id="frame-footer" slot="footer">
           <div id="footer-links">
+            <p id="instructions">Click below for instructions on how to register your Service Worker.</p>
             <a 
               class="arrow_anchor" 
-              href="https://aka.ms/install-pwa-studio" 
-              rel="noopener" 
-              target="_blank"
-              @click=${() => recordPWABuilderProcessStep("sw_modal.vscode_extension_link_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-              >
-              <p class="arrow_link">VS Code Extension</p> 
-              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-            </a>
-            <a 
-              class="arrow_anchor" 
-              href="https://docs.pwabuilder.com/#/home/sw-intro" 
+              href="https://docs.pwabuilder.com/#/home/sw-intro?id=registration" 
               rel="noopener" 
               target="_blank"
               @click=${() => recordPWABuilderProcessStep("sw_modal.sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-              <p class="arrow_link">Service Worker Documentation</p> 
+              <p class="arrow_link">Register your Service Worker</p> 
               <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
             </a>
           </div>

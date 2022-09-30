@@ -299,11 +299,11 @@ export class AppHome extends LitElement {
           #input-form {
             width: 100%;
           }
-          #input-form fast-text-field {
-            margin-right: 0;
-          }
           #home-header{
             font-size: 40px;
+          }
+          #input-form .navigation::part(base) {
+            width: 100%;
           }
         `)}
 
@@ -361,17 +361,14 @@ export class AppHome extends LitElement {
           #input-form {
             width: 100%;
           }
-          #input-form fast-text-field {
-            margin-right: 0;
-          }
-          #input-form fast-text-field::part(control) {
-            width: 100%;
-          }
           .grid-item-header {
             font-size: 20px;
           }
           #input-header {
             font-size: 20px;
+          }
+          #input-form .navigation::part(base) {
+            width: 100%;
           }
         }
         @media (max-width: 415px) {
@@ -385,18 +382,6 @@ export class AppHome extends LitElement {
           }
           #wrapper {
             width: 600px;
-          }
-        }
-        @media screen and (-ms-high-contrast: white-on-black) {
-          #input-form fast-text-field::part(control):focus {
-            outline: none;
-          }
-          #input-form fast-text-field::part(control):focus-visible {
-            outline: skyblue solid 6px;
-            outline-offset: 2px;
-          }
-          #input-form fast-text-field::part(control) {
-            color: white;
           }
         }
 
