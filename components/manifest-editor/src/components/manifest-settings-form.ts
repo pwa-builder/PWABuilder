@@ -507,7 +507,7 @@ export class ManifestSettingsForm extends LitElement {
 
               <p>(required)</p>
             </div>
-            <p>The relative URL that loads when your app starts</p>
+            <p>The URL that loads when your PWA starts</p>
             <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
@@ -526,7 +526,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The base direction in which to display direction-capable members of the manifest</p>
+            <p>The text direction of your PWA</p>
             <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
