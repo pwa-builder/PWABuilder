@@ -16,7 +16,7 @@ body:
         - Other
     validations:
       required: true
-  - type: markdown
+  - type: textarea
     attributes:
       value: |
 
