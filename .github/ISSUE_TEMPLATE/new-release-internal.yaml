@@ -3,6 +3,15 @@ description: This template is used for tracking releases
 title: "[RELEASE][PWABUILDER|VSCODE|STARTER|ETC] X.X"
 labels: ["release-task"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue tracks the publishing progress for a release. It should be updated as tasks are completed.
+        
+        This issue should only be created by a maintainer to track progress of a release. Link to sub-issues if approprite.
+
+        IMPORTANT: Make sure the title of this issue includes the product name (pwabuilder/vscode/starter/component/etc)
+        
   - type: dropdown
     id: product
     attributes:
@@ -21,16 +30,6 @@ body:
       label: Checklist
       description: Add or remove checklist items as appropriate
       value: |
-
-        This issue tracks the publishing progress for a release. It will get updated as tasks are completed.
-
-
-        <!-- 
-        This issue should only be created by a maintainer to track progress of a release. Link to sub-issues if approprite.
-
-        IMPORTANT: Make sure the title of this issue includes the product name (pwabuilder/vscode/starter/component/etc)
-        -->
-
         #### Code
           - [ ] Link to issue tracking board: {link_goes_here}
           - [ ] All P0s completed
