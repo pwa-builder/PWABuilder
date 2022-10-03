@@ -254,29 +254,17 @@ export const maniTests: Array<Validation> = [
                                 const sizes = icon.sizes?.split("x");
                                 const width = parseInt(sizes![0]!);
                                 const height = parseInt(sizes![1]!);
-    
+
                                 if (width < 96 || height < 96) {
                                     resolve(false);
                                 }
                             });
                         });
-    
+
                         // we never resolved false, so we must be good
                         resolve(true);
-    
-                        // shortcut.icons?.forEach((icon) => {
-                        //     const sizes = icon.sizes?.split("x");
-                        //     console.log("sizes", sizes);
-                        //     // sizes should both be larger than 96)
-                        //     if (sizes && parseInt((sizes[0] as string)) >= 96 && parseInt((sizes[1] as string)) >= 96) {
-                        //         resolve(true);
-                        //     }
-                        //     else {
-                        //         resolve(true);
-                        //     }
-                        // });
                     });
-    
+
                     console.log("shortcutIconValue test", test);
                     resolve(test);
                 }
@@ -284,22 +272,6 @@ export const maniTests: Array<Validation> = [
                     reject("Shortcuts is not an array");
                 }
             });
-        
-            // value.map((shortcut) => {
-            //     return new Promise((resolve) => {
-            //         shortcut["icons"].map((icon: any) => {
-            //             const sizes = icon.sizes.split("x");
-            //             console.log("sizes", sizes);
-            //             // sizes should both be larger than 96
-            //             if (parseInt(sizes[0]) >= 96 && parseInt(sizes[1]) >= 96) {
-            //                 resolve(true);
-            //             }
-            //             else {
-            //                 resolve(true);
-            //             }
-            //         });
-            //     });
-            // });
         }
     },
     {
