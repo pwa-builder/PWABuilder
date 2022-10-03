@@ -3,6 +3,19 @@ description: This template is used for tracking releases
 title: "[RELEASE][PWABUILDER|VSCODE|STARTER|ETC] X.X"
 labels: ["release-task"]
 body:
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      options:
+        - PWABuilder.com
+        - VS Code extension
+        - PWA Starter
+        - Component
+        - Docs
+        - Other
+    validations:
+      required: true
   - type: markdown
     attributes:
       value: |
