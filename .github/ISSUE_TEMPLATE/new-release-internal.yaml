@@ -18,6 +18,8 @@ body:
       required: true
   - type: textarea
     attributes:
+      label: Checklist
+      description: Add or remove checklist items as appropriate
       value: |
 
         This issue tracks the publishing progress for a release. It will get updated as tasks are completed.
