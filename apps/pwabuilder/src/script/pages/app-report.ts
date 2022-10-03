@@ -46,8 +46,12 @@ export class AppReport extends LitElement {
     siteName: 'Site Name',
     description: "Your site's description",
     siteUrl: 'Site URL',
+    iconURL: '',
+    iconAlt: 'Your sites logo'
   };
-  @property({ type: Object }) styles = { backgroundColor: 'white', color: 'black'};
+  @property({ type: Object }) CardStyles = { backgroundColor: 'white', color: 'black'};
+  @property({ type: Object }) BorderStyles = { borderTop: '1px solid #00000033'};
+  @property({ type: Object }) LastEditedStyles = { color: '#000000b3'};
   @property() manifestCard = {};
   @property() serviceWorkerCard = {};
   @property() securityCard = {};
@@ -88,6 +92,7 @@ export class AppReport extends LitElement {
   @state() manifestTotalScore: number = 0;
   @state() manifestValidCounter: number = 0;
   @state() manifestRequiredCounter: number = 0;
+  @state() manifestReccCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
   @state() manifestMessage: string = "";
 
@@ -95,6 +100,7 @@ export class AppReport extends LitElement {
   @state() swTotalScore: number = 0;
   @state() swValidCounter: number = 0;
   @state() swRequiredCounter: number = 0;
+  @state() swReccCounter: number = 0;
   @state() swDataLoading: boolean = true;
   @state() swMessage: string = "";
 
@@ -102,6 +108,7 @@ export class AppReport extends LitElement {
   @state() secTotalScore: number = 0;
   @state() secValidCounter: number = 0;
   @state() secRequiredCounter: number = 0;
+  @state() secReccCounter: number = 0;
   @state() secDataLoading: boolean = true;
   @state() secMessage: string = "";
 
@@ -240,7 +247,7 @@ export class AppReport extends LitElement {
           margin-left: 1em;
         }
         #app-card-footer {
-          padding: .5em 1em;
+          padding: .4em 1em;
           display: flex;
           width: 100%;
           align-items: center;
@@ -251,6 +258,7 @@ export class AppReport extends LitElement {
         }
         #last-edited {
           font-size: 12px;
+          white-space: nowrap;
           margin: 0;
         }
         #app-actions {
@@ -1032,26 +1040,43 @@ export class AppReport extends LitElement {
     return manifestContext!;
   }
 
-  populateAppCard(manifestContext: ManifestContext, url: string) {
+  async populateAppCard(manifestContext: ManifestContext, url: string) {
     let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
 
     if (manifestContext && !this.createdManifest) {
       const parsedManifestContext = manifestContext;
+
+      let iconUrl = this.iconSrcListParse()![0];
+
+      await this.testImage(iconUrl).then(
+        function fulfilled(_img) {
+          //console.log('That image is found and loaded', img);
+        },
+
+        function rejected() {
+          //console.log('That image was not found');
+          iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
+        }
+      );
 
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
           ? parsedManifestContext.manifest.short_name
           : (parsedManifestContext.manifest.name ? parsedManifestContext.manifest.name : 'Untitled App'),
         siteUrl: cleanURL,
+        iconURL: iconUrl,
+        iconAlt: "Your sites logo",
         description: parsedManifestContext.manifest.description
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
       if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
-        this.styles.backgroundColor = manifestContext.manifest.theme_color;
+        this.CardStyles.backgroundColor = manifestContext.manifest.theme_color;
         // calculate whether is best to use white or black
         let color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
-        this.styles.color = color;
+        this.CardStyles.color = color;
+        this.BorderStyles.borderTop = `1px solid ${color + '33'}`
+        this.LastEditedStyles.color = color + 'b3';
         color === "#ffffff" ? this.retestPath = "/assets/new/retest-white.svg" : "/assets/new/retest-black.svg"
 
       }
@@ -1060,9 +1085,37 @@ export class AppReport extends LitElement {
           siteName: "Missing Name",
           siteUrl: cleanURL,
           description: "Your manifest description is missing.",
+          iconURL: "/assets/new/icon_placeholder.png",
+          iconAlt: "A placeholder for you sites icon"
         };
     }
   }
+
+  testImage(url: string) {
+
+    // Define the promise
+    const imgPromise = new Promise(function imgPromise(resolve, reject) {
+
+        // Create the image
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            resolve(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            reject();
+        })
+
+        // Assign URL
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
+}
 
   pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
 
@@ -1125,6 +1178,9 @@ export class AppReport extends LitElement {
         if(test.category === "required" || test.testRequired){
           status = "red";
           this.manifestRequiredCounter++;
+        } else if(test.category === "recommended"){
+          status = "yellow";
+          this.manifestReccCounter++;
         } else {
           status = "yellow";
         }
@@ -1176,6 +1232,9 @@ export class AppReport extends LitElement {
           missing = true;
           this.swRequiredCounter++;
           this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
+        } else if(result.category === "recommended"){
+          status = "yellow";
+          this.swReccCounter++;
         } else {
           status = "yellow";
         }
@@ -1221,6 +1280,9 @@ export class AppReport extends LitElement {
         if(result.category === "required"){
           status = "red";
           this.secRequiredCounter++;
+        } else if(result.category === "recommended"){
+          status = "yellow";
+          this.manifestReccCounter++;
         } else {
           status = "yellow";
         }
@@ -1250,9 +1312,11 @@ export class AppReport extends LitElement {
 
     missing.forEach((field: string) => {
       if(required_fields.includes(field)){
-        this.requiredMissingFields.push(field)
+        this.requiredMissingFields.push(field);
+        this.manifestRequiredCounter++;
       } else if(reccommended_fields.includes(field)){
-        this.reccMissingFields.push(field)
+        this.reccMissingFields.push(field);
+        this.manifestReccCounter++;
       } if(optional_fields.includes(field)){
         this.optMissingFields.push(field)
       }
@@ -1390,7 +1454,7 @@ export class AppReport extends LitElement {
   }
 
 
-  decideColor(valid: number, total: number, card: string){
+  decideColor(card: string){
 
     let instantRed = false;
     if(card === "manifest"){
@@ -1401,11 +1465,18 @@ export class AppReport extends LitElement {
       instantRed = this.secRequiredCounter > 0;
     }
 
-    let ratio = parseFloat(JSON.stringify(valid)) / total;
+    let instantYellow = false;
+    if(card === "manifest"){
+      instantYellow = this.manifestReccCounter > 0;
+    } else if(card === "sw"){
+      instantYellow = this.swReccCounter > 0;
+    } else {
+      instantYellow = this.secReccCounter > 0;
+    }
 
     if(instantRed){
       return {"green": false, "red": true, "yellow": false};
-    } else if(ratio < .7){
+    } else if(instantYellow){
       return {"green": false, "red": false, "yellow": true};
     } else {
       return {"green": true, "red": false, "yellow": false};
@@ -1589,10 +1660,10 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.styles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="pwa-image-holder">
-                  ${!this.createdManifest ? html`<img src=${this.iconSrcListParse()![0]} ialt="Your sites logo" />` : html`<img src="/assets/new/icon_placeholder.png" alt="Your sites logo placeholder" />`}
+                  <img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
@@ -1600,8 +1671,8 @@ export class AppReport extends LitElement {
                 </div>
                 <p id="app-card-desc">${this.appCard.description}</p>
               </div>
-              <div id="app-card-footer">
-                <div id="test" style=${styleMap(this.styles)}>
+              <div id="app-card-footer" style=${styleMap(this.BorderStyles)}>
+                <div id="test" style=${styleMap(this.CardStyles)}>
                   <button
                     type="button"
                     id="retest"
@@ -1610,13 +1681,13 @@ export class AppReport extends LitElement {
                     }}
                     ?disabled=${this.runningTests}
                   >
+                    <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
+
                     <img
                       src=${this.retestPath}
                       alt="retest site"
                       role="presentation"
                     />
-                  
-                    <p id="last-edited" style=${styleMap(this.styles)}>${this.lastTested}</p>
                   </button>
                 </div>
               </div>
@@ -1786,7 +1857,7 @@ export class AppReport extends LitElement {
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                             id="manifestProgressRing"
-                            class=${classMap(this.decideColor(this.manifestValidCounter, this.manifestTotalScore, "manifest"))}
+                            class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
                           >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
                 }
@@ -1915,7 +1986,7 @@ export class AppReport extends LitElement {
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                     id="swProgressRing"
-                    class=${classMap(this.decideColor(this.swValidCounter, this.swTotalScore, "sw"))}
+                    class=${classMap(this.decideColor("sw"))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
                     >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`${this.swValidCounter} / ${this.swTotalScore}`}</sl-progress-ring>
                     `
@@ -2022,7 +2093,7 @@ export class AppReport extends LitElement {
                     html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
                     html`<sl-progress-ring
                     id="secProgressRing"
-                    class=${classMap(this.decideColor(this.secValidCounter, this.secTotalScore, "sec"))}
+                    class=${classMap(this.decideColor("sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
                     >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`${this.secValidCounter} / ${this.secTotalScore}`}</sl-progress-ring>
                     `
