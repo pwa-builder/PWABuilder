@@ -538,39 +538,6 @@ export class HelpViewPanel {
       cursor: pointer;
     }
 
-    #submit-block {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 2em;
-
-      position: sticky;
-      top: 0;
-      z-index: 9;
-      background: #1e1e1e;
-      height: 100%;
-      padding-top: 10px;
-
-      border-bottom: solid 1px darkgrey;
-      padding-bottom: 10px;
-    }
-
-    #submit-block h1 {
-      font-size: 16px;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-
-    #submit-block button {
-      background: #487cf1;
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 1.1em;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
     ion-icon {
       margin-left: 10px;
       font-size: 24px;

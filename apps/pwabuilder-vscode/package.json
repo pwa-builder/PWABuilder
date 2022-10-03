@@ -170,11 +170,6 @@
         "icon": "$(gear)"
       },
       {
-        "command": "pwa-studio.generateIcons",
-        "title": "PWABuilder Studio: Generate Icons",
-        "icon": "$(settings-edit)"
-      },
-      {
         "command": "pwa-studio.generateScreenshots",
         "title": "PWABuilder Studio: Generate Screenshots",
         "icon": "$(gear)"
@@ -183,6 +178,11 @@
         "command": "pwa-studio.help",
         "title": "PWABuilder Studio: Help",
         "icon": "$(note)"
+      },
+      {
+        "command": "pwa-studio.generateIcons",
+        "title": "PWABuilder Studio: Generate Icons",
+        "icon": "$(file-media)"
       },
       {
         "command": "pwa-studio.updateAdvWorker",
