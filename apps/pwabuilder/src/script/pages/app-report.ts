@@ -1828,7 +1828,7 @@ export class AppReport extends LitElement {
                       html`
                           <sl-tooltip class="mani-tooltip" open>
                             <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>
+                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
                           </sl-tooltip>` :
                       html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit your Manifest</button>`
                       }
