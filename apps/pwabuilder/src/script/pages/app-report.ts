@@ -1715,7 +1715,7 @@ export class AppReport extends LitElement {
                           id="pfs-disabled"
                           aria-disabled="true"
                         >
-                          Package for store
+                          Package for stores
                         </button>
                     </sl-tooltip>
                     `}
