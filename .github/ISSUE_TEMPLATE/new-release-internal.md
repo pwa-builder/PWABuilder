@@ -1,3 +1,4 @@
+---
 name: New Release (internal use only)
 description: This template is used for tracking releases
 title: "[RELEASE][PWABUILDER|VSCODE|STARTER|ETC] X.X"
