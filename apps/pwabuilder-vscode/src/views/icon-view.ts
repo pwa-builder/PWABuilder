@@ -28,6 +28,15 @@ export class IconViewPanel {
                 if (message.command === "generate-icons") {
                     await this.generateIcons(message.options)
                 }
+                else if (message.command === "base-icon") {
+                    const icon = await this.getBaseIcon();
+                    if (icon) {
+                        this._panel.webview.postMessage({
+                            command: "base-icon",
+                            icon: icon[0].fsPath,
+                        });
+                    }
+                }
             },
             undefined,
             this._disposables
@@ -78,6 +87,8 @@ export class IconViewPanel {
     
           <main>
             <form>
+
+              <img id="base-icon" />
               <div class="form-group">
                 <p>Choose an icon file to use as a base. 512x512 is preferred.</p>
                 <label for="icon">Base Icon</label>
@@ -129,6 +140,12 @@ export class IconViewPanel {
                 command: 'choose-base',
             })
           });
+
+          vscode.onDidReceiveMessage((message) => {
+            if (message.command === "base-icon") {
+                document.querySelector("#base-icon").src = message.icon;
+            }
+          })
         </script>
       </body>
       <style>
@@ -231,7 +248,7 @@ export class IconViewPanel {
 
                 if (!skipPrompts) {
                     // ask user for icon file
-                    iconFile = await this.getBaseIcon(iconFile);
+                    iconFile = await this.getBaseIcon();
                 }
                 else {
                     iconFile = [vscode.Uri.file(
@@ -332,8 +349,8 @@ export class IconViewPanel {
         })
     }
 
-    async getBaseIcon(iconFile: vscode.Uri[] | undefined) {
-        iconFile = await vscode.window.showOpenDialog({
+    async getBaseIcon() {
+        const iconFile = await vscode.window.showOpenDialog({
             canSelectFiles: true,
             canSelectMany: false,
             filters: {
