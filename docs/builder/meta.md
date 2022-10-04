@@ -24,17 +24,17 @@ The first step is to generate your .apk package with PWABuilder.
     <img src="../assets/builder/meta/url.jpg" alt="Homepage of pwabuilder.com" width=450>
 </div>
 
-3. Click `Next` to navigate to the package selection page.
+3. Click `Package for stores` in the upper right to navigate to the package selection page.
    
-4. Click on `Store Package` in the Meta Quest section.
+4. Click on `Generate Package` in the Meta Quest section.
 
 <div class="docs-image">
     <img src="../assets/builder/meta/store_package.jpg" alt="Meta Store package option on pwabuilder.com" width=550>
 </div>
 
-5. Next you will see a list of the different options for the Meta Quest platform that are covered in more detail below.
+5. Customize your package options - these are covered in more detail below.
    
-6. When you are ready, tap the Generate button to generate your app package, and then the Download button when it pops up to download the generated App and associated files.
+6. Click `Download Package`.
 
 #### Saving Your Signing Key
 

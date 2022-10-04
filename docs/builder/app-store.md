@@ -31,9 +31,9 @@ The whole process can be done in just a few steps:
     <img src="/assets/builder/enter-url.png" width=450>
 </div>
 
-3. Click `Next` to navigate to the package selection page.
+3. Click `Package for stores` to navigate to the package selection page.
    
-4. Select `Store Package` in the iOS section.
+4. Select `Generate Package` in the iOS section.
    
 <div class="docs-image">
     <img src="/assets/builder/ios/ios-publish-section.png" width=550>
@@ -43,7 +43,7 @@ The whole process can be done in just a few steps:
    
 6. Take note of your `Bundle ID`, you will need this info to publish to the App Store.
    
-7. Click `Generate` and your package will download. Your download will contain further instructions for submitting the package, but you can also use these docs.
+7. Click `Download Package`.
 
 ## Building Your App
 
