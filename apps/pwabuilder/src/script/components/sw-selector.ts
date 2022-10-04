@@ -69,6 +69,7 @@ export class SWSelector extends LitElement {
         }
       .dialog::part(panel) {
         position: relative;
+        border-radius: 20px;
       }
       .dialog::part(close-button__base){
         position: absolute;
@@ -78,9 +79,9 @@ export class SWSelector extends LitElement {
 
       #frame-footer {
         background-color: #F2F3FB;
-        padding: 1em 2em;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
+        padding: 1.5em 2em;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;

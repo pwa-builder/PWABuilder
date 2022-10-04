@@ -288,8 +288,8 @@ export class PublishPane extends LitElement {
         display: flex;
         flex-direction: column;
         background-color: #F2F3FB;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
         padding: 1em;
         gap: .5em;
       }
@@ -354,6 +354,7 @@ export class PublishPane extends LitElement {
         display: flex;
         flex-direction: column;
         align-items: center;
+        border-radius: 20px;
       }
       .dialog::part(overlay){
         backdrop-filter: blur(10px);
@@ -441,10 +442,10 @@ export class PublishPane extends LitElement {
       #form-extras {
         display: flex;
         justify-content: space-between;
-        padding: 1em 1.5em;
+        padding: 1.5em 2em;
         background-color: #F2F3FB;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
       }
 
       #form-details-block {

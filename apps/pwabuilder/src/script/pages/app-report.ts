@@ -423,6 +423,7 @@ export class AppReport extends LitElement {
           border-bottom-left-radius: 10px;
           border-bottom-right-radius: 10px;
           padding: .5em 1em;
+          border-top: 1px solid #E5E5E5;
         }
         #actions-footer img {
           height: 15px;
@@ -481,7 +482,7 @@ export class AppReport extends LitElement {
         }
         .pageToggles {
           height: 15px;
-          color: #CBCDEB;
+          color: #4f3fb6;
         }
         #dots {
           display: flex;
@@ -1115,7 +1116,7 @@ export class AppReport extends LitElement {
     });
 
     return imgPromise;
-}
+  }
 
   pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
 
@@ -1565,13 +1566,17 @@ export class AppReport extends LitElement {
   rotateZero(card: string){
     recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    icon!.style.transform = "rotate(0deg)";
+    if(icon){
+      icon!.style.transform = "rotate(0deg)";
+    }
   }
 
   rotateNinety(card: string){
     recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    icon!.style.transform = "rotate(90deg)";
+    if(icon){
+      icon!.style.transform = "rotate(90deg)";
+    }
   }
 
   sortTodos(){
@@ -1702,7 +1707,7 @@ export class AppReport extends LitElement {
                       id="pfs"
                       @click=${() => this.openPublishModal()}
                     >
-                      Package for store
+                      Package for stores
                     </button>
                     ` :
                     html`

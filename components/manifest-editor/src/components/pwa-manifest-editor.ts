@@ -86,7 +86,7 @@ export class PWAManifestEditor extends LitElement {
         overflow-y: auto;
         overflow-x: hidden;
         height: 500px;
-        padding: .5em;
+        padding: 1em .5em .5em .5em;
       }
 
       @media(max-width: 765px){

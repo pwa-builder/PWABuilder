@@ -47,6 +47,10 @@ export class ManifestInfoForm extends LitElement {
         --sl-input-height-medium: 3em;
         --sl-button-font-size-medium: 16px;
       }
+      sl-input::part(base),
+      sl-textarea::part(base){
+        background-color: #fbfbfb;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;

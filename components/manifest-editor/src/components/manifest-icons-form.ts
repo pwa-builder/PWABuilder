@@ -50,6 +50,7 @@ export class ManifestIconsForm extends LitElement {
   @state() uploadImageObjectUrl: string = '';
   @state() errored: boolean = false;
   @state() selectedPlatforms: PlatformInformation[] = [...platformsData];
+  @state() srcList: any = [];
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
   private errorCount: number = 0;
@@ -220,10 +221,12 @@ export class ManifestIconsForm extends LitElement {
     super();
   }
 
+
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(manifestInitialized){
       manifestInitialized = false;
       this.requestValidateAllFields();
+      await this.iconSrcListParse();
     }
   }
 
@@ -253,8 +256,14 @@ export class ManifestIconsForm extends LitElement {
       let passed = validation!.valid;
 
       if(!passed){
+        if(this.shadowRoot!.querySelectorAll('.error-message')){
+          let error_divs = this.shadowRoot!.querySelectorAll('.error-message');
+          error_divs.forEach((error: any) => error!.parentElement!.removeChild(error!));
+        }
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
+
+        
 
         if(validation.errors){
           validation.errors.forEach((error: string) => {
@@ -336,22 +345,59 @@ export class ManifestIconsForm extends LitElement {
     );
   }
 
-  iconSrcListParse() {
+  async iconSrcListParse() {
 
     if (!this.manifest && !this.manifestURL) {
-      return [];
+      return;
     }
 
-    let screenshotSrcList: any[] = [];
+    let srcList: any[] = [];
 
-    this.manifest!.icons?.forEach((icon: any) => {
+    for(let i = 0; i < this.manifest!.icons!.length; i++){
+      let icon = this.manifest!.icons![i];
       let iconURL: string = this.handleImageUrl(icon) || '';
-      if(iconURL){
-        screenshotSrcList.push({src: (iconURL as string), size: icon.sizes});
-      }
-    })
 
-    return screenshotSrcList;
+      await this.testImage(iconURL).then(
+        function fulfilled(_img) {
+        },
+
+        function rejected() {
+          iconURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconURL}`;
+        }
+      );
+
+      if(iconURL){
+        srcList.push({src: (iconURL as string), size: icon.sizes});
+      }
+    }
+
+    this.srcList = srcList;
+  }
+
+  testImage(url: string) {
+
+    // Define the promise
+    const imgPromise = new Promise(function imgPromise(resolve, reject) {
+
+        // Create the image
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            resolve(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            reject();
+        })
+
+        // Assign URL
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
   }
 
   handleImageUrl(icon: Icon) {
@@ -470,7 +516,7 @@ export class ManifestIconsForm extends LitElement {
           </div>
           <p>Below are the current Icons in your apps Manifest</p>
           <div class="icon-gallery">
-            ${this.iconSrcListParse().map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
+            ${this.srcList.map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
           </div>
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
