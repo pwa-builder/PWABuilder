@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import fetch from "node-fetch";
+const fetch = require('node-fetch');
 import { writeFile } from 'fs/promises';
 import { Manifest } from '../../interfaces';
 import { trackEvent } from "../usage-analytics";

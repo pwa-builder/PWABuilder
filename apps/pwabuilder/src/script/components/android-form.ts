@@ -252,7 +252,7 @@ export class AndroidForm extends AppPackageFormBase {
                 placeholder: 'MyCompany.MyApp',
                 value: this.packageOptions.packageId,
                 minLength: 3,
-                maxLength: 50,
+                maxLength: Number.MAX_SAFE_INTEGER,
                 spellcheck: false,
                 pattern: "[a-zA-Z0-9.-_]*$",
                 validationErrorMessage: "Package ID must contain only letters, numbers, periods, hyphens, and underscores.",
@@ -272,7 +272,9 @@ export class AndroidForm extends AppPackageFormBase {
                 minLength: 3,
                 maxLength: 50,
                 spellcheck: false,
-                validationErrorMessage: "App name must be between 3 and 50 characters in length",
+                pattern: "[^|$@#><)(!&%*]*$",
+                validationErrorMessage:
+                  'App name must not include special characters and be between 3 and 50 characters',
                 inputHandler: (val: string) => this.packageOptions.name = val
               })}
             </div>

@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
+import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
 
 let url: string | undefined = undefined;
 
@@ -40,22 +41,83 @@ export async function askForUrl(): Promise<void> {
 
     await setURL(url);
   } else {
-    // let user know they need to publish their PWA
-    // and open docs
-    const answer = await vscode.window.showInformationMessage(
-      "You need to publish your PWA to the web. Would you like to get a tutorial of how to do this with the Azure Static Web Apps VSCode extension?",
-      {
-        title: "Learn How",
-      },
-      {
-        title: "OK",
-      }
-    );
-
-    if (answer && answer.title === "Learn How") {
-      azureCommandWalkthrough();
-    }
+    azureCommandWalkthrough();
   }
+}
+
+async function doCLIDeploy(terminal: vscode.Terminal): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    // config file has been created, lets keep going
+
+    try {
+      // ask user if they want to deploy
+      const answer = await vscode.window
+        .showInformationMessage(
+          "Your Azure Static Web App config has been created. Would you like to continue with deploying?",
+          {
+            title: "Deploy",
+          },
+          {
+            title: "Cancel",
+          }
+        );
+
+      if (answer && answer.title === "Deploy") {
+        terminal.sendText("npx @azure/static-web-apps-cli deploy");
+
+        resolve();
+      }
+      else {
+
+        resolve();
+      }
+    }
+    catch (err) {
+      reject(err);
+    }
+  })
+}
+
+async function initPublish(terminal: vscode.Terminal): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const npmCheck = isNpmInstalled();
+      if (npmCheck) {
+        terminal.show();
+
+        // setup file watcher for swa-cli.config.json
+        const watcher = vscode.workspace.createFileSystemWatcher(
+          "**/swa-cli.config.json"
+        );
+
+        watcher.onDidCreate(async (uri) => {
+          if (uri) {
+            watcher.dispose();
+
+            await doCLIDeploy(terminal);
+
+            resolve();
+          }
+        });
+
+        watcher.onDidChange(async (uri) => {
+          if (uri) {
+            watcher.dispose();
+
+            await doCLIDeploy(terminal);
+
+            resolve();
+          }
+        })
+
+        terminal.sendText("npx @azure/static-web-apps-cli init --yes");
+      } else {
+        noNpmInstalledWarning();
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 // Opens the Azure Command Walkthrough
@@ -81,29 +143,25 @@ async function azureCommandWalkthrough(): Promise<void> {
     if (azureCommandQuestion !== undefined && azureCommandQuestion === "Yes") {
       // first you need to create a new azure static web app
       const azureSWAQuestion = await vscode.window.showQuickPick(
-        ["Open Documentation", "Cancel"],
+        ["Get Started", "Cancel"],
         {
           placeHolder:
-            "Learn how to using the Azure Static Web Apps VSCode Extension!",
+            "Deploy with the Azure Static Web Apps CLI",
         }
       );
 
       if (
         azureSWAQuestion !== undefined &&
-        azureSWAQuestion === "Open Documentation"
+        azureSWAQuestion === "Get Started"
       ) {
         // remind about build directory for pwa-starter
         vscode.window.showInformationMessage(
           "Using the PWABuilder pwa-starter? Set the build directory to /dist when asked"
         );
 
-        // open the walkthrough
-        await vscode.commands.executeCommand(
-          "vscode.open",
-          vscode.Uri.parse(
-            "https://docs.microsoft.com/en-us/azure/static-web-apps/getting-started?tabs=vanilla-javascript#install-azure-static-web-apps-extension"
-          )
-        );
+        // init using the CLI
+        const vsTerminal = vscode.window.createTerminal();
+        await initPublish(vsTerminal);
       }
     }
   } else {
@@ -115,7 +173,7 @@ async function azureCommandWalkthrough(): Promise<void> {
         title: "Learn How",
       },
       {
-        title: "OK",
+        title: "Cancel",
       }
     );
 

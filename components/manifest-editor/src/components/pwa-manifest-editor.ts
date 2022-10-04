@@ -10,10 +10,15 @@ import "./manifest-screenshots-form"
 import "./manifest-preview-form"
 import "./manifest-code-form"
 
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group';
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
 /* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
+
+import '@shoelace-style/shoelace/dist/components/tab/tab';
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group';
+import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel';
 
 /**
  * @since 0.1

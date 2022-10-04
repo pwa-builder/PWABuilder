@@ -1,11 +1,10 @@
 import * as vscode from "vscode";
-import * as path from "path";
-import { getWorker } from "../service-worker";
+import { getWorker } from "../service-workers/simple-service-worker";
 import { getManifest } from "../manifest/manifest-service";
 import { getURL } from "../web-publish";
 
 export class PackageViewProvider implements vscode.TreeDataProvider<any> {
-  constructor(private workspaceRoot: string) {}
+  constructor(private workspaceRoot: string) { }
 
   getTreeItem(element: ValidationItem): vscode.TreeItem {
     return element;
@@ -24,54 +23,279 @@ export class PackageViewProvider implements vscode.TreeDataProvider<any> {
     const pwaUrl = getURL();
 
     if (element) {
-      let items: any[] = [];
-      items.push(
-        new ValidationItem(
-          "Service Worker",
-          "",
-          sw ? "true" : "false",
-          vscode.TreeItemCollapsibleState.None
-        )
-      );
+      if (element.label === "Is a PWA") {
+        let items: ValidationItem[] = [];
 
-      items.push(
-        new ValidationItem(
-          "Web Manifest",
-          "",
-          manifest ? "true" : "false",
-          vscode.TreeItemCollapsibleState.None
-        )
-      );
-
-      if (pwaUrl) {
         items.push(
           new ValidationItem(
-            "Published to Web",
-            pwaUrl,
-            "true",
-            vscode.TreeItemCollapsibleState.None
-          )
-        );
-      } else {
-        items.push(
-          new ValidationItem(
-            "Published to Web",
+            "Service Worker",
             "",
-            "false",
+            sw ? "true" : "false",
             vscode.TreeItemCollapsibleState.None
           )
         );
+
+        items.push(
+          new ValidationItem(
+            "Web Manifest",
+            "",
+            manifest ? "true" : "false",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        if (pwaUrl) {
+          items.push(
+            new ValidationItem(
+              "Published to Web",
+              pwaUrl,
+              "true",
+              vscode.TreeItemCollapsibleState.None
+            )
+          );
+        } else {
+          items.push(
+            new ValidationItem(
+              "Published to Web",
+              "",
+              "false",
+              vscode.TreeItemCollapsibleState.None
+            )
+          );
+        }
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Publish to Stores") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Microsoft Store",
+            "https://aka.ms/windows-from-code",
+            "Checklist for publishing your app to the Microsoft Store",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Google Play Store",
+            "https://aka.ms/android-from-code",
+            "Checklist for publishing your app to the Google Play Store",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Apple App Store",
+            "https://aka.ms/ios-from-code",
+            "Checklist for publishing your app to the Apple App Store",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Meta Quest",
+            "https://aka.ms/quest-from-code",
+            "Checklist for publishing your app to the Meta Quest",
+            vscode.TreeItemCollapsibleState.Collapsed
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Microsoft Store") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Microsoft Developer Account",
+            "https://docs.pwabuilder.com/#/builder/windows?id=prerequisites",
+            "Get a Microsoft Developer Account to publish to the Microsoft Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Reserve Your App",
+            "https://docs.pwabuilder.com/#/builder/windows?id=reserve-your-app",
+            "Reserve your app in the Microsoft Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/windows?id=packaging",
+            "Generate your package for the Microsoft Store",
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Submit Your PWA",
+            "https://docs.pwabuilder.com/#/builder/windows?id=submitting-your-pwa",
+            "Submit your PWA to the Microsoft Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Google Play Store") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Google Developer Account",
+            "https://docs.pwabuilder.com/#/builder/android?id=prerequisites",
+            "Get a Google Developer Account to publish to the Google Play Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/android?id=packaging",
+            "Generate your package for the Google Play Store",
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Handle your assetlinks.json",
+            "https://docs.pwabuilder.com/#/builder/android?id=_1-deploy-the-assetlinksjson-file",
+            "Handle your assetlinks.json file",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Submit Your PWA",
+            "https://docs.pwabuilder.com/#/builder/android?id=_2-upload-your-app-to-the-google-play-store",
+            "Submit your PWA to the Google Play Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Apple App Store") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Apple Developer Account",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=prerequisites",
+            "Get an Apple Developer Account to publish to the Apple App Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=packaging",
+            "Generate your package for the Apple App Store",
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Build Your App",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=building-your-app",
+            "Build your app with Xcode",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Submit Your PWA",
+            "https://docs.pwabuilder.com/#/builder/app-store?id=publishing",
+            "Submit your PWA to the Apple App Store",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
+      }
+      else if (element.label === "Meta Quest") {
+        let items: ValidationItem[] = [];
+
+        items.push(
+          new ValidationItem(
+            "Meta Quest Developer Account",
+            "https://docs.pwabuilder.com/#/builder/meta?id=prerequisites",
+            "Get a Meta Quest Developer Account to publish to the Meta Quest",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Generate Your Package",
+            "https://docs.pwabuilder.com/#/builder/meta?id=packaging",
+            "Generate your package for the Meta Quest",
+            vscode.TreeItemCollapsibleState.None,
+            {
+              command: "pwa-studio.packageApp",
+              title: `Generate Your Package`,
+            }
+          )
+        );
+
+        items.push(
+          new ValidationItem(
+            "Sideload and Test",
+            "https://docs.pwabuilder.com/#/builder/meta?id=sideloading-and-testing",
+            "Submit your PWA to the Meta Quest",
+            vscode.TreeItemCollapsibleState.None
+          )
+        );
+
+        return Promise.resolve(items);
       }
 
-      return Promise.resolve(items);
     } else {
-      let items: any[] = [];
+      let items: ValidationItem[] = [];
 
       items.push(
         new ValidationItem(
-          "Store Ready",
+          "Is a PWA",
           "",
           sw && manifest && pwaUrl ? "true" : "false",
+          vscode.TreeItemCollapsibleState.Expanded
+        )
+      );
+
+      items.push(
+        new ValidationItem(
+          "Publish to Stores",
+          "",
+          "Checklist on how to publish to the app stores",
           vscode.TreeItemCollapsibleState.Expanded
         )
       );
@@ -100,13 +324,44 @@ class ValidationItem extends vscode.TreeItem {
     public readonly command?: vscode.Command
   ) {
     super(label, collapsibleState);
-    this.tooltip = `${this.label}`;
-    this.description = this.desc;
-    this.command = command;
+    this.tooltip = `${desc}`;
+    this.description = desc;
+
+    if (docsLink && docsLink.length > 0) {
+      if (!command) {
+        this.command = {
+          command: "vscode.open",
+          title: `Open ${docsLink}`,
+          arguments: [
+            vscode.Uri.parse(docsLink)
+          ]
+        };
+      }
+      else {
+        this.command = command;
+      }
+
+      if (label !== "Published to Web") {
+        this.iconPath = new vscode.ThemeIcon("link");
+      }
+      else {
+        this.iconPath =
+          this.desc.toString() === "true"
+            ? new vscode.ThemeIcon("check")
+            : new vscode.ThemeIcon("warning");
+      }
+    }
+    else {
+      if (label === "Publish to Stores") {
+        this.iconPath = new vscode.ThemeIcon("explorer-view-icon");
+      }
+      else {
+        this.iconPath =
+          this.desc.toString() === "true"
+            ? new vscode.ThemeIcon("check")
+            : new vscode.ThemeIcon("warning");
+      }
+    }
   }
 
-  iconPath =
-    this.desc.toString() === "true"
-      ? new vscode.ThemeIcon("check")
-      : new vscode.ThemeIcon("warning");
 }

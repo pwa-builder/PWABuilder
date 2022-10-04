@@ -4,6 +4,11 @@ import { Manifest } from '../utils/interfaces';
 import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { insertAfter, errorInTab } from '../utils/helpers';
 
+import '@shoelace-style/shoelace/dist/components/input/input';
+import '@shoelace-style/shoelace/dist/components/select/select';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item';
+import '@shoelace-style/shoelace/dist/components/color-picker/color-picker';
+
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
 

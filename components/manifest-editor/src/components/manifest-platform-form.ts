@@ -6,6 +6,15 @@ import { validateSingleField, singleFieldValidation, validateSingleRelatedApp, v
 import { errorInTab, insertAfter } from '../utils/helpers';
 //import { validateSingleField } from 'manifest-validation';
 
+// import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/select/select';
+import '@shoelace-style/shoelace/dist/components/menu/menu';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item';
+// import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox';
+import '@shoelace-style/shoelace/dist/components/details/details';
+import '@shoelace-style/shoelace/dist/components/icon-button/icon-button';
+
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 

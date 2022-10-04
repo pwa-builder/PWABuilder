@@ -9,6 +9,8 @@ import {
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
 
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox';
+
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 
 let manifestInitialized = false;

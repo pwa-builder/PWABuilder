@@ -1,14 +1,14 @@
 # Package for Stores
-Once your app is published to the web, PWA Studio can use [PWABuilder](https://www.pwabuilder.com) APIs to package your PWA for various app stores, including iOS, Google Play, and Microsoft. Your PWA just needs to be available on the web, and you're all set. If you need help publishing your app to the web, check out this documentation on using [Azure Static Web Apps](/starter/publish?id=azure-static-web-apps).
+Once your app is published to the web, PWABuilder Studio can use [PWABuilder](https://www.pwabuilder.com) APIs to package your PWA for various app stores, including iOS, Google Play, and Microsoft. Your PWA just needs to be available on the web, and you're all set. If you need help publishing your app to the web, check out this documentation on using [Azure Static Web Apps](/starter/publish?id=azure-static-web-apps).
 
 ## Add Your App's URL
-You can use PWA Studio to associate your progressive web app with a URL.
+You can use PWABuilder Studio to associate your progressive web app with a URL.
 
 To provide your progressive web app's URL:
 
 1. Hit in `ctrl-shift-P` in VS Code.
    
-2. Search for `PWA Studio: Set App URL`.
+2. Search for `PWABuilder Studio: Set App URL`.
    
 3. Select `Yes` if you already have a URL.
    
@@ -24,13 +24,13 @@ You can follow this link to get more info about Azure Static Web Apps.
 
 ## Validate Your PWA
 
-PWA Studio can evaluate and validate your PWA to ensure it is both [installable from the browser](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux#installing-a-pwa) and ready to publish to the app stores.
+PWABuilder Studio can evaluate and validate your PWA to ensure it is both [installable from the browser](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux#installing-a-pwa) and ready to publish to the app stores.
 
 To validate your PWA:
 
-1. Navigate to the PWA Studio pane by clicking the icon the left-most bar of VS Code.
+1. Navigate to the PWABuilder Studio pane by clicking the icon the left-most bar of VS Code.
    
-2. The bottom most section of the PWA Studio pane has a checklist where you can see what your PWA has and what it is missing.
+2. The bottom most section of the PWABuilder Studio pane has a checklist where you can see what your PWA has and what it is missing.
    
 3. Evaluate what your PWA needs to be store-ready.
 
@@ -51,7 +51,7 @@ Once your application is published to web and validated, you can package your PW
 
 1. Hit `ctrl-shift-P` with Code open.
    
-2. Search for and run the command `PWA Studio: Package your PWA`.
+2. Search for and run the command `PWABuilder Studio: Package your PWA`.
    
 3. Select which platform  you wish to package your PWA for.
    

@@ -8,6 +8,7 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
+
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
         }
@@ -91,3 +92,5 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
 
     return validations.length === 0;
 }
+
+export * from './interfaces';

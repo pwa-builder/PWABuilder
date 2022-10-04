@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
-import * as path from "path";
 import { readFile } from "fs/promises";
-import { findWorker } from "../service-worker";
+import { findWorker } from "../service-workers/service-worker";
 import { pathExists } from "../../library/file-utils";
 
 /**
