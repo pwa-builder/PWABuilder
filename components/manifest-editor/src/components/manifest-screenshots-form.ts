@@ -32,6 +32,8 @@ export class ManifestScreenshotsForm extends LitElement {
   @state() protected awaitRequest = false;
   @state() protected screenshotsList: Array<Screenshot> = [];
   @state() initialScreenshotLength = -1;
+  @state() srcList: any = [];
+  @state() newSrcList: any = [];
 
   // Generation Status
   @state() protected showSuccessMessage = false;
@@ -56,6 +58,13 @@ export class ManifestScreenshotsForm extends LitElement {
         --sl-input-height-medium: 3em;
         --sl-button-font-size-medium: 14px;
       }
+
+      sl-input::part(base),
+      sl-select::part(control){
+        background-color: #fbfbfb;
+      }
+
+      
       
       #form-holder {
         display: flex;
@@ -196,6 +205,8 @@ export class ManifestScreenshotsForm extends LitElement {
     if(manifestInitialized){
       manifestInitialized = false;
       this.requestValidateAllFields();
+      await this.screenshotSrcListParse();
+      await this.newScreenshotSrcListParse();
       if(this.manifest.screenshots && this.initialScreenshotLength == -1){
         this.initialScreenshotLength = this.manifest.screenshots.length;
       } else {
@@ -393,50 +404,98 @@ export class ManifestScreenshotsForm extends LitElement {
     }
   }
 
-  screenshotSrcListParse(): string[] {
+  async screenshotSrcListParse() {
 
     if (!this.manifest && !this.manifestURL) {
-      return [];
+      return;
     }
 
-    let screenshotSrcList: string[] = [];
+    let srcList: string[] = [];
     let initialCounter = this.initialScreenshotLength;
 
-    this.manifest!.screenshots?.forEach((sc: any) => {
+    for(let i = 0; i < this.manifest!.screenshots!.length; i++){
+      let sc = this.manifest!.screenshots![i];
       let scURL: string = this.handleImageUrl(sc) || '';
+
+      await this.testImage(scURL).then(
+        function fulfilled(_img) {
+        },
+
+        function rejected() {
+          scURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${scURL}`;
+        }
+      );
+
       if(scURL && initialCounter != 0){
-        screenshotSrcList.push(scURL as string);
+        srcList.push(scURL as string);
         initialCounter--;
       }
-    })
-
-    return screenshotSrcList;
+    }
+    this.srcList = srcList;
   }
 
-  newScreenshotSrcListParse(): string[] {
+  async newScreenshotSrcListParse() {
     if (!this.manifest && !this.manifestURL) {
-      return [];
+      return;
     }
 
-    let screenshotSrcList: string[] = [];
+    let srcList: string[] = [];
 
     if(this.manifest.screenshots && this.manifest.screenshots.length > this.initialScreenshotLength){
 
       let initialCounter = this.initialScreenshotLength;
 
-      this.manifest!.screenshots?.forEach((sc: any) => {
+      //this.manifest!.screenshots?.forEach((sc: any) => {
+      for(let i = 0; i < this.manifest!.screenshots!.length; i++){
+        let sc = this.manifest!.screenshots![i];
         if(initialCounter != 0){
           initialCounter--;
         } else {
           let scURL: string = this.handleImageUrl(sc) || '';
+
+          await this.testImage(scURL).then(
+            function fulfilled(_img) {
+            },
+    
+            function rejected() {
+              scURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${scURL}`;
+            }
+          );
+
           if(scURL){
-            screenshotSrcList.push(scURL as string);
+            srcList.push(scURL as string);
           }
         }
-      })
+      }
     }
 
-    return screenshotSrcList;
+    this.newSrcList = srcList;
+  }
+
+  testImage(url: string) {
+
+    // Define the promise
+    const imgPromise = new Promise(function imgPromise(resolve, reject) {
+
+        // Create the image
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            resolve(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            reject();
+        })
+
+        // Assign URL
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
   }
 
   handleImageUrl(icon: Icon) {
@@ -473,14 +532,14 @@ export class ManifestScreenshotsForm extends LitElement {
           </div>
           <p>Below are the screenshots that are currently in your manifest.</p>
           <div class="sc-gallery">
-            ${this.initialScreenshotLength > 0 ? this.screenshotSrcListParse().map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><ion-icon name="images"></ion-icon> There are no screenshots in your manifest</div>`}
+            ${this.srcList.length > 0 ? this.srcList.map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><ion-icon name="images"></ion-icon> There are no screenshots in your manifest</div>`}
           </div>
           <h3>Generate Screenshots</h3>
           <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>
           ${this.renderScreenshotInputUrlList()}
           <sl-button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</sl-button>
           <div class="sc-gallery">
-            ${this.newScreenshotSrcListParse().map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}
+            ${this.newSrcList.map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}
           </div>
           <div class="screenshots-actions">
             <sl-button

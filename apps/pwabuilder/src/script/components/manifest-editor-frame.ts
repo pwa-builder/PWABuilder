@@ -57,9 +57,9 @@ export class ManifestEditorFrame extends LitElement {
       }
       #frame-footer {
         background-color: #F2F3FB;
-        padding: 1em 2em;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
+        padding: 1.5em 2em;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -140,13 +140,13 @@ export class ManifestEditorFrame extends LitElement {
       
       .dialog::part(body){
         padding: 0;
-        border-radius: 10px;
       }
       .dialog::part(title){
         display: none;
       }
       .dialog::part(panel) {
         position: relative;
+        border-radius: 20px;
       }
       .dialog::part(overlay){
           backdrop-filter: blur(10px);

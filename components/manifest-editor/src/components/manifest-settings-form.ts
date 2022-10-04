@@ -48,6 +48,11 @@ export class ManifestSettingsForm extends LitElement {
         --sl-input-height-medium: 3em;
         --sl-toggle-size: 16px;
       }
+      sl-input::part(base),
+      sl-select::part(control),
+      sl-details::part(base){
+        background-color: #fbfbfb;
+      }
       #form-holder {
         display: flex;
         flex-direction: column;

@@ -50,12 +50,16 @@ export class ManifestPlatformForm extends LitElement {
       sl-menu-item::part(base),
       sl-button::part(base),
       sl-checkbox::part(base),
-      sl-checkbox::part(control) {
+      sl-checkbox::part(control),
+      sl-details::part(base) {
         --sl-input-font-size-medium: 16px;
         --sl-button-font-size-medium: 12px;
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
         --sl-toggle-size: 16px;
+      }
+      sl-details::part(base), sl-select::part(control), sl-input::part(base){
+        background-color: #fbfbfb;
       }
       #form-holder {
         display: flex;
