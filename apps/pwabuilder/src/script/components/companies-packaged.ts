@@ -236,7 +236,7 @@ export class ComapniesPackaged extends LitElement {
             )}
         </div>
       </div>
-      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="play" aria-label="play button"></ion-icon></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="pause" aria-label="pause button"></ion-icon></button>`}
+      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="play" aria-label="Play apps scrolling button"></ion-icon></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="pause" aria-label="Pause apps scrolling button"></ion-icon></button>`}
     </div>
     `;
   }
