@@ -147,6 +147,13 @@ export class ManifestIconsForm extends LitElement {
         gap: 7px;
         flex-wrap: wrap;
       }
+      .icon-box {
+        display: flex;
+        flex-direction: column;
+      }
+      .icon-box p {
+        margin: 0 10px;
+      }
       #icon-options {
         display: grid;
         grid-template-columns: 1fr 1fr;
