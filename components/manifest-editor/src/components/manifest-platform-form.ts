@@ -4,7 +4,6 @@ import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../
 import { standardCategories } from '../locales/categories';
 import { validateSingleField, singleFieldValidation, validateSingleRelatedApp, validateSingleProtocol } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
-//import { validateSingleField } from 'manifest-validation';
 
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]

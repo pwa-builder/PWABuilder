@@ -1,8 +1,9 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { Router, Route } from '@vaadin/router';
-import './script/pages/app-home';
 
+import './shoelace';
+import './script/pages/app-home';
 import './script/components/app-footer';
 import './script/components/app-header';
 import './script/components/app-button';

@@ -1,0 +1,31 @@
+name: Docs suggestion or improvement
+description: File a suggestion or issue about docs.pwabuilder.com
+title: "[DOCS] "
+labels: ["documentation", "needs triage :mag:"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue template 
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What's your suggestion for improvement for our docs?
+      description: Attach any screenshots or files that might help
+      placeholder: How can we make our docs better?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Do you have an implementation or a solution in mind?
+      description: Tell us what you want to happen
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Have you considered any alternatives?
+      description: Is this something that can be solved differently
+    validations:
+      required: false

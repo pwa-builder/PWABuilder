@@ -149,10 +149,31 @@ Due to the fact that iOS has very limited support for PWAs we will be supporting
 
 This usually is a result of the fields `background_color` or `theme_color` being set to `none` in the `manifest` file. These fields are optional so if you do not want to specifiy a color, you can omit the field all together.
   
-#### Error: `Failed to download Web Manifest [URL to Web Manifest].Responded with status 503`
+#### Error: `Failed to download Web Manifest [URL to Web Manifest]. Responded with status 503`
 
-This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that your pause your firewall service while packaging with PWABuilder and you can enable it again after your have your package.
+This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that you pause your firewall service while packaging with PWABuilder and you can enable it again after you have your package.
   
 #### Error: `request to [URL] failed, reason: unable to verify the first certificate`
 
 This is likely the result of an incomplete SSL certificate chain. You can test this to be sure here: https://www.ssllabs.com/ssltest/index.html
+
+#### Error: `Failed to download icon [Icon URL]. Responded with status 404`
+
+This error usually occurs when there is an empty array within another array in a manifest field.
+
+For example, here's an invalid icons array in the `shortcuts` field:
+
+```json
+"shortcuts": [
+    {
+      "name": "Shortcut Link",
+      "description": "Shortcut Link Description",
+      "url": "/shortcutlink",
+      "icons": [
+        []
+      ]
+    }
+  ]
+```
+
+This can happen for any JSON array in your manifest, so make sure you delete any nested arrays.

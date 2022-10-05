@@ -2,13 +2,11 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
-import {
-  handleServiceWorkerCommand,
+import { 
   generateServiceWorker,
   chooseServiceWorker,
-  handleAdvServiceWorkerCommand,
-  updateAdvServiceWorker,
-} from "./services/service-worker";
+} from "./services/service-workers/simple-service-worker";
+import { handleSW } from "./services/service-workers/service-worker";
 import {
   chooseManifest,
   generateManifest,
@@ -30,6 +28,7 @@ import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
 import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
+import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -43,13 +42,11 @@ const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
-const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
 const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
-// const publishChecklistID = "pwa-studio.publishChecklist";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -160,7 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
   const addServiceWorker = vscode.commands.registerCommand(
     serviceWorkerCommandId,
     async () => {
-      await handleServiceWorkerCommand();
+      await handleSW();
     }
   );
 
@@ -168,13 +165,6 @@ export function activate(context: vscode.ExtensionContext) {
     generateWorkerCommandId,
     async () => {
       await generateServiceWorker();
-    }
-  );
-
-  const generateAdvWorkerCommand = vscode.commands.registerCommand(
-    generateADVWorkerCommandID,
-    async () => {
-      handleAdvServiceWorkerCommand();
     }
   );
 
@@ -253,15 +243,13 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
   context.subscriptions.push(generateWorker);
+  context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
   context.subscriptions.push(generateIconsCommand);
   context.subscriptions.push(generateScreenshotsCommand);
-  context.subscriptions.push(generateAdvWorkerCommand);
-  context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
-  // context.subscriptions.push(publishChecklistCommand);
 }
 
 export function deactivate() {}

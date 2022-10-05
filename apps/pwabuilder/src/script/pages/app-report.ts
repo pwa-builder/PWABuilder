@@ -19,7 +19,6 @@ import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
 
-
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
 

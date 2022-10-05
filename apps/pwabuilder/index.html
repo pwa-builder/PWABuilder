@@ -39,25 +39,27 @@
     <link rel="preload" as="font" href="/assets/fonts/Hind-Bold.ttf" />
     <link rel="preload" as="font" href="/assets/fonts/Hind-Regular.ttf" />
 
-    <!--Shoelace-->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.82/dist/themes/light.css"
-    />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.82/dist/shoelace.js"></script>
-
     <!--Color js-->
     <script src="https://colorjs.io/dist/color.global.js"></script>
   </head>
 
 <body>
-  <!--Ion Icons-->
-  <script async="true" defer="true" type="module"
-  src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
-  <script async="true" defer="true" nomodule=""
-  src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
-
   <app-index></app-index>
+
+  <!--Ion Icons-->
+  <script async="true" defer="true" type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js" integrity="sha256-kWTp5hdydHxctEJpRhLgBZVEABZzt5+4jTJrb8DACO8=" crossorigin="anonymous"></script>
+  <script async="true" defer="true" nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js" integrity="sha256-r2kkUWpWNvBLLZ3wN+8zqDzlPsxXCbtDyo3mQMt4jNo=" crossorigin="anonymous"></script>
+
+
+  <!-- for analytics -->
+  <script type="text/javascript" src="https://az416426.vo.msecnd.net/scripts/c/ms.analytics-web-2.min.js"></script>
+  <script>
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for(const registration of registrations) {
+        registration.unregister();
+      } 
+    })
+  </script>
 </body>
 
 </html>

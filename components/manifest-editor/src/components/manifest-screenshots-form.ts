@@ -538,9 +538,7 @@ export class ManifestScreenshotsForm extends LitElement {
           <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>
           ${this.renderScreenshotInputUrlList()}
           <sl-button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</sl-button>
-          <div class="sc-gallery">
-            ${this.newSrcList.map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}
-          </div>
+          
           <div class="screenshots-actions">
             <sl-button
               type="submit"
@@ -548,6 +546,9 @@ export class ManifestScreenshotsForm extends LitElement {
               ?disabled=${this.generateScreenshotButtonDisabled}
               @click=${this.generateScreenshots}
               >Generate Screenshots</sl-button>
+          </div>
+          <div class="sc-gallery">
+            ${this.newSrcList.map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import "./manifest-settings-form"
 import "./manifest-platform-form"
 import "./manifest-icons-form"
 import "./manifest-screenshots-form"
-import "./manifest-preview-form"
+// import "./manifest-preview-form"
 import "./manifest-code-form"
 
 import { prettyString } from '../utils/pretty-json';
