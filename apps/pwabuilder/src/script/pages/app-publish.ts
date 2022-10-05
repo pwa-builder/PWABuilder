@@ -46,6 +46,7 @@ import { createWindowsPackageOptionsFromManifest } from '../services/publish/win
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { download } from '../utils/download';
+import { ManifestContext } from '../utils/interfaces';
 
 @customElement('app-publish')
 export class AppPublish extends LitElement {
@@ -583,7 +584,7 @@ export class AppPublish extends LitElement {
     );
     let manifestContext = getManifestContext();
     if (manifestContext.isGenerated) {
-      manifestContext = await fetchOrCreateManifest();
+      manifestContext = await fetchOrCreateManifest() as ManifestContext;
     }
 
     const options = createWindowsPackageOptionsFromManifest(
@@ -1100,7 +1101,7 @@ export class AppPublish extends LitElement {
           slot="modal-form"
           .generating=${this.generating}
           @init-oculus-gen="${(ev: CustomEvent) =>
-            this.generate('oculus', ev.detail)}"
+            this.generate('meta', ev.detail)}"
         >
         </oculus-form>
       </app-modal>

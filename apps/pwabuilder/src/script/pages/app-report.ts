@@ -19,9 +19,6 @@ import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
 
-import '@shoelace-style/shoelace/dist/components/details/details';
-
-
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
 
@@ -2175,8 +2172,8 @@ export class AppReport extends LitElement {
 
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-<!--       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
- -->      <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;
   }

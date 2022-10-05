@@ -19,7 +19,6 @@
       "isolatedModules": true,
       "resolveJsonModule": true,
       "types": [
-          "vite-plugin-pwa/client",
           "node"
       ]
   },

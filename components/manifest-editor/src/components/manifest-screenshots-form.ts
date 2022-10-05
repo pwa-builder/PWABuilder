@@ -10,8 +10,6 @@ import {
 import { generateScreenshots } from '../utils/screenshots';
 import { resolveUrl } from '../utils/urls';
 
-import '@shoelace-style/shoelace/dist/components/input/input';
-
 let manifestInitialized = false;
 
 @customElement('manifest-screenshots-form')

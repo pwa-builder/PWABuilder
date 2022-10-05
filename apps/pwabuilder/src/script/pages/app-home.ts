@@ -18,11 +18,6 @@ import '../components/resource-hub-new';
 import '../components/success-stories';
 import '../components/community-hub';
 
-import '@shoelace-style/shoelace/dist/components/input/input';
-import '@shoelace-style/shoelace/dist/components/button/button';
-
-// For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
-import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
 import { setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';

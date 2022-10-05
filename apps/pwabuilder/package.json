@@ -4,34 +4,28 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "scripts": {
-    "preinstall": "node ../../scripts/setupDeps.js",
-    "dev-server": "vite --open",
-    "dev": "cross-env NODE_ENV=development && npx @azure/static-web-apps-cli start http://localhost:3000 --run \"npm run dev-server\"",
+    "preinstall": "node ../../scripts/setupDeps.js && npm run copy-sl-assets",
+    "dev": "vite --open",
     "dev-task": "vite",
     "dev:deps": "cross-env NODE_ENV=development && concurrently \"node ../../scripts/watchDeps.js\" \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
-    "deploy": "npx @azure/static-web-apps-cli login --no-use-keychain && npx @azure/static-web-apps-cli deploy",
     "build": "cross-env NODE_ENV=production && tsc && vite build",
     "start": "npm run dev",
-    "start-remote": "vite --host"
+    "start-remote": "vite --host",
+    "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@pwabuilder/code-editor": "file:../../components/code-editor",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
-    "@pwabuilder/manifest-previewer": "^1.0.21",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
-    "@pwabuilder/pwainstall": "^1.6.7",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@shoelace-style/shoelace": "^2.0.0-beta.83",
     "@vaadin/router": "^1.7.4",
     "browser-fs-access": "^0.23.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
-    "lit": "^2.2.1",
-    "workbox-build": "^6.5.2",
-    "workbox-core": "^6.5.2",
-    "workbox-precaching": "^6.5.2"
+    "lit": "^2.2.1"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
@@ -64,7 +58,8 @@
     "tslib": "^2.1.0",
     "typescript": "^4.6.3",
     "vite": "^2.9.0",
-    "vite-plugin-pwa": "^0.11.13"
+    "ncp": "^2.0.0",
+    "mkdirp": "^1.0.4"
   },
   "prettier": {
     "tabWidth": 2,

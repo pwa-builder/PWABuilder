@@ -10,12 +10,6 @@ const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui'
 const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
 let manifestInitialized: boolean = false;
 
-// import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu';
-import '@shoelace-style/shoelace/dist/components/select/select';
-import '@shoelace-style/shoelace/dist/components/menu-item/menu-item';
-import '@shoelace-style/shoelace/dist/components/divider/divider';
-
 @customElement('manifest-settings-form')
 export class ManifestSettingsForm extends LitElement {
 
