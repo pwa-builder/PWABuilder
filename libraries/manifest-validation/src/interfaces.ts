@@ -12,6 +12,21 @@ export interface Validation {
     valid?: boolean;
 }
 
+interface Test {
+  errorString: string;
+  test: Function;
+}
+
+export interface NewValidation {
+    infoString?: string;
+    displayString?: string;
+    category: string;
+    member: string;
+    defaultValue?: string | any[];
+    docsLink?: string;
+    tests: Test[];
+}
+
 export interface Manifest {
     background_color?: string;
     description?: string;

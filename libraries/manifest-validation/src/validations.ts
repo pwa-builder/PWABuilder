@@ -1,7 +1,7 @@
-import { ShortcutItem, Validation } from "./interfaces";
+import { NewValidation, ShortcutItem, Validation } from "./interfaces";
 import { isStandardOrientation } from "./utils/validation-utils";
 
-export const maniTests: Array<Validation> = [
+export const maniTests: Array<Validation | NewValidation> = [
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
         displayString: "Manifest has icons field",
@@ -203,76 +203,127 @@ export const maniTests: Array<Validation> = [
         test: (value: string) =>
             value && Array.isArray(value) && value.length > 0 ? true : false,
     },
+    // {
+    //     infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
+    //     displayString: "Manifest has shortcuts field",
+    //     category: "recommended",
+    //     member: "shortcuts",
+    //     defaultValue: [],
+    //     docsLink:
+    //         "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+    //     errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
+    //     quickFix: true,
+    //     test: (value: any[]) => {
+    //         const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+    //         if (isArray === true) {
+    //             // check image types dont include webp
+    //             const hasWebp = value.some(icon => icon.type === "image/webp");
+    //             if (hasWebp) {
+    //                 return false;
+    //             }
+    //             else {
+    //                 return false;
+    //             }
+    //         }
+    //         else {
+    //             return false;
+    //         }
+    //     }
+    // },
+    // {
+    //     member: "shortcuts",
+    //     infoString: "The shortcut should have an icon atleast 96x96 pixels to be displayed correctly",
+    //     displayString: "Shortcut has atleast a 96x96 pixels icon",
+    //     category: "recommended",
+    //     defaultValue: "",
+    //     docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+    //     errorString: "Shortcut should have an icon atleast 96x96 pixels",
+    //     quickFix: false,
+    //     test: (value: Array<ShortcutItem>) => {
+    //         const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+    //         console.log("shortcutIconValue isArray", isArray);
+
+    //         return new Promise(async (resolve, reject) => {
+    //             if (isArray === true) {
+    //                 console.log("shortcutIconValue", value, value[0]?.icons);
+    //                 const test = await new Promise((resolve) => {
+    //                     // loop through each shortcut
+    //                     value.forEach((shortcut) => {
+    //                         // loop through each shortcut.icons array and check if any are smaller than 96x96
+    //                         shortcut.icons?.forEach((icon) => {
+    //                             const sizes = icon.sizes?.split("x");
+    //                             const width = parseInt(sizes![0]!);
+    //                             const height = parseInt(sizes![1]!);
+
+    //                             if (width < 96 || height < 96) {
+    //                                 resolve(false);
+    //                             }
+    //                         });
+    //                     });
+
+    //                     // we never resolved false, so we must be good
+    //                     resolve(true);
+    //                 });
+
+    //                 console.log("shortcutIconValue test", test);
+    //                 resolve(test);
+    //             }
+    //             else {
+    //                 reject("Shortcuts is not an array");
+    //             }
+    //         });
+    //     }
+    // },
     {
-        infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
+        member: "shortcuts",
+        category: "optional",
+        infoString: "Shorcuts offer the user quick access to different parts of your app.",
         displayString: "Manifest has shortcuts field",
-        category: "recommended",
-        member: "shortcuts",
         defaultValue: [],
-        docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-        errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
-        quickFix: true,
-        test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-            if (isArray === true) {
-                // check image types dont include webp
-                const hasWebp = value.some(icon => icon.type === "image/webp");
-                if (hasWebp) {
-                    return false;
-                }
-                else {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    },
-    {
-        member: "shortcuts",
-        infoString: "The shortcut should have an icon atleast 96x96 pixels to be displayed correctly",
-        displayString: "Shortcut has atleast a 96x96 pixels icon",
-        category: "recommended",
-        defaultValue: "",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-        errorString: "Shortcut should have an icon atleast 96x96 pixels",
-        quickFix: false,
-        test: (value: Array<ShortcutItem>) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-            console.log("shortcutIconValue isArray", isArray);
+        quickFix: true,
+        tests: [
+            {
+                errorString: "Shortcuts should be an array with a length > 0",
+                test: (value: ShortcutItem[]) => {
+                    const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+                    return isArray;
+                }
+            },
+            {
+                errorString: "Shortcut should have an icon atleast 96x96 pixels",
+                test: (value: ShortcutItem[]) => {
+                    return new Promise(async (resolve, reject) => {
+                        if (value && Array.isArray(value) && value.length > 0) {
+                            const test = await new Promise((resolve) => {
+                                // loop through each shortcut
+                                value.forEach((shortcut) => {
+                                    // loop through each shortcut.icons array and check if any are smaller than 96x96
+                                    shortcut.icons?.forEach((icon) => {
+                                        const sizes = icon.sizes?.split("x");
+                                        const width = parseInt(sizes![0]!);
+                                        const height = parseInt(sizes![1]!);
 
-            return new Promise(async (resolve, reject) => {
-                if (isArray === true) {
-                    console.log("shortcutIconValue", value, value[0]?.icons);
-                    const test = await new Promise((resolve) => {
-                        // loop through each shortcut
-                        value.forEach((shortcut) => {
-                            // loop through each shortcut.icons array and check if any are smaller than 96x96
-                            shortcut.icons?.forEach((icon) => {
-                                const sizes = icon.sizes?.split("x");
-                                const width = parseInt(sizes![0]!);
-                                const height = parseInt(sizes![1]!);
+                                        if (width < 96 || height < 96) {
+                                            resolve(false);
+                                        }
+                                    });
+                                });
 
-                                if (width < 96 || height < 96) {
-                                    resolve(false);
-                                }
+                                // we never resolved false, so we must be good
+                                resolve(true);
                             });
-                        });
 
-                        // we never resolved false, so we must be good
-                        resolve(true);
+                            resolve(test);
+                        }
+                        else {
+                            reject("Shortcuts is not an array");
+                        }
                     });
+                }
+            }
+        ]
 
-                    console.log("shortcutIconValue test", test);
-                    resolve(test);
-                }
-                else {
-                    reject("Shortcuts is not an array");
-                }
-            });
-        }
     },
     {
         infoString: "The iarc_rating_id member is a string that represents the International Age Rating Coalition (IARC) certification code of the web application. It is intended to be used to determine which ages the web application is appropriate for.",
