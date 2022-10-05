@@ -19,7 +19,7 @@ export class AppHeader extends LitElement {
   static get styles() {
     return css`
       :host {
-        --header-background: transparent;
+        --header-background: white;
         --header-border: rgba(0, 0, 0, 0.25) solid 1px;
       }
 
@@ -34,6 +34,7 @@ export class AppHeader extends LitElement {
         height: 71px;
 
         border-bottom: var(--header-border);
+        z-index: 1;
       }
 
       header img {
@@ -52,30 +53,31 @@ export class AppHeader extends LitElement {
         justify-content: space-between;
         align-items: center;
         width: 8em;
-
         font-size: 18px;
       }
 
-      fast-anchor:focus {
-        outline: solid;
-        outline-width: 2px;
-      }
-
-      nav fast-anchor::part(control) {
+      .nav_link {
         color: var(--font-color);
         text-decoration: none;
         border-bottom: none;
         font-weight: var(--font-bold);
       }
 
+      .nav_link:focus {
+        outline: solid;
+        outline-width: 2px;
+      }
+
       .nav_link span {
         display: inline-block;
         height: 18px;
+        font-size: 20px;
         border-bottom: 1px solid transparent;
       }
-    
+
       .nav_link:hover span{
         border-color: var(--font-color);
+        padding-bottom: 4px;
       }
 
       nav ion-icon {
@@ -84,6 +86,12 @@ export class AppHeader extends LitElement {
 
       #desktop-nav {
         display: flex;
+      }
+
+
+
+      a:visited {
+        color: black;
       }
 
       @media (prefers-color-scheme: light) {
@@ -106,7 +114,7 @@ export class AppHeader extends LitElement {
         }
 
       `)}
-      
+
 
       ${largeBreakPoint(css`
         #desktop-nav {
@@ -148,24 +156,25 @@ export class AppHeader extends LitElement {
     this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
       // casting here because of type problem described above
       if ((event as KeyboardEvent).key === "Enter") {
-        this.goHome();
+        Router.go("/");
       }
     })
   }
 
-  goHome() {
+  recordGoingHome() {
     recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    Router.go('/');
   }
 
   render() {
     return html`
       <header part="header">
-        <img @click="${this.goHome}" tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
+        <a href="/" @click=${() => this.recordGoingHome()}>
+          <img tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
           alt="PWABuilder logo" />
-      
+        </a>
+
         <nav id="desktop-nav">
-          <fast-anchor
+          <a
             class="nav_link"
             appearance="hypertext"
             href="https://docs.pwabuilder.com"
@@ -173,22 +182,23 @@ export class AppHeader extends LitElement {
             aria-label="PWABuilder Docs, will open in separate tab"
             rel="noopener"
             @click=${() => recordPWABuilderProcessStep(`.header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-            ><span>Docs</span></fast-anchor
           >
+            <span>Docs</span>
+          </a>
 
-          <fast-anchor
-          class="nav_link"
-            appearance="hypertext"
+          <a
+            class="nav_link"
             href="https://blog.pwabuilder.com"
             target="__blank"
             aria-label="PWABuilder Blog, will open in separate tab"
             rel="noopener"
             @click=${() => recordPWABuilderProcessStep(`.header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-            ><span>Blog</span></fast-anchor
           >
+            <span>Blog</span>
+          </a>
 
-          <fast-anchor
-            appearance="hypertext"
+          <a
+            class="nav_link"
             href="https://github.com/pwa-builder/PWABuilder"
             target="__blank"
             aria-label="Github repo, will open in separate tab"
@@ -196,7 +206,7 @@ export class AppHeader extends LitElement {
             @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github" title="View source on GitHub"></ion-icon>
-          </fast-anchor>
+          </a>
         </nav>
       </header>
     `;

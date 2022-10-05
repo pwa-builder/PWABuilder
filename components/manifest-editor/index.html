@@ -8,18 +8,33 @@
 
     <link rel="stylesheet" href="/global.css" />
 
-    <link
-      rel="stylesheet"
-      media="(prefers-color-scheme:light)"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/light.css"
-    />
-    <link
-      rel="stylesheet"
-      media="(prefers-color-scheme:dark)"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/themes/dark.css"
-      onload="document.documentElement.classList.add('sl-theme-dark');"
-    />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.73/dist/shoelace.js"></script>
+    <!-- Make sure to include the styles and component imports when using the manifest editor -->
+
+    <link rel="stylesheet" href="node_modules/@shoelace-style/shoelace/dist/themes/light.css" />
+
+    <script type="module">
+      import '@shoelace-style/shoelace/dist/components/button/button';
+      import '@shoelace-style/shoelace/dist/components/checkbox/checkbox';
+      import '@shoelace-style/shoelace/dist/components/color-picker/color-picker';
+      import '@shoelace-style/shoelace/dist/components/details/details';
+      import '@shoelace-style/shoelace/dist/components/divider/divider';
+      import '@shoelace-style/shoelace/dist/components/icon-button/icon-button';
+      import '@shoelace-style/shoelace/dist/components/input/input';
+      import '@shoelace-style/shoelace/dist/components/menu/menu';
+      import '@shoelace-style/shoelace/dist/components/menu-item/menu-item';
+      import '@shoelace-style/shoelace/dist/components/menu-label/menu-label';
+      import '@shoelace-style/shoelace/dist/components/select/select';
+      import '@shoelace-style/shoelace/dist/components/tab/tab';
+      import '@shoelace-style/shoelace/dist/components/tab-group/tab-group';
+      import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel';
+      import '@shoelace-style/shoelace/dist/components/textarea/textarea';
+      import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
+
+      // make sure to set base path so icons can be resolved
+      import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
+      setBasePath('/node_modules/@shoelace-style/shoelace/dist/');
+    </script>
+   
   </head>
 
   <body>
@@ -48,7 +63,7 @@
     <script type="module">
       let editor = document.querySelector("pwa-manifest-editor");
 
-      let resetBtn = document.getElementById("reset-button");
+      /* let resetBtn = document.getElementById("reset-button");
       resetBtn.addEventListener("click", () => {
         editor.resetManifest();
       });
@@ -56,72 +71,100 @@
       let downloadBtn = document.getElementById("download-button");
       downloadBtn.addEventListener("click", () => {
         editor.downloadManifest();
-      });
+      }); */
 
       editor.initialManifest = {
-                                "dir": "ltr",
-                                "lang": "en",
-                                "name": "Webboard",
-                                "scope": "/",
-                                "display": "standalone",
-                                "start_url": "/",
-                                "short_name": "Webboard",
-                                "theme_color": "#FFFFFF",
-                                "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
-                                "orientation": "any",
-                                "background_color": "#FFFFFF",
-                                "related_applications": [],
-                                "prefer_related_applications": false,
-                                "screenshots": [
-                                  {
-                                    "src": "assets/screen.png"
-                                  },
-                                  {
-                                    "src": "assets/screen.png"
-                                  },
-                                  {
-                                    "src": "assets/screen.png"
-                                  }
-                                ],
-                                "features": [
-                                  "Cross Platform",
-                                  "low-latency inking",
-                                  "fast",
-                                  "useful AI"
-                                ],
-                                "icons": [
-                                  {
-                                    "src": "icons/android/android-launchericon-64-64.png",
-                                    "sizes": "64x64"
-                                  },
-                                  {
-                                    "src": "icons/android/maskable_icon_192.png",
-                                    "sizes": "192x192",
-                                    "purpose": "maskable"
-                                  },
-                                  {
-                                    "src": "icons/android/android-launchericon-48-48.png",
-                                    "sizes": "48x48"
-                                  },
-                                  {
-                                    "src": "icons/android/android-launchericon-512-512.png",
-                                    "sizes": "512x512"
-                                  },
-                                  {
-                                    "src": "icons/android/android-launchericon-28-28.png",
-                                    "sizes": "28x28"
-                                  }
-                                ],
-                                "categories": ["magazines"],
-                                "shortcuts" : [
-                                  {
-                                    "name": "Today's agenda",
-                                    "url": "/today",
-                                    "description": "List of events planned for today"
-                                  }
-                                ]
-                            }; //load an initial manifest
-      editor.manifestURL = "https://webboard.app/manifest.json"
+  "name": "Sync'd - a Social Calendar App",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "sync'd",
+  "theme_color": "#E1477E",
+  "description": "An easy to use event calendar for busy groups to plan time with one another!",
+  "orientation": "any",
+  "background_color": "#DDBDD5",
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=works.jubilee.timetree",
+      "id": "works.jubilee.timetree"
+    },
+    {
+      "platform": "windowss",
+      "url": "https://play.google.com/store/apps/details?id=works.jubilee.timetree",
+      "id": "works.jubilee.timetree"
+    }
+  ],
+  "prefer_related_applications": "false",
+  "display_override" : ["window-controls-overlay"],
+  "icons": [
+    {
+      "src": "assets/icons/logo_64.png",
+      "sizes": "64x64",
+      "type":"image/png"
+    },
+    {
+      "src": "assets/icons/logo_128.png",
+      "sizes": "128x128",
+      "type":"image/png"
+    },
+    {
+      "src": "assets/icons/logo_512.png",
+      "sizes": "512x512",
+      "type":"image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/logo_1024.png",
+      "sizes": "1024x1024",
+      "type":"image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/login_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/calendar_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/addevent_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/mobile_screenshot.png"
+    },
+    {
+      "src": "assets/screenshots/tablet_screenshot.png"
+    }
+  ],
+  "categories": [
+    "utility",
+    "productivity",
+    "social"
+  ],
+  "dir": "ltr",
+  "lang": "en-US",
+  "iarc_rating_id": "465b8cee-af02-4012-8d4b-bcd3ebec0f3b",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "login",
+      "url": "/login",
+      "description": "Login to Sync'd"
+    }
+  ],
+  "share_target": {},
+  "protocol_handlers": [
+    {
+      "protocol": "web+jngl",
+      "url": "/lookup?type=%s"
+    },
+    {
+      "protocol": "web+jnglstore",
+      "url": "//shop?for=%s"
+    }
+  ]
+};
+      editor.manifestURL = "https://friendship-calendar-c0efc.web.app/manifest.json"
 
       let editedManifest = editor.manifest; // get edited or generated manifest
       //console.log(editedManifest);

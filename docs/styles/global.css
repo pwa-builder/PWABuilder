@@ -31,6 +31,7 @@
     --cover-button-primary-background: #7A688D;
     --cover-button-primary-color: #fff;
     --cover-button-primary-border: 1px solid #fff;
+    
 }
 
 .docs-image {
@@ -42,4 +43,17 @@
     padding-left: 5px;
     padding-right: 5px;
     border-radius: 3px;
+}
+
+.pwa-summit-banner strong {
+    color: var(--sl-color-green-950);
+    font-size: medium;
+}
+
+.pwa-summit-banner a {
+    color: var(--sl-color-green-700);
+}
+
+sl-button {
+    width: 100%;
 }

@@ -5,6 +5,8 @@ import { prettyString } from '../utils/pretty-json';
 
 import "./toast";
 
+import '@pwabuilder/code-editor'
+
 @customElement('manifest-code-form')
 export class ManifestCodeForm extends LitElement {
 
@@ -17,6 +19,7 @@ export class ManifestCodeForm extends LitElement {
       css`
         #code-holder {
           position: relative;
+          max-width: 700px;
         }
         #code-editor {
           overflow-x: scroll;
@@ -24,12 +27,12 @@ export class ManifestCodeForm extends LitElement {
           background-color: #f6f8fa;
           padding: 5px;
           padding-top: 0;
+          font-size: 16px;
         }
         #copy-manifest {
           position: absolute;
           top: 5px;
           right: 5px;
-
           display: flex;
           align-items: center;
         }
@@ -47,24 +50,12 @@ export class ManifestCodeForm extends LitElement {
   firstUpdated() {
   }
 
-  copyToClip(){
-     /* Copy the text inside the text field */
-     navigator.clipboard.writeText(prettyString(this.manifest));
-     this.showCopyToast = true;
-     setTimeout(() => {
-         this.showCopyToast = false;
-     }, 3000)
-
-  }
-
   render() {
     return html`
       <div id="code-holder">
-        <pre id="code-editor"><code>${prettyString(this.manifest)}</code></pre>
-        <button id="copy-manifest" @click=${() => this.copyToClip()}><ion-icon name="copy"></ion-icon>Copy Manifest</button>
+        <code-editor .startText=${prettyString(this.manifest)} .readOnly=${false}></code-editor>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
-
     `;
   }
 }

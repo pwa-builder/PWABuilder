@@ -1,6 +1,6 @@
 # Frequently Asked Questions
 
-Welcome to the PWA Studio FAQ!
+Welcome to the PWABuilder Studio FAQ!
 
 If you have a question that isn't addressed here or elsewhere in the documentation, feel free to open an [issue.](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
 
@@ -15,7 +15,7 @@ As with the above issue, to fix this tap the "I have a Service Worker" button in
 #### I have generated my Web Manifest / Service Worker, but devtools says my PWA does not have this asset?
 You most likely have not saved your `index.html` file. The extension will insert the needed html into your `index.html`, but you will need to hit save to save the changes.
 
-#### Can I try a pre-release version of PWA Studio?
+#### Can I try a pre-release version of PWABuilder Studio?
 
 Yes, you can!
 

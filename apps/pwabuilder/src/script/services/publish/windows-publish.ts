@@ -1,6 +1,6 @@
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { env } from '../../utils/environment';
 import { findBestAppIcon } from '../../utils/icons';
-import { Manifest } from '../../utils/interfaces';
 import {
   generateWindowsPackageId,
   validateWindowsOptions,
@@ -124,7 +124,7 @@ export async function createWindowsPackageOptionsFromForm(
   let manifest: Manifest;
   try {
     const manifestContext = await fetchOrCreateManifest();
-    manifest = manifestContext.manifest;
+    manifest = manifestContext!.manifest;
   } catch {
     return createEmptyPackageOptions();
   }

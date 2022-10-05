@@ -1,4 +1,6 @@
 import * as analytics from "@pwabuilder/site-analytics"
+export { AnalyticsBehavior } from '@pwabuilder/site-analytics';
+
 import { env } from "./environment";
 
 export function recordPageView(uri: string, name?: string, properties?: any) {
@@ -13,7 +15,7 @@ export function recordPWABuilderProcessStep(
   additionalInfo?: {}) {
     if (env.isProduction) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
-      let scn = 'pwa-builder';
+      let scn = 'pwa-builder-beta-test-b';
 
       if(demo_used){
         scn = 'demo-process';
@@ -45,5 +47,3 @@ export function recordPageAction(actionName: string, type: analytics.AnalyticsAc
     analytics.recordPageAction(actionName, type, behavior, properties);
   }
 }
-
-export {AnalyticsBehavior} from "@pwabuilder/site-analytics";

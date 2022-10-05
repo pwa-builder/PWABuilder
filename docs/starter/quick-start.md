@@ -20,7 +20,7 @@ There are just a few things you will need before getting started:
 
 ## Cloning the Starter
 
-?> **Note** You can also use our VSCode Extension, PWA Studio, to generate a starter project. Go [here](#/studio/quick-start) for more info.
+?> **Note** You can also use our VSCode Extension, PWABuilder Studio, to generate a starter project. Go [here](/studio/quick-start) for more info.
 
 To use the starter:
 
@@ -58,27 +58,55 @@ npm start
 
 Go to that URL to view and test your PWA locally.
 
-## Tech Stack
+## Technologies Used
 
-The PWA Starter was created using the tech stack that the PWABuilder team recommends and uses to build PWAs:
+The PWA Starter uses only a handful of libraries in order to remain lightweight and performant, but also while remaining easy and efficient to develop on. 
 
-- [**lit**](https://lit.dev/): Our framework of choice
-- [**@fluentui/web-components**](https://docs.microsoft.com/en-us/fluent-ui/web-components/): The Fluent UI Web Components are a set of UI components, just like [Ionic](https://ionicframework.com/), or the [Material Design youb Components](https://material.io/develop/youb)
-- [**Vite**](https://vitejs.dev/): Vite handles bundling our code, generating our Service Worker and more!
-- [**Vaadin Router**](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos): For routing, you use the Vaadin router
-- [**TypeScript**](https://www.typescriptlang.org/): TypeScript gives us features such as auto complete in our editors that helps make the development process easier
 
-We have settled on this tech stack because it meets our goals for Performance, Maintainability,
-Quality and Developer experience.
+#### Lit
+Lit is the library that we use to build our custom web components for the Starter. Lit adds some simple boilerplate that makes it easy to build standardized web components. 
+If you're new to web components, check out this [resource.](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 
-## File Structure
+All of our pages are components themselves, and are built using Lit. 
 
-- **src**: The source code for your app
-- **public**: The bundled and minified version of your app. This is the directory that would be published to your web server / hosting service
-- **public/manifest.json**: The Web Manifest for your app.
-- **public/assets/**: The assets for your app such as Icons.
-- **index.html**: The index file for your app. This is just like a normal index.html file.
-- **package.json**: This is where you specify the dependencies for your app.
-- **tsconfig.json**: This is where you specify the TypeScript settings for your app.
-- **vite.config.ts**: This is where you specify the [Vite](https://vitejs.dev/) settings for your app.
-- **registerSW.js**: This file is used by the build system to register your Service Worker.
+Learn more about Lit [here.](https://lit.dev/)
+
+#### Fluent Web Components
+In addition to custom components built with Lit, the Starter also makes use of prebuilt UI components.
+
+The starter uses [Fluent Web Components](https://docs.microsoft.com/en-us/fluent-ui/web-components/) for its user interface.
+
+#### Vite
+The Starter uses Vite as part of its build process. 
+
+Vite handles our code bundling and development server, and exposes PWA-specific functionality through the VitePWA plugin.
+
+Learn more [here.](https://vitejs.dev/)
+
+#### Vaadin Router
+For routing, the Starter uses Vaadin Router, a lightweight client-side router that works easily with web components.
+
+Learn more [here.](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos)
+
+#### Azure Static Web Apps CLI
+The Starter uses the Azure Static Web Apps CLI to enable you to deploy your PWA to Azure, along with local performance testing etc.
+
+Learn more [here.](https://azure.github.io/static-web-apps-cli/)
+
+
+## Navigating the Starter
+
+If you need help navigating the file structure of the starter, here's a breakdown of the initial directory structure.
+
+| Path | Description  |
+| :-----|-----|
+| **src/script/components/** | Our UI components live here. The template starts with just one: `header.ts`. |
+| **src/script/pages/** | Our page components live here. The template starts with an `app-home` page and an `app-about` page |
+| **public** | The bundled and minified version of your app. This is the directory that would be published to your web server / hosting service |
+| **public/manifest.json** | The Web Manifest for your app.|
+| **public/assets/** | The assets for your app such as icons and other media.  |
+| **index.html** | The index file for your app. This is just like a normal index.html file. |
+| **package.json** | This is where you specify the dependencies for your app. |
+| **tsconfig.json** | This is where you specify the TypeScript settings for your app. |
+| **vite.config.ts** | This is where you specify the [Vite](https://vitejs.dev/) settings for your app. |
+| **registerSW.js** | This file is used by the build system to register your Service Worker.|

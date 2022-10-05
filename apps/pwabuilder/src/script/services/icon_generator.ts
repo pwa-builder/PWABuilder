@@ -49,7 +49,7 @@ export async function  generateMissingImagesBase64(
 
     if (response.ok) {
       const manifestContext = await fetchOrCreateManifest();
-      const manifest = manifestContext.manifest;
+      const manifest = manifestContext!.manifest;
 
       if (!manifest) {
         console.error('Manifest was unexpectedly null or undefined');

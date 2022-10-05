@@ -54,6 +54,7 @@ export class Infocard extends LitElement {
         margin: 0;
         margin-bottom: .5em;
         text-align: center;
+        white-space: nowrap;
       }
 
       .card-content p {
@@ -156,7 +157,7 @@ export class Infocard extends LitElement {
           <p>${this.description}</p>
         </div>
         <div class="card-actions" @click=${() => recordPWABuilderProcessStep("home.middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-          <a href=${this.linkRoute} target="_blank" rel="noopener" aria-label="Learn more about ${this.cardTitle}">Learn More</a>
+          <a href=${this.linkRoute} target="_blank" rel="noopener" aria-label="Learn more about ${this.cardTitle}, will open separate tab">Learn More</a>
         </div>
       </div>
     `;

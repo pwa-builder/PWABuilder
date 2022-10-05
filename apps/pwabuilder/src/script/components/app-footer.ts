@@ -41,6 +41,7 @@ export class AppFooter extends LitElement {
       ion-icon {
         font-size: var(--font-size);
         color: white;
+        pointer-events: none;
       }
 
       span {
@@ -73,6 +74,13 @@ export class AppFooter extends LitElement {
         border-radius: 5px;
         padding: 3px;
       }
+
+      @media screen and (-ms-high-contrast: black-on-white) {
+          /* All high contrast styling rules */
+          ion-icon {
+            color: black;
+          }
+      } 
 
       ${xxxLargeBreakPoint(
         css`
@@ -174,10 +182,10 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
-            aria-label="Contribute to our Github"
+            aria-label="Contribute to our Github, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-github" role="presentation"></ion-icon>
+            <span title="Contribute to our Github"><ion-icon name="logo-github" role="presentation"></ion-icon></span>
           </fast-anchor>
 
           <fast-anchor
@@ -185,10 +193,10 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://twitter.com/pwabuilder"
-            aria-label="Follow us on Twitter"
+            aria-label="Follow us on Twitter, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-twitter" role="presentation"></ion-icon>
+            <span title="Follow us on Twitter"><ion-icon name="logo-twitter" role="presentation"></ion-icon></span>
           </fast-anchor>
 
           <fast-anchor
@@ -196,10 +204,10 @@ export class AppFooter extends LitElement {
             rel="noopener"
             appearance="hypertext"
             href="https://www.youtube.com/c/PWABuilder"
-            aria-label="Subscribe to our Youtube"
+            aria-label="Subscribe to our Youtube, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-youtube" role="presentation"></ion-icon>
+            <span title="Subscribe to our Youtube"><ion-icon name="logo-youtube" role="presentation"></ion-icon></span>
           </fast-anchor>
         </div>
       </footer>

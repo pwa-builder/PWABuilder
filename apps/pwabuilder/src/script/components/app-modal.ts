@@ -241,7 +241,10 @@ export class AppModal extends LitElement implements AppModalElement {
             </section>
         
             <section id="modal-body" part="modal-body">
-              <p part="modal-body-contents">${this.body}</p>
+              <p part="modal-body-contents">
+                ${this.body}
+                <slot name="modal-docs-link"></slot>
+              </p>
             </section>
 
             <slot id="modal-nav" name="modal-nav"></slot>

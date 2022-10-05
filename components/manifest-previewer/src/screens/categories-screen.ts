@@ -64,6 +64,10 @@ export class CategoriesScreen extends ScreenTemplate {
           height: 50px;
           width: 100%;
           overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
         }
 
         .categories {

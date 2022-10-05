@@ -1,4 +1,5 @@
-import { Manifest } from './interfaces';
+import { Manifest } from '@pwabuilder/manifest-validation';
+import { PackageOptions } from './interfaces';
 import { validateUrl } from './url';
 
 /**
@@ -18,7 +19,7 @@ export interface WindowsImageOptions {
   padding?: number; // should be between 0 (no padding) and 1 (max padding)
 }
 
-export interface WindowsPackageOptions {
+export interface WindowsPackageOptions  extends PackageOptions {
   name: string;
   packageId: string;
   url: string;

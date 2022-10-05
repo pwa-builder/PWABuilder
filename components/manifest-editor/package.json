@@ -14,9 +14,11 @@
   "license": "ISC",
   "dependencies": {
     "@ionic/core": "^6.1.4",
-    "lit": "^2.2.1",
-    "@pwabuilder/manifest-previewer": "file:../manifest-previewer",
-    "@pwabuilder/manifest-validation":  "file:../../libraries/manifest-validation"
+    "@pwabuilder/code-editor": "file:../code-editor",
+    "@pwabuilder/manifest-validation":  "file:../../libraries/manifest-validation",
+    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
+    "@shoelace-style/shoelace": "^2.0.0-beta.83",
+    "lit": "^2.2.1"
   },
   "devDependencies": {
     "@web/dev-server": "^0.1.31",

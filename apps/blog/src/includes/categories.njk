@@ -1,0 +1,31 @@
+<section class="bg-secondary text-white my-8 py-4">
+  <div class="container mx-auto px-8">
+    <h2 class="text-center lg:text-left mb-4">Categories</h2>
+
+    <ul class="grid grid-cols-2 lg:grid-cols-5 gap-1 justify-items-center lg:justify-items-start subheaderUlCat">
+      {% for tag in collections.tagList | filterTagList %}
+        <li class="px-2 py-4">
+          {% set tagUrl %}/tags/{{ tag | slug }}/{% endset %}
+          <a href="{{ tagUrl | url }}" class="capitalize subheaderCat">{{ tag }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</section>
+
+<style>
+  .subheaderCat {
+     text-decoration: none;
+     color: rgb(229, 231, 235);
+  }
+
+  .subheaderUlCat {
+    padding: 0;
+    list-style: none;
+  }
+
+  .subheaderUlCat li {
+    list-style: none;
+  }
+</style>

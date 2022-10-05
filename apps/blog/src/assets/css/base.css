@@ -1,0 +1,262 @@
+/* Prism Code Highlighting Theme (see https://prismjs.com) */
+@import url("https://cdn.jsdelivr.net/npm/prism-themes@1.5.0/themes/prism-dracula.css");
+/* Using google fonts for now hosted fonts not working will look into it later */
+@import url("https://fonts.googleapis.com/css2?family=Hind:wght@300;400;700&display=swap");
+
+:root {
+  --font-family: "Hind", sans-serif;
+  --font-bold: 700;
+  --font-medium: 400;
+
+  --font-size: 14px;
+  --small-font-size: 12px;
+  --small-medium-font-size: 22px;
+  --medium-font-size: 28px;
+  --large-font-size: 32px;
+  --xlarge-font-size: 44px;
+
+  --primary-font-color: #292c3a;
+  --secondary-font-color: #eeeeee;
+
+  --primary-background-color: #ffffff;
+  --secondary-background-color: #292c3a;
+
+  --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+  --button-radius: 44px;
+  --mobile-button-radius: 61px;
+  --mobile-button-height: 64px;
+  --mobile-button-font-size: 22px;
+  --desktop-button-height: 40px;
+
+  --input-radius: 8px;
+
+  --link-color: #5d5db9;
+  --mobile-link-color: #0683f9;
+
+  --list-border: 0.67681px solid #e5e5e5;
+  --success-color: #a2f4cc;
+  --light-primary-color: rgba(255, 255, 255, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:not(pre) > code[class*="language-"] {
+  /* Fixes issue where theme removes indentation. */
+  white-space: pre;
+}
+
+html,
+body {
+  font-size: min(max(var(--font-size), 4vw), 22px);
+  font-family: var(--font-family), sans-serif;
+  line-height: 1.5;
+  color: var(--primary-font-color);
+  background: var(--primary-background-color);
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  @apply antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+p, blockquote {
+  margin: revert;
+}
+
+blockquote {
+  box-shadow: inset 3px 0 0 0 rgb(41 41 41);
+  padding-left: 1rem;
+}
+
+.figcaption_hack {
+  color: rgba(117, 117, 117, 1);
+  font-size: 0.6rem;
+  font-weight: var(--font-bold);
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 70%;
+  display: block;
+}
+
+video {
+  margin: auto;
+}
+
+li {
+  font-size: 1rem;
+}
+
+li > a {
+  font-size: 1rem;
+}
+
+a {
+  color:#342a6a;
+  text-decoration: underline;
+}
+
+ol, ul {
+  margin-top: 1rem;
+  padding-left: 2rem;
+}
+
+ol {
+  list-style: decimal;
+}
+
+ul {
+  list-style: square;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  @apply font-bold leading-tight mt-3 break-words;
+  transition: all 200ms ease-in;
+}
+
+h1 {
+  @apply text-4xl;
+}
+
+h2 {
+  @apply text-2xl;
+}
+
+h3 {
+  @apply text-xl;
+}
+
+h4 {
+  @apply text-lg;
+}
+
+a {
+  @apply text-base font-bold;
+}
+
+a:hover {
+  @apply underline;
+}
+
+p {
+  @apply text-base;
+}
+
+pre {
+  @apply my-2 text-sm tracking-wider break-words;
+  border-radius: 25px;
+}
+
+pre[class*=language-] {
+  overflow: scroll !important;
+}
+
+hr {
+  @apply mt-4 mb-2 border-b border-gray-600;
+}
+
+small {
+  font-size: 0.8rem;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.my-8 {
+  max-width: 100%;
+}
+
+@media (max-width: 800px) {
+  nav[aria-label="sub-navigation"] {
+    display: flex;
+    align-items: flex-start;
+  }
+}
+
+/**
+ * Disable animations if the user has turned on the a11y option for reduced motion due to 
+ * vestibular disorders etc.
+ * 
+ * @link https://css-tricks.com/introduction-reduced-motion-media-query/#article-header-id-3
+ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01s !important;
+    transition-duration: 0.01s !important;
+  }
+}
+
+.js-focus-visible :focus:not([data-focus-visible-added]) {
+  @apply outline-none;
+}
+
+/*
+Leave it for testing margins, paddings, spacing
+
+* {
+  outline: 1px solid rgba(255, 0, 0, 0.2);
+  :hover {
+    outline: 1px solid rgba(255, 0, 0, 0.6);
+  }
+}
+* * {
+  outline: 1px solid rgba(0, 255, 0, 0.2);
+  :hover {
+    outline: 1px solid rgba(0, 255, 0, 0.6);
+  }
+}
+* * * {
+  outline: 1px solid rgba(0, 0, 255, 0.2);
+  :hover {
+    outline: 1px solid rgba(0, 0, 255, 0.6);
+  }
+}
+* * * * {
+  outline: 1px solid rgba(255, 0, 255, 0.2);
+  :hover {
+    outline: 1px solid rgba(255, 0, 0, 0.6);
+  }
+}
+* * * * * {
+  outline: 1px solid rgba(0, 255, 255, 0.2);
+  :hover {
+    outline: 1px solid rgba(0, 255, 0, 0.6);
+  }
+}
+* * * * * * {
+  outline: 1px solid rgba(255, 255, 0, 0.2);
+}
+:hover {
+  outline: 1px solid rgba(0, 0, 255, 0.6);
+}
+* * * * * * * {
+  outline: 1px solid rgba(255, 0, 0, 0.2);
+}
+:hover {
+  outline: 1px solid rgba(255, 0, 0, 0.6);
+}
+* * * * * * * * {
+  outline: 1px solid rgba(0, 255, 0, 0.2);
+  :hover {
+    outline: 1px solid rgba(0, 255, 0, 0.6);
+  }
+}
+* * * * * * * * * {
+  outline: 1px solid rgba(0, 0, 255, 0.2);
+  :hover {
+    outline: 1px solid rgba(0, 0, 255, 0.6);
+  }
+}
+
+*/

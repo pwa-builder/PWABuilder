@@ -2,6 +2,8 @@
 
 You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the <a href="https://partner.microsoft.com/en-us"> Microsoft Partner Center </a> to create your app submission.
 
+!> In order to package for Windows and submit to the Microsoft Store, you will need a [Partner Center Account](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership).
+
 #### How does it work?
 
 The PWABuilder service creates both a `.msixbundle` and a `.classic.appxbundle`. 
@@ -14,7 +16,7 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 
-- A Microsoft Developer account (which are available for a one-time fee of $19)
+- A Microsoft Developer account with Partner Center (which are available for a one-time fee of $19). Create one [here.](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership)
 
 ## Reserve Your App
 
@@ -39,6 +41,8 @@ In order to create a proper package of your PWA, you'll first need to reserve a 
 You will need **all three** to package with PWABuilder.
 
 ## Packaging
+
+!> The packaging process requires data from Partner Center to properly create your package. Unless you are creating a test package, you will need to use [Partner Center](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership) prior to packaging.
 
 Before you can submit your PWA to the Microsoft Store, you'll need to create the proper packages with PWABuilder.
 
@@ -70,6 +74,8 @@ Before you can submit your PWA to the Microsoft Store, you'll need to create the
 
 You can now use the packages you downloaded to submit your application through Partner Center.
 
+?> **Note** PWABuilder generates icons for you when creating your package. These are the icons that will appear on the OS when your application is installed.
+
 ## Submitting Your PWA
 
 To submit your PWA through Partner Center:
@@ -99,3 +105,15 @@ To submit your PWA through Partner Center:
 It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Micrsoft Store.
 
 If you want to view information about the status of your app, you can check through Partner Center at any time. This will be your go to spot for interacting with your listing.
+
+## Next Steps
+
+Progressive web apps are cross-platform and can be used anywhere! 
+
+After you've sucessfully published your app to the Microsoft Store, you can package and publish for other platforms:
+
+- [How to Package for the App Store](/builder/app-store)
+
+- [How to Package for Meta Quest](/builder/meta)
+
+- [How to Package for the Google Play Store](/builder/android)

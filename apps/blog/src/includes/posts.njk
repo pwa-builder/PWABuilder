@@ -1,0 +1,8 @@
+{% import "layouts/postcard.njk" as cardLayouts %}
+
+<section class="my-8">
+  <h2 class="text-center">Featured posts</h2>
+  {{ cardLayouts.featured(posts)}}
+  <h2 class="text-center">Trending posts</h2>
+  {{ cardLayouts.trending(posts)}}
+</section>

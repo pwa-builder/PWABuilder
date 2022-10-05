@@ -1,0 +1,110 @@
+{ // Badges
+    "Badge Display": {
+        "scope": "javascript,typescript",
+        "prefix": "badge-display",
+        "body": [
+            "navigator.setAppBadge($1).then(() => {",
+            "\t${2:console.log(\"The badge was added\")};",
+            "}).catch(e => {",
+            "\t${0:console.error(\"Error displaying the badge\", e)};",
+            "});"
+        ],
+        "description": "To display a number in the badge"
+    },
+    "Badge Clear": {
+        "scope": "javascript,typescript",
+        "prefix": "badge-clear",
+        "body": [
+            "navigator.clearAppBadge($1).then(() => {",
+            "\t${2:console.log(\"The badge was cleared\")};",
+            "}).catch(e => {",
+            "\t${0:console.error(\"Error clearing the badge\", e)};",
+            "});"
+        ],
+        "description": "To clear the badge"
+    },
+    // Notifications
+    "Notification Request Permission": {
+        "scope": "javascript,typescript",
+        "prefix": "notification-request-permission",
+        "body": [
+            "// Requesting permission should only be done in response to a user action. This is a best practice, to avoid interrupting the user with permission prompts when the user hasn't yet interacted with a feature that uses notifications.",
+            "${1:button}.addEventListener(\"${2:click}\", () => {",
+            "\tNotification.requestPermission().then(permission => {",
+            "\t\tif (permission === \"granted\") {",
+            "\t\t\t${0:console.log(\"The user accepted\")};",
+            "\t\t}",
+            "\t});",
+            "});"
+        ],
+        "description": "To request permission to display notifications"
+    },
+    "Notification Display": {
+        "scope": "javascript,typescript",
+        "prefix": "notification-display",
+        "body": [
+            "const notification = new Notification(\"${1:Hello World!}\", {",
+            "\tbody: \"${2:Body of my notification message}\",",
+            "\ticon: \"${0:/path/to/icon.png}\",",
+            "});"
+        ],
+    },
+    "Notification Display from Service Worker": {
+        "scope": "javascript,typescript",
+        "prefix": "notification-display-sw",
+        "body": [
+            "// You can display notifications from your app's service worker. This is useful because the service worker may be doing work while your app isn't running.",
+            "self.registration.showNotification(\"${1:Your content is ready}\", {",
+            "\tbody: \"${2:Your content is ready to be viewed. View it now?}\",",
+            "\ticon: \"${3:/path/to/icon.png}\",",
+            "\tactions: [",
+            "\t\t{action: \"${4:view}\", title: \"${5:View}\"},",
+            "\t\t{action: \"${6:dismiss}\", title: \"${7:Dismiss}\"} $0",
+            "\t],",
+            "});"
+        ],
+        "description": "To display a notification from a service worker"
+    },
+    "Notification Click from Service Worker": {
+        "scope": "javascript,typescript",
+        "prefix": "notification-click-sw",
+        "body": [
+            "// When the user clicks one of the action buttons, your PWA can handle the click by listening for the notificationclick event.",
+            "self.addEventListener(\"notificationclick\", event => {",
+            "\tevent.notification.close();",
+            "\tif (event.action === '${1:action1}') {",
+            "\t\t${2:console.log(\"action1 was clicked\")};",
+            "\t} else if (event.action === '${3:action2}') {",
+            "\t\t${4:console.log(\"action2 was clicked\")};",
+            "\t} else {",
+            "\t\t${0:console.log(\"main body of the notification was clicked\")};",
+            "\t}",
+            "}, false);"
+        ]
+    },
+    // Handle files
+    "File handle on launch": {
+        "scope": "javascript,typescript",
+        "prefix": "file-launch",
+        "body": [
+            "// When your app is launched by the OS after a file was opened, you can use the launchQueue object to access the file content.",
+            "if ('launchQueue' in window) {",
+            "\tconsole.log('File Handling API is supported!');",
+            "\twindow.launchQueue.setConsumer(launchParams => {",
+            "\t\thandleFiles(launchParams.files);",
+            "\t});",
+            "} else {",
+            "\tconsole.log('File Handling API is not supported!');",
+            "}",
+            "",
+            "async function handleFiles(files) {",
+            "\tfor (const file of files) {",
+            "\t\tconst blob = await file.getFile();",
+            "\t\tblob.handle = file;",
+            "\t\tconst text = await blob.text();",
+            "\t\tconsole.log(file.name + ' ' + text);",
+            "\t}",
+            "}"
+        ],
+    }
+}

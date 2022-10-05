@@ -42,13 +42,8 @@ export class SuccessCard extends LitElement {
         align-items: flex-start;
         justify-content: space-between;
         width: 100%;
-      }
-
-      .success-line-one h3 {
-        margin: 0;
-        font-size: 36px;
-        line-height: 36px;
-        font-weight: bold;
+        /* for screen reader scan */
+        flex-direction: row-reverse;
       }
 
       .success-stat {
@@ -59,11 +54,25 @@ export class SuccessCard extends LitElement {
         margin-bottom: .75em;
       }
 
+      .success-stat span {
+        margin-right: 50%;
+        font-size: 36px;
+        line-height: 36px;
+        font-weight: bold;
+      }
+
       .success-desc {
         margin: 0;
         font-size: 14px;
         line-height: 18px;
         color: var(--secondary-font-color);
+      }
+
+      @media screen and (-ms-high-contrast: white-on-black) {
+        .success-card:focus{
+          border: 4px solid white;
+          border-radius: 5px;
+        }
       }
 
       /* < 480px */
@@ -115,12 +124,13 @@ export class SuccessCard extends LitElement {
 
   render() {
     return html`
-      <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank">
+      <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank" aria-label=${"Success story of " + this.company + " link, click for more details on separate tab"}>
         <div class="success-line-one">
-          <h3>${this.cardValue}</h3>
-          <img src=${this.imageUrl} alt="${this.company} logo"/>
+           <img src=${this.imageUrl} alt="${this.company} logo"/>
+           <h3 class="success-stat">
+             <span>${this.cardValue}</span> ${this.cardStat}
+           </h3>    
         </div>
-        <p class="success-stat">${this.cardStat}</p>
         <p class="success-desc">${this.description}</p>
   </a>
     `;

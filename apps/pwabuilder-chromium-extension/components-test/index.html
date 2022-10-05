@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Component Test</title>
+    <script src="../components-dist/pwabuilder-components.js" type="module"></script>
+    <link rel="stylesheet" href="../components-dist/shoelace/light.css" />
+</head>
+<body>
+    <pwa-scanner></pwa-scanner>
+
+    <script>
+        let scanner = document.querySelector('pwa-scanner');
+        scanner.siteData = {
+            currentUrl: "https://webboard.app",
+            manifest: {
+                hasManifest: true,
+                manifest: {
+                    "dir": "ltr",
+                    "lang": "en",
+                    "name": "Webboard",
+                    "scope": "/",
+                    "display": "standalone",
+                    "start_url": "/",
+                    "short_name": "Webboard",
+                    "theme_color": "#FFFFFF",
+                    "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
+                    "orientation": "any",
+                    "background_color": "#FFFFFF",
+                    "related_applications": [],
+                    "prefer_related_applications": false,
+                    "screenshots": [
+                        {
+                            "src": "assets/screen.png"
+                        },
+                        {
+                            "src": "assets/screen.png"
+                        },
+                        {
+                            "src": "assets/screen.png"
+                        }
+                    ],
+                    "features": [
+                        "Cross Platform",
+                        "low-latency inking",
+                        "fast",
+                        "useful AI"
+                    ],
+                    "icons": [
+                        {
+                            "src": "icons/android/android-launchericon-64-64.png",
+                            "sizes": "64x64"
+                        },
+                        {
+                            "src": "icons/android/maskable_icon_192.png",
+                            "sizes": "192x192",
+                            "purpose": "maskable"
+                        },
+                        {
+                            "src": "icons/android/android-launchericon-48-48.png",
+                            "sizes": "48x48"
+                        },
+                        {
+                            "src": "icons/android/android-launchericon-512-512.png",
+                            "sizes": "512x512",
+                            "purpose": "any"
+                        },
+                        {
+                            "src": "icons/android/android-launchericon-28-28.png",
+                            "sizes": "28x28"
+                        }
+                    ]
+                },
+                manifestUrl: "https://webboard.app/manifest.json"
+            },
+            sw: {
+                hasSW: true,
+                hasPushRegistration: false,
+                serviceWorkerDetectionTimedOut: false,
+                hasBackgroundSync: false,
+                hasPeriodicBackgroundSync: false,
+                isHtmlInCache: true
+            }
+        }
+    </script>
+</body>
+</html>

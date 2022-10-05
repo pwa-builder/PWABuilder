@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "target": "ES2022",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": "dist/js",
+    "noEmitOnError": true,
+    "experimentalDecorators": true,
+    "typeRoots": ["node_modules/@types"],
+    "useDefineForClassFields": false,
+    "declaration": true,
+    "declarationMap": true
+  }
+}

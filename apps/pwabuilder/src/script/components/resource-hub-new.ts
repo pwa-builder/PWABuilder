@@ -23,10 +23,9 @@ export class ResourceHubNew extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-image: url(/assets/new/BackgroundPWA1920.png);
+        background-image: url(/assets/new/OtterBackgroundPWA1920.jpg);
         background-repeat: no-repeat;
         background-size: cover;
-        background-position: center;
         padding: 2em;
       }
 
@@ -78,7 +77,8 @@ export class ResourceHubNew extends LitElement {
       /* 640px - 1023px */
       ${largeBreakPoint(css`
           #hub-panel{
-            background-image: url(/assets/new/BackgroundPWA1024.png);
+            background-image: url(/assets/new/OtterBackgroundPWA1024.jpg);
+            background-position: center center;
             padding: 3.25em;
           }
       `)}
@@ -86,7 +86,7 @@ export class ResourceHubNew extends LitElement {
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
           #hub-panel {
-            background: url(/assets/new/BackgroundPWA1366.png);
+            background: url(/assets/new/OtterBackgroundPWA1366.jpg);
             background-position: center center;
             background-size: cover;
             background-repeat: no-repeat;
@@ -96,7 +96,7 @@ export class ResourceHubNew extends LitElement {
       /* > 1920 */
       ${xxxLargeBreakPoint(css`
             #hub-panel{
-            background-image: url(/assets/new/BackgroundPWA1920.png);
+            background-image: url(/assets/new/OtterBackgroundPWA1920.jpg);
             background-repeat: no-repeat;
             background-size: cover;
             padding: 3em;
@@ -112,7 +112,8 @@ export class ResourceHubNew extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  connectedCallback(): void {
+    super.connectedCallback();
     this.cards = landingCards();
   }
 
