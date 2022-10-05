@@ -26,19 +26,19 @@ export async function generateWindowsPackage(
         validationErrors.map(a => a.error).join('\n')
     );
   }
-  console.info('Before fetching windows package');
+  //console.info('Before fetching windows package');
   const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
     method: 'POST',
     body: JSON.stringify(windowsOptions),
     headers: new Headers({ 'content-type': 'application/json' }),
   });
-  console.info('After fetching windows package', response);
+  //console.info('After fetching windows package', response);
   if (response.status === 200) {
     const data = await response.blob();
 
     //set generated flag
     hasGeneratedWindowsPackage = true;
-    console.info('After fetching windows package', data);
+    //console.info('After fetching windows package', data);
     return data;
   } else {
     const responseText = await response.text();
