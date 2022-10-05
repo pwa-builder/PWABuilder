@@ -4,13 +4,14 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "scripts": {
-    "preinstall": "node ../../scripts/setupDeps.js && npm run copy-sl-assets",
+    "preinstall": "node ../../scripts/setupDeps.js",
     "dev": "vite --open",
     "dev-task": "vite",
     "dev:deps": "cross-env NODE_ENV=development && concurrently \"node ../../scripts/watchDeps.js\" \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
     "build": "cross-env NODE_ENV=production && tsc && vite build",
     "start": "npm run dev",
     "start-remote": "vite --host",
+    "postinstall": "npm run copy-sl-assets",
     "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons"
   },
   "author": "",
