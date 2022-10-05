@@ -5,7 +5,7 @@ import { customElement, state } from 'lit/decorators.js';
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
-  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "tiktok", "twitter"];
+  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "glass", "tiktok",  "twitter"];
   @state() paused: boolean = false;
   
   static get styles() {
@@ -75,13 +75,14 @@ export class ComapniesPackaged extends LitElement {
 
       @keyframes scroll {
         0% { transform: translateX(0); }
-        14% { transform: translateX(calc(var(--slide-width) * -1)); }
-        28% { transform: translateX(calc(var(--slide-width) * -2)); }
-        42% { transform: translateX(calc(var(--slide-width) * -3)); }
-        56% { transform: translateX(calc(var(--slide-width) * -4)); }
-        70% { transform: translateX(calc(var(--slide-width) * -5)); }
-        84% { transform: translateX(calc(var(--slide-width) * -6)); }
-        100% { transform: translateX(calc(var(--slide-width) * -7)); }
+        12% { transform: translateX(calc(var(--slide-width) * -1)); }
+        24% { transform: translateX(calc(var(--slide-width) * -2)); }
+        36% { transform: translateX(calc(var(--slide-width) * -3)); }
+        48% { transform: translateX(calc(var(--slide-width) * -4)); }
+        60% { transform: translateX(calc(var(--slide-width) * -5)); }
+        72% { transform: translateX(calc(var(--slide-width) * -6)); }
+        84% { transform: translateX(calc(var(--slide-width) * -7)); }
+        100% { transform: translateX(calc(var(--slide-width) * -8)); }
       }
 
       .slider {
@@ -116,7 +117,7 @@ export class ComapniesPackaged extends LitElement {
         animation: scroll 21s infinite ease;
         animation-delay: 3s;
         display: flex;
-        width: calc(var(--slide-width) * 14);
+        width: calc(var(--slide-width) * 16);
       }
       
       .slide {
@@ -178,8 +179,8 @@ export class ComapniesPackaged extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    const shuffled = this.shuffle(this.companies);
-    this.companies = [...shuffled];
+    /* const shuffled = this.shuffle(this.companies);
+    this.companies = [...shuffled]; */
   }
 
   shuffle(array: any) {
@@ -234,7 +235,7 @@ export class ComapniesPackaged extends LitElement {
             )}
         </div>
       </div>
-      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="play" aria-label="play button"></ion-icon></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="pause" aria-label="pause button"></ion-icon></button>`}
+      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="play" aria-label="Play apps scrolling button"></ion-icon></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="pause" aria-label="Pause apps scrolling button"></ion-icon></button>`}
     </div>
     `;
   }

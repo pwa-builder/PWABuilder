@@ -1,16 +1,16 @@
 {
   "name": "pwa-studio",
-  "displayName": "PWA Studio",
-  "description": "PWA Studio makes VSCode the best development environment for building PWAs!",
+  "displayName": "PWABuilder Studio",
+  "description": "PWABuilder Studio makes VSCode the best development environment for building PWAs!",
   "publisher": "PWABuilder",
-  "version": "1.0.5",
+  "version": "1.1.2",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/pwa-builder/pwabuilder-vscode"
   },
   "engines": {
-    "vscode": "^1.62.0"
+    "vscode": "^1.63.0"
   },
   "categories": [
     "Other",
@@ -53,7 +53,7 @@
     "walkthroughs": [
       {
         "id": "walkthrough.PWAStudio",
-        "title": "PWA Studio Walkthrough",
+        "title": "PWABuilder Studio Walkthrough",
         "media": {
           "image": "/resources/pwabuilder-icon.svg"
         },
@@ -98,14 +98,14 @@
           },
           {
             "id": "packageApps",
-            "title": "Package your PWA to the Microsoft Store",
+            "title": "Package your PWA for the Microsoft Store",
             "description": "Package your PWA for the Microsoft Store! \n[Package App](command:pwa-studio.packageApp)",
             "media": {
               "image": "/resources/package.png",
               "altText": "Package your app for the Microsoft Store"
             },
             "completionEvents": [
-              "onCommand:getting-started-sample.runCommand"
+              "onCommand:pwa-studio.packageApp"
             ]
           }
         ]
@@ -114,34 +114,34 @@
     "commands": [
       {
         "command": "pwa-studio.newPwaStarter",
-        "title": "PWA Studio: New PWA"
+        "title": "PWABuilder Studio: New PWA"
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "PWA Studio: Generate Service Worker",
+        "title": "PWABuilder Studio: Generate Service Worker",
         "icon": "$(add)"
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "PWA Studio: Validate",
+        "title": "PWABuilder Studio: Validate",
         "icon": "$(tools)"
       },
       {
         "command": "pwa-studio.manifest",
-        "title": "PWA Studio: Generate Web Manifest",
+        "title": "PWABuilder Studio: Generate Web Manifest",
         "icon": "$(add)"
       },
       {
         "command": "pwa-studio.chooseManifest",
-        "title": "PWA Studio: Choose existing Web Manifest"
+        "title": "PWABuilder Studio: Choose existing Web Manifest"
       },
       {
         "command": "pwa-studio.chooseServiceWorker",
-        "title": "PWA Studio: Choose existing Service Worker"
+        "title": "PWABuilder Studio: Choose existing Service Worker"
       },
       {
         "command": "pwa-studio.packageApp",
-        "title": "PWA Studio: Package your PWA",
+        "title": "PWABuilder Studio: Package your PWA",
         "icon": "$(package)"
       },
       {
@@ -166,27 +166,27 @@
       },
       {
         "command": "pwa-studio.setWebURL",
-        "title": "PWA Studio: Publish To Web",
+        "title": "PWABuilder Studio: Publish To Web",
         "icon": "$(gear)"
       },
       {
         "command": "pwa-studio.generateIcons",
-        "title": "PWA Studio: Generate Icons",
+        "title": "PWABuilder Studio: Generate Icons",
         "icon": "$(settings-edit)"
       },
       {
         "command": "pwa-studio.generateScreenshots",
-        "title": "PWA Studio: Generate Screenshots",
+        "title": "PWABuilder Studio: Generate Screenshots",
         "icon": "$(gear)"
       },
       {
         "command": "pwa-studio.help",
-        "title": "PWA Studio: Help",
+        "title": "PWABuilder Studio: Help",
         "icon": "$(note)"
       },
       {
         "command": "pwa-studio.updateAdvWorker",
-        "title": "PWA Studio: Update Service Worker",
+        "title": "PWABuilder Studio: Update Service Worker",
         "icon": "$(sync)"
       }
     ],
@@ -208,7 +208,7 @@
       "activitybar": [
         {
           "id": "pwabuilder-view",
-          "title": "PWA Studio",
+          "title": "PWABuilder Studio",
           "icon": "resources/pwabuilder-icon.svg"
         }
       ]
@@ -309,7 +309,7 @@
     "test-compile": "tsc -p ./",
     "compile": "tsc -p ./ && npm run copy",
     "watch": "npm run copy && tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "npm run compile",
     "lint": "eslint src --ext ts",
     "copy": "copyfiles .env out",
     "test": "node ./out/test/runTest.js"

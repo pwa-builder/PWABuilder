@@ -1,10 +1,11 @@
 import { open } from "fs/promises";
+import { resolve } from "path";
 import * as vscode from "vscode";
 import { getAnalyticsClient } from "../usage-analytics";
 
 let manifest: any | undefined;
 
-export async function generateManifest(context: vscode.ExtensionContext) {
+export async function generateManifest(skipPrompts?: boolean) {
   const analyticsClient = getAnalyticsClient();
   analyticsClient.trackEvent({
     name: "generate",
@@ -13,24 +14,40 @@ export async function generateManifest(context: vscode.ExtensionContext) {
 
   // open information message about generating manifest
   // with an ok button
-  const maniAnswer = await vscode.window.showInformationMessage(
-    "PWA Studio will generate your Web Manifest, first, you will need to choose where to save your manifest.json file.",
-    {
-      title: "Ok",
-    },
-    {
-      title: "Cancel",
-    }
-  );
+  let maniAnswer: any;
+  if (skipPrompts) {
+    maniAnswer = {
+      title: "Ok"
+    };
+  }
+  else {
+    maniAnswer = await vscode.window.showInformationMessage(
+      "PWABuilder Studio will generate your Web Manifest, first, you will need to choose where to save your manifest.json file.",
+      {
+        title: "Ok",
+      },
+      {
+        title: "Cancel",
+      }
+    );
+  }
 
   if (maniAnswer && maniAnswer.title === "Ok") {
     // ask user where they would like to save their manifest
-    const uri = await vscode.window.showSaveDialog({
-      defaultUri: vscode.Uri.file(
+    let uri: vscode.Uri | undefined;
+    if (skipPrompts) {
+      uri = vscode.Uri.file(
         `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
-      ),
-      saveLabel: "Generate Web Manifest",
-    });
+      )
+    }
+    else {
+      uri = await vscode.window.showSaveDialog({
+        defaultUri: vscode.Uri.file(
+          `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
+        ),
+        saveLabel: "Generate Web Manifest",
+      });
+    }
 
     if (uri) {
       // write empty manifest file
@@ -146,7 +163,15 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "}"
       );
 
-      editor.insertSnippet(maniSnippet);
+      await editor.insertSnippet(maniSnippet);
+
+      if (!skipPrompts) {
+        await handleAddingManiToIndex();
+
+        resolve();
+      }
+
+      resolve();
     }
   }
 }
@@ -283,28 +308,28 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
 
 async function handleAddingManiToIndex(): Promise<void> {
   let indexFile: undefined | vscode.Uri;
-  const indexFileData = await vscode.workspace.findFiles(
-    "**/index.html"
-    // "**/node_modules/**"
-  );
+    const indexFileData = await vscode.workspace.findFiles(
+        "**/index.html",
+        "**/node_modules/**"
+    );
 
-  if (indexFileData && indexFileData.length > 0) {
-    indexFile = indexFileData[0];
-  } else {
-    let indexFileDialogData = await vscode.window.showOpenDialog({
-      canSelectFiles: true,
-      canSelectFolders: false,
-      canSelectMany: false,
-      title: "Select your index.html",
-      filters: {
-        HTML: ["html"],
-      },
-    });
+    if (indexFileData && indexFileData.length > 0) {
+        indexFile = indexFileData[0];
+    } else {
+        let indexFileDialogData = await vscode.window.showOpenDialog({
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            title: "Select your index.html",
+            filters: {
+                HTML: ["html"],
+            },
+        });
 
-    if (indexFileDialogData) {
-      indexFile = indexFileDialogData[0];
+        if (indexFileDialogData) {
+            indexFile = indexFileDialogData[0];
+        }
     }
-  }
 
   if (indexFile) {
     const document = await vscode.workspace.openTextDocument(indexFile);
@@ -313,19 +338,18 @@ async function handleAddingManiToIndex(): Promise<void> {
     const manifest = getManifest();
 
     const goodPath = vscode.workspace.asRelativePath(manifest.fsPath);
+    console.log('goodPath', goodPath);
 
-    let linkString = `<link rel="manifest" href="${goodPath}">`;
+    let linkString = `<link rel="manifest" href="${goodPath}" />`;
 
     // find head in index file
     const start = editor.document.positionAt(
       editor.document.getText().indexOf("</head>")
     );
     // insert registerCommand in head
-    editor.insertSnippet(
+    await editor.insertSnippet(
       new vscode.SnippetString(linkString),
       start.translate(-1, 0)
     );
-
-    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
   }
 }

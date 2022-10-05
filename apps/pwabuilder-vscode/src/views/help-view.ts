@@ -59,7 +59,7 @@ export class HelpViewPanel {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="https://glitch.com/favicon.ico" />
 
-    <title>PWA Studio Help</title>
+    <title>PWABuilder Studio Help</title>
 
     <script type="module" src="${toolkitUri}"></script>
 
@@ -86,7 +86,7 @@ export class HelpViewPanel {
                 Service Workers
             </vscode-panel-tab>
             <vscode-panel-tab id="tab-4">
-                PWA Studio
+                PWABuilder Studio
             </vscode-panel-tab>
 
             <!-- general panel -->
@@ -105,7 +105,7 @@ export class HelpViewPanel {
                 </li>
 
                 <li>
-                <vscode-link href="https://aka.ms/pwa-studio-docs">Visit the PWA Studio Documentation</vscode-link>
+                <vscode-link href="https://aka.ms/pwa-studio-docs">Visit the PWABuilder Studio Documentation</vscode-link>
                 </li>
 
                 <li>
@@ -113,7 +113,7 @@ export class HelpViewPanel {
                 </li>
             </ul>
 
-            <vscode-link href="https://github.com/pwa-builder/PWABuilder/issues/new/choose">Found an issue with PWA Studio? Open an issue on Github</vscode-link>
+            <vscode-link href="https://github.com/pwa-builder/PWABuilder/issues/new/choose">Found an issue with PWABuilder Studio? Open an issue on Github</vscode-link>
            </section>
 
          </vscode-panel-view>
@@ -296,13 +296,13 @@ export class HelpViewPanel {
             <section class="container">
               <div class="side-by-side">
                 <div class="example-side">
-                  <h2>PWA Studio</h2>
+                  <h2>PWABuilder Studio</h2>
 
                   <vscode-link href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio&ssr=false#review-details">Rate and Review</vscode-link>
                 </div>
 
                 <div>
-                  <h2>PWA Studio FAQ</h2>
+                  <h2>PWABuilder Studio FAQ</h2>
 
                   <ul>
                     <li>

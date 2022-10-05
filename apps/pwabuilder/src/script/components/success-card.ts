@@ -68,6 +68,13 @@ export class SuccessCard extends LitElement {
         color: var(--secondary-font-color);
       }
 
+      @media screen and (-ms-high-contrast: white-on-black) {
+        .success-card:focus{
+          border: 4px solid white;
+          border-radius: 5px;
+        }
+      }
+
       /* < 480px */
       ${smallBreakPoint(css`
         .success-card {
@@ -117,12 +124,12 @@ export class SuccessCard extends LitElement {
 
   render() {
     return html`
-      <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank" aria-label=${"Success story of " + this.company + " link"}>
+      <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank" aria-label=${"Success story of " + this.company + " link, click for more details on separate tab"}>
         <div class="success-line-one">
            <img src=${this.imageUrl} alt="${this.company} logo"/>
-           <h1 class="success-stat">
+           <h3 class="success-stat">
              <span>${this.cardValue}</span> ${this.cardStat}
-           </h1>    
+           </h3>    
         </div>
         <p class="success-desc">${this.description}</p>
   </a>

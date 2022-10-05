@@ -142,7 +142,7 @@ function createDiagnostic(
   if (testResult !== undefined && typeof testResult !== "boolean") {
     const diagnostic = new vscode.Diagnostic(
       range,
-      `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
+      `PWABuilder Studio - ${testString}: ${test ? test.errorString : "Error"}`,
       severity
     );
 
@@ -153,7 +153,7 @@ function createDiagnostic(
   } else if (testResult === false) {
     const diagnostic = new vscode.Diagnostic(
       range,
-      `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
+      `PWABuilder Studio - ${testString}: ${test ? test.errorString : "Error"}`,
       severity
     );
 

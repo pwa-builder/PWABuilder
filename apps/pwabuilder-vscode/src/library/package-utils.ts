@@ -301,7 +301,7 @@ export async function buildAndroidOptions(): Promise<
       manifestData = await (await fetch(manifestUrl)).json();
 
       if (manifestData) {
-        manifest = manifestData;
+        manifest = (manifestData as Manifest);
       }
     } catch (err) {
       // show error message

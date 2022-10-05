@@ -9,8 +9,9 @@ import "@shoelace-style/shoelace/dist/components/details/details";
 import { runManifestChecks } from "../utils/manifest";
 import { TestResult } from "../interfaces/manifest";
 import { testSecurity } from "../checks/security";
-import { getManifestTestResults, getSwInfo } from "../checks/sw";
-import { getManifestInfo } from "../checks/manifest";
+import { getManifestTestResults } from "../checks/sw";
+import { SiteData } from "../interfaces/validation";
+import { deepEqual } from "../utils/utils";
 
 interface ValidationTests {
   passedTests: Array<TestResult>;
@@ -66,8 +67,38 @@ export class PWAScanner extends LitElement {
     `,
   ];
 
-  @state()
-  private currentUrl!: string;
+  private _siteData!: SiteData;
+
+  @property() 
+  get siteData(): SiteData {
+    return this._siteData;
+  }
+
+  set siteData(val: SiteData) {
+    const oldValue = this._siteData;
+    this._siteData = val;
+
+    if (this._siteData) {
+      if (oldValue) {
+        if (!deepEqual(oldValue.manifest, this._siteData.manifest)) {
+          this.runManifestChecks();
+        }
+        if (!deepEqual(oldValue.sw, this._siteData.sw)) {
+          this.runSwChecks();
+        }
+        // if (!deepEqual(oldValue.security, this._siteData.security)) {
+        if (this._siteData.currentUrl && oldValue.currentUrl !== this._siteData.currentUrl) {
+          this.runSecurityChecks();
+        }
+      } else {
+        this.runManifestChecks();
+        this.runSwChecks();
+        this.runSecurityChecks();
+      }
+    }
+
+    this.requestUpdate();
+  }
 
   @state() private manifestTestResults!: ValidationTests;
   @state() private swTestResults!: ValidationTests;
@@ -77,28 +108,15 @@ export class PWAScanner extends LitElement {
   @state() private swTestsLoading: boolean = true;
   @state() private securityTestsLoading: boolean = true;
 
-  async firstUpdated() {
-    let url = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (url.length > 0) {
-      this.currentUrl = url[0].url || "";
-    }
-
-    this.runManifestChecks();
-    this.runSwChecks();
-    this.runSecurityChecks();
-  }
-
   private async runManifestChecks() {
     this.manifestTestsLoading = true;
-    let manifestInfo = await getManifestInfo();
-
     const tests = await runManifestChecks({
-      manifestUrl: manifestInfo.manifestUri!,
-      initialManifest: manifestInfo.manifest!,
-      siteUrl: this.currentUrl,
+      manifestUrl: this.siteData.manifest.manifestUri!,
+      initialManifest: this.siteData.manifest.manifest!,
+      siteUrl: this.siteData.currentUrl,
       isGenerated: false,
       isEdited: false,
-      manifest: manifestInfo.manifest!,
+      manifest: this.siteData.manifest.manifest!,
     });
 
 
@@ -110,16 +128,12 @@ export class PWAScanner extends LitElement {
       failedTests: failed,
       category: "Manifest"
     }
-
     this.manifestTestsLoading = false;
-
-
   }
 
   private async runSwChecks() {
     this.swTestsLoading = true;
-    let swInfo = await getSwInfo();
-    let tests = getManifestTestResults(swInfo);
+    let tests = getManifestTestResults(this.siteData.sw);
 
     const passed = tests.filter(t => t.result);
     const failed = tests.filter(t => !t.result);
@@ -134,8 +148,11 @@ export class PWAScanner extends LitElement {
   }
 
   private async runSecurityChecks() {
+    if (!this.siteData.currentUrl) {
+      return;
+    }
     this.securityTestsLoading = true;
-    let tests = await testSecurity(this.currentUrl);
+    let tests = await testSecurity(this.siteData.currentUrl);
 
     const passed = tests.filter(t => t.result);
     const failed = tests.filter(t => !t.result);
@@ -149,12 +166,14 @@ export class PWAScanner extends LitElement {
     this.securityTestsLoading = false;
   }
 
-
-
   render() {
+    if (!this.siteData) {
+      return html`No site data`;
+    }
+
     return html`
       <div class="root">
-        <div>Current Url = ${this.currentUrl}</div>
+        <div>Current Url = ${this.siteData.currentUrl}</div>
       
         <div class="rings">
           <pwa-scanner-ring label="Manifest" .testResults=${this.manifestTestResults} ?isLoading=${this.manifestTestsLoading}>

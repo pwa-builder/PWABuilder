@@ -20,12 +20,14 @@ export interface ServiceWorkerDetectionResult {
 }
 
 export interface SecurityDataResults {
-    isHTTPS: true;
-    validProtocol: true;
-    valid: true;
+    isHTTPS: boolean;
+    validProtocol: boolean;
+    valid: boolean;
 }
 
 export interface SiteData {
+    currentUrl: string,
     manifest: ManifestDetectionResult,
-    sw: ServiceWorkerDetectionResult
+    sw: ServiceWorkerDetectionResult,
+    security?: SecurityDataResults
 }

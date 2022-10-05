@@ -512,7 +512,7 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener">Start a new PWA</a>
+                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
 
                 </div>
@@ -522,8 +522,8 @@ export class AppHome extends LitElement {
               </div>
 
               <div class="intro-grid-item">
-                <div class="grid-item-header">
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener">Use dev tools</a>
+                <div class="grid-item-header">  
+                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener" aria-label="Use dev tools, will open a separate tab">Use dev tools</a>
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </div>
                 <p>
@@ -558,8 +558,9 @@ export class AppHome extends LitElement {
                     class="navigation raise"
                     ?loading="${this.gettingManifest}"
                     ?disabled="${this.disableStart}"
-                    @click="${(e: InputEvent) => this.start(e)}">Start</sl-button>
-                  <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url" @click=${() => this.placeDemoURL()}>demo url</button></p>
+                    @click="${(e: InputEvent) => this.start(e)}"
+                    aria-label="Start your pwa, will redirect to testing page">Start</sl-button>
+                  <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url, will redirect to testing page" @click=${() => this.placeDemoURL()}>demo url</button></p>
                 </div>
 
               </div>

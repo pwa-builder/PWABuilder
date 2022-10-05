@@ -2,7 +2,7 @@
 
 ![](https://raw.githubusercontent.com/pwa-builder/pwa-studio/main/store_assets/intro-gif-new-app.gif)
 
-PWA Studio makes VSCode the BEST developer environment for building Progressive Web Apps. Using it, you can:
+PWABuilder Studio makes VSCode the BEST developer environment for building Progressive Web Apps. Using it, you can:
 
 * Start building a brand new PWA using the [pwa-starter](https://aka.ms/pwa-starter) template
 * Convert an existing web app into a PWA
@@ -17,7 +17,7 @@ PWA Studio makes VSCode the BEST developer environment for building Progressive 
 
 [Found a bug?](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
 
-## First Steps with PWA Studio
+## First Steps with PWABuilder Studio
 
 Here are a few places to check out in the documentation if you are using the extension for the first time:
 <br>

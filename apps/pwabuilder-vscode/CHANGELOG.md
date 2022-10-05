@@ -2,7 +2,18 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
+## [v1.1.0]
+
+- Updated deploy command to offer direct deploy to Azure Static Web Apps! https://github.com/pwa-builder/PWABuilder/issues/2674
+- Updated Service Worker command to NOT use Workbox by default (still available with the Advanced option), making the basic option much easier to implement into a wider range of projects / setups. https://github.com/pwa-builder/PWABuilder/issues/2672
+- New Publish Checklist for publishing your PWA to the app stores. This checklist walks you, step-by-step, through the process of publishing your PWA to our supported app stores. https://github.com/pwa-builder/PWABuilder/issues/2673
+- You can now package your PWA for Meta Quest devices right from VSCode! https://github.com/pwa-builder/PWABuilder/issues/3009
+- Fixes issues with SW detection https://github.com/pwa-builder/PWABuilder/issues/3180
+- Various small bug fixes
+
+
 ## [v1.0.4]
+
 - New snippets for screenshots and shortcuts + remove pwa prefix from snippets for better discoverability: https://github.com/pwa-builder/pwa-studio/pull/75
 - Preview builds available on our Actions tab here on Github from the dev branch
 - Guidance messages for Web Manifest generation: https://github.com/pwa-builder/pwa-studio/commit/6d7fcc6760e7f5e1176e65d68ea67bdbd7e92f7d
@@ -40,7 +51,7 @@ All notable changes to the "pwa-studio" extension will be documented in this fil
 ## [v0.2.5]
 
 - Added better usage analytics. No personal information is handled, only command usage. This will allow
-us to better scope our work in the future to what is being used the most in PWA Studio.
+us to better scope our work in the future to what is being used the most in PWABuilder Studio.
 
 ## [v0.2.4]
 
