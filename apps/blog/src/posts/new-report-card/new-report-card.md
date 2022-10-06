@@ -72,7 +72,7 @@ The security modal will scan your site for three required components of a secure
 
 ## Get Started Today
 
-Go to [pwabuilder.com](https://pwabuilder.com) to try out the new experience and let us know what you think. 
+Go to [pwabuilder.com](https://pwabuilder.com/) to try out the new experience and let us know what you think by tweeting at [@pwabuilder](https://twitter.com/pwabuilder) with your feedback.
 
 Running into issues? Have ideas or suggestions? Please open an issue on our [GitHub](https://github.com/pwa-builder/pwabuilder).
 
