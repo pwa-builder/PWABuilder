@@ -24,7 +24,7 @@ Today marks a big day in the history of the PWABuilder site. Over the past decad
 
 Today with our refreshed experience we are one step closer to our goal of helping developers ship high-quality experiences to their customers.
 
-## The refreshed Report Card
+## The Refreshed Report Card
 
 <img src="/posts/new-report-card/new-report-card.png" alt="New Report Card" role="presentation"/>
 
@@ -70,7 +70,7 @@ Here you can easily choose one of three prepackaged service workers to handle of
 
 The security modal will scan your site for three required components of a secure store ready PWA. The three required components are HTTPS, a valid SSL certificate, and ensuring that your site does not serve mixed content. If you are having issues or need help with getting your site to comply with the security three required security components click on the “security documentation” link for more information on how to make your PWA more secure.
 
-## Try it today
+## Get Started Today
 
 Go to [pwabuilder.com](https://pwabuilder.com) to try out the new experience and let us know what you think. 
 
