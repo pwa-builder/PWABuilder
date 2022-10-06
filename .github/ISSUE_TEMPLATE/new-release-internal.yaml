@@ -33,27 +33,33 @@ body:
         #### Code
           - [ ] Link to issue tracking board: {link_goes_here}
           - [ ] All P0s completed
-          - [ ] PR submitted to main and approved
+          - [ ] All PRs have been reviewed and merged into dev branch at least one week before release
+          - [ ] PR authored from dev to main - PR: {PR goes here}
+          - [ ] PR approved
           - [ ] PR merged
 
         #### Design
           - [ ] Design reviewed and signed off
 
         #### Bug Bash
-          - [ ] Bug bash scheduled
+          - [ ] Internal update and bug bash scheduled (make sure all code has merged in dev first)
 
         #### Docs Release Notes
-          - [ ] Authored and PR approved
+          - [ ] PR authored at least a week before release - PR: {PR goes here}
+          - [ ] PR approved
           - [ ] PR merged
 
         #### Docs
-          - [ ] Authored and PR approved
+          - [ ] PR authored at least a week before release - PR: {PR goes here}
+          - [ ] PR approved
           - [ ] PR merged
 
         #### Blog Post
-          - [ ] Authored and PR approved
+          - [ ] PR authored at least a week before release - PR: {PR goes here}
+          - [ ] PR approved
           - [ ] PR merged
 
         #### Social
           - [ ] Tweeted
           - [ ] Discord updated
+          - [ ] Internal update
