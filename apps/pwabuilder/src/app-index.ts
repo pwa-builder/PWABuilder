@@ -97,8 +97,6 @@ export class AppIndex extends LitElement {
         ev.detail.location.route?.component // page name
       );
     });
-
-    console.info('[VI]{version} - {date}[/VI]');
   }
 
   firstUpdated() {
