@@ -202,8 +202,9 @@ export class AppReport extends LitElement {
           flex-direction: column;
         }
         #app-card-header {
-          display: flex;
-          column-gap: 10px;
+          display: grid;
+          grid-template-columns: 1fr 2fr 4fr;
+          gap: 10px;
           align-items: center;
           font-size: 14px;
           padding: 2em;
@@ -228,7 +229,6 @@ export class AppReport extends LitElement {
           font-size: 24px;
         }
         #card-info {
-          width: 50%;
           overflow: hidden;
           white-space: nowrap;
         }
@@ -864,9 +864,7 @@ export class AppReport extends LitElement {
           #app-actions {
             width: 100%;
           }
-        }
 
-        @media(max-width: 900px){
           #two-cell-row {
             flex-direction: column;
             row-gap: 1em;
@@ -879,6 +877,16 @@ export class AppReport extends LitElement {
           }
           #sec-header {
             min-height: unset;
+          }
+        }
+
+        @media(max-width: 600px){
+          #app-card-header{
+            grid-template-columns: 1fr 5fr;
+            grid-template-rows: 1fr 1fr;
+          }
+          #app-card-desc, .skeleton-desc {
+            grid-column: 1 / 3;
           }
         }
 
@@ -1660,7 +1668,7 @@ export class AppReport extends LitElement {
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                 </div>
-                <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+                <sl-skeleton class="app-info-skeleton skeleton-desc" effect="pulse"></sl-skeleton>
               </div>
               <div id="app-card-footer">
                 <sl-skeleton class="app-info-skeleton-half" effect="pulse"></sl-skeleton>
