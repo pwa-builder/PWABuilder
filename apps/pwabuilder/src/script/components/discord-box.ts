@@ -11,11 +11,7 @@ export class DiscordBox extends LitElement {
     return css`
       #discord-box {
         display: flex;
-        align-items: flex-start;
-        position: fixed;
         z-index: 1;
-        bottom: 0;
-        right: 0;
         width: 200px;
         height: 30px;
         background-color: #F5F7FA;
@@ -23,6 +19,7 @@ export class DiscordBox extends LitElement {
         border-top-left-radius: 10px;
         column-gap: 10px;
         align-items: center;
+        margin-left: auto;
       }
 
       #discord-box #logo {
