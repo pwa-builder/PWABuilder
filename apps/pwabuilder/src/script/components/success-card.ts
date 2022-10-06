@@ -75,15 +75,31 @@ export class SuccessCard extends LitElement {
         }
       }
 
+      @media(max-width: 800px){
+        .success-card img {
+          margin-bottom: 10px;
+        }
+        .success-line-one {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        .success-stat span {
+          margin-right: 0;
+        }
+        .success-line-one h3 {
+          font-size: 20px;
+          text-align: center;
+        }
+      }
+
       /* < 480px */
       ${smallBreakPoint(css`
         .success-card {
           width: 280px;
           box-sizing: border-box;
         }
-        .success-line-one h3 {
-          font-size: 20px;
-        }
+        
       `)}
 
       /* 480px - 639px */
