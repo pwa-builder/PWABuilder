@@ -2,13 +2,13 @@ import { fetchOrCreateManifest } from '../manifest';
 import { env } from '../../utils/environment';
 import { getURL } from '../app-info';
 import { getChosenServiceWorker } from '../../services/service_worker';
-import { Manifest } from '../../utils/interfaces';
+import { Manifest } from '@pwabuilder/manifest-validation';
 
 export let hasGeneratedWebPackage = false;
 
 export async function generateWebPackage() {
   const manifestContext = await fetchOrCreateManifest();
-  const manifest = manifestContext.manifest;
+  const manifest = manifestContext!.manifest;
   const url = getURL();
   const chosenSW = getChosenServiceWorker();
 

@@ -11,26 +11,17 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
-import { isValidURL } from '../utils/url';
+import { cleanUrl, isValidURL } from '../utils/url';
 
-import '../components/content-header';
-import '../components/loading-button';
-import '../components/dropdown-menu';
-import '../components/app-sidebar';
 import '../components/companies-packaged';
-import '../components/resource-hub-new';
+import '../components/resource-hub';
 import '../components/success-stories';
 import '../components/community-hub';
 
-//@ts-ignore
-import style from '../../../styles/error-styles.css';
-
-// For more info on the @pwabuilder/pwainstall component click here https://github.com/pwa-builder/pwa-install
-import '@pwabuilder/pwainstall';
 import { Router } from '@vaadin/router';
-import { getProgress, getURL, setProgress } from '../services/app-info';
+import { setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
-import { fetchOrCreateManifest, resetInitialManifest } from '../services/manifest';
+import { resetInitialManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('app-home')
@@ -44,8 +35,16 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return [
-      style,
       css`
+
+        :host {
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-color-primary-300: #4F3FB6;
+        }
+
         #home-block::before {
           content: "";
         }
@@ -60,7 +59,7 @@ export class AppHome extends LitElement {
           align-items: center;
           padding: 4em;
         }
-        
+
         #mani {
           position: fixed;
         }
@@ -69,7 +68,7 @@ export class AppHome extends LitElement {
           width: 1000px;
         }
         app-header::part(header) {
-          background: transparent;
+          background-color: transparent;
           position: absolute;
           left: 0;
           right: 0;
@@ -174,25 +173,60 @@ export class AppHome extends LitElement {
           grid-column: 2;
           grid-row: 1;
         }
-        .raise:hover,
-        .raise:focus {
+        .raise:hover:not(disabled){
+          transform: scale(1.01);
+        }
+        .raise:focus:not(disabled) {
           transform: scale(1.01);
         }
         #demo {
           grid-column: 1 / 2;
           grid-row: 2;
         }
-        #input-form fast-text-field {
+        #input-form sl-input {
           margin-right: 10px;
         }
-        #input-form fast-text-field::part(root) {
+        #input-form sl-input::part(base) {
           border: 1px solid #e5e5e5;
           border-radius: var(--input-radius);
-        }
-        #input-form fast-text-field::part(control) {
           color: var(--font-color);
-          width: 26em;
+          width: 28em;
+          font-size: 14px;
+          height: 3em;
         }
+
+        #input-form sl-input::part(input) {
+          height: 3em;
+        }
+
+        #input-form .error::part(base){
+          border-color: #eb5757;
+          --sl-input-focus-ring-color: #eb575770;
+          --sl-focus-ring-width: 3px;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #eb5757ac;
+        }
+
+        .error-message {
+          color: var(--error-color);
+          font-size: var(--small-font-size);
+          margin-top: 6px;
+        }
+
+        #input-form .navigation::part(base) {
+          background-color: black;
+          color: white;
+          font-size: 14px;
+          height: 3em;
+          width: 25%;
+          border-radius: 50px;
+        }
+
+        #input-form .navigation::part(label){
+          display: flex;
+          align-items: center;
+        }
+
         #input-block {
           display: flex;
           flex-direction: column;
@@ -256,18 +290,27 @@ export class AppHome extends LitElement {
           }
           #input-area {
             width: 100%;
+            column-gap: 10px;
           }
           #input-and-error {
             margin-right: 10px;
+            width: 100%;
+          }
+          sl-input {
+            width: 100%;
+            margin-right: 10px;
+          }
+          #input-form sl-input::part(base){
+            width: 100%;
           }
           #input-form {
             width: 100%;
           }
-          #input-form fast-text-field {
-            margin-right: 0;
-          }
           #home-header{
             font-size: 40px;
+          }
+          #input-form .navigation::part(base) {
+            width: 8em;
           }
         `)}
 
@@ -283,7 +326,7 @@ export class AppHome extends LitElement {
             row-gap: 5px;
           }
         }
-        
+
         /* < 480px */
         @media (max-width: 480px) {
           #home-block {
@@ -307,7 +350,13 @@ export class AppHome extends LitElement {
             row-gap: 1em;
           }
           #input-and-error{
-            width: 85%;
+            width: 100%;
+          }
+          sl-input {
+            width: 100%;
+          }
+          #input-form sl-input::part(base){
+            width: 100%;
           }
           #input-area {
             width: 100%;
@@ -325,17 +374,14 @@ export class AppHome extends LitElement {
           #input-form {
             width: 100%;
           }
-          #input-form fast-text-field {
-            margin-right: 0;
-          }
-          #input-form fast-text-field::part(control) {
-            width: 100%;
-          }
           .grid-item-header {
             font-size: 20px;
           }
           #input-header {
             font-size: 20px;
+          }
+          #input-form .navigation::part(base) {
+            width: 8em;
           }
         }
         @media (max-width: 415px) {
@@ -351,20 +397,8 @@ export class AppHome extends LitElement {
             width: 600px;
           }
         }
-        @media screen and (-ms-high-contrast: white-on-black) {
-          #input-form fast-text-field::part(control):focus {
-            outline: none;
-          }
-          #input-form fast-text-field::part(control):focus-visible {
-            outline: skyblue solid 6px;
-            outline-offset: 2px;
-          }
-          #input-form fast-text-field::part(control) {
-            color: white;
-          }
-        } 
-        
-        /*1024px - 1365px*/ 
+
+        /*1024px - 1365px*/
         ${xLargeBreakPoint(css`
             #home-block {
               background: url(/assets/new/Hero1366_withmani.png);
@@ -391,7 +425,7 @@ export class AppHome extends LitElement {
     // Resetting for a new url
     sessionStorage.clear();
     resetInitialManifest();
-    
+
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
 
@@ -435,46 +469,21 @@ export class AppHome extends LitElement {
 
     if (this.siteURL) {
       this.gettingManifest = true;
+      this.siteURL = cleanUrl(this.siteURL);
       const isValidUrl = isValidURL(this.siteURL);
-      
-      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint, 
+
+      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
       {
         url: this.siteURL,
         valid: isValidUrl
       });
-      
+
       if (isValidUrl) {
-        try {
-          const manifestContext = await fetchOrCreateManifest(this.siteURL);
-          this.errorGettingURL = false;
-
-          const progress = getProgress();
-          this.updateProgress(progress);
-
-          const goodURL = manifestContext.siteUrl;
-          
-          if (goodURL !== undefined) {
-            Router.go(`/testing?site=${goodURL}`);
-          }
-        } catch (err) {
-          // couldnt get manifest
-          // continue forward with zeroed out results
-          // and use generated manifest
-          this.errorGettingURL = false;
-
-          const progress = getProgress();
-          this.updateProgress(progress);
-
-          const goodURL = getURL();
-
-          if (goodURL !== undefined) {
-            Router.go(`/testing?site=${goodURL}`);
-          }
-        }
+        Router.go(`/reportcard?site=${this.siteURL}`);
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
         this.errorGettingURL = true;
-        
+
         await this.updateComplete;
 
         (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
@@ -486,6 +495,7 @@ export class AppHome extends LitElement {
       setTimeout(() => this.gettingManifest = false, 100);
     }
   }
+
 
   updateProgress(progressData: ProgressList) {
     if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
@@ -519,13 +529,13 @@ export class AppHome extends LitElement {
                 <div class="grid-item-header">  
                   <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
-                  
+
                 </div>
                 <p>
                   Looking to build a new Progressive Web App? Checkout all the documentation here.
                 </p>
               </div>
-          
+
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
                   <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener" aria-label="Use dev tools, will open a separate tab">Use dev tools</a>
@@ -536,7 +546,7 @@ export class AppHome extends LitElement {
                 </p>
               </div>
             </section>
-          
+
             <form id="input-form" slot="input-container" @submit="${(e: InputEvent) => this.start(e)}">
               <div id="input-block" role="region">
                 <div id="input-header-holder">
@@ -548,26 +558,32 @@ export class AppHome extends LitElement {
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
-                    <fast-text-field slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                    <sl-input slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
                       class="${classMap({ error: this.errorGettingURL })}" aria-labelledby="input-header" @input="${(e: InputEvent) => this.handleURL(e)}">
-                    </fast-text-field>
-              
+                    </sl-input>
+
                     ${this.errorMessage && this.errorMessage.length > 0
                       ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
                       : null}
                   </div>
-            
-                  <loading-button id="start-button" type="submit" class="navigation raise" ?loading="${this.gettingManifest}" ?disabled="${this.disableStart}"
-                  @click="${(e: InputEvent) => this.start(e)}" aria-label="Start your pwa, will redirect to testing page">Start</loading-button>
+
+                  <sl-button
+                    id="start-button"
+                    type="submit"
+                    class="navigation raise"
+                    ?loading="${this.gettingManifest}"
+                    ?disabled="${this.disableStart}"
+                    @click="${(e: InputEvent) => this.start(e)}"
+                    aria-label="Start your pwa, will redirect to testing page">Start</sl-button>
                   <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url, will redirect to testing page" @click=${() => this.placeDemoURL()}>demo url</button></p>
                 </div>
-                
+
               </div>
             </form>
           </div>
         </div>
         <companies-packaged></companies-packaged>
-        <resource-hub-new></resource-hub-new>
+        <resource-hub></resource-hub>
         <success-stories></success-stories>
         <community-hub></community-hub>
       </main>

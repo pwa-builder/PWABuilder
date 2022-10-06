@@ -1,4 +1,5 @@
-import {
+export {};
+/* import {
   ProgressList,
   RawTestResult,
   Status,
@@ -101,3 +102,4 @@ function updateProgress(progress: ProgressList, results: RawTestResult) {
   const newProgress = progress;
   setProgress(newProgress);
 }
+ */

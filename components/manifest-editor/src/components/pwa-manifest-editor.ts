@@ -7,18 +7,13 @@ import "./manifest-settings-form"
 import "./manifest-platform-form"
 import "./manifest-icons-form"
 import "./manifest-screenshots-form"
-import "./manifest-preview-form"
+// import "./manifest-preview-form"
 import "./manifest-code-form"
 
-import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-//import { validateRequiredFields } from '@pwabuilder/manifest-validation';
-
-import '@shoelace-style/shoelace/dist/components/tab/tab.js';
-import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
-import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
+/* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
  * @since 0.1
@@ -58,7 +53,12 @@ export class PWAManifestEditor extends LitElement {
 
   @property({type: String}) manifestURL: string = '';
 
+  @property({type: String}) baseURL: string = '';
+
+  @property({type: String}) startingTab: string = "info";
+
   @state() manifest: Manifest = {};
+  @state() selectedTab: string = "info";
 
   static get styles() {
     return css`
@@ -66,20 +66,43 @@ export class PWAManifestEditor extends LitElement {
         --sl-font-size-small: 14px;
         --sl-spacing-medium: .75rem;
         --sl-space-large: 1rem;
+        position: relative;
+      }
+      .error-indicator {
+        position: absolute;
+        right: .5em;
       }
       sl-tab-group {
         --indicator-color: #4F3FB6;
       }
-      sl-tab[active]::part(base) {
-        color: #4F3FB6;
-      }
       sl-tab::part(base):hover {
         color: #4F3FB6;
+      }
+      sl-tab[active]::part(base) {
+        color: #4F3FB6;
+        font-weight: bold;
       }
       sl-tab-panel::part(base){
         overflow-y: auto;
         overflow-x: hidden;
         height: 500px;
+        padding: 1em .5em .5em .5em;
+      }
+
+      @media(max-width: 765px){
+
+      }
+
+      @media(max-width: 600px){
+
+      }
+
+      @media(max-width: 480px){
+        sl-tab::part(base) {
+          --sl-font-size-small: 12px;
+          --sl-spacing-medium: .5rem;
+          --sl-space-large: .75em;
+        }
       }
     `;
   }
@@ -106,7 +129,9 @@ export class PWAManifestEditor extends LitElement {
 
     this.manifest = {...this.manifest, [field]: change};
 
-    console.log("updated manifest -->", this.manifest);
+    //console.log("Manifest Successfuly Updated.")
+
+    //console.log(`updated manifest with new field ${field}`, this.manifest);
   }
 
   public resetManifest(){
@@ -130,6 +155,13 @@ export class PWAManifestEditor extends LitElement {
     element.click();
 
     document.body.removeChild(element);
+
+    let manifestDownloaded = new CustomEvent('manifestDownloaded', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(manifestDownloaded);
+
   }
 
   // Think about what this function should actually return?
@@ -139,22 +171,92 @@ export class PWAManifestEditor extends LitElement {
     return this.manifest.screenshots;
   }
 
+  errorInTab(e: CustomEvent){
+    let tabs = this.shadowRoot!.querySelectorAll('sl-tab');
+    let tab = tabs[0];
+
+    let panel = e.detail.panel;
+    let areThereErrors = e.detail.areThereErrors;
+
+    tabs.forEach((temp: any) => {
+      if(temp.panel === panel){
+        tab = temp;
+      }
+    });
+    if(areThereErrors){
+      if(tab.childElementCount == 0){
+        tab.innerHTML = `${tab.innerHTML}<span class="error-indicator" style='color: #eb5757'>!</span>`;
+      }
+    } else {
+      tab.innerHTML = tab.innerHTML.split("<")[0];
+    }
+    
+  }
+
+  cleanUrl(url: string): string {
+    let cleanedUrl: string | undefined;
+  
+    if (url && !url.startsWith('http') && !url.startsWith('https')) {
+      cleanedUrl = 'https://' + url;
+    }
+  
+    if (cleanedUrl) {
+      const test = this.isValidURL(cleanedUrl);
+  
+      if (test === false && !url.toLowerCase().startsWith('http://')) {
+        throw new Error(
+          'This error means that you may have a bad https cert or the url may not be correct'
+        );
+      }
+  
+      return cleanedUrl;
+    }
+  
+    // original URL is ok
+    return url;
+  }
+  
+  isValidURL(str: string) {
+    // from https://stackoverflow.com/a/14582229 but removed the ip address section
+    var pattern = new RegExp(
+      '^((https?:)?\\/\\/)?' + // protocol
+      '(?:\\S+(?::\\S*)?@)?(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}' + // domain name
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\\\#[-a-z\\\\d_]*)?', // fragment locator
+      'i' // case insensitive
+    );
+    return !!pattern.test(str);
+  }
+
+  setSelectedTab(e: any){
+    this.selectedTab = e.detail.name;
+    let tabSwitched = new CustomEvent('tabSwitched', {
+      detail: {
+          tab: this.selectedTab,
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(tabSwitched);
+  }
+
   render() {
     return html`
-      <sl-tab-group id="editor-tabs">
-        <sl-tab slot="nav" panel="info">Info</sl-tab>
-        <sl-tab slot="nav" panel="settings">Settings</sl-tab>
-        <sl-tab slot="nav" panel="platform">Platform</sl-tab>
-        <sl-tab slot="nav" panel="icons">Icons</sl-tab>
-        <sl-tab slot="nav" panel="screenshots">Screenshots</sl-tab>
-        <sl-tab slot="nav" panel="preview">Preview</sl-tab>
+      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)}>
+        <sl-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</sl-tab>
+        <sl-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</sl-tab>
+        <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
+        <sl-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</sl-tab>
+        <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
+        <!-- <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
         <sl-tab slot="nav" panel="code">Code</sl-tab>
-        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-info-form></sl-tab-panel>
-        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-settings-form></sl-tab-panel>
-        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-platform-form></sl-tab-panel>
-        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-icons-form></sl-tab-panel>
-        <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-screenshots-form></sl-tab-panel>
-        <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.manifestURL} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-preview-form></sl-tab-panel>
+        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-info-form></sl-tab-panel>
+        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-settings-form></sl-tab-panel>
+        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-platform-form></sl-tab-panel>
+        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-icons-form></sl-tab-panel>
+        <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-screenshots-form></sl-tab-panel>
+        <!-- <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-preview-form></sl-tab-panel> -->
         <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-code-form></sl-tab-panel>
       </sl-tab-group>
     `;

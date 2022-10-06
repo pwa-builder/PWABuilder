@@ -56,21 +56,23 @@ export class ComapniesPackaged extends LitElement {
         background-position: center;
       }
       .controls {
-        border: none;
+        height: 25px;
+        width: 25px;
+        border: 1px solid #4F3FB6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: none;
-        height: 20px;
-        width: auto;
       }
 
       .controls:hover {
         cursor: pointer;
       }
 
-      .controls ion-icon {
+      sl-icon {
         color: #4F3FB6;
-        padding: 5px;
-        border: 1px solid #4F3FB6;
-        border-radius: 50%;
+        font-size: 15px;
       }
 
       @keyframes scroll {
@@ -164,7 +166,7 @@ export class ComapniesPackaged extends LitElement {
       }
 
       @media screen and (-ms-high-contrast: white-on-black) {
-        .controls ion-icon {
+        .controls sl-icon {
           color: white;
           border-color: white;
         }
@@ -177,9 +179,8 @@ export class ComapniesPackaged extends LitElement {
     super();
   }
 
-  firstUpdated() {
-    // commenting out the code that randomizes the order
-    // so that we can control which companies appear in what order.
+  connectedCallback(): void {
+    super.connectedCallback();
     /* const shuffled = this.shuffle(this.companies);
     this.companies = [...shuffled]; */
   }
@@ -236,7 +237,14 @@ export class ComapniesPackaged extends LitElement {
             )}
         </div>
       </div>
-      ${this.paused ? html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="play" aria-label="Play apps scrolling button"></ion-icon></button>` : html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}><ion-icon name="pause" aria-label="Pause apps scrolling button"></ion-icon></button>`}
+      ${this.paused ? 
+        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}>
+              <sl-icon name="play-fill" aria-label="Play apps scrolling button"></sl-icon>
+            </button>` : 
+            
+        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}> 
+              <sl-icon name="pause-fill" aria-label="Pause apps scrolling button"></sl-icon>
+            </button>`}
     </div>
     `;
   }

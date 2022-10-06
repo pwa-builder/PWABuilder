@@ -1,4 +1,3 @@
-
 interface DownloadConfig {
   id?: string;
   fileName: string;
@@ -15,11 +14,11 @@ export async function download(config: DownloadConfig) {
     };
 
     if (config.blob) {
-      let link = document.createElement("a");
+      let link = document.createElement('a');
 
       link.href = URL.createObjectURL(config.blob);
 
-      link.setAttribute("download", fsOpts.fileName);
+      link.setAttribute('download', fsOpts.fileName);
 
       link.click();
     }

@@ -1,26 +1,24 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep } from '../utils/analytics';
+import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
-import { IOSAppPackageOptions } from '../utils/ios-validation';
-import { WindowsPackageOptions } from '../utils/win-validation';
-import { AndroidPackageOptions } from '../utils/android-validation';
-import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
-import { fileSave } from 'browser-fs-access';
 
 import {
   // smallBreakPoint,
   mediumBreakPoint,
   largeBreakPoint,
-  xLargeBreakPoint,
+  //xLargeBreakPoint,
   xxxLargeBreakPoint,
+  smallBreakPoint,
 } from '../utils/css/breakpoints';
 
 import './windows-form';
 import './android-form';
 import './ios-form';
 import './oculus-form';
+import { AppPackageFormBase } from './app-package-form-base';
+import { PackageOptions } from '../utils/interfaces';
 
 @customElement('publish-pane')
 export class PublishPane extends LitElement {
@@ -41,7 +39,35 @@ export class PublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
+  @state() errorMessages: TemplateResult[] = [];
+
   
+  @state() storeMap: any = {
+  "Windows": 
+    {
+      "logo": "/assets/windows_icon.svg",
+      "packaging_text": "Click below for instructions on how to submit to the Windows Store.",
+      "package_instructions": "https://docs.pwabuilder.com/#/builder/windows"
+    },
+  "Android": 
+    {
+      "logo": "/assets/android_icon.svg"
+      /* Android packaging text is handle in the function so that it will update on apk toggle */
+    },
+  "iOS": 
+    {
+      "logo": "/assets/apple_icon.svg",
+      "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
+      "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
+    },
+  "Meta": 
+    {
+      "logo": "/assets/meta_icon.svg",
+      "packaging_text": "Click below for instructions on how to submit to the Meta Quest Store.",
+      "package_instructions": "https://docs.pwabuilder.com/#/builder/meta"
+    }
+}
+
 
   readonly platforms: ICardData[] = [
     {
@@ -67,7 +93,7 @@ export class PublishPane extends LitElement {
       icon: '/assets/Publish_Android.svg',
       renderDownloadButton: () => this.renderAndroidDownloadButton()
     },
-    
+
     {
       title: 'iOS',
       factoids: [
@@ -99,40 +125,40 @@ export class PublishPane extends LitElement {
       * {
         box-sizing: border-box;
       }
-      
-      #frame-wrapper {
-        display: flex;
-        flex-direction: column;
-        row-gap: .5em;
+
+      #pp-frame-wrapper {
         width: 100%;
+        height: 90vh;
       }
-      #frame-content {
+      #pp-frame-content {
         display: flex;
         flex-direction: column;
+        height: 100%;
       }
-      #frame-header {
+      #pp-frame-header {
         display: flex;
         flex-direction: column;
-        row-gap: .5em;
+        row-gap: .25em;
         padding: 1em;
         padding-bottom: 0;
       }
-      #frame-header > * {
+      #pp-frame-header > * {
         margin: 0;
       }
-      #frame-header h1 {
+      #pp-frame-header h1 {
         font-size: 24px;
       }
-      #frame-header p {
+      #pp-frame-header p {
         font-size: 14px;
       }
       .card-wrapper {
         width: 100%;
-        max-height: 330px;
+        height: 100%;
         display: flex;
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
+        padding: 1em;
       }
       .packaged-tracker {
         height: max-content;
@@ -162,7 +188,6 @@ export class PublishPane extends LitElement {
         align-items: flex-start;
         justify-content: flex-start;
         width: 100%;
-        padding: 1em 1.5em;
         row-gap: .45em;
       }
       .title-block h3 {
@@ -188,10 +213,12 @@ export class PublishPane extends LitElement {
       }
       #store-cards {
         width: 100%;
+        height: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-gap: 1em;
+        grid-gap: .75em;
         padding: 1em;
+        overflow-y: auto;
       }
       app-button {
         display: flex;
@@ -201,8 +228,8 @@ export class PublishPane extends LitElement {
         all: unset;
         width: 75%;
         background-color: black;
-        color: white; 
-        font-size: 16px;
+        color: white;
+        font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
         border: none;
@@ -213,26 +240,32 @@ export class PublishPane extends LitElement {
         cursor: pointer;
         background-color: rgba(0, 0, 0, 0.75);
       }
-      #apk-type {
+      #apk-tabs {
         display: flex;
         align-items: baseline;
         width: 100%;
         border-bottom: 2px solid #5D5DB9;
         margin-top: 20px;
-        margin-bottom: 40px;
+        margin-bottom: 14px;
       }
-      #apk-type p {
+      .tab-holder {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: .5em;
+        justify-content: center;
+      }
+      .tab-holder p {
         font-size: 20px;
         font-weight: 700;
         line-height: 20px;
         letter-spacing: 0px;
         text-align: center;
-        width: 100%;
-        height: 100%;
         margin: 0;
         padding: 10px 0;
+        white-space: nowrap;
       }
-      #apk-type p:hover {
+      .tab-holder p:hover {
         cursor: pointer;
       }
       #other-android{
@@ -247,67 +280,331 @@ export class PublishPane extends LitElement {
         border-bottom: 5px solid #5D5DB9;
         color: #5D5DB9;
       }
-      
+
       .unselected-apk {
         border-bottom: 5px solid transparent;
       }
-      #form-header {
+      #pp-form-header {
         display: flex;
         flex-direction: column;
         background-color: #F2F3FB;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
         padding: 1em;
-        gap: 1.5em;
+        gap: .5em;
       }
-      #form-header > img {
+      #pp-form-header > img {
         width: 25px;
       }
-      #form-header > button {
+      #pp-form-header > button {
         all: unset;
       }
-      #form-header > button:hover {
+      #pp-form-header > button:hover {
         cursor: pointer;
       }
-      #form-header-content {
+      #pp-form-header-content {
         display: flex;
         gap: 1em;
       }
-      #form-header-content img {
+      #pp-form-header-content img {
         height: 50px;
       }
-      #form-header-text {
+      #pp-form-header-text {
         display: flex;
         flex-direction: column;
       }
-      #form-header-text > * {
+      #pp-form-header-text > * {
         margin: 0;
       }
-      #form-header-text h1 {
+      #pp-form-header-text h1 {
         font-size: 24px;
+        white-space: nowrap;
+        line-height: 24px;
       }
-      #form-header-text p {
+      #pp-form-header-text p {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.5)
       }
-      #form-area {
-        padding: 1em;
+
+      windows-form, android-form, ios-form, oculus-form {
+        height: 100%;
       }
-      
+
+      #form-area {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        position: relative;
+      }
+
+      #form-area[data-store="Android"] {
+        padding-top: 0;
+        flex-direction: column;
+      }
+
+      .dialog::part(body){
+        padding: 0;
+        width: 100%;
+      }
+      .dialog::part(title){
+        display: none;
+      }
+      .dialog::part(panel) {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 20px;
+      }
+      .dialog::part(overlay){
+        backdrop-filter: blur(10px);
+      }
+      .dialog::part(close-button__base){
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
+      #unsigned-tooltip{
+        position: relative;
+      }
+
+      .toolTip {
+        visibility: hidden;
+        font-size: 14px;
+        width: 150px;
+        background: black;
+        color: white;
+        font-weight: 500;
+        text-align: center;
+        border-radius: 6px;
+        padding: .75em;
+        /* Position the tooltip */
+        position: absolute;
+        top: 25px;
+        left: -100px;
+        z-index: 1;
+        box-shadow: 0px 2px 20px 0px #0000006c;
+      }
+      #unsigned-tooltip:hover .toolTip {
+        visibility: visible;
+      }
+
+      #errors {
+        position: absolute;
+        bottom: .5em;
+      }
+
+      .error-holder {
+        display: flex;
+        gap: .5em;
+        align-items: flex-start;
+        background-color: #FAEDF1;
+        padding: .5em;
+        border-left: 4px solid #EB5757;
+        border-radius: 3px;
+        margin: 0 1em;
+      }
+
+      .error-holder p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .error-title {
+        font-weight: bold;
+      }
+
+      .error-actions {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+        margin-top: .25em;
+      }
+
+      .error-actions > * {
+        all: unset;
+        color: black;
+        font-weight: bold;
+        font-size: 14px;
+        border-bottom: 1px solid transparent;
+      }
+
+      .error-actions > *:hover {
+        cursor: pointer;
+        border-bottom: 1px solid black;
+      }
+
+      .close_error:hover {
+        cursor: pointer;
+      }
+
+      #form-extras {
+        display: flex;
+        justify-content: space-between;
+        padding: 1.5em 2em;
+        background-color: #F2F3FB;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+      }
+
+      #form-details-block {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      #form-details-block p {
+        font-size: 14px;
+        color: #808080;
+      }
+
+      #form-options-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .5em;
+      }
+
+      #generate-submit::part(base) {
+        background-color: black;
+        color: white;
+        height: 3em;
+        width: 100%;
+        border-radius: 50px;
+      }
+
+      #form-extras sl-button::part(label){
+        font-size: 16px;
+        padding: .5em 2em;
+        display: flex;
+        align-items: center;
+      }
+
+      .arrow_link {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-weight: bold;
+        margin-bottom: .25em;
+        font-size: 14px;
+      }
+      .arrow_link a {
+        text-decoration: none;
+        border-bottom: 1px solid rgb(79, 63, 182);
+        font-size: 1em;
+        font-weight: bold;
+        margin: 0px 0.5em 0px 0px;
+        line-height: 1em;
+        color: rgb(79, 63, 182);
+      }
+      .arrow_link a:visited {
+        color: #4F3FB6;
+      }
+      .arrow_link:hover {
+        cursor: pointer;
+      }
+      .arrow_link:hover img {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+          transform: translateX(-5px);
+        }
+        60% {
+            transform: translateX(5px);
+        }
+      }
+
+      #tou-link{
+        color: 757575;
+        font-size: 14px;
+      }
+
+      @media(max-width: 640px){
+        #form-extras {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1em;
+        }
+        #form-details-block {
+          flex-direction: column;
+          gap: .75em;
+          align-items: center;
+          text-align: center;
+          width: 100%;
+        }
+        #form-options-actions {
+          flex-direction: column;
+        }
+      }
+
+      @media(min-height: 900px){
+        #pp-frame-wrapper {
+          width: 100%;
+          height: 80vh;
+        }
+      }
+
+      /* > 1920 */
+      ${xxxLargeBreakPoint(css``)}
+
+      /* 640px - 1023px */
+      ${largeBreakPoint(css``)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-        
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: auto;
+        }
       `)}
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
-        
-      `)}
-      /*1024px - 1365px*/
-      ${xLargeBreakPoint(css`
-      `)}
-      /* > 1920 */
-      ${xxxLargeBreakPoint(css`
-          
+      /* < 480 */
+      ${smallBreakPoint(css`
+        #store-cards {
+          display: flex;
+          flex-direction: column;
+          row-gap: .5em;
+          overflow-y: auto;
+        }
+        #pp-frame-header{
+          margin-bottom: 10px;
+          padding: 1em 2em 0em 1em;
+        }
+        #pp-frame-header h1 {
+          font-size: 20px;
+          line-height: 20px;
+        }
+        #pp-frame-header p {
+          font-size: 12px;
+        }
+        #pp-form-header-content img {
+          height: 35px;
+        }
+        #pp-form-header-text h1 {
+          font-size: 20px;
+          white-space: nowrap;
+          line-height: 20px;
+        }
+        #pp-form-header-text p {
+          font-size: 12px;
+        }
+        #apk-type p {
+          font-size: 16px;
+        }
+
+        #info-tooltip {
+          height: 16px
+        }
+
       `)}
     `
     ];
@@ -318,7 +615,7 @@ export class PublishPane extends LitElement {
   }
 
   firstUpdated(){
-   
+
   }
 
   renderWindowsDownloadButton(): TemplateResult {
@@ -355,42 +652,45 @@ export class PublishPane extends LitElement {
 
   renderForm(){
     if(this.selectedStore === "Windows"){
-      return html`<windows-form .generating=${this.generating} @init-windows-gen="${(ev: CustomEvent) =>
-        this.generate('windows', ev.detail as WindowsPackageOptions)}"></windows-form>`
+      return html`<windows-form id="packaging-form" .generating=${this.generating}></windows-form>`
     } else if(this.selectedStore === "Android"){
       return html`
-      <div id="apk-type">
-        <p class="selected-apk apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
-        <p class="unselected-apk apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>
-          Other Android
-          <info-circle-tooltip  id="info-tooltip" text='Generates an unsigned APK.'></info-circle-tooltip>
-        </p> 
+      <div id="apk-tabs">
+        <div class="tab-holder selected-apk">
+          <p class="apk-type" @click=${(e: any) => this.toggleApkType(e)}>Google Play</p>
+        </div>
+        <div class="tab-holder unselected-apk">
+          <p class="apk-type" id="other-android" @click=${(e: any) => this.toggleApkType(e)}>Other Android</p>
+          <div id="unsigned-tooltip">
+            <img src="/assets/new/tooltip.svg" alt="info circle tooltip" />
+            <span class="toolTip">
+              Generates an unsigned APK.
+            </span>
+          </div>
+        </div>
       </div>
       ${this.isGooglePlay ?
-        html`<android-form .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-          this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>` :
-        html`<android-form .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} @init-android-gen="${(e: CustomEvent) =>
-          this.generate('android', e.detail as AndroidPackageOptions)}"></android-form>`
+        html`<android-form id="packaging-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay}></android-form>` :
+        html`<android-form id="packaging-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay}></android-form>`
       }`
     } else if(this.selectedStore === "Meta"){
-      return html`<oculus-form .generating=${this.generating}
-          @init-oculus-gen="${(ev: CustomEvent) => this.generate('oculus', ev.detail)}">
+      return html`<oculus-form id="packaging-form" .generating=${this.generating}>
       </oculus-form>`
     } else {
-      return html`<ios-form .generating=${this.generating} @init-ios-gen="${(ev: CustomEvent) => this.generate('ios', ev.detail)}"></ios-form>`
+      return html`<ios-form id="packaging-form" .generating=${this.generating}></ios-form>`
     }
-    
+
   }
 
   showWindowsOptions() {
-    //recordPWABuilderProcessStep("windows_store_page_opened", AnalyticsBehavior.ProcessCheckpoint)
+    recordPWABuilderProcessStep("windows_store_form_opened", AnalyticsBehavior.ProcessCheckpoint)
     this.selectedStore = "Windows";
     this.cardsOrForm = false;
     this.requestUpdate();
   }
 
   showAndroidOptions() {
-    //recordPWABuilderProcessStep("android_store_page_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("android_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedStore = "Android";
     this.cardsOrForm = false;
     this.requestUpdate();
@@ -399,7 +699,7 @@ export class PublishPane extends LitElement {
   toggleApkType(event: any){
     let old = this.shadowRoot!.querySelector(".selected-apk");
     old?.classList.replace("selected-apk", "unselected-apk");
-    let next = event.target;
+    let next = event.target.parentNode;
     next.classList.replace("unselected-apk", "selected-apk");
 
     if(event.target.innerHTML === "Google Play"){
@@ -410,20 +710,20 @@ export class PublishPane extends LitElement {
   }
 
   showiOSOptions() {
-    //recordPWABuilderProcessStep("ios_store_page_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("ios_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedStore = "iOS";
     this.cardsOrForm = false;
     this.requestUpdate();
   }
 
   showMetaOptions() {
-    //recordPWABuilderProcessStep("meta_store_page_opened", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("meta_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
     this.selectedStore = "Meta";
     this.cardsOrForm = false;
     this.requestUpdate();
   }
 
-  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
+  async generate(platform: Platform, options?: PackageOptions) {
     // Record analysis results to our analytics portal.
     recordProcessStep(
       'analyze-and-package-pwa',
@@ -439,23 +739,21 @@ export class PublishPane extends LitElement {
 
     try {
       this.generating = true;
-      console.log("generating files");
       const packageData = await generatePackage(platform, options);
 
       if (packageData) {
-        console.log("succesfully generated files");
         this.downloadFileName = `${packageData.appName}.zip`;
         if (packageData.type === 'test') {
           this.testBlob = packageData.blob;
         } else {
-          console.log("non test blob");
           this.blob = packageData.blob;
           this.readyToDownload = true;
+          this.downloadPackage()
         }
       }
-    } catch (err) {
-      console.log("error");
+    } catch (err: any) {
       console.error(err);
+      this.renderErrorMessage(err.response);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
@@ -475,19 +773,51 @@ export class PublishPane extends LitElement {
           });
     } finally {
       this.generating = false;
-      /* this.openAndroidOptions = false;
-      this.openWindowsOptions = false;
-      this.openiOSOptions = false;
-      this.openOculusOptions = false; */
     }
   }
 
+  renderErrorMessage(response: any){
+    let stack_trace = "";
+    let message = "";
+    if(this.selectedStore === "Android"){
+      message = response.stack_trace.split("stack:")[0];
+      stack_trace = response.stack_trace.split("stack:")[1];
+    }
+    let error = html`
+      <div class="error-holder">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">${response.statusText}</p>
+          <p class="error-desc">Status code: ${response.status}. ${message}</p>
+          <div class="error-actions">
+            <button class="copy_stack" @click=${() => this.copyText(stack_trace)}>Copy stack trace</button>
+            <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
+          </div>
+        </div>
+        <img @click=${() => this.errorMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
+      </div>
+    `
+    this.errorMessages.push(error);
+  }
+
+  copyText(text: string){
+    navigator.clipboard.writeText(text);
+  }
+
   async downloadPackage(){
-    if (this.blob || this.testBlob) {
-      await fileSave((this.blob as Blob) || (this.testBlob as Blob), {
-        fileName: this.downloadFileName || 'your_pwa.zip',
-        extensions: ['.zip'],
-      });
+    let blob = (this.blob || this.testBlob);
+    if (blob) {
+      let filename = this.downloadFileName || 'your_pwa.zip';
+      var element = document.createElement('a');
+      element.href = URL.createObjectURL(blob!)
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
 
       this.blob = undefined;
       this.testBlob = undefined;
@@ -502,7 +832,7 @@ export class PublishPane extends LitElement {
             html`
             <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
             <p>Packaged Previously</p>
-            </div>` 
+            </div>`
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
@@ -519,48 +849,124 @@ export class PublishPane extends LitElement {
     );
   }
 
-  render() {
-    return html`
-      <div id="frame-wrapper">
-        <div id="frame-content">
-        ${this.cardsOrForm ?
-          html`
-          <div id="frame-header">
-            <h1>Awesome! Your PWA is store ready!</h1>
-            <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
-          </div>
-          <div id="store-cards">
-            ${this.renderContentCards()}
-          </div>`
-          :
-          html`
-          <div id="form-header">
-            <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.cardsOrForm = !this.cardsOrForm} /></button>
-            <div id="form-header-content">
-              <img src="${logoMap[this.selectedStore]}" alt="${this.selectedStore} logo" />
-              <div id="form-header-text">
-                <h1>${this.selectedStore} Package Options</h1>
-                <p>Customize your ${this.selectedStore} app below!</p>
-              </div>
+  async hideDialog(e: any){
+    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    if(e.target === dialog){
+      await dialog!.hide();
+      recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
+      document.body.style.height = "unset";
+      this.cardsOrForm = true;
+    }
+  }
+
+  backToCards(){
+    this.cardsOrForm = !this.cardsOrForm;
+    this.errorMessages = [];
+    recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
+  renderFormFooter(){
+    // Special case for Android since we have to toggle some info due to the "Other Android" scenario
+    if(this.selectedStore === "Android"){
+      return html`
+        <div id="form-extras">
+          <div id="form-details-block">
+            <p>${this.isGooglePlay ? "Click below for instructions on how to submit to the Google Play Store." : "Click below for instructions on how to submit to other Android stores."}</p>
+            <div class="arrow_link">
+              <a @click=${() => recordPWABuilderProcessStep(`${this.isGooglePlay ? this.selectedStore.toLowerCase() : `other_${this.selectedStore.toLowerCase()}` }_packaging_instructions_clicked`, AnalyticsBehavior.ProcessCheckpoint)} href=${this.isGooglePlay ? "https://docs.pwabuilder.com/#/builder/android" : "https://docs.pwabuilder.com/#/builder/other-android"} target="_blank" rel="noopener">Packaging Instructions</a>
+              <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
             </div>
-          </div> 
-          ${!this.readyToDownload ?   
-            // so if this is false then we wanna show the form  
-            html`
-              <div id="form-area">
-                ${this.renderForm()}
-              </div>
-            ` :
-            // when this becomes true this means that we are ready to download something
-            html`
-              <button type="button" @click=${() => this.downloadPackage()}>Download package!</button>
-            `
-          }  
-        `
-        }
+          </div>
+          <div id="form-options-actions" class="modal-actions">
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+              Download Package
+            </sl-button>
+            <a 
+              target="_blank" 
+              rel="noopener" 
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+              id="tou-link"
+              @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+              >Terms of Use</a>
+          </div>
+        </div>
+    `
+    }
+    return html`
+      <div id="form-extras">
+        <div id="form-details-block">
+          <p>${this.storeMap[this.selectedStore].packaging_text}</p>
+          <div class="arrow_link">
+            <a @click=${() => recordPWABuilderProcessStep(`${this.selectedStore.toLowerCase()}_packaging_instructions_clicked`, AnalyticsBehavior.ProcessCheckpoint)} href=${this.storeMap[this.selectedStore].package_instructions} target="_blank" rel="noopener">Packaging Instructions</a>
+            <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+          </div>
+        </div>
+        <div id="form-options-actions" class="modal-actions">
+          <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+            Download Package
+          </sl-button>
+          <a 
+            target="_blank" 
+            rel="noopener" 
+            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+            id="tou-link"
+            @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+            >Terms of Use</a>
         </div>
       </div>
-        
+    `
+  }
+
+  submitForm(){
+    let platForm = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase); // windows-form | android-form | ios-form | oculus-form
+    let form = platForm.getForm(); // the actual form element inside the platform form.
+    
+    if(form!.checkValidity()){
+      let packagingOptions = platForm!.getPackageOptions();
+      this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
+    } else {
+      form!.reportValidity();
+    }
+  }
+
+  render() {
+    return html`
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+        <div id="pp-frame-wrapper">
+          <div id="pp-frame-content">
+          ${this.cardsOrForm ?
+            html`
+              <div id="pp-frame-header">
+                <h1>Awesome! Your PWA is store ready!</h1>
+                <p>You are now ready to ship your PWA to the app stores. Generate store-ready packages for the Microsoft Store, Google Play, iOS and Meta stores.</p>
+              </div>
+              <div id="store-cards">
+                ${this.renderContentCards()}
+              </div>
+            `
+            :
+            html`
+              <div id="pp-form-header">
+                <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.backToCards()} /></button>
+                <div id="pp-form-header-content">
+                  <img src="${this.storeMap[this.selectedStore].logo}" alt="${this.selectedStore} logo" />
+                  <div id="pp-form-header-text">
+                    <h1>${this.selectedStore} Package Options</h1>
+                    <p>Customize your ${this.selectedStore} app below!</p>
+                  </div>
+                </div>
+              </div>
+              <div id="form-area" data-store=${this.selectedStore}>
+                ${this.renderForm()}
+                <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
+              </div>
+              ${this.renderFormFooter()}
+            `
+          }
+          </div>
+        </div>
+      </sl-dialog>
+
     `;
   }
 }
@@ -571,11 +977,4 @@ interface ICardData {
   isActionCard: boolean;
   icon: string;
   renderDownloadButton: () => TemplateResult;
-}
-
-const logoMap: any = { 
-  "Windows": "/assets/windows_icon.svg",
-  "Android": "/assets/android_icon.svg",
-  "iOS": "/assets/apple_icon.svg",
-  "Meta": "/assets/meta_icon.svg"
 }

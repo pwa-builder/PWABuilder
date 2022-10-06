@@ -19,7 +19,7 @@ import '../components/hover-tooltip';
         height: 12px;
         width: 12px;
         border-radius: 50%;
-        background: var(--neutral-fill-stealth-rest);
+        background: #e5e5e5;
         padding: 4px;
         margin-left: 6px;
       }
@@ -34,7 +34,7 @@ import '../components/hover-tooltip';
     return html`
       <img id="${this.circleId}" class="info-circle-img" src="assets/images/help-outline.svg" alt="help outline"
         aria-hidden="true" />
-      
+
       <hover-tooltip anchor="${this.circleId}" text="${this.text}" link="${ifDefined(this.link)}">
       </hover-tooltip>
     `;

@@ -1,6 +1,6 @@
+import { Manifest } from '@pwabuilder/manifest-validation';
 import {
   ListHeader,
-  Manifest,
   ManifestContext,
   ProgressList,
   PWABuilderSession,

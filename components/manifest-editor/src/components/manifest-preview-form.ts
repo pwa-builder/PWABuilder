@@ -1,5 +1,5 @@
-import '@pwabuilder/manifest-previewer';
-import { PreviewStage } from '@pwabuilder/manifest-previewer/dist/models';
+// import '@pwabuilder/manifest-previewer';
+// import { PreviewStage } from '@pwabuilder/manifest-previewer/dist/models';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
@@ -11,7 +11,7 @@ export class ManifestPreviewForm extends LitElement {
   @property({type: String}) manifestURL: string = "";
 
   // The current preview screen
-  @state() previewStage: PreviewStage = 'name';
+  @state() previewStage: string = 'name';
 
   static get styles() {
     return css`

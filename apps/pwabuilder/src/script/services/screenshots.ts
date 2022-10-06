@@ -36,7 +36,7 @@ export async function generateScreenshots(
       let screenshots: Array<Screenshot>;
       try {
         const manifestContext = await fetchOrCreateManifest();
-        screenshots = manifestContext.manifest.screenshots || [];
+        screenshots = manifestContext!.manifest.screenshots || [];
       } catch (error) {
         screenshots = [];
       }
