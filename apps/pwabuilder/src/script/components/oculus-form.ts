@@ -1,6 +1,5 @@
 import { css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AppPackageFormBase } from './app-package-form-base';
 import {

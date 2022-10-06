@@ -34,6 +34,9 @@ import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
+//@ts-ignore
+import Color from "../../../node_modules/colorjs.io/dist/color";
+
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";

@@ -119,7 +119,7 @@ export class AppIndex extends LitElement {
             },
           },
           {
-            path: 'imageGenerator',
+            path: '/imageGenerator',
             component: 'image-generator',
             action: async () => {
               await import('./script/pages/image-generator.js');

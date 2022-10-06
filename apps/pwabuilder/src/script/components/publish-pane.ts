@@ -855,8 +855,8 @@ export class PublishPane extends LitElement {
       await dialog!.hide();
       recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
+      this.cardsOrForm = true;
     }
-    this.cardsOrForm = true;
   }
 
   backToCards(){

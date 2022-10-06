@@ -532,7 +532,7 @@ export class ManifestScreenshotsForm extends LitElement {
           </div>
           <p>Below are the screenshots that are currently in your manifest.</p>
           <div class="sc-gallery">
-            ${this.srcList.length > 0 ? this.srcList.map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><ion-icon name="images"></ion-icon> There are no screenshots in your manifest</div>`}
+            ${this.srcList.length > 0 ? this.srcList.map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><sl-icon name="card-image"></sl-icon> There are no screenshots in your manifest</div>`}
           </div>
           <h3>Generate Screenshots</h3>
           <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>

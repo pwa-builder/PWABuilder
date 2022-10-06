@@ -1,6 +1,5 @@
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AppPackageFormBase } from './app-package-form-base';
 import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';

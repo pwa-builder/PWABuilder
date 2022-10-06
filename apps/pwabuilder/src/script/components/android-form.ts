@@ -1,6 +1,5 @@
 import { css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import '../components/loading-button';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createAndroidPackageOptionsFromManifest, emptyAndroidPackageOptions } from '../services/publish/android-publish';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';

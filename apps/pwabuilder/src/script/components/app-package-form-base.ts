@@ -121,37 +121,6 @@ export class AppPackageFormBase extends LitElement {
         align-items: center;
       }
 
-      .flipper-button {
-        background: white;
-        box-shadow: 0 1px 4px 0px rgb(0 0 0 / 25%);
-        border-radius: 50%;
-        color: #5231a7;
-
-        height: 16px;
-        min-width: 16px;
-
-        margin-left: 5px;
-      }
-
-      .flipper-button ion-icon {
-        pointer-events: none;
-
-        height: 10px;
-        width: 10px;
-      }
-
-      .flipper-button::part(control) {
-        font-size: 18px;
-        padding: 0;
-      }
-
-      .flipper-button::part(content) {
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
       .form-check {
         display: flex;
         align-items: center;

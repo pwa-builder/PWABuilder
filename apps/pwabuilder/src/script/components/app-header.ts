@@ -80,7 +80,7 @@ export class AppHeader extends LitElement {
         padding-bottom: 4px;
       }
 
-      nav ion-icon {
+      nav sl-icon {
         font-size: 2em;
       }
 
@@ -205,7 +205,7 @@ export class AppHeader extends LitElement {
             rel="noopener"
             @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon role="presentation" aria-hidden="true" tab-index="-1" name="logo-github" title="View source on GitHub"></ion-icon>
+            <sl-icon role="presentation" aria-hidden="true" tab-index="-1" name="github" title="View source on GitHub"></sl-icon>
           </a>
         </nav>
       </header>
