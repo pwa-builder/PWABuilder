@@ -14,7 +14,7 @@ import {
 import { cleanUrl, isValidURL } from '../utils/url';
 
 import '../components/companies-packaged';
-import '../components/resource-hub-new';
+import '../components/resource-hub';
 import '../components/success-stories';
 import '../components/community-hub';
 
@@ -568,7 +568,7 @@ export class AppHome extends LitElement {
           </div>
         </div>
         <companies-packaged></companies-packaged>
-        <resource-hub-new></resource-hub-new>
+        <resource-hub></resource-hub>
         <success-stories></success-stories>
         <community-hub></community-hub>
       </main>
