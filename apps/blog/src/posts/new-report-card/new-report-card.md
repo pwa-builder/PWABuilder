@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The new PWABuilder Report Card
+title: The New PWABuilder Report Card
 excerpt: Introducing a new way to analyze and package PWAs
 description: Introducing a new way to analyze and package PWAs
 date: 2022-10-06
