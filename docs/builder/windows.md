@@ -54,9 +54,9 @@ Before you can submit your PWA to the Microsoft Store, you'll need to create the
     <img src="/assets/builder/enter-url.png" alt="URL submission area on PWABuilder homepage" width=450>
 </div>
 
-3. Click `Next` to navigate to the package selection page.
+3. Click `Package for stores` to navigate to the package selection page.
 
-4. Select `Store Package` in the Windows section.
+4. Select `Generate Package` underneath `Windows` in the upper left.
 
 <div class="docs-image">
     <img src="/assets/builder/windows/windows-package-select.png" alt="Windows store package on PWABuilder" width=550>
@@ -68,9 +68,8 @@ Before you can submit your PWA to the Microsoft Store, you'll need to create the
    <img src="/assets/builder/windows/windows-app-options.png" alt="Windows App options dialog" width=500>
 </div>
 
-6. Click `Generate`.
+6. Click `Download Package`.
 
-7. `Download` your app packages.
 
 You can now use the packages you downloaded to submit your application through Partner Center.
 

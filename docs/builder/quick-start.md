@@ -27,19 +27,19 @@ You can have an application package for your PWA in just a few steps:
      <img src="/assets/builder/quick-start/homepage.png" alt="" width=500>
 </div>
 
-2. PWABuilder will then score your PWA and display the results.
+2. PWABuilder will take you to report card page for your application, where you can view scores and action items for your progressive web app.
 
 <div class="docs-image">
      <img src="/assets/builder/quick-start/pwa-scorecard.png" alt="" width=600>
 </div>
 
-3. Click `Next`.
+3. To proceed to packaging your app, click the black `Package for stores` button on the top right of the scorecard page.
 
-4. Select the platform you would like to download a package for.
+4. Browse the options for packaging, and select a platform by clicking `Generate Package`.
 
-5. Enter metadata for your application and click `Generate`.
+5. You will be prompted for metadata related to your application, which will vary depending on platform.
 
-6. Now, download your package! That's it!
+6. Lastly, select `Download Package` to download your package.
 
 <div class="docs-image">
      <img src="../assets/builder/quick-start/package-download.png" alt="" width=600>
