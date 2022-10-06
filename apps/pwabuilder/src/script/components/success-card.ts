@@ -82,7 +82,7 @@ export class SuccessCard extends LitElement {
           box-sizing: border-box;
         }
         .success-line-one h3 {
-          font-size: 28px;
+          font-size: 22px;
         }
       `)}
 
