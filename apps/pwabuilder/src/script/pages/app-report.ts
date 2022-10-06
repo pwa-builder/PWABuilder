@@ -1373,6 +1373,7 @@ export class AppReport extends LitElement {
     this.manifestDataLoading = true;
     this.swDataLoading = true;
     this.secDataLoading = true;
+    this.canPackage = false;
 
     // last tested
     this.lastTested = "Last tested seconds ago"

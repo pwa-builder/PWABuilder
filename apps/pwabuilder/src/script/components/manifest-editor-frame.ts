@@ -300,7 +300,7 @@ export class ManifestEditorFrame extends LitElement {
                   <p class="arrow_link">VS Code Extension</p> 
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </a>
-                <a class="arrow_anchor" href="https://developer.mozilla.org/en-US/docs/Web/Manifest" rel="noopener" target="_blank">
+                <a class="arrow_anchor" href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests" rel="noopener" target="_blank">
                   <p class="arrow_link">Manifest Documentation</p> 
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
                 </a>

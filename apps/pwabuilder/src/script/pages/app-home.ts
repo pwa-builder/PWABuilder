@@ -290,9 +290,18 @@ export class AppHome extends LitElement {
           }
           #input-area {
             width: 100%;
+            column-gap: 10px;
           }
           #input-and-error {
             margin-right: 10px;
+            width: 100%;
+          }
+          sl-input {
+            width: 100%;
+            margin-right: 10px;
+          }
+          #input-form sl-input::part(base){
+            width: 100%;
           }
           #input-form {
             width: 100%;
@@ -301,7 +310,7 @@ export class AppHome extends LitElement {
             font-size: 40px;
           }
           #input-form .navigation::part(base) {
-            width: 100%;
+            width: 8em;
           }
         `)}
 
@@ -341,7 +350,13 @@ export class AppHome extends LitElement {
             row-gap: 1em;
           }
           #input-and-error{
-            width: 85%;
+            width: 100%;
+          }
+          sl-input {
+            width: 100%;
+          }
+          #input-form sl-input::part(base){
+            width: 100%;
           }
           #input-area {
             width: 100%;
@@ -366,7 +381,7 @@ export class AppHome extends LitElement {
             font-size: 20px;
           }
           #input-form .navigation::part(base) {
-            width: 100%;
+            width: 8em;
           }
         }
         @media (max-width: 415px) {
