@@ -42,9 +42,14 @@ export async function generateWindowsPackage(
     return data;
   } else {
     const responseText = await response.text();
-    throw new Error(
+    let err = new Error(
       `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
     );
+    Object.defineProperty(response, "stack_trace", {value: responseText});
+      //@ts-ignore
+      err.response = response;
+    throw err;
+    
   }
 }
 
