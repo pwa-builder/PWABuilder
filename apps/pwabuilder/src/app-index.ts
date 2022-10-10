@@ -119,6 +119,13 @@ export class AppIndex extends LitElement {
             },
           },
           {
+            path: '/portals',
+            component: 'app-report',
+            action: async () => {
+              await import('./script/pages/app-report.js');
+            },
+          },
+          {
             path: '/imageGenerator',
             component: 'image-generator',
             action: async () => {
