@@ -37,7 +37,7 @@ export function resetInitialManifest() {
 }
 
 // Uses Azure manifest Puppeteer service to fetch the manifest
-async function getManifest(
+export async function getManifest(
   url: string
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
