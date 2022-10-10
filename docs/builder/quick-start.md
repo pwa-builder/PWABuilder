@@ -24,7 +24,7 @@ You can have an application package for your PWA in just a few steps:
 1. From the  [homepage of PWABuilder](https://www.pwabuilder.com/), you can enter a URL to start the packaging process.
 
 <div class="docs-image">
-     <img src="/assets/builder/quick-start/homepage.png" alt="" width=500>
+     <img src="/assets/builder/general/pwabuilder-enter-url.png" alt="URL submission area on PWABuilder homepage" width=500>
 </div>
 
 2. PWABuilder will take you to report card page for your application, where you can view scores and action items for your progressive web app.
