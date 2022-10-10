@@ -37,6 +37,10 @@ body:
           - [ ] PR authored from dev to main - PR: {PR goes here}
           - [ ] PR approved
           - [ ] PR merged
+          
+        #### PWABuilder.com existing functionality tests
+          - [ ] Test /portals and ensure is working (linked to from PowerApps)
+          - [ ] Test /imageGenerator and ensure is working (linked to from dev tools)
 
         #### Design
           - [ ] Design reviewed and signed off
