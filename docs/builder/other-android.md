@@ -20,7 +20,7 @@ The first step is to generate your Android package with PWABuilder:
 2. Enter the URL of your PWA on the homepage.
 
 <div class="docs-image">
-    <img src="/assets/builder/android/url.jpg" width=450 alt="Image of the url input field on pwabuilder.com homepage">
+     <img src="/assets/builder/general/pwabuilder-enter-url.png" alt="URL submission area on PWABuilder homepage" width=500>
 </div>
 
 3. Click the `Package for stores` button in the upper right to navigate to the package selection page.

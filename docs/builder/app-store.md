@@ -28,7 +28,7 @@ The whole process can be done in just a few steps:
 2. Enter the URL of your PWA on the homepage.
    
 <div class="docs-image">
-    <img src="/assets/builder/enter-url.png" width=450>
+     <img src="/assets/builder/general/pwabuilder-enter-url.png" alt="URL submission area on PWABuilder homepage" width=500>
 </div>
 
 3. Click `Package for stores` to navigate to the package selection page.

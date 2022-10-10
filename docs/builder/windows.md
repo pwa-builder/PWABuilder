@@ -51,7 +51,7 @@ Before you can submit your PWA to the Microsoft Store, you'll need to create the
 2. Enter the URL of your PWA on the homepage and click `Start`.
 
 <div class="docs-image">
-    <img src="/assets/builder/enter-url.png" alt="URL submission area on PWABuilder homepage" width=450>
+     <img src="/assets/builder/general/pwabuilder-enter-url.png" alt="URL submission area on PWABuilder homepage" width=500>
 </div>
 
 3. Click `Package for stores` to navigate to the package selection page.
