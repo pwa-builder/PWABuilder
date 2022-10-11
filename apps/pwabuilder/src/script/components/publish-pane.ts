@@ -1,5 +1,5 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { generatePackage, Platform } from '../services/publish';
@@ -41,26 +41,27 @@ export class PublishPane extends LitElement {
   @state() downloadFileName: string | null = null;
   @state() errorMessages: TemplateResult[] = [];
 
-  
+  @property() preventClosing = false;
+
   @state() storeMap: any = {
-  "Windows": 
+  "Windows":
     {
       "logo": "/assets/windows_icon.svg",
       "packaging_text": "Click below for instructions on how to submit to the Windows Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/windows"
     },
-  "Android": 
+  "Android":
     {
       "logo": "/assets/android_icon.svg"
       /* Android packaging text is handle in the function so that it will update on apk toggle */
     },
-  "iOS": 
+  "iOS":
     {
       "logo": "/assets/apple_icon.svg",
       "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
     },
-  "Meta": 
+  "Meta":
     {
       "logo": "/assets/meta_icon.svg",
       "packaging_text": "Click below for instructions on how to submit to the Meta Quest Store.",
@@ -884,6 +885,12 @@ export class PublishPane extends LitElement {
     }
   }
 
+  handleRequestClose(e: Event) {
+    if (this.preventClosing) {
+      e.preventDefault();
+    }
+  }
+
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
     this.errorMessages = [];
@@ -906,10 +913,10 @@ export class PublishPane extends LitElement {
             <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
               Download Package
             </sl-button>
-            <a 
-              target="_blank" 
-              rel="noopener" 
-              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+            <a
+              target="_blank"
+              rel="noopener"
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
               id="tou-link"
               @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
               >Terms of Use</a>
@@ -930,10 +937,10 @@ export class PublishPane extends LitElement {
           <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
             Download Package
           </sl-button>
-          <a 
-            target="_blank" 
-            rel="noopener" 
-            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+          <a
+            target="_blank"
+            rel="noopener"
+            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
             id="tou-link"
             @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
             >Terms of Use</a>
@@ -945,7 +952,7 @@ export class PublishPane extends LitElement {
   submitForm(){
     let platForm = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase); // windows-form | android-form | ios-form | oculus-form
     let form = platForm.getForm(); // the actual form element inside the platform form.
-    
+
     if(form!.checkValidity()){
       let packagingOptions = platForm!.getPackageOptions();
       this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
@@ -956,7 +963,7 @@ export class PublishPane extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} @sl-request-close=${(e:any) => this.handleRequestClose(e)} noHeader>
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
           ${this.cardsOrForm ?
