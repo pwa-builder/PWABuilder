@@ -64,12 +64,12 @@ export class TestPublishPane extends LitElement {
 
       #pp-frame-wrapper {
         width: 100%;
-        height: 90vh;
+        height: fit-content;
       }
       #pp-frame-content {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: fit-content;
       }
       #pp-frame-header {
         display: flex;
@@ -89,7 +89,7 @@ export class TestPublishPane extends LitElement {
       }
       .card-wrapper {
         width: 100%;
-        height: 50%;
+        height: fit-content;
         display: flex;
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
@@ -149,7 +149,7 @@ export class TestPublishPane extends LitElement {
       }
       #store-cards {
         width: 100%;
-        height: 100%;
+        height: fit-content;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: .75em;

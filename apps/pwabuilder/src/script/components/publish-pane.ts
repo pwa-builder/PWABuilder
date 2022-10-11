@@ -393,6 +393,7 @@ export class PublishPane extends LitElement {
       #errors {
         position: absolute;
         bottom: .5em;
+        padding: 0 1em;
       }
 
       .error-holder {
@@ -403,12 +404,16 @@ export class PublishPane extends LitElement {
         padding: .5em;
         border-left: 4px solid #EB5757;
         border-radius: 3px;
-        margin: 0 1em;
+        width: 100%;
       }
 
       .error-holder p {
         margin: 0;
         font-size: 14px;
+      }
+
+      .close_error {
+        margin-left: auto;
       }
 
       .error-title {
@@ -752,8 +757,7 @@ export class PublishPane extends LitElement {
         }
       }
     } catch (err: any) {
-      console.error(err);
-      this.renderErrorMessage(err.response);
+      this.renderErrorMessage(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
@@ -776,19 +780,40 @@ export class PublishPane extends LitElement {
     }
   }
 
-  renderErrorMessage(response: any){
-    let stack_trace = "";
-    let message = "";
-    if(this.selectedStore === "Android"){
+  renderErrorMessage(err: any){
+    let response = err.response;
+    let stack_trace = `The site I was testing is: ${getURL()}\n`; // stored in copy st button
+    let title = ""; // first line of error message
+    let message = ""; // text that comes after error code in quick desc
+    let quick_desc = ""; // the quick description they get to read (searchable)
+
+     
+    if(this.selectedStore === "Windows"){
+      let splitStack = response.stack_trace;
+      let [almost_quick_desc, ...almost_stack_trace] = splitStack.split("   ");
+      stack_trace += almost_stack_trace.join("   ");
+      
+      let splitMessage = almost_quick_desc;
+      let [almost_title, ...almost_message] = splitMessage.split(":");
+      title = almost_title;
+      quick_desc = almost_message.join(":");
+
+    } else if (this.selectedStore === "Android"){
+      title = response.statusText; 
+      stack_trace += response.stack_trace.split("stack:")[1]; 
       message = response.stack_trace.split("stack:")[0];
-      stack_trace = response.stack_trace.split("stack:")[1];
+      quick_desc = `Status code: ${response.status}. ${message}` 
+    } else {
+      title = response.statusText; 
+      stack_trace += err.stack; 
+      quick_desc = `Status code: ${response.status}. ${response.stack_trace}` 
     }
     let error = html`
       <div class="error-holder">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
-          <p class="error-title">${response.statusText}</p>
-          <p class="error-desc">Status code: ${response.status}. ${message}</p>
+          <p class="error-title">${title}</p>
+          <p class="error-desc">${quick_desc}</p>
           <div class="error-actions">
             <button class="copy_stack" @click=${() => this.copyText(stack_trace)}>Copy stack trace</button>
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>

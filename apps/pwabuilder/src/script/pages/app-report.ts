@@ -246,10 +246,9 @@ export class AppReport extends LitElement {
           display: -webkit-box !important;
           -webkit-line-clamp: 6;
           -webkit-box-orient: vertical;
-          margin-left: 1em;
         }
         #app-card-footer {
-          padding: .4em 1em;
+          padding: .432em 1em;
           display: flex;
           width: 100%;
           align-items: center;
