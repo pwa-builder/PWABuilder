@@ -1159,47 +1159,48 @@ export class AppReport extends LitElement {
     this.manifestDataLoading = true;
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
     details!.disabled = true;
-    let manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    let manifest;
 
-    this.validationResults = await validateManifest(manifest);
+    if(!this.createdManifest){
+      manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+      this.validationResults = await validateManifest(manifest);
 
-    //  This just makes it so that the valid things are first
-    // and the invalid things show after.
-    this.validationResults.sort((a, b) => {
-      if(a.valid && !b.valid){
-        return 1;
-      } else if(b.valid && !a.valid){
-        return -1;
-      } else {
-        return a.member.localeCompare(b.member);
-      }
-    });
-    this.manifestTotalScore = this.validationResults.length;
+      //  This just makes it so that the valid things are first
+      // and the invalid things show after.
+      this.validationResults.sort((a, b) => {
+        if(a.valid && !b.valid){
+          return 1;
+        } else if(b.valid && !a.valid){
+          return -1;
+        } else {
+          return a.member.localeCompare(b.member);
+        }
+      });
+      this.manifestTotalScore = this.validationResults.length;
 
-     if(this.createdManifest){
+      this.validationResults.forEach((test: Validation) => {
+        if(test.valid){
+          this.manifestValidCounter++;
+        } else {
+          let status ="";
+          if(test.category === "required" || test.testRequired){
+            status = "red";
+            this.manifestRequiredCounter++;
+          } else if(test.category === "recommended"){
+            status = "yellow";
+            this.manifestReccCounter++;
+          } else {
+            status = "yellow";
+          }
+
+          this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+          
+        }
+      });
+    } else {
+      manifest = {};
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
     }
-
-    this.validationResults.forEach((test: Validation) => {
-      if(test.valid){
-        this.manifestValidCounter++;
-      } else {
-        let status ="";
-        if(test.category === "required" || test.testRequired){
-          status = "red";
-          this.manifestRequiredCounter++;
-        } else if(test.category === "recommended"){
-          status = "yellow";
-          this.manifestReccCounter++;
-        } else {
-          status = "yellow";
-        }
-
-        if(!this.createdManifest){
-          this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
-        }
-      }
-    });
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -1532,20 +1533,22 @@ export class AppReport extends LitElement {
       this.thingToAdd = e.detail.displayString;
       this.showConfirmationModal = true;
       return;
+    } else if(e.detail.field === "Open Manifest Modal"){
+      let frame = this.shadowRoot!.querySelector("manifest-editor-frame");
+      (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+      return;
+    } else if(e.detail.field === "Open SW Modal"){
+      let frame = this.shadowRoot!.querySelector("sw-selector");
+      (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+      return;
     }
 
     let details = this.shadowRoot!.getElementById(e.detail.card);
 
-    //this.detailsClicked(e.detail.card)
-
     await (details as any)!.show();
 
     details!.scrollIntoView({behavior: "smooth"});
-
-    if(e.detail.field === "Open SW Modal"){
-      this.swSelectorOpen = true;
-    }
-
+    
     let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
 
     // The below block is just to get the specific item to animate if a field has more than 1 test.
