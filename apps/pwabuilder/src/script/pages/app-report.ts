@@ -97,6 +97,7 @@ export class AppReport extends LitElement {
   @state() manifestReccCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
   @state() manifestMessage: string = "";
+  @state() proxyLoadingImage: boolean = false;
 
   @state() serviceWorkerResults: any[] = [];
   @state() swTotalScore: number = 0;
@@ -225,6 +226,26 @@ export class AppReport extends LitElement {
           width: auto;
           padding: 10px;
         }
+        .proxy-loader {
+          width: 48px;
+          height: 48px;
+          border: 5px solid #4f3fb6;
+          border-bottom-color: transparent;
+          border-radius: 50%;
+          display: inline-block;
+          box-sizing: border-box;
+          animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+          0% {
+              transform: rotate(0deg);
+          }
+          100% {
+              transform: rotate(360deg);
+          }
+        } 
+
         #site-name {
           font-size: 24px;
         }
@@ -1056,8 +1077,36 @@ export class AppReport extends LitElement {
     if (manifestContext && !this.createdManifest) {
       const parsedManifestContext = manifestContext;
 
-      let iconUrl = this.iconSrcListParse()![0];
+      let icons = parsedManifestContext.manifest.icons;
 
+      let chosenIcon: any;
+
+      if(icons){
+        let maxSize = 0;
+        for(let i = 0; i < icons.length; i++){
+          let icon = icons[i];
+          let size = icon.sizes?.split("x")[0];
+          if(size === '512'){
+            chosenIcon = icon;
+            break;
+          } else{
+            if(parseInt(size!) > maxSize){
+              maxSize = parseInt(size!);
+              chosenIcon = icon;
+            }
+          }
+        }
+      }
+
+      let iconUrl: string;
+      if(chosenIcon){
+        iconUrl = this.iconSrcListParse(chosenIcon);
+      } else {
+        iconUrl = "/assets/icons/icon_512.png"
+      }
+
+      
+      this.proxyLoadingImage = true;
       await this.testImage(iconUrl).then(
         function fulfilled(_img) {
           //console.log('That image is found and loaded', img);
@@ -1068,6 +1117,7 @@ export class AppReport extends LitElement {
           iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
         }
       );
+      this.proxyLoadingImage = false;
 
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
@@ -1429,25 +1479,12 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("test_publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  iconSrcListParse() {
-
+  iconSrcListParse(icon: any) {
     let manifest = getManifestContext().manifest;
     let manifestURL = getManifestContext().manifestUrl;
+    let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
 
-    if (!manifest && !manifestURL) {
-      return ["/assets/icons/icon_512.png"];
-    }
-
-    let screenshotSrcList: any[] = [];
-
-    manifest!.icons?.forEach((icon: any) => {
-      let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
-      if(iconURL){
-        screenshotSrcList.push((iconURL as string));
-      }
-    })
-
-    return screenshotSrcList;
+    return iconURL;
   }
 
   handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
@@ -1681,7 +1718,7 @@ export class AppReport extends LitElement {
             <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="pwa-image-holder">
-                  <img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />
+                  ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
