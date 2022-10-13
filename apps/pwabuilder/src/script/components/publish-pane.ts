@@ -39,7 +39,7 @@ export class PublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
-  @state() errorMessages: TemplateResult[] = [];
+  @state() feedbackMessages: TemplateResult[] = [];
 
   @property() preventClosing = false;
 
@@ -391,10 +391,11 @@ export class PublishPane extends LitElement {
         visibility: visible;
       }
 
-      #errors {
+      #feedback {
         position: absolute;
         bottom: .5em;
         padding: 0 1em;
+        width: 100%;
       }
 
       .error-holder {
@@ -403,7 +404,7 @@ export class PublishPane extends LitElement {
         align-items: flex-start;
         background-color: #FAEDF1;
         padding: .5em;
-        border-left: 4px solid #EB5757;
+        border-left: 4px solid var(--error-color);
         border-radius: 3px;
         width: 100%;
       }
@@ -442,6 +443,30 @@ export class PublishPane extends LitElement {
       }
 
       .close_error:hover {
+        cursor: pointer;
+      }
+
+      .success-holder {
+        display: flex;
+        align-items: center;
+        gap: .5em;
+        background-color: #eefaed;
+        padding: .5em;
+        border-left: 4px solid var(--success-color);
+        border-radius: 3px;
+        width: 100%;
+      }
+
+      .success-holder p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .close_success {
+        margin-left: auto;
+      }
+
+      .close_success:hover {
         cursor: pointer;
       }
 
@@ -757,6 +782,7 @@ export class PublishPane extends LitElement {
           this.downloadPackage()
         }
       }
+      this.renderSuccessMessage()
     } catch (err: any) {
       this.renderErrorMessage(err);
       //this.showAlertModal(err as Error, platform);
@@ -820,10 +846,20 @@ export class PublishPane extends LitElement {
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
-        <img @click=${() => this.errorMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.feedbackMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
       </div>
     `
-    this.errorMessages.push(error);
+    this.feedbackMessages.push(error);
+  }
+
+  renderSuccessMessage(){
+    this.feedbackMessages.push(html`
+      <div class="success-holder">
+        <img src="/assets/new/valid.svg" alt="successful download icon" />
+        <p class="success-desc">${`Congratulations! Your ${this.selectedStore} package has successfully downloaded!`}</p>
+        <img @click=${() => this.feedbackMessages = []} class="close_success" src="assets/images/Close_desk.png" alt="close icon"/>
+      </div>
+    `);
   }
 
   copyText(text: string){
@@ -893,7 +929,7 @@ export class PublishPane extends LitElement {
 
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
-    this.errorMessages = [];
+    this.feedbackMessages = [];
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
@@ -910,7 +946,7 @@ export class PublishPane extends LitElement {
             </div>
           </div>
           <div id="form-options-actions" class="modal-actions">
-            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" ?disabled=${this.feedbackMessages.length > 0} >
               Download Package
             </sl-button>
             <a
@@ -990,7 +1026,7 @@ export class PublishPane extends LitElement {
               </div>
               <div id="form-area" data-store=${this.selectedStore}>
                 ${this.renderForm()}
-                <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
+                <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : html``}</div>
               </div>
               ${this.renderFormFooter()}
             `
