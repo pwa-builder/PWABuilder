@@ -39,7 +39,7 @@ export class PublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
-  @state() errorMessages: TemplateResult[] = [];
+  @state() feedbackMessages: TemplateResult[] = [];
 
   @property() preventClosing = false;
 
@@ -391,30 +391,36 @@ export class PublishPane extends LitElement {
         visibility: visible;
       }
 
-      #errors {
+      #feedback {
         position: absolute;
         bottom: .5em;
         padding: 0 1em;
+        width: 100%;
       }
 
-      .error-holder {
+      .feedback-holder {
         display: flex;
         gap: .5em;
-        align-items: flex-start;
-        background-color: #FAEDF1;
         padding: .5em;
-        border-left: 4px solid #EB5757;
         border-radius: 3px;
         width: 100%;
       }
 
-      .error-holder p {
-        margin: 0;
-        font-size: 14px;
+      .type-error {
+        align-items: flex-start;
+        background-color: #FAEDF1;
+        border-left: 4px solid var(--error-color);
       }
 
-      .close_error {
-        margin-left: auto;
+      .type-success {
+        align-items: center;
+        background-color: #eefaed;
+        border-left: 4px solid var(--success-color);
+      }
+
+      .feedback-holder p {
+        margin: 0;
+        font-size: 14px;
       }
 
       .error-title {
@@ -441,7 +447,11 @@ export class PublishPane extends LitElement {
         border-bottom: 1px solid black;
       }
 
-      .close_error:hover {
+      .close_feedback {
+        margin-left: auto;
+      }
+
+      .close_feedback:hover {
         cursor: pointer;
       }
 
@@ -757,6 +767,7 @@ export class PublishPane extends LitElement {
           this.downloadPackage()
         }
       }
+      this.renderSuccessMessage()
     } catch (err: any) {
       this.renderErrorMessage(err);
       //this.showAlertModal(err as Error, platform);
@@ -810,7 +821,7 @@ export class PublishPane extends LitElement {
       quick_desc = `Status code: ${response.status}. ${response.stack_trace}` 
     }
     let error = html`
-      <div class="error-holder">
+      <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
           <p class="error-title">${title}</p>
@@ -820,10 +831,20 @@ export class PublishPane extends LitElement {
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
-        <img @click=${() => this.errorMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `
-    this.errorMessages.push(error);
+    this.feedbackMessages.push(error);
+  }
+
+  renderSuccessMessage(){
+    this.feedbackMessages.push(html`
+      <div class="feedback-holder type-success">
+        <img src="/assets/new/valid.svg" alt="successful download icon" />
+        <p class="success-desc">${`Congratulations! Your ${this.selectedStore} package has successfully downloaded!`}</p>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
+      </div>
+    `);
   }
 
   copyText(text: string){
@@ -893,7 +914,7 @@ export class PublishPane extends LitElement {
 
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
-    this.errorMessages = [];
+    this.feedbackMessages = [];
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
@@ -910,7 +931,7 @@ export class PublishPane extends LitElement {
             </div>
           </div>
           <div id="form-options-actions" class="modal-actions">
-            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" ?disabled=${this.feedbackMessages.length > 0} >
               Download Package
             </sl-button>
             <a
@@ -990,7 +1011,7 @@ export class PublishPane extends LitElement {
               </div>
               <div id="form-area" data-store=${this.selectedStore}>
                 ${this.renderForm()}
-                <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
+                <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : html``}</div>
               </div>
               ${this.renderFormFooter()}
             `

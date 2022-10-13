@@ -406,7 +406,7 @@ export class ManifestScreenshotsForm extends LitElement {
 
   async screenshotSrcListParse() {
 
-    if (!this.manifest && !this.manifestURL) {
+    if (!this.manifest || !this.manifest.screenshots) {
       return;
     }
 
@@ -435,7 +435,7 @@ export class ManifestScreenshotsForm extends LitElement {
   }
 
   async newScreenshotSrcListParse() {
-    if (!this.manifest && !this.manifestURL) {
+    if (!this.manifest) {
       return;
     }
 
