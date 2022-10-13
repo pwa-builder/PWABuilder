@@ -398,24 +398,29 @@ export class PublishPane extends LitElement {
         width: 100%;
       }
 
-      .error-holder {
+      .feedback-holder {
         display: flex;
         gap: .5em;
-        align-items: flex-start;
-        background-color: #FAEDF1;
         padding: .5em;
-        border-left: 4px solid var(--error-color);
         border-radius: 3px;
         width: 100%;
       }
 
-      .error-holder p {
-        margin: 0;
-        font-size: 14px;
+      .type-error {
+        align-items: flex-start;
+        background-color: #FAEDF1;
+        border-left: 4px solid var(--error-color);
       }
 
-      .close_error {
-        margin-left: auto;
+      .type-success {
+        align-items: center;
+        background-color: #eefaed;
+        border-left: 4px solid var(--success-color);
+      }
+
+      .feedback-holder p {
+        margin: 0;
+        font-size: 14px;
       }
 
       .error-title {
@@ -442,31 +447,11 @@ export class PublishPane extends LitElement {
         border-bottom: 1px solid black;
       }
 
-      .close_error:hover {
-        cursor: pointer;
-      }
-
-      .success-holder {
-        display: flex;
-        align-items: center;
-        gap: .5em;
-        background-color: #eefaed;
-        padding: .5em;
-        border-left: 4px solid var(--success-color);
-        border-radius: 3px;
-        width: 100%;
-      }
-
-      .success-holder p {
-        margin: 0;
-        font-size: 14px;
-      }
-
-      .close_success {
+      .close_feedback {
         margin-left: auto;
       }
 
-      .close_success:hover {
+      .close_feedback:hover {
         cursor: pointer;
       }
 
@@ -836,7 +821,7 @@ export class PublishPane extends LitElement {
       quick_desc = `Status code: ${response.status}. ${response.stack_trace}` 
     }
     let error = html`
-      <div class="error-holder">
+      <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
           <p class="error-title">${title}</p>
@@ -846,7 +831,7 @@ export class PublishPane extends LitElement {
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
-        <img @click=${() => this.feedbackMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `
     this.feedbackMessages.push(error);
@@ -854,10 +839,10 @@ export class PublishPane extends LitElement {
 
   renderSuccessMessage(){
     this.feedbackMessages.push(html`
-      <div class="success-holder">
+      <div class="feedback-holder type-success">
         <img src="/assets/new/valid.svg" alt="successful download icon" />
         <p class="success-desc">${`Congratulations! Your ${this.selectedStore} package has successfully downloaded!`}</p>
-        <img @click=${() => this.feedbackMessages = []} class="close_success" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `);
   }
