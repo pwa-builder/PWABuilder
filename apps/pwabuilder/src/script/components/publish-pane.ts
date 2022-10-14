@@ -364,6 +364,7 @@ export class PublishPane extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
+        z-index: 1000;
       }
 
       #unsigned-tooltip{

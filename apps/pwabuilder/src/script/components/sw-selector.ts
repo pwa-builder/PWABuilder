@@ -75,6 +75,7 @@ export class SWSelector extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
+        z-index: 1000;
       }
 
       #frame-footer {
