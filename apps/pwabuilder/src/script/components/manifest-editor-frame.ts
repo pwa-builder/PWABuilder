@@ -155,6 +155,7 @@ export class ManifestEditorFrame extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
+        z-index: 1000;
       }
 
       @media(max-width: 600px){  
