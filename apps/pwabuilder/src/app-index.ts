@@ -97,6 +97,23 @@ export class AppIndex extends LitElement {
         ev.detail.location.route?.component // page name
       );
     });
+
+    const footer = document.querySelector('footer');
+    const discordBox = document.getElementById('discord-box');
+    const isVisible = document.body.contains(footer);
+
+    document.body.onscroll = function() {
+      console.log("scrolling");
+      console.log(isVisible);
+      if(isVisible) {
+        discordBox!.style.position = 'relative'; 
+        discordBox!.style.marginLeft = 'auto'; 
+      } else {
+        return null;
+      }
+
+      return;
+    }
   }
 
   firstUpdated() {
