@@ -802,14 +802,15 @@ export class PublishPane extends LitElement {
 
      
     if(this.selectedStore === "Windows"){
-      let splitStack = response.stack_trace;
-      let [almost_quick_desc, ...almost_stack_trace] = splitStack.split("   ");
-      stack_trace += almost_stack_trace.join("   ");
-      
-      let splitMessage = almost_quick_desc;
-      let [almost_title, ...almost_message] = splitMessage.split(":");
-      title = almost_title;
-      quick_desc = almost_message.join(":");
+      let errString = err.stack;
+      stack_trace += errString.slice(
+        errString.indexOf(" at ") + 1
+      ); 
+      title = errString.split(",")[0]; // first line of error message
+      quick_desc = errString.slice(
+        errString.indexOf("Details:") + 8,
+        errString.indexOf(" at ")
+      ); // the quick description they get to read (searchable)
 
     } else if (this.selectedStore === "Android"){
       title = response.statusText; 
@@ -900,12 +901,16 @@ export class PublishPane extends LitElement {
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
+      this.blob = undefined;
+      this.generating = false;
       await dialog!.hide();
       recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
       this.cardsOrForm = true;
     }
   }
+
+  
 
   handleRequestClose(e: Event) {
     if (this.preventClosing) {
