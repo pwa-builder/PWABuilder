@@ -5,8 +5,6 @@ import { validateManifest, Validation, Manifest, reportMissing, required_fields,
 import {
   BreakpointValues,
   mediumBreakPoint,
-  largeBreakPoint,
-  xxxLargeBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 import {classMap} from 'lit/directives/class-map.js';
@@ -156,6 +154,8 @@ export class AppReport extends LitElement {
   static get styles() {
     return [
       css`
+
+        /* Page wide */
         * {
           box-sizing: border-box;
           font-family: inherit;
@@ -166,7 +166,6 @@ export class AppReport extends LitElement {
           top: 0;
         }
 
-
         #report-wrapper {
           width: 100%;
           display: flex;
@@ -176,6 +175,7 @@ export class AppReport extends LitElement {
           background-color: #f2f3fb;
           padding: 20px;
         }
+
         #content-holder {
           max-width: 1300px;
           width: 100%;
@@ -183,6 +183,75 @@ export class AppReport extends LitElement {
           flex-flow: row wrap;
           gap: 1em;
         }
+
+        sl-details {
+          width: 100%;
+        }
+
+        sl-details::part(summary-icon){
+          display: none;
+        }
+
+        sl-details::part(content) {
+          padding-top: .75em;
+          padding-bottom: 1.5em;
+        }
+
+        sl-details:disabled{
+          cursor: no-drop;
+        }
+
+        @keyframes bounce {
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
+        }
+
+        button:hover {
+          cursor: pointer;
+        }
+
+        sl-progress-ring {
+          height: fit-content;
+          --track-width: 4px;
+          --indicator-width: 8px;
+          --size: 100px;
+          font-size: 18px;
+        }
+
+        sl-progress-ring::part(label){
+          color: #4F3FB6;
+          font-weight: bold;
+        }
+
+        .red {
+          --indicator-color: var(--error-color);
+        }
+
+        .yellow {
+          --indicator-color: var(--warning-color);
+        }
+
+        .green {
+          --indicator-color: var(--success-color);
+        }
+
+        .macro_error {
+          width: 3em;
+          height: auto;
+        }
+
+        /* App Card and Packaging */
         #header-row {
           width: 100%;
           display: flex;
@@ -190,6 +259,9 @@ export class AppReport extends LitElement {
           justify-content: center;
           column-gap: 1em;
         }
+
+        /* App Card */
+
         #app-card {
           width: 60%;
           height: 100%;
@@ -198,10 +270,7 @@ export class AppReport extends LitElement {
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
-        .flex-col {
-          display: flex;
-          flex-direction: column;
-        }
+
         #app-card-header {
           display: grid;
           grid-template-columns: 1fr 2fr 4fr;
@@ -211,6 +280,7 @@ export class AppReport extends LitElement {
           padding: 2em;
           width: 100%;
         }
+
         #pwa-image-holder {
           height: fit-content;
           width: fit-content;
@@ -221,11 +291,13 @@ export class AppReport extends LitElement {
           border-radius: 10px;
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
+        
         #app-card-header img {
           height: 85px;
           width: auto;
           padding: 10px;
         }
+
         .proxy-loader {
           width: 48px;
           height: 48px;
@@ -249,14 +321,17 @@ export class AppReport extends LitElement {
         #site-name {
           font-size: 24px;
         }
+        
         #card-info {
           overflow: hidden;
           white-space: nowrap;
         }
+
         #card-info p {
           margin: 0;
           font-weight: bold;
         }
+
         #app-card-desc {
           margin: 0;
           font-size: 14px;
@@ -268,6 +343,7 @@ export class AppReport extends LitElement {
           -webkit-line-clamp: 6;
           -webkit-box-orient: vertical;
         }
+
         #app-card-footer {
           padding: .432em 1em;
           display: flex;
@@ -278,11 +354,51 @@ export class AppReport extends LitElement {
           border-bottom-right-radius: 10px;
           border-top: 1px solid rgb(242 243 251 / 20%);
         }
+
         #last-edited {
           font-size: 12px;
           white-space: nowrap;
           margin: 0;
         }
+
+        #test {
+          font-size: 10px;
+        }
+
+        #test img {
+          height: 18px;
+        }
+        
+        #retest {
+          display: flex;
+          align-items: center;
+          column-gap: 10px;
+          border: none;
+          background-color: transparent;
+        }
+
+        #retest:disabled{
+          cursor: no-drop;
+        }
+
+        #app-image-skeleton {
+          height: 85px;
+          width: 130px;
+          --border-radius: 0;
+        }
+
+        .app-info-skeleton {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .app-info-skeleton-half {
+          width: 25%;
+          height: 20px;
+          margin: 10px 0;
+        }
+
+        /* Packaging Box */
         #app-actions {
           width: 40%;
           height: 100%;
@@ -292,6 +408,7 @@ export class AppReport extends LitElement {
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
+
         #app-actions button:not(#test-download) {
           font-weight: bold;
           white-space: nowrap;
@@ -299,75 +416,42 @@ export class AppReport extends LitElement {
           border-radius: 50px;
           font-size: 16px;
         }
-        #app-image-skeleton {
-          height: 85px;
-          width: 130px;
-          --border-radius: 0;
-        }
-        .app-info-skeleton {
-          width: 100%;
-          margin-bottom: 10px;
-        }
-        .app-info-skeleton-half {
-          width: 25%;
-          height: 20px;
-          margin: 10px 0;
-        }
-        #test {
-          font-size: 10px;
-        }
-        #test img {
-          height: 18px;
-        }
-        .flex-col-center {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
-        .flex-center {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        #retest {
-          display: flex;
-          align-items: center;
-          column-gap: 10px;
-          border: none;
-          background-color: transparent;
-        }
-        #retest:disabled{
-          cursor: no-drop;
-        }
+
         #package {
           row-gap: .5em;
           width: 100%;
           padding: 2em;
         }
+
         #pfs {
           background-color: black;
           color: white;
           border: none;
         }
+
         #pfs-disabled{
           background-color: #C3C3C3;
           border: none;
           color: white;
         }
+
         #pfs-disabled:hover{
           cursor: no-drop;
         }
+
         #pfs:focus, #pfs:hover {
           outline: rgb(79 63 182 / 70%) solid 2px;
         }
+
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
+
         .mani-tooltip::part(base){
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
+
         .mani-tooltip-content {
           padding: 0;
           display: flex;
@@ -384,21 +468,12 @@ export class AppReport extends LitElement {
           height: 50px;
           width: auto;
         }
+
         .mani-tooltip-content p {
           margin: 0;
           padding: .5em;
         }
-        sl-details:disabled{
-          cursor: no-drop;
-        }
 
-        sl-details::part(summary-icon){
-          display: none;
-        }
-
-        #hover {
-          background-color: rgba(0, 0, 0, 0.75);
-        }
         #test-download {
           background-color: transparent;
           color: #4f3fb6;
@@ -412,32 +487,11 @@ export class AppReport extends LitElement {
           white-space: nowrap;
           font-size: 12px;
         }
+
         #test-download:hover img {
           animation: bounce 1s;
         }
-        @keyframes bounce {
-          0%,
-          20%,
-          50%,
-          80%,
-          100% {
-            transform: translateY(0);
-          }
-          40% {
-            transform: translateX(-5px);
-          }
-          60% {
-            transform: translateX(5px);
-          }
-        }
-        .arrow_link {
-          margin: 0;
-          border-bottom: 1px solid #4f3fb6;
-          white-space: nowrap;
-        }
-        button:hover {
-          cursor: pointer;
-        }
+
         #actions-footer {
           background-color: #f2f3fb;
           width: 100%;
@@ -447,53 +501,45 @@ export class AppReport extends LitElement {
           padding: .5em 1em;
           border-top: 1px solid #E5E5E5;
         }
+
         #actions-footer img {
           height: 15px;
           width: auto;
         }
+
         #actions-footer p {
           margin: 0;
           font-size: 12px;
           font-weight: bold;
         }
+
+        /* Action Items Card */
         #todo {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
           border-radius: 10px;
         }
-        sl-details {
-          width: 100%;
-        }
-        sl-details::part(content) {
-          padding-top: .75em;
-          padding-bottom: 1.5em;
-        }
-        .details-summary {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-        }
-        .dropdown_icon {
-          transform: rotate(0deg);
-          transition: transform .5s;
-        }
+
         #todo-detail::part(base) {
           border-radius: 10px;
         }
+
         #todo-detail::part(header) {
           height: 60px;
         }
+
         #todo-detail::part(summary) {
           color: #4f3fb6;
           font-size: 20px;
           font-weight: bold;
         }
+
         #todo-summary-left {
           display: flex;
           align-items: center;
           gap: .5em;
         }
+
         #pagination-actions {
           display: flex;
           align-items: center;
@@ -502,23 +548,28 @@ export class AppReport extends LitElement {
           justify-self: center;
           gap: .25em;
         }
+
         .pageToggles {
           height: 15px;
           color: #4f3fb6;
         }
+
         #dots {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: .25em;
         }
+
         #dots img {
           height: 10px;
           width: auto;
         }
+
         #pagination-actions > sl-icon:hover{
           cursor:pointer
         }
+
         .pagination-buttons{
           background-color: transparent;
           border: none;
@@ -527,11 +578,13 @@ export class AppReport extends LitElement {
           justify-content: center;
           height: fit-content;
         }
+
         #indicators-holder {
           display: flex;
           gap: .5em;
           align-items: center;
         }
+
         .indicator {
           display: flex;
           gap: .5em;
@@ -540,18 +593,21 @@ export class AppReport extends LitElement {
           padding: .25em .5em;
           border-radius: 10px;
         }
+
         .indicator p {
           line-height: 20px;
           margin: 0;
           font-size: 15px;
         }
 
+        /* Manifest Card */
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: white;
           border-radius: 10px;
           width: 100%;
         }
+
         #manifest-header {
           display: flex;
           justify-content: space-between;
@@ -559,104 +615,43 @@ export class AppReport extends LitElement {
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
         }
+
         #mh-content{
           display: flex;
           gap: 1em;
           justify-content: space-between;
           width: 100%;
         }
+
         #mh-text {
           width: 50%;
           row-gap: 0.5em;
         }
-        .card-header {
-          font-size: 24px;
-          font-weight: bold;
-          margin: 0;
-          white-space: nowrap;
-        }
-        .card-desc {
-          margin: 0;
-          font-size: 14px;
-        }
+
         #mh-right {
           display: flex;
           column-gap: 2.5em;
         }
+
         #mh-actions {
           row-gap: 1em;
           align-items: center;
         }
-        .arrow_anchor {
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: bold;
-          margin: 0px 0.5em 0px 0px;
-          line-height: 1em;
-          color: rgb(79, 63, 182);
-          display: flex;
-          column-gap: 10px;
-        }
-        .arrow_anchor:visited {
-          color: #4f3fb6;
-        }
-        .arrow_anchor:hover {
-          cursor: pointer;
-        }
-        .arrow_anchor:hover img {
-          animation: bounce 1s;
-        }
-        #report-wrapper .alternate {
-          background: var(--secondary-color);
-          color: #4f3fb6;
-          border: 1px solid #4f3fb6;
-          font-size: 16px;
-          font-weight: bold;
-          border-radius: 50px;
-          padding: 0.75em 2em;
-        }
-        #report-wrapper .alternate:hover {
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-        }
+
         #manifest-detail-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 1em;
         }
-        .detail-list {
-          display: flex;
-          flex-direction: column;
-          row-gap: 18px;
-        }
-        .detail-list-header {
-          font-size: 18px;
-          margin: 0;
-          font-weight: bold;
-        }
-        .detail-list p:not(.detail-list-header){
-          margin: 0;
-        }
+
         .missing {
           font-size: 14px;
           margin: 0;
           font-weight: bold;
           white-space: no-wrap;
         }
-        .details::part(base) {
-          border-radius: 0;
-          border-bottom-left-radius: 10px;
-          border-bottom-right-radius: 10px;
-          border: none;
-        }
-        .details::part(summary) {
-          font-weight: bold;
-          font-size: 14px;
-        }
-        .details::part(header) {
-          height: 40px;
-          padding: 1em .75em;
-        }
 
+        /* S cards */
         #two-cell-row {
           display: flex;
           flex-flow: row wrap;
@@ -675,6 +670,7 @@ export class AppReport extends LitElement {
           border-radius: 10px;
         }
 
+        /* SW Card */
         #sw-header {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
@@ -699,37 +695,129 @@ export class AppReport extends LitElement {
           width: fit-content;
           align-items: center;
         }
+
+        /* Sec Card */
+
+        /* Classes used widely */
+        .flex-col {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .flex-col-center {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .flex-center {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .details-summary {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .dropdown_icon {
+          transform: rotate(0deg);
+          transition: transform .5s;
+        }
+
+        .card-header {
+          font-size: 24px;
+          font-weight: bold;
+          margin: 0;
+          white-space: nowrap;
+        }
+
+        .card-desc {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        .arrow_link {
+          margin: 0;
+          border-bottom: 1px solid #4f3fb6;
+          white-space: nowrap;
+        }
+
+        .arrow_anchor {
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: bold;
+          margin: 0px 0.5em 0px 0px;
+          line-height: 1em;
+          color: rgb(79, 63, 182);
+          display: flex;
+          column-gap: 10px;
+        }
+
+        .arrow_anchor:visited {
+          color: #4f3fb6;
+        }
+
+        .arrow_anchor:hover {
+          cursor: pointer;
+        }
+
+        .arrow_anchor:hover img {
+          animation: bounce 1s;
+        }
+
+        #report-wrapper .alternate {
+          background: var(--secondary-color);
+          color: #4f3fb6;
+          border: 1px solid #4f3fb6;
+          font-size: 16px;
+          font-weight: bold;
+          border-radius: 50px;
+          padding: 0.75em 2em;
+        }
+        #report-wrapper .alternate:hover {
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .detail-list {
+          display: flex;
+          flex-direction: column;
+          row-gap: 18px;
+        }
+
+        .detail-list-header {
+          font-size: 18px;
+          margin: 0;
+          font-weight: bold;
+        }
+
+        .detail-list p:not(.detail-list-header){
+          margin: 0;
+        }
+
+        .details::part(base) {
+          border-radius: 0;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          border: none;
+        }
+        .details::part(summary) {
+          font-weight: bold;
+          font-size: 14px;
+        }
+        .details::part(header) {
+          height: 40px;
+          padding: 1em .75em;
+        }
+
         .detail-grid {
           display: flex;
           flex-direction: column;
           row-gap: 0.5em;
-        }
-
-        sl-progress-ring {
-          height: fit-content;
-          --track-width: 4px;
-          --indicator-width: 8px;
-          --size: 100px;
-          font-size: 18px;
-        }
-
-        sl-progress-ring::part(label){
-          color: #4F3FB6;
-          font-weight: bold;
-        }
-
-        .red {
-          --indicator-color: var(--error-color);
-        }
-        .yellow {
-          --indicator-color: var(--warning-color);
-        }
-        .green {
-          --indicator-color: var(--success-color);
-        }
-        .macro_error {
-          width: 3em;
-          height: auto;
         }
 
         #sec-header {
@@ -832,6 +920,7 @@ export class AppReport extends LitElement {
           right: 5px;
         }
 
+        /* Retest modal */
         #confirmationButtons {
           display: flex;
           justify-content: space-evenly;
@@ -910,25 +999,20 @@ export class AppReport extends LitElement {
           }
         }
 
-
-
-
-
-        ${xxxLargeBreakPoint(css``)}
-        ${largeBreakPoint(css``)}
         ${mediumBreakPoint(css`
-          
-
           #mh-content {
             flex-direction: column;
           }
+
           #mh-actions, #sw-actions {
             align-items: flex-start;
             width: 50%;
           }
+
           #mh-text {
             width: 100%;
           }
+
           #manifest-detail-grid{
             display: flex;
             flex-direction: column;
@@ -943,15 +1027,14 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
-
         `)}
         ${smallBreakPoint(css`
-
           sl-progress-ring {
             --size: 75px;
             --track-width: 4px;
             font-size: 14px;
           }
+
           .progressRingSkeleton::part(base) {
             width: 75px;
             height: 75px;
@@ -965,15 +1048,19 @@ export class AppReport extends LitElement {
           #app-card{
             width: 100%;
           }
+
           #app-actions {
             width: 100%;
           }
+
           #app-actions button:not(#test-download) {
             font-size: 12px;
           }
+
           #retest img {
             height: 14px;
           }
+
           #package{
             width: 50%;
           }
@@ -981,24 +1068,28 @@ export class AppReport extends LitElement {
           #test-download {
             font-size: 10px;
           }
+
           #mh-content {
             flex-direction: column;
           }
+
           #mh-text {
             width: 100%;
           }
+
           #manifest-detail-grid{
             display: flex;
             flex-direction: column;
           }
+
           #report-wrapper .alternate {
             font-size: 16px;
           }
 
-          
           .half-width-cards {
             width: 100%;
           }
+
           #actions-footer img {
             height: 16px;
             width: auto;
@@ -1008,13 +1099,16 @@ export class AppReport extends LitElement {
     ];
   }
 
+  /* Legacy code, scared to remove. IDK the application of this code */
   constructor() {
     super();
     this.mql.addEventListener('change', e => {
       this.isDeskTopView = e.matches;
     });
   }
-
+  
+  // Runs when the page loads.
+  // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     const search = new URLSearchParams(location.search);
@@ -1028,10 +1122,13 @@ export class AppReport extends LitElement {
     setInterval(() => this.pollLastTested(), 120000);
   }
 
+
+  // Expands the Action items details on load
   firstUpdated() {
     this.rotateNinety("todo");
   }
 
+  // Polling function that updates the time that the site was last tested
   pollLastTested(){
     let last = new Date(JSON.parse(sessionStorage.getItem('last_tested')!));
     let now = new Date();
@@ -1052,6 +1149,9 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  // Fetches the sites manifest from the URL
+  // If it's missing it creates one and sets a flag
+  // If it's there then it saves it to sessionStorage
   async getManifest(url: string): Promise<ManifestContext> {
     this.isAppCardInfoLoading = true;
     let manifestContext: ManifestContext | undefined;
@@ -1071,6 +1171,8 @@ export class AppReport extends LitElement {
     return manifestContext!;
   }
 
+  // Populates the "App Card" from the manifest.
+  // Uses the URL for loading the image.
   async populateAppCard(manifestContext: ManifestContext, url: string) {
     let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
 
@@ -1151,6 +1253,9 @@ export class AppReport extends LitElement {
     }
   }
 
+  // Tests if an image will load
+  // If it fails, we use our proxy service to fetch it
+  // If it succeeds, we load it
   testImage(url: string) {
 
     // Define the promise
@@ -1177,7 +1282,10 @@ export class AppReport extends LitElement {
     return imgPromise;
   }
 
-  pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string) {
+  // Looks at the brackground color from the sites manifest
+  // If its darker, returns lightColor for the background of app card
+  // If its lighter, returns darkColor for the background of app card
+  pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string): string {
 
     //@ts-ignore:next-line
     var colors: any = new Color(bgColor).coords;
@@ -1189,9 +1297,11 @@ export class AppReport extends LitElement {
       return Math.pow((num + 0.055) / 1.055, 2.4);
     });
     var L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-    return (L > 0.3) ?  darkColor : lightColor;
+    let chosenColor = (L > 0.3) ?  darkColor : lightColor;
+    return chosenColor
   }
 
+  // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
   async runAllTests(url: string) {
     this.runningTests = true;
     await this.getManifest(url);
@@ -1203,6 +1313,7 @@ export class AppReport extends LitElement {
     this.runningTests = false;
   }
 
+  // Tests the Manifest and populates the manifest card detail dropdown
   async testManifest() {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
@@ -1273,6 +1384,7 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  // Tests the SW and populates the SW card detail dropdown
   async testServiceWorker(url: string) {
     //call service worker tests
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
@@ -1325,6 +1437,7 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  // Tests the Security and populates the Security card detail dropdown 
   async testSecurity(url: string) {
     //Call security tests
     let details = (this.shadowRoot!.getElementById("sec-details") as any);
@@ -1368,6 +1481,7 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  // If some manifest fields are missing it adds it to the drop down and returns the number that were missing
   async handleMissingFields(manifest: Manifest){
     let missing = await reportMissing(manifest);
 
@@ -1385,9 +1499,16 @@ export class AppReport extends LitElement {
         this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
       }
     });
-    return missing.length;
+    let num_missing = missing.length;
+    return num_missing
   }
 
+  /**
+  * Triggers all tests to retest
+  * If coming from confirmation is true, we have to delay a bit so a special message can show
+  * @param {boolean} comingFromConfirmation
+  * @return {void} 
+  */
   async retest(comingFromConfirmation: boolean) {
     recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.retestConfirmed = true;
@@ -1402,10 +1523,12 @@ export class AppReport extends LitElement {
     }
   }
 
+  // Delay function. Delays a given amt of ms
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Resets all data btwn tests
   resetData(){
     // reset scores
     this.manifestValidCounter = 0;
@@ -1451,6 +1574,7 @@ export class AppReport extends LitElement {
     this.retestConfirmed = false;
   }
 
+  // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
@@ -1458,6 +1582,7 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("manifest_editor_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
+   // Opens SW Selector and tracks analytics
   async openSWSelectorModal() {
     let dialog: any = this.shadowRoot!.querySelector("sw-selector")!.shadowRoot!.querySelector(".dialog");
 
@@ -1465,6 +1590,7 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("sw_selector_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
+   // Opens publish pane and tracks analytics
   async openPublishModal() {
     let dialog: any = this.shadowRoot!.querySelector("publish-pane")!.shadowRoot!.querySelector(".dialog");
 
@@ -1472,6 +1598,7 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
+   // Opens test publish modal and tracks analytics
   async openTestPublishModal() {
     let dialog: any = this.shadowRoot!.querySelector("test-publish-pane")!.shadowRoot!.querySelector(".dialog");
 
@@ -1479,6 +1606,7 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("test_publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  // Gets full icon URL from manifest given a manifest icon object
   iconSrcListParse(icon: any) {
     let manifest = getManifestContext().manifest;
     let manifestURL = getManifestContext().manifestUrl;
@@ -1487,6 +1615,7 @@ export class AppReport extends LitElement {
     return iconURL;
   }
 
+  // Makes sure the icon URL is valid
   handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
     if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
       return icon.src;
@@ -1502,7 +1631,7 @@ export class AppReport extends LitElement {
     return undefined;
   }
 
-
+  // Decides color of Progress rings depending on required and reccommended fields
   decideColor(card: string){
 
     let instantRed = false;
@@ -1533,6 +1662,7 @@ export class AppReport extends LitElement {
 
   }
 
+  // Swaps messages for each card depending on state of each card
   decideMessage(valid: number, total: number, card: string){
 
     let instantRed = false;
@@ -1562,6 +1692,7 @@ export class AppReport extends LitElement {
     }
   }
 
+  // Scrolls and Shakes the respective item from a click of an action item
   async animateItem(e: CustomEvent){
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
@@ -1608,11 +1739,13 @@ export class AppReport extends LitElement {
     }, 1000)
   }
 
+  // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
     this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest", "displayString": toAdd});
     this.requestUpdate();
   }
 
+  // Rotates the icon on each details drop down to 0 degrees
   rotateZero(card: string){
     recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
@@ -1621,6 +1754,7 @@ export class AppReport extends LitElement {
     }
   }
 
+  // Rotates the icon on each details drop down to 90 degrees
   rotateNinety(card: string){
     recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
@@ -1629,6 +1763,7 @@ export class AppReport extends LitElement {
     }
   }
 
+  // Sorts the action items list with the required stuff first
   sortTodos(){
     this.todoItems.sort((a, b) => {
       if(a.status === "red" && b.status !== "red"){
@@ -1643,11 +1778,13 @@ export class AppReport extends LitElement {
     return this.todoItems;
   }
 
+  // Pages the action items
   paginate() {
     let array = this.sortTodos();
     return array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
   }
 
+  // Moves to the next window in the action items list
   switchPage(up: boolean){
     if(up && this.pageNumber * this.pageSize < this.todoItems.length){
       this.pageNumber++;
@@ -1657,6 +1794,7 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  // Returns a list that represents the number of dots need for pagination
   getDots(){
     let dots: any[] = [];
 
@@ -1668,6 +1806,7 @@ export class AppReport extends LitElement {
     return dots;
   }
 
+  // Renders the indicators for each action item
   renderIndicators(){
     let yellow = 0;
     let red = 0;
@@ -1690,7 +1829,6 @@ export class AppReport extends LitElement {
     return html``
     
   }
-
 
   render() {
     return html`
