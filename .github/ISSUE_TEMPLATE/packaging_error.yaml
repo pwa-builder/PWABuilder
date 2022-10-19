@@ -24,7 +24,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: Error Message
+    id: error-message
     attributes:
       label: What is the error message you received? 
       description: Feel free to copy and paste the text or screenshot the error box and paste it here!
