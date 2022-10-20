@@ -4,6 +4,7 @@ import { findManifest } from "../services/manifest/manifest-service";
 import { trackEvent } from "../services/usage-analytics";
 import { getUri } from "../utils";
 import { writeFile } from 'fs/promises';
+import path = require("path");
 
 const pwaAssetGenerator = require('pwa-asset-generator');
 
@@ -11,6 +12,8 @@ export class IconViewPanel {
     public static currentPanel: IconViewPanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
+
+    private chosenIcon: vscode.Uri | undefined;
 
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
         this._panel = panel;
@@ -28,12 +31,25 @@ export class IconViewPanel {
                 if (message.command === "generate-icons") {
                     await this.generateIcons(message.options)
                 }
-                else if (message.command === "base-icon") {
+                else if (message.command === "choose-base") {
                     const icon = await this.getBaseIcon();
+
+                    const onDiskPath = vscode.Uri.file(
+                        icon![0].path
+                    );
+
+                    this.chosenIcon = icon![0];
+
+                    const goodIconSrc = this._panel.webview.asWebviewUri(onDiskPath);
+                    this._panel.webview.html.replace(/src=".*"/, `src="${goodIconSrc}"`);
+                    //   console.log("onDiskPath goodIconSrc", goodIconSrc);
+
+                    //   console.log("onDiskPath", onDiskPath);
+
                     if (icon) {
                         this._panel.webview.postMessage({
                             command: "base-icon",
-                            icon: icon[0].fsPath,
+                            icon: goodIconSrc,
                         });
                     }
                 }
@@ -90,26 +106,24 @@ export class IconViewPanel {
 
               <img id="base-icon" />
               <div class="form-group">
-                <p>Choose an icon file to use as a base. 512x512 is preferred.</p>
-                <label for="icon">Base Icon</label>
+                <label for="chooseBase">Choose an icon file to use as a base. 512x512 is preferred. PWABuilder Studio will use this icon to generate icons that are the required sizes.</label>
                 <vscode-button id="chooseBase">Choose Base Icon</vscode-button>
               </div>
 
               <div class="form-group">
-                
                 <div class="form-item">
-                 <label for="background_color">Background Color</label>
+                    <label for="background_color">Background Color: The background color of your icons</label>
                     <input class="form-control" id="background_color" value="transparent" type="color">
                 </div>
 
                 <div class="form-item">
-                 <label for="padding">Icon Padding</label>
+                 <label for="padding">Icon Padding: The padding around your icon and the edge of the icon</label>
                  <vscode-text-field id="padding" placeholder="Enter padding" value="10" type="number"></vscode-text-field>
                 </div>
 
                 <div class="form-item">
-                 <label for="generateMaskable">Generate Maskable Icon</label>
-                    <vscode-checkbox id="generateMaskable" checked="true"></vscode-checkbox>
+                  <label for="generateMaskable">Generate Maskable Icon: Maskable icons allow your icon to fill the background and adapt to different icon shapes</label>
+                  <vscode-checkbox id="generateMaskable" checked="true"></vscode-checkbox>
                 </div>
               </div>
             </form>
@@ -141,9 +155,10 @@ export class IconViewPanel {
             })
           });
 
-          vscode.onDidReceiveMessage((message) => {
-            if (message.command === "base-icon") {
-                document.querySelector("#base-icon").src = message.icon;
+          window.addEventListener("message", (message) => {
+            console.log("message", message);
+            if (message.data.command === "base-icon") {
+                document.querySelector("#base-icon").src = message.data.icon.external;
             }
           })
         </script>
@@ -169,6 +184,7 @@ export class IconViewPanel {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            margin-bottom: 1em;
         }
 
         #submit-block {
@@ -202,6 +218,11 @@ export class IconViewPanel {
             font-size: 1.1em;
             border-radius: 4px;
             cursor: pointer;
+        }
+
+        img {
+            width: 8em;
+            margin-top: 1em;
         }
       </style>
     </html>
@@ -246,7 +267,10 @@ export class IconViewPanel {
 
                 let iconFile: vscode.Uri[] | undefined;
 
-                if (!skipPrompts) {
+                if (this.chosenIcon) {
+                    iconFile = [this.chosenIcon];
+                }
+                else if (!skipPrompts) {
                     // ask user for icon file
                     iconFile = await this.getBaseIcon();
                 }
