@@ -1,6 +1,8 @@
-import { Manifest, Validation } from "./interfaces";
-import { findMissingKeys, findSingleField, isValidJSON, loopThroughKeys, loopThroughRequiredKeys } from "./utils/validation-utils";
-import { maniTests } from "./validations";
+import { Manifest, singleFieldValidation, Validation } from "./interfaces";
+export { Manifest, Validation, singleFieldValidation } from "./interfaces";
+import { findMissingKeys, isValidJSON } from "./utils/validation-utils";
+export { required_fields, reccommended_fields, optional_fields, validateSingleRelatedApp, validateSingleProtocol } from "./utils/validation-utils";
+import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
@@ -13,18 +15,15 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
 
         let data = await loopThroughKeys(manifest);
 
-
-        if (data && data.length > 0) {
-            resolve(data);
-        }
+        resolve(data);
     });
 }
 
-export async function validateSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
+export async function validateSingleField(field: string, value: any): Promise<singleFieldValidation> {
     return new Promise(async (resolve, reject) => {
         try {
             const data = await findSingleField(field, value);
-            console.log('data', data);
+            //console.log('data', data);
             resolve(data);
         }
         catch(err) {
@@ -38,6 +37,8 @@ export async function reportMissing(manifest: Manifest): Promise<Array<string>> 
         const data = await findMissingKeys(manifest);
         if (data && data.length > 0) {
             resolve(data);
+        } else {
+            resolve([]);
         }
     })
 }

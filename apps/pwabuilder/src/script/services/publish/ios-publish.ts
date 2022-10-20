@@ -23,10 +23,17 @@ export async function generateIOSPackage(
   });
 
   if (!createPackageResponse.ok) {
+    
     const responseText = await createPackageResponse.text();
-    throw new Error(
+
+    let err = new Error(
       `Error generating iOS package.\nStatus code: ${createPackageResponse.status}\nError: ${createPackageResponse.statusText}\nDetails: ${responseText}`
     );
+
+    Object.defineProperty(createPackageResponse, "stack_trace", {value: responseText});
+    //@ts-ignore
+    err.response = createPackageResponse;
+    throw err;
   }
 
   hasGeneratedIOSPackage = true;

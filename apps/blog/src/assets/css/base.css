@@ -201,6 +201,20 @@ code {
   @apply outline-none;
 }
 
+img[role="presentation"] {
+  box-shadow: rgb(0 0 0 / 20%) 0px 7px 29px 0px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.post-date {
+  font-size: 12pt;
+}
+
+.post-excerpt {
+  margin: 0;
+}
+
 /*
 Leave it for testing margins, paddings, spacing
 

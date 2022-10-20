@@ -1,3 +1,4 @@
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { LitElement } from 'lit';
 
 export type Lazy<T> = T | undefined;
@@ -13,7 +14,11 @@ export enum AppEvents {
   manifestUpdate = 'MANIFEST_UPDATE',
 }
 
-export interface Manifest {
+export interface PackageOptions{
+  
+}
+
+/* export interface Manifest {
   background_color?: string;
   description?: string;
   dir?: 'auto' | 'ltr' | 'rtl' | string;
@@ -48,7 +53,7 @@ export interface Manifest {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - accomodate custom entries... these can be a pain
   [key: string]: string | boolean | undefined | Array<any> | any;
-}
+} */
 
 export interface ShortcutItem {
   name: string;

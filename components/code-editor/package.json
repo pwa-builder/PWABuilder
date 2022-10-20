@@ -1,0 +1,47 @@
+{
+  "name": "@pwabuilder/code-editor",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "run-p build:watch serve",
+    "build:watch": "tsc --watch",
+    "serve": "web-dev-server --node-resolve --open --watch",
+    "preinstall": "node ../../scripts/setupDeps.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@codemirror/autocomplete": "^0.18.5",
+    "@codemirror/basic-setup": "^0.18.0",
+    "@codemirror/commands": "^0.18.1",
+    "@codemirror/fold": "^0.18.0",
+    "@codemirror/gutter": "^0.18.2",
+    "@codemirror/lang-json": "^0.18.0",
+    "@codemirror/language": "^0.18.1",
+    "@codemirror/lint": "^0.18.2",
+    "@codemirror/matchbrackets": "^0.18.0",
+    "@codemirror/state": "^0.18.6",
+    "@codemirror/text": "^0.18.0",
+    "@codemirror/tooltip": "^0.18.4",
+    "@codemirror/view": "^0.18.10",
+    "lit": "^2.2.1",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "@web/dev-server": "^0.1.31",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.6.3"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "consistent",
+    "trailingComma": "es5",
+    "endOfLine": "crlf",
+    "bracketSpacing": true
+  }
+}

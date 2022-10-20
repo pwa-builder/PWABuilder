@@ -1,5 +1,5 @@
-import { Manifest, Validation } from "../interfaces";
-import { maniTests } from "../validations";
+import { Manifest, RelatedApplication } from "../interfaces";
+import { langCodes, languageCodes } from "../locales";
 
 const possibleManiKeys = [
   "background_color",
@@ -15,13 +15,13 @@ const possibleManiKeys = [
   "short_name",
   "start_url",
   "theme_color",
-  "generated",
   "shortcuts",
   "categories",
   "screenshots",
   "iarc_rating_id",
   "icons",
-  "share_target"
+  "share_target",
+  "display_override"
 ];
 
 export function isStandardOrientation(orientation: string): boolean {
@@ -48,42 +48,12 @@ export function isValidJSON(json: Manifest): boolean {
   }
 }
 
-export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise((resolve) => {
-    let data: Array<Validation> = [];
 
-    const keys = Object.keys(manifest);
-
-    keys.forEach((key) => {
-      maniTests.forEach(async (test) => {
-        if (test.member === key && test.test) {
-          const testResult = await test.test(manifest[key]);
-
-          if (testResult === false) {
-            test.valid = false;
-            data.push(test);
-          }
-          else {
-            test.valid = true;
-            data.push(test);
-          }
-        }
-        else {
-          test.valid = false;
-          data.push(test);
-        }
-      })
-    })
-
-    resolve(data);
-  })
-}
 
 
 export async function findMissingKeys(manifest: Manifest): Promise<Array<string>> {
   return new Promise((resolve) => {
     let data: string[] = [];
-
     const keys = Object.keys(manifest);
 
     // find missing possible keys in manifest
@@ -97,48 +67,123 @@ export async function findMissingKeys(manifest: Manifest): Promise<Array<string>
   });
 }
 
-export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
-  return new Promise((resolve) => {
-    let data: Array<Validation> = [];
-
-    const keys = Object.keys(manifest);
-
-    keys.forEach((key) => {
-      maniTests.forEach(async (test) => {
-        if (test.category === "required") {
-          if (test.member === key && test.test) {
-            const testResult = await test.test(manifest[key]);
-
-            if (testResult === false) {
-              test.valid = false;
-              data.push(test);
-            }
-            else {
-              test.valid = true;
-              data.push(test);
-            }
-          }
-        }
-      })
-    })
-
-    resolve(data);
-  })
+export function containsStandardCategory(categories: string[]): boolean {
+  // https://github.com/w3c/manifest/wiki/Categories
+  const standardCategories = [
+    'books',
+    'business',
+    'education',
+    'entertainment',
+    'finance',
+    'fitness',
+    'food',
+    'games',
+    'government',
+    'health',
+    'kids',
+    'lifestyle',
+    'magazines',
+    'medical',
+    'music',
+    'navigation',
+    'news',
+    'personalization',
+    'photo',
+    'politics',
+    'productivity',
+    'security',
+    'shopping',
+    'social',
+    'sports',
+    'travel',
+    'utilities',
+    'weather',
+  ];
+  
+  return categories.some(c => standardCategories.includes(c));
 }
 
-export async function findSingleField(field: string, value: any): Promise<Validation | boolean | undefined> {
-  return new Promise(async (resolve) => {
-    let singleField = undefined;
+export function isValidLanguageCode(code: string){
+  // temporary fix that helps with codes like en-US that we don't cover.
+  let langUsed = code.split("-")[0];
+  let flag = false;
 
-    maniTests.forEach((test) => {
-      if (test.member === field && test.test) {
-        const testResult = test.test(value);
+  languageCodes.forEach((lang: langCodes) => {
+    if(lang.code === langUsed) {
+      flag = true;
+    }
+  })
+  return flag;
+}
 
-        console.log("testResult", testResult);
-        singleField = testResult;
-      }
+function getDimensions(sizes: string){
+  return (sizes || '0x0')
+    .split(' ')
+    .map(size => {
+      const dimensions = size.split('x');
+      return {
+        width: Number.parseInt(dimensions[0] || '0', 10),
+        height: Number.parseInt(dimensions[1] || '0', 10),
+      };
     });
-
-    resolve(singleField);
-  })
 }
+
+export function isAtLeast(sizes: string, width: number, height: number): boolean {
+  const dimensions = getDimensions(sizes);
+  return dimensions.some(i => i.width >= width && i.height >= height);
+}
+
+export function validateSingleRelatedApp(ra: RelatedApplication){
+  if(!platformOptions.includes(ra.platform)){
+    return "platform";
+  }
+
+  if(!isValidURL(ra.url!)){
+    return "url";
+  }
+
+  return "valid";
+}
+
+function isValidURL(str: string) {
+  // from https://stackoverflow.com/a/14582229 but removed the ip address section
+  var pattern = new RegExp(
+    '^((https?:)?\\/\\/)?' + // protocol
+    '(?:\\S+(?::\\S*)?@)?(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}' + // domain name
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    '(\\\\#[-a-z\\\\d_]*)?', // fragment locator
+    'i' // case insensitive
+  );
+  return !!pattern.test(str);
+}
+
+function isValidRelativeURL(str: string){
+  var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+  return !!pattern.test(str);
+}
+
+export function validateSingleProtocol(proto: any){
+  let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
+  if(!validProtocol){
+    return "protocol";
+  }
+
+  // i guess more importantly we should check if its in the scope of the site.
+
+  let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
+
+  if(!validURL){
+    return "url";
+  }
+
+  return "valid";
+}
+
+
+
+const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
+const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "geo", "gopher", "im", "ipfs", "ipns", "irc", "ircs", "magnet", "mailto", "matrix", "mms", "news", "nntp", "sip", "sms", "smsto", "ssb", "ssh", "tel", "urn", "webcal", "wtai", "xmpp"];
+export const required_fields = ["icons", "name", "short_name", "start_url"];
+export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
+export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];

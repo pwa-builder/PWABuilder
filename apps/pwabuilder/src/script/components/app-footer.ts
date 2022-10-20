@@ -29,18 +29,11 @@ export class AppFooter extends LitElement {
         font-size: var(--small-font-size);
       }
 
-      fast-anchor::part(control) {
-        border-bottom: none;
-      }
 
-      fast-anchor:focus {
-        outline: solid;
-        outline-width: 2px;
-      }
-
-      ion-icon {
+      sl-icon {
         font-size: var(--font-size);
         color: white;
+        pointer-events: none;
       }
 
       span {
@@ -68,25 +61,11 @@ export class AppFooter extends LitElement {
         color: white;
       }
 
-      fast-anchor:focus {
-        border: 1px solid white;
-        border-radius: 5px;
-        padding: 3px;
-      }
-
       @media screen and (-ms-high-contrast: black-on-white) {
           /* All high contrast styling rules */
-          ion-icon {
+          sl-icon {
             color: black;
           }
-      } 
-
-      @media screen and (-ms-high-contrast: white-on-black) {
-          /* All high contrast styling rules */
-          ion-icon {
-            color: black;
-          }
-          
       } 
 
       ${xxxLargeBreakPoint(
@@ -126,11 +105,11 @@ export class AppFooter extends LitElement {
             width: 10em;
           }
 
-          #icons fast-anchor {
+          #icons a {
             margin-right: 46px;
           }
 
-          #icons ion-icon {
+          #icons sl-icon {
             font-size: 27px;
             color: white;
           }
@@ -184,38 +163,38 @@ export class AppFooter extends LitElement {
         </div>
 
         <div id="icons">
-          <fast-anchor
+          <a
             target="_blank"
             rel="noopener"
             appearance="hypertext"
             href="https://github.com/pwa-builder/PWABuilder"
-            aria-label="Contribute to our Github"
+            aria-label="Contribute to our Github, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-github" role="presentation"></ion-icon>
-          </fast-anchor>
+            <span title="Contribute to our Github"><sl-icon name="github" role="presentation"></sl-icon></span>
+          </a>
 
-          <fast-anchor
+          <a
             target="_blank"
             rel="noopener"
             appearance="hypertext"
             href="https://twitter.com/pwabuilder"
-            aria-label="Follow us on Twitter"
+            aria-label="Follow us on Twitter, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-twitter" role="presentation"></ion-icon>
-          </fast-anchor>
+            <span title="Follow us on Twitter"><sl-icon name="twitter" role="presentation"></sl-icon></span>
+          </a>
 
-          <fast-anchor
+          <a
             target="_blank"
             rel="noopener"
             appearance="hypertext"
             href="https://www.youtube.com/c/PWABuilder"
-            aria-label="Subscribe to our Youtube"
+            aria-label="Subscribe to our Youtube, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <ion-icon name="logo-youtube" role="presentation"></ion-icon>
-          </fast-anchor>
+            <span title="Subscribe to our Youtube"><sl-icon name="youtube" role="presentation"></sl-icon></span>
+          </a>
         </div>
       </footer>
     `;

@@ -2,7 +2,7 @@
   This file is used for all of your global styles and CSS variables.
   Check here https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties for more info on using CSS variables.
 */
-
+@import '@shoelace-style/shoelace/dist/themes/light.css';
 /*
   for more info on font-display
   https://web.dev/optimize-webfont-loading/#customize-the-text-rendering-delay
@@ -98,8 +98,6 @@ body {
   padding: 0;
   margin: 0;
   background: var(--primary-background-color);
-
-  overflow-x: hidden;
 }
 
 p,

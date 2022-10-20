@@ -17,7 +17,6 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onStartupFinished",
     "onCommand:pwa-studio.helloWorld",
     "onCommand:pwa-studio.newPwaStarter",
     "onCommand:pwa-studio.serviceWorker",

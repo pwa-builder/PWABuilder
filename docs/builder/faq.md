@@ -25,7 +25,7 @@ Choose `Product Management` -> `Product Identity`:
 
 You'll see the Package ID, Publisher ID, and publisher display name. You'll need all three of these to publish in the Store.
 
-On PWABuilder when generating your Windows app, add these values to the Windows package options:
+On PWABuilder when generating your Windows app, add these values to the Windows package options here:
 
 <div class="docs-image">
      <img src="/assets/builder/faq/required-data-in-pwabuilder.png" alt="Publisher and package info in PWABuilder" width=400>

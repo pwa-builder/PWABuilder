@@ -6,12 +6,6 @@ import '../components/app-header';
 import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 
-import {
-  fastButtonCss,
-  fastCheckboxCss,
-  fastNumberFieldCss,
-  fastRadioCss,
-} from '../utils/css/fast-elements';
 import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 
 interface PlatformInformation {
@@ -65,13 +59,10 @@ export class ImageGenerator extends LitElement {
 
   static get styles() {
     return [
-      fastButtonCss,
-      fastCheckboxCss,
-      fastRadioCss,
-      fastNumberFieldCss,
       css`
         :host {
           --loader-size: 1.8em;
+          --sl-input-height-medium: 1.5rem;
         }
 
         h1 {
@@ -98,43 +89,27 @@ export class ImageGenerator extends LitElement {
           font-size: 10px;
         }
 
-        fast-card {
-          --background-color: var(--secondary-color);
-          padding: 16px;
+
+        app-file-input:hover {
+          cursor: pointer;
         }
 
-        fast-button {
+        sl-button {
           height: 24px;
           padding: 8px 0;
         }
 
-        fast-progress-ring {
-          height: var(--loader-size);
-          width: var(--loader-size);
-
-          --accent-foreground-rest: var(--secondary-color);
-          --accent-foreground-rest: var(--primary-color);
-          --neutral-fill-rest: white;
-          --neutral-fill-active: white;
-          --neutral-fill-hover: white;
-        }
-
-        fast-button::part(content) {
+        sl-button::part(base) {
           margin: 0 16px;
         }
 
         #image-generator-card {
           background: #ffffff;
+          padding: 16px;
         }
 
         #submit {
           margin-top: 8px;
-        }
-
-        fast-button#generateButton,
-        fast-button#downloadButton {
-          --neutral-foreground-rest: var(--secondary-color);
-          --button-font-color: var(--secondary-color);
         }
 
         .background {
@@ -144,6 +119,14 @@ export class ImageGenerator extends LitElement {
 
         .main {
           padding: 32px;
+        }
+
+        sl-input {
+          width: 30%;
+          font-size: 16px;
+        }
+        small {
+          margin-top: 10px;
         }
       `,
     ];
@@ -162,7 +145,7 @@ export class ImageGenerator extends LitElement {
       <div>
         <app-header></app-header>
         <main id="main" role="presentation" class="main background">
-          <fast-card id="image-generator-card">
+          <div id="image-generator-card">
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
             <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
@@ -174,25 +157,25 @@ export class ImageGenerator extends LitElement {
                 </div>
                 <div class="padding-section">
                   <h3>${loc.padding}</h3>
-                  <fast-number-field name="padding" max="1" min="0" step="0.1" .value=${this.padding}
-                    @change=${this.handlePaddingChange} required></fast-number-field>
+                  <sl-input name="padding" type="number" max="1" min="0" step="0.1" value=${this.padding}
+                    @change=${this.handlePaddingChange} required></sl-input>
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
                   <h3>${loc.background_color}</h3>
                   <div class="color-radio">
-                    <fast-radio-group orientation="vertical" .value=${this.colorOption}
+                    <sl-radio-group orientation="vertical" .value=${this.colorOption}
                       @change=${this.handleBackgroundRadioChange}>
-                      <fast-radio name="colorOption" value="best guess">
+                      <sl-radio name="colorOption" value="best guess">
                         ${loc.best_guess}
-                      </fast-radio>
-                      <fast-radio name="colorOption" value="transparent">
+                      </sl-radio>
+                      <sl-radio name="colorOption" value="transparent">
                         ${loc.transparent}
-                      </fast-radio>
-                      <fast-radio name="colorOption" value="custom">
+                      </sl-radio>
+                      <sl-radio name="colorOption" value="custom">
                         ${loc.custom_color}
-                      </fast-radio>
-                    </fast-radio-group>
+                      </sl-radio>
+                    </sl-radio-group>
                   </div>
                   ${this.renderColorPicker()}
                 </div>
@@ -205,17 +188,17 @@ export class ImageGenerator extends LitElement {
                 </div>
               </section>
               <section id="submit" class="form-bottom">
-                <fast-button id="generateButton" class="primary" ?disabled=${!this.generateEnabled || this.generating}
-                  @click=${this.generateZip}>
-                  ${this.generating
-                    ? html`<fast-progress-ring></fast-progress-ring>`
-                    : localeStrings.button.generate}
-                </fast-button>
+                <sl-button id="generateButton" class="primary" ?disabled=${!this.generateEnabled || this.generating}
+                  @click=${this.generateZip}
+                  ?loading=${this.generating}>
+                  ${localeStrings.button.generate}
+
+                </sl-button>
       
                 ${this.renderError()}
               </section>
             </form>
-          </fast-card>
+          </div>
         </main>
       </div>
     `;
@@ -224,10 +207,10 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-        <fast-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
+        <sl-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
           @change=${this.handleCheckbox} data-index=${i}>
           ${platform.label}
-        </fast-checkbox>
+        </sl-checkbox>
       `
     );
   }
