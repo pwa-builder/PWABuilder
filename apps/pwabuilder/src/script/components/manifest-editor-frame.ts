@@ -215,6 +215,7 @@ export class ManifestEditorFrame extends LitElement {
     super();
   }
 
+  // grabs the manifest, manifest url and site base url on load
   connectedCallback(): void {
     super.connectedCallback();
     this.manifest = getManifestContext().manifest;
@@ -222,6 +223,7 @@ export class ManifestEditorFrame extends LitElement {
     this.baseURL = sessionStorage.getItem("current_url")!;
   }
 
+  // downloads manifest and tells the site they need to retest to see new manifest changes
   downloadManifest(){
     let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
     editor.downloadManifest();
@@ -233,6 +235,7 @@ export class ManifestEditorFrame extends LitElement {
     this.dispatchEvent(readyForRetest);
   }
 
+  // hides modal
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
