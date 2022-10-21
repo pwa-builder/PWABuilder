@@ -793,6 +793,9 @@ export class PublishPane extends LitElement {
     }
   }
 
+  // takes the information from the selectedStore and error and forms a card to 
+  // convey the error message to the user in a user friendly way
+  // directs users towards FAQ
   renderErrorMessage(err: any){
     let response = err.response;
     let stack_trace = `The site I was testing is: ${getURL()}\n`; // stored in copy st button
@@ -839,6 +842,7 @@ export class PublishPane extends LitElement {
     this.feedbackMessages.push(error);
   }
 
+  // renders successfully downloaded message upon successful downloads
   renderSuccessMessage(){
     this.feedbackMessages.push(html`
       <div class="feedback-holder type-success">
@@ -849,10 +853,13 @@ export class PublishPane extends LitElement {
     `);
   }
 
+  // copy string to clipboard
   copyText(text: string){
     navigator.clipboard.writeText(text);
   }
 
+  // before we downloaded the package using a service
+  // now we just do it the vanilla js way
   async downloadPackage(){
     let blob = (this.blob || this.testBlob);
     if (blob) {
@@ -873,6 +880,7 @@ export class PublishPane extends LitElement {
     }
   }
 
+  // renders the store cards with their associated factoids from this.platforms
   renderContentCards(): TemplateResult[] {
     return this.platforms.map(
       platform => html`
@@ -910,20 +918,20 @@ export class PublishPane extends LitElement {
     }
   }
 
-  
-
   handleRequestClose(e: Event) {
     if (this.preventClosing) {
       e.preventDefault();
     }
   }
 
+  // goes from form back to cards when you click the back arrow
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
     this.feedbackMessages = [];
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  // the footer of the pane that has links to packaging instructions and download button
   renderFormFooter(){
     // Special case for Android since we have to toggle some info due to the "Other Android" scenario
     if(this.selectedStore === "Android"){
@@ -976,6 +984,8 @@ export class PublishPane extends LitElement {
     `
   }
 
+  // validates packaging options and downloads package if valid
+  // reports validity if not
   submitForm(){
     let platForm = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase); // windows-form | android-form | ios-form | oculus-form
     let form = platForm.getForm(); // the actual form element inside the platform form.

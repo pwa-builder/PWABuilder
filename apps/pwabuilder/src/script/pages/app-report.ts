@@ -679,7 +679,7 @@ export class AppReport extends LitElement {
           row-gap: 0.5em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
-          min-height: 280px;
+          min-height: 318px;
           justify-content: space-between;
         }
 
@@ -737,7 +737,7 @@ export class AppReport extends LitElement {
           row-gap: .5em;
           padding: 1em;
           border-bottom: 1px solid #c4c4c4;
-          min-height: 280px;
+          min-height: 318px;
         }
         #sec-top {
           display: flex;
