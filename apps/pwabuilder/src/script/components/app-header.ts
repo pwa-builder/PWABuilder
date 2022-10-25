@@ -39,6 +39,8 @@ export class AppHeader extends LitElement {
 
       header img {
         cursor: pointer;
+        width: 100px;
+        height: auto;
       }
 
       header h1 {
@@ -220,7 +222,7 @@ export class AppHeader extends LitElement {
     return html`
       <header part="header">
         <a href="/" @click=${() => this.recordGoingHome()}>
-          <img tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
+          <img tabindex="0" id="header-icon" src="/assets/logos/header_logo.png"
           alt="PWABuilder logo" />
         </a>
 
@@ -285,7 +287,6 @@ export class AppHeader extends LitElement {
               </div>
             </div>
           </sl-dropdown>
-          
         </nav>
       </header>
     `;

@@ -803,8 +803,13 @@ export class PublishPane extends LitElement {
     let message = ""; // text that comes after error code in quick desc
     let quick_desc = ""; // the quick description they get to read (searchable)
 
-     
-    if(this.selectedStore === "Windows"){
+    
+    if(err.message === "Failed to fetch"){
+      title = err.message;
+      quick_desc = "Our service was unable to package your PWA. Please open an issue on github here: https://github.com/pwa-builder/PWABuilder/issues/new/choose"
+      stack_trace += "No stack trace available";
+    }
+    else if(this.selectedStore === "Windows"){
       let errString = err.stack;
       stack_trace += errString.slice(
         errString.indexOf(" at ") + 1
