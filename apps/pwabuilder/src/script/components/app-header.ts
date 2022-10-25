@@ -52,10 +52,11 @@ export class AppHeader extends LitElement {
 
       nav {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         width: 8em;
         font-size: 18px;
+        gap: .75em;
       }
 
       .nav_link {
@@ -85,12 +86,6 @@ export class AppHeader extends LitElement {
       nav sl-icon {
         font-size: 2em;
       }
-
-      #desktop-nav {
-        display: flex;
-      }
-
-
 
       a:visited {
         color: black;
@@ -199,7 +194,7 @@ export class AppHeader extends LitElement {
             <span>Blog</span>
           </a>
 
-          <a
+          <!-- <a
             class="nav_link"
             href="https://github.com/pwa-builder/PWABuilder"
             target="__blank"
@@ -208,7 +203,7 @@ export class AppHeader extends LitElement {
             @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <sl-icon role="presentation" aria-hidden="true" tab-index="-1" name="github" title="View source on GitHub"></sl-icon>
-          </a>
+          </a> -->
         </nav>
       </header>
     `;
