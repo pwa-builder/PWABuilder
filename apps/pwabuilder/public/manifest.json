@@ -41,37 +41,37 @@
   "screenshots": [
     {
       "src": "/assets/screenshots/screen1.png",
-      "sizes": "2880x1800",
+      "sizes": "1630x918",
       "type": "image/png",
       "description": "PWABuilder Home Screen"
     },
     {
       "src": "/assets/screenshots/screen2.png",
-      "sizes": "2880/1800",
+      "sizes": "1631x917",
       "type": "image/png",
-      "description": "PWABuilder Report Card"
+      "description": "PWABuilder Report Card Page"
     },
     {
       "src": "/assets/screenshots/screen3.png",
-      "sizes": "2880x1800",
+      "sizes": "1631x917",
       "type": "image/png",
-      "description": "Manifest information on the Report Card"
+      "description": "Manifest Editor in the Report Card Page"
     },
     {
       "src": "/assets/screenshots/screen4.png",
-      "sizes": "2880x1800",
+      "sizes": "1631x917",
       "type": "image/png",
       "description": "Pick a pre-built Service Worker"
     },
     {
       "src": "/assets/screenshots/screen5.png",
-      "sizes": "2880x1800",
+      "sizes": "1633x919",
       "type": "image/png",
       "description": "Publish your PWA to the App Stores!"
     },
     {
       "src": "/assets/screenshots/mobile.png",
-      "sizes": "1439x2881",
+      "sizes": "387x844",
       "type": "image/png",
       "description": "PWABuilder also works on your phone!"
     }
