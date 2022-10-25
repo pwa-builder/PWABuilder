@@ -216,6 +216,11 @@ export class AppHeader extends LitElement {
     recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  showMenu(){
+    let menu = this.shadowRoot!.querySelector("sl-dropdown");
+    menu.show();
+  }
+
   render() {
     return html`
       <header part="header">
@@ -237,7 +242,7 @@ export class AppHeader extends LitElement {
             <span>Docs</span>
           </a>
           <sl-dropdown distance="10">
-            <button slot="trigger" class="nav_link nav_button" @click=${() => recordPWABuilderProcessStep(`.header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)}><span>Community</span></button>
+            <button slot="trigger" @mouseover=${() => this.showMenu()} class="nav_link nav_button" @click=${() => recordPWABuilderProcessStep(`.header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)}><span>Community</span></button>
             <div class="social-box">
               <div class="arrow" role="presentation"></div>
               <div class="col">
