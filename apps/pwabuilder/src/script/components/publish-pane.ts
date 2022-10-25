@@ -1,5 +1,5 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { generatePackage, Platform } from '../services/publish';
@@ -39,28 +39,29 @@ export class PublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
-  @state() errorMessages: TemplateResult[] = [];
+  @state() feedbackMessages: TemplateResult[] = [];
 
-  
+  @property() preventClosing = false;
+
   @state() storeMap: any = {
-  "Windows": 
+  "Windows":
     {
       "logo": "/assets/windows_icon.svg",
       "packaging_text": "Click below for instructions on how to submit to the Windows Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/windows"
     },
-  "Android": 
+  "Android":
     {
       "logo": "/assets/android_icon.svg"
       /* Android packaging text is handle in the function so that it will update on apk toggle */
     },
-  "iOS": 
+  "iOS":
     {
       "logo": "/assets/apple_icon.svg",
       "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
       "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
     },
-  "Meta": 
+  "Meta":
     {
       "logo": "/assets/meta_icon.svg",
       "packaging_text": "Click below for instructions on how to submit to the Meta Quest Store.",
@@ -363,6 +364,7 @@ export class PublishPane extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
+        z-index: 1000;
       }
 
       #unsigned-tooltip{
@@ -390,23 +392,34 @@ export class PublishPane extends LitElement {
         visibility: visible;
       }
 
-      #errors {
+      #feedback {
         position: absolute;
         bottom: .5em;
+        padding: 0 1em;
+        width: 100%;
       }
 
-      .error-holder {
+      .feedback-holder {
         display: flex;
         gap: .5em;
-        align-items: flex-start;
-        background-color: #FAEDF1;
         padding: .5em;
-        border-left: 4px solid #EB5757;
         border-radius: 3px;
-        margin: 0 1em;
+        width: 100%;
       }
 
-      .error-holder p {
+      .type-error {
+        align-items: flex-start;
+        background-color: #FAEDF1;
+        border-left: 4px solid var(--error-color);
+      }
+
+      .type-success {
+        align-items: center;
+        background-color: #eefaed;
+        border-left: 4px solid var(--success-color);
+      }
+
+      .feedback-holder p {
         margin: 0;
         font-size: 14px;
       }
@@ -435,7 +448,11 @@ export class PublishPane extends LitElement {
         border-bottom: 1px solid black;
       }
 
-      .close_error:hover {
+      .close_feedback {
+        margin-left: auto;
+      }
+
+      .close_feedback:hover {
         cursor: pointer;
       }
 
@@ -751,9 +768,9 @@ export class PublishPane extends LitElement {
           this.downloadPackage()
         }
       }
+      this.renderSuccessMessage()
     } catch (err: any) {
-      console.error(err);
-      this.renderErrorMessage(err.response);
+      this.renderErrorMessage(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
@@ -776,34 +793,73 @@ export class PublishPane extends LitElement {
     }
   }
 
-  renderErrorMessage(response: any){
-    let stack_trace = "";
-    let message = "";
-    if(this.selectedStore === "Android"){
+  // takes the information from the selectedStore and error and forms a card to 
+  // convey the error message to the user in a user friendly way
+  // directs users towards FAQ
+  renderErrorMessage(err: any){
+    let response = err.response;
+    let stack_trace = `The site I was testing is: ${getURL()}\n`; // stored in copy st button
+    let title = ""; // first line of error message
+    let message = ""; // text that comes after error code in quick desc
+    let quick_desc = ""; // the quick description they get to read (searchable)
+
+     
+    if(this.selectedStore === "Windows"){
+      let errString = err.stack;
+      stack_trace += errString.slice(
+        errString.indexOf(" at ") + 1
+      ); 
+      title = errString.split(",")[0]; // first line of error message
+      quick_desc = errString.slice(
+        errString.indexOf("Details:") + 8,
+        errString.indexOf(" at ")
+      ); // the quick description they get to read (searchable)
+
+    } else if (this.selectedStore === "Android"){
+      title = response.statusText; 
+      stack_trace += response.stack_trace.split("stack:")[1]; 
       message = response.stack_trace.split("stack:")[0];
-      stack_trace = response.stack_trace.split("stack:")[1];
+      quick_desc = `Status code: ${response.status}. ${message}` 
+    } else {
+      title = response.statusText; 
+      stack_trace += err.stack; 
+      quick_desc = `Status code: ${response.status}. ${response.stack_trace}` 
     }
     let error = html`
-      <div class="error-holder">
+      <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
-          <p class="error-title">${response.statusText}</p>
-          <p class="error-desc">Status code: ${response.status}. ${message}</p>
+          <p class="error-title">${title}</p>
+          <p class="error-desc">${quick_desc}</p>
           <div class="error-actions">
             <button class="copy_stack" @click=${() => this.copyText(stack_trace)}>Copy stack trace</button>
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
-        <img @click=${() => this.errorMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `
-    this.errorMessages.push(error);
+    this.feedbackMessages.push(error);
   }
 
+  // renders successfully downloaded message upon successful downloads
+  renderSuccessMessage(){
+    this.feedbackMessages.push(html`
+      <div class="feedback-holder type-success">
+        <img src="/assets/new/valid.svg" alt="successful download icon" />
+        <p class="success-desc">${`Congratulations! Your ${this.selectedStore} package has successfully downloaded!`}</p>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
+      </div>
+    `);
+  }
+
+  // copy string to clipboard
   copyText(text: string){
     navigator.clipboard.writeText(text);
   }
 
+  // before we downloaded the package using a service
+  // now we just do it the vanilla js way
   async downloadPackage(){
     let blob = (this.blob || this.testBlob);
     if (blob) {
@@ -824,6 +880,7 @@ export class PublishPane extends LitElement {
     }
   }
 
+  // renders the store cards with their associated factoids from this.platforms
   renderContentCards(): TemplateResult[] {
     return this.platforms.map(
       platform => html`
@@ -852,6 +909,8 @@ export class PublishPane extends LitElement {
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
+      this.blob = undefined;
+      this.generating = false;
       await dialog!.hide();
       recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
@@ -859,12 +918,20 @@ export class PublishPane extends LitElement {
     }
   }
 
+  handleRequestClose(e: Event) {
+    if (this.preventClosing) {
+      e.preventDefault();
+    }
+  }
+
+  // goes from form back to cards when you click the back arrow
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
-    this.errorMessages = [];
+    this.feedbackMessages = [];
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  // the footer of the pane that has links to packaging instructions and download button
   renderFormFooter(){
     // Special case for Android since we have to toggle some info due to the "Other Android" scenario
     if(this.selectedStore === "Android"){
@@ -878,13 +945,13 @@ export class PublishPane extends LitElement {
             </div>
           </div>
           <div id="form-options-actions" class="modal-actions">
-            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
+            <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" ?disabled=${this.feedbackMessages.length > 0} >
               Download Package
             </sl-button>
-            <a 
-              target="_blank" 
-              rel="noopener" 
-              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+            <a
+              target="_blank"
+              rel="noopener"
+              href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
               id="tou-link"
               @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
               >Terms of Use</a>
@@ -905,10 +972,10 @@ export class PublishPane extends LitElement {
           <sl-button  id="generate-submit" type="submit" @click=${() => this.submitForm()} ?loading="${this.generating}" >
             Download Package
           </sl-button>
-          <a 
-            target="_blank" 
-            rel="noopener" 
-            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" 
+          <a
+            target="_blank"
+            rel="noopener"
+            href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
             id="tou-link"
             @click=${() => recordPWABuilderProcessStep("TOU_clicked", AnalyticsBehavior.ProcessCheckpoint)}
             >Terms of Use</a>
@@ -917,10 +984,12 @@ export class PublishPane extends LitElement {
     `
   }
 
+  // validates packaging options and downloads package if valid
+  // reports validity if not
   submitForm(){
     let platForm = (this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase); // windows-form | android-form | ios-form | oculus-form
     let form = platForm.getForm(); // the actual form element inside the platform form.
-    
+
     if(form!.checkValidity()){
       let packagingOptions = platForm!.getPackageOptions();
       this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
@@ -931,7 +1000,7 @@ export class PublishPane extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} @sl-request-close=${(e:any) => this.handleRequestClose(e)} noHeader>
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
           ${this.cardsOrForm ?
@@ -958,7 +1027,7 @@ export class PublishPane extends LitElement {
               </div>
               <div id="form-area" data-store=${this.selectedStore}>
                 ${this.renderForm()}
-                <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
+                <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : html``}</div>
               </div>
               ${this.renderFormFooter()}
             `

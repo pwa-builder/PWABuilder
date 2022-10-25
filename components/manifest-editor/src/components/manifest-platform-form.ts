@@ -360,6 +360,13 @@ export class ManifestPlatformForm extends LitElement {
         }
 
         if(!passed){
+          // Remove old errors
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            console.log(error_div);
+            error_div!.parentElement!.removeChild(error_div!);
+          }
+
           // update error list with new errors
           if(validation.errors){
             let div = document.createElement('div');

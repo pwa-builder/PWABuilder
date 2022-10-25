@@ -563,7 +563,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Language</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/language"
+                  href="https://www.w3.org/TR/appmanifest/#lang-member"
                   target="_blank"
                   rel="noopener"
                 >

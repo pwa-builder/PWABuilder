@@ -75,6 +75,7 @@ export class SWSelector extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
+        z-index: 1000;
       }
 
       #frame-footer {
@@ -184,6 +185,7 @@ export class SWSelector extends LitElement {
     super();
   }
 
+  // hides modal
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
@@ -193,11 +195,13 @@ export class SWSelector extends LitElement {
     }
   }
 
+  // sets selected SW so we know which to download
   setSelectedSW(e: any){
     this.selectedSW = e.detail.name;
     recordPWABuilderProcessStep(`${this.selectedSW}_tab_clicked`, AnalyticsBehavior.ProcessCheckpoint)
   }
 
+  // downloads selected SW
   downloadSW(){
     let filename = "pwabuilder-sw.js";
     var element = document.createElement('a');

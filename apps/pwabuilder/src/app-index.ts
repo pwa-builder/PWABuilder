@@ -119,7 +119,14 @@ export class AppIndex extends LitElement {
             },
           },
           {
-            path: '/imageGenerator',
+            path: '/portals', // used by the power platform team
+            component: 'powerplatform-publish',
+            action: async () => {
+              await import('./script/pages/powerplatform-publish.js');
+            },
+          },
+          {
+            path: '/imageGenerator', // used by Edge dev tools
             component: 'image-generator',
             action: async () => {
               await import('./script/pages/image-generator.js');

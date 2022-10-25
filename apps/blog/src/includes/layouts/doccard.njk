@@ -41,19 +41,17 @@
 {% macro card(doc) %}
   <a class="doc-link" href="{{ doc.url | url }}">
     <div class="w-full h-full featured-post relative shadow rounded p-2">
-      <span
-          class="text-primary-font top-0 left-0 p-2"
-          datetime="{{ doc.data.date }}"
-        >
-        {{ doc.data.date | dateDisplay }}
-      </span>
-      <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ doc.data.image }}" alt=""/>
       <div class="p-3 flex flex-col">
-        <h3 class="mt-1 mb-4">
+        <span
+            class="post-date text-primary-font top-0 left-0 "
+            datetime="{{ doc.data.date }}"
+          >
+          {{ doc.data.date | dateDisplay }}
+        </span>
+        <h3 class="mt-1">
           {{ doc.data.title }}
         </h3>
-        <p class="opacity-75 mb-8">{{ doc.data.excerpt }}</p>
-        <p class="text-link p-1 text-xs">Keep reading...</p>
+        <p class="opacity-75 post-excerpt">{{ doc.data.excerpt }}</p>
       </div>
     </div>
   </a>

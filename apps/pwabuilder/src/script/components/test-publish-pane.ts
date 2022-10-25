@@ -37,7 +37,7 @@ export class TestPublishPane extends LitElement {
   @state() blob: Blob | File | null | undefined;
   @state() testBlob: Blob | File | null | undefined;
   @state() downloadFileName: string | null = null;
-  @state() errorMessages: TemplateResult[] = [];
+  @state() feedbackMessages: TemplateResult[] = [];
 
 
   readonly platforms: ICardData[] = [
@@ -64,12 +64,12 @@ export class TestPublishPane extends LitElement {
 
       #pp-frame-wrapper {
         width: 100%;
-        height: 90vh;
+        height: fit-content;
       }
       #pp-frame-content {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: fit-content;
       }
       #pp-frame-header {
         display: flex;
@@ -89,7 +89,7 @@ export class TestPublishPane extends LitElement {
       }
       .card-wrapper {
         width: 100%;
-        height: 50%;
+        height: fit-content;
         display: flex;
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
@@ -149,7 +149,7 @@ export class TestPublishPane extends LitElement {
       }
       #store-cards {
         width: 100%;
-        height: 100%;
+        height: fit-content;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-gap: .75em;
@@ -205,20 +205,34 @@ export class TestPublishPane extends LitElement {
         right: 5px;
       }
 
-      .error-holder {
-        display: flex;
-        gap: .5em;
-        align-items: flex-start;
-        background-color: #FAEDF1;
-        padding: .5em;
+      #feedback {
         position: absolute;
-        bottom: 100px;
-        border-left: 4px solid #EB5757;
-        border-radius: 3px;
-        margin: 0 1em;
+        bottom: .5em;
+        padding: 0 1em;
+        width: 100%;
       }
 
-      .error-holder p {
+      .feedback-holder {
+        display: flex;
+        gap: .5em;
+        padding: .5em;
+        border-radius: 3px;
+        width: 100%;
+      }
+
+      .type-error {
+        align-items: flex-start;
+        background-color: #FAEDF1;
+        border-left: 4px solid var(--error-color);
+      }
+
+      .type-success {
+        align-items: center;
+        background-color: #eefaed;
+        border-left: 4px solid var(--success-color);
+      }
+
+      .feedback-holder p {
         margin: 0;
         font-size: 14px;
       }
@@ -239,13 +253,19 @@ export class TestPublishPane extends LitElement {
         color: black;
         font-weight: bold;
         font-size: 14px;
+        border-bottom: 1px solid transparent;
       }
 
       .error-actions > *:hover {
         cursor: pointer;
+        border-bottom: 1px solid black;
       }
 
-      .close_error:hover {
+      .close_feedback {
+        margin-left: auto;
+      }
+
+      .close_feedback:hover {
         cursor: pointer;
       }
 
@@ -349,9 +369,10 @@ export class TestPublishPane extends LitElement {
           this.downloadPackage()
         }
       }
+      this.renderSuccessMessage()
     } catch (err: any) {
       console.error(err);
-      this.renderErrorMessage(err.response);
+      this.renderErrorMessage(err);
       //this.showAlertModal(err as Error, platform);
       recordProcessStep(
         'analyze-and-package-pwa',
@@ -378,28 +399,43 @@ export class TestPublishPane extends LitElement {
     }
   }
 
-  renderErrorMessage(response: any){
-    let stack_trace = "";
-    let message = "";
-    if(this.selectedStore === "Android"){
-      message = response.stack_trace.split("stack:")[0];
-      stack_trace = response.stack_trace.split("stack:")[1];
-    }
+  renderErrorMessage(err: any){
+    let errString = err.stack;
+    let stack_trace = `The site I was testing is: ${getURL()}\n`; // stored in copy st button
+    stack_trace += errString.slice(
+      errString.indexOf(" at ") + 1
+    ); 
+    let title = errString.split(",")[0]; // first line of error message
+    let quick_desc = errString.slice(
+      errString.indexOf("Details:") + 8,
+      errString.indexOf(" at ")
+    ); // the quick description they get to read (searchable)
+    
     let error = html`
-      <div class="error-holder">
+      <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
-          <p class="error-title">${response.statusText}</p>
-          <p class="error-desc">Status code: ${response.status}. ${message}</p>
+          <p class="error-title">${title}</p>
+          <p class="error-desc">${quick_desc}</p>
           <div class="error-actions">
-            <button class="copy_stack" @click=${this.copyText(stack_trace)}>Copy stack trace</button>
+            <button class="copy_stack" @click=${() => this.copyText(stack_trace)}>Copy stack trace</button>
             <a href="https://docs.pwabuilder.com/#/builder/faq" target="_blank" rel="noopener">Visit FAQ</a>
           </div>
         </div>
-        <img @click=${() => this.errorMessages = []} class="close_error" src="assets/images/Close_desk.png" alt="close icon"/>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `
-    this.errorMessages.push(error);
+    this.feedbackMessages.push(error);
+  }
+
+  renderSuccessMessage(){
+    this.feedbackMessages.push(html`
+      <div class="feedback-holder type-success">
+        <img src="/assets/new/valid.svg" alt="successful download icon" />
+        <p class="success-desc">${`Congratulations! Your ${this.selectedStore} test package has successfully downloaded!`}</p>
+        <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
+      </div>
+    `);
   }
 
   copyText(text: string){
@@ -454,6 +490,8 @@ export class TestPublishPane extends LitElement {
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
+      this.blob = undefined;
+      this.generating = false;
       await dialog!.hide();
       recordPWABuilderProcessStep("test_publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
@@ -473,7 +511,7 @@ export class TestPublishPane extends LitElement {
               ${this.renderContentCards()}
             </div>
             
-            <div id="errors">${this.errorMessages.length > 0 ?  this.errorMessages.map((error: TemplateResult) => error) : html``}</div>
+            <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : html``}</div>
           </div>
         </div>
       </sl-dialog>

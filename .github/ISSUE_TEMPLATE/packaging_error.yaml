@@ -1,0 +1,57 @@
+name: Packaging Error
+description: File an issue here if you've had trouble packaging your PWA
+title: "[BUG] "
+labels: ["bug :bug:", "needs triage :mag:"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! 
+  - type: textarea
+    id: site-tested
+    attributes:
+      label: Link to the report card page
+      description: Please copy and paste the URL from the report card page
+      placeholder: https://www.pwabuilder.com/reportcard?site=https://webboard.app
+    validations:
+      required: true
+  - type: textarea
+    id: what-store
+    attributes:
+      label: What Store were you trying to package for?
+      description: Tell us what store you were trying to package for
+      placeholder: e.g. Windows, Android, iOS, or Meta Quest
+    validations:
+      required: true
+  - type: textarea
+    id: error-message
+    attributes:
+      label: What is the error message you received? 
+      description: Feel free to copy and paste the text or screenshot the error box and paste it here!
+      placeholder: "Internal Server Error: Status Code 500..."
+    validations:
+      required: true
+  - type: textarea
+    id: stack-trace
+    attributes:
+      label: Paste your stack trace below
+      description: The error box should have a button to copy your stack trace, please paste that here.
+      placeholder: Paste your stack strace here
+    validations:
+      required: true
+  - type: textarea
+    id: environment-version
+    attributes:
+      label: What environment were you using?
+      description: What OS, Browser, Device, and versions of each were you using when the issue happened?
+      placeholder: |
+        OS: Windows 10
+        Browser: [e.g. edge, chrome, safari]
+        Browser Version: [e.g. 22]
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here

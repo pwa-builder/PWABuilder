@@ -255,6 +255,7 @@ export class ManifestInfoForm extends LitElement {
 
         // Validation Failed
         if(!passed){
+
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
 
           // Structure of these two fields are different so they need their own logic.
@@ -284,8 +285,8 @@ export class ManifestInfoForm extends LitElement {
           } else { // All other fields
             
             // Remove old errors
-            if(this.shadowRoot!.querySelector(".error-div")){
-              let error_div = this.shadowRoot!.querySelector(".error-div");
+            if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+              let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
               error_div!.parentElement!.removeChild(error_div!);
             }
   
