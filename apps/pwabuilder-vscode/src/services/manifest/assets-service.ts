@@ -88,26 +88,19 @@ export async function generateScreenshots(skipPrompts?: boolean) {
     });
 }
 
-export async function generateIcons(skipPrompts?: boolean) {
+export async function generateIcons(options: any = {}, skipPrompts?: boolean) {
     return new Promise(async (resolve, reject) => {
         try {
             trackEvent("generate", { type: "icons" });
 
-            let screenshotFile: vscode.Uri[] | undefined;
+            let iconFile: vscode.Uri[] | undefined;
 
             if (!skipPrompts) {
                 // ask user for icon file
-                screenshotFile = await vscode.window.showOpenDialog({
-                    canSelectFiles: true,
-                    canSelectMany: false,
-                    filters: {
-                        'Images': ['png', 'jpg', 'jpeg'],
-                    },
-                    openLabel: 'Select your Icon file, 512x512 is preferred',
-                });
+                iconFile = await getBaseIcon(iconFile);
             }
             else {
-                screenshotFile = [vscode.Uri.file(
+                iconFile = [vscode.Uri.file(
                     `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icon-512.png`
                 )];
             }
@@ -140,7 +133,7 @@ export async function generateIcons(skipPrompts?: boolean) {
                 progress.report({ message: "Generating Icons..." });
 
                 const { savedImages, htmlMeta, manifestJsonContent } = await pwaAssetGenerator.generateImages(
-                    screenshotFile ? screenshotFile[0].fsPath : null,
+                    iconFile ? iconFile[0].fsPath : null,
                     outputDir ? outputDir[0].fsPath : null,
                     {
                         scrape: false,
@@ -200,6 +193,18 @@ export async function generateIcons(skipPrompts?: boolean) {
             reject(err);
         }
     })
+}
+
+async function getBaseIcon(iconFile: vscode.Uri[] | undefined) {
+    iconFile = await vscode.window.showOpenDialog({
+        canSelectFiles: true,
+        canSelectMany: false,
+        filters: {
+            'Images': ['png', 'jpg', 'jpeg'],
+        },
+        openLabel: 'Select your Icon file, 512x512 is preferred',
+    });
+    return iconFile;
 }
 
 async function handleScreenshots(data: any, skipPrompts?: boolean): Promise<{ path: string; screenshots: Array<any> }> {

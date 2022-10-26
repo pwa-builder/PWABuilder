@@ -54,7 +54,7 @@
         "id": "walkthrough.PWAStudio",
         "title": "PWABuilder Studio Walkthrough",
         "media": {
-          "image": "/resources/pwabuilder-icon.svg"
+          "image": "/resources/SocialMediaLogo.svg"
         },
         "description": "A getting started guide for the PWABuilder pwa-studio extension",
         "steps": [
@@ -169,11 +169,6 @@
         "icon": "$(gear)"
       },
       {
-        "command": "pwa-studio.generateIcons",
-        "title": "PWABuilder Studio: Generate Icons",
-        "icon": "$(settings-edit)"
-      },
-      {
         "command": "pwa-studio.generateScreenshots",
         "title": "PWABuilder Studio: Generate Screenshots",
         "icon": "$(gear)"
@@ -182,6 +177,11 @@
         "command": "pwa-studio.help",
         "title": "PWABuilder Studio: Help",
         "icon": "$(note)"
+      },
+      {
+        "command": "pwa-studio.generateIcons",
+        "title": "PWABuilder Studio: Generate Icons",
+        "icon": "$(file-media)"
       },
       {
         "command": "pwa-studio.updateAdvWorker",
@@ -208,7 +208,7 @@
         {
           "id": "pwabuilder-view",
           "title": "PWABuilder Studio",
-          "icon": "resources/pwabuilder-icon.svg"
+          "icon": "resources/VSCode_White.svg"
         }
       ]
     },
