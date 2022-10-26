@@ -54,7 +54,7 @@
         "id": "walkthrough.PWAStudio",
         "title": "PWABuilder Studio Walkthrough",
         "media": {
-          "image": "/resources/pwabuilder-icon.svg"
+          "image": "/resources/SocialMediaLogo.svg"
         },
         "description": "A getting started guide for the PWABuilder pwa-studio extension",
         "steps": [
@@ -208,7 +208,7 @@
         {
           "id": "pwabuilder-view",
           "title": "PWABuilder Studio",
-          "icon": "resources/pwabuilder-icon.svg"
+          "icon": "resources/VSCode_White.svg"
         }
       ]
     },
