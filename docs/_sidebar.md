@@ -1,7 +1,6 @@
 <div align=center>
-  <img width="45" src="assets/icons/pwa-builder.png">
+  <img src="assets/icons/pwa-builder.png" alt="PWABuilder Logo">
 </div>
-<br>
 
 - **Home** 
   - [About](/ "PWABuilder Suite Documentation")
