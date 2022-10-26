@@ -1,5 +1,5 @@
 <div align=center>
-  <img src="assets/icons/pwa-builder.png">
+  <img src="assets/icons/pwa-builder.png" alt="PWABuilder Logo">
 </div>
 
 - **Home** 
