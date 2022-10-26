@@ -1,6 +1,6 @@
 {
   "dir": "ltr",
-  "lang": "EN",
+  "lang": "en-US",
   "name": "PWABuilder",
   "display": "standalone",
   "start_url": "/",
@@ -15,7 +15,8 @@
     {
       "src": "/assets/icons/icon_512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/assets/icons/icon_192.png",
@@ -82,6 +83,6 @@
     "simple"
   ],
   "categories": [
-    "utility"
+    "utilities"
   ]
 }
