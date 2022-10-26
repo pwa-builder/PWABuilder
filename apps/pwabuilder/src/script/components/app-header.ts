@@ -39,6 +39,8 @@ export class AppHeader extends LitElement {
 
       header img {
         cursor: pointer;
+        width: 100px;
+        height: auto;
       }
 
       header h1 {
@@ -50,10 +52,14 @@ export class AppHeader extends LitElement {
 
       nav {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         width: 8em;
-        font-size: 18px;
+        gap: .75em;
+      }
+
+      .nav_button {
+        all: unset;
       }
 
       .nav_link {
@@ -61,6 +67,8 @@ export class AppHeader extends LitElement {
         text-decoration: none;
         border-bottom: none;
         font-weight: var(--font-bold);
+        font-size: 20px;
+        margin: 0;
       }
 
       .nav_link:focus {
@@ -76,6 +84,7 @@ export class AppHeader extends LitElement {
       }
 
       .nav_link:hover span{
+        cursor: pointer;
         border-color: var(--font-color);
         padding-bottom: 4px;
       }
@@ -84,15 +93,59 @@ export class AppHeader extends LitElement {
         font-size: 2em;
       }
 
-      #desktop-nav {
-        display: flex;
-      }
-
-
-
-      a:visited {
+      .nav_link:visited {
         color: black;
       }
+
+      .social-box {
+        display: flex;
+        background-color: white;
+        gap: 2em;
+        color: #777777;
+        font-size: 16px;
+        padding: 1em;
+        position: relative;
+        border-radius: 5px;
+      }
+
+      .arrow {
+        height: 15px;
+        width: 15px;
+        transform: rotate(45deg);
+        background-color: white;
+        position: absolute;
+        top: -5px;
+        right: 45px;
+      }
+
+      .col {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .col-header {
+        text-decoration: none;
+        margin: 0;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #777777;
+      }
+
+      .link {
+        text-decoration: none;
+      }
+
+      .link:visited, .link:active, .link:link {
+        color: #777777;
+      }
+
+      .link:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      
 
       @media (prefers-color-scheme: light) {
         header {
@@ -165,11 +218,17 @@ export class AppHeader extends LitElement {
     recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  showMenu(){
+    recordPWABuilderProcessStep(`.header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
+    let menu = this.shadowRoot!.querySelector("sl-dropdown");
+    menu!.show();
+  }
+
   render() {
     return html`
       <header part="header">
         <a href="/" @click=${() => this.recordGoingHome()}>
-          <img tabindex="0" id="header-icon" src="/assets/images/header_logo.svg"
+          <img tabindex="0" id="header-icon" src="/assets/logos/header_logo.png"
           alt="PWABuilder logo" />
         </a>
 
@@ -185,28 +244,55 @@ export class AppHeader extends LitElement {
           >
             <span>Docs</span>
           </a>
-
-          <a
-            class="nav_link"
-            href="https://blog.pwabuilder.com"
-            target="__blank"
-            aria-label="PWABuilder Blog, will open in separate tab"
-            rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <span>Blog</span>
-          </a>
-
-          <a
-            class="nav_link"
-            href="https://github.com/pwa-builder/PWABuilder"
-            target="__blank"
-            aria-label="Github repo, will open in separate tab"
-            rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <sl-icon role="presentation" aria-hidden="true" tab-index="-1" name="github" title="View source on GitHub"></sl-icon>
-          </a>
+          <sl-dropdown distance="10">
+            <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
+            <div class="social-box">
+              <div class="arrow" role="presentation"></div>
+              <div class="col">
+                <a 
+                class="col-header"
+                href="https://blog.pwabuilder.com"
+                target="__blank"
+                aria-label="PWABuilder Blog, will open in separate tab"
+                rel="noopener"
+                @click=${() => recordPWABuilderProcessStep(`.header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                >Blogs</a>
+              </div>
+              <div class="col">
+                <p class="col-header">Follow us on</p>
+                <a 
+                  class="link" 
+                  href="https://github.com/pwa-builder/PWABuilder"
+                  target="__blank"
+                  aria-label="PWABuilder Github repo, will open in separate tab"
+                  rel="noopener"
+                  @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                  >
+                  Github
+                </a>
+                <a 
+                  class="link" 
+                  href="https://twitter.com/pwabuilder"
+                  target="__blank"
+                  aria-label="PWABuilder Twitter, will open in separate tab"
+                  rel="noopener"
+                  @click=${() => recordPWABuilderProcessStep(`.header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                  >
+                  Twitter
+                </a>
+                <a 
+                  class="link" 
+                  href="https://aka.ms/pwabuilderdiscord"
+                  target="__blank"
+                  aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
+                  rel="noopener"
+                  @click=${() => recordPWABuilderProcessStep(`.header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                  >
+                  Discord
+                </a>
+              </div>
+            </div>
+          </sl-dropdown>
         </nav>
       </header>
     `;

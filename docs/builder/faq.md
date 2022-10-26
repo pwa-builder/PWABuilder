@@ -1,3 +1,5 @@
+?> If you are still having problems solving your issue after reading the FAQ, please feel free to open an issue on our [Github](https://github.com/pwa-builder/PWABuilder/issues/new/choose).
+
 # Frequently Asked Questions
 
 Welcome to the PWA Builder FAQ! 
