@@ -212,13 +212,13 @@ export class AndroidForm extends AppPackageFormBase {
 
   rotateZero(){
     recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
-    let icon: any = this.shadowRoot!.querySelector('dropdown_icon');
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(0deg)";
   }
 
   rotateNinety(){
     recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
-    let icon: any = this.shadowRoot!.querySelector('dropdown_icon');
+    let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(90deg)";
   }
 
