@@ -13,6 +13,7 @@ export function recordPWABuilderProcessStep(
   processStep: string,
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
+    console.log(env.isProduction);
     if (env.isProduction) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
       let scn = 'pwa-builder-beta-test-b';
