@@ -156,7 +156,7 @@ export class Infocard extends LitElement {
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
-        <div class="card-actions" @click=${() => recordPWABuilderProcessStep("home.middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+        <div class="card-actions" @click=${() => recordPWABuilderProcessStep("middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
           <a href=${this.linkRoute} target="_blank" rel="noopener" aria-label="Learn more about ${this.cardTitle}, will open separate tab">Learn More</a>
         </div>
       </div>

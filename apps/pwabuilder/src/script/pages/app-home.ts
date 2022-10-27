@@ -472,7 +472,7 @@ export class AppHome extends LitElement {
       this.siteURL = cleanUrl(this.siteURL);
       const isValidUrl = isValidURL(this.siteURL);
 
-      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
+      recordPWABuilderProcessStep('top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
       {
         url: this.siteURL,
         valid: isValidUrl
@@ -507,7 +507,7 @@ export class AppHome extends LitElement {
 
   placeDemoURL(){
     sessionStorage.setItem('demoURL', JSON.stringify(true));
-    recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = demoURL;
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
@@ -527,7 +527,7 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
+                  <a @click=${() => recordPWABuilderProcessStep("top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
 
                 </div>

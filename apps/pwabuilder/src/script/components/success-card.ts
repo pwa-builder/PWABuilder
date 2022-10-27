@@ -140,7 +140,7 @@ export class SuccessCard extends LitElement {
 
   render() {
     return html`
-      <a @click=${() => recordPWABuilderProcessStep("home.middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank" aria-label=${"Success story of " + this.company + " link, click for more details on separate tab"}>
+      <a @click=${() => recordPWABuilderProcessStep("middle." + this.company + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} class="success-card" href="${this.source}" rel="noopener" target="_blank" aria-label=${"Success story of " + this.company + " link, click for more details on separate tab"}>
         <div class="success-line-one">
            <img src=${this.imageUrl} alt="${this.company} logo"/>
            <h3 class="success-stat">
