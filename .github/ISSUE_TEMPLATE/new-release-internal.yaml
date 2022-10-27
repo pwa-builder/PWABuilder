@@ -67,3 +67,9 @@ body:
           - [ ] Tweeted
           - [ ] Discord updated
           - [ ] Internal update
+          
+       #### Analytics
+          - [ ] Adobe Analytics dashboard receiving signals after release date
+       
+       #### Dependencies
+          - [ ] PowerBI dashboard
