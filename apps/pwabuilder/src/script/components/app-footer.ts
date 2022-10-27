@@ -41,6 +41,10 @@ export class AppFooter extends LitElement {
         display: block;
       }
 
+      #icons-container {
+        display: inline-block;
+      }
+
       #icons {
         width: 8em;
         display: flex;
@@ -98,6 +102,11 @@ export class AppFooter extends LitElement {
           #links {
             margin-top: 30px;
             margin-bottom: 30px;
+          }
+
+          #icons-container {
+            display: block;
+            padding-top: 20px;
           }
 
           #icons {
@@ -159,43 +168,46 @@ export class AppFooter extends LitElement {
               @click=${() => recordPWABuilderProcessStep(`.footer.terms_of_use_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
               >Terms of Use</a
             >
+            <div id="icons-container">
+              <div id="icons">
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  appearance="hypertext"
+                  href="https://github.com/pwa-builder/PWABuilder"
+                  aria-label="Contribute to our Github, will open in separate tab"
+                  @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                >
+                  <span title="Contribute to our Github"><sl-icon name="github" role="presentation"></sl-icon></span>
+                </a>
+
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  appearance="hypertext"
+                  href="https://twitter.com/pwabuilder"
+                  aria-label="Follow us on Twitter, will open in separate tab"
+                  @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                >
+                  <span title="Follow us on Twitter"><sl-icon name="twitter" role="presentation"></sl-icon></span>
+                </a>
+
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  appearance="hypertext"
+                  href="https://www.youtube.com/c/PWABuilder"
+                  aria-label="Subscribe to our Youtube, will open in separate tab"
+                  @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                >
+                  <span title="Subscribe to our Youtube"><sl-icon name="youtube" role="presentation"></sl-icon></span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div id="icons">
-          <a
-            target="_blank"
-            rel="noopener"
-            appearance="hypertext"
-            href="https://github.com/pwa-builder/PWABuilder"
-            aria-label="Contribute to our Github, will open in separate tab"
-            @click=${() => recordPWABuilderProcessStep(`.footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <span title="Contribute to our Github"><sl-icon name="github" role="presentation"></sl-icon></span>
-          </a>
-
-          <a
-            target="_blank"
-            rel="noopener"
-            appearance="hypertext"
-            href="https://twitter.com/pwabuilder"
-            aria-label="Follow us on Twitter, will open in separate tab"
-            @click=${() => recordPWABuilderProcessStep(`.footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <span title="Follow us on Twitter"><sl-icon name="twitter" role="presentation"></sl-icon></span>
-          </a>
-
-          <a
-            target="_blank"
-            rel="noopener"
-            appearance="hypertext"
-            href="https://www.youtube.com/c/PWABuilder"
-            aria-label="Subscribe to our Youtube, will open in separate tab"
-            @click=${() => recordPWABuilderProcessStep(`.footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <span title="Subscribe to our Youtube"><sl-icon name="youtube" role="presentation"></sl-icon></span>
-          </a>
-        </div>
+       
       </footer>
     `;
   }
