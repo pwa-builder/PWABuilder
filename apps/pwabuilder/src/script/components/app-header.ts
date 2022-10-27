@@ -219,9 +219,15 @@ export class AppHeader extends LitElement {
   }
 
   showMenu(){
-    recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
     let menu = this.shadowRoot!.querySelector("sl-dropdown");
-    menu!.show();
+    if(menu!.open){
+      recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
+      menu!.hide()
+    } else {
+      recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
+      menu!.show();
+
+    }
   }
 
   render() {
