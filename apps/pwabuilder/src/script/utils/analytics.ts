@@ -13,7 +13,6 @@ export function recordPWABuilderProcessStep(
   processStep: string,
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
-    console.log(`isProduction: ${env.isProduction}`);
     if (env.isProduction) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
       let scn = 'pwa-builder-v4';
@@ -39,7 +38,6 @@ export function recordProcessStep(
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
     if (env.isProduction) {
-      console.log("hitting analytics.ts call to library.")
       analytics.recordProcessStep(processName, processStep, stepType, additionalInfo);
     }
 }
