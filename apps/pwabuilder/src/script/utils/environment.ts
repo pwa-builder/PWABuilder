@@ -16,7 +16,8 @@ export const env = {
   zipCreatorUrl: '',
 };
 
-if ((window as any).ENV == 'production') {
+//@ts-ignore
+if (import.meta.env.PROD) {
   env.isProduction = true;
   env.manifestFinderUrl =
     'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest';
