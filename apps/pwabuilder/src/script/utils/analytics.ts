@@ -13,9 +13,9 @@ export function recordPWABuilderProcessStep(
   processStep: string,
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
-    if (env.isProduction) {
+    //if (env.isProduction) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
-      let scn = 'pwa-builder-beta-test-b';
+      let scn = 'pwa-builder-v4';
 
       if(demo_used){
         scn = 'demo-process';
@@ -27,9 +27,9 @@ export function recordPWABuilderProcessStep(
       }
 
       let processLabel = pageName + "." + processStep
-
+      
       recordProcessStep(scn, processLabel, stepType, additionalInfo);
-    }
+    //}
 }
 
 export function recordProcessStep(
@@ -37,9 +37,10 @@ export function recordProcessStep(
   processStep: string,
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
-    if (env.isProduction) {
+    //if (env.isProduction) {
+      console.log("hitting analytics.ts call to library.")
       analytics.recordProcessStep(processName, processStep, stepType, additionalInfo);
-    }
+    //}
 }
 
 export function recordPageAction(actionName: string, type: analytics.AnalyticsActionType, behavior: analytics.AnalyticsBehavior, properties?: { [key: string]: string | number | boolean | string[] | number[] | boolean[] | object }) {

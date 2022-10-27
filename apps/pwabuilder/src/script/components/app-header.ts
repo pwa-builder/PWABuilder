@@ -215,11 +215,11 @@ export class AppHeader extends LitElement {
   }
 
   recordGoingHome() {
-    recordPWABuilderProcessStep(`.header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   showMenu(){
-    recordPWABuilderProcessStep(`.header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
+    recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
     let menu = this.shadowRoot!.querySelector("sl-dropdown");
     menu!.show();
   }
@@ -240,7 +240,7 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="PWABuilder Docs, will open in separate tab"
             rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`.header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            @click=${() => recordPWABuilderProcessStep(`header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <span>Docs</span>
           </a>
@@ -255,7 +255,7 @@ export class AppHeader extends LitElement {
                 target="__blank"
                 aria-label="PWABuilder Blog, will open in separate tab"
                 rel="noopener"
-                @click=${() => recordPWABuilderProcessStep(`.header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                 >Blogs</a>
               </div>
               <div class="col">
@@ -266,7 +266,7 @@ export class AppHeader extends LitElement {
                   target="__blank"
                   aria-label="PWABuilder Github repo, will open in separate tab"
                   rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`.header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                  @click=${() => recordPWABuilderProcessStep(`header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                   >
                   Github
                 </a>
@@ -276,7 +276,7 @@ export class AppHeader extends LitElement {
                   target="__blank"
                   aria-label="PWABuilder Twitter, will open in separate tab"
                   rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`.header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                  @click=${() => recordPWABuilderProcessStep(`header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                   >
                   Twitter
                 </a>
@@ -286,7 +286,7 @@ export class AppHeader extends LitElement {
                   target="__blank"
                   aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
                   rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`.header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                  @click=${() => recordPWABuilderProcessStep(`header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                   >
                   Discord
                 </a>
