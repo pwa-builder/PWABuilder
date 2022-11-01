@@ -1,6 +1,6 @@
 # Integrating UI component libraries
 
-The PWA Starter uses the [Shoelace](https://shoelace.style/) library for UI comopnents by default. You can think of this as similar to Fluent Components or Material Components from Google. Shoelace provides a set of components, such as buttons, modals, alerts, progress bars etc, that make it easier and quicker to develop your PWA. 
+The PWA Starter uses the [Shoelace](https://shoelace.style/) library for UI components by default. You can think of this as similar to Fluent Components or Material Components from Google. Shoelace provides a set of components, such as buttons, modals, alerts, progress bars etc, that make it easier and quicker to develop your PWA. 
 
 However, you do not have to use Shoelace with the Starter, any Web Components based UI libraries will work great with our Web Components based setup. Let's go through some of the popular ones and how to integrate them into the starter.
 
