@@ -30,6 +30,8 @@ import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
 import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
+import { initDashboard } from "./services/dashboard/dev-dashboard";
+import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -56,6 +58,8 @@ export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
   initAnalytics();
+
+  initDashboard();
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -87,6 +91,10 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.workspaceFolders[0].uri.fsPath
     );
 
+    const dashboardViewProvider = new DashboardViewProvider(
+      vscode.workspace.workspaceFolders[0].uri.fsPath
+    )
+
     vscode.window.createTreeView("validationPanel", {
       treeDataProvider: maniValidationProvider,
     });
@@ -98,6 +106,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.createTreeView("packagePanel", {
       treeDataProvider: packageViewProvider,
     });
+
+    vscode.window.createTreeView("dashboardPanel", {
+      treeDataProvider: dashboardViewProvider,
+    })
 
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
       maniValidationProvider.refresh(event);
