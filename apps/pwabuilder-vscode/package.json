@@ -29,6 +29,7 @@
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
     "onCommand:pwa-studio.generateScreenshots",
+    "onCommand:pwa-studio.devBuild",
     "onView:validationPanel",
     "onView:dashboardPanel",
     "onView:serviceWorkerPanel",
@@ -188,6 +189,21 @@
         "command": "pwa-studio.updateAdvWorker",
         "title": "PWABuilder Studio: Update Service Worker",
         "icon": "$(sync)"
+      },
+      {
+        "command": "pwa-studio.devBuild",
+        "title": "PWABuilder Studio: Start Dev Server",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "pwa-studio.prodBuild",
+        "title": "PWABuilder Studio: Build for Production",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "pwa-studio.runTests",
+        "title": "PWABuilder Studio: Run Tests",
+        "icon": "$(gear)"
       }
     ],
     "viewsWelcome": [
@@ -216,6 +232,10 @@
     "views": {
       "pwabuilder-view": [
         {
+          "id": "dashboardPanel",
+          "name": "Dev Dashboard"
+        },
+        {
           "id": "validationPanel",
           "name": "Web Manifest"
         },
@@ -226,10 +246,6 @@
         {
           "id": "packagePanel",
           "name": "Publish Checklist"
-        },
-        {
-          "id": "dashboardPanel",
-          "name": "Dev Dashboard"
         }
       ]
     },

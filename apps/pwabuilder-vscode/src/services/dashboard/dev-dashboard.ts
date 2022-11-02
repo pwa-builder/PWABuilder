@@ -1,16 +1,54 @@
 import * as vscode from "vscode";
 
-let scriptsObject: any = {};
+export let scriptsObject: any = {};
 
 export async function initDashboard() {
     const packageJson: vscode.Uri = await findPackageJSON();
 
     if (packageJson) {
-        const packageScripts = await findScripts(packageJson);
+        const packageScripts: any = await findScripts(packageJson);
         console.log("packageScripts: ", packageScripts);
         if (packageScripts) {
-            scriptsObject = packageScripts;
+            scriptsObject = {
+                "dev": packageScripts["start"] ? 'npm run start' : 'npm run dev',
+                "build": packageScripts["build"] ? 'npm run build' : null,
+                "test": packageScripts["test"] ? 'npm run test' : null,
+            };
+
+            return packageScripts;
         }
+    }
+}
+
+export async function runTests() {
+    const testScript = scriptsObject["test"];
+
+    if (testScript) {
+        const terminal = vscode.window.createTerminal("Test");
+        terminal.sendText(testScript);
+        terminal.show();
+    }
+}
+
+export async function prodBuild() {
+    const prodBuildScript = scriptsObject["build"];
+    console.log("prodBuildScript: ", prodBuildScript);
+
+    if (prodBuildScript) {
+        const terminal = vscode.window.createTerminal("Build");
+        terminal.sendText(prodBuildScript);
+        terminal.show();
+    }
+}
+
+export async function devBuild() {
+    // get dev build script from scriptsObject
+    const devBuildScript = scriptsObject["start"] || scriptsObject["dev"];
+
+    if (devBuildScript) {
+        const terminal = vscode.window.createTerminal("Dev");
+        terminal.sendText(devBuildScript);
+        terminal.show();
     }
 }
 
