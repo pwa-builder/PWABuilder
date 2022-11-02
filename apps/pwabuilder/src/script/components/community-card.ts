@@ -129,7 +129,7 @@ export class CommunityCard extends LitElement {
             height: auto;
           }
           .community-card-content p {
-            font-size: .825em;
+            font-size: 14px;
           }
       `)}
 

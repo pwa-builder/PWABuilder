@@ -139,7 +139,7 @@ export class AppHome extends LitElement {
         .intro-grid-item p {
           margin: 0;
           color: #292C3A;
-          font-size: .75em;
+          font-size: 16px;
           width: 15em;
         }
         #input-form {
@@ -160,28 +160,25 @@ export class AppHome extends LitElement {
         }
         #input-area {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(6, 1fr);
           grid-template-rows: 1fr 1fr;
+          row-gap: 5px;
+          place-items: center;
         }
         #input-and-error {
-          grid-column: 1;
-          grid-row: 1;
+          grid-area: 1 / 1 / auto / 5;
           display: flex;
           flex-direction: column;
         }
         #start-button {
-          grid-column: 2;
-          grid-row: 1;
+          grid-area: 1 / 5 / auto / auto;
+          width: 100%;
         }
         .raise:hover:not(disabled){
           transform: scale(1.01);
         }
         .raise:focus:not(disabled) {
           transform: scale(1.01);
-        }
-        #demo {
-          grid-column: 1 / 2;
-          grid-row: 2;
         }
         #input-form sl-input {
           margin-right: 10px;
@@ -218,7 +215,6 @@ export class AppHome extends LitElement {
           color: white;
           font-size: 14px;
           height: 3em;
-          width: 25%;
           border-radius: 50px;
         }
 
@@ -234,10 +230,11 @@ export class AppHome extends LitElement {
           width: 100%;
         }
         #demo {
-          font-size: .55em;
-          margin: 0;
-          margin-top: 5px;
+          font-size: 12px;
           color: #292C3A;
+          margin: 0;
+          grid-area: 2 / 1 / auto / 2;
+          place-self: start;
         }
         #demo-action {
           margin: 0;
@@ -312,6 +309,9 @@ export class AppHome extends LitElement {
           #input-form .navigation::part(base) {
             width: 8em;
           }
+          #demo {
+            grid-area: 2 / 1 / auto / 3;
+          }
         `)}
 
         @media (min-width: 480px) and (max-width: 580px) {
@@ -323,7 +323,6 @@ export class AppHome extends LitElement {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            row-gap: 5px;
           }
         }
 

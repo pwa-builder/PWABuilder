@@ -1053,7 +1053,11 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
-          #app-actions button:not(#test-download) {
+          #app-actions button:not(#test-download) { /* #pfs */
+            font-size: 16px;
+          }
+
+          #app-actions .arrow_link {
             font-size: 12px;
           }
 
@@ -1090,9 +1094,16 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
+          #actions-footer p {
+            font-size: 14px;
+          }
+
           #actions-footer img {
-            height: 16px;
+            height: 18px;
             width: auto;
+          }
+          #last-edited {
+            font-size: 14px;
           }
         `)}
       `,
