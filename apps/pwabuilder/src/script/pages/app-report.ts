@@ -332,6 +332,10 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        #card-info p:not(#site-name) {
+          font-size: 16px;
+        }
+
         #app-card-desc {
           margin: 0;
           font-size: 14px;
@@ -1053,7 +1057,11 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
-          #app-actions button:not(#test-download) {
+          #app-actions button:not(#test-download) { /* #pfs */
+            font-size: 16px;
+          }
+
+          #app-actions .arrow_link {
             font-size: 12px;
           }
 
@@ -1063,6 +1071,7 @@ export class AppReport extends LitElement {
 
           #package{
             width: 50%;
+            row-gap: .75em;
           }
 
           #test-download {
@@ -1090,9 +1099,22 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
+          #actions-footer p {
+            font-size: 14px;
+          }
+
           #actions-footer img {
-            height: 16px;
+            height: 18px;
             width: auto;
+          }
+          #last-edited {
+            font-size: 14px;
+          }
+          #manifest-header, #sw-header, #sec-header {
+            padding-bottom: 2.5em;
+          }
+          #mh-actions, #sw-actions, #sec-header {
+            row-gap: 1.5em;
           }
         `)}
       `,
