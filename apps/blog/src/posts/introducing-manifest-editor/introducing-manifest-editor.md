@@ -25,16 +25,16 @@ With our site redesign that was released in early October, some of you may have 
 ## How does it work
 After entering a URL on the [home page of PWABuilder](https://www.pwabuilder.com), you will see our new report card page. After all the test are done running, you should be able to click on the button in the "Manifest" section that will say "Edit Your Manifest". If your site does not have a manifest yet, do not worry! PWABuilder will have started a manifest for you using information we were able to collect about your site. You will be able to edit and download this manifest all the same. 
 
-<img src="posts/introducing-manifest-editor/edit-your-manifest.png" alt="The Manifest section of the PWABuilder report card page with the Edit Your Manifest button located on the right side." />
+<img src="/posts/introducing-manifest-editor/edit-your-manifest.png" alt="The Manifest section of the PWABuilder report card page with the Edit Your Manifest button located on the right side." />
 
 After clicking on that button you will be greated with the Manifest Editor! Right now we have seperated each field into five categories: Info, Settings, Platform, Screenshots and Icons. There is also an additional tab labeled "Code" where you can see your manifest updating with your changes in real time! 
 
 
-<img src="posts/introducing-manifest-editor/manifest-editor.png" alt="The Manifest Editor open on the Info tab. This is the appearance of the Manifest editor when you first open it." />
+<img src="/posts/introducing-manifest-editor/manifest-editor.png" alt="The Manifest Editor open on the Info tab. This is the appearance of the Manifest editor when you first open it." />
 
 If there are any problems with any of your manifest fields, you will see a red exclamation mark next to the tab with the error. Following that mark, you'll see the field highlighted red with a specific error message describing your issue. In order to update a field, simply change the value in the given input box and you can double check the "Code" tab to make sure that change was reflected. 
 
-<img src="posts/introducing-manifest-editor/fix-an-error.gif" alt="The Manifest editor open on the Info tab with an error. The error is fixed and verified on the code tab." />
+<img src="/posts/introducing-manifest-editor/fix-an-error.gif" alt="The Manifest editor open on the Info tab with an error. The error is fixed and verified on the code tab." />
 
 If you want to learn more information about each manifest field, simply click the info icon next to the field name to be taken to documentation about the field. There are also links at the bottom of the manifest editor modal that lead to PWABuilder Studio, our VS Code Extenstion, where you can recieve a guided manifest editing experience right inside of your code editor and also general manifest documentation just for ease of access.
 
