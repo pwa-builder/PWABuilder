@@ -13,6 +13,8 @@ on:
       - main
     paths:
       - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
 
 jobs:
   build_and_deploy_job:
