@@ -23,13 +23,16 @@ on:
       - dev
     paths:
       - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - dev
     paths:
       - "apps/pwabuilder/**"
-
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
 env:
   NODE_VERSION: '14.x' # set this to the node version to use
 
