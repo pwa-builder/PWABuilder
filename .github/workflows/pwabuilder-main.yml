@@ -7,6 +7,8 @@ on:
       - main     
     paths:
       - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
