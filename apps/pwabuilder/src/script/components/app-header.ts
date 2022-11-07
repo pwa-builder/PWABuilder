@@ -1,8 +1,11 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-
+import {
+  AnalyticsBehavior,
+  recordPWABuilderProcessStep,
+} from '../utils/analytics';
+import { signInUser, signOutUser } from '../services/sign-in';
 import {
   xxxLargeBreakPoint,
   xxLargeBreakPoint,
@@ -11,6 +14,8 @@ import {
   mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
+
+import '@pwabuilder/pwaauth';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
@@ -55,7 +60,7 @@ export class AppHeader extends LitElement {
         justify-content: flex-end;
         align-items: center;
         width: 8em;
-        gap: .75em;
+        gap: 0.75em;
       }
 
       .nav_button {
@@ -83,7 +88,7 @@ export class AppHeader extends LitElement {
         border-bottom: 1px solid transparent;
       }
 
-      .nav_link:hover span{
+      .nav_link:hover span {
         cursor: pointer;
         border-color: var(--font-color);
         padding-bottom: 4px;
@@ -136,7 +141,9 @@ export class AppHeader extends LitElement {
         text-decoration: none;
       }
 
-      .link:visited, .link:active, .link:link {
+      .link:visited,
+      .link:active,
+      .link:link {
         color: #777777;
       }
 
@@ -145,17 +152,13 @@ export class AppHeader extends LitElement {
         text-decoration: underline;
       }
 
-      
-
       @media (prefers-color-scheme: light) {
         header {
           color: black;
         }
       }
 
-      ${smallBreakPoint(css`
-
-      `)}
+      ${smallBreakPoint(css``)}
 
       ${mediumBreakPoint(css`
         header nav {
@@ -165,7 +168,6 @@ export class AppHeader extends LitElement {
         #desktop-nav {
           display: flex;
         }
-
       `)}
 
 
@@ -173,7 +175,6 @@ export class AppHeader extends LitElement {
         #desktop-nav {
           display: flex;
         }
-
       `)}
 
       ${xLargeBreakPoint(css`
@@ -206,27 +207,49 @@ export class AppHeader extends LitElement {
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
-    this.shadowRoot?.querySelector('#header-icon')?.addEventListener("keydown", (event) => {
-      // casting here because of type problem described above
-      if ((event as KeyboardEvent).key === "Enter") {
-        Router.go("/");
-      }
-    })
+    this.shadowRoot
+      ?.querySelector('#header-icon')
+      ?.addEventListener('keydown', (event) => {
+        // casting here because of type problem described above
+        if ((event as KeyboardEvent).key === 'Enter') {
+          Router.go('/');
+        }
+      });
+
+    this.shadowRoot
+      ?.querySelector('#signin')
+      ?.addEventListener('signin-completed', async () => {
+        signInUser();
+      });
+
+    this.shadowRoot
+      ?.querySelector('#signin')
+      ?.addEventListener('signout-completed', async () => {
+        signOutUser();
+      });
   }
 
   recordGoingHome() {
-    recordPWABuilderProcessStep(`header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(
+      `header.logo_clicked`,
+      AnalyticsBehavior.ProcessCheckpoint
+    );
   }
 
-  showMenu(){
-    let menu = this.shadowRoot!.querySelector("sl-dropdown");
-    if(menu!.open){
-      recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
-      menu!.hide()
+  showMenu() {
+    let menu = this.shadowRoot!.querySelector('sl-dropdown');
+    if (menu!.open) {
+      recordPWABuilderProcessStep(
+        `header.community_dropdown_closed`,
+        AnalyticsBehavior.ProcessCheckpoint
+      );
+      menu!.hide();
     } else {
-      recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
+      recordPWABuilderProcessStep(
+        `header.community_dropdown_expanded`,
+        AnalyticsBehavior.ProcessCheckpoint
+      );
       menu!.show();
-
     }
   }
 
@@ -234,9 +257,20 @@ export class AppHeader extends LitElement {
     return html`
       <header part="header">
         <a href="/" @click=${() => this.recordGoingHome()}>
-          <img tabindex="0" id="header-icon" src="/assets/logos/header_logo.png"
-          alt="PWABuilder logo" />
+          <img
+            tabindex="0"
+            id="header-icon"
+            src="/assets/logos/header_logo.png"
+            alt="PWABuilder logo"
+          />
         </a>
+
+        <pwa-auth
+          id="signin"
+          microsoftkey="32b653f7-a63a-4ad0-bf58-9e15f5914a34"
+          credentialmode="silent"
+        >
+        </pwa-auth>
 
         <nav id="desktop-nav">
           <a
@@ -246,54 +280,82 @@ export class AppHeader extends LitElement {
             target="__blank"
             aria-label="PWABuilder Docs, will open in separate tab"
             rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            @click=${() =>
+              recordPWABuilderProcessStep(
+                `header.docs_clicked`,
+                AnalyticsBehavior.ProcessCheckpoint
+              )}
           >
             <span>Docs</span>
           </a>
           <sl-dropdown distance="10">
-            <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
+            <button
+              slot="trigger"
+              type="button"
+              @mouseover=${() => this.showMenu()}
+              class="nav_link nav_button"
+            >
+              <span>Community</span>
+            </button>
             <div class="social-box">
               <div class="arrow" role="presentation"></div>
               <div class="col">
-                <a 
-                class="col-header"
-                href="https://blog.pwabuilder.com"
-                target="__blank"
-                aria-label="PWABuilder Blog, will open in separate tab"
-                rel="noopener"
-                @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                >Blogs</a>
+                <a
+                  class="col-header"
+                  href="https://blog.pwabuilder.com"
+                  target="__blank"
+                  aria-label="PWABuilder Blog, will open in separate tab"
+                  rel="noopener"
+                  @click=${() =>
+                    recordPWABuilderProcessStep(
+                      `header.blog_clicked`,
+                      AnalyticsBehavior.ProcessCheckpoint
+                    )}
+                  >Blogs</a
+                >
               </div>
               <div class="col">
                 <p class="col-header">Follow us on</p>
-                <a 
-                  class="link" 
+                <a
+                  class="link"
                   href="https://github.com/pwa-builder/PWABuilder"
                   target="__blank"
                   aria-label="PWABuilder Github repo, will open in separate tab"
                   rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                  >
+                  @click=${() =>
+                    recordPWABuilderProcessStep(
+                      `header.github_clicked`,
+                      AnalyticsBehavior.ProcessCheckpoint
+                    )}
+                >
                   Github
                 </a>
-                <a 
-                  class="link" 
+                <a
+                  class="link"
                   href="https://twitter.com/pwabuilder"
                   target="__blank"
                   aria-label="PWABuilder Twitter, will open in separate tab"
                   rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                  >
+                  @click=${() =>
+                    recordPWABuilderProcessStep(
+                      `header.twitter_clicked`,
+                      AnalyticsBehavior.ProcessCheckpoint
+                    )}
+                >
                   Twitter
                 </a>
-                <a 
-                  class="link" 
+                <a
+                  class="link"
                   href="https://aka.ms/pwabuilderdiscord"
                   target="__blank"
                   aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
                   rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                  >
+                  @click=${() =>
+                    recordPWABuilderProcessStep(
+                      `header.discord_clicked`,
+                      AnalyticsBehavior.ProcessCheckpoint
+                    )}
+                >
                   Discord
                 </a>
               </div>

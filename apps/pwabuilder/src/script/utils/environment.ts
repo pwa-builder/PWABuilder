@@ -13,6 +13,7 @@ export const env = {
   webPackageGeneratorUrl: '',
   webPackageGeneratorFormUrl: '',
   ratingUrl: '',
+  signinFunctionsUrl: '',
   zipCreatorUrl: '',
 };
 
@@ -29,7 +30,7 @@ if (import.meta.env.PROD) {
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
-    'https://pwabuilder-cloudapk-pre.azurewebsites.net';
+    'https://pwabuilder-cloudapk.azurewebsites.net';
   env.iosPackageGeneratorUrl =
     'https://pwabuilder-ios.azurewebsites.net/packages/create';
   env.oculusPackageGeneratorUrl =
@@ -44,6 +45,7 @@ if (import.meta.env.PROD) {
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl =
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
+  env.signinFunctionsUrl = 'http://localhost:7071/api';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 } else {
   env.manifestFinderUrl =
@@ -70,5 +72,6 @@ if (import.meta.env.PROD) {
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.ratingUrl =
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
+  env.signinFunctionsUrl = 'http://localhost:7071/api';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 }
