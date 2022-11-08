@@ -34,7 +34,7 @@ After clicking on that button you will be greated with the Manifest Editor! Righ
 
 If there are any problems with any of your manifest fields, you will see a red exclamation mark next to the tab with the error. Following that mark, you'll see the field highlighted red with a specific error message describing your issue. In order to update a field, simply change the value in the given input box and you can double check the "Code" tab to make sure that change was reflected. 
 
-<img src="/posts/introducing-manifest-editor/fix-an-error.gif" alt="The Manifest editor open on the Info tab with an error. The error is fixed and verified on the code tab." />
+<img src="/posts/introducing-manifest-editor/error.png" alt="The Manifest editor open on the Info tab with an error. The error is fixed and verified on the code tab." />
 
 If you want to learn more information about each manifest field, simply click the info icon next to the field name to be taken to documentation about the field. There are also links at the bottom of the manifest editor modal that lead to PWABuilder Studio, our VS Code Extenstion, where you can recieve a guided manifest editing experience right inside of your code editor and also general manifest documentation just for ease of access.
 
