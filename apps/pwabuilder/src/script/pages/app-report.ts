@@ -12,6 +12,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 
 import '../components/app-header';
 import '../components/todo-list-item';
+import '../components/share-card';
 import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
@@ -174,6 +175,7 @@ export class AppReport extends LitElement {
           align-items: center;
           background-color: #f2f3fb;
           padding: 20px;
+          margin-top: 50px;
         }
 
         #content-holder {
@@ -445,6 +447,51 @@ export class AppReport extends LitElement {
 
         #pfs:focus, #pfs:hover {
           outline: rgb(79 63 182 / 70%) solid 2px;
+        }
+
+        #share-card-banner {
+          display: flex;
+          position: absolute;
+          justify-content: space-between;
+          align-items: center;
+          color: white;
+          background: #4F3FB61A;
+          width:100%;
+          height: 45px;
+          box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.08);
+          border-radius: 10px;  
+          padding: 30px 16px;
+        }
+
+        #share-card-banner p {
+          position: absolute;
+          left: 10.17%;
+          right: 41.84%;
+          top: 6.28%;
+          bottom: 91.83%;
+          font-family: 'Hind';
+          font-style: normal;
+          font-weight: 700;
+          font-size: 14px;
+          line-height: 24px;
+          color: #4F3FB6;
+        }
+
+        .share-banner-buttons {
+          width: 124.34px;
+          height: 35px;
+          background: transparent;
+          color: rgb(79, 63, 182);
+          font-size: 10px;
+          font-weight: bold;
+          padding: 0.75em 2em;
+          border: 1px solid #6F5FD3;
+          border-radius: 20px;
+        }
+
+        .banner-button-icons {
+          height: 12px;
+          margin-right: 8px;
         }
 
         .mani-tooltip {
@@ -1597,6 +1644,14 @@ export class AppReport extends LitElement {
   }
 
   // Opens manifest editor and tracks analytics
+  async openShareCardModal() {
+    let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog!.show();
+    recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }  
+
+  // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
@@ -1855,6 +1910,16 @@ export class AppReport extends LitElement {
   render() {
     return html`
       <app-header></app-header>
+      <div id="share-card-banner"> 
+        <img id="manny-icon" src="/assets/manny_banner_image.png" />      
+        <div>
+          <p>Proud of your PWA? Share your score with the world</p> 
+        </div> 
+        <div style="display: flex">
+          <button type="button" class="share-banner-buttons"><img class="banner-button-icons" src="/assets/copy_icon_grey.png"/>Copy link</button>
+          ${this.swDataLoading ? html`` : html`<button type="button" class="share-banner-buttons" @click=${() => this.openShareCardModal()}><img class="banner-button-icons" src="/assets/social_share_icon.png"/>Share score</button>`}
+        </div>
+      </div>
       <div id="report-wrapper">
         <div id="content-holder">
           <div id="header-row">
@@ -2381,6 +2446,13 @@ export class AppReport extends LitElement {
 
       </sl-dialog>
 
+      <share-card 
+        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${JSON.stringify(this.decideColor("manifest"))}/Manifest`}
+        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${JSON.stringify(this.decideColor("sw"))}/Service Worker`}
+        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${JSON.stringify(this.decideColor("sec"))}/Security`}
+        .siteName=${this.appCard.siteName}
+      >
+      </share-card>
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
