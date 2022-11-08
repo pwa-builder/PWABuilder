@@ -19,7 +19,7 @@ If you want more in depth documentation on manifest fields, full descriptions fo
 
 ### name: `string`
 
-`name` is a required field that represents the display name for your application. Anywhere where a name for this application would be displayed, this value will be used. 
+`name` is a required field that specifies the display name for your application. Anywhere where a name for this application would be displayed, this value will be used. 
 
 This name should usually align with the store listings associate with your applications.
 
@@ -59,6 +59,8 @@ Just like `short_name`, this data should usually align with any store listings.
 "background_color": "green"
 ```
 
+!> PWABuilder expects a HEX color value for this field. You can convert an RGB color value to HEX [here.](https://www.rgbtohex.net/)
+
 ### theme_color: `string`
 
 `theme_color` is an optional field that changes the default color used by certain OS features. For example, this would change the color of your title bar when the application is installed on Windows.
@@ -66,6 +68,8 @@ Just like `short_name`, this data should usually align with any store listings.
 ```json
 "theme_color": "purple"
 ```
+
+!> PWABuilder expects a HEX color value for this field. You can convert an RGB color value to HEX [here.](https://www.rgbtohex.net/)
 
 ## Settings
 
@@ -101,11 +105,11 @@ It has three values to choose from:
 "scope": "https://docs.pwabuilder.com"
 ```
 
-### language: `string`
-`language` is an optional field that specifies the primary language of your app. The `Language` field expects a proper subtag for each langauge, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
+### lang: `string`
+`lang` is an optional field that specifies the primary language of your app. The `Language` field expects a proper subtag for each langauge, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
 
 ```json
-"language": "en"
+"lang": "en"
 ```
 
 ### orientation: `string`
