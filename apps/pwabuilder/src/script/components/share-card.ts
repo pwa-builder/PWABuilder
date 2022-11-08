@@ -145,37 +145,39 @@ export class ShareCard extends LitElement {
       .green {
         --indicator-color: var(--success-color);
       }
+
+      #rings {
+        display: flex;
+        flex-direction: column;
+      }
     `
   }
 
-  renderProgressRings() {
-    const progress_ring_data = [
+  renderProgressRings(cardData: any) {
+    /* const progress_ring_data = [
       this.manifestData,
       this.swData,
       this.securityData
-    ]
+    ] */
 
-    console.log("Progress Ring Data:", progress_ring_data);
+    console.log("Progress Ring Data:", cardData);
+    let data = cardData.split('/');
+    let validCounter = parseFloat(data[0]);
+    let totalScore = parseFloat(data[1]);
+    let color = JSON.parse(data[2]);
+    let categoryName = data[3];
+
+    console.log("SPLIT DATA:", data);
     
-    progress_ring_data.forEach((i) => {
-      let data = i.split('/');
-      let validCounter = parseFloat(data[0]);
-      let totalScore = parseFloat(data[1]);
-      let color = JSON.parse(data[2]);
-      let categoryName = data[3];
-
-      console.log("SPLIT DATA:", data);
-      
-      return html`
-        <sl-progress-ring
-          id=${categoryName}
-          class=${classMap(color)}
-          value="${(validCounter/totalScore) * 100}"
-        >
-          ${validCounter / totalScore}
-        </sl-progress-ring>
-      `
-    });
+    return html`
+      <sl-progress-ring
+        id=${categoryName}
+        class=${classMap(color)}
+        value="${(validCounter / totalScore) * 100}"
+      >
+        ${validCounter} / ${totalScore}
+      </sl-progress-ring>
+    `
   }
 
   getReportCardLink() {
@@ -203,9 +205,12 @@ export class ShareCard extends LitElement {
               <div>
                 ${this.siteName}
               </div>
-              <div>
-                ${() => this.renderProgressRings()}
-                ${console.log("render progress", this.renderProgressRings())}
+              <div id="rings">
+                ${[
+                    this.manifestData,
+                    this.swData,
+                    this.securityData
+                  ].map((data: any) => this.renderProgressRings(data))}
               </div>
             </div>
             <div class="modal-input-field">
