@@ -1,6 +1,7 @@
 name: PWABuilder.com Main CI/CD
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main     

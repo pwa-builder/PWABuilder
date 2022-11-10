@@ -261,6 +261,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
         displayString: "Manifest has hex encoded background color",
         category: "recommended",
+        testRequired: true,
         member: "background_color",
         defaultValue: "#000000",
         docsLink:
@@ -281,6 +282,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
         displayString: "Manifest has hex encoded theme color",
         category: "recommended",
+        testRequired: true,
         member: "theme_color",
         defaultValue: "#000000",
         docsLink:

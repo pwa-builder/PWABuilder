@@ -15,7 +15,7 @@ export function recordPWABuilderProcessStep(
   additionalInfo?: {}) {
     if (env.isProduction) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
-      let scn = 'pwa-builder-beta-test-b';
+      let scn = 'pwa-builder-v4';
 
       if(demo_used){
         scn = 'demo-process';
@@ -27,7 +27,7 @@ export function recordPWABuilderProcessStep(
       }
 
       let processLabel = pageName + "." + processStep
-
+      
       recordProcessStep(scn, processLabel, stepType, additionalInfo);
     }
 }

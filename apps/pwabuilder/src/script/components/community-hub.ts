@@ -51,7 +51,7 @@ export class CommunityHub extends LitElement {
         margin: 0;
         margin-bottom: 1em;
         font-weight: bold;
-        font-size: 1.55em;
+        font-size: var(--header-font-size);
       }
 
       #community-cards {

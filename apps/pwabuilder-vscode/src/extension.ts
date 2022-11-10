@@ -24,6 +24,7 @@ import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { HelpViewPanel } from "./views/help-view";
+import { IconViewPanel } from "./views/icon-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
@@ -47,6 +48,7 @@ const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
+const iconViewID = "pwa-studio.iconView";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -124,13 +126,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const generateIconsCommand = vscode.commands.registerCommand(
+  /*const generateIconsCommand = vscode.commands.registerCommand(
     handleIconsCommmandID,
     async () => {
       // IconGenerationPanel.render(context.extensionUri);
       await generateIcons();
     }
-  );
+  );*/
 
   const generateScreenshotsCommand = vscode.commands.registerCommand(
     handleScreenshotsCommandID,
@@ -144,6 +146,13 @@ export function activate(context: vscode.ExtensionContext) {
     helpCommandID,
     async () => {
       HelpViewPanel.render(context.extensionUri);
+    }
+  );
+
+  const iconView = vscode.commands.registerCommand(
+    handleIconsCommmandID ,
+    async () => {
+      IconViewPanel.render(context.extensionUri);
     }
   );
 
@@ -247,7 +256,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
-  context.subscriptions.push(generateIconsCommand);
+  context.subscriptions.push(iconView);
   context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(helpCommand);
 }

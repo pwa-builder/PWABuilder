@@ -226,11 +226,11 @@ export class AppReport extends LitElement {
           --track-width: 4px;
           --indicator-width: 8px;
           --size: 100px;
-          font-size: 18px;
+          font-size: var(--subheader-font-size);
         }
 
         sl-progress-ring::part(label){
-          color: #4F3FB6;
+          color: var(--primary-color);
           font-weight: bold;
         }
 
@@ -301,7 +301,7 @@ export class AppReport extends LitElement {
         .proxy-loader {
           width: 48px;
           height: 48px;
-          border: 5px solid #4f3fb6;
+          border: 5px solid var(--primary-color);
           border-bottom-color: transparent;
           border-radius: 50%;
           display: inline-block;
@@ -319,7 +319,7 @@ export class AppReport extends LitElement {
         } 
 
         #site-name {
-          font-size: 24px;
+          font-size: calc(var(--subheader-font-size) + 4px);
         }
         
         #card-info {
@@ -332,9 +332,17 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        #card-info p:not(#site-name) {
+          font-size: 16px;
+        }
+
+        #site-url {
+          white-space: normal;
+        }
+
         #app-card-desc {
           margin: 0;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
           width: 100%;
           white-space: normal;
           overflow: hidden;
@@ -409,30 +417,28 @@ export class AppReport extends LitElement {
           box-shadow: 0px 4px 30px 0px #00000014;
         }
 
-        #app-actions button:not(#test-download) {
-          font-weight: bold;
-          white-space: nowrap;
-          padding: .75em 2em;
-          border-radius: 50px;
-          font-size: 16px;
-        }
-
         #package {
           row-gap: .5em;
           width: 100%;
           padding: 2em;
         }
 
+        #app-actions button:not(#test-download) { // pfs + disabled
+          white-space: nowrap;
+          padding: var(--button-padding);
+          border-radius: var(--button-border-radius);
+          font-size: var(--button-font-size);
+          font-weight: var(--font-bold);
+          border: none;
+          color: white;
+        }
+
         #pfs {
           background-color: black;
-          color: white;
-          border: none;
         }
 
         #pfs-disabled{
           background-color: #C3C3C3;
-          border: none;
-          color: white;
         }
 
         #pfs-disabled:hover{
@@ -440,7 +446,7 @@ export class AppReport extends LitElement {
         }
 
         #pfs:focus, #pfs:hover {
-          outline: rgb(79 63 182 / 70%) solid 2px;
+          box-shadow: var(--button-box-shadow);
         }
 
         .mani-tooltip {
@@ -476,7 +482,7 @@ export class AppReport extends LitElement {
 
         #test-download {
           background-color: transparent;
-          color: #4f3fb6;
+          color: var(--primary-color);
           border: none;
           width: fit-content;
           display: flex;
@@ -529,7 +535,7 @@ export class AppReport extends LitElement {
         }
 
         #todo-detail::part(summary) {
-          color: #4f3fb6;
+          color: var(--primary-color);
           font-size: 20px;
           font-weight: bold;
         }
@@ -538,6 +544,10 @@ export class AppReport extends LitElement {
           display: flex;
           align-items: center;
           gap: .5em;
+        }
+
+        #todo-summary-left p {
+          font-size: var(--subheader-font-size);
         }
 
         #pagination-actions {
@@ -551,7 +561,7 @@ export class AppReport extends LitElement {
 
         .pageToggles {
           height: 15px;
-          color: #4f3fb6;
+          color: var(--primary-color);
         }
 
         #dots {
@@ -724,13 +734,17 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
+        .details-summary p {
+          font-size: var(--card-body-font-size);
+        }
+
         .dropdown_icon {
           transform: rotate(0deg);
           transition: transform .5s;
         }
 
         .card-header {
-          font-size: 24px;
+          font-size: calc(var(--subheader-font-size) + 4px);
           font-weight: bold;
           margin: 0;
           white-space: nowrap;
@@ -738,18 +752,18 @@ export class AppReport extends LitElement {
 
         .card-desc {
           margin: 0;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
         }
 
         .arrow_link {
           margin: 0;
-          border-bottom: 1px solid #4f3fb6;
+          border-bottom: 1px solid var(--primary-color);
           white-space: nowrap;
         }
 
         .arrow_anchor {
           text-decoration: none;
-          font-size: 14px;
+          font-size: var(--arrow-link-font-size);
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
@@ -759,7 +773,7 @@ export class AppReport extends LitElement {
         }
 
         .arrow_anchor:visited {
-          color: #4f3fb6;
+          color: var(--primary-color);
         }
 
         .arrow_anchor:hover {
@@ -772,15 +786,15 @@ export class AppReport extends LitElement {
 
         #report-wrapper .alternate {
           background: var(--secondary-color);
-          color: #4f3fb6;
-          border: 1px solid #4f3fb6;
-          font-size: 16px;
+          color: var(--primary-color);
+          border: 1px solid var(--primary-color);
+          font-size: var(--button-font-size);
           font-weight: bold;
-          border-radius: 50px;
-          padding: 0.75em 2em;
+          padding: var(--button-padding);
+          border-radius: var(--button-border-radius);
         }
         #report-wrapper .alternate:hover {
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+          box-shadow: var(--button-box-shadow)
         }
 
         .detail-list {
@@ -807,7 +821,7 @@ export class AppReport extends LitElement {
         }
         .details::part(summary) {
           font-weight: bold;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
         }
         .details::part(header) {
           height: 40px;
@@ -938,7 +952,7 @@ export class AppReport extends LitElement {
           display: block;
           margin:15px auto;
           position: relative;
-          color: #4F3FB6;
+          color: var(--primary-color);
           box-sizing: border-box;
           animation: animloader 2s linear infinite;
         }
@@ -989,6 +1003,10 @@ export class AppReport extends LitElement {
           }
         }
 
+        /* @media(max-width: 700px){
+          --button-padding
+        } */
+
         @media(max-width: 600px){
           #app-card-header{
             grid-template-columns: 1fr 5fr;
@@ -1021,7 +1039,7 @@ export class AppReport extends LitElement {
           sl-progress-ring {
             --size: 75px;
             --track-width: 4px;
-            font-size: 14px;
+            --subheader-font-size: 14px;
           }
           .progressRingSkeleton::part(base) {
             width: 75px;
@@ -1053,7 +1071,7 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
-          #app-actions button:not(#test-download) {
+          #app-actions .arrow_link {
             font-size: 12px;
           }
 
@@ -1063,6 +1081,7 @@ export class AppReport extends LitElement {
 
           #package{
             width: 50%;
+            row-gap: .75em;
           }
 
           #test-download {
@@ -1090,9 +1109,22 @@ export class AppReport extends LitElement {
             width: 100%;
           }
 
+          #actions-footer p {
+            font-size: 14px;
+          }
+
           #actions-footer img {
-            height: 16px;
+            height: 18px;
             width: auto;
+          }
+          #last-edited {
+            font-size: 14px;
+          }
+          #manifest-header, #sw-header, #sec-header {
+            padding-bottom: 2.5em;
+          }
+          #mh-actions, #sw-actions, #sec-header {
+            row-gap: 1.5em;
           }
         `)}
       `,
@@ -1860,7 +1892,7 @@ export class AppReport extends LitElement {
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
-                  <p>${this.appCard.siteUrl}</p>
+                  <p id="site-url">${this.appCard.siteUrl}</p>
                 </div>
                 <p id="app-card-desc">${this.appCard.description}</p>
               </div>

@@ -48,7 +48,7 @@ export class Infocard extends LitElement {
       }
 
       .card-content h3 {
-        font-size: 1em;
+        font-size: var(--subheader-font-size);
         line-height: 24px;
         font-weight: var(--font-bold);
         margin: 0;
@@ -59,7 +59,7 @@ export class Infocard extends LitElement {
 
       .card-content p {
         color: var(--secondary-font-color);
-        font-size: .65em;
+        font-size: var(--card-body-font-size);
         line-height: 18px;
         text-align: center;
         margin: 0;
@@ -77,7 +77,7 @@ export class Infocard extends LitElement {
         font-weight: bold;
         border-bottom: 1px solid rgb(79, 63, 182);
         text-decoration: none;
-        line-height: 14px;
+        font-size: var(--card-body-font-size);
         font-size: 14px;
         margin: 0;
       }
@@ -93,8 +93,11 @@ export class Infocard extends LitElement {
             max-width: 300px;
             height: 15em;
           }
+          .card-content img {
+            width: 6em;
+          }
           .card-content p {
-            font-size: .825em;
+            font-size: 14px;
           }
           .card-content h3 {
             font-size: 20px;
@@ -156,7 +159,7 @@ export class Infocard extends LitElement {
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
-        <div class="card-actions" @click=${() => recordPWABuilderProcessStep("home.middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+        <div class="card-actions" @click=${() => recordPWABuilderProcessStep("middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
           <a href=${this.linkRoute} target="_blank" rel="noopener" aria-label="Learn more about ${this.cardTitle}, will open separate tab">Learn More</a>
         </div>
       </div>

@@ -45,11 +45,12 @@ export class CommunityCard extends LitElement {
 
       .community-card-content h3 {
         margin: 0;
-        font-size: 1em;
+        font-size: var(--subheader-font-size);
+        font-weight: var(--font-bold);
       }
 
       .community-card-content p {
-        font-size: .75em;
+        font-size:  var(--body-font-size);
         margin-top: 0;
         margin-bottom: .25em;
       }
@@ -65,7 +66,7 @@ export class CommunityCard extends LitElement {
 
       .community-card-actions a {
         color: #4F3FB6;
-        font-size: 14px;
+        font-size: var(--arrow-link-font-size);
         font-weight: bold;
         margin-right: .5em;
         width: 100%;
@@ -129,7 +130,7 @@ export class CommunityCard extends LitElement {
             height: auto;
           }
           .community-card-content p {
-            font-size: .825em;
+            font-size: 16px;
           }
       `)}
 
@@ -163,7 +164,7 @@ export class CommunityCard extends LitElement {
             ${this.links && this.links.map((link: any) =>
               html`
               <div class="card-link-box">
-                <a @click=${() => recordPWABuilderProcessStep("home.bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener" aria-label="${link.text}, will open in separate tab">${link.text}</a>
+                <a @click=${() => recordPWABuilderProcessStep("bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener" aria-label="${link.text}, will open in separate tab">${link.text}</a>
                 <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
               </div>
               `

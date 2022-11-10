@@ -76,12 +76,6 @@ export class AppHome extends LitElement {
           z-index: 2;
           border: none;
         }
-        h1 {
-          font-size: var(--xlarge-font-size);
-          line-height: 48px;
-          letter-spacing: -0.015em;
-          margin-bottom: 20px;
-        }
         #input-header {
           font-size: 1em;
           font-weight: bold;
@@ -121,7 +115,7 @@ export class AppHome extends LitElement {
         .grid-item-header a {
           text-decoration: none;
           border-bottom: 1px solid rgb(79, 63, 182);
-          font-size: 1em;
+          font-size: var(--subheader-font-size);
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
@@ -139,7 +133,7 @@ export class AppHome extends LitElement {
         .intro-grid-item p {
           margin: 0;
           color: #292C3A;
-          font-size: .75em;
+          font-size:  var(--body-font-size);
           width: 15em;
         }
         #input-form {
@@ -160,28 +154,25 @@ export class AppHome extends LitElement {
         }
         #input-area {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(6, 1fr);
           grid-template-rows: 1fr 1fr;
+          row-gap: 5px;
+          place-items: center;
         }
         #input-and-error {
-          grid-column: 1;
-          grid-row: 1;
+          grid-area: 1 / 1 / auto / 5;
           display: flex;
           flex-direction: column;
         }
         #start-button {
-          grid-column: 2;
-          grid-row: 1;
+          grid-area: 1 / 5 / auto / auto;
+          width: 100%;
         }
         .raise:hover:not(disabled){
           transform: scale(1.01);
         }
         .raise:focus:not(disabled) {
           transform: scale(1.01);
-        }
-        #demo {
-          grid-column: 1 / 2;
-          grid-row: 2;
         }
         #input-form sl-input {
           margin-right: 10px;
@@ -218,7 +209,6 @@ export class AppHome extends LitElement {
           color: white;
           font-size: 14px;
           height: 3em;
-          width: 25%;
           border-radius: 50px;
         }
 
@@ -234,10 +224,11 @@ export class AppHome extends LitElement {
           width: 100%;
         }
         #demo {
-          font-size: .55em;
-          margin: 0;
-          margin-top: 5px;
+          font-size: 12px;
           color: #292C3A;
+          margin: 0;
+          grid-area: 2 / 1 / auto / 2;
+          place-self: start;
         }
         #demo-action {
           margin: 0;
@@ -254,6 +245,10 @@ export class AppHome extends LitElement {
         }
         #home-header {
           max-width: 498px;
+          line-height: 48px;
+          letter-spacing: -0.015em;
+          margin-bottom: 20px;
+          font-size: var(--title-font-size);
         }
         /* 640px - 1023px */
         ${largeBreakPoint(css`
@@ -312,6 +307,9 @@ export class AppHome extends LitElement {
           #input-form .navigation::part(base) {
             width: 8em;
           }
+          #demo {
+            grid-area: 2 / 1 / auto / 3;
+          }
         `)}
 
         @media (min-width: 480px) and (max-width: 580px) {
@@ -323,7 +321,6 @@ export class AppHome extends LitElement {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            row-gap: 5px;
           }
         }
 
@@ -342,7 +339,8 @@ export class AppHome extends LitElement {
             width: 400px;
           }
           #home-header {
-            font-size: 1.9em;
+            font-size: 32px;
+            line-height: 36px;
           }
           #content-grid {
             display: flex;
@@ -367,9 +365,6 @@ export class AppHome extends LitElement {
           }
           #input-header-holder img {
             display: none;
-          }
-          #home-header {
-            line-height: 36px;
           }
           #input-form {
             width: 100%;
@@ -472,7 +467,7 @@ export class AppHome extends LitElement {
       this.siteURL = cleanUrl(this.siteURL);
       const isValidUrl = isValidURL(this.siteURL);
 
-      recordPWABuilderProcessStep('.top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
+      recordPWABuilderProcessStep('top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
       {
         url: this.siteURL,
         valid: isValidUrl
@@ -507,7 +502,7 @@ export class AppHome extends LitElement {
 
   placeDemoURL(){
     sessionStorage.setItem('demoURL', JSON.stringify(true));
-    recordPWABuilderProcessStep("home.top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep("top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = demoURL;
     let box = this.shadowRoot!.getElementById("input-box");
     (box as HTMLInputElement)!.value = this.siteURL;
@@ -527,7 +522,7 @@ export class AppHome extends LitElement {
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
-                  <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
+                  <a @click=${() => recordPWABuilderProcessStep("top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
                   <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
 
                 </div>

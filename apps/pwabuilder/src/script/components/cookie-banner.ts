@@ -18,6 +18,11 @@ export class CookieBanner extends LitElement {
         padding: 16px;
         font-weight: 700;
         font-size: var(--small-font-size);
+        position: fixed;
+        bottom: 0;
+        z-index: 2;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       #cookie-info {
@@ -93,7 +98,7 @@ export class CookieBanner extends LitElement {
   firstUpdated() {
     // by default, non essential cookies are denied.
     const savedValue = localStorage.getItem('PWABuilderGDPR');
-
+    
     if (!savedValue) {
       this.show = true;
       localStorage.setItem('PWABuilderGDPR', JSON.stringify(false));
