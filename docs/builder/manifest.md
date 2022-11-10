@@ -1,6 +1,6 @@
 # Customizing Your Web App Manifest
 
-Many capabilities of progressive web apps are exposed through your app's web manifest, and you can use the PWABuilder service to edit your manifest and enhance your app.
+Many capabilities of Progressive Web Apps are exposed through your app's manifest, and you can use the PWABuilder service to edit your manifest and enhance your app.
 
 
 To edit your manifest via the PWABuilder site:
