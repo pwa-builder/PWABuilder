@@ -230,7 +230,7 @@ The `shortcuts` field is an array of `shortcut` objects, which can contain the f
 
 ### protocol_handlers: `Array`
 
-`protocol_handlers` is an optional field that specifies an array of protocols that this application can handle. A protocol handler will contain a `protocol` and `url` member to specify how each valid protocol is handled.
+`protocol_handlers` is an optional field that specifies an array of protocols that the application can handle. A protocol handler will contain `protocol` and `url` members to specify how each valid protocol is handled.
 
 ```json
 "protocol_handlers": [
