@@ -48,7 +48,7 @@ export class Infocard extends LitElement {
       }
 
       .card-content h3 {
-        font-size: 1em;
+        font-size: var(--subheader-font-size);
         line-height: 24px;
         font-weight: var(--font-bold);
         margin: 0;
@@ -59,7 +59,7 @@ export class Infocard extends LitElement {
 
       .card-content p {
         color: var(--secondary-font-color);
-        font-size: .65em;
+        font-size: var(--card-body-font-size);
         line-height: 18px;
         text-align: center;
         margin: 0;
@@ -77,7 +77,7 @@ export class Infocard extends LitElement {
         font-weight: bold;
         border-bottom: 1px solid rgb(79, 63, 182);
         text-decoration: none;
-        line-height: 14px;
+        font-size: var(--card-body-font-size);
         font-size: 14px;
         margin: 0;
       }

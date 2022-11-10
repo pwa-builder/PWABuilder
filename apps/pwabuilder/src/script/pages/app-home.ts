@@ -76,12 +76,6 @@ export class AppHome extends LitElement {
           z-index: 2;
           border: none;
         }
-        h1 {
-          font-size: var(--xlarge-font-size);
-          line-height: 48px;
-          letter-spacing: -0.015em;
-          margin-bottom: 20px;
-        }
         #input-header {
           font-size: 1em;
           font-weight: bold;
@@ -121,7 +115,7 @@ export class AppHome extends LitElement {
         .grid-item-header a {
           text-decoration: none;
           border-bottom: 1px solid rgb(79, 63, 182);
-          font-size: 1em;
+          font-size: var(--subheader-font-size);
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
@@ -139,7 +133,7 @@ export class AppHome extends LitElement {
         .intro-grid-item p {
           margin: 0;
           color: #292C3A;
-          font-size: 16px;
+          font-size:  var(--body-font-size);
           width: 15em;
         }
         #input-form {
@@ -251,6 +245,10 @@ export class AppHome extends LitElement {
         }
         #home-header {
           max-width: 498px;
+          line-height: 48px;
+          letter-spacing: -0.015em;
+          margin-bottom: 20px;
+          font-size: var(--title-font-size);
         }
         /* 640px - 1023px */
         ${largeBreakPoint(css`
@@ -341,7 +339,8 @@ export class AppHome extends LitElement {
             width: 400px;
           }
           #home-header {
-            font-size: 1.9em;
+            font-size: 32px;
+            line-height: 36px;
           }
           #content-grid {
             display: flex;
@@ -366,9 +365,6 @@ export class AppHome extends LitElement {
           }
           #input-header-holder img {
             display: none;
-          }
-          #home-header {
-            line-height: 36px;
           }
           #input-form {
             width: 100%;

@@ -319,7 +319,7 @@ export class AppReport extends LitElement {
         } 
 
         #site-name {
-          font-size: 24px;
+          font-size: calc(var(--subheader-font-size) + 4px);
         }
         
         #card-info {
@@ -336,9 +336,13 @@ export class AppReport extends LitElement {
           font-size: 16px;
         }
 
+        #site-url {
+          white-space: normal;
+        }
+
         #app-card-desc {
           margin: 0;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
           width: 100%;
           white-space: normal;
           overflow: hidden;
@@ -416,7 +420,7 @@ export class AppReport extends LitElement {
         #app-actions button:not(#test-download) {
           font-weight: bold;
           white-space: nowrap;
-          padding: .75em 2em;
+          padding: var(--button-border-radius);
           border-radius: 50px;
           font-size: 16px;
         }
@@ -542,6 +546,10 @@ export class AppReport extends LitElement {
           display: flex;
           align-items: center;
           gap: .5em;
+        }
+
+        #todo-summary-left p {
+          font-size: var(--subheader-font-size);
         }
 
         #pagination-actions {
@@ -728,13 +736,17 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
+        .details-summary p {
+          font-size: var(--card-body-font-size);
+        }
+
         .dropdown_icon {
           transform: rotate(0deg);
           transition: transform .5s;
         }
 
         .card-header {
-          font-size: 24px;
+          font-size: calc(var(--subheader-font-size) + 4px);
           font-weight: bold;
           margin: 0;
           white-space: nowrap;
@@ -742,7 +754,7 @@ export class AppReport extends LitElement {
 
         .card-desc {
           margin: 0;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
         }
 
         .arrow_link {
@@ -753,7 +765,7 @@ export class AppReport extends LitElement {
 
         .arrow_anchor {
           text-decoration: none;
-          font-size: 14px;
+          font-size: var(--arrow-link-font-size);
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
@@ -781,7 +793,7 @@ export class AppReport extends LitElement {
           font-size: 16px;
           font-weight: bold;
           border-radius: 50px;
-          padding: 0.75em 2em;
+          padding: var(--button-border-radius);
         }
         #report-wrapper .alternate:hover {
           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
@@ -811,7 +823,7 @@ export class AppReport extends LitElement {
         }
         .details::part(summary) {
           font-weight: bold;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
         }
         .details::part(header) {
           height: 40px;
@@ -1882,7 +1894,7 @@ export class AppReport extends LitElement {
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
-                  <p>${this.appCard.siteUrl}</p>
+                  <p id="site-url">${this.appCard.siteUrl}</p>
                 </div>
                 <p id="app-card-desc">${this.appCard.description}</p>
               </div>

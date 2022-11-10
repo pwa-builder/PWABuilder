@@ -48,9 +48,9 @@ export class SuccessCard extends LitElement {
 
       .success-stat {
         margin: 0;
-        font-size: 20px;
+        font-size: var(--subheader-font-size);
         line-height: 28px;
-        font-weight: bold;
+        font-weight: var(--font-bold);
         margin-bottom: .75em;
       }
 
@@ -63,7 +63,7 @@ export class SuccessCard extends LitElement {
 
       .success-desc {
         margin: 0;
-        font-size: 14px;
+        font-size:  var(--card-body-font-size);
         line-height: 18px;
         color: var(--secondary-font-color);
       }

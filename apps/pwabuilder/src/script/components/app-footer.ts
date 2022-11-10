@@ -26,7 +26,7 @@ export class AppFooter extends LitElement {
         padding-left: 37px;
         padding-right: 37px;
         font-weight: 700;
-        font-size: var(--small-font-size);
+        font-size: var(--footer-font-size);
       }
 
 

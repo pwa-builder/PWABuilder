@@ -67,7 +67,7 @@ export class AppHeader extends LitElement {
         text-decoration: none;
         border-bottom: none;
         font-weight: var(--font-bold);
-        font-size: 20px;
+        font-size: var(--subheader-font-size);
         margin: 0;
       }
 

@@ -45,11 +45,12 @@ export class CommunityCard extends LitElement {
 
       .community-card-content h3 {
         margin: 0;
-        font-size: 1em;
+        font-size: var(--subheader-font-size);
+        font-weight: var(--font-bold);
       }
 
       .community-card-content p {
-        font-size: .75em;
+        font-size:  var(--body-font-size);
         margin-top: 0;
         margin-bottom: .25em;
       }
@@ -65,7 +66,7 @@ export class CommunityCard extends LitElement {
 
       .community-card-actions a {
         color: #4F3FB6;
-        font-size: 14px;
+        font-size: var(--arrow-link-font-size);
         font-weight: bold;
         margin-right: .5em;
         width: 100%;

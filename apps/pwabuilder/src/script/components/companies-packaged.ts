@@ -39,14 +39,14 @@ export class ComapniesPackaged extends LitElement {
 
       #success-title h2 {
         text-align: center;
-        font-size: 1.6em;
+        font-size: var(--header-font-size);
         margin: 0;
       }
 
       #success-title p {
         text-align: center;
         margin: 0;
-        font-size: .75em;
+        font-size:  var(--body-font-size);
       }
 
       #success-wrapper #img-box {
