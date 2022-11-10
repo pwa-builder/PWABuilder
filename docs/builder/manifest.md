@@ -13,7 +13,7 @@ To edit your manifest via the PWABuilder site:
 
 4. Once you've edited your manifest to your liking, you can either download your manifest with the `Download Manifest` button at the bottom of the modal, or copy-paste it from the `Code` tab on the far right.
 
-If you want more in depth documentation on manifest fields, full descriptions for each field follow below. They are separated into the sections they appear in on the PWABuilder website.
+If you want more in depth documentation on manifest members, full descriptions for each member follow below. They are separated into the sections they appear in on the PWABuilder website.
 
 ## Info
 
