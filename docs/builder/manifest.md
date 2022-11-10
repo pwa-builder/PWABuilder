@@ -178,7 +178,7 @@ You can read more about IARC [here.](https://www.globalratings.com/how-iarc-work
 
 `related_applications` is an optional field that specifies applications that have similar or adjacent functionality to your application. This field allows users and store listings to complement your application with related technology.
 
-This field is an array of application objects, which can each contain a `platform` (the platform that the application is available on), `url` (the web URL where the app can be found), and `id` (the unique ID that specifies the application on the given platform) value. 
+This field is an array of application objects, each of which contains a `platform` (the platform that the application is available on), `url` (the web URL where the app can be found), and `id` (the unique ID that specifies the application on the given platform) value. 
 
 ```json
 "related_applications": [
