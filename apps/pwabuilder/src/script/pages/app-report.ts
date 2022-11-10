@@ -230,7 +230,7 @@ export class AppReport extends LitElement {
         }
 
         sl-progress-ring::part(label){
-          color: #4F3FB6;
+          color: var(--primary-color);
           font-weight: bold;
         }
 
@@ -301,7 +301,7 @@ export class AppReport extends LitElement {
         .proxy-loader {
           width: 48px;
           height: 48px;
-          border: 5px solid #4f3fb6;
+          border: 5px solid var(--primary-color);
           border-bottom-color: transparent;
           border-radius: 50%;
           display: inline-block;
@@ -482,7 +482,7 @@ export class AppReport extends LitElement {
 
         #test-download {
           background-color: transparent;
-          color: #4f3fb6;
+          color: var(--primary-color);
           border: none;
           width: fit-content;
           display: flex;
@@ -535,7 +535,7 @@ export class AppReport extends LitElement {
         }
 
         #todo-detail::part(summary) {
-          color: #4f3fb6;
+          color: var(--primary-color);
           font-size: 20px;
           font-weight: bold;
         }
@@ -561,7 +561,7 @@ export class AppReport extends LitElement {
 
         .pageToggles {
           height: 15px;
-          color: #4f3fb6;
+          color: var(--primary-color);
         }
 
         #dots {
@@ -757,7 +757,7 @@ export class AppReport extends LitElement {
 
         .arrow_link {
           margin: 0;
-          border-bottom: 1px solid #4f3fb6;
+          border-bottom: 1px solid var(--primary-color);
           white-space: nowrap;
         }
 
@@ -773,7 +773,7 @@ export class AppReport extends LitElement {
         }
 
         .arrow_anchor:visited {
-          color: #4f3fb6;
+          color: var(--primary-color);
         }
 
         .arrow_anchor:hover {
@@ -786,8 +786,8 @@ export class AppReport extends LitElement {
 
         #report-wrapper .alternate {
           background: var(--secondary-color);
-          color: #4f3fb6;
-          border: 1px solid #4f3fb6;
+          color: var(--primary-color);
+          border: 1px solid var(--primary-color);
           font-size: var(--button-font-size);
           font-weight: bold;
           padding: var(--button-padding);
@@ -952,7 +952,7 @@ export class AppReport extends LitElement {
           display: block;
           margin:15px auto;
           position: relative;
-          color: #4F3FB6;
+          color: var(--primary-color);
           box-sizing: border-box;
           animation: animloader 2s linear infinite;
         }
