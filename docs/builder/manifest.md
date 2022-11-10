@@ -165,7 +165,7 @@ In addition to the four display values above, `display_override` can also take t
 
 ### iarc_rating_id: `string`
 
-`iarc_rating_id` is an optional field that allows the developer to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.
+`iarc_rating_id` is an optional field that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.
 
 
 You can read more about IARC [here.](https://www.globalratings.com/how-iarc-works.aspx)
