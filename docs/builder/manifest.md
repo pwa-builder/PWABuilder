@@ -136,7 +136,7 @@ It has three values to choose from:
 
 `display` can take any of the following values:
 
-* `browser`: The applications opens in a standard browser window.
+* `browser`: The applications will open in a standard browser window.
 * `minimal-ui`: The application will open in a minimal browser window that still includes certain UI features, such as navigation.
 * `standalone`: The application will open in its own window with no browser UI elements.
 * `fullscreen`: The application will make use of all available display space.

@@ -26,7 +26,7 @@
   - [Other Android](/builder/other-android "PWABuilder - Creating Android Packages")
   - [Meta Quest](/builder/meta "PWABuilder - Meta Quest")
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
-  - [Manifest Options](/builder/manifest "PWABuilder - Customizing Your Web Manifest")
+  - [Manifest Options](/builder/manifest "PWABuilder - Customizing Your Web App Manifest")
   - [FAQ](/builder/faq "PWABuilder - FAQ")
   
 - **PWABuilder Studio**
