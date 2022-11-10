@@ -50,7 +50,7 @@
   --font-size: 14px;
   --title-font-size: 44px;
   --header-font-size: 35px;
-  --subheader-font-size: 22px;
+  --subheader-font-size: 20px;
   --body-font-size: 16px;
   --card-body-font-size: 14px;
   --interactions-font-size: 14px;
@@ -73,9 +73,10 @@
   --success-accent-color:  #E3FFF2;
 
   /* Buttons */
-  --button-box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-  --button-border-radius: 12px 46px;
-  --button-padding: 1em;
+  --button-font-size: 16px;
+  --button-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  --button-border-radius: 50px;
+  --button-padding: 12px 46px;
 
   --mobile-button-radius: 61px;
   --mobile-button-height: 64px;

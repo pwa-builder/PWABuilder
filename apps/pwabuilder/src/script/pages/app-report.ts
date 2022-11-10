@@ -226,7 +226,7 @@ export class AppReport extends LitElement {
           --track-width: 4px;
           --indicator-width: 8px;
           --size: 100px;
-          font-size: 18px;
+          font-size: var(--subheader-font-size);
         }
 
         sl-progress-ring::part(label){
@@ -417,30 +417,28 @@ export class AppReport extends LitElement {
           box-shadow: 0px 4px 30px 0px #00000014;
         }
 
-        #app-actions button:not(#test-download) {
-          font-weight: bold;
-          white-space: nowrap;
-          padding: var(--button-border-radius);
-          border-radius: 50px;
-          font-size: 16px;
-        }
-
         #package {
           row-gap: .5em;
           width: 100%;
           padding: 2em;
         }
 
+        #app-actions button:not(#test-download) { // pfs + disabled
+          white-space: nowrap;
+          padding: var(--button-padding);
+          border-radius: var(--button-border-radius);
+          font-size: var(--button-font-size);
+          font-weight: var(--font-bold);
+          border: none;
+          color: white;
+        }
+
         #pfs {
           background-color: black;
-          color: white;
-          border: none;
         }
 
         #pfs-disabled{
           background-color: #C3C3C3;
-          border: none;
-          color: white;
         }
 
         #pfs-disabled:hover{
@@ -448,7 +446,7 @@ export class AppReport extends LitElement {
         }
 
         #pfs:focus, #pfs:hover {
-          outline: rgb(79 63 182 / 70%) solid 2px;
+          box-shadow: var(--button-box-shadow);
         }
 
         .mani-tooltip {
@@ -790,13 +788,13 @@ export class AppReport extends LitElement {
           background: var(--secondary-color);
           color: #4f3fb6;
           border: 1px solid #4f3fb6;
-          font-size: 16px;
+          font-size: var(--button-font-size);
           font-weight: bold;
-          border-radius: 50px;
-          padding: var(--button-border-radius);
+          padding: var(--button-padding);
+          border-radius: var(--button-border-radius);
         }
         #report-wrapper .alternate:hover {
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+          box-shadow: var(--button-box-shadow)
         }
 
         .detail-list {
@@ -1005,6 +1003,10 @@ export class AppReport extends LitElement {
           }
         }
 
+        /* @media(max-width: 700px){
+          --button-padding
+        } */
+
         @media(max-width: 600px){
           #app-card-header{
             grid-template-columns: 1fr 5fr;
@@ -1037,7 +1039,7 @@ export class AppReport extends LitElement {
           sl-progress-ring {
             --size: 75px;
             --track-width: 4px;
-            font-size: 14px;
+            --subheader-font-size: 14px;
           }
           .progressRingSkeleton::part(base) {
             width: 75px;
@@ -1067,10 +1069,6 @@ export class AppReport extends LitElement {
 
           #app-actions {
             width: 100%;
-          }
-
-          #app-actions button:not(#test-download) { /* #pfs */
-            font-size: 16px;
           }
 
           #app-actions .arrow_link {
