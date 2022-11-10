@@ -9,7 +9,7 @@ To edit your manifest via the PWABuilder site:
 
 2. In the `Manifest` subsection, click `Edit Your Manifest`.
 
-3. A modal with several tabs will open. Each tab will contain different settings for editing your manifest, along with brief tooltips on what each field means.
+3. A modal with several tabs will open. Each tab will contain different settings for editing your manifest, along with brief tooltips on what each member means.
 
 4. Once you've edited your manifest to your liking, you can either download your manifest with the `Download Manifest` button at the bottom of the modal, or copy-paste it from the `Code` tab on the far right.
 
