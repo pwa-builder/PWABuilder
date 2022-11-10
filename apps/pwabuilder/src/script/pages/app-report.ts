@@ -477,14 +477,57 @@ export class AppReport extends LitElement {
           color: #4F3FB6;
         }
 
+        #share-card-container {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 12px;
+        }
+
+        #share-card-content {
+          display: flex;
+          flex-direction: row;
+        }
+
+        #share-card-content p {
+          font-weight: 700;
+          font-size: 16px;
+          line-height: 24px;
+          color: #4F3FB6;
+
+        }
+
+        #share-card-manny {
+          display: flex;
+          flex-direction: column;
+          justify-content: end;
+          margin-right: 15px;
+        }
+
+        #share-card-cta {
+          display: inline-flex;
+        }
+
+        #share-card-cta #copy-link {
+          margin-right: 11.75px;
+        }
+
+        #share-card-cta #share-link:disabled {
+          background:  #fff;
+          color: #ccc;
+          border-color: #ccc;
+          cursor: no-drop;
+        }
+
         .share-banner-buttons {
-          width: 124.34px;
+          width: 103.33px;
           height: 35px;
           background: transparent;
           color: rgb(79, 63, 182);
           font-size: 10px;
           font-weight: bold;
-          padding: 0.75em 2em;
           border: 1px solid #6F5FD3;
           border-radius: 20px;
         }
@@ -652,7 +695,7 @@ export class AppReport extends LitElement {
         }
 
         /* Manifest Card */
-        #manifest {
+        #manifest, #share-card {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: white;
           border-radius: 10px;
@@ -1910,16 +1953,6 @@ export class AppReport extends LitElement {
   render() {
     return html`
       <app-header></app-header>
-      <div id="share-card-banner"> 
-        <img id="manny-icon" src="/assets/manny_banner_image.png" />      
-        <div>
-          <p>Proud of your PWA? Share your score with the world</p> 
-        </div> 
-        <div style="display: flex">
-          <button type="button" class="share-banner-buttons"><img class="banner-button-icons" src="/assets/copy_icon_grey.png"/>Copy link</button>
-          ${this.swDataLoading ? html`` : html`<button type="button" class="share-banner-buttons" @click=${() => this.openShareCardModal()}><img class="banner-button-icons" src="/assets/social_share_icon.png"/>Share score</button>`}
-        </div>
-      </div>
       <div id="report-wrapper">
         <div id="content-holder">
           <div id="header-row">
@@ -2426,9 +2459,32 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-
+          <div id="share-card">
+            <div id="share-card-container">
+              <div id="share-card-content">
+                <div id="share-card-manny">
+                  <img src="/assets/manny_banner_image.png"/>
+                </div>
+                <div>
+                  <p>Proud of your PWA? Share your score with the word</p>
+                </div>
+              </div>
+              <div id="share-card-cta">
+                <button type="button" id="copy-link" class="share-banner-buttons"><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>        
+                <button type="button" id="share-link" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                  ${this.runningTests ?
+                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg"/>` :
+                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg"/>`
+                  }
+                  Share score
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      
 
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
         ${this.retestConfirmed ?
