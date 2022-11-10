@@ -245,7 +245,7 @@ The `shortcuts` field is an array of `shortcut` objects, which can contain the f
 
 ### categories: `Array`
 
-`categories` is an optional field that specifies an array of categories that this application belongs to. Though this array isn't limited to specific values, you can find a list of known categories [here.](https://github.com/w3c/manifest/wiki/Categories)
+`categories` is an optional field that specifies an array of categories that the application belongs to. Though this array isn't limited to specific values, you can find a list of known categories [here.](https://github.com/w3c/manifest/wiki/Categories)
 
 ```json
 "categories": ["games", "finance", "navigation"]
