@@ -101,10 +101,11 @@ export class ManifestIconsForm extends LitElement {
       .header-left{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       
       .toolTip {
+        font-size: 14px;
         visibility: hidden;
         width: 150px;
         background: black;

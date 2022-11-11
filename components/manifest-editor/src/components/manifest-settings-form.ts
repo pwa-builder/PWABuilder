@@ -107,6 +107,7 @@ export class ManifestSettingsForm extends LitElement {
         column-gap: 10px;
       }
       .toolTip {
+        font-size: 14px;
         visibility: hidden;
         width: 150px;
         background: black;
