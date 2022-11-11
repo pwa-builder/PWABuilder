@@ -1385,7 +1385,6 @@ export class AppReport extends LitElement {
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
     }
     
-
     let amt_missing = await this.handleMissingFields(manifest);
 
     this.manifestTotalScore += amt_missing;
