@@ -1384,15 +1384,17 @@ export class AppReport extends LitElement {
       manifest = {};
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
     }
+    
+
+    let amt_missing = await this.handleMissingFields(manifest);
+
+    this.manifestTotalScore += amt_missing;
+
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
     } else {
       this.canPackageList[0] = true;
     }
-
-    let amt_missing = await this.handleMissingFields(manifest);
-
-    this.manifestTotalScore += amt_missing;
 
     this.manifestDataLoading = false;
     details!.disabled = false;
@@ -1510,7 +1512,6 @@ export class AppReport extends LitElement {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
-        this.canPackageList[0] = false;
         this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "red"})
       } else if(reccommended_fields.includes(field)){
         this.reccMissingFields.push(field);
