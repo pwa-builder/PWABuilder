@@ -17,7 +17,7 @@ export class CookieBanner extends LitElement {
         justify-content: space-between;
         padding: 16px;
         font-weight: 700;
-        font-size: var(--small-font-size);
+        font-size: var(--footer-font-size);
         position: fixed;
         bottom: 0;
         z-index: 2;
@@ -43,7 +43,7 @@ export class CookieBanner extends LitElement {
       }
 
       #cookie-actions button {
-        border-radius: var(--button-radius);
+        border-radius: var(--button-border-radius);
         border: none;
         padding: 8px;
         font-weight: bold;
