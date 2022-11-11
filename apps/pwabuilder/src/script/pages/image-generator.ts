@@ -114,7 +114,7 @@ export class ImageGenerator extends LitElement {
 
         .background {
           background-color: var(--primary-color);
-          color: var(--primary-color);
+          color: var(--font-color);
         }
 
         .main {
