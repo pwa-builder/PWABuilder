@@ -77,7 +77,7 @@ export class AppHome extends LitElement {
           border: none;
         }
         #input-header {
-          font-size: 1em;
+          font-size: var(--subheader-font-size);
           font-weight: bold;
           margin: 0;
           line-height: 1.75em;

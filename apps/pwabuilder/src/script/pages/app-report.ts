@@ -431,6 +431,7 @@ export class AppReport extends LitElement {
           font-weight: var(--font-bold);
           border: none;
           color: white;
+          white-space: nowrap;
         }
 
         #pfs {
@@ -792,6 +793,7 @@ export class AppReport extends LitElement {
           font-weight: bold;
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
+          white-space: nowrap;
         }
         #report-wrapper .alternate:hover {
           box-shadow: var(--button-box-shadow)

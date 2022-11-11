@@ -74,7 +74,7 @@
 
   /* Buttons */
   --button-font-size: 16px;
-  --button-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  --button-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
   --button-border-radius: 50px;
   --button-padding: 12px 46px;
 
