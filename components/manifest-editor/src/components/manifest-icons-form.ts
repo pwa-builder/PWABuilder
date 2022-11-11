@@ -85,16 +85,17 @@ export class ManifestIconsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-field p {
+      .form-field p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
       }
 
       .field-header{
         display: flex;
         align-items: center;
         justify-content: space-between;
-        column-gap: 5px;
+        column-gap: 10px;
       }
 
       .header-left{
@@ -217,6 +218,16 @@ export class ManifestIconsForm extends LitElement {
 
         #selected-icon {
           max-width: 70px;
+        }
+
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
         }
         
       }

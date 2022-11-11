@@ -64,9 +64,10 @@ export class ManifestInfoForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p {
+      .form-row p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
       }
       .long .form-field {
         width: 100%;
@@ -87,7 +88,7 @@ export class ManifestInfoForm extends LitElement {
       .header-left{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
 
       .color_field {
@@ -136,7 +137,7 @@ export class ManifestInfoForm extends LitElement {
 
       .color-section p {
         font-size: 18px;
-        color: #808080;
+        color: #717171;
         display: flex;
         align-items: center;
         height: fit-content;
@@ -173,6 +174,9 @@ export class ManifestInfoForm extends LitElement {
         border-color: #eb5757;
       }
 
+      sl-input::part(input), sl-textarea::part(textarea){
+        color: #717171;
+      }
 
       @media(max-width: 765px){
         .form-row:not(.color-row) {
@@ -211,6 +215,16 @@ export class ManifestInfoForm extends LitElement {
 
         .color-row .form-field {
           width: 100%;
+        }
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
+          border-radius: 7px;
         }
       }
     `;

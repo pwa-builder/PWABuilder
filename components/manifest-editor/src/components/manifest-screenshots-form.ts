@@ -86,14 +86,18 @@ export class ManifestScreenshotsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-field p {
+      .form-field p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
+      }
+      sl-input::part(input){
+        color: #717171;
       }
       .field-header{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       .toolTip {
         visibility: hidden;
@@ -191,6 +195,16 @@ export class ManifestScreenshotsForm extends LitElement {
 
         .form-field h3 {
           font-size: 16px;
+        }
+
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
         }
       }
   

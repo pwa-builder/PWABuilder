@@ -73,9 +73,15 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p {
+      .form-row p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
+      }
+      sl-input::part(input), 
+      sl-select::part(display-label), 
+      sl-details::part(summary){
+        color: #717171;
       }
       .form-field {
         width: 50%;
@@ -86,7 +92,7 @@ export class ManifestPlatformForm extends LitElement {
       .field-header{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       .color_field {
         display: flex;
@@ -187,9 +193,10 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .long-items p {
+      .long-items p:not(.toolTip){
         font-size: 14px;
         margin: 0;
+        color: #717171;
       }
       .long-items .form-field {
         width: 100%;
@@ -275,6 +282,16 @@ export class ManifestPlatformForm extends LitElement {
 
         #cat-field {
           grid-template-columns: repeat(2, auto);
+        }
+
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
         }
         
       }

@@ -66,9 +66,15 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p {
+      .form-row p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
+      }
+      sl-input::part(input), 
+      sl-select::part(display-label), 
+      sl-details::part(summary){
+        color: #717171;
       }
       .long .form-field {
         width: 100%;
@@ -89,7 +95,7 @@ export class ManifestSettingsForm extends LitElement {
       .header-left{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       .color_field {
         display: flex;
@@ -216,6 +222,16 @@ export class ManifestSettingsForm extends LitElement {
 
         .form-row h3 {
           font-size: 16px;
+        }
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
+          border-radius: 7px;
         }
       }
     `;
