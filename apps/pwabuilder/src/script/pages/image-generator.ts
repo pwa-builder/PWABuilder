@@ -301,10 +301,6 @@ export class ImageGenerator extends LitElement {
         .filter((_, index) => this.platformSelected[index])
         .forEach(data => form.append('platform', data.value));
 
-        for (const value of form.values()) {
-          console.log(value);
-        }
-
       const res = await fetch(`${baseUrl}/api/image`, {
         method: 'POST',
         body: form,
