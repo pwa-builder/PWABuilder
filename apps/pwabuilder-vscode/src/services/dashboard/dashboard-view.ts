@@ -30,13 +30,22 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
         const scripts = await getScriptsObject();
 
         for (const script in scripts) {
-            // create vscode command for each script
-            items.push(new DashboardItem(scripts[script], script, "Run script", vscode.TreeItemCollapsibleState.None, {
-                command: "pwa-studio.runScript",
-                title: `Run ${script}`,
-                arguments: [script]
-            }));
+            // check and see if the script is already in items
+            if (!items.find(item => item.docsLink === scripts[script])) {
+                // create vscode command for each script
+                items.push(new DashboardItem(`Run ${script}`, scripts[script], "Run", vscode.TreeItemCollapsibleState.None, {
+                    command: "pwa-studio.runScript",
+                    title: `Run ${script}`,
+                    arguments: [script]
+                }));
+            }
         }
+
+        items.push(new DashboardItem("Validate my PWA", "https://pwabuilder.com", "Audit", vscode.TreeItemCollapsibleState.None, {
+            command: "pwa-studio.validatePWA",
+            title: "Audit my PWA",
+            arguments: []
+        }));
 
         return items;
     }
@@ -68,6 +77,6 @@ class DashboardItem extends vscode.TreeItem {
         this.label = label;
     }
 
-    iconPath = new vscode.ThemeIcon("gear");
+    iconPath = new vscode.ThemeIcon("play");
 
 }

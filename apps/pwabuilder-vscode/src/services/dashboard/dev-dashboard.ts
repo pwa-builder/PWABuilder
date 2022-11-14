@@ -7,14 +7,7 @@ export async function initDashboard(): Promise<void> {
 
     if (packageJson) {
         const packageScripts: any = await findScripts(packageJson);
-        console.log("packageScripts: ", packageScripts);
         if (packageScripts) {
-            // scriptsObject = {
-            //     "dev": packageScripts["start"] ? 'npm run start' : 'npm run dev',
-            //     "build": packageScripts["build"] ? 'npm run build' : null,
-            //     "test": packageScripts["test"] ? 'npm run test' : null,
-            // };
-
             // get keys from packageScripts
             const keys = Object.keys(packageScripts);
             keys.map((key) => {
@@ -24,6 +17,12 @@ export async function initDashboard(): Promise<void> {
             });
         }
     }
+}
+
+export async function runScript(script: string) {
+    const terminal = vscode.window.createTerminal("PWABuilder Studio");
+    terminal.show();
+    terminal.sendText(`npm run ${script}`);
 }
 
 export async function runTests() {

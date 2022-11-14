@@ -30,7 +30,7 @@ import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
 import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
-import { devBuild, prodBuild, runTests } from "./services/dashboard/dev-dashboard";
+import { devBuild, prodBuild, runScript, runTests } from "./services/dashboard/dev-dashboard";
 import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
@@ -53,6 +53,7 @@ const helpCommandID = "pwa-studio.help";
 const devBuildCommandID = "pwa-studio.devBuild";
 const prodBuildCommandID = "pwa-studio.prodBuild";
 const runTestCommandID = "pwa-studio.runTests";
+const runScriptCommandID = "pwa-studio.runScript";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -250,6 +251,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let runScriptCommand = vscode.commands.registerCommand(
+    runScriptCommandID,
+    async (script: string) => {
+      await runScript(script);
+    }
+  );
+
   // init manifest improvement suggestion
   // to-do: integrate into sideview panel
   // initSuggestions();
@@ -292,6 +300,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(devBuildCommand);
   context.subscriptions.push(prodBuildCommand);
   context.subscriptions.push(runTestCommand);
+  context.subscriptions.push(runScriptCommand);
   context.subscriptions.push(iconView);
   context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(helpCommand);
