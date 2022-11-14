@@ -2,20 +2,26 @@ import * as vscode from "vscode";
 
 export let scriptsObject: any = {};
 
-export async function initDashboard() {
+export async function initDashboard(): Promise<void> {
     const packageJson: vscode.Uri = await findPackageJSON();
 
     if (packageJson) {
         const packageScripts: any = await findScripts(packageJson);
         console.log("packageScripts: ", packageScripts);
         if (packageScripts) {
-            scriptsObject = {
-                "dev": packageScripts["start"] ? 'npm run start' : 'npm run dev',
-                "build": packageScripts["build"] ? 'npm run build' : null,
-                "test": packageScripts["test"] ? 'npm run test' : null,
-            };
+            // scriptsObject = {
+            //     "dev": packageScripts["start"] ? 'npm run start' : 'npm run dev',
+            //     "build": packageScripts["build"] ? 'npm run build' : null,
+            //     "test": packageScripts["test"] ? 'npm run test' : null,
+            // };
 
-            return packageScripts;
+            // get keys from packageScripts
+            const keys = Object.keys(packageScripts);
+            keys.map((key) => {
+                if (!scriptsObject[key]) {
+                    scriptsObject[key] = packageScripts[key];
+                }
+            });
         }
     }
 }
@@ -91,4 +97,8 @@ export function findScripts(packageJSON: vscode.Uri) {
             reject(`Error finding scripts in package.json: ${err}`);
         }
     });
+}
+
+export function getScriptsObject() {
+    return scriptsObject;
 }

@@ -30,7 +30,7 @@ import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
 import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
-import { devBuild, initDashboard, prodBuild, runTests } from "./services/dashboard/dev-dashboard";
+import { devBuild, prodBuild, runTests } from "./services/dashboard/dev-dashboard";
 import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
@@ -60,8 +60,6 @@ export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
   initAnalytics();
-
-  initDashboard();
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,

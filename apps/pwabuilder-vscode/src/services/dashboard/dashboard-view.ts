@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
+import { getScriptsObject, initDashboard } from "./dev-dashboard";
 
 export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
     scripts: any = {};
 
     constructor(private workspaceRoot: string) {
-
     }
 
     getTreeItem(element: DashboardItem): vscode.TreeItem {
@@ -23,22 +23,20 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
         }
     }
 
-    private getDashboardItems(): DashboardItem[] {
+    private async getDashboardItems(): Promise<DashboardItem[]> {
+        await initDashboard();
+
         const items: DashboardItem[] = [];
-        items.push(new DashboardItem("Dev Build", "dev", "Build for development", vscode.TreeItemCollapsibleState.None, {
-            command: "pwa-studio.devBuild",
-            title: `Dev Build`
-        }));
+        const scripts = await getScriptsObject();
 
-        items.push(new DashboardItem("Production Build", "build", "Build for production", vscode.TreeItemCollapsibleState.None, {
-            command: "pwa-studio.prodBuild",
-            title: `Production Tests`
-        }));
-
-        items.push(new DashboardItem("Run Tests", "test", "Run tests", vscode.TreeItemCollapsibleState.None, {
-            command: "pwa-studio.runTests",
-            title: `Run Tests`
-        }));
+        for (const script in scripts) {
+            // create vscode command for each script
+            items.push(new DashboardItem(scripts[script], script, "Run script", vscode.TreeItemCollapsibleState.None, {
+                command: "pwa-studio.runScript",
+                title: `Run ${script}`,
+                arguments: [script]
+            }));
+        }
 
         return items;
     }
