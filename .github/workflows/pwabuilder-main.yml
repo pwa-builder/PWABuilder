@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - run: sudo chown -R 1001:121 "/github/home/.npm"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v0.0.1-preview
