@@ -158,14 +158,14 @@ export class ImageGenerator extends LitElement {
                 <div class="padding-section">
                   <h3>${loc.padding}</h3>
                   <sl-input name="padding" type="number" max="1" min="0" step="0.1" value=${this.padding}
-                    @change=${this.handlePaddingChange} required></sl-input>
+                    @sl-change=${this.handlePaddingChange} required></sl-input>
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
                   <h3>${loc.background_color}</h3>
                   <div class="color-radio">
                     <sl-radio-group orientation="vertical" .value=${this.colorOption}
-                      @change=${this.handleBackgroundRadioChange}>
+                      @sl-change=${this.handleBackgroundRadioChange}>
                       <sl-radio name="colorOption" value="best guess">
                         ${loc.best_guess}
                       </sl-radio>
@@ -208,7 +208,7 @@ export class ImageGenerator extends LitElement {
     return platformsData.map(
       (platform, i) => html`
         <sl-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
-          @change=${this.handleCheckbox} data-index=${i}>
+          @sl-change=${this.handleCheckbox} data-index=${i}>
           ${platform.label}
         </sl-checkbox>
       `
@@ -246,8 +246,10 @@ export class ImageGenerator extends LitElement {
   }
 
   handlePaddingChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.padding = Number(input.value);
+
+    const input = <HTMLInputElement | HTMLSelectElement>event.target;
+    let updatedValue = input.value;
+    this.padding = parseFloat(updatedValue);
   }
 
   handleCheckbox(event: Event) {
@@ -298,6 +300,10 @@ export class ImageGenerator extends LitElement {
       platformsData
         .filter((_, index) => this.platformSelected[index])
         .forEach(data => form.append('platform', data.value));
+
+        for (const value of form.values()) {
+          console.log(value);
+        }
 
       const res = await fetch(`${baseUrl}/api/image`, {
         method: 'POST',
