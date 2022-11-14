@@ -93,8 +93,11 @@ export class Infocard extends LitElement {
             max-width: 300px;
             height: 15em;
           }
+          .card-content img {
+            width: 6em;
+          }
           .card-content p {
-            font-size: .825em;
+            font-size: 14px;
           }
           .card-content h3 {
             font-size: 20px;

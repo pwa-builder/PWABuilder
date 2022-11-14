@@ -1,17 +1,22 @@
 name: PWABuilder.com Main CI/CD
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main     
     paths:
       - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
     paths:
       - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
 
 jobs:
   build_and_deploy_job:
