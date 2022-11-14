@@ -246,7 +246,6 @@ export class ImageGenerator extends LitElement {
   }
 
   handlePaddingChange(event: Event) {
-
     const input = <HTMLInputElement>event.target;
     let updatedValue = input.value;
     this.padding = parseFloat(updatedValue);
