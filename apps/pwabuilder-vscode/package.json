@@ -3,7 +3,7 @@
   "displayName": "PWABuilder Studio",
   "description": "PWABuilder Studio makes VSCode the best development environment for building PWAs!",
   "publisher": "PWABuilder",
-  "version": "1.1.2",
+  "version": "1.2.1",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
@@ -301,7 +301,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "vscode:prepublish": "npm run esbuild-base",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --platform=node --external:./node_modules/* --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
