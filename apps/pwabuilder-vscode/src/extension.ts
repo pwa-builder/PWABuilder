@@ -28,8 +28,10 @@ import { IconViewPanel } from "./views/icon-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
-import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
+import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
+import { devBuild, prodBuild, runScript, runTests } from "./services/dashboard/dev-dashboard";
+import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -48,7 +50,10 @@ const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
-const iconViewID = "pwa-studio.iconView";
+const devBuildCommandID = "pwa-studio.devBuild";
+const prodBuildCommandID = "pwa-studio.prodBuild";
+const runTestCommandID = "pwa-studio.runTests";
+const runScriptCommandID = "pwa-studio.runScript";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -87,6 +92,10 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.workspaceFolders[0].uri.fsPath
     );
 
+    const dashboardViewProvider = new DashboardViewProvider(
+      vscode.workspace.workspaceFolders[0].uri.fsPath
+    )
+
     vscode.window.createTreeView("validationPanel", {
       treeDataProvider: maniValidationProvider,
     });
@@ -98,6 +107,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.createTreeView("packagePanel", {
       treeDataProvider: packageViewProvider,
     });
+
+    vscode.window.createTreeView("dashboardPanel", {
+      treeDataProvider: dashboardViewProvider,
+    })
 
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
       maniValidationProvider.refresh(event);
@@ -217,6 +230,34 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let devBuildCommand = vscode.commands.registerCommand(
+    devBuildCommandID,
+    async () => {
+      await devBuild();
+    }
+  );
+
+  let prodBuildCommand = vscode.commands.registerCommand(
+    prodBuildCommandID,
+    async () => {
+      await prodBuild();
+    }
+  );
+
+  let runTestCommand = vscode.commands.registerCommand(
+    runTestCommandID,
+    async () => {
+      await runTests();
+    }
+  );
+
+  let runScriptCommand = vscode.commands.registerCommand(
+    runScriptCommandID,
+    async (script: string) => {
+      await runScript(script);
+    }
+  );
+
   // init manifest improvement suggestion
   // to-do: integrate into sideview panel
   // initSuggestions();
@@ -256,6 +297,10 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
+  context.subscriptions.push(devBuildCommand);
+  context.subscriptions.push(prodBuildCommand);
+  context.subscriptions.push(runTestCommand);
+  context.subscriptions.push(runScriptCommand);
   context.subscriptions.push(iconView);
   context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(helpCommand);

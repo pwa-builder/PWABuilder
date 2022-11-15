@@ -3,7 +3,7 @@
   "displayName": "PWABuilder Studio",
   "description": "PWABuilder Studio makes VSCode the best development environment for building PWAs!",
   "publisher": "PWABuilder",
-  "version": "1.1.2",
+  "version": "1.2.1",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
@@ -29,7 +29,9 @@
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
     "onCommand:pwa-studio.generateScreenshots",
+    "onCommand:pwa-studio.devBuild",
     "onView:validationPanel",
+    "onView:dashboardPanel",
     "onView:serviceWorkerPanel",
     "onView:packagePanel"
   ],
@@ -187,6 +189,21 @@
         "command": "pwa-studio.updateAdvWorker",
         "title": "PWABuilder Studio: Update Service Worker",
         "icon": "$(sync)"
+      },
+      {
+        "command": "pwa-studio.devBuild",
+        "title": "PWABuilder Studio: Start Dev Server",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "pwa-studio.prodBuild",
+        "title": "PWABuilder Studio: Build for Production",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "pwa-studio.runTests",
+        "title": "PWABuilder Studio: Run Tests",
+        "icon": "$(gear)"
       }
     ],
     "viewsWelcome": [
@@ -214,6 +231,10 @@
     },
     "views": {
       "pwabuilder-view": [
+        {
+          "id": "dashboardPanel",
+          "name": "Dev Dashboard"
+        },
         {
           "id": "validationPanel",
           "name": "Web Manifest"
@@ -301,7 +322,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "vscode:prepublish": "npm run esbuild-base",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --platform=node --external:./node_modules/* --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
