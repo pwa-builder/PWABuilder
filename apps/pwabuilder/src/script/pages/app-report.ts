@@ -574,6 +574,14 @@ export class AppReport extends LitElement {
           padding: .5em;
         }
 
+        #cl-mani-tooltip-content {
+          gap: 0;
+        }
+
+        #cl-mani-tooltip-content img {
+          height: 30px;
+        }
+
         #test-download {
           background-color: transparent;
           color: #4f3fb6;
@@ -1714,7 +1722,9 @@ export class AppReport extends LitElement {
   }
 
   copyReportCardLink() {
-    return navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
+    })
   }
 
   // Opens share card modal and tracks analytics
@@ -2501,11 +2511,14 @@ export class AppReport extends LitElement {
                 </div>
               </div>
               <div id="share-card-cta">
-                <button type="button" id="copy-link" class="share-banner-buttons" @click=${() => this.copyReportCardLink}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>        
+                <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
+                  <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Copied!</p></div>
+                  <button type="button" id="copy-link" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
+                </sl-tooltip>        
                 <button type="button" id="share-link" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
                   ${this.runningTests ?
-                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg"/>` :
-                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg"/>`
+                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
                   }
                   Share score
                 </button>
