@@ -4,6 +4,7 @@ import { getManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
+  largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';
@@ -519,6 +520,7 @@ export class AppReport extends LitElement {
           color: #ccc;
           border-color: #ccc;
           cursor: no-drop;
+          box-shadow: none;
         }
 
         .share-banner-buttons {
@@ -530,6 +532,10 @@ export class AppReport extends LitElement {
           font-weight: bold;
           border: 1px solid #6F5FD3;
           border-radius: 20px;
+        }
+
+        .share-banner-buttons:hover {
+          box-shadow: rgb(0 0 0 / 30%) 0px 0px 10px;
         }
 
         .banner-button-icons {
@@ -1121,6 +1127,10 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
+          #share-card-message p {
+            font-size: 12px;
+            line-height: 18px;
+          }
         `)}
         ${smallBreakPoint(css`
           sl-progress-ring {
@@ -1205,6 +1215,23 @@ export class AppReport extends LitElement {
           }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
+          }
+          #share-card-container {
+            flex-direction: column-reverse;
+            padding-top: 10px;
+          }
+          #share-card-content {
+            flex-direction: column-reverse;
+            align-items: center;
+          }
+          #share-card-message {
+            padding: 0 10px;
+          }
+          #share-card-message p {
+            text-align: center;
+          }
+          #share-card-cta {
+            margin-top: 20px;
           }
         `)}
       `,
@@ -1686,7 +1713,11 @@ export class AppReport extends LitElement {
     this.retestConfirmed = false;
   }
 
-  // Opens manifest editor and tracks analytics
+  copyReportCardLink() {
+    return navigator.clipboard.writeText(window.location.href);
+  }
+
+  // Opens share card modal and tracks analytics
   async openShareCardModal() {
     let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
 
@@ -2465,12 +2496,12 @@ export class AppReport extends LitElement {
                 <div id="share-card-manny">
                   <img src="/assets/manny_banner_image.png"/>
                 </div>
-                <div>
-                  <p>Proud of your PWA? Share your score with the word</p>
+                <div id="share-card-message">
+                  <p>Proud of your PWA? Share your score with the world!</p>
                 </div>
               </div>
               <div id="share-card-cta">
-                <button type="button" id="copy-link" class="share-banner-buttons"><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>        
+                <button type="button" id="copy-link" class="share-banner-buttons" @click=${() => this.copyReportCardLink}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>        
                 <button type="button" id="share-link" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
                   ${this.runningTests ?
                     html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg"/>` :
