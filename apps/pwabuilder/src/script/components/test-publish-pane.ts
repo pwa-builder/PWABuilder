@@ -218,6 +218,7 @@ export class TestPublishPane extends LitElement {
         padding: .5em;
         border-radius: 3px;
         width: 100%;
+        word-break: break-word;
       }
 
       .type-error {
