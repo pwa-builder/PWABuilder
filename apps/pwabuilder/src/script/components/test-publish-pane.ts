@@ -237,6 +237,12 @@ export class TestPublishPane extends LitElement {
         font-size: 14px;
       }
 
+      .error-desc {
+        max-height: 175px;
+        overflow-y: auto;
+        line-height: normal;
+      }
+
       .error-title {
         font-weight: bold;
       }

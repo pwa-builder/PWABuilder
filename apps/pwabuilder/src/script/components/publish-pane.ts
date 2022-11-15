@@ -405,6 +405,7 @@ export class PublishPane extends LitElement {
         padding: .5em;
         border-radius: 3px;
         width: 100%;
+        word-break: break-word;
       }
 
       .type-error {
@@ -446,6 +447,12 @@ export class PublishPane extends LitElement {
       .error-actions > *:hover {
         cursor: pointer;
         border-bottom: 1px solid black;
+      }
+
+      .error-desc {
+        max-height: 175px;
+        overflow-y: auto;
+        line-height: normal;
       }
 
       .close_feedback {
