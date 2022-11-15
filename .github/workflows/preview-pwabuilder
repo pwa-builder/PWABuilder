@@ -1,4 +1,4 @@
-name: Preview PWABuilder
+name: preview.pwabuilder.com
 
 on:
   workflow_dispatch:
