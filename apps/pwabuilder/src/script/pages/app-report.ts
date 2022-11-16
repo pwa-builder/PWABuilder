@@ -492,7 +492,7 @@ export class AppReport extends LitElement {
 
           font-weight: bold;
           white-space: nowrap;
-          font-size: 12px;
+          font-size: var(--arrow-link-font-size);
         }
 
         #test-download:hover img {
@@ -1929,7 +1929,7 @@ export class AppReport extends LitElement {
                       id="pfs"
                       @click=${() => this.openPublishModal()}
                     >
-                      Package for stores
+                      Package For Stores
                     </button>
                     ` :
                     html`
@@ -1942,12 +1942,12 @@ export class AppReport extends LitElement {
                           id="pfs-disabled"
                           aria-disabled="true"
                         >
-                          Package for stores
+                          Package For Stores
                         </button>
                     </sl-tooltip>
                     `}
                 <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
-                  <p class="arrow_link">Download test package</p>
+                  <p class="arrow_link">Download Test Package</p>
                   <img
                     src="/assets/new/arrow.svg"
                     alt="arrow"
