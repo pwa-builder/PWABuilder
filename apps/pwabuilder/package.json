@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
+  "engines": { "node": "14.15.1" },
   "scripts": {
     "preinstall": "node ../../scripts/setupDeps.js",
     "dev": "vite --open",
