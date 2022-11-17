@@ -20,7 +20,7 @@ export const maniTests = [
         purpose: "maskable",
       },
     ], null, 2),
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+    docsLink: "hhttps://docs.pwabuilder.com/#/builder/manifest?id=icons-array",
     errorString: "icons should be an array with a length > 0",
     quickFix: true,
     test: (value: any[]) => {
@@ -40,7 +40,7 @@ export const maniTests = [
     category: "required",
     member: "name",
     defaultValue: "placeholder name",
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
+    docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=name-string",
     errorString: "name is required and should be a string with a length > 0",
     quickFix: true,
     test: (value: string) => {
@@ -68,7 +68,7 @@ export const maniTests = [
     member: "short_name",
     defaultValue: "placeholder",
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
     errorString:
       "short_name is required and should be a string with a length > 0 and should not have any whitespace",
     quickFix: true,
@@ -102,7 +102,7 @@ export const maniTests = [
     category: "required",
     member: "start_url",
     defaultValue: "/",
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
+    docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
     errorString:
       "start_url is required and should be a string with a length > 0",
     quickFix: true,
@@ -115,7 +115,7 @@ export const maniTests = [
     category: "required",
     member: "display",
     defaultValue: "standalone",
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
+    docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=display-string",
     errorString:
       "display is required and should be either fullscreen, standalone, minimal-ui, browser",
     quickFix: true,
@@ -132,7 +132,7 @@ export const maniTests = [
     member: "background_color",
     defaultValue: "#000000",
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
     errorString: "background_color is required and should be a valid hex color",
     quickFix: true,
     test: (value: string) => {
@@ -147,7 +147,7 @@ export const maniTests = [
     member: "theme_color",
     defaultValue: "#000000",
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
     errorString: "theme_color is required and should be a valid hex color",
     quickFix: true,
     test: (value: string) => {
@@ -162,7 +162,7 @@ export const maniTests = [
     member: "orientation",
     defaultValue: "any",
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string",
     errorString:
       "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
     quickFix: true,
@@ -196,7 +196,7 @@ export const maniTests = [
       },
     ], null, 2),
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array",
     errorString:
       "screenshots is required and should be an array with a length > 0",
     quickFix: true,
@@ -217,7 +217,7 @@ export const maniTests = [
         "icons": [{ "src": "https://pwabuilder.com/assets/icons/icon_192.png", "sizes": "192x192" }]
       }
     ], null, 2),
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+    docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
     errorString:
       "shortcuts should be an array with a length > 0 and should not include webp images",
     quickFix: true,
@@ -242,7 +242,7 @@ export const maniTests = [
     member: "iarc_rating_id",
     defaultValue: "",
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
     quickFix: true,
   },
   {
@@ -252,7 +252,7 @@ export const maniTests = [
     member: "related_applications",
     defaultValue: [],
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
     quickFix: true,
   },
   {
@@ -261,7 +261,7 @@ export const maniTests = [
       "The lang member is a string that represents the default language of your PWA.",
     category: "optional",
     defaultValue: "en-US",
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/lang",
+    docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=lang-string",
     errorString: "lang is required and should be set to a valid language code",
     quickFix: true,
     test: (value: string) =>
@@ -273,7 +273,7 @@ export const maniTests = [
       "The dir member is a string that represents the default text direction of your PWA.",
     category: "optional",
     defaultValue: "ltr",
-    docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
+    docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
     quickFix: true,
   },
   {
@@ -283,7 +283,7 @@ export const maniTests = [
     category: "optional",
     defaultValue: "",
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
     errorString: "description and should be a string with a length > 0",
     quickFix: true,
     test: (value: string) =>
@@ -311,7 +311,7 @@ export const maniTests = [
     category: "optional",
     defaultValue: [],
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
     quickFix: true,
   },
   {
@@ -321,7 +321,7 @@ export const maniTests = [
     category: "optional",
     defaultValue: [],
     docsLink:
-      "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
     quickFix: true,
   },
 ];

@@ -8,7 +8,7 @@ export const maniTests: Array<Validation> = [
         category: "required",
         member: "name",
         defaultValue: "placeholder name",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=name-string",
         errorString: "name is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
@@ -55,7 +55,7 @@ export const maniTests: Array<Validation> = [
                 "purpose": "maskable"
             }
         ]),
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
         errorString: "icons is required and must be non-empty array",
         quickFix: true,
         test: (value: any[]) => {
@@ -83,7 +83,7 @@ export const maniTests: Array<Validation> = [
                 "purpose": "maskable"
             }
         ]),
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
         errorString: "Need at least one icon with purpose set to any",
         quickFix: true,
         test: (value: any[]) => {
@@ -118,7 +118,7 @@ export const maniTests: Array<Validation> = [
                 "purpose": "maskable"
             }
         ]),
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
         errorString: "Need at least one PNG icon 512x512 or larger",
         quickFix: false,
         test: (value: any[]) => {
@@ -153,7 +153,7 @@ export const maniTests: Array<Validation> = [
                 "purpose": "maskable"
             }
         ]),
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
         errorString: "Seperate Icons are needed for both maskable and any",
         quickFix: true,
         test: (value: any[]) => {
@@ -175,7 +175,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         member: "scope",
         defaultValue: "/",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/scope",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=scope-string",
         errorString: "scope must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
@@ -205,7 +205,7 @@ export const maniTests: Array<Validation> = [
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
         errorString: "short_name is required and must be a string with a length >= 2",
         quickFix: true,
         test: (value: string) => {
@@ -236,7 +236,7 @@ export const maniTests: Array<Validation> = [
         member: "start_url",
         defaultValue: "/",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
         errorString: "start_url is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
@@ -248,7 +248,7 @@ export const maniTests: Array<Validation> = [
         category: "recommended",
         member: "display",
         defaultValue: "standalone",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=display-string",
         errorString: "display must be one of the following strings: fullscreen, standalone, minimal-ui, browser",
         quickFix: true,
         test: (value: string) => {
@@ -265,7 +265,7 @@ export const maniTests: Array<Validation> = [
         member: "background_color",
         defaultValue: "#000000",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
         errorString: "background_color should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
@@ -286,7 +286,7 @@ export const maniTests: Array<Validation> = [
         member: "theme_color",
         defaultValue: "#000000",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
         errorString: "theme_color should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
@@ -306,7 +306,7 @@ export const maniTests: Array<Validation> = [
         member: "orientation",
         defaultValue: "any",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string",
         errorString: "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
         quickFix: true,
         test: (value: string) => {
@@ -339,7 +339,7 @@ export const maniTests: Array<Validation> = [
             },
         ]),
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
         errorString: "screenshots must be an array with a length > 0",
         quickFix: true,
         test: (value: string) =>
@@ -352,7 +352,7 @@ export const maniTests: Array<Validation> = [
         member: "shortcuts",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
         errorString: "shortcuts should be a non-empty array and should not include webp images",
         quickFix: true,
         test: (value: any[]) => {
@@ -379,7 +379,7 @@ export const maniTests: Array<Validation> = [
         member: "iarc_rating_id",
         defaultValue: "",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
         quickFix: true,
         errorString: "iarc_rating_id must be a string with a length > 0",
         test: (value: string) => {
@@ -394,7 +394,7 @@ export const maniTests: Array<Validation> = [
         member: "related_applications",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
@@ -410,7 +410,7 @@ export const maniTests: Array<Validation> = [
         member: "prefer_related_applications",
         defaultValue: false,
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/prefer_related_applications",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
         quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
         test: (value: any) => {
             return typeof(value)  === "boolean"
@@ -424,7 +424,7 @@ export const maniTests: Array<Validation> = [
         member: "categories",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/categories",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
         quickFix: true,
         test: (value: any[]) => {
             if (value) {
@@ -443,7 +443,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: "en",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/lang",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=lang-string",
         errorString: "lang should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
@@ -457,7 +457,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: "ltr",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
         quickFix: true,
         test: (value: string) =>
                 value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
@@ -469,7 +469,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: "",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
         errorString: "description must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
@@ -498,7 +498,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
         quickFix: true,
         errorString: "protocol_handlers should be a non-empty array",
         test: (value: any[]) => {
@@ -514,7 +514,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
         quickFix: true,
         errorString: "display_override must be a non-empty array",
         test: (value: any[]) => {

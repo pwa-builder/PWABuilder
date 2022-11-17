@@ -15,7 +15,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
         element?: DashboardItem
     ): Promise<DashboardItem[] | undefined> {
         if (!this.workspaceRoot) {
-            vscode.window.showInformationMessage("No dashboard in empty workspace");
+            vscode.window.showInformationMessage("You can't have a dashboard open in an empty workspace.");
             return Promise.resolve([]);
         }
         else {

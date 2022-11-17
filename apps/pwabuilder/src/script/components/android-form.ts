@@ -352,7 +352,7 @@ export class AndroidForm extends AppPackageFormBase {
                   ${this.renderFormInput({
                     label: 'Start URL',
                     tooltip: `The start path for your PWA. Must be relative to the Host URL. If Host URL contains your PWA, you can use '/' to specify a default`,
-                    tooltipLink: 'https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url',
+                    tooltipLink: 'https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string',
                     inputId: 'start-url-input',
                     required: true,
                     placeholder: '/index.html',
