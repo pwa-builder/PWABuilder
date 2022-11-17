@@ -218,6 +218,7 @@ export class TestPublishPane extends LitElement {
         padding: .5em;
         border-radius: 3px;
         width: 100%;
+        word-break: break-word;
       }
 
       .type-error {
@@ -235,6 +236,12 @@ export class TestPublishPane extends LitElement {
       .feedback-holder p {
         margin: 0;
         font-size: 14px;
+      }
+
+      .error-desc {
+        max-height: 175px;
+        overflow-y: auto;
+        line-height: normal;
       }
 
       .error-title {

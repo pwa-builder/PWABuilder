@@ -453,7 +453,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         category: "required",
         member: "icons",
         defaultValue: [],
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons-array",
       },
       {
         infoString: "Contains name property",
@@ -461,7 +461,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         category: "required",
         member: "name",
         defaultValue: "placeholder name",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=name-string",
       },
       {
         infoString: "Contains short_name property",
@@ -471,7 +471,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
       },
       {
         infoString: "Designates a start_url",
@@ -481,7 +481,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "start_url",
         defaultValue: "/",
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
       },
       {
         infoString: "Specifies a display mode",
@@ -495,7 +495,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         category: "recommended",
         member: "display",
         defaultValue: "standalone",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=display-string",
       },
       {
         infoString: "Has a background color",
@@ -504,7 +504,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "background_color",
         defaultValue: "black",
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
       },
       {
         infoString: "Has a theme color",
@@ -513,7 +513,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "theme_color",
         defaultValue: "black",
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
       },
       {
         infoString: "Specifies an orientation mode",
@@ -525,7 +525,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "orientation",
         defaultValue: "any",
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string",
       },
       {
         infoString: "Contains screenshots for app store listings",
@@ -535,7 +535,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "screenshots",
         defaultValue: [],
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array",
       },
       {
         infoString: "Lists shortcuts for quick access",
@@ -545,19 +545,19 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "shortcuts",
         defaultValue: [],
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
       },
       {
         infoString: "Icons specify their type",
         result: !!manifest.icons && manifest.icons.every((i: any) => !!i.type),
         category: "recommended",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons-array",
       },
       {
         infoString: "Icons specify their size",
         result: !!manifest.icons && manifest.icons.every((i: any) => !!i.sizes),
         category: "recommended",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons-array",
       },
       {
         infoString: "Contains an IARC ID",
@@ -566,7 +566,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "iarc_rating_id",
         defaultValue: "",
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
       },
       {
         infoString: "Specifies related_applications",
@@ -579,7 +579,7 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         member: "related_applications",
         defaultValue: [],
         docsLink:
-          "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
+          "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
       },
     ];
   }
@@ -642,7 +642,7 @@ export async function handleManiDocsCommand(event: any): Promise<void> {
   if (event.label === "Installable" || event.label === "Uninstallable") {
     vscode.env.openExternal(
       vscode.Uri.parse(
-        "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs"
+        "https://docs.pwabuilder.com/#/home/pwa-intro?id=installability"
       )
     );
   }
