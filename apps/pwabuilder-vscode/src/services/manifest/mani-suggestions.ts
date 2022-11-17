@@ -26,7 +26,7 @@ export const initSuggestions = async () => {
           vscode.commands.executeCommand(
             "vscode.open",
             vscode.Uri.parse(
-              "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts"
+              "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"
             )
           );
         }

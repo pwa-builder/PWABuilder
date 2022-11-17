@@ -47,7 +47,6 @@ export function recordProcessStep(
   processStep: string,
   stepType: AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.StartProcess | AnalyticsBehavior.ProcessCheckpoint | AnalyticsBehavior.CancelProcess | AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
-
   lazyLoadAnalytics()
     .then(oneDS => oneDS.capturePageAction(null, {
       actionType: AnalyticsActionType.Other,
@@ -57,7 +56,8 @@ export function recordProcessStep(
         scnstp: processStep
       },
       content: additionalInfo
-    }));
+    }))
+    .catch(err => console.warn('Process step was not recorded', err));
 }
 
 export function recordPageAction(actionName: string, type: AnalyticsActionType, behavior: AnalyticsBehavior, properties?: { [key: string]: string | number | boolean | string[] | number[] | boolean[] | object }) {
@@ -266,7 +266,7 @@ export const enum AnalyticsActionType {
 }
 
 // See https://martech.azurewebsites.net/website-tools/oneds/references/behavior-dictionary
-export const enum AnalyticsBehavior {
+export enum AnalyticsBehavior {
   ContentUpdate = 0,
   NavigationBack = 1,
   NavigationSelectionJump = 2,

@@ -19,7 +19,6 @@ import {
   windowsProdQuestions,
 } from "../../questions";
 import { getManifest } from "../manifest/manifest-service";
-import { getWorker } from "../service-worker";
 import { getURL } from "../web-publish";
 import {
   AndroidDocsURL,
@@ -28,6 +27,8 @@ import {
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
 import { getAnalyticsClient } from "../usage-analytics";
+import { findWorker } from "../service-workers/service-worker";
+import { pathExists } from "../../library/file-utils";
 /*
  * To-do Justin: More re-use
  */
@@ -41,11 +42,14 @@ let msixAnswers: string[];
 let didInputFail: boolean;
 
 export async function packageApp(): Promise<void> {
-  const url = getURL();
-  const sw = getWorker();
-  const manifest = getManifest();
+  const url = await getURL();
 
-  if (!url || !sw || !manifest) {
+  const serviceWorkerId: vscode.Uri = await findWorker();
+  const serviceWorkerExists = await pathExists(serviceWorkerId);
+
+  const manifest = await getManifest();
+
+  if (!url || !serviceWorkerExists || !manifest) {
     if (!url) {
       const answer = await vscode.window.showErrorMessage(
         "Please publish your app before packaging it.",
@@ -64,7 +68,7 @@ export async function packageApp(): Promise<void> {
       return;
     }
 
-    if (!sw) {
+    if (!serviceWorkerExists) {
       const answer = await vscode.window.showErrorMessage(
         "You must have a Service Worker to package your PWA.",
         {

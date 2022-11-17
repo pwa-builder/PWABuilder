@@ -1,3 +1,5 @@
+?> If you are still having problems solving your issue after reading the FAQ, please feel free to open an issue on our [Github](https://github.com/pwa-builder/PWABuilder/issues/new/choose).
+
 # Frequently Asked Questions
 
 Welcome to the PWA Builder FAQ! 
@@ -25,7 +27,7 @@ Choose `Product Management` -> `Product Identity`:
 
 You'll see the Package ID, Publisher ID, and publisher display name. You'll need all three of these to publish in the Store.
 
-On PWABuilder when generating your Windows app, add these values to the Windows package options:
+On PWABuilder when generating your Windows app, add these values to the Windows package options here:
 
 <div class="docs-image">
      <img src="/assets/builder/faq/required-data-in-pwabuilder.png" alt="Publisher and package info in PWABuilder" width=400>
@@ -151,7 +153,7 @@ This usually is a result of the fields `background_color` or `theme_color` being
   
 #### Error: `Failed to download Web Manifest [URL to Web Manifest]. Responded with status 503`
 
-This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that your pause your firewall service while packaging with PWABuilder and you can enable it again after your have your package.
+This is a common error we get when websites use firewall services like Cloudflare (these services view PWABuilder as an unwanted bot). It is recommended that you pause your firewall service while packaging with PWABuilder and you can enable it again after you have your package.
   
 #### Error: `request to [URL] failed, reason: unable to verify the first certificate`
 

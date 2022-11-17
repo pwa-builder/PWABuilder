@@ -18,14 +18,22 @@ You can start from the very beginning [here](https://microsoft.github.io/win-stu
 
 ## PWA Starter Workshop
 
-If you want a hands-on alternative to learning about PWAs, checkout [this workshop](https://github.com/beth-panx/pwa-workshop-student/blob/main/workshop/0-setup.md) hosted on GitHub.
+If you want a hands-on alternative to learning about PWAs, checkout [the PWA workshop](/home/pwa-workshop) hosted on GitHub.
 
 The workshop is a guided walk through of building a sample application with the PWA Starter.
 
-## Mozzilla PWA Resources
+## Microsoft Edge PWA Resources
+
+Microsoft Edge has a lot of technical docs to learn about progressive web apps and the many features that make it easy to build apps that feel native on desktop operating systems:
+
+* [**Get started with Progressive Web Apps**](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/)
+
+* [**Integrate PWAs on desktop**](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/icon-theme-color)
+
+## MDN PWA Resources
 
 MDN has plenty of resources related to progressive web apps and web capabilities available:
 
-* [**Mozilla PWA Guidance Homepage**](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+* [**MDN PWA Guidance Homepage**](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 
 * [**MDN Web API documentation**](https://developer.mozilla.org/en-US/docs/Web/API)

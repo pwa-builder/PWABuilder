@@ -3,11 +3,12 @@ export interface Validation {
     displayString?: string;
     category: string;
     member: string;
-    defaultValue?: string | any[];
+    defaultValue?: string | boolean | any[]; // prefer related apps is a boolean
     docsLink?: string;
-    errorString?: string;
+    errorString: string;
     quickFix: boolean;
     test?: Function;
+    testRequired?: boolean;
     testName?: string;
     valid?: boolean;
 }
@@ -114,4 +115,9 @@ export interface Manifest {
   export interface FilesParams {
     name: string;
     accept: string[];
+  }
+
+  export interface singleFieldValidation {
+    valid: Boolean;
+    errors?: string[];
   }

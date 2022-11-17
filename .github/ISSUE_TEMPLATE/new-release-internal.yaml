@@ -1,0 +1,75 @@
+name: New Release (internal use only)
+description: This template is used for tracking releases
+title: "[RELEASE][PWABUILDER|VSCODE|STARTER|ETC] X.X"
+labels: ["release-task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue tracks the publishing progress for a release. It should be updated as tasks are completed.
+        
+        This issue should only be created by a maintainer to track progress of a release. Link to sub-issues if approprite.
+
+        IMPORTANT: Make sure the title of this issue includes the product name (pwabuilder/vscode/starter/component/etc)
+        
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      options:
+        - PWABuilder.com
+        - VS Code extension
+        - PWA Starter
+        - Component
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Checklist
+      description: Add or remove checklist items as appropriate
+      value: |
+        #### Code
+          - [ ] Link to issue tracking board: {link_goes_here}
+          - [ ] All P0s completed
+          - [ ] All PRs have been reviewed and merged into dev branch at least one week before release
+          - [ ] PR authored from dev to main - PR: {PR goes here}
+          - [ ] PR approved
+          - [ ] PR merged
+          
+        #### PWABuilder.com existing functionality tests
+          - [ ] Test /portals and ensure is working (linked to from PowerApps)
+          - [ ] Test /imageGenerator and ensure is working (linked to from dev tools)
+
+        #### Design
+          - [ ] Design reviewed and signed off
+
+        #### Bug Bash
+          - [ ] Internal update and bug bash scheduled (make sure all code has merged in dev first)
+
+        #### Docs Release Notes
+          - [ ] PR authored at least a week before release - PR: {PR goes here}
+          - [ ] PR approved
+          - [ ] PR merged
+
+        #### Docs
+          - [ ] PR authored at least a week before release - PR: {PR goes here}
+          - [ ] PR approved
+          - [ ] PR merged
+
+        #### Blog Post
+          - [ ] PR authored at least a week before release - PR: {PR goes here}
+          - [ ] PR approved
+          - [ ] PR merged
+
+        #### Social
+          - [ ] Tweeted
+          - [ ] Discord updated
+          - [ ] Internal update
+          
+       #### Analytics
+          - [ ] Adobe Analytics dashboard receiving signals after release date
+       
+       #### Dependencies
+          - [ ] PowerBI dashboard

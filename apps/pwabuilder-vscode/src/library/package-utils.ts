@@ -1,5 +1,5 @@
 import { writeFile } from "fs/promises";
-import fetch from "node-fetch";
+const fetch = require('node-fetch');
 import { Headers, Response } from "node-fetch";
 import { Manifest, MsixInfo } from "../interfaces";
 
@@ -295,13 +295,13 @@ export async function buildAndroidOptions(): Promise<
   if (manifestUrl && packageId) {
     // fetch manifest from manifestUrl using node-fetch
 
-    let manifestData: Manifest | undefined;
+    let manifestData: Manifest | undefined | unknown;
     let manifest: Manifest | undefined;
     try {
       manifestData = await (await fetch(manifestUrl)).json();
 
       if (manifestData) {
-        manifest = manifestData;
+        manifest = (manifestData as Manifest);
       }
     } catch (err) {
       // show error message

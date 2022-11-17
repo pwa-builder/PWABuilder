@@ -1,7 +1,41 @@
-import { Validation } from "./interfaces";
-import { isStandardOrientation } from "./utils/validation-utils";
+import { Manifest, singleFieldValidation, Validation } from "./interfaces";
+import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
+    {
+        infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
+        displayString: "Manifest has name field",
+        category: "required",
+        member: "name",
+        defaultValue: "placeholder name",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=name-string",
+        errorString: "name is required and must be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) => {
+            return value && typeof value === "string" && value.length > 0;
+        }
+    },
+    {
+        infoString: "share_target enables your app to get shared content from other apps",
+        displayString: "Manifest has share_target field",
+        category: "optional",
+        member: "share_target",
+        defaultValue: JSON.stringify({
+            "action": "/share-target/",
+            "methods": ["GET"],
+            "params": {
+                "title": "title",
+                "text": "text",
+                "url": "url"
+              }
+        }),
+        docsLink: "https://web.dev/web-share-target/",
+        errorString: "share_target must be an object",
+        quickFix: true,
+        test: (value: string) => {
+            return value && typeof value === "object";
+        }
+    },
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
         displayString: "Manifest has icons field",
@@ -21,14 +55,44 @@ export const maniTests: Array<Validation> = [
                 "purpose": "maskable"
             }
         ]),
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "icons should be an array with a length > 0",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+        errorString: "icons is required and must be non-empty array",
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
+            return isArray;
+        }
+    },
+    {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have at least one icon with purpose any",
+        category: "recommended",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+        errorString: "Need at least one icon with purpose set to any",
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
             if (isArray) {
-                return true;
+                const anyIcon = value.find(icon => icon.purpose === "any");
+
+                return anyIcon ? true : false;
             }
             else {
                 return false;
@@ -36,13 +100,83 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
-        infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
-        displayString: "Manifest has name field",
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have at least one PNG icon 512x512 or larger",
         category: "required",
-        member: "name",
-        defaultValue: "placeholder name",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
-        errorString: "name is required and should be a string with a length > 0",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+        errorString: "Need at least one PNG icon 512x512 or larger",
+        quickFix: false,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const anyIcon = value.find(icon => isAtLeast(icon.sizes, 512, 512) && (icon.type === 'image/png' || icon.src.endsWith(".png")));
+
+                return anyIcon ? true : false;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons should have one icon with purpose set to any, and one for maskable",
+        category: "required",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+        errorString: "Seperate Icons are needed for both maskable and any",
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            
+            if (isArray) {
+                const wrongIcon = value.find(icon => icon.purpose === "any maskable");
+
+                return wrongIcon ? false : true;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
+        displayString: "Manifest has a scope field",
+        category: "optional",
+        member: "scope",
+        defaultValue: "/",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=scope-string",
+        errorString: "scope must be a string with a length > 0",
         quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
@@ -66,17 +200,16 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Manifest has short name field",
+        displayString: "Short name is the correct minimum length (2 characters)",
         category: "required",
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
-        errorString:
-            "short_name is required and should be a string with a length > 0 and should not have any whitespace",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
+        errorString: "short_name is required and must be a string with a length >= 2",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && typeof value === "string" && value.length > 0 && value.trim() === value;
+          const existsAndLength = value && value.length >= 2;
           return existsAndLength;
         },
     },
@@ -103,9 +236,8 @@ export const maniTests: Array<Validation> = [
         member: "start_url",
         defaultValue: "/",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
-        errorString:
-            "start_url is required and should be a string with a length > 0",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
+        errorString: "start_url is required and must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0
@@ -116,9 +248,8 @@ export const maniTests: Array<Validation> = [
         category: "recommended",
         member: "display",
         defaultValue: "standalone",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
-        errorString:
-            "display is required and should be either fullscreen, standalone, minimal-ui, browser",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=display-string",
+        errorString: "display must be one of the following strings: fullscreen, standalone, minimal-ui, browser",
         quickFix: true,
         test: (value: string) => {
             return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
@@ -130,30 +261,42 @@ export const maniTests: Array<Validation> = [
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
         displayString: "Manifest has hex encoded background color",
         category: "recommended",
+        testRequired: true,
         member: "background_color",
         defaultValue: "#000000",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
-        errorString: "background_color is required and should be a valid hex color",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
+        errorString: "background_color should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
-            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return hexRegex.test(value);
+            if (value) {
+                const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+                return hexRegex.test(value);
+            }
+            else {
+                return false;
+            }
         },
     },
     {
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
         displayString: "Manifest has hex encoded theme color",
         category: "recommended",
+        testRequired: true,
         member: "theme_color",
         defaultValue: "#000000",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
-        errorString: "theme_color is required and should be a valid hex color",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
+        errorString: "theme_color should be a valid hex color",
         quickFix: true,
         test: (value: string) => {
-            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return hexRegex.test(value);
+            if (value) {
+                const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+                return hexRegex.test(value);
+            }
+            else {
+                return false;
+            }
         },
     },
     {
@@ -163,9 +306,8 @@ export const maniTests: Array<Validation> = [
         member: "orientation",
         defaultValue: "any",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
-        errorString:
-            "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string",
+        errorString: "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
         quickFix: true,
         test: (value: string) => {
             return isStandardOrientation(value);
@@ -197,8 +339,8 @@ export const maniTests: Array<Validation> = [
             },
         ]),
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
-        errorString: "screenshots is required and should be an array with a length > 0",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
+        errorString: "screenshots must be an array with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && Array.isArray(value) && value.length > 0 ? true : false,
@@ -210,11 +352,11 @@ export const maniTests: Array<Validation> = [
         member: "shortcuts",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-        errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
+        errorString: "shortcuts should be a non-empty array and should not include webp images",
         quickFix: true,
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const isArray = value && Array.isArray(value);
             if (isArray === true) {
                 // check image types dont include webp
                 const hasWebp = value.some(icon => icon.type === "image/webp");
@@ -222,7 +364,7 @@ export const maniTests: Array<Validation> = [
                     return false;
                 }
                 else {
-                    return false;
+                    return true;
                 }
             }
             else {
@@ -237,8 +379,13 @@ export const maniTests: Array<Validation> = [
         member: "iarc_rating_id",
         defaultValue: "",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
         quickFix: true,
+        errorString: "iarc_rating_id must be a string with a length > 0",
+        test: (value: string) => {
+            // should exist
+            return value && typeof value === "string" && value.length > 0;
+        }
     },
     {
         infoString: "The related_applications field is an array of objects specifying native applications that are installable by, or accessible to, the underlying platform — for example, a platform-specific (native) Windows application.",
@@ -247,31 +394,73 @@ export const maniTests: Array<Validation> = [
         member: "related_applications",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
         quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+            return isArray;
+        },
+        errorString: "related_applications should be a non-empty array",
+    },
+    {
+        infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
+        displayString: "Manifest properly sets prefer related applications field",
+        category: "optional",
+        testRequired: true,
+        member: "prefer_related_applications",
+        defaultValue: false,
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
+        quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
+        test: (value: any) => {
+            return typeof(value)  === "boolean"
+        },
+        errorString: "prefer_related_applications should be set to a boolean value",
+    },
+    {
+        infoString: "The categories member is an array of strings that represent the categories of the web application.",
+        displayString: "Manifest has categories field",
+        category: "optional",
+        member: "categories",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
+        quickFix: true,
+        test: (value: any[]) => {
+            if (value) {
+                const isGood = containsStandardCategory(value);
+                return isGood;
+            }
+
+            return false;
+        },
+        errorString: "categories should be a non-empty array"
     },
     {
         member: "lang",
         displayString: "Manifest specifies a language",
         infoString: "The lang member is a string that represents the default language of your PWA.",
         category: "optional",
-        defaultValue: "en-US",
+        defaultValue: "en",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/lang",
-        errorString: "lang is required and should be set to a valid language code",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=lang-string",
+        errorString: "lang should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0
+                value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
     },
     {
         member: "dir",
         displayString: "Manifest specifies a default direction of text",
         infoString: "The dir member is a string that represents the default text direction of your PWA.",
+        errorString: "dir must be one of the following strings: ltr, rtl, or auto",
         category: "optional",
         defaultValue: "ltr",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
-        quickFix: true
+            "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
+        quickFix: true,
+        test: (value: string) =>
+                value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
     },
     {
         member: "description",
@@ -280,9 +469,8 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: "",
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
-        errorString:
-            "description and should be a string with a length > 0",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
+        errorString: "description must be a string with a length > 0",
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
@@ -310,8 +498,14 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
-        quickFix: true
+            "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
+        quickFix: true,
+        errorString: "protocol_handlers should be a non-empty array",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            return isArray;
+        }
     },
     {
         member: "display_override",
@@ -320,7 +514,127 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: [],
         docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
+            "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
         quickFix: true,
+        errorString: "display_override must be a non-empty array",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            return isArray;
+        }
+    },
+    {
+        member: "id",
+        displayString: "Manifest has an app ID",
+        infoString: "The id member is a string that represents the unique identifier of your PWA to the browser.",
+        category: "recommended",
+        defaultValue: "/",
+        docsLink: "https://developer.chrome.com/blog/pwa-manifest-id",
+        errorString: "id must be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) =>
+            value && typeof value === "string" && value.length > 0,
+    },
+    {
+        member: "launch_handler",
+        displayString: "Manifest has launch handler field",
+        infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
+        category: "recommended",
+        defaultValue: "",
+        docsLink: "https://developer.chrome.com/docs/web-platform/launch-handler/",
+        errorString: "launch_handler should be defined",
+        quickFix: false,
+        test: (value: any) => {
+            return value && typeof value === "object";
+        }
     }
 ];
+
+export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
+    return new Promise((resolve) => {
+        let data: Array<Validation> = [];
+  
+        const keys = Object.keys(manifest);
+  
+        keys.forEach((key) => {
+            maniTests.forEach(async (test) => {
+                if (test.member === key && test.test) {
+                    const testResult = await test.test(manifest[key]);
+  
+    
+                    if(testResult){
+                      test.valid = true;
+                      data.push(test);
+                    }
+                    else {
+                      test.valid = false;
+                      data.push(test);
+                    }
+                }
+            })
+        })
+  
+        resolve(data);
+    })
+  }
+  
+  export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
+    return new Promise((resolve) => {
+      let data: Array<Validation> = [];
+  
+      const keys = Object.keys(manifest);
+  
+      keys.forEach((key) => {
+        maniTests.forEach(async (test) => {
+          if (test.category === "required") {
+            if (test.member === key && test.test) {
+              const testResult = await test.test(manifest[key]);
+  
+              if (testResult === false) {
+                test.valid = false;
+                data.push(test);
+              }
+              else {
+                test.valid = true;
+                data.push(test);
+              }
+            }
+          }
+        })
+      })
+  
+      resolve(data);
+    })
+  }
+  
+  export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
+    return new Promise(async (resolve) => {
+  
+      // For && operations, true is the base.
+      let singleField = true;
+      let failedTests: string[] | undefined = [];
+  
+      maniTests.forEach((test) => {
+        if (test.member === field && test.test) {
+        
+          const testResult = test.test(value);
+  
+          if(!testResult){
+            failedTests!.push(test.errorString!);
+          }
+  
+          // If the test passes true && true = true.
+          // If the test fails true && false = false
+          // If a field has MULTIPLE tests, they will stack
+          // ie: true (base) && true (test 1) && false (ie test 2 fails).
+          singleField = singleField && testResult;
+        }
+      });
+  
+      if(singleField){
+        resolve({"valid": singleField})
+      }
+  
+      resolve({"valid": singleField, "errors": failedTests});
+    })
+  }

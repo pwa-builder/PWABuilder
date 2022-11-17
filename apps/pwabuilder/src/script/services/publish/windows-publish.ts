@@ -1,6 +1,6 @@
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { env } from '../../utils/environment';
 import { findBestAppIcon } from '../../utils/icons';
-import { Manifest } from '../../utils/interfaces';
 import {
   generateWindowsPackageId,
   validateWindowsOptions,
@@ -23,27 +23,33 @@ export async function generateWindowsPackage(
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
       'Invalid Windows options. ' +
-      validationErrors.map(a => a.error).join('\n')
+        validationErrors.map(a => a.error).join('\n')
     );
   }
-
+  //console.info('Before fetching windows package');
   const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
     method: 'POST',
     body: JSON.stringify(windowsOptions),
     headers: new Headers({ 'content-type': 'application/json' }),
   });
+  //console.info('After fetching windows package', response);
   if (response.status === 200) {
     const data = await response.blob();
 
     //set generated flag
     hasGeneratedWindowsPackage = true;
-
+    //console.info('After fetching windows package', data);
     return data;
   } else {
     const responseText = await response.text();
-    throw new Error(
+    let err = new Error(
       `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`
     );
+    Object.defineProperty(response, "stack_trace", {value: responseText});
+      //@ts-ignore
+      err.response = response;
+    throw err;
+    
   }
 }
 
@@ -57,12 +63,12 @@ export function emptyWindowsPackageOptions(): WindowsPackageOptions {
     classicPackage: {
       generate: true,
       version: '1.0.0.0',
-      url: ''
+      url: '',
     },
     publisher: {
       displayName: '',
-      commonName: ''
-    }
+      commonName: '',
+    },
   };
 }
 
@@ -108,7 +114,7 @@ export function createWindowsPackageOptionsFromManifest(
     manifest: manifest,
     images: {
       baseImage: icon?.src || '',
-      backgroundColor: manifest.background_color || "transparent",
+      backgroundColor: manifest.background_color || 'transparent',
       padding: 0.0,
     },
     resourceLanguage: manifest?.lang,
@@ -123,7 +129,7 @@ export async function createWindowsPackageOptionsFromForm(
   let manifest: Manifest;
   try {
     const manifestContext = await fetchOrCreateManifest();
-    manifest = manifestContext.manifest;
+    manifest = manifestContext!.manifest;
   } catch {
     return createEmptyPackageOptions();
   }
@@ -155,7 +161,7 @@ export async function createWindowsPackageOptionsFromForm(
     manifest: manifest,
     images: {
       baseImage: form.iconUrl.value || icon,
-      backgroundColor: "transparent", // TODO: should we let the user specify image background color in the form?
+      backgroundColor: 'transparent', // TODO: should we let the user specify image background color in the form?
       padding: 0.0,
     },
     resourceLanguage: form.windowsLanguageInput.value || 'EN-US',

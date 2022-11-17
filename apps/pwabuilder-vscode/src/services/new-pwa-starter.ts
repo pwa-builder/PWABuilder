@@ -115,7 +115,7 @@ function openRepositoryWithCode(): void {
     gitFileWatcher.dispose();
   });
 
-  terminal.sendText(`code --add ${repositoryName}`);
+  terminal.sendText(`code ${repositoryName}`);
 }
 
 function removeGitFolderListener(): any {

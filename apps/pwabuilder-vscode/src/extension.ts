@@ -2,13 +2,11 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
-import {
-  handleServiceWorkerCommand,
+import { 
   generateServiceWorker,
   chooseServiceWorker,
-  handleAdvServiceWorkerCommand,
-  updateAdvServiceWorker,
-} from "./services/service-worker";
+} from "./services/service-workers/simple-service-worker";
+import { handleSW } from "./services/service-workers/service-worker";
 import {
   chooseManifest,
   generateManifest,
@@ -26,10 +24,14 @@ import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { HelpViewPanel } from "./views/help-view";
+import { IconViewPanel } from "./views/icon-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
-import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
+import { generateScreenshots } from "./services/manifest/assets-service";
+import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
+import { devBuild, prodBuild, runScript, runTests } from "./services/dashboard/dev-dashboard";
+import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -43,12 +45,15 @@ const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
-const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
 const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
+const devBuildCommandID = "pwa-studio.devBuild";
+const prodBuildCommandID = "pwa-studio.prodBuild";
+const runTestCommandID = "pwa-studio.runTests";
+const runScriptCommandID = "pwa-studio.runScript";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -87,6 +92,10 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.workspaceFolders[0].uri.fsPath
     );
 
+    const dashboardViewProvider = new DashboardViewProvider(
+      vscode.workspace.workspaceFolders[0].uri.fsPath
+    )
+
     vscode.window.createTreeView("validationPanel", {
       treeDataProvider: maniValidationProvider,
     });
@@ -98,6 +107,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.createTreeView("packagePanel", {
       treeDataProvider: packageViewProvider,
     });
+
+    vscode.window.createTreeView("dashboardPanel", {
+      treeDataProvider: dashboardViewProvider,
+    })
 
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
       maniValidationProvider.refresh(event);
@@ -126,13 +139,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const generateIconsCommand = vscode.commands.registerCommand(
+  /*const generateIconsCommand = vscode.commands.registerCommand(
     handleIconsCommmandID,
     async () => {
       // IconGenerationPanel.render(context.extensionUri);
       await generateIcons();
     }
-  );
+  );*/
 
   const generateScreenshotsCommand = vscode.commands.registerCommand(
     handleScreenshotsCommandID,
@@ -149,6 +162,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const iconView = vscode.commands.registerCommand(
+    handleIconsCommmandID ,
+    async () => {
+      IconViewPanel.render(context.extensionUri);
+    }
+  );
+
   const chooseServiceWorkerCommand = vscode.commands.registerCommand(
     chooseServiceWorkerCommandID,
     async () => {
@@ -159,7 +179,7 @@ export function activate(context: vscode.ExtensionContext) {
   const addServiceWorker = vscode.commands.registerCommand(
     serviceWorkerCommandId,
     async () => {
-      await handleServiceWorkerCommand();
+      await handleSW();
     }
   );
 
@@ -167,13 +187,6 @@ export function activate(context: vscode.ExtensionContext) {
     generateWorkerCommandId,
     async () => {
       await generateServiceWorker();
-    }
-  );
-
-  const generateAdvWorkerCommand = vscode.commands.registerCommand(
-    generateADVWorkerCommandID,
-    async () => {
-      handleAdvServiceWorkerCommand();
     }
   );
 
@@ -206,7 +219,7 @@ export function activate(context: vscode.ExtensionContext) {
   let manifestCommand = vscode.commands.registerCommand(
     manifestCommandID,
     async () => {
-      await generateManifest(context);
+      await generateManifest();
     }
   );
 
@@ -214,6 +227,34 @@ export function activate(context: vscode.ExtensionContext) {
     setAppURLCommandID,
     async () => {
       await askForUrl();
+    }
+  );
+
+  let devBuildCommand = vscode.commands.registerCommand(
+    devBuildCommandID,
+    async () => {
+      await devBuild();
+    }
+  );
+
+  let prodBuildCommand = vscode.commands.registerCommand(
+    prodBuildCommandID,
+    async () => {
+      await prodBuild();
+    }
+  );
+
+  let runTestCommand = vscode.commands.registerCommand(
+    runTestCommandID,
+    async () => {
+      await runTests();
+    }
+  );
+
+  let runScriptCommand = vscode.commands.registerCommand(
+    runScriptCommandID,
+    async (script: string) => {
+      await runScript(script);
     }
   );
 
@@ -252,13 +293,16 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
   context.subscriptions.push(generateWorker);
+  context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
-  context.subscriptions.push(generateIconsCommand);
+  context.subscriptions.push(devBuildCommand);
+  context.subscriptions.push(prodBuildCommand);
+  context.subscriptions.push(runTestCommand);
+  context.subscriptions.push(runScriptCommand);
+  context.subscriptions.push(iconView);
   context.subscriptions.push(generateScreenshotsCommand);
-  context.subscriptions.push(generateAdvWorkerCommand);
-  context.subscriptions.push(updateAdvWorkerCommand);
   context.subscriptions.push(helpCommand);
 }
 

@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
-import * as path from "path";
 import { readFile } from "fs/promises";
-import { findWorker } from "../service-worker";
+import { findWorker } from "../service-workers/service-worker";
 import { pathExists } from "../../library/file-utils";
 
 /**
@@ -39,7 +38,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         items.push(
           new ValidationItem(
             "Handles Caching",
-            "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Offline_Service_workers",
+            "https://docs.pwabuilder.com/#/home/sw-intro",
             "true",
             vscode.TreeItemCollapsibleState.None
           )
@@ -48,7 +47,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         items.push(
           new ValidationItem(
             "Handles Caching",
-            "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Offline_Service_workers",
+            "https://docs.pwabuilder.com/#/home/sw-intro",
             "false",
             vscode.TreeItemCollapsibleState.None
           )
@@ -70,9 +69,12 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         if (indexFileExists) {
           const indexContents = await readFile(indexFile.fsPath, "utf8");
 
+          console.log('indexContents', indexContents);
+
+          // second check here after the or is specific to pwa-starter apps
           if (
             indexContents &&
-            indexContents.includes("serviceWorker.register")
+            indexContents.includes("serviceWorker.register") || indexContents && indexContents.includes('<script src="registerSW.js"></script>')
           ) {
             items.push(
               new ValidationItem(

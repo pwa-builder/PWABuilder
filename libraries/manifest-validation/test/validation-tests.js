@@ -3,7 +3,7 @@ const assert = require('node:assert').strict;
 
 const maniLib = require('../dist/index');
 
-const test_manifest = JSON.stringify({
+const test_manifest = {
   "dir": "ltr",
   "lang": "en",
   "name": "Webboard",
@@ -66,7 +66,7 @@ const test_manifest = JSON.stringify({
           "sizes": "28x28"
       }
   ]
-});
+};
 
 /*
   * Test validateManifest method
@@ -82,8 +82,14 @@ test('Should reject because of improper JSON', async () => {
 // should include missing fields
 test('includes missing fields', async () => {
   const data = await maniLib.validateManifest(test_manifest);
-
   assert.equal(data.includes("iarc_rating_id"), false);
+});
+
+// should return the correct number of fields
+test('returns correct number of fields', async () => {
+  const data = await maniLib.validateManifest(test_manifest);
+
+  assert.equal(data.length, 19);
 });
 
 /*
@@ -120,9 +126,9 @@ test('can validate required fields', async () => {
 });
 
 test('should reject because of missing required field', async () => {
-  const manifest = JSON.parse(test_manifest);
+  const manifest = test_manifest;
   delete manifest.short_name;
-  const newMani = JSON.stringify(manifest);
+  const newMani = manifest;
 
   assert.rejects(maniLib.validateRequiredFields(newMani));
 });
@@ -131,3 +137,4 @@ test('should reject because of missing required field', async () => {
 test('should reject because of improper json', async () => {
   assert.rejects(maniLib.validateRequiredFields('{'));
 });
+

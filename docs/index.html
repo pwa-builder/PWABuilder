@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="description" content="Documentation for building great progressive web apps with the PWABuilder tooling suite.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <meta property="og:image" content="/assets/icons/pwa-builder.png">
+    <meta property="og:image" content="/assets/icons/share-logo.png">
 
-    <link rel="icon" href="/assets/icons/icon_24.png" type="image/x-icon" />
+    <link rel="icon" href="/assets/icons/icon_24.png" type="image/png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.75/dist/themes/light.css" />
@@ -53,22 +53,6 @@
                 function(hook) {
                     hook.doneEach(function() {
                         window.recordPageView(document.location.href, getPageName());
-                    });
-                },
-                function(hook) {
-                    var summitBanner = [
-                        '<sl-alert open variant="success" class="pwa-summit-banner">',
-                        '<sl-icon slot="icon" name="globe2"></sl-icon>',
-                        '<div>',
-                        '<strong>Upcoming: PWA Summit on October 5th! &#x1F604; </strong><br />',
-                        '<a href="https://pwasummit.org/">PWA Summit</a> is an online conference dedicated entirely to helping developers succeed with Progressive Web Apps. ',
-                        'Sign ups for speakers are now closed, but you can still register to attend <a href="https://pwasummit.org/register/">here.</a>',
-                        '</div>',
-                        '</sl-alert>'
-                    ].join('');
-
-                    hook.afterEach(function(html) {
-                        return summitBanner + html;
                     });
                 }
             ]

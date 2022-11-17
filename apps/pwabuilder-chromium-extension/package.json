@@ -1,0 +1,43 @@
+{
+  "name": "pwabuilder-chromium-extension",
+  "version": "1.0.0",
+  "description": "Hackathon Project - An experiment, not officially supported.... for now 😊",
+  "main": "background.js",
+  "scripts": {
+    "dev": "webpack --config webpack.config.js --watch",
+    "preinstall": "node ../../scripts/setupDeps.js",
+    "build": "webpack --config webpack.config.js",
+    "build:components": "webpack --config webpack.config.components.js",
+    "build:components:watch": "webpack --config webpack.config.components.js --watch",
+    "serve:components": "web-dev-server --node-resolve --open --watch --app-index components-test/index.html",
+    "start:components": "run-p build:components:watch serve:components"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pwa-builder/pwabuilder-chromium-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pwa-builder/pwabuilder-chromium-extension/issues"
+  },
+  "homepage": "https://github.com/pwa-builder/pwabuilder-chromium-extension#readme",
+  "devDependencies": {
+    "@types/chrome": "0.0.180",
+    "copy-webpack-plugin": "^10.2.4",
+    "lit": "^2.3.1",
+    "ts-loader": "^9.2.8",
+    "typescript": "^4.5.4",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2",
+    "@zip.js/zip.js": "2.4.7",
+    "@web/dev-server": "^0.1.31",
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "@shoelace-style/shoelace": "^2.0.0-beta.83",
+    "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
+    "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation"
+  }
+}

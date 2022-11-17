@@ -1,23 +1,22 @@
 {
   "name": "pwa-studio",
-  "displayName": "PWA Studio",
-  "description": "PWA Studio makes VSCode the best development environment for building PWAs!",
+  "displayName": "PWABuilder Studio",
+  "description": "PWABuilder Studio makes VSCode the best development environment for building PWAs!",
   "publisher": "PWABuilder",
-  "version": "1.0.5",
+  "version": "1.2.1",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/pwa-builder/pwabuilder-vscode"
   },
   "engines": {
-    "vscode": "^1.62.0"
+    "vscode": "^1.63.0"
   },
   "categories": [
     "Other",
     "Snippets"
   ],
   "activationEvents": [
-    "onStartupFinished",
     "onCommand:pwa-studio.helloWorld",
     "onCommand:pwa-studio.newPwaStarter",
     "onCommand:pwa-studio.serviceWorker",
@@ -25,12 +24,14 @@
     "onCommand:pwa-studio.manifest",
     "onCommand:pwa-studio.packageApp",
     "onCommand:pwa-studio.generateWorker",
+    "onCommand:pwa-studio.updateAdvWorker",
     "onCommand:pwa-studio.chooseManifest",
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
     "onCommand:pwa-studio.generateScreenshots",
-    "onCommand:pwa-studio.updateAdvWorker",
+    "onCommand:pwa-studio.devBuild",
     "onView:validationPanel",
+    "onView:dashboardPanel",
     "onView:serviceWorkerPanel",
     "onView:packagePanel"
   ],
@@ -53,9 +54,9 @@
     "walkthroughs": [
       {
         "id": "walkthrough.PWAStudio",
-        "title": "PWA Studio Walkthrough",
+        "title": "PWABuilder Studio Walkthrough",
         "media": {
-          "image": "/resources/pwabuilder-icon.svg"
+          "image": "/resources/SocialMediaLogo.svg"
         },
         "description": "A getting started guide for the PWABuilder pwa-studio extension",
         "steps": [
@@ -98,14 +99,14 @@
           },
           {
             "id": "packageApps",
-            "title": "Package your PWA to the Microsoft Store",
+            "title": "Package your PWA for the Microsoft Store",
             "description": "Package your PWA for the Microsoft Store! \n[Package App](command:pwa-studio.packageApp)",
             "media": {
               "image": "/resources/package.png",
               "altText": "Package your app for the Microsoft Store"
             },
             "completionEvents": [
-              "onCommand:getting-started-sample.runCommand"
+              "onCommand:pwa-studio.packageApp"
             ]
           }
         ]
@@ -114,34 +115,34 @@
     "commands": [
       {
         "command": "pwa-studio.newPwaStarter",
-        "title": "PWA Studio: New PWA"
+        "title": "PWABuilder Studio: New PWA"
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "PWA Studio: Generate Service Worker",
+        "title": "PWABuilder Studio: Generate Service Worker",
         "icon": "$(add)"
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "PWA Studio: Validate",
+        "title": "PWABuilder Studio: Validate",
         "icon": "$(tools)"
       },
       {
         "command": "pwa-studio.manifest",
-        "title": "PWA Studio: Generate Web Manifest",
+        "title": "PWABuilder Studio: Generate Web Manifest",
         "icon": "$(add)"
       },
       {
         "command": "pwa-studio.chooseManifest",
-        "title": "PWA Studio: Choose existing Web Manifest"
+        "title": "PWABuilder Studio: Choose existing Web Manifest"
       },
       {
         "command": "pwa-studio.chooseServiceWorker",
-        "title": "PWA Studio: Choose existing Service Worker"
+        "title": "PWABuilder Studio: Choose existing Service Worker"
       },
       {
         "command": "pwa-studio.packageApp",
-        "title": "PWA Studio: Package your PWA",
+        "title": "PWABuilder Studio: Package your PWA",
         "icon": "$(package)"
       },
       {
@@ -166,28 +167,43 @@
       },
       {
         "command": "pwa-studio.setWebURL",
-        "title": "PWA Studio: Publish To Web",
+        "title": "PWABuilder Studio: Publish To Web",
         "icon": "$(gear)"
-      },
-      {
-        "command": "pwa-studio.generateIcons",
-        "title": "PWA Studio: Generate Icons",
-        "icon": "$(settings-edit)"
       },
       {
         "command": "pwa-studio.generateScreenshots",
-        "title": "PWA Studio: Generate Screenshots",
+        "title": "PWABuilder Studio: Generate Screenshots",
         "icon": "$(gear)"
       },
       {
+        "command": "pwa-studio.help",
+        "title": "PWABuilder Studio: Help",
+        "icon": "$(note)"
+      },
+      {
+        "command": "pwa-studio.generateIcons",
+        "title": "PWABuilder Studio: Generate Icons",
+        "icon": "$(file-media)"
+      },
+      {
         "command": "pwa-studio.updateAdvWorker",
-        "title": "PWA Studio: Update Service Worker",
+        "title": "PWABuilder Studio: Update Service Worker",
         "icon": "$(sync)"
       },
       {
-        "command": "pwa-studio.help",
-        "title": "PWA Studio: Help",
-        "icon": "$(note)"
+        "command": "pwa-studio.devBuild",
+        "title": "PWABuilder Studio: Start Dev Server",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "pwa-studio.prodBuild",
+        "title": "PWABuilder Studio: Build for Production",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "pwa-studio.runTests",
+        "title": "PWABuilder Studio: Run Tests",
+        "icon": "$(gear)"
       }
     ],
     "viewsWelcome": [
@@ -208,13 +224,17 @@
       "activitybar": [
         {
           "id": "pwabuilder-view",
-          "title": "PWA Studio",
-          "icon": "resources/pwabuilder-icon.svg"
+          "title": "PWABuilder Studio",
+          "icon": "resources/VSCode_White.svg"
         }
       ]
     },
     "views": {
       "pwabuilder-view": [
+        {
+          "id": "dashboardPanel",
+          "name": "Dev Dashboard"
+        },
         {
           "id": "validationPanel",
           "name": "Web Manifest"
@@ -302,14 +322,14 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "vscode:prepublish": "npm run esbuild-base",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --platform=node --external:./node_modules/* --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./",
     "compile": "tsc -p ./ && npm run copy",
     "watch": "npm run copy && tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
+    "pretest": "npm run compile",
     "lint": "eslint src --ext ts",
     "copy": "copyfiles .env out",
     "test": "node ./out/test/runTest.js"
@@ -339,7 +359,7 @@
     "dotenv": "^16.0.1",
     "formdata-node": "^4.3.2",
     "formdata-polyfill": "^4.0.10",
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^2.6.7",
     "pwa-asset-generator": "^6.1.1",
     "shelljs": "^0.8.5",
     "workbox-build": "^6.4.2"

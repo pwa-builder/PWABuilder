@@ -4,3 +4,5 @@ node_modules
 dist
 build
 coverage
+sl-icons/
+types/
