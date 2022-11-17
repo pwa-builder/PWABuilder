@@ -33,7 +33,7 @@ export function getAnalyticsClient() {
 export function trackEvent(name: string, properties: any) {
   try {
     if (getFlag("analytics") === true) {
-      dedupePackagingTries(name, properties);
+     //  dedupePackagingTries(name, properties);
 
       defaultClient.trackEvent({ 
         name,  
@@ -47,19 +47,19 @@ export function trackEvent(name: string, properties: any) {
   }
 }
 
-function dedupePackagingTries(name: string, properties: any) {
-  if (name === "package" && properties.url) {
-    // if not already in packagedURLs, add it
-    if (packagedURLs.indexOf(properties.url) === -1) {
-      packagedURLs.push(properties.url);
-      properties.tries = 1;
-    }
-    else {
-      // increment tries
-      properties.tries = packagedURLs.filter(url => url === properties.url).length + 1;
-    }
-  }
-}
+// function dedupePackagingTries(name: string, properties: any) {
+//   if (name === "package" && properties.url) {
+//     // if not already in packagedURLs, add it
+//     if (packagedURLs.indexOf(properties.url) === -1) {
+//       packagedURLs.push(properties.url);
+//       properties.tries = 1;
+//     }
+//     else {
+//       // increment tries
+//       properties.tries = packagedURLs.filter(url => url === properties.url).length + 1;
+//     }
+//   }
+// }
 
 export function trackException(err: Error) {
   try {
