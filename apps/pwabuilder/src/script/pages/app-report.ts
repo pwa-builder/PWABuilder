@@ -434,6 +434,15 @@ export class AppReport extends LitElement {
           white-space: nowrap;
         }
 
+        #test-download:disabled {
+          cursor: no-drop;
+          color: #595959;
+        }
+
+        #test-download:disabled .arrow_link {
+          border-color: #595959;
+        }
+
         #pfs {
           background-color: black;
         }
@@ -754,6 +763,10 @@ export class AppReport extends LitElement {
         .card-desc {
           margin: 0;
           font-size: var(--card-body-font-size);
+        }
+
+        #test-download p {
+          line-height: 1em;
         }
 
         .arrow_link {
@@ -1946,13 +1959,8 @@ export class AppReport extends LitElement {
                         </button>
                     </sl-tooltip>
                     `}
-                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
+                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${this.runningTests || this.createdManifest}>
                   <p class="arrow_link">Download Test Package</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
                 </button>
               </div>
               <div id="actions-footer" class="flex-center">
