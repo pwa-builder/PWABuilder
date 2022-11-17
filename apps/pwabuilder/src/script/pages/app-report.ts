@@ -463,9 +463,13 @@ export class AppReport extends LitElement {
           --sl-tooltip-padding: 0;
         }
 
-        .mani-tooltip::part(base){
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        .mani-tooltip::part(body){
+          background-color: #ffffff;
+        }
+
+        .mani-tooltip::part(base__arrow){
+          background-color: #ffffff;
+          z-index: 10;
         }
 
         .mani-tooltip-content {
@@ -476,6 +480,9 @@ export class AppReport extends LitElement {
           justify-content: center;
           border-radius: 10px;
           gap: .5em;
+          background-color: #ffffff;
+          color: var(--font-color);
+          box-shadow: rgb(0 0 0 / 15%) 0px 0px 40px;        
         }
 
         .mani-tooltip-content img {
