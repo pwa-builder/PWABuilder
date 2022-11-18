@@ -575,11 +575,8 @@ export class AppReport extends LitElement {
         }
 
         #cl-mani-tooltip-content {
-          gap: 0;
-        }
-
-        #cl-mani-tooltip-content img {
-          height: 30px;
+          padding: 5px 10px;
+          font-size: 10px;
         }
 
         #test-download {
@@ -2512,7 +2509,7 @@ export class AppReport extends LitElement {
               </div>
               <div id="share-card-cta">
                 <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
-                  <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Copied!</p></div>
+                  <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">link copied</div>
                   <button type="button" id="copy-link" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
                 </sl-tooltip>        
                 <button type="button" id="share-link" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>

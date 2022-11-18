@@ -2,6 +2,8 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
+import domtoimage from 'dom-to-image';
+import * as htmlToImage from 'html-to-image';
 
 
 
@@ -19,7 +21,7 @@ export class ShareCard extends LitElement {
 
   static get styles() {
     return css`
-         .dialog::part(header){
+      .dialog::part(header){
         margin-bottom: 20px;
       }
       .dialog::part(body){
@@ -43,6 +45,7 @@ export class ShareCard extends LitElement {
       }
       .dialog::part(close-button__base){
         position: absolute;
+        padding: 0;
         top: 5px;
         right: 5px;
         z-index: 1000;
@@ -63,11 +66,10 @@ export class ShareCard extends LitElement {
         flex-direction: column;
         justify-content: space-around;
       }
-      #html-image {
+      #score-image {
         width: 100%;   
         height: 330px;
         border-radius: 8px;
-        margin-top: 12px;
         background-image: url("/assets/share_score_backdrop.png");
         background-position: center;
         background-size: cover;
@@ -169,7 +171,7 @@ export class ShareCard extends LitElement {
     `
   }
 
-  renderProgressRings(cardData: any) {
+  renderProgressRings(cardData: any){
     let data = cardData.split('/');
     let validCounter = parseFloat(data[0]);
     let totalScore = parseFloat(data[1]);
@@ -187,17 +189,64 @@ export class ShareCard extends LitElement {
     `
   }
 
-  getReportCardLink() {
-    const url = new URL(window.location.href);
-    return url;
+  htmlToImage(shareOption: string) {
+    let image = this.shadowRoot!.getElementById("score-image");
+
+    htmlToImage.toJpeg(image!, { quality: 0.95 })
+      .then((dataUrl) => {
+        if (shareOption === "download"){
+          this.downloadImage(dataUrl, "score.png")
+        } else if (shareOption === "share"){
+          const file = this.dataURLtoFile(dataUrl, "thanku_poster.png");
+          this.shareFile(file, "Title", "https://co-aid.in");
+        } else {  
+          return;
+        }
+      });
   }
+
+  downloadImage(url: string, filename: string) {
+    let link = document.createElement('a');
+    link.href = "data:image/png;base64" + url;
+    link.download = filename; 
+    link.click();
+
+    URL.revokeObjectURL(link.href);
+  }
+
+  dataURLtoFile(dataurl: string, filename: string) {
+    var arr = dataurl.split(","),
+    mimeType = arr[0].match(/:(.*?);/)![1],
+    decodedData = atob(arr[1]),
+    lengthOfDecodedData = decodedData.length,
+    u8array = new Uint8Array(lengthOfDecodedData);
+    while (lengthOfDecodedData--) {
+      u8array[lengthOfDecodedData] = decodedData.charCodeAt(lengthOfDecodedData);
+    }
+    return new File([u8array], filename, { type: mimeType });
+  };
+
+  shareFile(file: File, title: string, text: string) {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator
+        .share({
+          files: [file],
+          title,
+          text
+        })
+        .then(() => console.log("Share was successful."))
+        .catch((error) => console.log("Sharing failed", error));
+    } else {
+      console.log(`Your system doesn't support sharing files.`);
+    }
+  };
 
   hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     dialog!.hide();
   }
 
-  handleRequestClose(e: Event) {
+  handleRequestClose(e: Event){
     if (this.preventClosing) {
       e.preventDefault();
     }
@@ -208,11 +257,11 @@ export class ShareCard extends LitElement {
       <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
-            <div id="html-image">
+            <div id="score-image">
               <div id="site-name">
                 ${this.siteName}
               </div>
-              <div id="rings">
+              <div id="rings" aria-label="progress ring displays">
                 ${[
                     this.manifestData,
                     this.swData,
@@ -223,8 +272,8 @@ export class ShareCard extends LitElement {
             <div id="share-content">        
               <button type="button" id="cancel-button" class="standard-button" @click=${(e:any) => this.hideDialog(e)}>Cancel</button>
               <!-- todo: add image download function -->
-              <button type="button" id="download-button" class="standard-button"><img src="/assets/download-icon.png"/>  Download Image</button>
-              <button type="button" id="share-button" class="standard-button"><img src="/assets/modal-share-icon.png"/>  Share</button>                    
+              <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img src="/assets/download-icon.png"/>  Download Image</button>
+              <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img src="/assets/modal-share-icon.png"/>  Share</button>                    
             </div>
           </div>
         </div>
