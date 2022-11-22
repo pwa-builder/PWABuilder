@@ -33,7 +33,6 @@ export function getAnalyticsClient() {
 export function trackEvent(name: string, properties: any) {
   try {
     if (getFlag("analytics") === true) {
-     //  dedupePackagingTries(name, properties);
 
       defaultClient.trackEvent({ 
         name,  
