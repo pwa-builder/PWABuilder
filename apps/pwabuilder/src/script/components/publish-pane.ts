@@ -413,6 +413,302 @@ export class PublishPane extends LitElement {
           padding: 0.5em;
           border-radius: 3px;
           width: 100%;
+          word-break: break-word;
+        }
+
+        .type-error {
+          align-items: flex-start;
+          background-color: #faedf1;
+          border-left: 4px solid var(--error-color);
+        }
+
+        #pp-frame-wrapper {
+          width: 100%;
+          height: 90vh;
+        }
+        #pp-frame-content {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
+        #pp-frame-header {
+          display: flex;
+          flex-direction: column;
+          row-gap: 0.25em;
+          padding: 1em;
+          padding-bottom: 0;
+        }
+        #pp-frame-header > * {
+          margin: 0;
+        }
+        #pp-frame-header h1 {
+          font-size: 24px;
+        }
+        #pp-frame-header p {
+          font-size: 14px;
+        }
+        .card-wrapper {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
+          position: relative;
+          padding: 1em;
+        }
+        .packaged-tracker {
+          height: max-content;
+          width: 33%;
+          background-color: #e2f2e8;
+          align-self: flex-end;
+          justify-self: flex-end;
+          border-bottom-left-radius: 5px;
+          padding: 7px;
+          padding-left: 9px;
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+        .packaged-tracker p {
+          margin: 0;
+          text-align: center;
+          color: #50ba87;
+          font-size: 10px;
+          line-height: 12px;
+          font-weight: bold;
+        }
+        .title-block {
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-start;
+          width: 100%;
+          row-gap: 0.45em;
+        }
+        .title-block h3 {
+          margin: 0;
+          font-size: 24px;
+        }
+        .factoids {
+          width: 100%;
+          height: max-content;
+          padding-left: 16px;
+          margin: 0;
+          margin-top: 10px;
+        }
+        .factoids li {
+          font-size: 14px;
+        }
+        .platform-actions-block {
+          align-self: center;
+          display: flex;
+          justify-content: center;
+          row-gap: 10px;
+          width: 100%;
+        }
+        #store-cards {
+          width: 100%;
+          height: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          grid-gap: 0.75em;
+          padding: 1em;
+          overflow-y: auto;
+        }
+        app-button {
+          display: flex;
+          justify-content: center;
+        }
+        .package-button {
+          all: unset;
+          width: 75%;
+          background-color: black;
+          color: white;
+          font-size: 14px;
+          border-radius: 50px;
+          padding: 0.75em 1em;
+          border: none;
+          text-align: center;
+          font-weight: bold;
+        }
+        .package-button:hover {
+          cursor: pointer;
+          background-color: rgba(0, 0, 0, 0.75);
+        }
+        #apk-tabs {
+          display: flex;
+          align-items: baseline;
+          width: 100%;
+          border-bottom: 2px solid #5d5db9;
+          margin-top: 20px;
+          margin-bottom: 14px;
+        }
+        .tab-holder {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+          justify-content: center;
+        }
+        .tab-holder p {
+          font-size: 20px;
+          font-weight: 700;
+          line-height: 20px;
+          letter-spacing: 0px;
+          text-align: center;
+          margin: 0;
+          padding: 10px 0;
+          white-space: nowrap;
+        }
+        .tab-holder p:hover {
+          cursor: pointer;
+        }
+        #other-android {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        #info-tooltip {
+          height: 20px;
+        }
+        .selected-apk {
+          border-bottom: 5px solid #5d5db9;
+          color: #5d5db9;
+        }
+
+        .unselected-apk {
+          border-bottom: 5px solid transparent;
+        }
+        #pp-form-header {
+          display: flex;
+          flex-direction: column;
+          background-color: #f2f3fb;
+          border-top-left-radius: 20px;
+          border-top-right-radius: 20px;
+          padding: 1em;
+          gap: 0.5em;
+        }
+        #pp-form-header > img {
+          width: 25px;
+        }
+        #pp-form-header > button {
+          all: unset;
+        }
+        #pp-form-header > button:hover {
+          cursor: pointer;
+        }
+        #pp-form-header-content {
+          display: flex;
+          gap: 1em;
+        }
+        #pp-form-header-content img {
+          height: 50px;
+        }
+        #pp-form-header-text {
+          display: flex;
+          flex-direction: column;
+        }
+        #pp-form-header-text > * {
+          margin: 0;
+        }
+        #pp-form-header-text h1 {
+          font-size: 24px;
+          white-space: nowrap;
+          line-height: 24px;
+        }
+        #pp-form-header-text p {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.5);
+        }
+
+        windows-form,
+        android-form,
+        ios-form,
+        oculus-form {
+          height: 100%;
+        }
+
+        #form-area {
+          height: 100%;
+          width: 100%;
+          overflow: auto;
+          position: relative;
+        }
+
+        #form-area[data-store='Android'] {
+          padding-top: 0;
+          flex-direction: column;
+        }
+
+        .dialog::part(body) {
+          padding: 0;
+          width: 100%;
+        }
+        .dialog::part(title) {
+          display: none;
+        }
+        .dialog::part(panel) {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          border-radius: 20px;
+        }
+        .dialog::part(overlay) {
+          backdrop-filter: blur(10px);
+        }
+        .dialog::part(close-button__base) {
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          z-index: 1000;
+        }
+
+        .error-desc {
+          max-height: 175px;
+          overflow-y: auto;
+          line-height: normal;
+        }
+
+        .close_feedback {
+          margin-left: auto;
+        }
+
+        .toolTip {
+          visibility: hidden;
+          font-size: 14px;
+          width: 150px;
+          background: black;
+          color: white;
+          font-weight: 500;
+          text-align: center;
+          border-radius: 6px;
+          padding: 0.75em;
+          /* Position the tooltip */
+          position: absolute;
+          top: 25px;
+          left: -100px;
+          z-index: 1;
+          box-shadow: 0px 2px 20px 0px #0000006c;
+        }
+        #unsigned-tooltip:hover .toolTip {
+          visibility: visible;
+        }
+
+        #feedback {
+          position: absolute;
+          bottom: 0.5em;
+          padding: 0 1em;
+          width: 100%;
+        }
+
+        .feedback-holder {
+          display: flex;
+          gap: 0.5em;
+          padding: 0.5em;
+          border-radius: 3px;
+          width: 100%;
         }
 
         .type-error {
