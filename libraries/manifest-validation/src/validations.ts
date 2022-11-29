@@ -421,18 +421,23 @@ export const maniTests: Array<Validation> = [
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
         displayString: "Manifest has categories field",
         category: "optional",
+        testRequired: true,
         member: "categories",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
         quickFix: true,
         test: (value: any[]) => {
-            if (value) {
-                const isGood = containsStandardCategory(value);
-                return isGood;
+            let isGood;
+            if(value){
+                containsStandardCategory(value) && Array.isArray(value) 
+                ? 
+                isGood = true 
+                : 
+                isGood = false;
             }
 
-            return false;
+            return isGood
         },
         errorString: "categories should be a non-empty array"
     },
