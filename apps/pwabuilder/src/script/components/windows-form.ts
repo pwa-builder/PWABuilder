@@ -1,4 +1,4 @@
-import { css, html } from 'lit';
+import { css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, getManifestUrl } from '../services/app-info';
 import {
@@ -6,7 +6,7 @@ import {
   emptyWindowsPackageOptions,
 } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
-import { AppPackageFormBase } from './app-package-form-base';
+import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
@@ -17,6 +17,7 @@ export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
+  @state() activeLanguages: string[] = [];
 
   static get styles() {
     return [
@@ -103,6 +104,8 @@ export class WindowsForm extends AppPackageFormBase {
     );
 
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
+
+    this.activeLanguages.push(this.packageOptions.resourceLanguage!);
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -166,13 +169,50 @@ export class WindowsForm extends AppPackageFormBase {
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(90deg)";
   }
-  
+
   public getPackageOptions(): PackageOptions {
     return this.packageOptions;
   }
 
   public getForm(): HTMLFormElement {
     return this.shadowRoot!.querySelector("form")!;
+  }
+
+  /* label: 'Language',
+  tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
+  tooltipLink:
+    'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
+  inputId: 'language-input',
+  value: this.packageOptions.resourceLanguage,
+  placeholder: 'EN-US',
+  inputHandler: (val: string) =>
+    (this.packageOptions.resourceLanguage = val), */
+  renderMultiSelect(formInput: FormInput): TemplateResult {
+
+    return html`
+      <label for="${formInput.inputId}">
+        ${formInput.label}
+        ${this.renderTooltip(formInput)}
+      </label>
+      <div id="multiSelectBox">
+        <div class="multi-wrap">
+          <p class="sub-multi">Selected Languages</p>
+          <div id="activeLanguages">
+            ${this.activeLanguages.map((lang: string) => html`pill`)}
+          </div>
+        </div>
+        <div class="multi-wrap">
+          <p class="sub-multi">Selected Multiple Languages</p>
+          <sl-dropdown>
+            <sl-button slot="trigger" caret>Select</sl-button>
+            <sl-menu>
+              ${[/*this.windowsLanguages*/].map((lang: string) => html`<sl-menu-item ?checked=${this.activeLanguages.includes(lang)}>${lang}</sl-menu-item>`)}
+            </sl-menu>
+          </sl-dropdown>
+        </div>
+      </div>
+
+    `;
   }
 
   render() {
@@ -322,7 +362,7 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-                ${this.renderFormInput({
+                ${this.renderMultiSelect({
                   label: 'Language',
                   tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
                   tooltipLink:
