@@ -524,11 +524,14 @@ export class AppReport extends LitElement {
         }
 
         .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
           width: 103.33px;
           height: 35px;
           background: transparent;
           color: rgb(79, 63, 182);
-          font-size: 10px;
+          font-size: 12px;
           font-weight: bold;
           border: 1px solid #6F5FD3;
           border-radius: 20px;
@@ -539,8 +542,8 @@ export class AppReport extends LitElement {
         }
 
         .banner-button-icons {
-          height: 12px;
-          margin-right: 8px;
+          height: 16px;
+          margin-right: 5px;
         }
 
         .mani-tooltip {
@@ -1229,14 +1232,27 @@ export class AppReport extends LitElement {
             flex-direction: column-reverse;
             align-items: center;
           }
-          #share-card-message {
-            padding: 0 10px;
-          }
           #share-card-message p {
             text-align: center;
+            padding: 0px 1.35em;
+            margin: 15px 0;
           }
           #share-card-cta {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
             margin-top: 20px;
+          }
+          .share-banner-buttons {
+            width: 100%;
+            height: 100%;
+            font-size: 16px;
+            padding: 0.5em 0;
+          }
+          .banner-button-icons {
+            height: 20px;
+            margin-right: 8px;
           }
         `)}
       `,
@@ -2516,8 +2532,7 @@ export class AppReport extends LitElement {
                   ${this.runningTests ?
                     html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
                     html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-                  }
-                  Share score
+                  }Share score
                 </button>
               </div>
             </div>

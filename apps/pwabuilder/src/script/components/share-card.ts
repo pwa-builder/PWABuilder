@@ -2,7 +2,6 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
-import domtoimage from 'dom-to-image';
 import * as htmlToImage from 'html-to-image';
 
 
@@ -150,6 +149,21 @@ export class ShareCard extends LitElement {
         background-color: #E3FFF2;
       }
 
+      .ring-categories {
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .ring-label {
+        font-size: 14px;
+        margin-top: 8px;
+        align-self: center;
+        font-weight: 400;
+        line-height: 20px;
+        color: #292C3A;
+      }
+
       #rings {
         display: flex;
         flex-direction: row;
@@ -158,6 +172,9 @@ export class ShareCard extends LitElement {
       }
 
       ${smallBreakPoint(css`
+        #score-image {
+          background-image: url("/assets/share_score_backdrop_mobile.png");
+        }
         .standard-button {
           width: 133px;
         }
@@ -179,13 +196,16 @@ export class ShareCard extends LitElement {
     let categoryName = data[3];
     
     return html`
-      <sl-progress-ring
-        id=${categoryName}
-        class=${classMap(color)}
-        value="${(validCounter / totalScore) * 100}"
-      >
-        ${validCounter} / ${totalScore}
-      </sl-progress-ring>
+      <div class="ring-categories">
+        <sl-progress-ring
+          id=${categoryName}
+          class=${classMap(color)}
+          value="${(validCounter / totalScore) * 100}"
+        >
+          ${validCounter} / ${totalScore}
+        </sl-progress-ring>
+        <div class="ring-label"> ${categoryName} </div>
+      </div>
     `
   }
 
@@ -271,7 +291,6 @@ export class ShareCard extends LitElement {
             </div>
             <div id="share-content">        
               <button type="button" id="cancel-button" class="standard-button" @click=${(e:any) => this.hideDialog(e)}>Cancel</button>
-              <!-- todo: add image download function -->
               <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img src="/assets/download-icon.png"/>  Download Image</button>
               <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img src="/assets/modal-share-icon.png"/>  Share</button>                    
             </div>

@@ -26,7 +26,6 @@
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
     "cors": "^2.8.5",
-    "dom-to-image": "^2.6.0",
     "express": "^4.17.3",
     "html-to-image": "^1.10.8",
     "ionicons": "^6.0.3",
