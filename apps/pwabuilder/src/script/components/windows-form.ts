@@ -18,6 +18,7 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
   @state() activeLanguages: string[] = [];
+  @state() activeLanguageCodes: string[] = [];
 
   static get styles() {
     return [
@@ -105,7 +106,18 @@ export class WindowsForm extends AppPackageFormBase {
 
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
 
-    this.activeLanguages.push(this.packageOptions.resourceLanguage!);
+
+    if(this.packageOptions.resourceLanguage){
+      let lang = this.packageOptions.resourceLanguage;
+      for(let i = 0; i < windowsLanguages.length; i++){
+        let cur = windowsLanguages[i];
+        if(cur.name === lang){
+          this.activeLanguages.push(cur.name);
+          this.activeLanguageCodes.push(cur.code);
+          break;
+        }
+      }
+    }
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -188,7 +200,6 @@ export class WindowsForm extends AppPackageFormBase {
   inputHandler: (val: string) =>
     (this.packageOptions.resourceLanguage = val), */
   renderMultiSelect(formInput: FormInput): TemplateResult {
-
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
@@ -198,21 +209,26 @@ export class WindowsForm extends AppPackageFormBase {
         <div class="multi-wrap">
           <p class="sub-multi">Selected Languages</p>
           <div id="activeLanguages">
-            ${this.activeLanguages.map((lang: string) => html`pill`)}
+            ${this.activeLanguages.map((lang: string) => html`${lang}`)}
           </div>
         </div>
         <div class="multi-wrap">
           <p class="sub-multi">Selected Multiple Languages</p>
-          <sl-dropdown>
+          <sl-dropdown ?stayopenonselect=${true}>
             <sl-button slot="trigger" caret>Select</sl-button>
             <sl-menu>
-              ${[/*this.windowsLanguages*/].map((lang: string) => html`<sl-menu-item ?checked=${this.activeLanguages.includes(lang)}>${lang}</sl-menu-item>`)}
+              ${windowsLanguages.map((lang: any) => html`<sl-menu-item ?checked=${this.activeLanguages.includes(lang.name)} @click=${() => this.addLanguage(lang)}>${lang.name}</sl-menu-item>`)}
             </sl-menu>
           </sl-dropdown>
         </div>
       </div>
-
     `;
+  }
+
+  addLanguage(lang: any){
+    this.activeLanguages.push(lang.name);
+    this.activeLanguageCodes.push(lang.code);
+    this.requestUpdate();
   }
 
   render() {
@@ -368,7 +384,7 @@ export class WindowsForm extends AppPackageFormBase {
                   tooltipLink:
                     'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
                   inputId: 'language-input',
-                  value: this.packageOptions.resourceLanguage,
+                  value: this.activeLanguageCodes,
                   placeholder: 'EN-US',
                   inputHandler: (val: string) =>
                     (this.packageOptions.resourceLanguage = val),
@@ -434,3 +450,108 @@ export class WindowsForm extends AppPackageFormBase {
     `;
   }
 }
+
+
+const windowsLanguages = [
+  { "code": "ar", "name": "Arabic" },
+  { "code": "af", "name": "Afrikaans" },
+  { "code": "sq", "name": "Albanian" },
+  { "code": "am", "name": "Amharic" },
+  { "code": "hy", "name": "Armenian" },
+  { "code": "as", "name": "Assamese" },
+  { "code": "az-arab", "name": "Azerbaijani" },
+  { "code": "eu", "name": "Basque (Basque)" },
+  { "code": "be", "name": "Belarusian" },
+  { "code": "bn", "name": "Bangla" },
+  { "code": "bs", "name": "Bosnian" },
+  { "code": "bg", "name": "Bulgarian" },
+  { "code": "ca", "name": "Catalan" },
+  { "code": "chr-cher", "name": "Cherokee" },
+  { "code": "zh-Hans", "name": "Chinese (Simplified)" },
+  { "code": "zh-Hant", "name": "Chinese (Traditional)" },
+  { "code": "hr", "name": "Croatian" },
+  { "code": "cs", "name": "Czech" },
+  { "code": "da", "name": "Danish" },
+  { "code": "prs", "name": "Dari" },
+  { "code": "nl", "name": "Dutch" },
+  { "code": "en", "name": "English" },
+  { "code": "et", "name": "Estonian" },
+  { "code": "fil", "name": "Filipino" },
+  { "code": "fi", "name": "Finnish" },
+  { "code": "fr", "name": "French" },
+  { "code": "gl", "name": "Galician" },
+  { "code": "ka", "name": "Georgian" },
+  { "code": "de", "name": "German" },
+  { "code": "el", "name": "Greek" },
+  { "code": "gu", "name": "Gujarati" },
+  { "code": "ha", "name": "Hausa" },
+  { "code": "he", "name": "Hebrew" },
+  { "code": "hi", "name": "Hindi" },
+  { "code": "hu", "name": "Hungarian" },
+  { "code": "is", "name": "Icelandic" },
+  { "code": "ig-ng", "name": "Igbo" },
+  { "code": "id", "name": "Indonesian" },
+  { "code": "iu-cans", "name": "Inuktitut (Latin)" },
+  { "code": "ga", "name": "Irish" },
+  { "code": "xh", "name": "isiXhosa" },
+  { "code": "zu", "name": "isiZulu" },
+  { "code": "it", "name": "Italian" },
+  { "code": "ja", "name": "Japanese" },
+  { "code": "kn", "name": "Kannada" },
+  { "code": "kk", "name": "Kazakh" },
+  { "code": "km", "name": "Khmer" },
+  { "code": "quc-latn", "name": "K'iche'" },
+  { "code": "rw", "name": "Kinyarwanda" },
+  { "code": "sw", "name": "KiSwahili" },
+  { "code": "kok", "name": "Konkani" },
+  { "code": "ko", "name": "Korean" },
+  { "code": "ku-arab", "name": "Kurdish" },
+  { "code": "ky-kg", "name": "Kyrgyz" },
+  { "code": "lo", "name": "Lao" },
+  { "code": "lv", "name": "Latvian" },
+  { "code": "lt", "name": "Lithuanian" },
+  { "code": "lb", "name": "Luxembourgish" },
+  { "code": "mk", "name": "Macedonian" },
+  { "code": "ms", "name": "Malay" },
+  { "code": "ml", "name": "Malayalam" },
+  { "code": "mt", "name": "Maltese" },
+  { "code": "mi", "name": "Maori" },
+  { "code": "mr", "name": "Marathi" },
+  { "code": "mn-cyrl", "name": "Mongolian (Cyrillic)" },
+  { "code": "ne", "name": "Nepali" },
+  { "code": "no", "name": "Norwegian" },
+  { "code": "or", "name": "Odia" },
+  { "code": "fa", "name": "Persian" },
+  { "code": "pl", "name": "Polish" },
+  { "code": "pt-br", "name": "Portuguese (Brazil)" },
+  { "code": "pt", "name": "Portuguese (Portugal)" },
+  { "code": "pa", "name": "Panjabi" },
+  { "code": "quz", "name": "Quechua" },
+  { "code": "ro", "name": "Romanian" },
+  { "code": "ru", "name": "Russian" },
+  { "code": "gd-gb", "name": "Scottish Gaelic" },
+  { "code": "sr-Latn", "name": "Serbian (Latin)" },
+  { "code": "sr-cyrl", "name": "Serbian (Cyrillic)" },
+  { "code": "nso", "name": "Sesotho sa Leboa" },
+  { "code": "tn", "name": "Setswana" },
+  { "code": "sd-arab", "name": "Sindhi" },
+  { "code": "si", "name": "Sinhala" },
+  { "code": "sk", "name": "Slovak" },
+  { "code": "sl", "name": "Slovenian" },
+  { "code": "es", "name": "Spanish" },
+  { "code": "sv", "name": "Swedish" },
+  { "code": "tg-arab", "name": "Tajik (Cyrillic)" },
+  { "code": "ta", "name": "Tamil" },
+  { "code": "tt", "name": "Tatar" },
+  { "code": "te", "name": "Telugu" },
+  { "code": "tk-cyrl", "name": "Turkmish" },
+  { "code": "uk", "name": "Ukrainian" },
+  { "code": "uk", "name": "Ukrainian" },
+  { "code": "ur", "name": "Urdu" },
+  { "code": "ug-arab", "name": "Uyghur" },
+  { "code": "uz", "name": "Uzbek (Latin)" },
+  { "code": "vi", "name": "Vietnamese" },
+  { "code": "cy", "name": "Welsh" },
+  { "code": "wo", "name": "Wolof" },
+  { "code": "yo-ng", "name": "Yoruba" },
+]
