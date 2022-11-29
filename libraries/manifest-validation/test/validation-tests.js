@@ -89,7 +89,7 @@ test('includes missing fields', async () => {
 test('returns correct number of fields', async () => {
   const data = await maniLib.validateManifest(test_manifest);
 
-  assert.equal(data.length, 19);
+  assert.equal(data.length, 22);
 });
 
 /*
@@ -108,14 +108,15 @@ test('can validate a single field, should return true', async () => {
   const validity = await maniLib.validateSingleField("short_name", "Webboard");
 
   // validity should be a boolean, and true in this case
-  assert.strictEqual(validity, true);
+  assert.equal(validity.valid, true);
 });
 
 test('can validate a single field, should return false', async () => {
   const validity = await maniLib.validateSingleField("theme_color", "black");
-
-  // validity should return a Validation, and we check that its the right validation
-  assert.strictEqual(validity, false);
+  
+  assert.equal(validity.valid, false);
+  assert.equal(validity.errors[0], 'theme_color should be a valid hex color');
+  assert.equal(1, validity.errors.length);
 });
 
 /*
