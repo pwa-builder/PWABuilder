@@ -1,4 +1,4 @@
-import { Manifest, singleFieldValidation, Validation } from "./interfaces";
+import { Icon, Manifest, singleFieldValidation, Validation } from "./interfaces";
 import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
@@ -344,6 +344,31 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) =>
             value && Array.isArray(value) && value.length > 0 ? true : false,
+    },
+    {
+        infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
+        displayString: "Shortcuts have atleast a 96x96 icon",
+        category: "recommended",
+        member: "shortcuts",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
+        errorString: "shortcuts should have atleast one icon with a size of 96x96",
+        quickFix: false,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+            if (isArray === true) {
+                const has96x96Icon = value.some((shortcut) => {
+                    return shortcut.icons.some((icon: Icon) => {
+                        return icon.sizes === "96x96";
+                    });
+                });
+                return has96x96Icon;
+            }
+            else {
+                return false;
+            }
+        }
     },
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
