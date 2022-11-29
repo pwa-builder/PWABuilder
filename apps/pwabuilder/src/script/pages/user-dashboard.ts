@@ -1,7 +1,5 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
-//@ts-ignore
-import style from '../../../styles/layout-defaults.css';
 import { fastAnchorCss } from '../utils/css/fast-elements';
 import { customElement } from 'lit/decorators.js';
 import { getUserProjects, UserProject } from '../services/sign-in';
@@ -15,9 +13,12 @@ export class UserDashboard extends LitElement {
 
   static get styles() {
     return [
-      style,
       fastAnchorCss,
       css`
+        app-button {
+          font-size: 25px;
+          --button-font-color: black;
+        }
         ul {
           list-style: none;
           margin: 0;
@@ -67,17 +68,16 @@ export class UserDashboard extends LitElement {
       (userProject) => html`
         <li>
           <div id="title-block">
-            <h3>
-              <app-button
-                @click=${() => this.goToTestingPage(userProject.url!)}
-              >
-                ${userProject.url}
-              </app-button>
-              <p>
-                Date Tested:
-                ${this.convertToDateString(userProject.lastTested!)}
-              </p>
-            </h3>
+            <app-button @click=${() => this.goToTestingPage(userProject.url!)}>
+              ${userProject.url}
+            </app-button>
+            <p>
+              Date Tested: ${this.convertToDateString(userProject.lastTested!)}
+              <br />
+              Mani score: ${userProject.maniResult!} <br />
+              SW score: ${userProject.swResult!} <br />
+              Sec score: ${userProject.secResult!}
+            </p>
           </div>
         </li>
       `

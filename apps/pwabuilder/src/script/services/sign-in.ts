@@ -4,8 +4,33 @@ import { env } from '../utils/environment';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
+import { Platform } from './publish';
 
 export const pwabuilder_token = 'pwa-auth-token';
+export abstract class User {
+  //private static userDetails: UserDetails;
+  private static userProjects: UserProject[];
+  static setUserDetails(details: UserDetails) {
+    //User.userDetails = details;
+    sessionStorage.setItem('user-details', JSON.stringify(details));
+  }
+
+  static setUserProjects(projects: UserProject[]) {
+    User.userProjects = projects;
+    sessionStorage.setItem('user-projects', JSON.stringify(projects));
+  }
+
+  static getUserDetails(): UserDetails {
+    const userDetails = JSON.parse(
+      sessionStorage.getItem('user-details')!
+    ) as UserDetails;
+    return userDetails;
+  }
+
+  static getUserProjects(): UserProject[] {
+    return User.userProjects;
+  }
+}
 
 export function isUserLoggedIn(): boolean {
   const item = localStorage.getItem(pwabuilder_token);
@@ -24,21 +49,25 @@ function getAccessToken(): string | null {
   return null;
 }
 //Set the user as signed in
-export async function signInUser(): Promise<void> {
+export async function signInUser(): Promise<UserDetails | null> {
   const jsonToken = getAccessToken();
+  console.log('JSON token', jsonToken);
   if (jsonToken !== null) {
     try {
-      await fetch(env.signinFunctionsUrl + '/LoginUser', {
+      const response = await fetch(env.signinFunctionsUrl + '/LoginUser', {
         method: 'POST',
         headers: { Authorization: setHeader(jsonToken) },
       });
-      Router.go('/userDashboard');
+      const details = await response.json();
+      User.setUserDetails({ name: details.name, id: details.id });
+      return details;
     } catch (e) {
       console.log('Error getting user details', e);
     }
   } else {
     console.log('Error logging in');
   }
+  return null;
 }
 
 //Set the user as signed out and return to homepage
@@ -64,7 +93,7 @@ export async function storeUserProject(userProjectObj: any) {
 
 export async function storePackageOptionsForProject(
   userPackageOptions: any,
-  platform: 'windows' | 'android' | 'other-android' | 'ios' | 'oculus',
+  platform: Platform,
   url: string
 ) {
   const jsonToken = getAccessToken();
@@ -129,6 +158,11 @@ export async function getUserProjectByUrl(
     }
   }
   return null;
+}
+
+export interface UserDetails {
+  name?: string;
+  id?: string;
 }
 export interface UserProject {
   id?: string;

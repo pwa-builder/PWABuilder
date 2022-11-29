@@ -1,11 +1,5 @@
-import {
-  LitElement,
-  html,
-  css,
-  customElement,
-  property,
-  TemplateResult,
-} from 'lit-element';
+import { customElement, property } from 'lit/decorators.js';
+import { LitElement, css, html, TemplateResult } from 'lit';
 import { SignInResult } from './signin-result';
 import { SignInProvider } from './signin-provider';
 import { FederatedCredential } from './federated-credential';
@@ -44,6 +38,7 @@ type StoredAccessToken = {
 };
 
 @customElement('pwa-auth')
+//@ts-ignore
 export class PwaAuthImpl extends LitElement implements PwaAuth {
   @property({ type: String, reflect: true }) appearance:
     | 'button'

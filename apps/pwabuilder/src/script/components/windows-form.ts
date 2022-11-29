@@ -8,13 +8,16 @@ import {
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AppPackageFormBase } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+  AnalyticsBehavior,
+  recordPWABuilderProcessStep,
+} from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 
 @customElement('windows-form')
-
 export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
+  @property() userProject: any;
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
 
@@ -27,7 +30,6 @@ export class WindowsForm extends AppPackageFormBase {
           height: 100%;
           display: flex;
           flex-direction: column;
-
         }
         .flipper-button {
           display: flex;
@@ -38,10 +40,11 @@ export class WindowsForm extends AppPackageFormBase {
           width: 135px;
           height: 40px;
         }
-        .basic-settings, .adv-settings {
+        .basic-settings,
+        .adv-settings {
           display: flex;
           flex-direction: column;
-          gap: .75em;
+          gap: 0.75em;
         }
         #form-layout {
           flex-grow: 1;
@@ -54,21 +57,21 @@ export class WindowsForm extends AppPackageFormBase {
           margin-top: 1em;
         }
 
-        sl-details::part(base){
+        sl-details::part(base) {
           border: none;
         }
 
-        sl-details::part(summary-icon){
+        sl-details::part(summary-icon) {
           display: none;
         }
 
         .dropdown_icon {
           transform: rotate(0deg);
-          transition: transform .5s;
+          transition: transform 0.5s;
           height: 30px;
         }
 
-        sl-details::part(header){
+        sl-details::part(header) {
           padding: 0 10px;
         }
 
@@ -83,8 +86,7 @@ export class WindowsForm extends AppPackageFormBase {
           font-size: 18px;
           font-weight: bold;
         }
-
-    `
+      `,
     ];
   }
 
@@ -98,10 +100,15 @@ export class WindowsForm extends AppPackageFormBase {
       manifestContext = await fetchOrCreateManifest();
     }
 
-    this.packageOptions = createWindowsPackageOptionsFromManifest(
-      manifestContext!.manifest
-    );
-
+    if (this.userProject && this.userProject.windowsPackageOptions) {
+      this.packageOptions = this.userProject
+        .windowsPackageOptions as WindowsPackageOptions;
+    } else {
+      //TODO: Add checkbox if user opts to store their info or not
+      this.packageOptions = createWindowsPackageOptionsFromManifest(
+        manifestContext!.manifest
+      );
+    }
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
   }
 
@@ -155,242 +162,271 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
-  rotateZero(){
-    recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
+  rotateZero() {
+    recordPWABuilderProcessStep(
+      'windows_form_all_settings_expanded',
+      AnalyticsBehavior.ProcessCheckpoint
+    );
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-    icon!.style.transform = "rotate(0deg)";
+    icon!.style.transform = 'rotate(0deg)';
   }
 
-  rotateNinety(){
-    recordPWABuilderProcessStep("windows_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
+  rotateNinety() {
+    recordPWABuilderProcessStep(
+      'windows_form_all_settings_collapsed',
+      AnalyticsBehavior.ProcessCheckpoint
+    );
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-    icon!.style.transform = "rotate(90deg)";
+    icon!.style.transform = 'rotate(90deg)';
   }
-  
+
   public getPackageOptions(): PackageOptions {
     return this.packageOptions;
   }
 
   public getForm(): HTMLFormElement {
-    return this.shadowRoot!.querySelector("form")!;
+    return this.shadowRoot!.querySelector('form')!;
   }
 
   render() {
     return html`
-    <div id="form-holder">
-      <form
-        id="windows-options-form"
-        slot="modal-form"
-        style="width: 100%"
-      >
-        <div id="form-layout">
-          <div class="basic-settings">
-            <div class="form-group">
-              ${this.renderFormInput({
-                label: 'Package ID',
-                tooltip: `The Package ID uniquely identifying your app in the Microsoft Store. Get this value from Windows Partner Center.`,
-                tooltipLink:
-                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'package-id-input',
-                required: true,
-                placeholder: 'MyCompany.MyApp',
-                minLength: 3,
-                maxLength: 50,
-                spellcheck: false,
-                pattern: '[a-zA-Z0-9.-]*$',
-                validationErrorMessage:
-                  'Package ID must contain only letters, numbers, period, or hyphen.',
-                inputHandler: (val: string) =>
-                  (this.packageOptions.packageId = val),
-              })}
-            </div>
-            <div class="form-group">
-              ${this.renderFormInput({
-                label: 'Publisher display name',
-                tooltip: `The display name of your app's publisher. Gets this value from Windows Partner Center.`,
-                tooltipLink:
-                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'publisher-display-name-input',
-                required: true,
-                minLength: 3,
-                spellcheck: false,
-                validationErrorMessage:
-                  'Publisher display name must be at least 3 characters. Get this value from Windows Partner Center.',
-                placeholder: 'Contoso Inc',
-                inputHandler: (val: string) =>
-                  (this.packageOptions.publisher.displayName = val),
-              })}
-            </div>
-            <div class="form-group">
-              ${this.renderFormInput({
-                label: 'Publisher ID',
-                tooltip: `The ID of your app's publisher. Get this value from Windows Partner Center.`,
-                tooltipLink:
-                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'publisher-id-input',
-                placeholder: 'CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca',
-                validationErrorMessage:
-                  'Publisher ID must be in the format CN=XXXX. Get your publisher ID from Partner Center.',
-                pattern: 'CN=.+',
-                required: true,
-                spellcheck: false,
-                minLength: 4,
-                inputHandler: (val: string) =>
-                  (this.packageOptions.publisher.commonName = val),
-              })}
-            </div>
-          </div>
-          <!-- "all settings" section of the modal -->
-          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
-            <div class="details-summary" slot="summary">
-              <p>All Settings</p>
-              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
-            </div>
-            <div class="adv-settings">
+      <div id="form-holder">
+        <form id="windows-options-form" slot="modal-form" style="width: 100%">
+          <div id="form-layout">
+            <div class="basic-settings">
               <div class="form-group">
                 ${this.renderFormInput({
-                  label: 'App name',
-                  tooltip: `The name of your app. This is displayed to users in the Store.`,
+                  label: 'Package ID',
+                  tooltip: `The Package ID uniquely identifying your app in the Microsoft Store. Get this value from Windows Partner Center.`,
                   tooltipLink:
-                    'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-displayname',
-                  inputId: 'app-name-input',
+                    'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
+                  inputId: 'package-id-input',
                   required: true,
-                  minLength: 1,
-                  maxLength: 256,
-                  value: this.packageOptions.name,
-                  placeholder: 'My Awesome PWA',
-                  pattern: "[^|$@#><)(!&%*]*$",
-                  validationErrorMessage:
-                    'App name must not include special characters and be between 1 and 256 characters',
-                  inputHandler: (val: string) =>
-                    (this.packageOptions.name = val),
-                })}
-              </div>
-              <div class="form-group">
-                ${this.renderFormInput({
-                  label: 'App version',
-                  tooltip: `Your app version in the form of '1.0.0'. It must not start with zero and must be greater than classic package version. For new apps, this should be set to 1.0.1`,
-                  tooltipLink:
-                    'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
-                  inputId: 'version-input',
-                  required: true,
-                  minLength: 5,
-                  value: this.packageOptions.version,
-                  placeholder: '1.0.1',
+                  placeholder: 'MyCompany.MyApp',
+                  minLength: 3,
+                  maxLength: 50,
+                  value: this.userProject
+                    ? this.packageOptions.packageId
+                    : undefined,
                   spellcheck: false,
-                  pattern: '^[^0]+\\d*.\\d+.\\d+$',
+                  pattern: '[a-zA-Z0-9.-]*$',
                   validationErrorMessage:
-                    "Version must be in the form of '1.0.0', cannot start with zero, and must be greater than classic version",
+                    'Package ID must contain only letters, numbers, period, or hyphen.',
                   inputHandler: (val: string) =>
-                    (this.packageOptions.version = val),
+                    (this.packageOptions.packageId = val),
                 })}
               </div>
               <div class="form-group">
                 ${this.renderFormInput({
-                  label: 'Classic app version',
-                  tooltip: `The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0', it cannot start with zero, and must be less than app version. For new apps, this should be set to 1.0.0`,
+                  label: 'Publisher display name',
+                  tooltip: `The display name of your app's publisher. Gets this value from Windows Partner Center.`,
                   tooltipLink:
-                    'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
-                  inputId: 'classic-version-input',
+                    'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
+                  inputId: 'publisher-display-name-input',
                   required: true,
-                  minLength: 5,
-                  value: this.packageOptions.classicPackage?.version,
-                  placeholder: '1.0.0',
-                  pattern: '^[^0]+\\d*.\\d+.\\d+$',
+                  minLength: 3,
+                  value: this.userProject
+                    ? this.packageOptions.publisher.displayName
+                    : undefined,
+                  spellcheck: false,
                   validationErrorMessage:
-                    "Classic app version must be in the form of '1.0.0', cannot start with zero, and must be less than than app version",
+                    'Publisher display name must be at least 3 characters. Get this value from Windows Partner Center.',
+                  placeholder: 'Contoso Inc',
                   inputHandler: (val: string) =>
-                    (this.packageOptions.classicPackage!.version = val),
+                    (this.packageOptions.publisher.displayName = val),
                 })}
               </div>
               <div class="form-group">
                 ${this.renderFormInput({
-                  label: 'Icon URL',
-                  tooltip: `The URL of an icon to use for your app. This should be a 512x512 or larger, square PNG image. Additional Windows image sizes will be fetched from your manifest, and any missing Windows image sizes will be generated by PWABuilder. The URL can be an absolute path or relative to your manifest.`,
+                  label: 'Publisher ID',
+                  tooltip: `The ID of your app's publisher. Get this value from Windows Partner Center.`,
                   tooltipLink:
-                    'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/',
-                  inputId: 'icon-url-input',
+                    'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
+                  inputId: 'publisher-id-input',
+                  placeholder: 'CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca',
+                  validationErrorMessage:
+                    'Publisher ID must be in the format CN=XXXX. Get your publisher ID from Partner Center.',
+                  pattern: 'CN=.+',
                   required: true,
-                  type: 'text', // NOTE: can't use URL here, because we allow relative paths.
-                  minLength: 2,
-                  validationErrorMessage:
-                    'Must be an absolute URL or a URL relative to your manifest',
-                  value: this.packageOptions.images?.baseImage || '',
-                  placeholder: '/images/512x512.png',
+                  spellcheck: false,
+                  minLength: 4,
+                  value: this.userProject
+                    ? this.packageOptions.publisher.commonName
+                    : undefined,
                   inputHandler: (val: string) =>
-                    (this.packageOptions.images!.baseImage = val),
+                    (this.packageOptions.publisher.commonName = val),
                 })}
-              </div>
-              <div class="form-group">
-                ${this.renderFormInput({
-                  label: 'Language',
-                  tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
-                  tooltipLink:
-                    'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
-                  inputId: 'language-input',
-                  value: this.packageOptions.resourceLanguage,
-                  placeholder: 'EN-US',
-                  inputHandler: (val: string) =>
-                    (this.packageOptions.resourceLanguage = val),
-                })}
-              </div>
-              <div class="form-group" id="target-device-families">
-                <label>Target device families</label>
-                <div class="form-check">
-                  ${this.renderFormInput({
-                    label: 'Desktop',
-                    value: 'Desktop',
-                    tooltip:
-                      'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
-                    tooltipLink:
-                      'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                    inputId: 'device-family-input-desktop',
-                    type: 'checkbox',
-                    checked: true,
-                    inputHandler: (val: string, checked: boolean) => {
-                      this.addOrRemoveDeviceFamily(val, checked);
-                    },
-                  })}
-                </div>
-                <div class="form-check">
-                  ${this.renderFormInput({
-                    label: 'Holographic (HoloLens)',
-                    value: 'Holographic',
-                    tooltip:
-                      'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
-                    tooltipLink:
-                      'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                    inputId: 'device-family-input-holographic',
-                    type: 'checkbox',
-                    checked: true,
-                    inputHandler: (val: string, checked: boolean) => {
-                      this.addOrRemoveDeviceFamily(val, checked);
-                    },
-                  })}
-                </div>
-                <div class="form-check">
-                  ${this.renderFormInput({
-                    label: 'Surface Hub (Team)',
-                    value: 'Team',
-                    tooltip:
-                      'Identifies the device family that your package targets.',
-                    tooltipLink:
-                      'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                    inputId: 'device-family-input-team',
-                    type: 'checkbox',
-                    checked: false,
-                    inputHandler: (val: string, checked: boolean) => {
-                      this.addOrRemoveDeviceFamily(val, checked);
-                    },
-                  })}
-                </div>
               </div>
             </div>
-          </sl-details>
-        </div>
-
-      </form>
-    </div>
+            <!-- "all settings" section of the modal -->
+            <sl-details
+              @sl-show=${() => this.rotateNinety()}
+              @sl-hide=${() => this.rotateZero()}
+            >
+              <div class="details-summary" slot="summary">
+                <p>All Settings</p>
+                <img
+                  class="dropdown_icon"
+                  src="/assets/new/dropdownIcon.svg"
+                  alt="dropdown toggler"
+                />
+              </div>
+              <div class="adv-settings">
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'App name',
+                    tooltip: `The name of your app. This is displayed to users in the Store.`,
+                    tooltipLink:
+                      'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-displayname',
+                    inputId: 'app-name-input',
+                    required: true,
+                    minLength: 1,
+                    maxLength: 256,
+                    value: this.packageOptions.name,
+                    placeholder: 'My Awesome PWA',
+                    pattern: '[^|$@#><)(!&%*]*$',
+                    validationErrorMessage:
+                      'App name must not include special characters and be between 1 and 256 characters',
+                    inputHandler: (val: string) =>
+                      (this.packageOptions.name = val),
+                  })}
+                </div>
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'App version',
+                    tooltip: `Your app version in the form of '1.0.0'. It must not start with zero and must be greater than classic package version. For new apps, this should be set to 1.0.1`,
+                    tooltipLink:
+                      'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
+                    inputId: 'version-input',
+                    required: true,
+                    minLength: 5,
+                    value: this.packageOptions.version,
+                    placeholder: '1.0.1',
+                    spellcheck: false,
+                    pattern: '^[^0]+\\d*.\\d+.\\d+$',
+                    validationErrorMessage:
+                      "Version must be in the form of '1.0.0', cannot start with zero, and must be greater than classic version",
+                    inputHandler: (val: string) =>
+                      (this.packageOptions.version = val),
+                  })}
+                </div>
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Classic app version',
+                    tooltip: `The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0', it cannot start with zero, and must be less than app version. For new apps, this should be set to 1.0.0`,
+                    tooltipLink:
+                      'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
+                    inputId: 'classic-version-input',
+                    required: true,
+                    minLength: 5,
+                    value: this.packageOptions.classicPackage?.version,
+                    placeholder: '1.0.0',
+                    pattern: '^[^0]+\\d*.\\d+.\\d+$',
+                    validationErrorMessage:
+                      "Classic app version must be in the form of '1.0.0', cannot start with zero, and must be less than than app version",
+                    inputHandler: (val: string) =>
+                      (this.packageOptions.classicPackage!.version = val),
+                  })}
+                </div>
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Icon URL',
+                    tooltip: `The URL of an icon to use for your app. This should be a 512x512 or larger, square PNG image. Additional Windows image sizes will be fetched from your manifest, and any missing Windows image sizes will be generated by PWABuilder. The URL can be an absolute path or relative to your manifest.`,
+                    tooltipLink:
+                      'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/',
+                    inputId: 'icon-url-input',
+                    required: true,
+                    type: 'text', // NOTE: can't use URL here, because we allow relative paths.
+                    minLength: 2,
+                    validationErrorMessage:
+                      'Must be an absolute URL or a URL relative to your manifest',
+                    value: this.packageOptions.images?.baseImage || '',
+                    placeholder: '/images/512x512.png',
+                    inputHandler: (val: string) =>
+                      (this.packageOptions.images!.baseImage = val),
+                  })}
+                </div>
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Language',
+                    tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
+                    tooltipLink:
+                      'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
+                    inputId: 'language-input',
+                    value: this.packageOptions.resourceLanguage,
+                    placeholder: 'EN-US',
+                    inputHandler: (val: string) =>
+                      (this.packageOptions.resourceLanguage = val),
+                  })}
+                </div>
+                <div class="form-group" id="target-device-families">
+                  <label>Target device families</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Desktop',
+                      value: 'Desktop',
+                      tooltip:
+                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-desktop',
+                      type: 'checkbox',
+                      checked: this.userProject
+                        ? this.packageOptions.targetDeviceFamilies?.includes(
+                            'Desktop'
+                          )
+                        : true,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Holographic (HoloLens)',
+                      value: 'Holographic',
+                      tooltip:
+                        'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-holographic',
+                      type: 'checkbox',
+                      checked: this.userProject
+                        ? this.packageOptions.targetDeviceFamilies?.includes(
+                            'Holographic'
+                          )
+                        : true,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Surface Hub (Team)',
+                      value: 'Team',
+                      tooltip:
+                        'Identifies the device family that your package targets.',
+                      tooltipLink:
+                        'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+                      inputId: 'device-family-input-team',
+                      type: 'checkbox',
+                      checked: this.userProject
+                        ? this.packageOptions.targetDeviceFamilies?.includes(
+                            'Team'
+                          )
+                        : false,
+                      inputHandler: (val: string, checked: boolean) => {
+                        this.addOrRemoveDeviceFamily(val, checked);
+                      },
+                    })}
+                  </div>
+                </div>
+              </div>
+            </sl-details>
+          </div>
+        </form>
+      </div>
     `;
   }
 }

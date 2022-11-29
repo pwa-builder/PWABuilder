@@ -1,11 +1,16 @@
 import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import {
   AnalyticsBehavior,
   recordPWABuilderProcessStep,
 } from '../utils/analytics';
-import { signInUser, signOutUser } from '../services/sign-in';
+import {
+  isUserLoggedIn,
+  signInUser,
+  signOutUser,
+  User,
+} from '../services/sign-in';
 import {
   xxxLargeBreakPoint,
   xxLargeBreakPoint,
@@ -15,12 +20,13 @@ import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
 
+import '../components/sign-in-modal';
 import '@pwabuilder/pwaauth';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property({ type: String }) heading = 'PWABuilder';
-
+  @state() signedInText = 'Sign In/Sign Up';
   static get styles() {
     return css`
       :host {
@@ -215,18 +221,6 @@ export class AppHeader extends LitElement {
           Router.go('/');
         }
       });
-
-    this.shadowRoot
-      ?.querySelector('#signin')
-      ?.addEventListener('signin-completed', async () => {
-        signInUser();
-      });
-
-    this.shadowRoot
-      ?.querySelector('#signin')
-      ?.addEventListener('signout-completed', async () => {
-        signOutUser();
-      });
   }
 
   recordGoingHome() {
@@ -234,6 +228,14 @@ export class AppHeader extends LitElement {
       `header.logo_clicked`,
       AnalyticsBehavior.ProcessCheckpoint
     );
+  }
+
+  async openSignInModal() {
+    let dialog: any =
+      this.shadowRoot!.querySelector(
+        'sign-in-modal'
+      )!.shadowRoot!.querySelector('.dialog');
+    await dialog.show();
   }
 
   showMenu() {
@@ -253,6 +255,10 @@ export class AppHeader extends LitElement {
     }
   }
 
+  private dashboardClick() {
+    Router.go('/userDashboard');
+  }
+
   render() {
     return html`
       <header part="header">
@@ -265,12 +271,10 @@ export class AppHeader extends LitElement {
           />
         </a>
 
-        <pwa-auth
-          id="signin"
-          microsoftkey="32b653f7-a63a-4ad0-bf58-9e15f5914a34"
-          credentialmode="silent"
-        >
-        </pwa-auth>
+        <button id="signin" @click=${() => this.openSignInModal()}>
+          ${this.signedInText}
+        </button>
+        <sign-in-modal id="signin-modal"></sign-in-modal>
 
         <nav id="desktop-nav">
           <a
@@ -288,6 +292,14 @@ export class AppHeader extends LitElement {
           >
             <span>Docs</span>
           </a>
+          <button
+            slot="trigger"
+            type="button"
+            class="nav_link nav_button"
+            @click=${() => this.dashboardClick()}
+          >
+            <span>Dashboard</span>
+          </button>
           <sl-dropdown distance="10">
             <button
               slot="trigger"

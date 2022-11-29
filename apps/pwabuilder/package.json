@@ -29,7 +29,8 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "ionicons": "^6.0.3",
-    "lit": "^2.2.1"
+    "lit": "^2.2.1",
+    "lit-element": "^3.2.2"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",

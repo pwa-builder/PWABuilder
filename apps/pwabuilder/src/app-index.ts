@@ -89,7 +89,7 @@ export class AppIndex extends LitElement {
   constructor() {
     super();
 
-    window.addEventListener('vaadin-router-location-changed', ev => {
+    window.addEventListener('vaadin-router-location-changed', (ev) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       recordPageView(
@@ -119,6 +119,13 @@ export class AppIndex extends LitElement {
             },
           },
           {
+            path: '/userDashboard',
+            component: 'user-dashboard',
+            action: async () => {
+              await import('./script/pages/user-dashboard.js');
+            },
+          },
+          {
             path: '/portals', // used by the power platform team
             component: 'powerplatform-publish',
             action: async () => {
@@ -131,7 +138,7 @@ export class AppIndex extends LitElement {
             action: async () => {
               await import('./script/pages/image-generator.js');
             },
-          }
+          },
         ] as Route[],
       },
     ]);
@@ -149,7 +156,6 @@ export class AppIndex extends LitElement {
         <discord-box></discord-box>
         <app-footer></app-footer>
       </div>
-
     `;
   }
 }
