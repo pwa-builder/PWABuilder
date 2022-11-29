@@ -421,6 +421,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
         displayString: "Manifest has categories field",
         category: "optional",
+        testRequired: true,
         member: "categories",
         defaultValue: [],
         docsLink:
