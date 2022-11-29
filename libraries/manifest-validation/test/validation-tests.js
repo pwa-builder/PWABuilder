@@ -89,7 +89,7 @@ test('includes missing fields', async () => {
 test('returns correct number of fields', async () => {
   const data = await maniLib.validateManifest(test_manifest);
 
-  assert.equal(data.length, 23);
+  assert.equal(data.length, 24);
 });
 
 /*
@@ -142,6 +142,13 @@ test('Can validate the inner structure of shortcuts, should fail', async () => {
   ]);
 
   assert.equal(validity.valid, false);
+});
+
+test('start_url is within app scope, should pass', async () => {
+  const validity = await maniLib.validateSingleField("start_url", "/app");
+  console.log("validity", validity);
+
+  assert.equal(validity.valid, true);
 });
 
 /*
