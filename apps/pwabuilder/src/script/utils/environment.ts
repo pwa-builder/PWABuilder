@@ -29,7 +29,7 @@ if (import.meta.env.PROD) {
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
-    'https://pwabuilder-cloudapk.azurewebsites.net';
+    'https://pwabuilder-cloudapk-pre.azurewebsites.net';
   env.iosPackageGeneratorUrl =
     'https://pwabuilder-ios.azurewebsites.net/packages/create';
   env.oculusPackageGeneratorUrl =
