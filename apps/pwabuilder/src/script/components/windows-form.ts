@@ -94,7 +94,8 @@ export class WindowsForm extends AppPackageFormBase {
 
         #activeLanguages {
           box-sizing: border-box;
-          height: 40px;
+          min-height: 40px;
+          max-height: fit-content;
           border: 1px solid #c5c5c5;
           border-radius: 8px;
           width: 100%;
@@ -119,7 +120,6 @@ export class WindowsForm extends AppPackageFormBase {
         #languageDrop {
           width: 100%;
         }
-
 
         #languageDrop sl-button {
           height: 40px;
@@ -154,12 +154,23 @@ export class WindowsForm extends AppPackageFormBase {
         #langWrapper {
           display: flex;
           flex-direction: column;
-          background: lightblue;
+          background: #ffffff;
           width: 100%;
           height: 200px;
           overflow-y: scroll;
-          border-bottom-right-radius: 8px;
-          border-bottom-left-radius: 8px;
+          border-radius: 8px;
+          border: 1px solid #c5c5c5;
+          
+        }
+
+        #langWrapper sl-menu-item::part(base){
+          font-size: 16px;
+          color: #757575;
+        }
+
+        #langWrapper sl-menu-item::part(base):hover{
+          
+          background-color: red;
         }
     `
     ];
@@ -186,12 +197,14 @@ export class WindowsForm extends AppPackageFormBase {
       let lang = this.packageOptions.resourceLanguage;
       for(let i = 0; i < windowsLanguages.length; i++){
         let cur = windowsLanguages[i];
-        if(cur.name === lang){
+        if(cur.code.toLowerCase() === (lang as string).toLowerCase()){
           this.activeLanguages.push(cur.name);
           this.activeLanguageCodes.push(cur.code);
           break;
         }
       }
+      this.packageOptions.resourceLanguage = this.activeLanguageCodes;
+      console.log(this.packageOptions.resourceLanguage);
     }
   }
 
@@ -289,7 +302,7 @@ export class WindowsForm extends AppPackageFormBase {
         </div>
         <div class="multi-wrap">
           <p class="sub-multi">Selected Multiple Languages</p>
-          <sl-dropdown  id="languageDrop" ?stayopenonselect=${true}>
+          <sl-dropdown  id="languageDrop" ?stayopenonselect=${true} distance="1">
             <sl-button slot="trigger" caret>Select</sl-button>
             <div id="langWrapper"> 
               ${windowsLanguages.map((lang: any) => html`<sl-menu-item ?checked=${this.activeLanguages.includes(lang.name)} @click=${() => this.addLanguage(lang)}>${lang.name}</sl-menu-item>`)}
@@ -311,6 +324,9 @@ export class WindowsForm extends AppPackageFormBase {
 
     console.log(this.activeLanguages);
     console.log(this.activeLanguageCodes);
+
+    this.packageOptions.resourceLanguage = this.activeLanguageCodes;
+
     this.requestUpdate();
   }
 
@@ -320,6 +336,8 @@ export class WindowsForm extends AppPackageFormBase {
 
     console.log(this.activeLanguages);
     console.log(this.activeLanguageCodes);
+
+    this.packageOptions.resourceLanguage = this.activeLanguageCodes;
 
     this.requestUpdate();
   }
@@ -477,7 +495,7 @@ export class WindowsForm extends AppPackageFormBase {
                   tooltipLink:
                     'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
                   inputId: 'language-input',
-                  value: this.activeLanguageCodes,
+                  value: this.packageOptions.resourceLanguage,
                   placeholder: 'EN-US',
                   inputHandler: (val: string) =>
                     (this.packageOptions.resourceLanguage = val),
