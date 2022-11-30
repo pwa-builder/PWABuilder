@@ -86,6 +86,81 @@ export class WindowsForm extends AppPackageFormBase {
           font-weight: bold;
         }
 
+        .sub-multi {
+          font-size: var(--smallish-font-size);
+          margin: 0;
+          color: rgba(0,0,0,.5);
+        }
+
+        #activeLanguages {
+          box-sizing: border-box;
+          height: 40px;
+          border: 1px solid #c5c5c5;
+          border-radius: 8px;
+          width: 100%;
+          margin-bottom: 10px;
+          display: flex;
+          gap: 5px;
+          overflow: auto hidden;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 2px;
+}
+        #activeLanguages sl-tag::part(base) {
+          height: 35px;
+          font-size: 16px;
+          color: #757575;
+          background-color: #f0f0f0;
+          border-radius: 8px;
+          padding: 8px 15px;
+          gap: 40px;
+        }
+
+        #languageDrop {
+          width: 100%;
+        }
+
+
+        #languageDrop sl-button {
+          height: 40px;
+          border: 1px solid #c5c5c5;
+          border-radius: 8px;
+          width: 100%;
+        }
+
+        #languageDrop sl-button::part(base) {
+          height: 40px;
+          border: 1px solid #c5c5c5;
+          border-radius: 8px;
+          width: 100%;
+          padding: 0;
+          border: none;
+          background: transparent;
+          align-items: center;
+          justify-content: flex-start;
+          color: #757575;
+          font-size: 16px;
+          font-weight: normal;
+        }
+
+        #languageDrop sl-button::part(label) {
+          margin-right: auto;
+        }
+
+        #languageDrop sl-button::part(caret){
+          padding: 10px;
+        }
+
+        #langWrapper {
+          display: flex;
+          flex-direction: column;
+          background: lightblue;
+          width: 100%;
+          height: 200px;
+          overflow-y: scroll;
+          border-bottom-right-radius: 8px;
+          border-bottom-left-radius: 8px;
+        }
     `
     ];
   }
@@ -209,16 +284,16 @@ export class WindowsForm extends AppPackageFormBase {
         <div class="multi-wrap">
           <p class="sub-multi">Selected Languages</p>
           <div id="activeLanguages">
-            ${this.activeLanguages.map((lang: string) => html`${lang}`)}
+            ${this.activeLanguages.map((lang: string, index: number) => html`<sl-tag size="large" @sl-remove=${() => this.removeLanguage(index)} removable>${lang}</sl-tag>`)}
           </div>
         </div>
         <div class="multi-wrap">
           <p class="sub-multi">Selected Multiple Languages</p>
-          <sl-dropdown ?stayopenonselect=${true}>
+          <sl-dropdown  id="languageDrop" ?stayopenonselect=${true}>
             <sl-button slot="trigger" caret>Select</sl-button>
-            <sl-menu>
+            <div id="langWrapper"> 
               ${windowsLanguages.map((lang: any) => html`<sl-menu-item ?checked=${this.activeLanguages.includes(lang.name)} @click=${() => this.addLanguage(lang)}>${lang.name}</sl-menu-item>`)}
-            </sl-menu>
+            </div>
           </sl-dropdown>
         </div>
       </div>
@@ -226,8 +301,26 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   addLanguage(lang: any){
-    this.activeLanguages.push(lang.name);
-    this.activeLanguageCodes.push(lang.code);
+    if(!this.activeLanguages.includes(lang.name)){
+      this.activeLanguages.push(lang.name);
+      this.activeLanguageCodes.push(lang.code);
+    } else {
+      let index = this.activeLanguages.indexOf(lang.name);
+      this.removeLanguage(index);
+    }
+
+    console.log(this.activeLanguages);
+    console.log(this.activeLanguageCodes);
+    this.requestUpdate();
+  }
+
+  removeLanguage(index: number){
+    this.activeLanguages = this.activeLanguages.filter((_item: any, i: number) => i != index );
+    this.activeLanguageCodes = this.activeLanguageCodes.filter((_item: any, i: number) => i != index );
+
+    console.log(this.activeLanguages);
+    console.log(this.activeLanguageCodes);
+
     this.requestUpdate();
   }
 
