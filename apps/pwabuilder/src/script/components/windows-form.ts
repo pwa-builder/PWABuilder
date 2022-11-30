@@ -92,22 +92,18 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
-        #activeLanguages {
-          box-sizing: border-box;
+        :host{
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+        }
+
+        #languageDrop::part(control){
           min-height: 40px;
-          max-height: fit-content;
-          border: 1px solid #c5c5c5;
-          border-radius: 8px;
-          width: 100%;
-          margin-bottom: 10px;
-          display: flex;
-          gap: 5px;
-          overflow: auto hidden;
-          align-items: center;
-          justify-content: flex-start;
-          padding: 2px;
-}
-        #activeLanguages sl-tag::part(base) {
+        }
+
+        #languageDrop::part(tag__base){
           height: 35px;
           font-size: 16px;
           color: #757575;
@@ -117,61 +113,23 @@ export class WindowsForm extends AppPackageFormBase {
           gap: 40px;
         }
 
-        #languageDrop {
-          width: 100%;
-        }
-
-        #languageDrop sl-button {
-          height: 40px;
-          border: 1px solid #c5c5c5;
-          border-radius: 8px;
-          width: 100%;
-        }
-
-        #languageDrop sl-button::part(base) {
-          height: 40px;
-          border: 1px solid #c5c5c5;
-          border-radius: 8px;
-          width: 100%;
-          padding: 0;
-          border: none;
-          background: transparent;
-          align-items: center;
-          justify-content: flex-start;
-          color: #757575;
-          font-size: 16px;
-          font-weight: normal;
-        }
-
-        #languageDrop sl-button::part(label) {
-          margin-right: auto;
-        }
-
-        #languageDrop sl-button::part(caret){
-          padding: 10px;
-        }
-
-        #langWrapper {
-          display: flex;
-          flex-direction: column;
-          background: #ffffff;
-          width: 100%;
+        #languageDrop::part(menu){
+          background-color: #ffffff;
           height: 200px;
           overflow-y: scroll;
           border-radius: 8px;
           border: 1px solid #c5c5c5;
-          
         }
 
-        #langWrapper sl-menu-item::part(base){
+        #languageDrop sl-menu-item::part(base){
           font-size: 16px;
           color: #757575;
         }
 
-        #langWrapper sl-menu-item::part(base):hover{
-          
-          background-color: red;
+        #languageDrop sl-menu-item::part(base):hover{
+          background-color: grey;
         }
+       
     `
     ];
   }
@@ -180,7 +138,9 @@ export class WindowsForm extends AppPackageFormBase {
     super();
   }
 
-  async firstUpdated() {
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+
     let manifestContext: ManifestContext | undefined = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
@@ -191,21 +151,6 @@ export class WindowsForm extends AppPackageFormBase {
     );
 
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
-
-
-    if(this.packageOptions.resourceLanguage){
-      let lang = this.packageOptions.resourceLanguage;
-      for(let i = 0; i < windowsLanguages.length; i++){
-        let cur = windowsLanguages[i];
-        if(cur.code.toLowerCase() === (lang as string).toLowerCase()){
-          this.activeLanguages.push(cur.name);
-          this.activeLanguageCodes.push(cur.code);
-          break;
-        }
-      }
-      this.packageOptions.resourceLanguage = this.activeLanguageCodes;
-      console.log(this.packageOptions.resourceLanguage);
-    }
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -295,52 +240,27 @@ export class WindowsForm extends AppPackageFormBase {
       </label>
       <div id="multiSelectBox">
         <div class="multi-wrap">
-          <p class="sub-multi">Selected Languages</p>
-          <div id="activeLanguages">
-            ${this.activeLanguages.map((lang: string, index: number) => html`<sl-tag size="large" @sl-remove=${() => this.removeLanguage(index)} removable>${lang}</sl-tag>`)}
-          </div>
-        </div>
-        <div class="multi-wrap">
-          <p class="sub-multi">Selected Multiple Languages</p>
-          <sl-dropdown  id="languageDrop" ?stayopenonselect=${true} distance="1">
-            <sl-button slot="trigger" caret>Select</sl-button>
-            <div id="langWrapper"> 
-              ${windowsLanguages.map((lang: any) => html`<sl-menu-item ?checked=${this.activeLanguages.includes(lang.name)} @click=${() => this.addLanguage(lang)}>${lang.name}</sl-menu-item>`)}
-            </div>
-          </sl-dropdown>
+          <p class="sub-multi">Select Multiple Languages</p>
+          <sl-select id="languageDrop" 
+            placeholder="Select one or more languages"
+            @sl-change=${(e: any) => this.handleLanguage(e)} 
+            .value=${this.packageOptions.resourceLanguage!}
+            ?stayopenonselect=${true} 
+            multiple 
+          >
+            ${windowsLanguages.map((lang: any) => html`
+              <sl-menu-item value=${lang.code}>${lang.name}</sl-menu-item>
+            `)}
+          </sl-select>
         </div>
       </div>
     `;
   }
 
-  addLanguage(lang: any){
-    if(!this.activeLanguages.includes(lang.name)){
-      this.activeLanguages.push(lang.name);
-      this.activeLanguageCodes.push(lang.code);
-    } else {
-      let index = this.activeLanguages.indexOf(lang.name);
-      this.removeLanguage(index);
-    }
-
-    console.log(this.activeLanguages);
-    console.log(this.activeLanguageCodes);
-
-    this.packageOptions.resourceLanguage = this.activeLanguageCodes;
-
-    this.requestUpdate();
+  handleLanguage(e: any){
+    this.packageOptions.resourceLanguage= e.target.value;
   }
 
-  removeLanguage(index: number){
-    this.activeLanguages = this.activeLanguages.filter((_item: any, i: number) => i != index );
-    this.activeLanguageCodes = this.activeLanguageCodes.filter((_item: any, i: number) => i != index );
-
-    console.log(this.activeLanguages);
-    console.log(this.activeLanguageCodes);
-
-    this.packageOptions.resourceLanguage = this.activeLanguageCodes;
-
-    this.requestUpdate();
-  }
 
   render() {
     return html`
@@ -656,7 +576,6 @@ const windowsLanguages = [
   { "code": "tt", "name": "Tatar" },
   { "code": "te", "name": "Telugu" },
   { "code": "tk-cyrl", "name": "Turkmish" },
-  { "code": "uk", "name": "Ukrainian" },
   { "code": "uk", "name": "Ukrainian" },
   { "code": "ur", "name": "Urdu" },
   { "code": "ug-arab", "name": "Uyghur" },

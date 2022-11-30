@@ -90,6 +90,11 @@ export function createWindowsPackageOptionsFromManifest(
   const packageID = generateWindowsPackageId(new URL(pwaURL).hostname);
   const manifestIcons = manifest.icons || [];
 
+  let languages: string[] = [];
+  if(manifest.lang){
+    languages.push(manifest.lang);
+  }
+
   const icon = findBestAppIcon(manifestIcons);
   const options: WindowsPackageOptions = {
     name: name as string,
@@ -117,7 +122,7 @@ export function createWindowsPackageOptionsFromManifest(
       backgroundColor: manifest.background_color || 'transparent',
       padding: 0.0,
     },
-    resourceLanguage: manifest?.lang,
+    resourceLanguage: languages,
   };
 
   return options;
