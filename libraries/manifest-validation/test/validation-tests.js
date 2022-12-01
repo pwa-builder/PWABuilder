@@ -152,9 +152,22 @@ test('start_url is within app scope, should pass', async () => {
 });
 
 test("start_url is not within app scope, should fail", async () => {
+  test_manifest.scope = "/app";
   const validity = await maniLib.validateSingleField("start_url", "https://www.example.com");
 
   assert.equal(validity.valid, false);
+});
+
+test("protocol handlers are valid, should pass", async () => {
+  const validity = await maniLib.validateSingleField("protocol_handlers", [
+    {
+      "protocol": "mailto",
+      "uriTemplate": "/app/#!/%s",
+      "name": "Example"
+    }
+  ]);
+
+  assert.equal(validity.valid, true);
 });
 
 /*

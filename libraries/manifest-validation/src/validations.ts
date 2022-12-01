@@ -1,6 +1,6 @@
 import { currentManifest } from ".";
 import { Icon, Manifest, singleFieldValidation, Validation } from "./interfaces";
-import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
+import { checkRelativeUrlBasedOnScope, containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validProtocols } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -569,7 +569,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
         quickFix: true,
-        errorString: "protocol_handlers should all be relative URLs that are within the scope of the app",
+        errorString: "protocol_handlers should all be relative URLs that are within the scope of the app, should have a name, a urlTemplate and a valid protocol",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
 
@@ -577,15 +577,33 @@ export const maniTests: Array<Validation> = [
             if (currentMani) {
                 if (isArray) {
                     const isRelative = value && value.every((protocolHandler: any) => {
+
                         if (currentMani.scope) {
-                            return checkRelativeUrlBasedOnScope(protocolHandler.protocol, currentMani.scope);
+                            return checkRelativeUrlBasedOnScope(protocolHandler.uriTemplate, currentMani.scope);
                         }
                         else {
-                            return checkRelativeUrlBasedOnScope(protocolHandler.protocol, "/");
+                            return true;
                         }
                     });
 
-                    return isRelative;
+                    const hasName = value && value.every((protocolHandler: any) => {
+                        return protocolHandler.name && protocolHandler.name.length > 0;
+                    });
+
+                    const hasValidUriTemplate = value && value.every((protocolHandler: any) => {
+                        return protocolHandler.uriTemplate && 
+                         protocolHandler.uriTemplate.length > 0 &&
+                            protocolHandler.uriTemplate.includes("%s");
+                         ;
+                    });
+
+                    const hasValidProtocol = value && value.every((protocolHandler: any) => {
+                        return protocolHandler.protocol &&
+                         protocolHandler.protocol.length > 0 &&
+                         validProtocols.includes(protocolHandler.protocol);
+                    });
+
+                    return isRelative && hasName && hasValidUriTemplate && hasValidProtocol;
                 }
                 else {
                     return false;
@@ -726,16 +744,4 @@ export async function findSingleField(field: string, value: any): Promise<single
 
         resolve({ "valid": singleField, "errors": failedTests });
     })
-}
-
-export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolean {
-    if (scope.endsWith("/") && url.startsWith("/")) {
-        return true;
-    }
-    else if (url.startsWith(scope) || url.startsWith("/")) {
-        return true;
-    }
-    else {
-        return false;
-    }
 }
