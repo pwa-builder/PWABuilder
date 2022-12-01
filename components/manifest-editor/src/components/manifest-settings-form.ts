@@ -197,6 +197,11 @@ export class ManifestSettingsForm extends LitElement {
         line-height: 16px;
         margin-left: .25em;
       }
+      
+      sl-menu-item::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
 
       @media(max-width: 765px){
         .form-row {

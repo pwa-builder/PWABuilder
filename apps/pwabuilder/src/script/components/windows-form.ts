@@ -88,7 +88,7 @@ export class WindowsForm extends AppPackageFormBase {
         }
 
         .sub-multi {
-          font-size: var(--smallish-font-size);
+          font-size: var(--body-font-size);
           margin: 0;
           color: rgba(0,0,0,.5);
         }
@@ -106,10 +106,10 @@ export class WindowsForm extends AppPackageFormBase {
 
         #languageDrop::part(tag__base){
           height: 35px;
-          font-size: 16px;
+          font-size: var(--body-font-size);
           color: #757575;
           background-color: #f0f0f0;
-          border-radius: 8px;
+          border-radius: var(--input-border-radius);
           padding: 8px 15px;
           gap: 40px;
         }
@@ -118,13 +118,13 @@ export class WindowsForm extends AppPackageFormBase {
           background-color: #ffffff;
           height: 200px;
           overflow-y: scroll;
-          border-radius: 8px;
+          border-radius: var(--input-border-radius);
           border: 1px solid #c5c5c5;
           margin-top: 3px;
         }
 
         #languageDrop sl-menu-item::part(base){
-          font-size: 16px;
+          font-size: var(--body-font-size);
           color: #757575;
         }
 
@@ -134,7 +134,7 @@ export class WindowsForm extends AppPackageFormBase {
         }
 
         #languageDrop::part(display-label){
-          font-size: 16px;
+          font-size: var(--body-font-size);
           color: #757575;
         }
        

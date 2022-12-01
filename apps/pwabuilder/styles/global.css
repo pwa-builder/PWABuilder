@@ -72,6 +72,9 @@
   --error-accent-color: #FFF3F3;
   --success-accent-color:  #E3FFF2;
 
+  /* Inputs */
+  --input-border-radius: 8px;
+
   /* Buttons */
   --button-font-size: 16px;
   --button-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);

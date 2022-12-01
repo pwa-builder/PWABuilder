@@ -19,7 +19,7 @@ export class AppPackageFormBase extends LitElement {
     const localStyles =  css`
       #form-layout input {
         border: 1px solid rgba(194, 201, 209, 1);
-        border-radius: var(--input-radius);
+        border-radius: var(--input-border-radius);
         color: var(--font-color);
       }
 
@@ -43,7 +43,7 @@ export class AppPackageFormBase extends LitElement {
         font-size: 14px;
         height: 3em;
         width: 25%;
-        border-radius: 50px;
+        border-radius: var(--button-border-radius);
       }
 
       #form-extras sl-button::part(label){

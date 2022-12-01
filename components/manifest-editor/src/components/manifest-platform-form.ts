@@ -138,6 +138,10 @@ export class ManifestPlatformForm extends LitElement {
       sl-menu {
          width: 100%;
       }
+      sl-menu-item::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
       #cat-field {
         display: grid;
         grid-template-rows: repeat(7, auto);
