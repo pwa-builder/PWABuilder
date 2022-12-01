@@ -308,7 +308,7 @@ export class PublishPane extends LitElement {
         gap: 1em;
       }
       #pp-form-header-content img {
-        height: 50px;
+        height: 40px;
       }
       #pp-form-header-text {
         display: flex;
