@@ -40,7 +40,7 @@ const test_manifest = {
       "short_name": "Start Live",
       "description": "Jump direction into starting or joining a live session",
       "url": "/?startLive",
-      "icons": [{ "src": "icons/android/maskable_icon_192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "icons/android/maskable_icon_96.png", "sizes": "96x96" }]
     }
   ],
   "icons": [
@@ -89,7 +89,7 @@ test('includes missing fields', async () => {
 test('returns correct number of fields', async () => {
   const data = await maniLib.validateManifest(test_manifest);
 
-  assert.equal(data.length, 19);
+  assert.equal(data.length, 24);
 });
 
 /*
@@ -108,14 +108,47 @@ test('can validate a single field, should return true', async () => {
   const validity = await maniLib.validateSingleField("short_name", "Webboard");
 
   // validity should be a boolean, and true in this case
-  assert.strictEqual(validity, true);
+  assert.equal(validity.valid, true);
 });
 
 test('can validate a single field, should return false', async () => {
   const validity = await maniLib.validateSingleField("theme_color", "black");
 
-  // validity should return a Validation, and we check that its the right validation
-  assert.strictEqual(validity, false);
+  assert.equal(validity.valid, false);
+  assert.equal(validity.errors[0], 'theme_color should be a valid hex color');
+  assert.equal(1, validity.errors.length);
+});
+
+/*
+  * inner validation testing
+*/
+
+test('Can validate the inner structure of shortcuts', async () => {
+  const validity = await maniLib.validateSingleField("shortcuts", test_manifest.shortcuts);
+
+  assert.equal(validity.valid, true);
+});
+
+// should fail because of missing 96x96 icon
+test('Can validate the inner structure of shortcuts, should fail', async () => {
+  const validity = await maniLib.validateSingleField("shortcuts", [
+    {
+      "name": "Start Live Session",
+      "short_name": "Start Live",
+      "description": "Jump direction into starting or joining a live session",
+      "url": "/?startLive",
+      "icons": [{ "src": "icons/android/maskable_icon_192.png", "sizes": "192x192" }]
+    }
+  ]);
+
+  assert.equal(validity.valid, false);
+});
+
+test('start_url is within app scope, should pass', async () => {
+  const validity = await maniLib.validateSingleField("start_url", "/app");
+  console.log("validity", validity);
+
+  assert.equal(validity.valid, true);
 });
 
 /*
