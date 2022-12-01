@@ -4,6 +4,7 @@ import { getManifestContext, getManifestUrl } from '../services/app-info';
 import {
   createWindowsPackageOptionsFromManifest,
   emptyWindowsPackageOptions,
+  windowsLanguages,
 } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AppPackageFormBase, FormInput } from './app-package-form-base';
@@ -119,6 +120,7 @@ export class WindowsForm extends AppPackageFormBase {
           overflow-y: scroll;
           border-radius: 8px;
           border: 1px solid #c5c5c5;
+          margin-top: 3px;
         }
 
         #languageDrop sl-menu-item::part(base){
@@ -127,7 +129,13 @@ export class WindowsForm extends AppPackageFormBase {
         }
 
         #languageDrop sl-menu-item::part(base):hover{
-          background-color: grey;
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
+        #languageDrop::part(display-label){
+          font-size: 16px;
+          color: #757575;
         }
        
     `
@@ -223,15 +231,6 @@ export class WindowsForm extends AppPackageFormBase {
     return this.shadowRoot!.querySelector("form")!;
   }
 
-  /* label: 'Language',
-  tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
-  tooltipLink:
-    'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
-  inputId: 'language-input',
-  value: this.packageOptions.resourceLanguage,
-  placeholder: 'EN-US',
-  inputHandler: (val: string) =>
-    (this.packageOptions.resourceLanguage = val), */
   renderMultiSelect(formInput: FormInput): TemplateResult {
     return html`
       <label for="${formInput.inputId}">
@@ -246,11 +245,21 @@ export class WindowsForm extends AppPackageFormBase {
             @sl-change=${(e: any) => this.handleLanguage(e)} 
             .value=${this.packageOptions.resourceLanguage!}
             ?stayopenonselect=${true} 
-            multiple 
+            multiple
+            .maxTagsVisible=${5}
           >
-            ${windowsLanguages.map((lang: any) => html`
-              <sl-menu-item value=${lang.code}>${lang.name}</sl-menu-item>
-            `)}
+          ${windowsLanguages.map((lang: any) => 
+            html`
+              ${lang.codes.map((code: string) =>  
+                html`
+                  <sl-menu-item value=${code}>${lang.name} - ${code}</sl-menu-item>
+                `
+              )}
+            `
+          )} 
+           <!-- ${windowsLanguages.map((lang: any) => html`
+              <sl-menu-item value=${lang.codes[0]}>${lang.name}</sl-menu-item>
+            `)} -->
           </sl-select>
         </div>
       </div>
@@ -258,7 +267,7 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   handleLanguage(e: any){
-    this.packageOptions.resourceLanguage= e.target.value;
+    this.packageOptions.resourceLanguage = e.target.value;
   }
 
 
@@ -411,7 +420,7 @@ export class WindowsForm extends AppPackageFormBase {
               <div class="form-group">
                 ${this.renderMultiSelect({
                   label: 'Language',
-                  tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
+                  tooltip: `Optional. Select as many languages as your app supports. Additional languages can be specified in Windows Partner Center. If empty, EN-US will be used.`,
                   tooltipLink:
                     'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
                   inputId: 'language-input',
@@ -481,107 +490,3 @@ export class WindowsForm extends AppPackageFormBase {
     `;
   }
 }
-
-
-const windowsLanguages = [
-  { "code": "ar", "name": "Arabic" },
-  { "code": "af", "name": "Afrikaans" },
-  { "code": "sq", "name": "Albanian" },
-  { "code": "am", "name": "Amharic" },
-  { "code": "hy", "name": "Armenian" },
-  { "code": "as", "name": "Assamese" },
-  { "code": "az-arab", "name": "Azerbaijani" },
-  { "code": "eu", "name": "Basque (Basque)" },
-  { "code": "be", "name": "Belarusian" },
-  { "code": "bn", "name": "Bangla" },
-  { "code": "bs", "name": "Bosnian" },
-  { "code": "bg", "name": "Bulgarian" },
-  { "code": "ca", "name": "Catalan" },
-  { "code": "chr-cher", "name": "Cherokee" },
-  { "code": "zh-Hans", "name": "Chinese (Simplified)" },
-  { "code": "zh-Hant", "name": "Chinese (Traditional)" },
-  { "code": "hr", "name": "Croatian" },
-  { "code": "cs", "name": "Czech" },
-  { "code": "da", "name": "Danish" },
-  { "code": "prs", "name": "Dari" },
-  { "code": "nl", "name": "Dutch" },
-  { "code": "en", "name": "English" },
-  { "code": "et", "name": "Estonian" },
-  { "code": "fil", "name": "Filipino" },
-  { "code": "fi", "name": "Finnish" },
-  { "code": "fr", "name": "French" },
-  { "code": "gl", "name": "Galician" },
-  { "code": "ka", "name": "Georgian" },
-  { "code": "de", "name": "German" },
-  { "code": "el", "name": "Greek" },
-  { "code": "gu", "name": "Gujarati" },
-  { "code": "ha", "name": "Hausa" },
-  { "code": "he", "name": "Hebrew" },
-  { "code": "hi", "name": "Hindi" },
-  { "code": "hu", "name": "Hungarian" },
-  { "code": "is", "name": "Icelandic" },
-  { "code": "ig-ng", "name": "Igbo" },
-  { "code": "id", "name": "Indonesian" },
-  { "code": "iu-cans", "name": "Inuktitut (Latin)" },
-  { "code": "ga", "name": "Irish" },
-  { "code": "xh", "name": "isiXhosa" },
-  { "code": "zu", "name": "isiZulu" },
-  { "code": "it", "name": "Italian" },
-  { "code": "ja", "name": "Japanese" },
-  { "code": "kn", "name": "Kannada" },
-  { "code": "kk", "name": "Kazakh" },
-  { "code": "km", "name": "Khmer" },
-  { "code": "quc-latn", "name": "K'iche'" },
-  { "code": "rw", "name": "Kinyarwanda" },
-  { "code": "sw", "name": "KiSwahili" },
-  { "code": "kok", "name": "Konkani" },
-  { "code": "ko", "name": "Korean" },
-  { "code": "ku-arab", "name": "Kurdish" },
-  { "code": "ky-kg", "name": "Kyrgyz" },
-  { "code": "lo", "name": "Lao" },
-  { "code": "lv", "name": "Latvian" },
-  { "code": "lt", "name": "Lithuanian" },
-  { "code": "lb", "name": "Luxembourgish" },
-  { "code": "mk", "name": "Macedonian" },
-  { "code": "ms", "name": "Malay" },
-  { "code": "ml", "name": "Malayalam" },
-  { "code": "mt", "name": "Maltese" },
-  { "code": "mi", "name": "Maori" },
-  { "code": "mr", "name": "Marathi" },
-  { "code": "mn-cyrl", "name": "Mongolian (Cyrillic)" },
-  { "code": "ne", "name": "Nepali" },
-  { "code": "no", "name": "Norwegian" },
-  { "code": "or", "name": "Odia" },
-  { "code": "fa", "name": "Persian" },
-  { "code": "pl", "name": "Polish" },
-  { "code": "pt-br", "name": "Portuguese (Brazil)" },
-  { "code": "pt", "name": "Portuguese (Portugal)" },
-  { "code": "pa", "name": "Panjabi" },
-  { "code": "quz", "name": "Quechua" },
-  { "code": "ro", "name": "Romanian" },
-  { "code": "ru", "name": "Russian" },
-  { "code": "gd-gb", "name": "Scottish Gaelic" },
-  { "code": "sr-Latn", "name": "Serbian (Latin)" },
-  { "code": "sr-cyrl", "name": "Serbian (Cyrillic)" },
-  { "code": "nso", "name": "Sesotho sa Leboa" },
-  { "code": "tn", "name": "Setswana" },
-  { "code": "sd-arab", "name": "Sindhi" },
-  { "code": "si", "name": "Sinhala" },
-  { "code": "sk", "name": "Slovak" },
-  { "code": "sl", "name": "Slovenian" },
-  { "code": "es", "name": "Spanish" },
-  { "code": "sv", "name": "Swedish" },
-  { "code": "tg-arab", "name": "Tajik (Cyrillic)" },
-  { "code": "ta", "name": "Tamil" },
-  { "code": "tt", "name": "Tatar" },
-  { "code": "te", "name": "Telugu" },
-  { "code": "tk-cyrl", "name": "Turkmish" },
-  { "code": "uk", "name": "Ukrainian" },
-  { "code": "ur", "name": "Urdu" },
-  { "code": "ug-arab", "name": "Uyghur" },
-  { "code": "uz", "name": "Uzbek (Latin)" },
-  { "code": "vi", "name": "Vietnamese" },
-  { "code": "cy", "name": "Welsh" },
-  { "code": "wo", "name": "Wolof" },
-  { "code": "yo-ng", "name": "Yoruba" },
-]
