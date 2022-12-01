@@ -494,7 +494,7 @@ export class ManifestInfoForm extends LitElement {
               <div class="header-left">
                 <h3>Name</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=name-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -515,7 +515,7 @@ export class ManifestInfoForm extends LitElement {
               <div class="header-left">
                 <h3>Short Name</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -538,7 +538,7 @@ export class ManifestInfoForm extends LitElement {
               <div class="header-left">
                 <h3>Description</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/description"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=description-string"
                   target="_blank"
                   rel="noopener"
                 >

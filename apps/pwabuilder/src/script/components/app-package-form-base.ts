@@ -37,7 +37,7 @@ export class AppPackageFormBase extends LitElement {
         margin-top: 4px;
       }
 
-      sl-button::part(base) {
+      #form-extras sl-button::part(base) {
         background-color: black;
         color: white;
         font-size: 14px;
@@ -46,7 +46,7 @@ export class AppPackageFormBase extends LitElement {
         border-radius: 50px;
       }
 
-      sl-button::part(label){
+      #form-extras sl-button::part(label){
         display: flex;
         align-items: center;
       }
@@ -278,7 +278,7 @@ export interface FormInput {
   name?: string;
   type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
   placeholder?: string;
-  value?: string;
+  value?: string | string[];
   required?: boolean;
   minLength?: number;
   maxLength?: number;

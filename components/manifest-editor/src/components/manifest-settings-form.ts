@@ -516,7 +516,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Start URL</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -537,7 +537,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Dir</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -560,7 +560,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Scope</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -603,7 +603,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Orientation</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -624,7 +624,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Display</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=display-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -647,7 +647,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Display Override</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"
                   target="_blank"
                   rel="noopener"
                 >

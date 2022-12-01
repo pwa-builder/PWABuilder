@@ -177,7 +177,7 @@ Once you have a provisioning profile, you can create an app reservation on your 
 
 2. Select `My Apps`.
 
-3. Select tge `+` symbole and then click `New App`:
+3. Select the `+` symbol and then click `New App`:
 
 4. You will be prompted for details about your app:
    1. Choose `iOS` for the platform

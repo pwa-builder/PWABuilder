@@ -535,7 +535,7 @@ export class ManifestScreenshotsForm extends LitElement {
           <div class="field-header">
             <h3>Screenshots</h3>
             <a
-              href="https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots"
+              href="https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"
               target="_blank"
               rel="noopener"
             >

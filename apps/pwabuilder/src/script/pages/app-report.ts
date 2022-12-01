@@ -130,7 +130,7 @@ export class AppReport extends LitElement {
   private possible_messages = [
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
-                  "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommeneded and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
+                  "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommended and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
                   "blocked": "PWABuilder has analyzed your Web Manifest. You have a one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
                   "none": "PWABuilder has analyzed your site and did not find a Web Manifest. Use our Manifest Editor to generate one. You can package for the store once you have a valid manifest.",
                   }
@@ -1416,16 +1416,16 @@ export class AppReport extends LitElement {
       manifest = {};
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
     }
+    
+    let amt_missing = await this.handleMissingFields(manifest);
+
+    this.manifestTotalScore += amt_missing;
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
     } else {
       this.canPackageList[0] = true;
     }
-
-    let amt_missing = await this.handleMissingFields(manifest);
-
-    this.manifestTotalScore += amt_missing;
 
     this.manifestDataLoading = false;
     details!.disabled = false;
@@ -1543,13 +1543,14 @@ export class AppReport extends LitElement {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "red"})
       } else if(reccommended_fields.includes(field)){
         this.reccMissingFields.push(field);
         this.manifestReccCounter++;
-      } if(optional_fields.includes(field)){
+      } else if(optional_fields.includes(field)){
         this.optMissingFields.push(field)
       }
-      if(!this.createdManifest){
+      if(!this.createdManifest && !required_fields.includes(field)){
         this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
       }
     });

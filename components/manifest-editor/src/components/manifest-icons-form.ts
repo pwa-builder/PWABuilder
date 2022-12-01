@@ -520,7 +520,7 @@ export class ManifestIconsForm extends LitElement {
             <div class="header-left">
               <h3>App Icons</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=icons-array"
                 target="_blank"
                 rel="noopener"
               >
