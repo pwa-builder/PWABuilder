@@ -256,8 +256,8 @@ export const maniTests: Array<Validation> = [
         test: (value: string) => {
             const currentMani = currentManifest;
             if (currentMani && currentMani.scope) {
-                const relativeCheck = checkRelativeUrl(value, currentMani.scope);
-                console.log("relativeCheck", relativeCheck);
+                const relativeCheck = checkRelativeUrlBasedOnScope(value, currentMani.scope);
+
                 return relativeCheck;
             }
             else {
@@ -561,6 +561,42 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
+        member: "protocol_handlers",
+        displayString: "Protocol handlers field has valid protocol",
+        infoString: "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
+        quickFix: true,
+        errorString: "protocol_handlers should all be relative URLs that are within the scope of the app",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            const currentMani= currentManifest;
+            if (currentMani) {
+                if (isArray) {
+                    const isRelative = value && value.every((protocolHandler: any) => {
+                        if (currentMani.scope) {
+                            return checkRelativeUrlBasedOnScope(protocolHandler.protocol, currentMani.scope);
+                        }
+                        else {
+                            return checkRelativeUrlBasedOnScope(protocolHandler.protocol, "/");
+                        }
+                    });
+
+                    return isRelative;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                throw new Error("No web manifest found, currentManifest is undefined");
+            }
+        }
+    },
+    {
         member: "display_override",
         displayString: "Manifest has display override field",
         infoString: "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
@@ -692,11 +728,11 @@ export async function findSingleField(field: string, value: any): Promise<single
     })
 }
 
-export function checkRelativeUrl(url: string, scope: string): boolean {
-    if (scope.endsWith("/")) {
+export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolean {
+    if (scope.endsWith("/") && url.startsWith("/")) {
         return true;
     }
-    else if (url.startsWith(scope)) {
+    else if (url.startsWith(scope) || url.startsWith("/")) {
         return true;
     }
     else {

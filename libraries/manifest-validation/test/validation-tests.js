@@ -148,7 +148,13 @@ test('start_url is within app scope, should pass', async () => {
   const validity = await maniLib.validateSingleField("start_url", "/app");
   console.log("validity", validity);
 
-  assert.equal(validity.valid, true);
+  assert.equal(validity.valid, true); 
+});
+
+test("start_url is not within app scope, should fail", async () => {
+  const validity = await maniLib.validateSingleField("start_url", "https://www.example.com");
+
+  assert.equal(validity.valid, false);
 });
 
 /*
