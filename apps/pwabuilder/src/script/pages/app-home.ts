@@ -179,7 +179,7 @@ export class AppHome extends LitElement {
         }
         #input-form sl-input::part(base) {
           border: 1px solid #e5e5e5;
-          border-radius: var(--input-radius);
+          border-radius: var(--input-border-radius);
           color: var(--font-color);
           width: 28em;
           font-size: 14px;
