@@ -4,13 +4,10 @@ import { findMissingKeys, isValidJSON } from "./utils/validation-utils";
 export { required_fields, reccommended_fields, optional_fields, validateSingleRelatedApp, validateSingleProtocol } from "./utils/validation-utils";
 import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
 
-export let currentManifest: Manifest | undefined = undefined;
-
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
-        currentManifest = manifest;
 
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
@@ -94,6 +91,6 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
     const validations = await validateRequiredFields(manifest);
 
     return validations.length === 0;
-}   
+}
 
 export * from './interfaces';
