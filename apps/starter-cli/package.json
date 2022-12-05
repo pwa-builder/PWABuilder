@@ -1,0 +1,23 @@
+{
+  "name": "starter-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "bin": {
+    "pwa-starter": "./dist/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "@types/yargs": "^17.0.15",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "yargs": "^17.6.2"
+  }
+}
