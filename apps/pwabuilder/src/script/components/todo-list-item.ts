@@ -29,10 +29,12 @@ export class TodoItem extends LitElement {
         border-radius: 10px;
         padding: .5em;
         margin-bottom: 10px;
+        border: 1px solid transparent;
       }
 
       #item-wrapper:hover {
         cursor: pointer;
+        border: 1px solid #CBCDEB;
       }
 
       #item-wrapper img {

@@ -16,6 +16,7 @@ import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
+import '../components/info-panel';
 
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
@@ -34,6 +35,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
+import { infoPanel, testInfo } from '../utils/manifest-info';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -126,6 +128,9 @@ export class AppReport extends LitElement {
   @state() manifestContext: ManifestContext | undefined;
 
   @state() todoItems: any[] = [];
+
+  @state() infoPanelField: string | undefined;
+  @state() infoPanelData: infoPanel | undefined;
 
   private possible_messages = [
     {"messages": {
@@ -1716,50 +1721,62 @@ export class AppReport extends LitElement {
   }
 
   // Scrolls and Shakes the respective item from a click of an action item
-  async animateItem(e: CustomEvent){
+  async showInfoPanel(e: CustomEvent){
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-    if(e.detail.card === "retest"){
-      this.thingToAdd = e.detail.displayString;
-      this.showConfirmationModal = true;
-      return;
-    } else if(e.detail.field === "Open Manifest Modal"){
-      let frame = this.shadowRoot!.querySelector("manifest-editor-frame");
-      (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
-      return;
-    } else if(e.detail.field === "Open SW Modal"){
-      let frame = this.shadowRoot!.querySelector("sw-selector");
-      (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
-      return;
-    }
+    // if its a manifest field for now
+    if(testInfo[e.detail.field]){
+      this.infoPanelField = e.detail.field;
+      this.infoPanelData = testInfo[e.detail.field];
 
-    let details = this.shadowRoot!.getElementById(e.detail.card);
+      let dialog: any = this.shadowRoot!.querySelector("info-panel")!.shadowRoot!.querySelector(".dialog");
 
-    await (details as any)!.show();
+      await dialog.show()
+      // could specify field if we wanted in analytics
+      // recordPWABuilderProcessStep("info_panel_opened", AnalyticsBehavior.ProcessCheckpoint);
+    } else { // animateItem
+      if(e.detail.card === "retest"){
+        this.thingToAdd = e.detail.displayString;
+        this.showConfirmationModal = true;
+        return;
+      } else if(e.detail.field === "Open Manifest Modal"){
+        let frame = this.shadowRoot!.querySelector("manifest-editor-frame");
+        (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+        return;
+      } else if(e.detail.field === "Open SW Modal"){
+        let frame = this.shadowRoot!.querySelector("sw-selector");
+        (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+        return;
+      }
 
-    details!.scrollIntoView({behavior: "smooth"});
-    
-    let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
+      let details = this.shadowRoot!.getElementById(e.detail.card);
 
-    // The below block is just to get the specific item to animate if a field has more than 1 test.
-    let item: any;
-    if(itemList!.length === 1){
-      item = itemList![0]
-    } else {
-      itemList.forEach((temp: any) => {
-        let textSplit = temp.querySelector('p').innerHTML.split("-->");
-        let text = textSplit[textSplit.length - 1]
-        if(text === e.detail.displayString){
-          item = temp;
-        }
-      })
-    }
+      await (details as any)!.show();
 
-    item!.classList.toggle("animate");
-    setTimeout(() => {
+      details!.scrollIntoView({behavior: "smooth"});
+      
+      let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
+
+      // The below block is just to get the specific item to animate if a field has more than 1 test.
+      let item: any;
+      if(itemList!.length === 1){
+        item = itemList![0]
+      } else {
+        itemList.forEach((temp: any) => {
+          let textSplit = temp.querySelector('p').innerHTML.split("-->");
+          let text = textSplit[textSplit.length - 1]
+          if(text === e.detail.displayString){
+            item = temp;
+          }
+        })
+      }
+
       item!.classList.toggle("animate");
-    }, 1000)
+      setTimeout(() => {
+        item!.classList.toggle("animate");
+      }, 1000)
+    }
   }
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
@@ -1989,7 +2006,7 @@ export class AppReport extends LitElement {
                     .fix=${todo.fix}
                     .card=${todo.card}
                     .displayString=${todo.displayString}
-                    @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+                    @todo-clicked=${(e: CustomEvent) => this.showInfoPanel(e)}>
                   </todo-item>`
               ) : html`<span class="loader"></span>`}
 
@@ -2386,7 +2403,10 @@ export class AppReport extends LitElement {
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+      <info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!}></info-panel>
 
     `;
   }
 }
+
+
