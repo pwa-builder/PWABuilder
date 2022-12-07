@@ -79,6 +79,9 @@ const test_manifest = {
 };
 
 let realWorldManifest = undefined;
+let realWorldURLs = [
+  "https://webboard.app/manifest.json",
+]
 
 describe('Manifest Validation with hardcoded test manifest', async () => {
   /*
@@ -205,39 +208,41 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
 
 });
 
-describe('Manifest Validation with real world manifest', async () => {
-  beforeEach(async () => {
-    // fetch manifest from https://webboard.app/manifest.json with node
-    const response = await fetch('https://webboard.app/manifest.json');
-    realWorldManifest = await response.json();
+realWorldURLs.forEach(url => {
+  describe('Manifest Validation with real world manifest', async () => {
+    beforeEach(async () => {
+      // fetch manifest from https://webboard.app/manifest.json with node
+      const response = await fetch(url);
+      realWorldManifest = await response.json();
+    });
+  
+    it('can validate whole manifest with real world manifest', async () => {
+      assert.doesNotReject(maniLib.validateManifest(realWorldManifest));
+    });
+  
+    // should include missing fields
+    it('includes missing fields', async () => {
+      const data = await maniLib.validateManifest(test_manifest);
+      assert.equal(data.includes("iarc_rating_id"), false);
+    });
+  
+    /*
+      * Test validateSingleField method
+    */
+    it('can validate a single field, should return true', async () => {
+      const validity = await maniLib.validateSingleField("short_name", "Webboard");
+  
+      // validity should be a boolean, and true in this case
+      assert.strictEqual(validity.valid, true);
+    });
+  
+    it('can validate a single field, should return false', async () => {
+      const validity = await maniLib.validateSingleField("theme_color", "black");
+  
+      assert.equal(validity.valid, false);
+      assert.equal(validity.errors[0], 'theme_color should be a valid hex color');
+      assert.equal(1, validity.errors.length);
+    });
+  
   });
-
-  it('can validate whole manifest with real world manifest', async () => {
-    assert.doesNotReject(maniLib.validateManifest(realWorldManifest));
-  });
-
-  // should include missing fields
-  it('includes missing fields', async () => {
-    const data = await maniLib.validateManifest(test_manifest);
-    assert.equal(data.includes("iarc_rating_id"), false);
-  });
-
-  /*
-    * Test validateSingleField method
-  */
-  it('can validate a single field, should return true', async () => {
-    const validity = await maniLib.validateSingleField("short_name", "Webboard");
-
-    // validity should be a boolean, and true in this case
-    assert.strictEqual(validity.valid, true);
-  });
-
-  it('can validate a single field, should return false', async () => {
-    const validity = await maniLib.validateSingleField("theme_color", "black");
-
-    assert.equal(validity.valid, false);
-    assert.equal(validity.errors[0], 'theme_color should be a valid hex color');
-    assert.equal(1, validity.errors.length);
-  });
-
 });
