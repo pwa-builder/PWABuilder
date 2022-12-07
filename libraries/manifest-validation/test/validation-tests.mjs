@@ -80,22 +80,12 @@ const test_manifest = {
 
 let realWorldManifest = undefined;
 
-describe('Manifest Validation', async () => {
-
-  beforeEach(async () => {
-    // fetch manifest from https://webboard.app/manifest.json with node
-    const response = await fetch('https://webboard.app/manifest.json');
-    realWorldManifest = await response.json();
-  });
+describe('Manifest Validation with hardcoded test manifest', async () => {
   /*
   * Test validateManifest method
 */
   it('can validate whole manifest', async () => {
     assert.doesNotReject(maniLib.validateManifest(test_manifest));
-  });
-
-  it('can validate whole manifest with real world manifest', async () => {
-    assert.doesNotReject(maniLib.validateManifest(realWorldManifest));
   });
 
   it('Should reject because of improper JSON', async () => {
@@ -212,5 +202,42 @@ describe('Manifest Validation', async () => {
     assert.rejects(maniLib.validateRequiredFields('{'));
   });
 
+
+});
+
+describe('Manifest Validation with real world manifest', async () => {
+  beforeEach(async () => {
+    // fetch manifest from https://webboard.app/manifest.json with node
+    const response = await fetch('https://webboard.app/manifest.json');
+    realWorldManifest = await response.json();
+  });
+
+  it('can validate whole manifest with real world manifest', async () => {
+    assert.doesNotReject(maniLib.validateManifest(realWorldManifest));
+  });
+
+  // should include missing fields
+  it('includes missing fields', async () => {
+    const data = await maniLib.validateManifest(test_manifest);
+    assert.equal(data.includes("iarc_rating_id"), false);
+  });
+
+  /*
+    * Test validateSingleField method
+  */
+  it('can validate a single field, should return true', async () => {
+    const validity = await maniLib.validateSingleField("short_name", "Webboard");
+
+    // validity should be a boolean, and true in this case
+    assert.strictEqual(validity.valid, true);
+  });
+
+  it('can validate a single field, should return false', async () => {
+    const validity = await maniLib.validateSingleField("theme_color", "black");
+
+    assert.equal(validity.valid, false);
+    assert.equal(validity.errors[0], 'theme_color should be a valid hex color');
+    assert.equal(1, validity.errors.length);
+  });
 
 });
