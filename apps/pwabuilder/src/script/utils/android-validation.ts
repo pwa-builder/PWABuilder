@@ -32,6 +32,7 @@ export interface AndroidPackageOptions  extends PackageOptions {
   iconUrl: string;
   includeSourceCode: boolean;
   isChromeOSOnly: boolean;
+  isMetaQuest: boolean;
   launcherName: string;
   maskableIconUrl: string | null;
   monochromeIconUrl: string | null;
@@ -60,6 +61,8 @@ export interface AndroidPackageOptions  extends PackageOptions {
   startUrl: string;
   themeColor: string;
   webManifestUrl: string;
+  fullScopeUrl: string;
+  minSdkVersion?: number;
 }
 
 /**

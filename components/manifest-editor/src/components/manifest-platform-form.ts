@@ -911,7 +911,7 @@ export class ManifestPlatformForm extends LitElement {
             <div class="field-header">
               <h3>IARC Rating ID</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"
                 target="_blank"
                 rel="noopener"
               >
@@ -928,7 +928,7 @@ export class ManifestPlatformForm extends LitElement {
             <div class="field-header">
               <h3>Prefer Related Applications</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/prefer_related_applications"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean"
                 target="_blank"
                 rel="noopener"
               >
@@ -950,7 +950,7 @@ export class ManifestPlatformForm extends LitElement {
             <div class="field-header">
               <h3>Related Applications</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array"
                 target="_blank"
                 rel="noopener"
               >
@@ -987,7 +987,7 @@ export class ManifestPlatformForm extends LitElement {
             <div class="field-header">
               <h3>Shortcuts</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"
                 target="_blank"
                 rel="noopener"
               >
@@ -1023,7 +1023,7 @@ export class ManifestPlatformForm extends LitElement {
             <div class="field-header">
               <h3>Protocol Handlers</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"
                 target="_blank"
                 rel="noopener"
               >
@@ -1057,7 +1057,7 @@ export class ManifestPlatformForm extends LitElement {
             <div class="field-header">
               <h3>Categories</h3>
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/categories"
+                href="https://docs.pwabuilder.com/#/builder/manifest?id=categories-array"
                 target="_blank"
                 rel="noopener"
               >

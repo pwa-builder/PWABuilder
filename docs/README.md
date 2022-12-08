@@ -4,13 +4,40 @@
 
 Welcome to the new documentation for the PWABuilder tooling suite! 
 
-In these docs, you can find guides, tips, and info for three separate but related PWABuilder tools:
+The suite has three main tools:
 
-* ***PWA Starter:*** A starter template for building a brand new PWA
-* ***PWABuilder Studio:*** A Visual Studio Code Extension for developing PWAs
-* ***PWABuilder:*** A packaging tool for preparing PWAs for applications stores
+<div class="home-nav-container">
+   <sl-card class="home-nav-card">
+         <h3>
+            PWA Starter
+         </h3>
+         <body>
+           Build a new progressive app with the development-ready PWA Starter.
+         </body>
+      <sl-button href="#/starter/quick-start">Go to Starter Docs</sl-button>
+   </sl-card>
+   <sl-card class="home-nav-card">
+         <h3>
+            PWABuilder
+         </h3>
+         <body>
+         Package progressive web apps for native app stores with PWABuilder.
+         </body>
+      <sl-button href="#/builder/quick-start">Go to Builder Docs</sl-button>
+   </sl-card>
+   
+   <sl-card class="home-nav-card">
+         <h3>
+            PWABuilder Studio
+         </h3>
+         <body>
+            Ease PWA development with the PWABuilder Studio VS Code extension.
+         </body>
+      <sl-button href="#/studio/quick-start">Go to Studio Docs</sl-button>
+   </sl-card>
+</div>
 
-If you're new to the PWABuilder suite, keep reading for a quick overview for each of our tools.
+If you'd like a more in-depth overview of each tool, continue reading below.
 
 !> Never worked with progressive web apps before? Jump right into our [***Introduction to Progressive Web Apps***](/home/pwa-intro)
 
