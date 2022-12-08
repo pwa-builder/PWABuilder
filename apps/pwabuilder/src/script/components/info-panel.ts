@@ -34,9 +34,9 @@ export class InfoPanel extends LitElement {
       .dialog {
         --footer-spacing: 0;
       }
-      .dialog::part(body){
+      /* .dialog::part(body){
         padding-top: 0;
-      }
+      } */
       .dialog::part(title){
         display: none;
       }
@@ -92,6 +92,14 @@ export class InfoPanel extends LitElement {
       .answer {
         font-size: 16px;
         margin: 0;
+      }
+
+      .back-button {
+        border: none;
+        background-color: transparent;
+      }
+      .back-button:hover {
+        cursor: pointer;
       }
     `;
   }
@@ -171,7 +179,7 @@ export class InfoPanel extends LitElement {
           </div>` :
           html`
             <div class="editor-wrapper">
-              <button type="button" @click=${() => this.showEditor()}> <-- </button>
+              <button type="button" class="back-button" @click=${() => this.showEditor()}> <img src="/assets/new/back_for_package_form.svg" alt="back info page" /> </button>
               <h1 class="title">Edit your Manifest</h1>
               <pwa-manifest-editor 
                 .initialManifest=${this.manifest} 
