@@ -501,8 +501,6 @@ export class ManifestSettingsForm extends LitElement {
 
   decideFocus(field: string){
     let decision = this.focusOn === field;
-    //let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
-    //(input as HTMLElement)!.focus();
     return {focus: decision}
   }
 
@@ -529,7 +527,7 @@ export class ManifestSettingsForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The URL that loads when your PWA starts</p>
-            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("start_url"))}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -548,7 +546,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The text direction of your PWA</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("dir"))}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -571,7 +569,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>Which URLs can load within your app</p>
-            <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("scope"))}></sl-input>
           </div>
           
           <div class="form-field">
@@ -591,7 +589,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("lang"))}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -614,7 +612,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("orientation"))}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -635,7 +633,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("display"))}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
