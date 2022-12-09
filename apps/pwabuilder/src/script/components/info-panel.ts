@@ -186,6 +186,7 @@ export class InfoPanel extends LitElement {
                 .manifestURL=${this.manifestURL} 
                 .baseURL=${this.baseURL}
                 .startingTab=${this.info!.location}
+                .focusOn=${this.field}
               ></pwa-manifest-editor>
             </div>
           ` 

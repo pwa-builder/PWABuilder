@@ -57,6 +57,8 @@ export class PWAManifestEditor extends LitElement {
 
   @property({type: String}) startingTab: string = "info";
 
+  @property({type: String}) focusOn: string = "";
+
   @state() manifest: Manifest = {};
   @state() selectedTab: string = "info";
 
@@ -252,7 +254,7 @@ export class PWAManifestEditor extends LitElement {
         <!-- <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
         <sl-tab slot="nav" panel="code">Code</sl-tab>
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-info-form></sl-tab-panel>
-        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-settings-form></sl-tab-panel>
+        <sl-tab-panel name="settings"><manifest-settings-form .focusOn=${this.focusOn} .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-settings-form></sl-tab-panel>
         <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-platform-form></sl-tab-panel>
         <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-icons-form></sl-tab-panel>
         <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-screenshots-form></sl-tab-panel>

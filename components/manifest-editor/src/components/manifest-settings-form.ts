@@ -4,6 +4,7 @@ import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
+import {classMap} from 'lit/directives/class-map.js';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
@@ -25,7 +26,10 @@ export class ManifestSettingsForm extends LitElement {
   private validationPromise: Promise<void> | undefined;
   private errorCount: number = 0;
 
+  @property({type: String}) focusOn: string = "";
+
   @state() activeOverrideItems: string[] = [];
+
 
   static get styles() {
     return css`
@@ -189,6 +193,11 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 16px;
         line-height: 16px;
         margin-left: .25em;
+      }
+
+      .focus {
+        border: 5px solid green;
+        border-radius: 6px;
       }
 
       @media(max-width: 765px){
@@ -490,6 +499,13 @@ export class ManifestSettingsForm extends LitElement {
     }
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    //let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+    //(input as HTMLElement)!.focus();
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
@@ -643,7 +659,7 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p>Used to determine the preferred display mode</p>
             <div id="override-list">
-            <sl-details summary="Click to edit display override" data-field="display_override">
+            <sl-details summary="Click to edit display override" data-field="display_override" class=${classMap(this.decideFocus("display_override"))}>
               <sl-menu>
                 <sl-menu-label>Active Override Items</sl-menu-label>
                 ${this.activeOverrideItems.length != 0 ?
