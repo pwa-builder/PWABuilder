@@ -144,7 +144,7 @@ export async function generateManifest(skipPrompts?: boolean) {
         "\n" +
         "]," +
         "\n" +
-        '"prefer_related_applications": "${15|false, true|}",' +
+        '"prefer_related_applications": ${15|false, true|},' +
         "\n" +
         '"shortcuts": [' +
         "\n" +
