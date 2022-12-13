@@ -17,5 +17,8 @@
   "devDependencies": {
     "typescript": "^4.6.3",
     "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.0"
   }
 }

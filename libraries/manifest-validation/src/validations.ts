@@ -1,5 +1,6 @@
-import { Manifest, singleFieldValidation, Validation } from "./interfaces";
-import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
+import { currentManifest } from ".";
+import { Icon, Manifest, singleFieldValidation, Validation } from "./interfaces";
+import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validProtocols } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -243,6 +244,60 @@ export const maniTests: Array<Validation> = [
             value && typeof value === "string" && value.length > 0
     },
     {
+        infoString: "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
+        displayString: "start_url is valid",
+        category: "required",
+        member: "start_url",
+        defaultValue: "/",
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
+        errorString: "start_url is required and must be a string with a length > 0, must be a valid URL, and must be relative to the app scope (if specified)",
+        quickFix: true,
+        test: (value: string) => {
+            if (value && typeof value === "string" && value.length > 0) {
+                try {
+                    // get current manifest
+                    const currentMani = currentManifest;
+
+                    const url = value;
+                    console.log("test url", url);
+
+                    // is url relative to scope
+                    let relativeToScope = false;
+                    if (currentMani && currentMani.scope) {
+                        console.log("test scope", currentMani?.scope);
+                        // is url relative to currentMani.scope
+                        const scopeUrl = currentMani.scope;
+                        console.log("scope url", scopeUrl);
+
+                        if (url.startsWith(scopeUrl)) {
+                          relativeToScope = true;
+                        }
+                        else {
+                            relativeToScope = false;
+                        }
+                    }
+                    else if (currentMani && !currentMani.scope && (url.startsWith("/") || url.startsWith("https"))) {
+                        relativeToScope = true;
+                    }
+                    else {
+                        relativeToScope = false;
+                    }
+
+                    return relativeToScope;
+                    
+                }
+                catch {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+
+    },
+    {
         infoString: "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
         displayString: "Manifest has display field",
         category: "recommended",
@@ -366,6 +421,31 @@ export const maniTests: Array<Validation> = [
                 else {
                     return true;
                 }
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
+        displayString: "Shortcuts have atleast a 96x96 icon",
+        category: "recommended",
+        member: "shortcuts",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
+        errorString: "shortcuts should have atleast one icon with a size of 96x96",
+        quickFix: false,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+            if (isArray === true) {
+                const has96x96Icon = value.some((shortcut) => {
+                    return shortcut.icons.some((icon: Icon) => {
+                        return icon.sizes === "96x96";
+                    });
+                });
+                return has96x96Icon;
             }
             else {
                 return false;
@@ -510,6 +590,36 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value);
 
             return isArray;
+        }
+    },
+    {
+        member: "protocol_handlers",
+        displayString: "Protocol handlers field has valid protocol",
+        infoString: "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
+        quickFix: true,
+        errorString: "protocol_handlers should all be relative URLs that are within the scope of the app, should have a url and a valid protocol",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            if (isArray) {
+                const allValid = value.every((protocolHandler: any) => {
+                    const isRelativeUrl = protocolHandler.url && protocolHandler.url.startsWith("/");
+                    const hasProtocol = protocolHandler.protocol && protocolHandler.protocol.length > 0;
+                    const isProtocolValid = hasProtocol && validProtocols.includes(protocolHandler.protocol);
+                    const hasUrl = protocolHandler.url && protocolHandler.url.length > 0;
+
+                    return isRelativeUrl && hasProtocol && hasUrl && isProtocolValid;
+                });
+
+                return allValid;
+            }
+            else {
+                return false;
+            }
         }
     },
     {

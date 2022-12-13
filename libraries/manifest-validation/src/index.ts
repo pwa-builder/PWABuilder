@@ -1,18 +1,20 @@
 import { Manifest, singleFieldValidation, Validation } from "./interfaces";
 export { Manifest, Validation, singleFieldValidation } from "./interfaces";
 import { findMissingKeys, isValidJSON } from "./utils/validation-utils";
-export { required_fields, reccommended_fields, optional_fields, validateSingleRelatedApp, validateSingleProtocol } from "./utils/validation-utils";
+export { required_fields, reccommended_fields, optional_fields, validateSingleRelatedApp } from "./utils/validation-utils";
 import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
+
+export let currentManifest: Manifest | undefined;
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
-
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
         }
 
+        currentManifest = manifest;
         let data = await loopThroughKeys(manifest);
 
         resolve(data);
