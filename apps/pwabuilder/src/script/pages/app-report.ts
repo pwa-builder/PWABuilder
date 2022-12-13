@@ -4,7 +4,6 @@ import { getManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
-  largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
 } from '../utils/css/breakpoints';

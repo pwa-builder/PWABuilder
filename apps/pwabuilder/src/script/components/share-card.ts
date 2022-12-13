@@ -261,7 +261,7 @@ export class ShareCard extends LitElement {
     }
   };
 
-  hideDialog(e: any){
+  hideDialog(){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     dialog!.hide();
   }
@@ -274,7 +274,7 @@ export class ShareCard extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${() => this.hideDialog()} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="score-image">
@@ -290,7 +290,7 @@ export class ShareCard extends LitElement {
               </div>
             </div>
             <div id="share-content">        
-              <button type="button" id="cancel-button" class="standard-button" @click=${(e:any) => this.hideDialog(e)}>Cancel</button>
+              <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
               <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img src="/assets/download-icon.png" alt="Download image button icon"/>  Download Image</button>
               <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img src="/assets/modal-share-icon.png" alt="Share image button icon"/>  Share</button>                    
             </div>
