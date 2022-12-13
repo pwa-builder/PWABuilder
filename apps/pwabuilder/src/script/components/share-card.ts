@@ -101,6 +101,9 @@ export class ShareCard extends LitElement {
         font-weight: bold;
         border-radius: 50px;
       }
+      .standard-button:hover {
+        cursor: pointer;
+      }
       #share-button {
         color: white;
         background-color: #292C3A;
@@ -218,7 +221,7 @@ export class ShareCard extends LitElement {
           this.downloadImage(dataUrl, `${this.siteName}_pwabuilder_score.png`)
         } else if (shareOption === "share"){
           const file = this.dataURLtoFile(dataUrl, `${this.siteName}_pwabuilder_score.png`);
-          this.shareFile(file, "Title", "https://co-aid.in");
+          this.shareFile(file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!");
         } else {  
           return;
         }
