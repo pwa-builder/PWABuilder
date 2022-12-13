@@ -170,6 +170,28 @@ export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolea
   }
 }
 
+function isValidRelativeURL(str: string){
+  var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+  return !!pattern.test(str);
+}
+
+export function validateSingleProtocol(proto: any){
+  let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
+  if(!validProtocol){
+    return "protocol";
+  }
+
+  // i guess more importantly we should check if its in the scope of the site.
+
+  let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
+
+  if(!validURL){
+    return "url";
+  }
+
+  return "valid";
+}
+
 
 
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
