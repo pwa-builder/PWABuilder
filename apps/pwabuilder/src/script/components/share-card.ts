@@ -291,8 +291,8 @@ export class ShareCard extends LitElement {
             </div>
             <div id="share-content">        
               <button type="button" id="cancel-button" class="standard-button" @click=${(e:any) => this.hideDialog(e)}>Cancel</button>
-              <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img src="/assets/download-icon.png"/>  Download Image</button>
-              <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img src="/assets/modal-share-icon.png"/>  Share</button>                    
+              <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img src="/assets/download-icon.png" alt="Download image button icon"/>  Download Image</button>
+              <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img src="/assets/modal-share-icon.png" alt="Share image button icon"/>  Share</button>                    
             </div>
           </div>
         </div>
