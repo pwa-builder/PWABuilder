@@ -215,9 +215,9 @@ export class ShareCard extends LitElement {
     htmlToImage.toJpeg(image!, { quality: 0.95 })
       .then((dataUrl) => {
         if (shareOption === "download"){
-          this.downloadImage(dataUrl, "score.png")
+          this.downloadImage(dataUrl, `${this.siteName}_pwabuilder_score.png`)
         } else if (shareOption === "share"){
-          const file = this.dataURLtoFile(dataUrl, "thanku_poster.png");
+          const file = this.dataURLtoFile(dataUrl, `${this.siteName}_pwabuilder_score.png`);
           this.shareFile(file, "Title", "https://co-aid.in");
         } else {  
           return;
