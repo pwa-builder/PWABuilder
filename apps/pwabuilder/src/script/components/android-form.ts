@@ -179,6 +179,15 @@ export class AndroidForm extends AppPackageFormBase {
     this.requestUpdate();
   }
 
+  isMetaQuestChanged(checked: boolean) {
+    this.packageOptions.isMetaQuest = checked;
+    if (checked) {
+      this.packageOptions.minSdkVersion = 23;
+    } else {
+      delete this.packageOptions.minSdkVersion;
+    }
+  }
+
   androidSigningKeyUploaded(event: any) {
     const filePicker = event as HTMLInputElement;
     if (filePicker && filePicker.files && filePicker.files.length > 0) {
@@ -657,6 +666,22 @@ export class AndroidForm extends AppPackageFormBase {
                     })}
                   </div>
                 </div>` : html``}
+
+                <div class="form-group">
+                  <label>
+                    ${localeStrings.text.android.titles.metaquest}
+                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your Android package will be compatible with Meta Quest devices.',
+                      inputId: 'metaquest-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.isMetaQuest === true,
+                      inputHandler: (_, checked) => this.isMetaQuestChanged(checked)
+                    })}
+                  </div>
+                </div>
 
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.source_code}</label>
