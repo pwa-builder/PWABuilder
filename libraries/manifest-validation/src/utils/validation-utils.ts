@@ -145,7 +145,7 @@ export function validateSingleRelatedApp(ra: RelatedApplication){
   return "valid";
 }
 
-function isValidURL(str: string) {
+export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/14582229 but removed the ip address section
   var pattern = new RegExp(
     '^((https?:)?\\/\\/)?' + // protocol
@@ -168,28 +168,6 @@ export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolea
   else {
       return false;
   }
-}
-
-function isValidRelativeURL(str: string){
-  var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
-  return !!pattern.test(str);
-}
-
-export function validateSingleProtocol(proto: any){
-  let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
-  if(!validProtocol){
-    return "protocol";
-  }
-
-  // i guess more importantly we should check if its in the scope of the site.
-
-  let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
-
-  if(!validURL){
-    return "url";
-  }
-
-  return "valid";
 }
 
 

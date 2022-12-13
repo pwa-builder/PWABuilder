@@ -1,6 +1,6 @@
 import { Manifest, singleFieldValidation, Validation } from "./interfaces";
 export { Manifest, Validation, singleFieldValidation } from "./interfaces";
-import { findMissingKeys, isValidJSON } from "./utils/validation-utils";
+import { findMissingKeys, isValidJSON, isValidURL, validProtocols } from "./utils/validation-utils";
 export { required_fields, reccommended_fields, optional_fields, validateSingleRelatedApp } from "./utils/validation-utils";
 import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
 
@@ -94,5 +94,27 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
 
     return validations.length === 0;
 }
+
+function isValidRelativeURL(str: string){
+    var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+    return !!pattern.test(str);
+  }
+  
+  export function validateSingleProtocol(proto: any){
+    let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
+    if(!validProtocol){
+      return "protocol";
+    }
+  
+    // i guess more importantly we should check if its in the scope of the site.
+  
+    let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
+  
+    if(!validURL){
+      return "url";
+    }
+  
+    return "valid";
+  }
 
 export * from './interfaces';
