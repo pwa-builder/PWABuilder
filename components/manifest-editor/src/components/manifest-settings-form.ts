@@ -196,7 +196,8 @@ export class ManifestSettingsForm extends LitElement {
       }
 
       .focus {
-        border: 5px solid green;
+        outline: 5px solid #45b63f6f;
+        border-color: #45b63fac;
         border-radius: 6px;
       }
 

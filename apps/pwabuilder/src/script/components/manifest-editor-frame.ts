@@ -13,6 +13,8 @@ import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
+import { getManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
+import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
@@ -20,6 +22,7 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
+  @state() initME: boolean = false;
   @property({type: Boolean}) isGenerated: boolean = false;
 
   static get styles() {
@@ -218,7 +221,13 @@ export class ManifestEditorFrame extends LitElement {
   // grabs the manifest, manifest url and site base url on load
   connectedCallback(): void {
     super.connectedCallback();
-    this.manifest = getManifestContext().manifest;
+
+    if(!this.initME){
+      this.manifest = getManifestContext().manifest;
+      this.initME = true;
+    } else {
+      this.manifest = getManifestEditorManifest();
+    }
     this.manifestURL = getManifestContext().manifestUrl;
     this.baseURL = sessionStorage.getItem("current_url")!;
   }
@@ -239,6 +248,12 @@ export class ManifestEditorFrame extends LitElement {
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
+
+      let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as PWAManifestEditor)
+      if(editor && editor!.manifest){
+        updateManifestEditorManifest(editor.manifest);
+      }
+      
       await dialog!.hide();
       recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";

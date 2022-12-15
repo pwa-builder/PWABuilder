@@ -9,6 +9,7 @@ import '@pwabuilder/manifest-editor';
 import { Manifest } from '@pwabuilder/manifest-validation';
 import { getManifestContext } from '../services/app-info';
 import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
+import { getManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
 
 @customElement('info-panel')
 export class InfoPanel extends LitElement {
@@ -19,6 +20,7 @@ export class InfoPanel extends LitElement {
   @state() manifest: Manifest | undefined;
   @state() manifestURL: string | undefined;
   @state() baseURL: string | undefined;
+  @state() initME: boolean = false;
   /*
   export interface infoPanel {
     description: string;
@@ -111,7 +113,12 @@ export class InfoPanel extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     let context = getManifestContext();
-    this.manifest = context.manifest;
+    if(!this.initME){
+      this.manifest = context.manifest;
+      this.initME = true;
+    } else {
+      this.manifest = getManifestEditorManifest();
+    }
     this.manifestURL = context.manifestUrl;
     this.baseURL = context.siteUrl;
   }
@@ -130,11 +137,9 @@ export class InfoPanel extends LitElement {
       this.infoShowing = true;
 
       // save manifest state
-      let editor = (this.shadowRoot!.querySelector('pwa-manifest-editor') as PWAManifestEditor);
-      if(editor && editor.manifest != null){
-        let editedManifest = editor.manifest;
-        if(editedManifest) console.log(editedManifest);
-        // bubble event so that the other ME knows that it changed? 
+      let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as PWAManifestEditor)
+      if(editor && editor!.manifest){
+        updateManifestEditorManifest(editor.manifest);
       }
       
       // hide dialog and record analytics

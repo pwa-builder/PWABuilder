@@ -227,7 +227,8 @@ export class ManifestPlatformForm extends LitElement {
       }
 
       .focus {
-        border: 5px solid green;
+        outline: 5px solid #45b63f6f;
+        border-color: #45b63fac;
         border-radius: 6px;
       }
 
@@ -913,6 +914,11 @@ export class ManifestPlatformForm extends LitElement {
 
   decideFocus(field: string){
     let decision = this.focusOn === field;
+    /* let spot = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+    if(decision && spot){
+      console.log(":scrolling")
+      spot!.scrollIntoView({behavior: "smooth"})
+    } */
     return {focus: decision}
   }
 

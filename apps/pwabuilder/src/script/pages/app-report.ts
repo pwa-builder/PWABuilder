@@ -35,7 +35,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
-import { infoPanel, testInfo } from '../utils/manifest-info';
+import { infoPanel, manifest_fields } from '../utils/manifest-info';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1726,9 +1726,9 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     // if its a manifest field for now
-    if(testInfo[e.detail.field]){
+    if(manifest_fields[e.detail.field]){
       this.infoPanelField = e.detail.field;
-      this.infoPanelData = testInfo[e.detail.field];
+      this.infoPanelData = manifest_fields[e.detail.field];
 
       let dialog: any = this.shadowRoot!.querySelector("info-panel")!.shadowRoot!.querySelector(".dialog");
 
@@ -2403,7 +2403,8 @@ export class AppReport extends LitElement {
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
-      <info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!}></info-panel>
+      ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!}></info-panel>`}
+      
 
     `;
   }
