@@ -247,7 +247,7 @@ export class ComapniesPackaged extends LitElement {
             </button>` : 
             
         html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}> 
-              <sl-icon name="pause-fill" aria-label="Pause apps scrolling button"></sl-icon>
+              <sl-icon name="pause-fill" aria-label="Pause apps scrolling button" role="button"></sl-icon>
             </button>`}
     </div>
     `;
