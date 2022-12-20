@@ -101,6 +101,9 @@ export class ShareCard extends LitElement {
         font-weight: bold;
         border-radius: 50px;
       }
+      .standard-button:hover {
+        cursor: pointer;
+      }
       #share-button {
         color: white;
         background-color: #292C3A;
@@ -173,7 +176,17 @@ export class ShareCard extends LitElement {
 
       ${smallBreakPoint(css`
         #score-image {
-          background-image: url("/assets/share_score_backdrop_mobile.png");
+          min-width: 100%;
+          min-height: auto;
+          background: url("/assets/share_score_backdrop_mobile.png") center center no-repeat;
+          background-size: cover;
+          background-attachment: scroll;
+          -webkit-background: url("/assets/share_score_backdrop_mobile.png") center center cover no-repeat;
+          -webkit-background-size: cover;
+          -webkit-background-attachment: scroll;
+          -moz-background: url("/assets/share_score_backdrop_mobile.png") center center cover no-repeat; 
+          -moz-background-size: cover;
+          -moz-background-attachment: scroll;
         }
         .standard-button {
           width: 133px;
@@ -215,10 +228,10 @@ export class ShareCard extends LitElement {
     htmlToImage.toJpeg(image!, { quality: 0.95 })
       .then((dataUrl) => {
         if (shareOption === "download"){
-          this.downloadImage(dataUrl, "score.png")
+          this.downloadImage(dataUrl, `${this.siteName}_pwabuilder_score.png`)
         } else if (shareOption === "share"){
-          const file = this.dataURLtoFile(dataUrl, "thanku_poster.png");
-          this.shareFile(file, "Title", "https://co-aid.in");
+          const file = this.dataURLtoFile(dataUrl, `${this.siteName}_pwabuilder_score.png`);
+          this.shareFile(file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!");
         } else {  
           return;
         }
