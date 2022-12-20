@@ -176,7 +176,17 @@ export class ShareCard extends LitElement {
 
       ${smallBreakPoint(css`
         #score-image {
-          background-image: url("/assets/share_score_backdrop_mobile.png");
+          min-width: 100%;
+          min-height: auto;
+          background: url("/assets/share_score_backdrop_mobile.png") center center no-repeat;
+          background-size: cover;
+          background-attachment: scroll;
+          -webkit-background: url("/assets/share_score_backdrop_mobile.png") center center cover no-repeat;
+          -webkit-background-size: cover;
+          -webkit-background-attachment: scroll;
+          -moz-background: url("/assets/share_score_backdrop_mobile.png") center center cover no-repeat; 
+          -moz-background-size: cover;
+          -moz-background-attachment: scroll;
         }
         .standard-button {
           width: 133px;
