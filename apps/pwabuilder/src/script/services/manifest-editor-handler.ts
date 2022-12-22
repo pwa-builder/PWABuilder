@@ -1,11 +1,12 @@
 import { Manifest } from "@pwabuilder/manifest-validation"
 
 let initialManifest: Manifest = {};
-
+export let initialized: Boolean = false;
 let editedManifest: Manifest = {};
 
 export function initManifestEditorManifest(manifest: Manifest){
   initialManifest = manifest;
+  initialized = true;
 }
 
 export function updateManifestEditorManifest(manifest: Manifest) {
@@ -13,6 +14,5 @@ export function updateManifestEditorManifest(manifest: Manifest) {
 }
 
 export function getManifestEditorManifest() {
-  console.log(initialManifest)
   return editedManifest ?? initialManifest;
 }

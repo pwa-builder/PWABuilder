@@ -13,7 +13,7 @@ import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
-import { getManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
+import { getManifestEditorManifest, initialized, initManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
 import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
 
 @customElement('manifest-editor-frame')
@@ -22,7 +22,6 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
-  @state() initME: boolean = false;
   @property({type: Boolean}) isGenerated: boolean = false;
 
   static get styles() {
@@ -221,15 +220,19 @@ export class ManifestEditorFrame extends LitElement {
   // grabs the manifest, manifest url and site base url on load
   connectedCallback(): void {
     super.connectedCallback();
+    let context = getManifestContext();
+    this.manifestURL = context.manifestUrl;
+    this.baseURL = context.siteUrl;
+  }
 
-    if(!this.initME){
-      this.manifest = getManifestContext().manifest;
-      this.initME = true;
+  grabCorrectManifest() {
+    let context = getManifestContext();
+    if(!initialized){
+      this.manifest = context.manifest;
+      initManifestEditorManifest(this.manifest);
     } else {
       this.manifest = getManifestEditorManifest();
     }
-    this.manifestURL = getManifestContext().manifestUrl;
-    this.baseURL = sessionStorage.getItem("current_url")!;
   }
 
   // downloads manifest and tells the site they need to retest to see new manifest changes
@@ -292,7 +295,7 @@ export class ManifestEditorFrame extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => this.grabCorrectManifest()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">

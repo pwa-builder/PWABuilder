@@ -9,7 +9,8 @@ import '@pwabuilder/manifest-editor';
 import { Manifest } from '@pwabuilder/manifest-validation';
 import { getManifestContext } from '../services/app-info';
 import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
-import { getManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
+import { getManifestEditorManifest, initialized, initManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
+import { PropertyValueMap } from '@lit/reactive-element';
 
 @customElement('info-panel')
 export class InfoPanel extends LitElement {
@@ -113,14 +114,19 @@ export class InfoPanel extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     let context = getManifestContext();
-    if(!this.initME){
+    this.manifestURL = context.manifestUrl;
+    this.baseURL = context.siteUrl;
+  }
+  
+  grabCorrectManifest() {
+    //document.body.style.height = "100vh"
+    let context = getManifestContext();
+    if(!initialized){
       this.manifest = context.manifest;
-      this.initME = true;
+      initManifestEditorManifest(this.manifest);
     } else {
       this.manifest = getManifestEditorManifest();
     }
-    this.manifestURL = context.manifestUrl;
-    this.baseURL = context.siteUrl;
   }
 
   capFirstLetter(field: string) {
@@ -156,7 +162,7 @@ export class InfoPanel extends LitElement {
   render() {
     return html`
     
-        <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+        <sl-dialog class="dialog" @sl-show=${() => this.grabCorrectManifest()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         ${this.infoShowing ? 
         html`  
           <div class="title-block"> 
