@@ -13,7 +13,7 @@ export class ShareCard extends LitElement {
   @property() manifestData = "";
   @property() swData = "";
   @property() securityData = "";
-  @property() siteName = "";
+  @property() siteUrl = "";
 
   
 
@@ -179,10 +179,10 @@ export class ShareCard extends LitElement {
           width: 133px;
         }
         #cancel-button {
-          display: block;
+          display: none;
         }
         #download-button {
-          display: none;
+          display: block;
         }
       `)}
     `
@@ -215,10 +215,10 @@ export class ShareCard extends LitElement {
     htmlToImage.toJpeg(image!, { quality: 0.95 })
       .then((dataUrl) => {
         if (shareOption === "download"){
-          this.downloadImage(dataUrl, "score.png")
+          this.downloadImage(dataUrl, `${this.siteUrl}_pwabuilder_score.png`)
         } else if (shareOption === "share"){
-          const file = this.dataURLtoFile(dataUrl, "thanku_poster.png");
-          this.shareFile(file, "Title", "https://co-aid.in");
+          const file = this.dataURLtoFile(dataUrl, `${this.siteUrl}_pwabuilder_score.png`);
+          this.shareFile(file, `${this.siteUrl} PWABuilder report card score`, "Check out my report card scores from PWABuilder!");
         } else {  
           return;
         }
@@ -279,7 +279,7 @@ export class ShareCard extends LitElement {
           <div id="frame-content">
             <div id="score-image">
               <div id="site-name">
-                ${this.siteName}
+                ${this.siteUrl}
               </div>
               <div id="rings" aria-label="progress ring displays">
                 ${[
