@@ -75,7 +75,7 @@ Enabling window controls overlay gives you access to this space:
 
 The area to the right of the controls becomes customizable.
 
-### How to Enabled and Use Window Controls Overlay
+### How to Enable and Use Window Controls Overlay
 
 To enable window controls overlay, set the value of `display_override` in your web app manifest like this:
 
