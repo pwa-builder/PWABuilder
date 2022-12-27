@@ -8,7 +8,7 @@ This article will showcase how to enable various native functionality for your p
 
 ## Shortcuts 
 
-Application shorcuts allow your user to directly navigate to certain parts of your progressive web app directly from the operating system. When shorctuts are enabled, they can be accessed through your application's context menu. In Windows, the context menu can be opened by right-clicking on your app's icon.
+Application shortcuts allow your user to directly navigate to certain parts of your progressive web app directly from the operating system. When shortctuts are enabled, they can be accessed through your application's context menu. In Windows, the context menu can be opened by right-clicking on your app's icon.
 
 A context menu with shortcuts will look like this:
 
