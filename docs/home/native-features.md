@@ -65,7 +65,7 @@ In this example, we've added a few extra fields to our shorcut. `short_name` pro
 
 !> Window Controls Overlay will only work with certain browsers, such as Edge and Chrome.
 
-Enabling the windows control overlay feature allows you to customize the space next to the window controls (minimize, close, etc.) with CSS and Javascript. This can give you more control over how your app is presented in a native context after it is installed.
+Enabling the window controls overlay feature allows you to customize the space next to the window controls (minimize, close, etc.) with CSS and Javascript. This can give you more control over how your app is presented in a native context after it is installed.
 
 Enabling window controls overlay gives you access to this space: 
 
