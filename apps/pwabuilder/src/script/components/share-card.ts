@@ -74,12 +74,15 @@ export class ShareCard extends LitElement {
         background-size: cover;
         background-repeat: no-repeat;
       }
-      #site-name {
-        padding: 15px;
+      #site-url {
+        padding: 15px 15px 0px;
         font-weight: bold;
         font-size: 24px;
-        line-height: 20px;
-        color: #292C3A;
+        color: rgb(41, 44, 58);
+        line-height: 1em;
+        max-height: 3em;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       #share-content {
         display: flex;
@@ -183,6 +186,9 @@ export class ShareCard extends LitElement {
         }
         #download-button {
           display: block;
+          flex-direction: row;
+          align-items: center;
+          padding: 0px 15px;  
         }
       `)}
     `
@@ -278,7 +284,7 @@ export class ShareCard extends LitElement {
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="score-image">
-              <div id="site-name">
+              <div id="site-url">
                 ${this.siteUrl}
               </div>
               <div id="rings" aria-label="progress ring displays">

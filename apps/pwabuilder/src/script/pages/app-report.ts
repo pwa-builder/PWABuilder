@@ -2589,7 +2589,7 @@ export class AppReport extends LitElement {
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${JSON.stringify(this.decideColor("manifest"))}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${JSON.stringify(this.decideColor("sw"))}/Service Worker`}
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${JSON.stringify(this.decideColor("sec"))}/Security`}
-        .siteName=${this.appCard.siteName}
+        .siteUrl=${this.appCard.siteUrl}
       >
       </share-card>
       <publish-pane></publish-pane>
