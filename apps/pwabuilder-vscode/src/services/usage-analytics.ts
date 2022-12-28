@@ -1,23 +1,16 @@
-import { setup, defaultClient } from 'applicationinsights';
+import TelemetryReporter from '@vscode/extension-telemetry';
 import { getFlag } from '../flags';
 
-// urls packaged during this session
-const packagedURLs: Array<string> = [];
+let reporter: TelemetryReporter;
 
 export function initAnalytics() {
   try {
     // check flag first
     if (getFlag("analytics") === true) {
-      setup("#{ANALYTICS_CODE}#")
-      .setAutoDependencyCorrelation(false)
-      .setAutoCollectRequests(false)
-      .setAutoCollectPerformance(false, false)
-      .setAutoCollectExceptions(true)
-      .setAutoCollectDependencies(false)
-      .setAutoCollectConsole(false)
-      .setUseDiskRetryCaching(false)
-      .setSendLiveMetrics(false)
-      .start();
+      // key is not sensitive 
+      // https://www.npmjs.com/package/@vscode/extension-telemetry#:~:text=Follow%20guide%20to%20set%20up%20Application%20Insights%20in%20Azure%20and%20get%20your%20key.%20Don%27t%20worry%20about%20hardcoding%20it%2C%20it%20is%20not%20sensitive.
+      reporter = new TelemetryReporter("f6d86710-4415-4bd6-a2e0-e95bbdfe51be");
+      return reporter;
     }
   }
   catch (err) {
@@ -25,19 +18,11 @@ export function initAnalytics() {
   }
 }
 
-export function getAnalyticsClient() {
-  return defaultClient;
-}
-
 // function to trackEvent
 export function trackEvent(name: string, properties: any) {
   try {
     if (getFlag("analytics") === true) {
-
-      defaultClient.trackEvent({ 
-        name,  
-        properties
-      });
+      reporter.sendTelemetryEvent(name, properties);
     }
   }
   catch (err) {
@@ -50,9 +35,7 @@ export function trackEvent(name: string, properties: any) {
 export function trackException(err: Error) {
   try {
     if (getFlag("analytics") === true) {
-      defaultClient.trackException({ 
-        exception: err
-      });
+      reporter.sendTelemetryException(err);
     }
   }
   catch (err) {
