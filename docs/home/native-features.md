@@ -37,7 +37,7 @@ All thats necessary to add shortcuts to your progressive web app is adding a val
 ]
 ```
 
-These shortcut objects just have a `name`, a `url` to navigate to, and a brief `description` of the shorcut.
+These shortcut objects just have a `name`, a `url` to navigate to, and a brief `description` of the shortcut.
 
 There are a few extra fields you can add to spruce up your shortcut. Another example:
 
