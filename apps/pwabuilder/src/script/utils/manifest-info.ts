@@ -66,14 +66,10 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   },
   "dir": {
       description:`dir is an optional member that specifies the text direction for your PWA.
-      
-      It has three values to choose from:
-      
-      • auto - No set directionality for your app.
-      
-      • ltr - Text will go from left to right.
-      
-      • rtl - Text will go from right to left.`,
+It has three values to choose from:
+• auto - No set directionality for your app.
+• ltr - Text will go from left to right.
+• rtl - Text will go from right to left.`,
       purpose:null,
       example:null,
       code:`"dir": "ltr"`,
@@ -176,7 +172,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   "prefer_related_applications": {
       description:`prefer_related_aplications is an optional member that specifies whether or not related_applications should be preferred to this one. This member defaults to false, but if set to true, the browser may recommend an alternate application to the user`,
       purpose:null,
-      example:null,
+      example:"It is important that the value of this field is a boolean.",
       code:`"prefer_related_applications": true`,
       location: "platform",
       required: false
@@ -233,15 +229,15 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       purpose:null,
       example:null,
       code:`"icons": [
-          {
-            "src": "assets/icon1.png",
-            "sizes": "48x48 96x96",
-          },
-          {
-            "src": "assets/icon2.png",
-            "sizes": "any"
-          }
-        ]`,
+  {
+    "src": "assets/icon1.png",
+    "sizes": "48x48 96x96",
+  },
+  {
+    "src": "assets/icon2.png",
+    "sizes": "any"
+  }
+]`,
       location: "icons",
       required: true
   },

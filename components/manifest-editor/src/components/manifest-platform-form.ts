@@ -421,9 +421,6 @@ export class ManifestPlatformForm extends LitElement {
     }
   }
 
-  
-
-
   async handleInputChange(event: InputEvent){
 
     if(this.validationPromise){
@@ -500,8 +497,6 @@ export class ManifestPlatformForm extends LitElement {
       this.dispatchEvent(errorInTab(true, "platform"));
     }
   }
-
-  
 
   addFieldToHTML(field: string){
     if(field === "shortcuts"){
@@ -914,11 +909,17 @@ export class ManifestPlatformForm extends LitElement {
 
   decideFocus(field: string){
     let decision = this.focusOn === field;
-    /* let spot = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-    if(decision && spot){
-      console.log(":scrolling")
-      spot!.scrollIntoView({behavior: "smooth"})
-    } */
+
+    /* if(this.focusOn && decision){
+      let spot = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+      console.log(spot)
+      if(spot){
+        (spot as HTMLElement).focus();
+        console.log(":scrolling")
+        spot!.scrollIntoView({behavior: "smooth"})
+      }
+    }  */
+
     return {focus: decision}
   }
 

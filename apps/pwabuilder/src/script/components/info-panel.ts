@@ -175,10 +175,14 @@ export class InfoPanel extends LitElement {
             <p class="answer">${this.info?.description}</p>
           </div>
 
-          <div class="block">
-            <h2 class="question">Why should I use the ${this.capFirstLetter(this.field!)} field?</h2>
-            <p class="answer">${this.info?.purpose}</p>
-          </div>
+          ${this.info?.purpose ? html`
+            <div class="block">
+              <h2 class="question">Why should I use the ${this.capFirstLetter(this.field!)} field?</h2>
+              <p class="answer">${this.info?.purpose}</p>
+            </div>
+            ` : html``
+          }
+          
 
           <div class="block">
             <h2 class="question">How do I implement the ${this.capFirstLetter(this.field!)} field?</h2>

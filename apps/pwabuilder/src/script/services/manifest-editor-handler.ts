@@ -16,3 +16,8 @@ export function updateManifestEditorManifest(manifest: Manifest) {
 export function getManifestEditorManifest() {
   return editedManifest ?? initialManifest;
 }
+
+export function resetManifestEditorManifest(){
+  initialManifest = {};
+  initialized = false;
+}
