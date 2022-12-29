@@ -2,6 +2,7 @@ import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 import { handleWebhint } from "../../library/handle-webhint";
 import { maniTests } from "../../manifest-utils";
+import { trackException } from "../usage-analytics";
 
 let manifestFileRead: string | undefined;
 
@@ -83,8 +84,9 @@ export function refreshDiagnostics(
 
     maniDiagnostics.set(doc.uri, diagnostics);
   }
-  catch (err) {
+  catch (err: any) {
     // the manifest.json file is most likely empty
+    trackException(err);
     return;
   }
 }
@@ -132,8 +134,9 @@ function createDiagnostic(
 
         testResult = testValue.test(textToTest[testString]);
         test = testValue;
-      } catch (err) {
+      } catch (err: any) {
         console.error("Could not parse JSON value", err);
+        trackException(err);
       }
     }
   });
@@ -583,7 +586,8 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
       },
     ];
   }
-  catch (err) {
+  catch (err: any) {
+    trackException(err);
     return undefined;
   }
 }

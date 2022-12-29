@@ -1,16 +1,12 @@
 import { open } from "fs/promises";
 import { resolve } from "path";
 import * as vscode from "vscode";
-import { getAnalyticsClient } from "../usage-analytics";
+import { trackEvent } from "../usage-analytics";
 
 let manifest: any | undefined;
 
 export async function generateManifest(skipPrompts?: boolean) {
-  const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({
-    name: "generate",
-    properties: { type: "manifest" }
-  });
+  trackEvent("generate", { "type": "manifest" })
 
   // open information message about generating manifest
   // with an ok button

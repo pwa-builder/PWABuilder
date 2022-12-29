@@ -26,9 +26,9 @@ import {
   validateAndroidOptions,
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
-import { getAnalyticsClient } from "../usage-analytics";
 import { findWorker } from "../service-workers/service-worker";
 import { pathExists } from "../../library/file-utils";
+import { trackEvent, trackException } from "../usage-analytics";
 /*
  * To-do Justin: More re-use
  */
@@ -108,11 +108,7 @@ export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
-  const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({ 
-    name: "package",  
-    properties: { packageType: packageType, url: url,  stage: "init" } 
-  });
+  trackEvent("package", { "packageType": packageType, "url": url, "stage": "init" });
   
   if (packageType === "iOS") {
     try {
@@ -157,6 +153,8 @@ export async function packageApp(): Promise<void> {
         `There was an error packaging your app: ${err && err.message ? err.message : err
         }`
       );
+
+      trackException(err);
     }
   } else if (packageType === "Android") {
     try {
@@ -195,6 +193,8 @@ export async function packageApp(): Promise<void> {
         `There was an error packaging your app: ${err && err.message ? err.message : err
         }`
       );
+
+      trackException(err);
     }
   } else {
     await getMsixInputs();
@@ -249,11 +249,7 @@ async function packageWithPwaBuilder(): Promise<any> {
   const packageData = await packageForWindows(packageInfo);
 
   const url = getURL();
-  const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({ 
-    name: "package",  
-    properties: { packageType: "Windows", url: url, stage: "complete" } 
-  });
+  trackEvent("package", { "packageType": "Windows", "url": url, "stage": "complete" })
 
   if (packageData) {
     return packageData.blob();
@@ -351,8 +347,10 @@ async function writeMSIXToFile(responseData: any, name: string): Promise<void> {
         Buffer.from(await responseData.arrayBuffer())
       );
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error(`There was an error packaging your app: ${err}`);
+
+    trackException(err);
   }
 }
 
