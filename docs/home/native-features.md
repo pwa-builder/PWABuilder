@@ -59,7 +59,7 @@ There are a few extra fields you can add to spruce up your shortcut. Another exa
 ]
 ```
 
-In this example, we've added a few extra fields to our shotrcut. `short_name` provides an alternate name to display for your shortcut if there is limited display space, while `icons` allows you to specify a custom icon to display for your shortcut in the context menu. For shortcuts, the array you provide must include an icon that is 96x96.
+In this example, we've added a few extra fields to our shortcut. `short_name` provides an alternate name to display for your shortcut if there is limited display space, while `icons` allows you to specify a custom icon to display for your shortcut in the context menu. For shortcuts, the array you provide must include an icon that is 96x96.
 
 ## Window Controls Overlay
 
