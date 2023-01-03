@@ -13,7 +13,7 @@ export class ShareCard extends LitElement {
   @property() manifestData = "";
   @property() swData = "";
   @property() securityData = "";
-  @property() siteName = "";
+  @property() siteUrl = "";
 
   
 
@@ -74,12 +74,15 @@ export class ShareCard extends LitElement {
         background-size: cover;
         background-repeat: no-repeat;
       }
-      #site-name {
-        padding: 15px;
+      #site-url {
+        padding: 15px 15px 0px;
         font-weight: bold;
         font-size: 24px;
-        line-height: 20px;
-        color: #292C3A;
+        color: rgb(41, 44, 58);
+        line-height: 1em;
+        max-height: 3em;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       #share-content {
         display: flex;
@@ -192,10 +195,13 @@ export class ShareCard extends LitElement {
           width: 133px;
         }
         #cancel-button {
-          display: block;
+          display: none;
         }
         #download-button {
-          display: none;
+          display: block;
+          flex-direction: row;
+          align-items: center;
+          padding: 0px 15px;  
         }
       `)}
     `
@@ -228,10 +234,11 @@ export class ShareCard extends LitElement {
     htmlToImage.toJpeg(image!, { quality: 0.95 })
       .then((dataUrl) => {
         if (shareOption === "download"){
-          this.downloadImage(dataUrl, `${this.siteName}_pwabuilder_score.png`)
+          this.downloadImage(dataUrl, `${this.siteUrl}_pwabuilder_score.png`)
         } else if (shareOption === "share"){
-          const file = this.dataURLtoFile(dataUrl, `${this.siteName}_pwabuilder_score.png`);
-          this.shareFile(file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!");
+          const file = this.dataURLtoFile(dataUrl, `${this.siteUrl}_pwabuilder_score.png`);
+          console.log("file from dataURL()", file);
+          this.shareFile(file, `${this.siteUrl} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
         } else {  
           return;
         }
@@ -241,6 +248,7 @@ export class ShareCard extends LitElement {
   downloadImage(url: string, filename: string) {
     let link = document.createElement('a');
     link.href = "data:image/png;base64" + url;
+    console.log("File link from downloadImage()", link.href);
     link.download = filename; 
     link.click();
 
@@ -260,6 +268,7 @@ export class ShareCard extends LitElement {
   };
 
   shareFile(file: File, title: string, text: string) {
+    console.log("File from shareFile():", file);
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator
         .share({
@@ -291,8 +300,8 @@ export class ShareCard extends LitElement {
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="score-image">
-              <div id="site-name">
-                ${this.siteName}
+              <div id="site-url">
+                ${this.siteUrl}
               </div>
               <div id="rings" aria-label="progress ring displays">
                 ${[
