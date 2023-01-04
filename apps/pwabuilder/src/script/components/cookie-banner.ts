@@ -58,7 +58,8 @@ export class CookieBanner extends LitElement {
       }
 
       #cookie-actions #reject-button {
-        background: #ffffff;;
+        background: #ffffff;
+        color: var(--font-color);
       }
 
       #cookie-actions #accept-button {
