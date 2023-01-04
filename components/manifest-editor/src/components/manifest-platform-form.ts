@@ -241,6 +241,12 @@ export class ManifestPlatformForm extends LitElement {
         color: rgb(79, 63, 182);
       }
 
+      sl-checkbox[checked]::part(control) {
+        background-color: #4f3fb6;
+        border-color: #4f3fb6;
+        color: #ffffff;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
