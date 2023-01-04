@@ -66,7 +66,7 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p:not(.toolTip) {
+      .field-desc {
         font-size: 14px;
         margin: 0;
         color: #717171;
@@ -182,6 +182,8 @@ export class ManifestSettingsForm extends LitElement {
         padding: 0 .5em;
         font-weight: 600;
         padding-top: 3px;
+        font-size: 14px;
+        margin: 0;
       }
 
       #override-options-grid{
@@ -198,10 +200,11 @@ export class ManifestSettingsForm extends LitElement {
         margin-left: .25em;
       }
       
-      sl-menu-item::part(base):hover{
+      sl-menu-item::part(base):hover {
         color: #ffffff;
         background-color: #4F3FB6;
       }
+
 
       @media(max-width: 765px){
         .form-row {
@@ -532,9 +535,9 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
 
-              <p>(required)</p>
+              <p class="field-desc">(required)</p>
             </div>
-            <p>The URL that loads when your PWA starts</p>
+            <p class="field-desc">The URL that loads when your PWA starts</p>
             <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
@@ -553,7 +556,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The text direction of your PWA</p>
+            <p class="field-desc">The text direction of your PWA</p>
             <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
@@ -576,7 +579,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>Which URLs can load within your app</p>
+            <p class="field-desc">Which URLs can load within your app</p>
             <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
           </div>
           
@@ -596,7 +599,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The primary language of your app</p>
+            <p class="field-desc">The primary language of your app</p>
             <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
@@ -619,7 +622,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The default screen orientation of your app</p>
+            <p class="field-desc">The default screen orientation of your app</p>
             <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
@@ -640,7 +643,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The appearance of your app window</p>
+            <p class="field-desc">The appearance of your app window</p>
             <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
@@ -663,7 +666,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>Used to determine the preferred display mode</p>
+            <p class="field-desc">Used to determine the preferred display mode</p>
             <div id="override-list">
             <sl-details summary="Click to edit display override" data-field="display_override">
               <sl-menu>

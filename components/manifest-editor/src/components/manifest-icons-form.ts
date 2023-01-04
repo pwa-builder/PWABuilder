@@ -177,7 +177,13 @@ export class ManifestIconsForm extends LitElement {
         row-gap: 5px;
       }
       .error {
-        color: #eb5757
+        color: #292c3a;
+      }
+
+      sl-button::part(base):hover {
+        background-color: rgba(79, 63, 182, 0.06);
+        border-color: rgba(79, 63, 182, 0.46);
+        color: rgb(79, 63, 182);
       }
 
       @media(max-width: 765px){

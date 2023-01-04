@@ -235,6 +235,12 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 16px;
       }
 
+      sl-button::part(base):hover {
+        background-color: rgba(79, 63, 182, 0.06);
+        border-color: rgba(79, 63, 182, 0.46);
+        color: rgb(79, 63, 182);
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;

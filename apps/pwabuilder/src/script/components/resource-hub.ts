@@ -30,7 +30,7 @@ export class ResourceHubNew extends LitElement {
       }
 
       #hub-panel h2 {
-        color: white;
+        color: #ffffff;
         margin: 0;
         margin-bottom: 1em;
         font-weight: bold;
