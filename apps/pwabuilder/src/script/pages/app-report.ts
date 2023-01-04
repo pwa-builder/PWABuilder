@@ -50,7 +50,7 @@ export class AppReport extends LitElement {
     iconURL: '',
     iconAlt: 'Your sites logo'
   };
-  @property({ type: Object }) CardStyles = { backgroundColor: 'white', color: 'black'};
+  @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a'};
   @property({ type: Object }) BorderStyles = { borderTop: '1px solid #00000033'};
   @property({ type: Object }) LastEditedStyles = { color: '#000000b3'};
   @property() manifestCard = {};
@@ -175,7 +175,6 @@ export class AppReport extends LitElement {
           align-items: center;
           background-color: #f2f3fb;
           padding: 20px;
-          margin-top: 50px;
         }
 
         #content-holder {
@@ -268,7 +267,7 @@ export class AppReport extends LitElement {
           width: 60%;
           height: 100%;
           border-radius: 10px;
-          background-color: white;
+          background-color: #ffffff;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
@@ -289,7 +288,7 @@ export class AppReport extends LitElement {
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: white;
+          background-color: #ffffff;
           border-radius: 10px;
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
@@ -413,7 +412,7 @@ export class AppReport extends LitElement {
           width: 40%;
           height: 100%;
           border-radius: 10px;
-          background-color: white;
+          background-color: #ffffff;
           align-items: center;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
@@ -432,7 +431,7 @@ export class AppReport extends LitElement {
           font-size: var(--button-font-size);
           font-weight: var(--font-bold);
           border: none;
-          color: white;
+          color: #ffffff;
           white-space: nowrap;
         }
 
@@ -446,7 +445,7 @@ export class AppReport extends LitElement {
         }
 
         #pfs {
-          background-color: black;
+          background-color: var(--font-color);
         }
 
         #pfs-disabled{
@@ -466,7 +465,7 @@ export class AppReport extends LitElement {
           position: absolute;
           justify-content: space-between;
           align-items: center;
-          color: white;
+          color: #ffffff;
           background: #4F3FB61A;
           width:100%;
           height: 45px;
@@ -486,7 +485,7 @@ export class AppReport extends LitElement {
           font-weight: 700;
           font-size: 14px;
           line-height: 24px;
-          color: #4F3FB6;
+          color: var(--primary-color);
         }
 
         #share-card-container {
@@ -507,7 +506,7 @@ export class AppReport extends LitElement {
           font-weight: 700;
           font-size: 16px;
           line-height: 24px;
-          color: #4F3FB6;
+          color: var(--primary-color);
 
         }
 
@@ -733,7 +732,7 @@ export class AppReport extends LitElement {
         /* Manifest Card */
         #manifest, #share-card {
           box-shadow: 0px 4px 30px 0px #00000014;
-          background-color: white;
+          background-color: #ffffff;
           border-radius: 10px;
           width: 100%;
         }
@@ -792,7 +791,7 @@ export class AppReport extends LitElement {
 
         #two-cell-row > * {
           width: 49%;
-          background: white;
+          background: #ffffff;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -2059,7 +2058,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.CardStyles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="pwa-image-holder">
                   ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}

@@ -32,11 +32,6 @@ export class AppPackageFormBase extends LitElement {
         font-style: italic;
       }
 
-
-      info-circle-tooltip {
-        margin-top: 4px;
-      }
-
       #form-extras sl-button::part(base) {
         background-color: black;
         color: white;

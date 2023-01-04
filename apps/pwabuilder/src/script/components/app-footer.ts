@@ -15,7 +15,7 @@ export class AppFooter extends LitElement {
     return css`
       footer {
         /*temp color*/
-        background: #292C3A;
+        background: var(--font-color);
         color: white;
         fill: white;
         display: flex;
@@ -32,7 +32,7 @@ export class AppFooter extends LitElement {
 
       sl-icon {
         font-size: var(--font-size);
-        color: white;
+        color: #ffffff;
         pointer-events: none;
       }
 
@@ -54,17 +54,17 @@ export class AppFooter extends LitElement {
 
       #links a {
         margin-right: 12px;
-        color: white;
+        color: #ffffff;
       }
 
       #links a:visited {
-        color: white;
+        color: #ffffff;
       }
 
       @media screen and (-ms-high-contrast: black-on-white) {
           /* All high contrast styling rules */
           sl-icon {
-            color: black;
+            color: var(--font-color);
           }
       } 
 

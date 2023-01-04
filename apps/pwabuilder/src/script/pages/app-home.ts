@@ -41,7 +41,7 @@ export class AppHome extends LitElement {
           --sl-input-focus-ring-color: #4f3fb670;
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
-          --sl-color-primary-300: #4F3FB6;
+          --sl-color-primary-300: var(--primary-color);
         }
 
         #home-block::before {
@@ -80,7 +80,7 @@ export class AppHome extends LitElement {
           font-weight: bold;
           margin: 0;
           line-height: 1.75em;
-          color: #4F3FB6;
+          color: var(--primary-color);
         }
         #content-grid {
           padding: 0;
@@ -121,7 +121,7 @@ export class AppHome extends LitElement {
           color: rgb(79, 63, 182);
         }
         .grid-item-header a:visited {
-          color: #4F3FB6;
+          color: var(--primary-color);
         }
         .grid-item-header:hover {
           cursor: pointer;
@@ -131,7 +131,7 @@ export class AppHome extends LitElement {
         }
         .intro-grid-item p {
           margin: 0;
-          color: #292C3A;
+          color: var(--font-color);
           font-size:  var(--body-font-size);
           width: 15em;
         }
@@ -204,7 +204,7 @@ export class AppHome extends LitElement {
         }
 
         #input-form .navigation::part(base) {
-          background-color: black;
+          background-color: var(--font-color);
           color: white;
           font-size: 14px;
           height: 3em;
@@ -224,7 +224,7 @@ export class AppHome extends LitElement {
         }
         #demo {
           font-size: 12px;
-          color: #292C3A;
+          color: var(--font-color);
           margin: 0;
           grid-area: 2 / 1 / auto / 2;
           place-self: start;
@@ -238,6 +238,7 @@ export class AppHome extends LitElement {
           padding: 0;
           font-size: 1em;
           margin-left: 1px;
+          color: var(--font-color);
         }
         #demo-action:hover{
           cursor: pointer;
