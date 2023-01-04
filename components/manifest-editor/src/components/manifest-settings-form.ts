@@ -205,6 +205,12 @@ export class ManifestSettingsForm extends LitElement {
         background-color: #4F3FB6;
       }
 
+      sl-checkbox[checked]::part(control) {
+        background-color: #4f3fb6;
+        border-color: #4f3fb6;
+        color: #ffffff;
+      }
+
 
       @media(max-width: 765px){
         .form-row {
