@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 
 export let scriptsObject: any = {};
+export let goodProdBuildScript: string | undefined;
+export let goodDevBuildScriopt: string | undefined;
 
 export async function initDashboard(): Promise<void> {
     const packageJson: vscode.Uri = await findPackageJSON();
@@ -35,9 +37,30 @@ export async function runTests() {
     }
 }
 
-export async function prodBuild() {
+export async function setupProdBuild() {
     const prodBuildScript = scriptsObject["build"];
-    console.log("prodBuildScript: ", prodBuildScript);
+
+    const prompt = await vscode.window.showInformationMessage(
+        `Is this the production build script?: ${prodBuildScript}`,
+        "Yes",
+        "No"
+    );
+
+    if (prompt === "No") {
+        const prodBuildScriptInput = await vscode.window.showInputBox({
+            placeHolder: "Enter production build script",
+        });
+
+        if (prodBuildScriptInput) {
+            goodProdBuildScript = prodBuildScriptInput;
+        }
+    }
+    else if (prompt === "Yes") {
+        goodProdBuildScript = prodBuildScript;
+    }
+    else {
+        goodProdBuildScript = undefined;
+    }
 
     if (prodBuildScript) {
         const terminal = vscode.window.createTerminal("Build");
@@ -46,9 +69,31 @@ export async function prodBuild() {
     }
 }
 
-export async function devBuild() {
+export async function setupDevBuild() {
     // get dev build script from scriptsObject
     const devBuildScript = scriptsObject["start"] || scriptsObject["dev"];
+
+    const prompt = await vscode.window.showInformationMessage(
+        `Is this the development build script?: ${devBuildScript}`,
+        "Yes",
+        "No"
+    );
+
+    if (prompt === "No") {
+        const devBuildScriptInput = await vscode.window.showInputBox({
+            placeHolder: "Enter development build script",
+        });
+
+        if (devBuildScriptInput) {
+            goodDevBuildScriopt = devBuildScriptInput;
+        }
+    }
+    else if (prompt === "Yes") {
+        goodDevBuildScriopt = devBuildScript;
+    }
+    else {
+        goodDevBuildScriopt = undefined;
+    }
 
     if (devBuildScript) {
         const terminal = vscode.window.createTerminal("Dev");

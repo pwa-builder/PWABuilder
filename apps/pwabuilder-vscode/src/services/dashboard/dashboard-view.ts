@@ -81,7 +81,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                 const items: DashboardItem[] = [];
 
                 items.push(new DashboardItem("Add Shortcuts", "https://pwabuilder.com", "Add Shortcuts", vscode.TreeItemCollapsibleState.None, {
-                    command: "pwa-studio.addShortcut",
+                    command: "pwa-studio.addShortcuts",
                     title: "Add a shortcut",
                     arguments: []
                 }));
@@ -174,6 +174,8 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         }
                     )
                 );
+
+                resolve(items);
             }
             else {
                 resolve([]);

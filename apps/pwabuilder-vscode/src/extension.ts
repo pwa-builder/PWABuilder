@@ -30,8 +30,9 @@ import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
 import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
-import { devBuild, prodBuild, runScript, runTests } from "./services/dashboard/dev-dashboard";
+import { runScript, runTests } from "./services/dashboard/dev-dashboard";
 import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
+import { addShareTarget, addShortcuts } from "./services/enhancements";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -50,10 +51,10 @@ const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
-const devBuildCommandID = "pwa-studio.devBuild";
-const prodBuildCommandID = "pwa-studio.prodBuild";
 const runTestCommandID = "pwa-studio.runTests";
 const runScriptCommandID = "pwa-studio.runScript";
+const addShortcutsCommandID = "pwa-studio.addShortcuts";
+const addShareTargetCommandID = "pwa-studio.addShareTarget";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -139,13 +140,19 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  /*const generateIconsCommand = vscode.commands.registerCommand(
-    handleIconsCommmandID,
+  const addShortcutsCommand = vscode.commands.registerCommand(
+    addShortcutsCommandID,
     async () => {
-      // IconGenerationPanel.render(context.extensionUri);
-      await generateIcons();
+      await addShortcuts();
     }
-  );*/
+  );
+
+  const addShareTargetCommand = vscode.commands.registerCommand(
+    addShareTargetCommandID,
+    async () => {
+      await addShareTarget();
+    }
+  );
 
   const generateScreenshotsCommand = vscode.commands.registerCommand(
     handleScreenshotsCommandID,
@@ -230,20 +237,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  let devBuildCommand = vscode.commands.registerCommand(
-    devBuildCommandID,
-    async () => {
-      await devBuild();
-    }
-  );
-
-  let prodBuildCommand = vscode.commands.registerCommand(
-    prodBuildCommandID,
-    async () => {
-      await prodBuild();
-    }
-  );
-
   let runTestCommand = vscode.commands.registerCommand(
     runTestCommandID,
     async () => {
@@ -297,13 +290,13 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
-  context.subscriptions.push(devBuildCommand);
-  context.subscriptions.push(prodBuildCommand);
   context.subscriptions.push(runTestCommand);
   context.subscriptions.push(runScriptCommand);
   context.subscriptions.push(iconView);
   context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(helpCommand);
+  context.subscriptions.push(addShortcutsCommand);
+  context.subscriptions.push(addShareTargetCommand);
 }
 
 export function deactivate() {}
