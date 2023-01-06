@@ -65,6 +65,7 @@ export class AppHeader extends LitElement {
         display: flex;
         justify-content: flex-end;
         align-items: center;
+
         width: 8em;
         gap: 0.75em;
       }
@@ -221,6 +222,29 @@ export class AppHeader extends LitElement {
           Router.go('/');
         }
       });
+
+    this.shadowRoot
+      ?.querySelector('#signin')
+      ?.addEventListener('signin-completed', async () => {
+        signInUser();
+      });
+
+    this.shadowRoot
+      ?.querySelector('#signin')
+      ?.addEventListener('signout-completed', async () => {
+        console.log('Sign out is completed');
+        signOutUser();
+      });
+
+    this.shadowRoot
+      ?.querySelector('#signin-modal')
+      ?.addEventListener('signin-details', async (e) => {
+        this.signedInText = (e as any).detail;
+      });
+    if (isUserLoggedIn()) {
+      //If the user is logged in succesfully, fetch their details
+      this.signedInText = User.getUserDetails().name ?? 'Sign In/Sign Up';
+    }
   }
 
   recordGoingHome() {

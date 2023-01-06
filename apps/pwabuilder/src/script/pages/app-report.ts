@@ -1191,7 +1191,6 @@ export class AppReport extends LitElement {
       this.siteURL = site;
       if (isUserLoggedIn()) {
         this.userProject = (await getUserProjectByUrl(this.siteURL))!;
-        console.log('This is user project', this.userProject);
       }
       this.runAllTests(site);
       sessionStorage.setItem('last_tested', JSON.stringify(new Date()));
@@ -1205,7 +1204,6 @@ export class AppReport extends LitElement {
     this.rotateNinety('todo');
     if (isUserLoggedIn()) {
       this.userProject = (await getUserProjectByUrl(this.siteURL))!;
-      console.log('This is user project', this.userProject);
     }
   }
 
@@ -2932,7 +2930,7 @@ export class AppReport extends LitElement {
       </sl-dialog>
 
       <publish-pane
-        .userProject=${this.userProject ? this.userProject : null}
+        .userProject=${this.userProject.url !== null ? this.userProject : null}
       ></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading

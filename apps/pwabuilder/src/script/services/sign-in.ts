@@ -142,9 +142,7 @@ export async function getUserProjects(): Promise<UserProject[] | undefined> {
   return undefined;
 }
 
-export async function getUserProjectByUrl(
-  url: string
-): Promise<UserProject | null> {
+export async function getUserProjectByUrl(url: string): Promise<UserProject> {
   const jsonToken = getAccessToken();
   if (jsonToken !== null) {
     try {
@@ -157,7 +155,7 @@ export async function getUserProjectByUrl(
       console.log('Error fetching project', e);
     }
   }
-  return null;
+  return {} as UserProject;
 }
 
 export interface UserDetails {
