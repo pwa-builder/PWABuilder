@@ -10,7 +10,6 @@ import { Manifest } from '@pwabuilder/manifest-validation';
 import { getManifestContext } from '../services/app-info';
 import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
 import { getManifestEditorManifest, initialized, initManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
-import { PropertyValueMap } from '@lit/reactive-element';
 
 @customElement('info-panel')
 export class InfoPanel extends LitElement {
@@ -97,6 +96,10 @@ export class InfoPanel extends LitElement {
         margin: 0;
       }
 
+      .desc-line {
+        margin: 0;
+      }
+
       .back-button {
         border: none;
         background-color: transparent;
@@ -172,7 +175,7 @@ export class InfoPanel extends LitElement {
           
           <div class="block">
             <h2 class="question">What is the ${this.capFirstLetter(this.field!)} field?</h2>
-            <p class="answer">${this.info?.description}</p>
+            <div class="answer">${this.info?.description.map((line: String) => html`<p class="desc-line">${line}</p>`)}</div>
           </div>
 
           ${this.info?.purpose ? html`

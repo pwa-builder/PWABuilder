@@ -307,7 +307,7 @@ export class ManifestPlatformForm extends LitElement {
         this.requestValidateAllFields();
         fieldsValidated = true;
       }
-      this.reset();
+      //this.reset();
     }
   }
 
