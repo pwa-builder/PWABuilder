@@ -6,6 +6,7 @@ let editedManifest: Manifest = {};
 
 export function initManifestEditorManifest(manifest: Manifest){
   initialManifest = manifest;
+  editedManifest = manifest;
   initialized = true;
 }
 
@@ -19,5 +20,6 @@ export function getManifestEditorManifest() {
 
 export function resetManifestEditorManifest(){
   initialManifest = {};
+  editedManifest = {};
   initialized = false;
 }

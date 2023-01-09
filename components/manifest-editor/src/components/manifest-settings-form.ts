@@ -175,6 +175,16 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 16px;
       }
 
+      sl-details:focus {
+        outline: 5px solid var(--sl-input-focus-ring-color);
+        border-radius: 5px;
+      }
+
+      sl-details.error:focus {
+        outline: 5px solid #eb575770;
+        border-radius: 5px;
+      }
+
       .menu-prefix {
         padding: 0 .5em;
         font-weight: 600;
@@ -196,9 +206,8 @@ export class ManifestSettingsForm extends LitElement {
       }
 
       .focus {
-        outline: 5px solid #45b63f6f;
-        border-color: #45b63fac;
-        border-radius: 6px;
+        border: 5px solid #45b63fac;
+        border-radius: 10px;
       }
 
       @media(max-width: 765px){
@@ -233,6 +242,13 @@ export class ManifestSettingsForm extends LitElement {
 
   constructor() {
     super();
+  }
+
+  firstUpdated(){
+    if(this.focusOn){
+      let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {

@@ -177,9 +177,8 @@ export class ManifestInfoForm extends LitElement {
       }
 
       .focus {
-        outline: 5px solid #45b63f6f;
-        border-color: #45b63fac;
-        border-radius: 6px;
+        border: 5px solid #45b63fac;
+        border-radius: 10px;
       }
 
 
@@ -227,6 +226,13 @@ export class ManifestInfoForm extends LitElement {
 
   constructor() {
     super();
+  }
+
+  firstUpdated(){
+    if(this.focusOn){
+      let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {

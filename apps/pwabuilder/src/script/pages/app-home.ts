@@ -22,6 +22,7 @@ import { setProgress } from '../services/app-info';
 import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { resetInitialManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import { resetManifestEditorManifest } from '../services/manifest-editor-handler';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -477,6 +478,7 @@ export class AppHome extends LitElement {
       });
 
       if (isValidUrl) {
+        resetManifestEditorManifest();
         Router.go(`/reportcard?site=${this.siteURL}`);
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;
