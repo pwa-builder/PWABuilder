@@ -200,16 +200,16 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Short name is the correct minimum length (2 characters)",
+        displayString: "Short name is the correct minimum length (3 characters)",
         category: "required",
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
-        errorString: "short_name is required and must be a string with a length >= 2",
+        errorString: "short_name is required and must be a string with a length >= 3",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && value.length >= 2;
+          const existsAndLength = value && value.length >= 3;
           return existsAndLength;
         },
     },
