@@ -15,6 +15,6 @@ export const builder: CommandBuilder<Options, Options> = (yargs) =>
 export const handler = (argv: Arguments<Options>): void => {
   execSync('npm run deploy', {
     stdio: [0, 1, 2], // we need this so node will print the command output
-    cwd: path.resolve(__dirname, ''), // path to where you want to save the file
+    cwd: path.resolve(process.cwd(), ''), // path to where you want to save the file
   })
 };

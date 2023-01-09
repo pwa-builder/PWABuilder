@@ -14,6 +14,12 @@ function replaceInFile(filePath: string, replaceRegex: string, newString: string
   });
 }
 
-function replaceInFileList(listOfFilePaths: string[], replaceRegex: string, newString: string) {
+export function replaceInFileList(listOfFilePaths: string[], replaceRegex: string, newString: string) {
   
+  const replaceInFileWrapper = (filePath: string) => {
+    replaceInFile(filePath, replaceRegex, newString);
+  };
+
+  listOfFilePaths.map(replaceInFileWrapper);
 }
+
