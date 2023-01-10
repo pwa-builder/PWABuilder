@@ -9,8 +9,8 @@ export async function addShortcuts() {
     // if manifest.json exists
     if (manifest) {
         // open manifest.json
-        const manifestUri = vscode.Uri.file(manifest);
-        const manifestFile = await vscode.workspace.openTextDocument(manifestUri);
+        const manifestFile = await vscode.workspace.openTextDocument(manifest);
+        console.log("ManifestFile", manifestFile)
 
         const manifestObject: Manifest = JSON.parse(
             manifestFile.getText()
@@ -57,7 +57,7 @@ export async function addShortcuts() {
 
                 const edit = new vscode.WorkspaceEdit();
                 edit.replace(
-                    manifestUri,
+                    manifest,
                     new vscode.Range(
                         new vscode.Position(0, 0),
                         new vscode.Position(manifestFile.lineCount, 0)
@@ -84,6 +84,80 @@ export async function addShortcuts() {
     }
 }
 
+export async function addProtocolHandler() {
+    // get manifest.json
+    const manifest = await getManifest();
+
+    // if manifest.json exists
+    if (manifest) {
+        // open manifest.json
+        const manifestFile = await vscode.workspace.openTextDocument(manifest);
+        console.log("ManifestFile", manifestFile)
+
+        const manifestObject: Manifest = JSON.parse(
+            manifestFile.getText()
+        );
+
+        // if protocol_handlers array exists
+        if (manifestObject.protocol_handlers) {
+            // show information message notification
+            const option = await vscode.window.showInformationMessage(
+                "Your Web Manifest seems to already have a protocol handler! Want to learn more about them? ",
+                "Learn More"
+            );
+            if (option === "Learn More") {
+                vscode.commands.executeCommand(
+                    "vscode.open",
+                    vscode.Uri.parse(
+                        "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"
+                    )
+                );
+            }
+        }
+        else {
+            const option = await vscode.window.showInformationMessage(
+                "Did you know PWAs support Protocol Handlers? This feature can be enabled through the Web Manifest",
+                "Add Protocol Handler",
+            );
+
+            if (option === "Add Protocol Handler") {
+                manifestObject.protocol_handlers = [
+                    {
+                        "protocol": "web+tea",
+                        "url": "/tea?type=%s"
+                    }
+                ];
+
+                const edit = new vscode.WorkspaceEdit();
+                edit.replace(
+                    manifest,
+                    new vscode.Range(
+                        new vscode.Position(0, 0),
+                        new vscode.Position(manifestFile.lineCount, 0)
+                    ),
+                    JSON.stringify(manifestObject, null, 2)
+                );
+                await vscode.workspace.applyEdit(edit);
+
+                const option = await vscode.window.showInformationMessage(
+                    "Protocol handler added! Want to learn more about them? ",
+                    "Learn More"
+                );
+
+                if (option === "Learn More") {
+                    vscode.commands.executeCommand(
+                        "vscode.open",
+                        vscode.Uri.parse(
+                            "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"
+                        )
+                    );
+                }
+
+            }
+        }
+    }
+}
+
 export async function addShareTarget() {
     // get manifest.json
     const manifest = await getManifest();
@@ -91,8 +165,8 @@ export async function addShareTarget() {
     // if manifest.json exists
     if (manifest) {
         // open manifest.json
-        const manifestUri = vscode.Uri.file(manifest);
-        const manifestFile = await vscode.workspace.openTextDocument(manifestUri);
+        const manifestFile = await vscode.workspace.openTextDocument(manifest);
+        console.log("ManifestFile", manifestFile)
 
         const manifestObject: Manifest = JSON.parse(
             manifestFile.getText()
@@ -133,7 +207,7 @@ export async function addShareTarget() {
 
                 const edit = new vscode.WorkspaceEdit();
                 edit.replace(
-                    manifestUri,
+                    manifest,
                     new vscode.Range(
                         new vscode.Position(0, 0),
                         new vscode.Position(manifestFile.lineCount, 0)

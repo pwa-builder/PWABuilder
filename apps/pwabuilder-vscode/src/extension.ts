@@ -32,7 +32,7 @@ import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
 import { runScript, runTests } from "./services/dashboard/dev-dashboard";
 import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
-import { addShareTarget, addShortcuts } from "./services/enhancements";
+import { addProtocolHandler, addShareTarget, addShortcuts } from "./services/enhancements";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -55,6 +55,7 @@ const runTestCommandID = "pwa-studio.runTests";
 const runScriptCommandID = "pwa-studio.runScript";
 const addShortcutsCommandID = "pwa-studio.addShortcuts";
 const addShareTargetCommandID = "pwa-studio.addShareTarget";
+const addProtocolHandlerCommandID = "pwa-studio.addProtocolHandler";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -154,10 +155,16 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const addProtocolHandlerCommand = vscode.commands.registerCommand(
+    addProtocolHandlerCommandID,
+    async () => {
+      await addProtocolHandler();
+    }
+  );
+
   const generateScreenshotsCommand = vscode.commands.registerCommand(
     handleScreenshotsCommandID,
     async () => {
-      // ScreenshotGenerationPanel.render(context.extensionUri);
       await generateScreenshots();
     }
   )
@@ -297,6 +304,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(helpCommand);
   context.subscriptions.push(addShortcutsCommand);
   context.subscriptions.push(addShareTargetCommand);
+  context.subscriptions.push(addProtocolHandlerCommand);
 }
 
 export function deactivate() {}

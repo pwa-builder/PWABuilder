@@ -321,7 +321,7 @@ export class IconViewPanel {
 
                     console.log(savedImages, htmlMeta, manifestJsonContent);
 
-                    const manifest: vscode.Uri = await findManifest();
+                    const manifest: vscode.Uri = (await findManifest() as vscode.Uri);
                     if (manifest) {
                         const manifestFile = await vscode.workspace.openTextDocument(
                             manifest

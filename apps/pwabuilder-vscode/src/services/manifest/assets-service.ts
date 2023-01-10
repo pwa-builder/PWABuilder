@@ -52,7 +52,7 @@ export async function generateScreenshots(skipPrompts?: boolean) {
 
                     const screenshots = await handleScreenshots(data, skipPrompts ? true : false);
 
-                    const manifest: vscode.Uri = await findManifest();
+                    const manifest: vscode.Uri = (await findManifest() as vscode.Uri);
 
                     // read manifest file
                     const manifestFile = await vscode.workspace.openTextDocument(
@@ -143,7 +143,7 @@ export async function generateIcons(options: any = {}, skipPrompts?: boolean) {
 
                 console.log(savedImages, htmlMeta, manifestJsonContent);
 
-                const manifest: vscode.Uri = await findManifest();
+                const manifest: vscode.Uri = (await findManifest() as vscode.Uri);
                 if (manifest) {
                     const manifestFile = await vscode.workspace.openTextDocument(
                         manifest

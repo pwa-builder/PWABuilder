@@ -118,6 +118,18 @@
         "title": "PWABuilder Studio: New PWA"
       },
       {
+        "command": "pwa-studio.addShortcuts",
+        "title": "PWABuilder Studio: Add shortcuts to your PWA"
+      },
+      {
+        "command": "pwa-studio.addShareTarget",
+        "title": "PWABuilder Studio: Add share target to your PWA"
+      },
+      {
+        "command": "pwa-studio.addProtocolHandler",
+        "title": "PWABuilder Studio: Add a protocol handler to your PWA"
+      },
+      {
         "command": "pwa-studio.serviceWorker",
         "title": "PWABuilder Studio: Generate Service Worker",
         "icon": "$(add)"
