@@ -112,3 +112,81 @@ Some example CSS to see how these could be used:
 ```
 
 Take note of the `-webkit-app-region` and `app-region` values being set to `drag`. This allows our title bar drag behavior to work properly when window controls overlay is enabled.
+
+## Web Share API 
+
+The Web Share API allows your app to use the operating system's native share dialog to share content (files, links) to and from your progressive web app.
+
+On Windows, the dialog for sharing from your progressive web app looks like this:
+
+<div class="docs-image">
+   <img src="assets/home/native-features/pwinter-share.jpg" alt="The native share dialog open on Windows.">
+</div>
+
+Making use of the Web Share API will ease the process of sharing to and from your PWA, and allows apps that make use of files to interact more cleanly with the OS.
+
+### How to Share *From* Your PWA
+
+!> Using the Web Share API requires `HTTPS`. Your progressive web app should be using `HTTPS` anyway to properly enable your service worker.
+
+The easiest use case for sharing from your progressive web app is with a web link. It can be implemented with a single function:
+
+```js
+async function shareLink(shareTitle, shareText, link) {
+    const shareData = {
+        title: shareTitle,
+        text: shareText,
+        url: link,
+    };
+    try {
+        await navigator.share(shareData);
+    } catch (e) {
+        console.error(e);
+    }
+}
+```
+
+All you have to do is make a call to `navigator.share()` and pass in the desired share data. We are passing a title to display, some text to add more detail, and the actual link to share itself.
+
+You can also share files with the Web Share API. The code to share files is very similar to sharing a link:
+
+```js
+async function shareFiles(filesArray, shareTitle, shareText) {
+    if (navigator.canShare && navigator.canShare({ files: filesArray })) {
+        try {
+            await navigator.share({
+                files: filesArray,
+                title: shareTitle,
+                text: shareText
+            });
+        } catch (error) {
+            console.log('Sharing failed', error);
+        }
+    } else {
+        console.log(`System doesn't support sharing.`);
+    }
+};
+```
+
+The only primary change here is that we are making a call to `navigator.canShare()` to confirm that the file types we are trying to share are compatible with the Web Share API. You can find a list of supported file types [here.](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share#shareable_file_types)
+
+### How to Share *To* Your PWA
+
+You can also enable your progressive web app to receive shared files from the native operating system. This is enabled in your PWA's web app manifest by adding the `share_target` member.
+
+Here is an example of how to handle a shared URL:
+
+```json
+"share_target": {
+      "action": "index.html?share-action",
+      "method": "GET",
+      "enctype": "application/x-www-form-urlencoded",
+      "params": {
+        "title": "title",
+        "text": "text",
+        "url": "url"
+      }
+    }
+```
+
+The key field here is `action`. This allows you to set a specific URL that will open and handle a shared link of this type. If you want to execute functionality based on a shared link, you can have this page parse a link and determine how to handle the shared data.
