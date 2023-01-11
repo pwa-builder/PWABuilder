@@ -2,7 +2,8 @@ import * as vscode from "vscode";
 
 export let scriptsObject: any = {};
 export let goodProdBuildScript: string | undefined;
-export let goodDevBuildScriopt: string | undefined;
+export let goodDevBuildScript: string | undefined;
+export let goodTestScript: string | undefined;
 
 export async function initDashboard(): Promise<void> {
     const packageJson: vscode.Uri = await findPackageJSON();
@@ -14,7 +15,18 @@ export async function initDashboard(): Promise<void> {
             const keys = Object.keys(packageScripts);
             keys.map((key) => {
                 if (!scriptsObject[key]) {
-                    scriptsObject[key] = packageScripts[key];
+                    if (key === "start" || key === "dev") {
+                        goodDevBuildScript = packageScripts[key];
+                        scriptsObject["dev"] = goodDevBuildScript;
+                    }
+                    else if (key === "build" || key === "prod" || key === "build-prod") {
+                        goodProdBuildScript = packageScripts[key];
+                        scriptsObject["build"] = goodProdBuildScript;
+                    }
+                    else if (key === "test") {
+                        goodTestScript = packageScripts[key];
+                        scriptsObject["test"] = goodTestScript;
+                    }
                 }
             });
         }
@@ -85,14 +97,14 @@ export async function setupDevBuild() {
         });
 
         if (devBuildScriptInput) {
-            goodDevBuildScriopt = devBuildScriptInput;
+            goodDevBuildScript = devBuildScriptInput;
         }
     }
     else if (prompt === "Yes") {
-        goodDevBuildScriopt = devBuildScript;
+        goodDevBuildScript = devBuildScript;
     }
     else {
-        goodDevBuildScriopt = undefined;
+        goodDevBuildScript = undefined;
     }
 
     if (devBuildScript) {
