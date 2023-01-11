@@ -2,7 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
-import * as htmlToImage from 'html-to-image';
+import html2canvas from 'html2canvas'
 
 
 
@@ -231,8 +231,9 @@ export class ShareCard extends LitElement {
   htmlToImage(shareOption: string) {
     let image = this.shadowRoot!.getElementById("score-image");
 
-    htmlToImage.toJpeg(image!, { quality: 0.95 })
-      .then((dataUrl) => {
+    html2canvas(image!)
+      .then((canvas: HTMLCanvasElement) => {
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
         if (shareOption === "download"){
           this.downloadImage(dataUrl, `${this.siteUrl}_pwabuilder_score.png`)
         } else if (shareOption === "share"){
