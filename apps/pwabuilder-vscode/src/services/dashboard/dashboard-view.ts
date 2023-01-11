@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { getScriptsObject, initDashboard } from "./dev-dashboard";
 
+// Possibly use the custom tasks api
+
 export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
     scripts: any = {};
 
@@ -67,11 +69,13 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                     // check and see if the script is already in items
                     if (!items.find(item => item.docsLink === scripts[script])) {
                         // create vscode command for each script
-                        items.push(new DashboardItem(`Run ${script}`, scripts[script], `Run ${scripts[script]}`, vscode.TreeItemCollapsibleState.None, {
-                            command: "pwa-studio.runScript",
-                            title: `Run ${script}`,
-                            arguments: [script]
-                        }));
+                        items.push(new DashboardItem(`Run ${script}`, scripts[script], `Run ${scripts[script]}`, vscode.TreeItemCollapsibleState.None,
+                            new vscode.ThemeIcon("play"),
+                            {
+                                command: "pwa-studio.runScript",
+                                title: `Run ${script}`,
+                                arguments: [script]
+                            }));
                     }
                 }
 
@@ -80,7 +84,8 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
             else if (element && element.label === "Add Native Features") {
                 const items: DashboardItem[] = [];
 
-                items.push(new DashboardItem("Add Shortcuts", "https://pwabuilder.com", "Add Shortcuts", vscode.TreeItemCollapsibleState.None, {
+                items.push(new DashboardItem("Add Shortcuts", "https://pwabuilder.com", "Add Shortcuts", vscode.TreeItemCollapsibleState.None,
+                    new vscode.ThemeIcon("add"), {
                     command: "pwa-studio.addShortcuts",
                     title: "Add a shortcut",
                     arguments: []
@@ -92,6 +97,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuilder.com",
                         "Use Share Target to receive shared content to your app",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("add"),
                         {
                             command: "pwa-studio.addShareTarget",
                             title: "Add a share target",
@@ -106,6 +112,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuilder.com",
                         "Use a protocol handler to handle a custom protocol",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("add"),
                         {
                             command: "pwa-studio.addProtocolHandler",
                             title: "Add a protocol handler",
@@ -120,6 +127,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuiler.com",
                         "Use a file handler to allow your app to handle files directly",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("add"),
                         {
                             command: "pwa-studio.addFileHandler",
                             title: "Add a file handler",
@@ -139,6 +147,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuilder.com",
                         "Package for the Microsoft Store",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("play"),
                         {
                             command: "pwa-studio.packageApp",
                             title: "Package your app",
@@ -153,6 +162,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuilder.com",
                         "Package for Google Play",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("play"),
                         {
                             command: "pwa-studio.packageApp",
                             title: "Package your app",
@@ -167,6 +177,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuilder.com",
                         "Package for the Apple App Store",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("play"),
                         {
                             command: "pwa-studio.packageApp",
                             title: "Package your app",
@@ -181,6 +192,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                         "https://pwabuilder.com",
                         "Package for Meta Quest",
                         vscode.TreeItemCollapsibleState.None,
+                        new vscode.ThemeIcon("play"),
                         {
                             command: "pwa-studio.packageApp",
                             title: "Package your app",
@@ -214,6 +226,7 @@ class DashboardItem extends vscode.TreeItem {
         public readonly docsLink: string,
         public readonly desc: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+        public readonly iconPath?: vscode.ThemeIcon,
         public readonly command?: vscode.Command
     ) {
         super(label, collapsibleState);
@@ -222,8 +235,7 @@ class DashboardItem extends vscode.TreeItem {
         this.command = command;
         this.collapsibleState = collapsibleState;
         this.label = label;
+        this.iconPath = iconPath;
     }
-
-    iconPath = new vscode.ThemeIcon("play");
 
 }

@@ -5,14 +5,16 @@ export let goodProdBuildScript: string | undefined;
 export let goodDevBuildScript: string | undefined;
 export let goodTestScript: string | undefined;
 
+let terminal: vscode.Terminal | undefined;
+
 export async function initDashboard(): Promise<void> {
     const packageJson: vscode.Uri = await findPackageJSON();
 
     if (packageJson) {
         const packageScripts: any = await findScripts(packageJson);
         if (packageScripts) {
-            // get keys from packageScripts
             const keys = Object.keys(packageScripts);
+
             keys.map((key) => {
                 if (!scriptsObject[key]) {
                     if (key === "start" || key === "dev") {
@@ -33,17 +35,21 @@ export async function initDashboard(): Promise<void> {
     }
 }
 
+export async function stopRunningScript() {
+    terminal?.sendText("Ctrl+C");
+    terminal?.dispose();
+}
+
 export async function runScript(script: string) {
-    const terminal = vscode.window.createTerminal("PWABuilder Studio");
-    terminal.show();
-    terminal.sendText(`npm run ${script}`);
+    terminal?.sendText("")
+    terminal?.dispose();
 }
 
 export async function runTests() {
     const testScript = scriptsObject["test"];
 
     if (testScript) {
-        const terminal = vscode.window.createTerminal("Test");
+        terminal = vscode.window.createTerminal("Test");
         terminal.sendText(testScript);
         terminal.show();
     }
