@@ -2,6 +2,21 @@ import * as vscode from "vscode";
 import { getManifest } from "./manifest/manifest-service";
 import { Manifest } from "../interfaces";
 
+const shortcutString = new vscode.SnippetString('\,\n\t\"shortcuts\": [\n\t\t\{\n\t\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",\n\t\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",\n\t\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"\n\t\t\}\n\t\]\n');
+const protocolHandlerString = new vscode.SnippetString('\,\n\t\"protocol_handlers\": [\n\t\t\{\n\t\t\t\"protocol\":\"${15:The protocol you would like to handle. For example: web+myapp}\",\n\t\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\"\n\t\t\}\n\t\]\n');
+const shareTargetString = new vscode.SnippetString('\,\n\t\"share_target\": \{\n\t\t\"action\": \"${15:The action you would like to perform when the user chooses to share content to your app. For example: share}\",\n\t\t\"method\": \"${16:The method you would like to use to share content to your app. For example: GET}\",\n\t\t\"enctype\": \"${17:The encoding type you would like to use to share content to your app. For example: application/x-www-form-urlencoded}\",\n\t\t\"params\": \{\n\t\t\t\"title\": \"${18:The title of the content you would like to share}\",\n\t\t\t\"text\": \"${19:The text of the content you would like to share}\",\n\t\t\t\"url\": \"${20:The url of the content you would like to share}\"\n\t\t\}\n\t\}\n');
+
+async function handleInsertSnippet(manifestFile: vscode.TextDocument, snippet: vscode.SnippetString) {
+    const edit = new vscode.WorkspaceEdit();
+    const goodLine = manifestFile.lineCount - 2;
+
+    const textEditor = await vscode.window.showTextDocument(manifestFile);
+
+    await textEditor.insertSnippet(snippet, new vscode.Position(goodLine, 0));
+
+    await vscode.workspace.applyEdit(edit);
+}
+
 export async function addShortcuts() {
     // get manifest.json
     const manifest = await getManifest();
@@ -41,16 +56,7 @@ export async function addShortcuts() {
             if (option === "Add Shortcuts") {
 
                 // create a snippet with the vscode api
-                const snippet = new vscode.SnippetString('\,\n\t\"shortcuts\": [\n\t\t\{\n\t\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",\n\t\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",\n\t\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"\n\t\t\}\n\t\]\n');
-
-                const edit = new vscode.WorkspaceEdit();
-                const goodLine = manifestFile.lineCount - 2;
-
-                const textEditor = await vscode.window.showTextDocument(manifestFile);
-
-                await textEditor.insertSnippet(snippet, new vscode.Position(goodLine, 0));
-
-                await vscode.workspace.applyEdit(edit);
+                await handleInsertSnippet(manifestFile, shortcutString);
 
                 const option = await vscode.window.showInformationMessage(
                     "Shortcuts added! Want to learn more about them? ",
@@ -107,16 +113,7 @@ export async function addProtocolHandler() {
             );
 
             if (option === "Add Protocol Handler") {
-                const snippet = new vscode.SnippetString('\"protocol_handlers\": [""\t{""\t\t\"protocol\":\"${15:web+tea}\",""\t\t\"url\":\"${16:/tea?type=%s}\"""\t}","]');
-
-                const edit = new vscode.WorkspaceEdit();
-                const goodLine = manifestFile.lineCount - 2;
-
-                const textEditor = await vscode.window.showTextDocument(manifestFile);
-
-                await textEditor.insertSnippet(snippet, new vscode.Position(goodLine, 0));
-
-                await vscode.workspace.applyEdit(edit);
+                await handleInsertSnippet(manifestFile, protocolHandlerString);
 
 
                 const option = await vscode.window.showInformationMessage(
@@ -175,26 +172,7 @@ export async function addShareTarget() {
             );
 
             if (option === "Add Share Target") {
-                manifestObject.share_target = {
-                    "action": "share",
-                    "method": "GET",
-                    "params": {
-                        "title": "title",
-                        "text": "text",
-                        "url": "url"
-                    }
-                };
-
-                const edit = new vscode.WorkspaceEdit();
-                edit.replace(
-                    manifest,
-                    new vscode.Range(
-                        new vscode.Position(0, 0),
-                        new vscode.Position(manifestFile.lineCount, 0)
-                    ),
-                    JSON.stringify(manifestObject, null, 2)
-                );
-                await vscode.workspace.applyEdit(edit);
+                await handleInsertSnippet(manifestFile, shareTargetString);;
 
                 const option = await vscode.window.showInformationMessage(
                     "Share Target added! Want to learn more about them? ",
