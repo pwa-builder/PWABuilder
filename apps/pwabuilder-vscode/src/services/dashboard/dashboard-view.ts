@@ -98,17 +98,31 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                             arguments: []
                         }
                     )
-                )
+                );
 
                 items.push(
                     new DashboardItem(
                         "Handle a custom protocol",
                         "https://pwabuilder.com",
-                        "Use a custom protocol handler to handle a custom protocol",
+                        "Use a protocol handler to handle a custom protocol",
                         vscode.TreeItemCollapsibleState.None,
                         {
                             command: "pwa-studio.addProtocolHandler",
                             title: "Add a protocol handler",
+                            arguments: []
+                        }
+                    )
+                );
+
+                items.push(
+                    new DashboardItem(
+                        "Handle files directly",
+                        "https://pwabuiler.com",
+                        "Use a file handler to allow your app to handle files directly",
+                        vscode.TreeItemCollapsibleState.None,
+                        {
+                            command: "pwa-studio.addFileHandler",
+                            title: "Add a file handler",
                             arguments: []
                         }
                     )

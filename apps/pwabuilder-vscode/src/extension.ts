@@ -32,7 +32,7 @@ import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
 import { runScript, runTests } from "./services/dashboard/dev-dashboard";
 import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
-import { addProtocolHandler, addShareTarget, addShortcuts } from "./services/enhancements";
+import { addFileHandlers, addProtocolHandler, addShareTarget, addShortcuts } from "./services/enhancements";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -56,6 +56,7 @@ const runScriptCommandID = "pwa-studio.runScript";
 const addShortcutsCommandID = "pwa-studio.addShortcuts";
 const addShareTargetCommandID = "pwa-studio.addShareTarget";
 const addProtocolHandlerCommandID = "pwa-studio.addProtocolHandler";
+const addFileHandlerCommandID = "pwa-studio.addFileHandler";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -159,6 +160,13 @@ export function activate(context: vscode.ExtensionContext) {
     addProtocolHandlerCommandID,
     async () => {
       await addProtocolHandler();
+    }
+  );
+
+  const addFileHandlerCommand = vscode.commands.registerCommand(
+    addFileHandlerCommandID,
+    async () => {
+      await addFileHandlers();
     }
   );
 
@@ -305,6 +313,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(addShortcutsCommand);
   context.subscriptions.push(addShareTargetCommand);
   context.subscriptions.push(addProtocolHandlerCommand);
+  context.subscriptions.push(addFileHandlerCommand);
 }
 
 export function deactivate() {}

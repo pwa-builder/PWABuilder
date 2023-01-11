@@ -122,6 +122,10 @@
         "title": "PWABuilder Studio: Add shortcuts to your PWA"
       },
       {
+        "command": "pwa-studio.addFileHandler",
+        "title": "PWABuilder Studio: Add a file handler to your PWA"
+      },
+      {
         "command": "pwa-studio.addShareTarget",
         "title": "PWABuilder Studio: Add share target to your PWA"
       },
