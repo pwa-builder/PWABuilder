@@ -39,31 +39,17 @@ export async function addShortcuts() {
             );
 
             if (option === "Add Shortcuts") {
-                manifestObject.shortcuts = [
-                    {
-                        "name": "PWA Builder",
-                        "short_name": "PWA Builder",
-                        "description": "PWA Builder is a free tool that helps you build a PWA for your site.",
-                        "url": "https://www.pwabuilder.com/",
-                        "icons": [
-                            {
-                                "src": "https://www.pwabuilder.com/assets/img/pwabuilder-logo.png",
-                                "sizes": "192x192",
-                                "type": "image/png"
-                            }
-                        ]
-                    }
-                ];
+
+                // create a snippet with the vscode api
+                const snippet = new vscode.SnippetString('\,\n\t\"shortcuts\": [\n\t\t\{\n\t\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",\n\t\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",\n\t\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"\n\t\t\}\n\t\]\n');
 
                 const edit = new vscode.WorkspaceEdit();
-                edit.replace(
-                    manifest,
-                    new vscode.Range(
-                        new vscode.Position(0, 0),
-                        new vscode.Position(manifestFile.lineCount, 0)
-                    ),
-                    JSON.stringify(manifestObject, null, 2)
-                );
+                const goodLine = manifestFile.lineCount - 2;
+
+                const textEditor = await vscode.window.showTextDocument(manifestFile);
+
+                await textEditor.insertSnippet(snippet, new vscode.Position(goodLine, 0));
+
                 await vscode.workspace.applyEdit(edit);
 
                 const option = await vscode.window.showInformationMessage(
@@ -121,23 +107,17 @@ export async function addProtocolHandler() {
             );
 
             if (option === "Add Protocol Handler") {
-                manifestObject.protocol_handlers = [
-                    {
-                        "protocol": "web+tea",
-                        "url": "/tea?type=%s"
-                    }
-                ];
+                const snippet = new vscode.SnippetString('\"protocol_handlers\": [""\t{""\t\t\"protocol\":\"${15:web+tea}\",""\t\t\"url\":\"${16:/tea?type=%s}\"""\t}","]');
 
                 const edit = new vscode.WorkspaceEdit();
-                edit.replace(
-                    manifest,
-                    new vscode.Range(
-                        new vscode.Position(0, 0),
-                        new vscode.Position(manifestFile.lineCount, 0)
-                    ),
-                    JSON.stringify(manifestObject, null, 2)
-                );
+                const goodLine = manifestFile.lineCount - 2;
+
+                const textEditor = await vscode.window.showTextDocument(manifestFile);
+
+                await textEditor.insertSnippet(snippet, new vscode.Position(goodLine, 0));
+
                 await vscode.workspace.applyEdit(edit);
+
 
                 const option = await vscode.window.showInformationMessage(
                     "Protocol handler added! Want to learn more about them? ",
