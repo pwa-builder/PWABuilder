@@ -115,7 +115,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       required: false
   },
   "display_override": {
-      description:[`display_override is similar to the display member, but allows you to select a fallback order for different display modes. In addition to the four display values above, display_override can also take the value window-control-overlay. Window-control-overlay is a desktop-only display mode and adds a native-style overlay to the top of your application.`],
+      description:[`display_override is similar to the display member, but allows you to select a fallback order for different display modes. In addition to the four display values, display_override can also take the value window-controls-overlay. Window-controls-overlay is a desktop-only display mode and adds a native-style overlay to the top of your application.`],
       purpose:`Using the display_override member gives you further control over how your application is displayed. By setting a custom fallback order, you can ensure your app stays as close to its intended design as possible.`,
       example:null,
       code:`"display_override": [
@@ -139,16 +139,16 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       purpose:`Including related applications will allow users to find technology that can supplement your own PWA, or perhaps even make it more useful.`,
       example:null,
       code:`"related_applications": [
-          {
-            "platform": "windows",
-            "url": "https://www.example-app.com",
-            "id": "example.ExampleApp"
-          },
-          {
-            "platform": "play",
-            "url": "https://www.example-app-2.com"
-          }
-        ]`,
+  {
+    "platform": "windows",
+    "url": "https://www.example-app.com",
+    "id": "example.ExampleApp"
+  },
+  {
+    "platform": "play",
+    "url": "https://www.example-app-2.com"
+  }
+]`,
       location: "platform",
       required: false
   },
@@ -171,16 +171,16 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       purpose:`Shortcuts allow users to access certain areas of your PWA quickly and easily. Effectively implemeting shortcuts can reduce friction in your app and make your PWA feel more fully integrated with the native operating system.`,
       example:null,
       code:`"shortcuts": [
-          {
-            "name": "About",
-            "url": "/about"
-          },
-          {
-            "name": "Send Message",
-            "url": "/new-message",
-            "description": "Open a chat with another user and send a message to them."
-          }dir
-        ]`,
+  {
+    "name": "About",
+    "url": "/about"
+  },
+  {
+    "name": "Send Message",
+    "url": "/new-message",
+    "description": "Open a chat with another user and send a message to them."
+  }dir
+]`,
       location: "platform",
       required: false
   },
@@ -189,11 +189,11 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       purpose:`Making use of protocol handlers can make your application more dynamic and functional. By defining handlers for different protocol schemes, your app can navigate directly to the appropriate content for certain types of links.`,
       example:null,
       code:`"protocol_handlers": [
-          {
-            "protocol": "web+music",
-            "url": "/play?track=%s"
-          }
-        ]`,
+  {
+    "protocol": "web+music",
+    "url": "/play?track=%s"
+  }
+]`,
       location: "platform",
       required: false
   },
@@ -227,13 +227,13 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       purpose:`Including screenshots will allow users to get a sneak peak of your application when it is published and packaged for stores.`,
       example:null,
       code:`"screenshots" : [
-          {
-            "src": "screenshot.jpg",
-            "sizes": "1280x720",
-            "type": "image/jpg",
-            "platform": "wide",
-          }
-        ]`,
+  {
+    "src": "screenshot.jpg",
+    "sizes": "1280x720",
+    "type": "image/jpg",
+    "platform": "wide",
+  }
+]`,
       location: "screenshots",
       required: false
   },
