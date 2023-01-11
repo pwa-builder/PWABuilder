@@ -43,7 +43,6 @@ export async function addFileHandlers() {
             }
         } else {
             await handleInsertSnippet(manifestFile, fileHandlerString);
-
             const option = await vscode.window.showInformationMessage(
                 "Your Web Manifest has been updated with file handlers! Want to learn more about them? ",
                 "Learn More"

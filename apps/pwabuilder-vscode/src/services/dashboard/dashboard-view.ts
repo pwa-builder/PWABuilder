@@ -35,9 +35,9 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
 
             items.push(
                 new DashboardItem(
-                    "Enhance your PWA",
+                    "Add Native Features",
                     "https://pwabuilder.com",
-                    "Easily add enhancements such as shortcuts to your app",
+                    "Easily add native features such as shortcuts to your app",
                     vscode.TreeItemCollapsibleState.Expanded
                 )
             );
@@ -77,7 +77,7 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
 
                 resolve(items);
             }
-            else if (element && element.label === "Enhance your PWA") {
+            else if (element && element.label === "Add Native Features") {
                 const items: DashboardItem[] = [];
 
                 items.push(new DashboardItem("Add Shortcuts", "https://pwabuilder.com", "Add Shortcuts", vscode.TreeItemCollapsibleState.None, {
