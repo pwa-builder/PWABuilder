@@ -37,6 +37,12 @@
   ],
   "main": "./out/main.js",
   "contributes": {
+    "jsonValidation": [
+      {
+        "fileMatch": "manifest.json",
+        "url": "https://json.schemastore.org/web-manifest-combined.json"
+      }
+    ],
     "snippets": [
       {
         "language": "json",
