@@ -1,87 +1,88 @@
-import { SignInResult } from "./signin-result";
-import { SignInProvider } from "./signin-provider";
+import { SignInResult } from './signin-result';
+import { SignInProvider } from './signin-provider';
+import { GoogleProvider } from './google-provider';
 
 export class GoogleProvider implements SignInProvider {
+  static readonly apiUrl = 'https://accounts.google.com/gsi/client';
+  private resolve: ((result: SignInResult) => void) | null = null;
+  private reject: ((error: any) => void) | null = null;
+  constructor(private clientId: string) {}
 
-    static readonly apiUrl = "https://apis.google.com/js/api:client.js";
-
-    constructor(private clientId: string) {
-    }
-
-    signIn(): Promise<SignInResult> {
-        return this.loadDependencies()
-            .then(() => this.signInWithGoogleAuth2());
-    }
-
-    loadDependencies(): Promise<void> {
-        return this.appendGoogleScript()
-            .then(() => this.loadAuth());
-    }
-
-    private appendGoogleScript(): Promise<void> {
-        const gapiLoad = window.gapi?.load;
-        if (!gapiLoad) {
-            return new Promise<void>((resolve, reject) => {
-                const scriptEl = window.document.createElement("script");
-                scriptEl.async = true;
-                scriptEl.src = GoogleProvider.apiUrl;
-                scriptEl.onload = () => resolve();
-                scriptEl.onerror = (error) => reject({ message: "Error loading Google Platform library", error: error });
-                window.document.head.appendChild(scriptEl);
-            });
-        }
-
-        // GApi is already loaded.
-        return Promise.resolve();
-    }
-
-    private loadAuth(): Promise<void> {
-        if (!window.gapi || !window.gapi.load) {
-            return Promise.reject("Couldn't find gapi.load");
-        }
-
-        // If we already have auth2, cool, we're done.
-        if(window.gapi.auth2) {
-            return Promise.resolve();
-        }
-
-        // Otherwise, pull in auth2.
-        return new Promise<void>(resolve => window.gapi.load("auth2", () => resolve()));
-    }
-
-    private signInWithGoogleAuth2(): Promise<SignInResult> {
-        if (!gapi?.auth2) {
-            return Promise.reject("gapi.auth2 wasn't loaded");
-        }
-
-        const auth = gapi.auth2.init({
-            client_id: this.clientId,
-            cookie_policy: "single_host_origin"
+  private appendGoogleScript(): Promise<void> {
+    console.log('Appending script');
+    return new Promise<void>((resolve, reject) => {
+      const scriptEl = window.document.createElement('script');
+      scriptEl.async = true;
+      scriptEl.src = GoogleProvider.apiUrl;
+      scriptEl.onload = () => resolve();
+      scriptEl.onerror = (error) =>
+        reject({
+          message: 'Error loading Google Platform library',
+          error: error,
         });
+      window.document.head.appendChild(scriptEl);
+    });
+  }
 
-        // Speed through the process if we're already signed in.
-        if (auth.isSignedIn.get()) {
-            const user = auth.currentUser.get();
-            return Promise.resolve(this.getSignInResultFromUser(user));
-        }
+  async signIn(): Promise<SignInResult> {
+    await this.loadDependencies();
+    return new Promise<SignInResult>((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+      this.signInWithGoogleSignInAPI();
+    });
+  }
 
-        // Otherwise, kick off the OAuth flow.
-        return auth.signIn()
-            .then(user => this.getSignInResultFromUser(user));
-    }
+  signInWithGoogleSignInAPI() {
+    (window as any).google.accounts.id.initialize({
+      client_id: this.clientId,
+      callback: (data) => this.handleCredentialResponse(data),
+    });
 
-    private getSignInResultFromUser(user: gapi.auth2.GoogleUser): SignInResult {
-        const profile = user.getBasicProfile();
-        const authResponse = user.getAuthResponse(true);
-        return {
-            email: profile.getEmail(),
-            name: profile.getName(),
-            imageUrl: profile.getImageUrl(),
-            accessToken: authResponse?.id_token,
-            accessTokenExpiration: new Date(authResponse.expires_at),
-            provider: "Google",
-            error: null,
-            providerData: user
-        };
-    }
+    console.log(
+      'BUTTON',
+      document.querySelector('pwa-auth'),
+      document.querySelector('pwa-auth')?.shadowRoot?.querySelector('#Google')
+    );
+    // (window as any).google.accounts.id.renderButton(
+    //   document.querySelector('pwa-auth')?.shadowRoot?.querySelector('#Google'),
+    //   { theme: 'outline', size: 'large' } // customization attributes
+    // );
+    (window as any).google.accounts.id.prompt(); // also display the One Tap dialog
+  }
+
+  handleCredentialResponse(response) {
+    console.log('Callback is called', response);
+    const webToken = this.decodeJwt(response.credential) as any;
+    console.log('Response payload', webToken);
+    this.resolve?.({
+      email: webToken?.email,
+      name: webToken?.name,
+      imageUrl: webToken?.picture,
+      accessToken: response.credential,
+      accessTokenExpiration: new Date(webToken?.exp),
+      provider: 'Google',
+      error: null,
+    });
+  }
+
+  private decodeJwt(token: string): Object | null {
+    // https://stackoverflow.com/a/38552302/536
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+  }
+
+  loadDependencies(): Promise<void> {
+    return this.appendGoogleScript();
+  }
 }

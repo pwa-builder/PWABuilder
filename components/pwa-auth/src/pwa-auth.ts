@@ -523,8 +523,8 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
   }
 
   private importGoogleProvider(key: string): Promise<SignInProvider> {
-    return import('./new-google-provider').then(
-      (module) => new module.NewGoogleProvider(key)
+    return import('./google-provider').then(
+      (module) => new module.GoogleProvider(key)
     );
   }
 

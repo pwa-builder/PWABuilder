@@ -17,7 +17,6 @@
     "strictNullChecks": true,
     "importHelpers": true
   },
-
   "exclude": [
     "node_modules"
   ],
