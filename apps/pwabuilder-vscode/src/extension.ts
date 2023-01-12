@@ -113,7 +113,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.createTreeView("dashboardPanel", {
       treeDataProvider: dashboardViewProvider,
-    })
+    });
+
+    vscode.window.createTreeView("explorerPanel", {
+      treeDataProvider: dashboardViewProvider
+    });
 
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
       maniValidationProvider.refresh(event);

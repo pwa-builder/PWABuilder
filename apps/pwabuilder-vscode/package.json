@@ -246,6 +246,12 @@
       ]
     },
     "views": {
+      "explorer": [
+        {
+          "id": "explorerPanel",
+          "name": "PWABuilder Studio"
+        }
+      ],
       "pwabuilder-view": [
         {
           "id": "dashboardPanel",
@@ -335,25 +341,7 @@
           "group": "inline"
         }
       ]
-    },
-    "taskDefinitions": [
-      {
-        "type": "npm",
-        "required": [
-          "script"
-        ],
-        "properties": {
-          "script": {
-            "type": "string",
-            "description": "The script to execute"
-          },
-          "path": {
-            "type": "string",
-            "description": "The path to the package.json file. If omitted the package.json in the root of the workspace folder is used."
-          }
-        }
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base",

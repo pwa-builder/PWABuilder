@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 import { getScriptsObject, initDashboard } from "./dev-dashboard";
 
-// Possibly use the custom tasks api
-
 export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
     scripts: any = {};
 
