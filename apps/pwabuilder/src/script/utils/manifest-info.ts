@@ -135,7 +135,13 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       required: false
   },
   "related_applications": {
-      description: [`related_applications is an optional member that specifies applications that have similar or adjacent functionality to your application. This member allows users and store listings to complement your application with related technology. This member is an array of application objects, each of which contains a platform (the platform that the application is available on), url (the web URL where the app can be found), and id (the unique ID that specifies the application on the given platform) value.`],
+      description: [
+        `related_applications is an optional member that specifies applications that have similar or adjacent functionality to your application. 
+        This member allows users and store listings to complement your application with related technology. 
+        This member is an array of application objects, each of which contains:`,
+        `• platform: the platform that the application is available on`, 
+        `• url: the web URL where the app can be found`,  
+        `• id: the unique ID that specifies the application on the given platform`],
       purpose:`Including related applications will allow users to find technology that can supplement your own PWA, or perhaps even make it more useful.`,
       example:null,
       code:`"related_applications": [
@@ -161,8 +167,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       required: false
   },
   "shortcuts": {
-      description:[`shortcuts is an optional member that specifies a list of key tasks within your application. These shortcuts can be displayed by the operating system to allow a user to launch directly to a specific part of the application.`,
-      `The shortcuts member is an array of shortcut objects, which can contain the following members:`,
+      description:[`shortcuts is an optional member that specifies a list of key tasks within your application. These shortcuts can be displayed by the operating system to allow a user to launch directly to a specific part of the application. The shortcuts member is an array of shortcut objects, which can contain the following members:`,
       `• name (Required): The display name of the shorcut.`,
       `• url (Required): The url that the shortcut will open to.`,
       `• short_name: The shortened display name for when display space is limited.`,
@@ -179,7 +184,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
     "name": "Send Message",
     "url": "/new-message",
     "description": "Open a chat with another user and send a message to them."
-  }dir
+  }
 ]`,
       location: "platform",
       required: false

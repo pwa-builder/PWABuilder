@@ -920,6 +920,7 @@ export class AppReport extends LitElement {
           flex-direction: column;
           align-items: center;
           width: 65%;
+          position: relative;
         }
         .dialog::part(overlay){
           backdrop-filter: blur(10px);
@@ -1738,7 +1739,8 @@ export class AppReport extends LitElement {
       await dialog.show()
       // could specify field if we wanted in analytics
       // recordPWABuilderProcessStep("info_panel_opened", AnalyticsBehavior.ProcessCheckpoint);
-    } else { // animateItem
+    } 
+    else { // animateItem
       if(e.detail.card === "retest"){
         this.thingToAdd = e.detail.displayString;
         this.showConfirmationModal = true;
@@ -1752,7 +1754,8 @@ export class AppReport extends LitElement {
         (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
         return;
       }
-
+    }
+    /* 
       let details = this.shadowRoot!.getElementById(e.detail.card);
 
       await (details as any)!.show();
@@ -1779,7 +1782,7 @@ export class AppReport extends LitElement {
       setTimeout(() => {
         item!.classList.toggle("animate");
       }, 1000)
-    }
+    } */
   }
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
@@ -1807,9 +1810,17 @@ export class AppReport extends LitElement {
   }
 
   // Sorts the action items list with the required stuff first
+  // -1 = a wins
+  // 1 = b wins
   sortTodos(){
     this.todoItems.sort((a, b) => {
-      if(a.status === "red" && b.status !== "red"){
+      if(a.status === "retest" && b.status !== "retest"){
+        return -1;
+      } else if(b.status === "retest" && a.status !== "retest") {
+        return 1;
+      } else if(a.status === "retest" && b.status === "retest") {
+        return a.field.localeCompare(b.field);
+      } else if(a.status === "red" && b.status !== "red"){
         return -1;
       } else if(b.status === "red" && a.status !== "red"){
         return 1;

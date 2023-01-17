@@ -8,6 +8,7 @@ import {
   Manifest,
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
+import {classMap} from 'lit/directives/class-map.js';
 
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 
@@ -41,6 +42,7 @@ export class ManifestIconsForm extends LitElement {
   }}) manifest: Manifest = {};
 
   @property({type: String}) manifestURL: string = "";
+  @property({type: String}) focusOn: string = "";
 
   // Icon state vars
   @state() uploadSelectedImageFile: Lazy<File>;
@@ -500,13 +502,18 @@ export class ManifestIconsForm extends LitElement {
     hyperlink.click();
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
             <div class="header-left">
-              <h3>App Icons</h3>
+              <h3 class=${classMap(this.decideFocus("icons"))}>App Icons</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=icons-array"
                 target="_blank"

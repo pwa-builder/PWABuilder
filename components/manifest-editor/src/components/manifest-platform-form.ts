@@ -237,8 +237,7 @@ export class ManifestPlatformForm extends LitElement {
       }
 
       .focus {
-        border: 5px solid #45b63fac;
-        border-radius: 10px;
+        color: #4F3FB6;
       }
 
       @media(max-width: 765px){
@@ -926,17 +925,6 @@ export class ManifestPlatformForm extends LitElement {
 
   decideFocus(field: string){
     let decision = this.focusOn === field;
-
-    /* if(this.focusOn && decision){
-      let spot = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-      console.log(spot)
-      if(spot){
-        (spot as HTMLElement).focus();
-        console.log(":scrolling")
-        spot!.scrollIntoView({behavior: "smooth"})
-      }
-    }  */
-
     return {focus: decision}
   }
 
@@ -946,7 +934,7 @@ export class ManifestPlatformForm extends LitElement {
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>IARC Rating ID</h3>
+              <h3 class=${classMap(this.decideFocus("iarc_rating_id"))}>IARC Rating ID</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"
                 target="_blank"
@@ -959,11 +947,11 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Displays what ages are suitable for your PWA</p>
-            <sl-input placeholder="PWA IARC Rating ID" value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("iarc_rating_id"))}></sl-input>
+            <sl-input placeholder="PWA IARC Rating ID" value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Prefer Related Applications</h3>
+              <h3 class=${classMap(this.decideFocus("prefer_related_applications"))}>Prefer Related Applications</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean"
                 target="_blank"
@@ -976,7 +964,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""} class=${classMap(this.decideFocus("prefer_related_applications"))}>
+            <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
               <sl-menu-item value="true">true</sl-menu-item>
               <sl-menu-item value="false">false</sl-menu-item>
             </sl-select>
@@ -985,7 +973,7 @@ export class ManifestPlatformForm extends LitElement {
         <div class="long-items">
           <div class="form-field">
             <div class="field-header">
-              <h3>Related Applications</h3>
+              <h3 class=${classMap(this.decideFocus("related_applications"))}>Related Applications</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array"
                 target="_blank"
@@ -998,7 +986,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Applications that provide similar functionality to your PWA</p>
-            <sl-details class="field-details" summary="Click to edit related apps" data-field="related_applications" class=${classMap(this.decideFocus("related_applications"))}>
+            <sl-details class="field-details" summary="Click to edit related apps" data-field="related_applications">
               <sl-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</sl-button>
               <div class="items-holder">
                 ${ this.manifest.related_applications && Array.isArray(this.manifest.related_applications) ? this.manifest.related_applications.map((app: any, i: number) =>
@@ -1022,7 +1010,7 @@ export class ManifestPlatformForm extends LitElement {
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Shortcuts</h3>
+              <h3 class=${classMap(this.decideFocus("shortcuts"))}>Shortcuts</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"
                 target="_blank"
@@ -1035,7 +1023,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Links to key tasks or pages within your PWA</p>
-            <sl-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts" class=${classMap(this.decideFocus("shortcuts"))}>
+            <sl-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts">
               <sl-button @click=${() => this.addFieldToHTML("shortcuts")} ?disabled=${this.shortcutHTML.length != 0}>Add Shortcut</sl-button>
               <div class="items-holder">
                 ${this.manifest.shortcuts && Array.isArray(this.manifest.shortcuts) ? this.manifest.shortcuts!.map((sc: any, i: number) =>
@@ -1058,7 +1046,7 @@ export class ManifestPlatformForm extends LitElement {
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Protocol Handlers</h3>
+              <h3 class=${classMap(this.decideFocus("protocol_handlers"))}>Protocol Handlers</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"
                 target="_blank"
@@ -1071,7 +1059,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>Protocols this web app can register and handle</p>
-            <sl-details class="field-details" summary="Click to edit protocol handlers" data-field="protocol_handlers" class=${classMap(this.decideFocus("protocol_handlers"))}>
+            <sl-details class="field-details" summary="Click to edit protocol handlers" data-field="protocol_handlers">
               <sl-button @click=${() => this.addFieldToHTML("protocol_handlers")} ?disabled=${this.protocolHTML.length != 0}>Add Protocol</sl-button>
               <div class="items-holder">
                 ${this.manifest.protocol_handlers  && Array.isArray(this.manifest.protocol_handlers) ? this.manifest.protocol_handlers.map((p: any, i: number) =>
@@ -1092,7 +1080,7 @@ export class ManifestPlatformForm extends LitElement {
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Categories</h3>
+              <h3 class=${classMap(this.decideFocus("categories"))}>Categories</h3>
               <a
                 href="https://docs.pwabuilder.com/#/builder/manifest?id=categories-array"
                 target="_blank"
@@ -1105,7 +1093,7 @@ export class ManifestPlatformForm extends LitElement {
               </a>
             </div>
             <p>The categories your PWA belongs to</p>
-              <div id="cat-field"  data-field="categories" class=${classMap(this.decideFocus("categories"))}>
+              <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
                     html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
                   )}

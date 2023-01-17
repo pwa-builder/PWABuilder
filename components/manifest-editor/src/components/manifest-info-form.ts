@@ -177,8 +177,7 @@ export class ManifestInfoForm extends LitElement {
       }
 
       .focus {
-        border: 5px solid #45b63fac;
-        border-radius: 10px;
+        color: #4f3fb6;
       }
 
 
@@ -497,7 +496,7 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Name</h3>
+                <h3 class=${classMap(this.decideFocus("name"))}>Name</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=name-string"
                   target="_blank"
@@ -513,12 +512,12 @@ export class ManifestInfoForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The name of your app as displayed to the user</p>
-            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("name"))}></sl-input>
+            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Short Name</h3>
+                <h3 class=${classMap(this.decideFocus("short_name"))}>Short Name</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string"
                   target="_blank"
@@ -534,14 +533,14 @@ export class ManifestInfoForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>Used in app launchers</p>
-            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("short_name"))}></sl-input>
+            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
         </div>
         <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Description</h3>
+                <h3 class=${classMap(this.decideFocus("description"))}>Description</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=description-string"
                   target="_blank"
@@ -555,7 +554,7 @@ export class ManifestInfoForm extends LitElement {
               </div>
             </div>
             <p>Used in app storefronts and install dialogs</p>
-            <sl-textarea placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange} resize="none" class=${classMap(this.decideFocus("description"))}></sl-textarea>
+            <sl-textarea placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange} resize="none"></sl-textarea>
           </div>
           
         </div>
@@ -563,7 +562,7 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field color_field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Background Color</h3>
+                <h3 class=${classMap(this.decideFocus("background_color"))}>Background Color</h3>
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
                   target="_blank"
@@ -579,7 +578,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Background color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} hoist=${true} data-field="background_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("background_color")} class=${classMap(this.decideFocus("background_color"))}></sl-color-picker>
+                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} hoist=${true} data-field="background_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
                 <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
@@ -587,7 +586,7 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field color_field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Theme Color</h3>
+                <h3 class=${classMap(this.decideFocus("theme_color"))}>Theme Color</h3>
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
                   target="_blank"
@@ -603,7 +602,7 @@ export class ManifestInfoForm extends LitElement {
             <p>Select a Theme color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} hoist=${true} data-field="theme_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("theme_color")} class=${classMap(this.decideFocus("theme_color"))}></sl-color-picker>
+                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} hoist=${true} data-field="theme_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
                 <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>

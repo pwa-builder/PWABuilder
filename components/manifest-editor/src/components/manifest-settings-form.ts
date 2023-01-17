@@ -206,8 +206,7 @@ export class ManifestSettingsForm extends LitElement {
       }
 
       .focus {
-        border: 5px solid #45b63fac;
-        border-radius: 10px;
+        color: #4f3fb6;
       }
 
       @media(max-width: 765px){
@@ -528,7 +527,7 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Start URL</h3>
+                <h3 class=${classMap(this.decideFocus("start_url"))}>Start URL</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"
                   target="_blank"
@@ -544,12 +543,12 @@ export class ManifestSettingsForm extends LitElement {
               <p>(required)</p>
             </div>
             <p>The URL that loads when your PWA starts</p>
-            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("start_url"))}></sl-input>
+            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Dir</h3>
+                <h3 class=${classMap(this.decideFocus("dir"))}>Dir</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"
                   target="_blank"
@@ -563,7 +562,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The text direction of your PWA</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("dir"))}>
+            <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -572,7 +571,7 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Scope</h3>
+                <h3 class=${classMap(this.decideFocus("scope"))}>Scope</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"
                   target="_blank"
@@ -586,13 +585,13 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>Which URLs can load within your app</p>
-            <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("scope"))}></sl-input>
+            <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
           </div>
           
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Language</h3>
+                <h3 class=${classMap(this.decideFocus("lang"))}>Language</h3>
                 <a
                   href="https://www.w3.org/TR/appmanifest/#lang-member"
                   target="_blank"
@@ -606,7 +605,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("lang"))}>
+            <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -615,7 +614,7 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Orientation</h3>
+                <h3 class=${classMap(this.decideFocus("orientation"))}>Orientation</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"
                   target="_blank"
@@ -629,14 +628,14 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("orientation"))}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Display</h3>
+                <h3 class=${classMap(this.decideFocus("display"))}>Display</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=display-string"
                   target="_blank"
@@ -650,7 +649,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p>The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange} class=${classMap(this.decideFocus("display"))}>
+            <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
           </div>
@@ -659,7 +658,7 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Display Override</h3>
+                <h3 class=${classMap(this.decideFocus("display_override"))}>Display Override</h3>
                 <a
                   href="https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"
                   target="_blank"
@@ -674,7 +673,7 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p>Used to determine the preferred display mode</p>
             <div id="override-list">
-            <sl-details summary="Click to edit display override" data-field="display_override" class=${classMap(this.decideFocus("display_override"))}>
+            <sl-details summary="Click to edit display override" data-field="display_override">
               <sl-menu>
                 <sl-menu-label>Active Override Items</sl-menu-label>
                 ${this.activeOverrideItems.length != 0 ?

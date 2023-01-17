@@ -9,6 +9,7 @@ import {
 } from '../utils/interfaces';
 import { generateScreenshots } from '../utils/screenshots';
 import { resolveUrl } from '../utils/urls';
+import {classMap} from 'lit/directives/class-map.js';
 
 let manifestInitialized = false;
 
@@ -24,6 +25,7 @@ export class ManifestScreenshotsForm extends LitElement {
   }}) manifest: Manifest = {};
   @property({type: String}) manifestURL: string = "";
   @property({type: String}) baseURL: string = "";
+  @property({type: String}) focusOn: string = "";
 
   @state() screenshotUrlList: Array<string | undefined> = [undefined];
   @state() screenshotListValid: Array<boolean> = [];
@@ -85,6 +87,9 @@ export class ManifestScreenshotsForm extends LitElement {
       .form-field h3 {
         font-size: 18px;
         margin: 0;
+      }
+      .focus {
+        color: #4f3fb6;
       }
       .form-field p {
         font-size: 14px;
@@ -513,12 +518,17 @@ export class ManifestScreenshotsForm extends LitElement {
     return undefined;
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
-            <h3>Screenshots</h3>
+            <h3 class=${classMap(this.decideFocus("screenshots"))}>Screenshots</h3>
             <a
               href="https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"
               target="_blank"

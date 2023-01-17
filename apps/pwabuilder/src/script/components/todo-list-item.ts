@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
+import {classMap} from 'lit/directives/class-map.js';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -8,6 +8,7 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
+import { manifest_fields } from '../utils/manifest-info';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -20,10 +21,11 @@ export class TodoItem extends LitElement {
   static get styles() {
     return [
       css`
-      #item-wrapper {
+      .iwrapper {
         display: flex;
         column-gap: .5em;
         align-items: center;
+        justify-content: space-between;
         font-size: 16px;
         background-color: #F1F2FA;
         border-radius: 10px;
@@ -32,16 +34,26 @@ export class TodoItem extends LitElement {
         border: 1px solid transparent;
       }
 
-      #item-wrapper:hover {
+      .iwrapper.clickable:hover {
         cursor: pointer;
         border: 1px solid #CBCDEB;
       }
 
-      #item-wrapper img {
+      .iwrapper img {
         height: 16px;
       }
 
-      #item-wrapper p {
+      .left, .right {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .left {
+        gap: .5em;
+      }
+
+      .iwrapper p {
         margin: 0;
         vertical-align: middle;
         line-height: 16px;
@@ -88,16 +100,30 @@ export class TodoItem extends LitElement {
     this.dispatchEvent(event);
   }
 
+  decideClickable(field: string){
+    let decision;
+    if(manifest_fields[field] || this.status === "retest"){
+      decision = true;
+    } // else if(sw_fields[field]){}
+    else {
+      decision = false;
+    }
+    return {iwrapper: true, clickable: decision}
+  }
+
   render() {
     return html`
-      <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
-        ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+      <div class=${classMap(this.decideClickable(this.field))} @click=${() => this.bubbleEvent()} >
+        <div class="left">
+          ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
-        <p>${this.fix.split("~").length > 1 ? 
-            this.fix.split("~").join(" "+ this.field + " ") :
-            this.fix
-            } 
-        </p>
+          <p>${this.fix.split("~").length > 1 ? 
+              this.fix.split("~").join(" "+ this.field + " ") :
+              this.fix
+              } 
+          </p>
+        </div>
+        ${manifest_fields[this.field] ? html`<div class="right"><img src="assets/tooltip.svg" alt="info symbol, additional information available on click" /></div>` : html``}
       </div>
     `;
   }

@@ -89,11 +89,12 @@ export class InfoPanel extends LitElement {
 
       .question {
         font-size: 18px;
-        margin: 13px 0;
+        margin: 10px 0;
       }
       .answer {
         font-size: 16px;
         margin: 0;
+        margin-bottom: 16px;
       }
 
       .desc-line {
@@ -174,13 +175,13 @@ export class InfoPanel extends LitElement {
           </div>
           
           <div class="block">
-            <h2 class="question">What is the ${this.capFirstLetter(this.field!)} field?</h2>
+            <h2 class="question">What is the ${this.field!} field?</h2>
             <div class="answer">${this.info?.description.map((line: String) => html`<p class="desc-line">${line}</p>`)}</div>
           </div>
 
           ${this.info?.purpose ? html`
             <div class="block">
-              <h2 class="question">Why should I use the ${this.capFirstLetter(this.field!)} field?</h2>
+              <h2 class="question">Why should I use the ${this.field!} field?</h2>
               <p class="answer">${this.info?.purpose}</p>
             </div>
             ` : html``
@@ -188,8 +189,8 @@ export class InfoPanel extends LitElement {
           
 
           <div class="block">
-            <h2 class="question">How do I implement the ${this.capFirstLetter(this.field!)} field?</h2>
-            <p class="answer">${this.info?.example}</p>
+            <h2 class="question">How do I implement the ${this.field!} field?</h2>
+            ${ this.info?.example ? html`<p class="answer">${this.info?.example}</p>` : html``}
             <code-editor 
               .startText=${this.info?.code}
               .readOnly=${true}>
