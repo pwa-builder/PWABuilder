@@ -3,6 +3,7 @@ import { readFile } from "fs/promises";
 import { testManifest } from "./validation";
 import { findManifest, getManifest } from "../manifest/manifest-service";
 import { pathExists } from "../../library/file-utils";
+import { trackException } from "../usage-analytics";
 
 /**
  * This is the Web Manifest Panel
@@ -87,7 +88,8 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       const testResults = await testManifest(manifestContents);
 
       return testResults;
-    } catch (err) {
+    } catch (err: any) {
+      trackException(err);
       throw new Error(`Error loading and testing manifest: ${err}`);
     }
   }

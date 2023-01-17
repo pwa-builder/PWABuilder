@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { trackException } from "../usage-analytics";
 
 export let scriptsObject: any = {};
 export let goodProdBuildScript: string | undefined;
@@ -141,7 +142,8 @@ export function findPackageJSON(): Promise<vscode.Uri> {
             } else {
                 reject("No package.json found");
             }
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(`Error finding package.json: ${err}`);
         }
     });
@@ -162,7 +164,8 @@ export function findScripts(packageJSON: vscode.Uri) {
             } else {
                 reject("No scripts found in package.json");
             }
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(`Error finding scripts in package.json: ${err}`);
         }
     });

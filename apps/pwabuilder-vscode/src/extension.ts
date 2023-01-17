@@ -63,7 +63,11 @@ export let storageManager: LocalStorageService | undefined = undefined;
 export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
-  initAnalytics();
+  const telemReporter = initAnalytics();
+
+  if (telemReporter) {
+    context.subscriptions.push(telemReporter);
+  }
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
