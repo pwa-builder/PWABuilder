@@ -4,6 +4,7 @@ export const env = {
   manifestCreatorUrl: '',
   serviceWorkerUrl: '',
   api: '',
+  apiV2: '',
   windowsPackageGeneratorUrl: '',
   androidPackageGeneratorUrl: '',
   iosPackageGeneratorUrl: '',
@@ -26,6 +27,8 @@ if (import.meta.env.PROD) {
   env.serviceWorkerUrl =
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
   env.api = 'https://pwabuilder-tests.azurewebsites.net/api';
+  // TODO: fix after testing
+  env.apiV2 = 'https://pwabuilder-tests-preview.azurewebsites.net/api';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
@@ -53,6 +56,8 @@ if (import.meta.env.PROD) {
   env.serviceWorkerUrl =
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
   env.api = 'https://pwabuilder-tests.azurewebsites.net/api';
+  // TODO: fix after testing
+  env.apiV2 = 'http://localhost:7071/api';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
@@ -72,3 +77,4 @@ if (import.meta.env.PROD) {
     'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 }
+

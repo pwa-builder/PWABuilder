@@ -34,6 +34,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
+import { Report, ReportAudit, processManifest, processServiceWorker } from './app-home.helper';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -42,6 +43,7 @@ const stop_src = "/assets/new/stop.svg";
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
+  @property({ type: Object }) reportAudit: ReportAudit | undefined;
   @property({ type: Object }) appCard = {
     siteName: 'Site Name',
     description: "Your site's description",
@@ -122,7 +124,7 @@ export class AppReport extends LitElement {
   @state() thingToAdd: string = "";
   @state() retestConfirmed: boolean = false;
 
-  @state() createdManifest: boolean = false;  
+  @state() createdManifest: boolean = false;
   @state() manifestContext: ManifestContext | undefined;
 
   @state() todoItems: any[] = [];
@@ -291,7 +293,7 @@ export class AppReport extends LitElement {
           border-radius: 10px;
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
-        
+
         #app-card-header img {
           height: 85px;
           width: auto;
@@ -316,12 +318,12 @@ export class AppReport extends LitElement {
           100% {
               transform: rotate(360deg);
           }
-        } 
+        }
 
         #site-name {
           font-size: 24px;
         }
-        
+
         #card-info {
           overflow: hidden;
           white-space: nowrap;
@@ -372,7 +374,7 @@ export class AppReport extends LitElement {
         #test img {
           height: 18px;
         }
-        
+
         #retest {
           display: flex;
           align-items: center;
@@ -714,7 +716,7 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
         }
-        
+
         .flex-center {
           display: flex;
           align-items: center;
@@ -1128,7 +1130,7 @@ export class AppReport extends LitElement {
       this.isDeskTopView = e.matches;
     });
   }
-  
+
   // Runs when the page loads.
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
@@ -1229,7 +1231,7 @@ export class AppReport extends LitElement {
         iconUrl = "/assets/icons/icon_512.png"
       }
 
-      
+
       this.proxyLoadingImage = true;
       await this.testImage(iconUrl).then(
         function fulfilled(_img) {
@@ -1326,8 +1328,13 @@ export class AppReport extends LitElement {
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
   async runAllTests(url: string) {
     this.runningTests = true;
-    await this.getManifest(url);
-    await Promise.all([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
+    this.reportAudit = await Report(url);
+    console.log(this.reportAudit);
+
+    await this.populateAppCard(await processManifest(url, this.reportAudit?.artifacts?.webAppManifest), this.reportAudit?.artifacts?.webAppManifest?.url);
+
+    // await this.getManifest(url);
+    await Promise.all([ this.testManifest(), this.testServiceWorker(processServiceWorker(this.reportAudit?.audits)), this.testSecurity(url)]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
@@ -1377,14 +1384,14 @@ export class AppReport extends LitElement {
           }
 
           this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
-          
+
         }
       });
     } else {
       manifest = {};
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
     }
-    
+
     let amt_missing = await this.handleMissingFields(manifest);
 
     this.manifestTotalScore += amt_missing;
@@ -1407,14 +1414,14 @@ export class AppReport extends LitElement {
   }
 
   // Tests the SW and populates the SW card detail dropdown
-  async testServiceWorker(url: string) {
+  async testServiceWorker(serviceWorkerResults: TestResult[]) {
     //call service worker tests
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
     details!.disabled = true;
 
     let missing = false;
 
-    const serviceWorkerTestResult = await testServiceWorker(url);
+    const serviceWorkerTestResult = serviceWorkerResults;
     this.serviceWorkerResults = serviceWorkerTestResult;
 
     this.serviceWorkerResults.forEach((result: any) => {
@@ -1459,7 +1466,7 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
-  // Tests the Security and populates the Security card detail dropdown 
+  // Tests the Security and populates the Security card detail dropdown
   async testSecurity(url: string) {
     //Call security tests
     let details = (this.shadowRoot!.getElementById("sec-details") as any);
@@ -1530,7 +1537,7 @@ export class AppReport extends LitElement {
   * Triggers all tests to retest
   * If coming from confirmation is true, we have to delay a bit so a special message can show
   * @param {boolean} comingFromConfirmation
-  * @return {void} 
+  * @return {void}
   */
   async retest(comingFromConfirmation: boolean) {
     recordPWABuilderProcessStep("retest_clicked", AnalyticsBehavior.ProcessCheckpoint);
@@ -1739,7 +1746,7 @@ export class AppReport extends LitElement {
     await (details as any)!.show();
 
     details!.scrollIntoView({behavior: "smooth"});
-    
+
     let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
 
     // The below block is just to get the specific item to animate if a field has more than 1 test.
@@ -1850,7 +1857,7 @@ export class AppReport extends LitElement {
       </div>`
     }
     return html``
-    
+
   }
 
   render() {
@@ -1907,7 +1914,7 @@ export class AppReport extends LitElement {
                   </button>
                 </div>
               </div>
-              
+
             </div>`}
             <div id="app-actions" class="flex-col">
               <div id="package" class="flex-col-center">
@@ -1978,7 +1985,7 @@ export class AppReport extends LitElement {
                   ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.renderIndicators() : html``}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
-                
+
               </div>
              ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
                 html`
@@ -1997,8 +2004,8 @@ export class AppReport extends LitElement {
               <div id="pagination-actions">
                 <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
                 <div id="dots">
-                  ${this.getDots().map((_dot: any, index: number) => 
-                    this.pageNumber == index + 1 ? 
+                  ${this.getDots().map((_dot: any, index: number) =>
+                    this.pageNumber == index + 1 ?
                       html`
                         <img src="/assets/new/active_dot.svg" alt="active dot" />
                       ` :
@@ -2100,7 +2107,7 @@ export class AppReport extends LitElement {
                     )}
                   ` :
                   html``}
-                  
+
                   ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -2321,7 +2328,7 @@ export class AppReport extends LitElement {
                     html`
                       <a
                         class="arrow_anchor"
-                        href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" 
+                        href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04"
                         rel="noopener"
                         target="_blank"
                         @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
