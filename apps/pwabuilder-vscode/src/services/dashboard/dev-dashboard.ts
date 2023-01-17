@@ -41,7 +41,6 @@ export async function stopRunningScript() {
 }
 
 export async function runScript(script: string) {
-    console.log("running", script,)
     terminal = vscode.window.createTerminal(`${script}`);
     terminal.show();
 
@@ -51,7 +50,6 @@ export async function runScript(script: string) {
     else {
         terminal.sendText(`npm run ${script}`)
     }
-    // terminal?.dispose();
 }
 
 export async function runTests() {

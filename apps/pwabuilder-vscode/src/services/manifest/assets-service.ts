@@ -141,8 +141,6 @@ export async function generateIcons(options: any = {}, skipPrompts?: boolean) {
                         iconOnly: true
                     });
 
-                console.log(savedImages, htmlMeta, manifestJsonContent);
-
                 const manifest: vscode.Uri = (await findManifest() as vscode.Uri);
                 if (manifest) {
                     const manifestFile = await vscode.workspace.openTextDocument(
