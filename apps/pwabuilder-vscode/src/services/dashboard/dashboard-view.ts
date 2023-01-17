@@ -44,6 +44,15 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
 
             items.push(
                 new DashboardItem(
+                    "Assets",
+                    "https://pwabuilder.com",
+                    "Manage your app's assets",
+                    vscode.TreeItemCollapsibleState.Expanded
+                )
+            );
+
+            items.push(
+                new DashboardItem(
                     "Packaging",
                     "https://pwabuilder.com",
                     "Package your PWA for the app stores",
@@ -76,7 +85,6 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                             }));
                     }
                 }
-
                 resolve(items);
             }
             else if (element && element.label === "Add Native Features") {
@@ -200,6 +208,28 @@ export class DashboardViewProvider implements vscode.TreeDataProvider<any> {
                 );
 
                 resolve(items);
+            }
+            else if (element && element.label === "Assets") {
+                const items: DashboardItem[] = [];
+
+                items.push(new DashboardItem('Generate Icons', 'https://pwabuilder.com', 'Generate icons for your app', vscode.TreeItemCollapsibleState.None,
+                    new vscode.ThemeIcon("file-media"),
+                    {
+                        command: "pwa-studio.generateIcons",
+                        title: "Generate icons",
+                        arguments: []
+                    }));
+
+                items.push(new DashboardItem('Generate Screenshots', 'https://pwabuilder.com', 'Generate splash screens for your app', vscode.TreeItemCollapsibleState.None,
+                    new vscode.ThemeIcon("file-media"),
+                    {
+                        command: "pwa-studio.generateScreenshots",
+                        title: "Generate screenshots",
+                        arguments: []
+                    }));
+
+                resolve(items);
+
             }
             else {
                 resolve([]);
