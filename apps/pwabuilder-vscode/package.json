@@ -3,7 +3,7 @@
   "displayName": "PWABuilder Studio",
   "description": "PWABuilder Studio makes VSCode the best development environment for building PWAs!",
   "publisher": "PWABuilder",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
