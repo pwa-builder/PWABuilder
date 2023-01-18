@@ -16,8 +16,8 @@ export class AppFooter extends LitElement {
       footer {
         /*temp color*/
         background: var(--font-color);
-        color: white;
-        fill: white;
+        color: #ffffff;
+        fill: #ffffff;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -101,7 +101,7 @@ export class AppFooter extends LitElement {
           }
 
           #icons {
-            color: white;
+            color: #ffffff;
             width: 10em;
           }
 
@@ -111,7 +111,7 @@ export class AppFooter extends LitElement {
 
           #icons sl-icon {
             font-size: 27px;
-            color: white;
+            color: #ffffff;
           }
         `
       )}

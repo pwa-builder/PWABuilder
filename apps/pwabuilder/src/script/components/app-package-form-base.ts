@@ -33,8 +33,8 @@ export class AppPackageFormBase extends LitElement {
       }
 
       #form-extras sl-button::part(base) {
-        background-color: black;
-        color: white;
+        background-color: var(--font-color);
+        color: #ffffff;
         font-size: 14px;
         height: 3em;
         width: 25%;
