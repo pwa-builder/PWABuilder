@@ -105,12 +105,33 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     let resultsData: ValidationItem[] = [];
     testResults.map((result: any) => {
       if (detail) {
+        let potentialCommand = null;
+
+        switch (result.member) {
+          case "shortcuts":
+            potentialCommand = {
+              command: "pwa-studio.addShortcuts",
+              title: "Add Shortcuts",
+              arguments: [],
+            };
+            break;
+
+          case "icons": 
+            potentialCommand = {
+              command: "pwa-studio.generateIcons",
+              title: "Generate Icons",
+              arguments: [],
+            };
+            break;
+        }
+
         resultsData.push(
           new ValidationItem(
             result.infoString,
             result.docsLink ? result.docsLink : "",
             result.result ? result.result.toString() : "",
-            vscode.TreeItemCollapsibleState.None
+            vscode.TreeItemCollapsibleState.None,
+            potentialCommand ? potentialCommand : undefined
           )
         );
       } else {
@@ -144,17 +165,23 @@ class ValidationItem extends vscode.TreeItem {
     public readonly label: string,
     public readonly docsLink: string,
     private version: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly command?: vscode.Command
   ) {
     super(label, collapsibleState);
     this.tooltip = `${this.label}-${this.version}`;
     this.description = this.version;
 
-    this.command = {
-      command: "vscode.open",
-      title: "Open Web Manifest",
-      arguments: [getManifest()],
-    };
+    if (command && version === "false") {
+      this.command = command;
+    }
+    else {
+      this.command = {
+        command: "vscode.open",
+        title: "Open Web Manifest",
+        arguments: [getManifest()],
+      };
+    }
   }
   
 
