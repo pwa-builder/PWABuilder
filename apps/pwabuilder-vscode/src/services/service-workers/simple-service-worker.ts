@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { getAnalyticsClient } from "../usage-analytics";
 import { findWorker, handleAddingToIndex } from "./service-worker";
+import { trackEvent, trackException } from "../usage-analytics";
 
 let existingWorker: vscode.Uri | undefined = undefined;
 
@@ -100,11 +100,7 @@ const simple_worker = `
 `;
 
 export async function handleServiceWorkerCommand() {
-    const analyticsClient = getAnalyticsClient();
-    analyticsClient.trackEvent({
-        name: "generate",
-        properties: { type: "service-worker" }
-    });
+    trackEvent("generate", { "type": "service-worker" })
 
     // first, check if the service worker already exists
     existingWorker = await findWorker();
@@ -188,7 +184,8 @@ async function getServiceWorkerContents(): Promise<string | undefined> {
     return new Promise<string | undefined>(async (resolve, reject) => {
         try {
             resolve(simple_worker);
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(`Error getting service worker contents: ${err}`);
         }
     });

@@ -523,7 +523,7 @@ export class AppHome extends LitElement {
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
                   <a @click=${() => recordPWABuilderProcessStep("top.PWAStarter_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://docs.pwabuilder.com/#/starter/quick-start" target="_blank" rel="noopener" aria-label="Start a new pwa, will open in separate tab">Start a new PWA</a>
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                  <img src="/assets/new/arrow.svg" alt="arrow"/>
 
                 </div>
                 <p>
@@ -534,7 +534,7 @@ export class AppHome extends LitElement {
               <div class="intro-grid-item">
                 <div class="grid-item-header">  
                   <a @click=${() => recordPWABuilderProcessStep("home.top.PWAStudio_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/install-pwa-studio" target="_blank" rel="noopener" aria-label="Use dev tools, will open a separate tab">Use dev tools</a>
-                  <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                  <img src="/assets/new/arrow.svg" alt="arrow"/>
                 </div>
                 <p>
                   Use our VS Code extension to create, improve, and package your PWA directly in your code editor.

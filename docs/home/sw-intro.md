@@ -125,6 +125,17 @@ This snippet showcases using a *Cache-First* strategy to fetch resources. When t
 
 The Cache-First strategy is basic and has some cons (for example, updating stale resources), but works great for simple, beginner use cases.
 
+## Security
+
+Service workers have to be served from a secure, HTTPS-enabled endpoint in order to function. Because service workers are essential to progressive web apps, all PWAs must therefore be served on HTTPS to work properly.
+
+For testing purposes, service workers will function without HTTPS when served from `localhost`, but if you want to distribute your PWA, you will need to secure your application.
+
+If you are unfamiliar with creating certificates to secure an endpoint, you can use an app hosting service that comes with HTTPS enabled by default. 
+
+One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI [here.](/starter/publish?id=azure-static-web-apps)
+
+
 ## Next Steps
 
 If you're looking to get more in depth information about service workers, check out [this resource](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).

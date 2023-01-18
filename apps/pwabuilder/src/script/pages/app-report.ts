@@ -2098,7 +2098,6 @@ export class AppReport extends LitElement {
                         <img
                           src="/assets/new/arrow.svg"
                           alt="arrow"
-                          role="presentation"
                         />
                       </a>
                   `}
@@ -2272,7 +2271,6 @@ export class AppReport extends LitElement {
                         <img
                           src="/assets/new/arrow.svg"
                           alt="arrow"
-                          role="presentation"
                         />
                       </a>
                     `
@@ -2370,7 +2368,6 @@ export class AppReport extends LitElement {
                         <img
                           src="/assets/new/arrow.svg"
                           alt="arrow"
-                          role="presentation"
                         />
                       </a>
                     `
