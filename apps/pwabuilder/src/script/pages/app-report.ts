@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getManifestContext } from '../services/app-info';
+import { getManifestContext, setManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
@@ -34,7 +34,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
-import { Report, ReportAudit, processManifest, processServiceWorker } from './app-home.helper';
+import { Report, ReportAudit, processManifest, processSecurity, processServiceWorker } from './app-home.helper';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1197,8 +1197,8 @@ export class AppReport extends LitElement {
 
   // Populates the "App Card" from the manifest.
   // Uses the URL for loading the image.
-  async populateAppCard(manifestContext: ManifestContext, url: string) {
-    let cleanURL = url.replace(/(^\w+:|^)\/\//, '')
+  async populateAppCard(manifestContext: ManifestContext, url?: string) {
+    let cleanURL = url?.replace(/(^\w+:|^)\/\//, '') || '';
 
     if (manifestContext && !this.createdManifest) {
       const parsedManifestContext = manifestContext;
@@ -1328,13 +1328,19 @@ export class AppReport extends LitElement {
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
   async runAllTests(url: string) {
     this.runningTests = true;
+    this.isAppCardInfoLoading = true;
     this.reportAudit = await Report(url);
+
     console.log(this.reportAudit);
 
-    await this.populateAppCard(await processManifest(url, this.reportAudit?.artifacts?.webAppManifest), this.reportAudit?.artifacts?.webAppManifest?.url);
+    this.manifestContext = await processManifest(url, this.reportAudit?.artifacts?.webAppManifest);
+    setManifestContext(this.manifestContext);
+    this.isAppCardInfoLoading = false;
+
+    await this.populateAppCard(this.manifestContext, this.reportAudit?.artifacts?.webAppManifest?.url);
 
     // await this.getManifest(url);
-    await Promise.all([ this.testManifest(), this.testServiceWorker(processServiceWorker(this.reportAudit?.audits)), this.testSecurity(url)]).then(() =>
+    await Promise.all([ this.testManifest(), this.testServiceWorker(processServiceWorker(this.reportAudit?.audits)), this.testSecurity(processSecurity(this.reportAudit.audits))]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
@@ -1467,12 +1473,12 @@ export class AppReport extends LitElement {
   }
 
   // Tests the Security and populates the Security card detail dropdown
-  async testSecurity(url: string) {
+  async testSecurity(securityAudit: TestResult[]) {
     //Call security tests
     let details = (this.shadowRoot!.getElementById("sec-details") as any);
     details!.disabled = true;
 
-    const securityTests = await testSecurity(url);
+    const securityTests = securityAudit;
     this.securityResults = securityTests;
 
     this.securityResults.forEach((result: any) => {

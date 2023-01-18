@@ -244,11 +244,11 @@ export async function createManifestContextFromEmpty(url: string): Promise<Manif
     isEdited: false,
   };
 
-  setManifestContext(context);
+  // setManifestContext(context);
 
-  await updateManifest({
-    ...createdManifestResult.content,
-  });
+  // await updateManifest({
+  //   ...createdManifestResult.content,
+  // });
 
   return context;
 }
