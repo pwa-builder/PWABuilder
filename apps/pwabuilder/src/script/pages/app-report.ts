@@ -12,7 +12,6 @@ import { styleMap } from 'lit/directives/style-map.js';
 
 import '../components/app-header';
 import '../components/todo-list-item';
-import '../components/share-card';
 import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
@@ -460,102 +459,6 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
 
-        #share-card-banner {
-          display: flex;
-          position: absolute;
-          justify-content: space-between;
-          align-items: center;
-          color: #ffffff;
-          background: #4F3FB61A;
-          width:100%;
-          height: 45px;
-          box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.08);
-          border-radius: 10px;  
-          padding: 30px 16px;
-        }
-
-        #share-card-banner p {
-          position: absolute;
-          left: 10.17%;
-          right: 41.84%;
-          top: 6.28%;
-          bottom: 91.83%;
-          font-family: 'Hind';
-          font-style: normal;
-          font-weight: 700;
-          font-size: 14px;
-          line-height: 24px;
-          color: var(--primary-color);
-        }
-
-        #share-card-container {
-          width: 100%;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 12px;
-        }
-
-        #share-card-content {
-          display: flex;
-          flex-direction: row;
-        }
-
-        #share-card-content p {
-          font-weight: 700;
-          font-size: 16px;
-          line-height: 24px;
-          color: var(--primary-color);
-
-        }
-
-        #share-card-manny {
-          display: flex;
-          flex-direction: column;
-          justify-content: end;
-          margin-right: 15px;
-        }
-
-        #share-card-cta {
-          display: inline-flex;
-        }
-
-        #share-card-cta #copy-link {
-          margin-right: 11.75px;
-        }
-
-        #share-card-cta #share-link:disabled {
-          background:  #fff;
-          color: #ccc;
-          border-color: #ccc;
-          cursor: no-drop;
-          box-shadow: none;
-        }
-
-        .share-banner-buttons {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 103.33px;
-          height: 35px;
-          background: transparent;
-          color: rgb(79, 63, 182);
-          font-size: 12px;
-          font-weight: bold;
-          border: 1px solid #6F5FD3;
-          border-radius: 20px;
-        }
-
-        .share-banner-buttons:hover {
-          box-shadow: rgb(0 0 0 / 30%) 0px 0px 10px;
-        }
-
-        .banner-button-icons {
-          height: 16px;
-          margin-right: 5px;
-        }
-
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -730,7 +633,7 @@ export class AppReport extends LitElement {
         }
 
         /* Manifest Card */
-        #manifest, #share-card {
+        #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: #ffffff;
           border-radius: 10px;
@@ -1169,10 +1072,6 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
-          #share-card-message p {
-            font-size: 12px;
-            line-height: 18px;
-          }
         `)}
         ${smallBreakPoint(css`
           sl-progress-ring {
@@ -1253,36 +1152,6 @@ export class AppReport extends LitElement {
           }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
-          }
-          #share-card-container {
-            flex-direction: column-reverse;
-            padding-top: 10px;
-          }
-          #share-card-content {
-            flex-direction: column-reverse;
-            align-items: center;
-          }
-          #share-card-message p {
-            text-align: center;
-            padding: 0px 1.35em;
-            margin: 15px 0;
-          }
-          #share-card-cta {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            margin-top: 20px;
-          }
-          .share-banner-buttons {
-            width: 100%;
-            height: 100%;
-            font-size: 16px;
-            padding: 0.5em 0;
-          }
-          .banner-button-icons {
-            height: 20px;
-            margin-right: 8px;
           }
         `)}
       `,
@@ -1769,15 +1638,7 @@ export class AppReport extends LitElement {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
     })
-  }
-
-  // Opens share card modal and tracks analytics
-  async openShareCardModal() {
-    let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
-
-    await dialog!.show();
-    recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
-  }  
+  } 
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
@@ -2539,30 +2400,6 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-          <div id="share-card">
-            <div id="share-card-container">
-              <div id="share-card-content">
-                <div id="share-card-manny">
-                  <img src="/assets/manny_banner_image.png"/>
-                </div>
-                <div id="share-card-message">
-                  <p>Proud of your PWA? Share your score with the world!</p>
-                </div>
-              </div>
-              <div id="share-card-cta">
-                <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
-                  <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">link copied</div>
-                  <button type="button" id="copy-link" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
-                </sl-tooltip>        
-                <button type="button" id="share-link" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                  ${this.runningTests ?
-                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-                  }Share score
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -2583,14 +2420,6 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
-
-      <share-card 
-        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${JSON.stringify(this.decideColor("manifest"))}/Manifest`}
-        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${JSON.stringify(this.decideColor("sw"))}/Service Worker`}
-        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${JSON.stringify(this.decideColor("sec"))}/Security`}
-        .siteUrl=${this.appCard.siteUrl}
-      >
-      </share-card>
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
