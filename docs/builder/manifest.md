@@ -39,7 +39,7 @@ It is recommended that `short_name` be 12 characters or less in length.
 "short_name": "WebBoard"
 ```
 
-?> `short_name` isn't required by Web Standards, but is a required member for packaging with the PWABuilder service.
+?> `short_name` isn't required by Web Standards, but is a required member for packaging with the PWABuilder service. `short_name` must be 3 or more characters to ensure you can package for all stores.
 
 ### description: `string`
 

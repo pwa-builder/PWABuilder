@@ -3,8 +3,8 @@ import * as vscode from "vscode";
 import { injectManifest } from "workbox-build";
 import { isNpmInstalled, noNpmInstalledWarning } from "../new-pwa-starter";
 
-import { getAnalyticsClient } from "../usage-analytics";
 import { findWorker, handleAddingToIndex } from "./service-worker";
+import { trackEvent, trackException } from "../usage-analytics";
 
 const vsTerminal = vscode.window.createTerminal();
 
@@ -51,7 +51,8 @@ export async function updateAdvServiceWorker(): Promise<void> {
                     swDest,
                     globDirectory: buildDir[0].fsPath,
                 });
-            } catch (err) {
+            } catch (err: any) {
+                trackException(err);
                 await Promise.reject(err);
             }
         } else {
@@ -113,27 +114,26 @@ export async function handleAdvServiceWorkerCommand(): Promise<void> {
                     swDest,
                     globDirectory: buildDir[0].fsPath,
                 });
-            } catch (err) {
+            } catch (err: any) {
+                trackException(err);
                 console.error("error", err);
             }
 
             vscode.window.showInformationMessage(
                 "Your Service Worker will now precache your assets. Remember to tap the `Update Precache Manifest` button when you do a new build of your PWA"
             );
-        } catch (err) {
+        } catch (err: any) {
             await vscode.window.showErrorMessage(
                 `Error writing file to your PWA: ${err}`
             );
+
+            trackException(err);
         }
     }
 }
 
 export async function handleServiceWorkerCommandAdv(): Promise<void> {
-    const analyticsClient = getAnalyticsClient();
-    analyticsClient.trackEvent({
-        name: "generate",
-        properties: { type: "service-worker" }
-    });
+    trackEvent("generate", { "type": "service-worker" });
 
     //setup file watcher for workbox config file
     const watcher = vscode.workspace.createFileSystemWatcher(
@@ -200,7 +200,8 @@ async function runWorkboxTool(): Promise<void> {
             } else {
                 noNpmInstalledWarning();
             }
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(err);
         }
     });
