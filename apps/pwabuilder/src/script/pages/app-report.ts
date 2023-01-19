@@ -1867,6 +1867,14 @@ export class AppReport extends LitElement {
 
   }
 
+  getRingColor(card: string) {
+    let ring = this.shadowRoot!.getElementById(`${card}ProgressRing`);
+    if(ring){
+      return ring.classList[0];
+    }
+    return;
+  }
+
   // Swaps messages for each card depending on state of each card
   decideMessage(valid: number, total: number, card: string){
 
@@ -2585,9 +2593,9 @@ export class AppReport extends LitElement {
       </sl-dialog>
 
       <share-card 
-        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${JSON.stringify(this.decideColor("manifest"))}/Manifest`}
-        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${JSON.stringify(this.decideColor("sw"))}/Service Worker`}
-        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${JSON.stringify(this.decideColor("sec"))}/Security`}
+        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
+        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
+        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
         .siteUrl=${this.appCard.siteUrl}
       >
       </share-card>

@@ -6,6 +6,9 @@ import html2canvas from 'html2canvas'
 
 
 
+const colorMap = new Map([["green", "#3ba372"], ["yellow", "#ebc157"], ["red", "#eb5757"]]);
+const accentMap = new Map([["green", "#E3FFF2"], ["yellow", "#FFFAED"], ["red", "#FFF3F3"]]);
+
 @customElement('share-card')
 export class ShareCard extends LitElement {
 
@@ -14,9 +17,6 @@ export class ShareCard extends LitElement {
   @property() swData = "";
   @property() securityData = "";
   @property() siteUrl = "";
-
-  
-
 
   static get styles() {
     return css`
@@ -65,25 +65,7 @@ export class ShareCard extends LitElement {
         flex-direction: column;
         justify-content: space-around;
       }
-      #score-image {
-        width: 100%;   
-        height: 330px;
-        border-radius: 8px;
-        background-image: url("/assets/share_score_backdrop.png");
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-      }
-      #site-url {
-        padding: 15px 15px 0px;
-        font-weight: bold;
-        font-size: 24px;
-        color: rgb(41, 44, 58);
-        line-height: 1em;
-        max-height: 3em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+      
       #share-content {
         display: flex;
         flex-direction: row;
@@ -121,76 +103,9 @@ export class ShareCard extends LitElement {
       #share-button:hover {
         outline: rgba(79, 63, 182, 0.7) solid 2px;
       }
-      sl-progress-ring {
-          --track-width: 4px;
-          --indicator-width: 4px;
-          --size: 65.32px;
-          font-size: 12px;
-          height: 65.32px;
-          align-self: center;
-      }
-      sl-progress-ring::part(base) {
-        border-radius: 50%;
-      }
-      sl-progress-ring::part(label){
-          color: #4F3FB6;
-          font-weight: bold;
-      }
-      .red {
-        --indicator-color: var(--error-color);
-      }
-      .yellow {
-        --indicator-color: var(--warning-color);
-      } 
-      .green {
-        --indicator-color: var(--success-color);
-      }
-      .red::part(base) {
-        background-color: #f7bebe;
-      }
-      .yellow::part(base) {
-        background-color: #FFFAED !important;
-      }
-      .green::part(base){
-        background-color: #E3FFF2;
-      }
-
-      .ring-categories {
-        display:flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      .ring-label {
-        font-size: 14px;
-        margin-top: 8px;
-        align-self: center;
-        font-weight: 400;
-        line-height: 20px;
-        color: #292C3A;
-      }
-
-      #rings {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        height: 150px;
-      }
 
       ${smallBreakPoint(css`
-        #score-image {
-          min-width: 100%;
-          min-height: auto;
-          background: url("/assets/share_score_backdrop_mobile.png") center center no-repeat;
-          background-size: cover;
-          background-attachment: scroll;
-          -webkit-background: url("/assets/share_score_backdrop_mobile.png") center center cover no-repeat;
-          -webkit-background-size: cover;
-          -webkit-background-attachment: scroll;
-          -moz-background: url("/assets/share_score_backdrop_mobile.png") center center cover no-repeat; 
-          -moz-background-size: cover;
-          -moz-background-attachment: scroll;
-        }
+        
         .standard-button {
           width: 133px;
         }
@@ -207,43 +122,128 @@ export class ShareCard extends LitElement {
     `
   }
 
-  renderProgressRings(cardData: any){
-    let data = cardData.split('/');
-    let validCounter = parseFloat(data[0]);
-    let totalScore = parseFloat(data[1]);
-    let color = JSON.parse(data[2]);
-    let categoryName = data[3];
+  async draw(){
+    // manifest Data
+    const maniData = this.manifestData.split('/');
+    const maniPercent = `${parseFloat(maniData[0])} / ${parseFloat(maniData[1])}`
+    const maniColor: string = maniData[2];
+    const maniHeader = maniData[3];
+
+    // sw Data
+    const swData = this.swData.split('/');
+    const swPercent = `${parseFloat(swData[0])} / ${parseFloat(swData[1])}`
+    const swColor = swData[2];
+    const swHeader = swData[3];
+
+    // sec Data
+    const secData = this.securityData.split('/');
+    const secPercent = `${parseFloat(secData[0])} / ${parseFloat(secData[1])}`
+    const secColor = secData[2];
+    const secHeader = secData[3];
+
+    let canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
+    let ctx = canvas!.getContext("2d");
+
+    canvas.width = 413;
+    canvas.height = 331;
+
+    var background = new Image();
+    background.src = 'assets/share_score_backdrop.png';
+
+     // Use `await` to wait for the image to load
+    await new Promise(resolve => background.onload = resolve);
+    // Now that the image is loaded, draw it on the canvas
+    ctx!.drawImage(background, 0, 0);
     
-    return html`
-      <div class="ring-categories">
-        <sl-progress-ring
-          id=${categoryName}
-          class=${classMap(color)}
-          value="${(validCounter / totalScore) * 100}"
-        >
-          ${validCounter} / ${totalScore}
-        </sl-progress-ring>
-        <div class="ring-label"> ${categoryName} </div>
-      </div>
-    `
+    // offset to start top middle rather than
+    // middle right like a unit circle
+    const start = -0.5 * Math.PI;
+    const trackColor = "#e4e4e7";
+
+    // makes ends of lines round
+    ctx!.lineCap = 'round';
+    ctx!.lineJoin = 'round';
+
+    // text for url
+    ctx!.font = "bold 24px Hind, sans-serif";
+    ctx!.fillStyle = "#292c3a";
+    ctx!.fillText(this.siteUrl, 15, 35);
+
+    ctx!.textAlign = "center";
+
+    // --- mani ring ---
+    // track
+    this.drawRingPart(ctx!, 3, trackColor, 68.83, 100, 40, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
+
+    // indicator
+    let percentMani = eval(maniPercent);
+    let radiansMani = (360 * percentMani) * (Math.PI / 180);
+    let endMani = (start) + radiansMani;
+    this.drawRingPart(ctx!, 6, colorMap.get(maniColor)!, 68.83, 100, 40, start, endMani, false, "transparent");
+
+    // text
+    this.writeText(ctx!, 68.83, maniPercent, maniHeader);
+
+    // --- sw ring ---
+    // track
+    this.drawRingPart(ctx!, 3, trackColor, 206.5, 100, 40, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
+
+    // indicator
+    let percentSW = eval(swPercent);
+    let radiansSW = (360 * percentSW) * (Math.PI / 180);
+    let endSW = (start) + radiansSW;
+    this.drawRingPart(ctx!, 6, colorMap.get(swColor)!, 206.5, 100, 40, start, endSW, false, "transparent");
+
+    // text
+    this.writeText(ctx!, 206.5, swPercent, swHeader);
+
+    // --- sec ring ---
+    // track
+    this.drawRingPart(ctx!, 3, trackColor, 344.16, 100, 40, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
+
+    // indicator
+    let percentSec = eval(secPercent);
+    let radiansSec = (360 * percentSec) * (Math.PI / 180);
+    let endSec = (start) + radiansSec;
+    this.drawRingPart(ctx!, 6, colorMap.get(secColor)!, 344.16, 100, 40, start, endSec, false, "transparent");
+
+    // text
+    this.writeText(ctx!, 344.16, secPercent, secHeader);
+  }
+
+  drawRingPart(ctx: CanvasRenderingContext2D, lineWidth: number, trackColor: string, x: number, y: number, radius: number, start: number, end: number, clockwise: boolean, fillColor: string){
+    ctx.beginPath();
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = trackColor;
+    ctx.arc(x, y, radius, start, end, clockwise);
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  writeText(ctx: CanvasRenderingContext2D, x: number, percent: string, header: string){
+    ctx!.font = "bold 16px Hind, sans-serif";
+    ctx!.fillStyle = "#4f3fb6";
+    ctx!.fillText(percent, x, 106);
+    ctx!.font = "16px Hind, sans-serif";
+    ctx!.fillStyle = "#292c3a";
+    ctx!.fillText(header, x, 170);
   }
 
   htmlToImage(shareOption: string) {
-    let image = this.shadowRoot!.getElementById("score-image");
+    const canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
 
-    html2canvas(image!)
-      .then((canvas: HTMLCanvasElement) => {
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
-        if (shareOption === "download"){
-          this.downloadImage(dataUrl, `${this.siteUrl}_pwabuilder_score.png`)
-        } else if (shareOption === "share"){
-          const file = this.dataURLtoFile(dataUrl, `${this.siteUrl}_pwabuilder_score.png`);
-          console.log("file from dataURL()", file);
-          this.shareFile(file, `${this.siteUrl} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
-        } else {  
-          return;
-        }
-      });
+    if (shareOption === "download"){
+      this.downloadImage(dataUrl, `${this.siteUrl}_pwabuilder_score.png`)
+    } else if (shareOption === "share"){
+      const file = this.dataURLtoFile(dataUrl, `${this.siteUrl}_pwabuilder_score.png`);
+      console.log("file from dataURL()", file);
+      this.shareFile(file, `${this.siteUrl} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
+    } else {  
+      return;
+    }
+    
   }
 
   downloadImage(url: string, filename: string) {
@@ -297,20 +297,15 @@ export class ShareCard extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${() => this.hideDialog()} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => this.draw()} @sl-hide=${() => this.hideDialog()} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
-            <div id="score-image">
-              <div id="site-url">
-                ${this.siteUrl}
-              </div>
-              <div id="rings" aria-label="progress ring displays">
-                ${[
-                    this.manifestData,
-                    this.swData,
-                    this.securityData
-                  ].map((data: any) => this.renderProgressRings(data))}
-              </div>
+            <div id="canvas-holder">
+              <canvas
+                id="myCanvas"
+              >
+                Your browser does not support the canvas element.
+              </canvas>
             </div>
             <div id="share-content">        
               <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
