@@ -30,8 +30,6 @@
     "colorjs.io": "^0.4.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
-    "html-to-image": "^1.11.4",
-    "html2canvas": "^1.4.1",
     "ionicons": "^6.0.3",
     "lit": "^2.2.1"
   },
@@ -39,8 +37,6 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@playwright/test": "^1.12.3",
     "@types/chai": "^4.2.21",
-    "@types/dom-to-image": "^2.6.4",
-    "@types/html2canvas": "^1.0.0",
     "@types/lodash-es": "^4.17.4",
     "@types/mocha": "^8.2.3",
     "@types/node": "^18.7.6",
