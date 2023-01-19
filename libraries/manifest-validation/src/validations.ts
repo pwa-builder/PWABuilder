@@ -260,15 +260,15 @@ export const maniTests: Array<Validation> = [
                     const currentMani = currentManifest;
 
                     const url = value;
-                    console.log("test url", url);
+                    //console.log("test url", url);
 
                     // is url relative to scope
                     let relativeToScope = false;
                     if (currentMani && currentMani.scope) {
-                        console.log("test scope", currentMani?.scope);
+                        //console.log("test scope", currentMani?.scope);
                         // is url relative to currentMani.scope
                         const scopeUrl = currentMani.scope;
-                        console.log("scope url", scopeUrl);
+                        //console.log("scope url", scopeUrl);
 
                         if (url.startsWith(scopeUrl)) {
                           relativeToScope = true;
