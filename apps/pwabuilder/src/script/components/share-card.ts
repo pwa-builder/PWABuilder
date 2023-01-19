@@ -65,6 +65,12 @@ export class ShareCard extends LitElement {
         flex-direction: column;
         justify-content: space-around;
       }
+
+      #canvas-holder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       
       #share-content {
         display: flex;
@@ -144,6 +150,7 @@ export class ShareCard extends LitElement {
     let canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
     let ctx = canvas!.getContext("2d");
 
+    // canvas resolution
     canvas.width = 413;
     canvas.height = 331;
 
