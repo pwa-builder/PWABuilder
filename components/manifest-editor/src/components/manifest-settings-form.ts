@@ -244,8 +244,8 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   firstUpdated(){
-    if(this.focusOn){
-      let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    if(this.focusOn && field){
       setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
     }
   }

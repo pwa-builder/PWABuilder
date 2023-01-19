@@ -168,7 +168,7 @@ export class ManifestScreenshotsForm extends LitElement {
       }
 
       .error {
-        color: #eb5757;
+        color: #292c3a;
       }
 
       @media(max-width: 765px){

@@ -177,7 +177,10 @@ export class ManifestIconsForm extends LitElement {
         row-gap: 5px;
       }
       .error {
-        color: #eb5757
+        color: #292c3a;
+      }
+      .focus {
+        color: #4F3FB6;
       }
 
       @media(max-width: 765px){
@@ -271,8 +274,6 @@ export class ManifestIconsForm extends LitElement {
         }
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
-
-        
 
         if(validation.errors){
           validation.errors.forEach((error: string) => {
