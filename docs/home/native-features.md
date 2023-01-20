@@ -255,7 +255,7 @@ The Notification API has a function to request permission from the user:
 Notification.requestPermission();
 ```
 
-If the user grants permission when prompted, your app will then be able to send notifications to the user.
+If the user grants permission when prompted, your app will then be able to send notifications to the user. You only need to request permission to display notifications once to send notifications from your app indefinitely. The user can revoke this permission in their browser's settings.
 
 How and when you choose to request permission is up to you. However, it is often recommended to request permission in response to a user action, such as a button click. You can take a look at an [example](/home/pwa-intro?id=trigger-a-notification) in the PWA Overview documentation.
 
