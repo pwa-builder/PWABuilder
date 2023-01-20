@@ -225,7 +225,7 @@ Or you can make another call to `setAppBadge()` with a value of zero:
 navigator.setAppBadge(0);
 ```
 
-The Badging API can be used from withing your progressive web app, or it's service worker. A common use case for the Badging API is setting the badge in response to a `push` event, which can be handled with a listener in your service worker.
+The Badging API can be used from within your progressive web app, or it's service worker. A common use case for the Badging API is setting the badge in response to a `push` event, which can be handled with a listener in your service worker.
 
 Badging is often used in conjunction with the Notifications API to inform users when new content is available. The next section will take you through how make use of notifications for your progressive web app.
 
