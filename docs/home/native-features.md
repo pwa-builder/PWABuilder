@@ -190,3 +190,112 @@ Here is an example of how to handle a shared URL:
 ```
 
 The key field here is `action`. This allows you to set a specific URL that will open and handle a shared link of this type. If you want to execute functionality based on a shared link, you can have this page parse a link and determine how to handle the shared data.
+
+## Badging
+
+If your progressive web app is installed to the OS, the Badging API allows you to display a notification badge on your PWA's taskbar icon. You can use this functionality to inform the user when new content is available or requires their attention. This can help to keep the engagement up for your progressive web app - bringing users back to view new content.
+
+Here's what a badge for a progressive web app will look like on Windows:
+
+<div class="docs-image">
+   <img src="assets/home/native-features/badging-task-bar.png" alt="Image of a progressive web app with a notification badge displayed on Windows.">
+</div>
+
+### Displaying and Clearing Badges
+
+Using the Badging API only takes a few lines of code:
+
+```js
+if ('setAppBadge' in navigator) {
+  navigator.setAppBadge(1);
+}
+```
+
+In this code snippet, we are just checking if the `setAppBadge` feature is available and then making a call to `navigator.setAppBadge(1)` to display a badge with a value of one.
+
+To clear the app badge, use this function:
+
+```js
+navigator.clearAppBadge();
+```
+
+Or you can make another call to `setAppBadge()` with a value of zero:
+
+```js
+navigator.setAppBadge(0);
+```
+
+The Badging API can be used from within your progressive web app, or it's service worker. A common use case for the Badging API is setting the badge in response to a `push` event, which can be handled with a listener in your service worker.
+
+Badging is often used in conjunction with the Notifications API to inform users when new content is available. The next section will take you through how make use of notifications for your progressive web app.
+
+## Push Notifications
+
+If you want a more direct way to notify users of content in your progressive web app, you can make use of the Notifications API. If the user gives permission for your app to send notifications, your app will be able to send a pop up notification that displays on the operating system regardless of whether or not your app is currently running.
+
+A notification displayed on Windows would look something like this:
+
+<div class="docs-image">
+   <img src="assets/home/native-features/notifications-action-center.png" alt="A push notification being sent by Edge for a progressive web app.">
+</div>
+
+### Displaying a Push Notification
+
+Notifications are often displayed in response to `push` event from the back end. A service worker can listen for this event and then display a notification when a push is received. 
+
+?> **Note** For simplicity sake, this guidance will focus on handling `push` from the front end, but you can learn more about the Push API [here.](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=how-to-start-1)
+
+### Requesting Permission
+
+Before your progressive web app can display notifications, you need to request permission to display them. 
+
+The Notification API has a function to request permission from the user:
+
+```js
+Notification.requestPermission();
+```
+
+If the user grants permission when prompted, your app will then be able to send notifications to the user. You only need to request permission to display notifications once to send notifications from your app indefinitely. The user can revoke this permission in their browser's settings.
+
+How and when you choose to request permission is up to you. However, it is often recommended to request permission in response to a user action, such as a button click. You can take a look at an [example](/home/pwa-intro?id=trigger-a-notification) in the PWA Overview documentation.
+
+### Adding A Push Listener to our Service Worker
+
+Once we have permission to display notifications, we need a way to actually display them. We can add a `push` event listener to our service worker to handle push events and then display a notification:
+
+```js
+self.addEventListener('push', (event) => {
+  event.waitUntil(
+    self.registration.showNotification('Notification Title', {
+      body: 'Notification Body Text',
+      icon: 'custom-notification-icon.png',
+    });
+  );
+});
+```
+
+In this snippet we are making a call to `showNotification` and passing in a `title` argument and an object containing further specifications for our notification. In this case, we are sending body text and a custom icon for our notification.
+
+?> **Note** You can view a list of data you can pass to your Notification [here.](https://developer.mozilla.org/en-US/docs/Web/API/notification)
+
+### Handling Notification Clicks
+
+Now that we can display notifications, we have to add logic for handling when those notifications are clicked by the user.
+
+We can add a listener for the `notificationclick` event to our service worker:
+
+```js
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close(); 
+    var fullPath = self.location.origin + event.notification.data.path; 
+    clients.openWindow(fullPath); 
+});
+```
+
+First, we call `notification.close` to remove the notification.
+
+Next, if we included the `path` field with our notification data, we can append that path our origin path and make a call to `clients.openWindow`. This will launch our progressive web app and open it at our desired location.
+
+## Learn More
+
+More native integrations documentation will be added here over time, but if you want more guidance on how to further integrate and upgrade your progressive web app, check out the [30 Days of PWA series.](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/README)
