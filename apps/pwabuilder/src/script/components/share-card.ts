@@ -71,6 +71,11 @@ export class ShareCard extends LitElement {
         align-items: center;
         justify-content: center;
       }
+
+      #myCanvas {
+        width: 413px;
+        height: auto;
+      }
       
       #share-content {
         display: flex;
@@ -111,7 +116,11 @@ export class ShareCard extends LitElement {
       }
 
       ${smallBreakPoint(css`
-        
+
+        #myCanvas {
+          width: 313px;
+          height: auto;
+        }
         .standard-button {
           width: 133px;
         }
@@ -151,11 +160,11 @@ export class ShareCard extends LitElement {
     let ctx = canvas!.getContext("2d");
 
     // canvas resolution
-    canvas.width = 413;
-    canvas.height = 331;
+    canvas.width = 824; //413
+    canvas.height = 660; //331
 
-    var background = new Image();
-    background.src = 'assets/share_score_backdrop.png';
+    let background = new Image();
+    background.src = 'assets/share_score_backdrop.jpg';
 
      // Use `await` to wait for the image to load
     await new Promise(resolve => background.onload = resolve);
@@ -172,50 +181,76 @@ export class ShareCard extends LitElement {
     ctx!.lineJoin = 'round';
 
     // text for url
-    ctx!.font = "bold 24px Hind, sans-serif";
+    ctx!.font = "bold 48px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
-    ctx!.fillText(this.siteUrl, 15, 35);
+    ctx!.fillText(this.siteUrl, 30, 70);
 
     ctx!.textAlign = "center";
 
     // --- mani ring ---
     // track
-    this.drawRingPart(ctx!, 3, trackColor, 68.83, 100, 40, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
+    this.drawRingPart(ctx!, 6, trackColor, 137.5, 199, 80, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
 
     // indicator
     let percentMani = eval(maniPercent);
-    let radiansMani = (360 * percentMani) * (Math.PI / 180);
-    let endMani = (start) + radiansMani;
-    this.drawRingPart(ctx!, 6, colorMap.get(maniColor)!, 68.83, 100, 40, start, endMani, false, "transparent");
+    if(percentMani === 0){
+      // draw exclamation
+      await this.drawExclamation(ctx!, 82.5, 144);
 
-    // text
-    this.writeText(ctx!, 68.83, maniPercent, maniHeader);
+      ctx!.font = "36px Hind, sans-serif";
+      ctx!.fillStyle = "#292c3a";
+      ctx!.fillText(maniHeader, 137.5, 330);
+    } else {
+      let radiansMani = (360 * percentMani) * (Math.PI / 180);
+      let endMani = (start) + radiansMani;
+      this.drawRingPart(ctx!, 12, colorMap.get(maniColor)!, 137.5, 199, 80, start, endMani, false, "transparent");
+      
+      // text
+      this.writeText(ctx!, 137.5, maniPercent, maniHeader);
+    }
 
     // --- sw ring ---
     // track
-    this.drawRingPart(ctx!, 3, trackColor, 206.5, 100, 40, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
+    this.drawRingPart(ctx!, 6, trackColor, 412.5, 199, 80, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
 
     // indicator
     let percentSW = eval(swPercent);
-    let radiansSW = (360 * percentSW) * (Math.PI / 180);
-    let endSW = (start) + radiansSW;
-    this.drawRingPart(ctx!, 6, colorMap.get(swColor)!, 206.5, 100, 40, start, endSW, false, "transparent");
+    if(percentSW === 0){
+      await this.drawExclamation(ctx!, 357.5, 144);
 
-    // text
-    this.writeText(ctx!, 206.5, swPercent, swHeader);
-
+      ctx!.font = "36px Hind, sans-serif";
+      ctx!.fillStyle = "#292c3a";
+      ctx!.fillText(swHeader, 412.5, 330);
+    } else {
+      let radiansSW = (360 * percentSW) * (Math.PI / 180);
+      let endSW = (start) + radiansSW;
+      this.drawRingPart(ctx!, 12, colorMap.get(swColor)!, 412.5, 199, 80, start, endSW, false, "transparent");
+      
+      // text
+      this.writeText(ctx!, 412.5, swPercent, swHeader);
+    }
+    
     // --- sec ring ---
     // track
-    this.drawRingPart(ctx!, 3, trackColor, 344.16, 100, 40, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
+    this.drawRingPart(ctx!, 6, trackColor, 687, 199, 80, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
 
     // indicator
     let percentSec = eval(secPercent);
-    let radiansSec = (360 * percentSec) * (Math.PI / 180);
-    let endSec = (start) + radiansSec;
-    this.drawRingPart(ctx!, 6, colorMap.get(secColor)!, 344.16, 100, 40, start, endSec, false, "transparent");
+    if(percentSec === 0) {
+      // draw exclamation
+      await this.drawExclamation(ctx!, 632, 144);
 
-    // text
-    this.writeText(ctx!, 344.16, secPercent, secHeader);
+      ctx!.font = "36px Hind, sans-serif";
+      ctx!.fillStyle = "#292c3a";
+      ctx!.fillText(secHeader, 687, 330);
+    } else {
+      let radiansSec = (360 * percentSec) * (Math.PI / 180);
+      let endSec = (start) + radiansSec;
+      this.drawRingPart(ctx!, 12, colorMap.get(secColor)!, 687, 199, 80, start, endSec, false, "transparent");
+
+      // text
+      this.writeText(ctx!, 687, secPercent, secHeader);
+    }
   }
 
   drawRingPart(ctx: CanvasRenderingContext2D, lineWidth: number, trackColor: string, x: number, y: number, radius: number, start: number, end: number, clockwise: boolean, fillColor: string){
@@ -228,13 +263,23 @@ export class ShareCard extends LitElement {
     ctx.stroke();
   }
 
+  async drawExclamation(ctx: CanvasRenderingContext2D, x: number, y: number){
+    // draw exclamation
+    let exclamation = new Image();
+    exclamation.src = 'assets/new/macro_error.svg';
+    // Use `await` to wait for the image to load
+    await new Promise(resolve => exclamation.onload = resolve);
+    // Now that the image is loaded, draw it on the canvas
+    ctx!.drawImage(exclamation, x, y, 110, 110);
+  }
+
   writeText(ctx: CanvasRenderingContext2D, x: number, percent: string, header: string){
-    ctx!.font = "bold 16px Hind, sans-serif";
+    ctx!.font = "bold 36px Hind, sans-serif";
     ctx!.fillStyle = "#4f3fb6";
-    ctx!.fillText(percent, x, 106);
-    ctx!.font = "16px Hind, sans-serif";
+    ctx!.fillText(percent, x, 209);
+    ctx!.font = "36px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
-    ctx!.fillText(header, x, 170);
+    ctx!.fillText(header, x, 330);
   }
 
   htmlToImage(shareOption: string) {
