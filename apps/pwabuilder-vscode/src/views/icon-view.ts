@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { Manifest } from "../interfaces";
 import { findManifest } from "../services/manifest/manifest-service";
-import { trackEvent } from "../services/usage-analytics";
+import { trackEvent, trackException } from "../services/usage-analytics";
 import { getUri } from "../utils";
 import { writeFile } from 'fs/promises';
 import path = require("path");
@@ -263,7 +263,7 @@ export class IconViewPanel {
     async generateIcons(options: any = {}, skipPrompts?: boolean) {
         return new Promise(async (resolve, reject) => {
             try {
-                trackEvent("generate", { type: "icons" });
+                trackEvent("generate", { "type": "icons" });
 
                 let iconFile: vscode.Uri[] | undefined;
 
@@ -363,10 +363,12 @@ export class IconViewPanel {
                 });
 
             }
-            catch (err) {
+            catch (err: any) {
                 vscode.window.showErrorMessage(
                     `There was an error generaring icons: ${err}`
                 );
+
+                trackException(err);
 
                 reject(err);
             }

@@ -20,7 +20,7 @@ export async function generateWindowsPackage(
   }
 
   // sets en-us as the default fallback
-  if(!windowsOptions.resourceLanguage || windowsOptions.resourceLanguage.length == 0){
+  if(!windowsOptions.resourceLanguage || windowsOptions.resourceLanguage.length === 0){
     windowsOptions.resourceLanguage = 'en-us';
   } 
   // the api expects a comma separated string instead of a list, so we do it this way

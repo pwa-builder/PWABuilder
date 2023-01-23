@@ -104,9 +104,20 @@ This step is required for running the production version of your app. If you ski
 
 1. Once you’ve uploaded your .aab file, Google Play re-signs your app. Because of this, you’ll need to update your asset links file.
    
-2. Go to Google Play Console, select your app release then choose `Setup -> App integrity`, then copy your SHA-256 fingerprint.
-   
-3. Then, paste the fingerprint into your assetlinks.json file:
+2. Go to the Google Play Console and select your app release:
+
+<div class="docs-image">
+    <img src="/assets/builder/android/google-play-app-release.png" alt="Image of where to find your app release in the Google Play Console" width=700>
+</div>
+
+3. Click `Setup` and then `App integrity` in the sidebar. Navigate to the `App signing` tab and copy your SHA-256 fingerprint:
+
+<div class="docs-image">
+    <img src="/assets/builder/android/google-play-sha256.png" alt="Image of where to find your SHA-256 fingerprint in the Google Play Console" width=700>
+</div>
+
+
+4. Then, paste the fingerprint into your assetlinks.json file:
 
 ```json
 [
@@ -124,7 +135,7 @@ This step is required for running the production version of your app. If you ski
 ]
 ```
     
-4. Once your updated assetlinks.json file is deployed to your server, the address bar will disappear from your app.
+5. Once your updated assetlinks.json file is deployed to your server, the address bar will disappear from your app.
 
 
 #### 4. Save your signing key

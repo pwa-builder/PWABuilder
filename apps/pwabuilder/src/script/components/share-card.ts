@@ -1,10 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
-import html2canvas from 'html2canvas'
-
-
 
 const colorMap = new Map([["green", "#3ba372"], ["yellow", "#ebc157"], ["red", "#eb5757"]]);
 const accentMap = new Map([["green", "#E3FFF2"], ["yellow", "#FFFAED"], ["red", "#FFF3F3"]]);
