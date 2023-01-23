@@ -84,6 +84,7 @@ export class ShareCard extends LitElement {
         padding: var(--button-padding);
         white-space: nowrap;
         width: 50%;
+        height: 100%;
         background: transparent;
         color: var(--primary-color);
         border: 1px solid rgb(79, 63, 182);
@@ -102,9 +103,6 @@ export class ShareCard extends LitElement {
         color: white;
         background-color: #292C3A;
         border-color: #292C3A;
-      }
-      #cancel-button {
-        display: none;
       }
       #download-button:hover, #cancel-button:hover {
         box-shadow: rgb(0 0 0 / 30%) 0px 0px 10px;
@@ -126,9 +124,6 @@ export class ShareCard extends LitElement {
         }
         .standard-button {
           width: 133px;
-        }
-        #cancel-button {
-          display: none;
         }
         #download-button {
           display: block;
@@ -166,6 +161,8 @@ export class ShareCard extends LitElement {
     canvas.width = 824; //413
     canvas.height = 660; //331
 
+    const ringYpos = 209;
+
     let background = new Image();
     background.src = 'assets/share_score_backdrop.jpg';
 
@@ -192,7 +189,7 @@ export class ShareCard extends LitElement {
 
     // --- mani ring ---
     // track
-    this.drawRingPart(ctx!, 6, trackColor, 137.5, 199, 80, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
+    this.drawRingPart(ctx!, 6, trackColor, 137.5, ringYpos, 80, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
 
     // indicator
     let percentMani = eval(maniPercent);
@@ -206,7 +203,7 @@ export class ShareCard extends LitElement {
     } else {
       let radiansMani = (360 * percentMani) * (Math.PI / 180);
       let endMani = (start) + radiansMani;
-      this.drawRingPart(ctx!, 12, colorMap.get(maniColor)!, 137.5, 199, 80, start, endMani, false, "transparent");
+      this.drawRingPart(ctx!, 12, colorMap.get(maniColor)!, 137.5, ringYpos, 80, start, endMani, false, "transparent");
       
       // text
       this.writeText(ctx!, 137.5, maniPercent, maniHeader);
@@ -214,20 +211,20 @@ export class ShareCard extends LitElement {
 
     // --- sw ring ---
     // track
-    this.drawRingPart(ctx!, 6, trackColor, 412.5, 199, 80, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
+    this.drawRingPart(ctx!, 6, trackColor, 412.5, ringYpos, 80, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
 
     // indicator
     let percentSW = eval(swPercent);
     if(percentSW === 0){
       await this.drawExclamation(ctx!, 357.5, 144);
 
-      ctx!.font = "36px Hind, sans-serif";
+      ctx!.font = "32px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
       ctx!.fillText(swHeader, 412.5, 330);
     } else {
       let radiansSW = (360 * percentSW) * (Math.PI / 180);
       let endSW = (start) + radiansSW;
-      this.drawRingPart(ctx!, 12, colorMap.get(swColor)!, 412.5, 199, 80, start, endSW, false, "transparent");
+      this.drawRingPart(ctx!, 12, colorMap.get(swColor)!, 412.5, ringYpos, 80, start, endSW, false, "transparent");
       
       // text
       this.writeText(ctx!, 412.5, swPercent, swHeader);
@@ -235,7 +232,7 @@ export class ShareCard extends LitElement {
     
     // --- sec ring ---
     // track
-    this.drawRingPart(ctx!, 6, trackColor, 687, 199, 80, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
+    this.drawRingPart(ctx!, 6, trackColor, 687, ringYpos, 80, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
 
     // indicator
     let percentSec = eval(secPercent);
@@ -249,7 +246,7 @@ export class ShareCard extends LitElement {
     } else {
       let radiansSec = (360 * percentSec) * (Math.PI / 180);
       let endSec = (start) + radiansSec;
-      this.drawRingPart(ctx!, 12, colorMap.get(secColor)!, 687, 199, 80, start, endSec, false, "transparent");
+      this.drawRingPart(ctx!, 12, colorMap.get(secColor)!, 687, ringYpos, 80, start, endSec, false, "transparent");
 
       // text
       this.writeText(ctx!, 687, secPercent, secHeader);
@@ -277,12 +274,12 @@ export class ShareCard extends LitElement {
   }
 
   writeText(ctx: CanvasRenderingContext2D, x: number, percent: string, header: string){
-    ctx!.font = "bold 36px Hind, sans-serif";
+    ctx!.font = "bold 32px Hind, sans-serif";
     ctx!.fillStyle = "#4f3fb6";
-    ctx!.fillText(percent, x, 209);
-    ctx!.font = "36px Hind, sans-serif";
+    ctx!.fillText(percent, x, 219);
+    ctx!.font = "32px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
-    ctx!.fillText(header, x, 330);
+    ctx!.fillText(header, x, 340);
   }
 
   htmlToImage(shareOption: string) {
@@ -350,6 +347,33 @@ export class ShareCard extends LitElement {
     }
   }
 
+  renderShareActionButtons(){
+    if (navigator.canShare && navigator.canShare({
+      title: 'My Image',
+      text: 'Check out this cool image',
+      url: 'https://www.pwabuilder.com/assets/icons/icon_512.png'
+    })) {
+      console.log("Share API is unavailable in this browser.")
+      return html`
+        <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
+        <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
+      `
+    }
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      console.log("This is a mobile browser");
+      return html`
+        <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
+        <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
+      `
+    } else {
+        console.log("This is a desktop browser");
+        return html`
+        <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
+        <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
+      `
+    }
+  }
+
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => this.draw()} @sl-hide=${() => this.hideDialog()} noHeader>
@@ -362,10 +386,8 @@ export class ShareCard extends LitElement {
                 Your browser does not support the canvas element.
               </canvas>
             </div>
-            <div id="share-actions">        
-              <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
-              <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
-              <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                    
+            <div id="share-actions">    
+              ${this.renderShareActionButtons()}    
             </div>
           </div>
         </div>

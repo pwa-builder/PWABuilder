@@ -468,7 +468,7 @@ export class AppReport extends LitElement {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px;
+          padding: 12px 22px;
           position: relative;
         }
 
@@ -476,7 +476,7 @@ export class AppReport extends LitElement {
           position: absolute;
           left: 10px;
           bottom: 0;
-          height: 67px;
+          height: 85px;
         }
 
         #share-card-content{
@@ -490,7 +490,7 @@ export class AppReport extends LitElement {
           font-size: var(--subheader-font-size);
           color: var(--primary-color);
           font-weight: bold;
-          margin-left: 100px;
+          margin-left: 115px;
         }
 
         #share-card-actions {
@@ -526,6 +526,11 @@ export class AppReport extends LitElement {
         #share-button:disabled:hover {
           cursor: no-drop;
           box-shadow: none;
+        }
+
+        .banner-button-icons {
+          width: 20px;
+          height: auto;
         }
         
         .mani-tooltip {
@@ -1152,6 +1157,7 @@ export class AppReport extends LitElement {
 
           #share-card-text {
             margin-left: 0;
+            margin-bottom: 0;
             text-align: center;
           }
 
@@ -1251,6 +1257,7 @@ export class AppReport extends LitElement {
 
           #share-card-text {
             margin-left: 0;
+            margin-bottom: 0;
             text-align: center;
           }
 
