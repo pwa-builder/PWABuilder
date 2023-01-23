@@ -460,6 +460,74 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
 
+        #share-card {
+          width: 100%;
+          background: #ffffff;
+          border-radius: 10px;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px;
+          position: relative;
+        }
+
+        #share-card-mani{
+          position: absolute;
+          left: 10px;
+          bottom: 0;
+          height: 67px;
+        }
+
+        #share-card-content{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        #share-card-text {
+          font-size: var(--subheader-font-size);
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-left: 100px;
+        }
+
+        #share-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+
+        .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          padding: 10px 20px;
+          background: transparent;
+          color: var(--primary-color);
+          font-size: var(--button-font-size);
+          font-weight: bold;
+          border: 1px solid var(--primary-color);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
+        }
+        .share-banner-buttons:hover {
+          box-shadow: var(--button-box-shadow)
+        }
+
+        #share-button:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #share-button:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+        
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -1073,7 +1141,25 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
+          }
         `)}
+
         ${smallBreakPoint(css`
           sl-progress-ring {
             --size: 75px;
@@ -1153,6 +1239,23 @@ export class AppReport extends LitElement {
           }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
+          }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
           }
         `)}
       `,
@@ -1640,6 +1743,14 @@ export class AppReport extends LitElement {
       setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
     })
   } 
+
+  // Opens share card modal and tracks analytics
+  async openShareCardModal() {
+    let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog!.show();
+    recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }  
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
@@ -2406,9 +2517,30 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
+
+
+          <div id="share-card">
+            <div id="share-card-content">
+              <img id="share-card-mani" src="/assets/manny_banner_image.png"/>
+              <p id="share-card-text">Proud of your PWA? Share your score with the world!</p>
+            </div>
+            <div id="share-card-actions">
+              <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
+                <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">Link copied</div>
+                <button type="button" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
+              </sl-tooltip>        
+              <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                ${this.runningTests ?
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                } Share score
+              </button>
+            </div>
+          </div>
+
+
         </div>
       </div>
-
       
 
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>

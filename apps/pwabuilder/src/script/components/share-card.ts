@@ -73,25 +73,27 @@ export class ShareCard extends LitElement {
         height: auto;
       }
       
-      #share-content {
+      #share-actions {
         display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
+        align-items: center;
+        justify-content: center;
         margin-bottom: 15px;
-      }
-      #share-content img {
-        margin-right: 5px;
+        gap: 10px;
       }
       .standard-button {
-        width: 201.96px;
-        height: 44px;
+        padding: var(--button-padding);
+        white-space: nowrap;
+        width: 50%;
         background: transparent;
-        color: rgb(79, 63, 182);
+        color: var(--primary-color);
         border: 1px solid rgb(79, 63, 182);
-        font-size: 16px;
+        font-size: var(--button-font-size);
         font-weight: bold;
-        border-radius: 50px;
+        border-radius: var(--button-border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
       }
       .standard-button:hover {
         cursor: pointer;
@@ -109,6 +111,11 @@ export class ShareCard extends LitElement {
       }
       #share-button:hover {
         outline: rgba(79, 63, 182, 0.7) solid 2px;
+      }
+
+      .actions-icons {
+        width: 25px;
+        height: auto;
       }
 
       ${smallBreakPoint(css`
@@ -355,10 +362,10 @@ export class ShareCard extends LitElement {
                 Your browser does not support the canvas element.
               </canvas>
             </div>
-            <div id="share-content">        
+            <div id="share-actions">        
               <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
-              <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img src="/assets/download-icon.png" alt="Download image button icon"/>  Download Image</button>
-              <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img src="/assets/modal-share-icon.png" alt="Share image button icon"/>  Share</button>                    
+              <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
+              <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/modal-share-icon.svg" alt="Share image button icon"/>  Share</button>                    
             </div>
           </div>
         </div>
