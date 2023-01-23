@@ -39,7 +39,7 @@ export class ManifestEditorFrame extends LitElement {
         display: flex;
         flex-direction: column;
         row-gap: 1em;
-        padding: 1em;
+        padding: 1.5em;
       }
       #frame-header {
         display: flex;

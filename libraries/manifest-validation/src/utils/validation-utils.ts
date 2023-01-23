@@ -145,7 +145,7 @@ export function validateSingleRelatedApp(ra: RelatedApplication){
   return "valid";
 }
 
-function isValidURL(str: string) {
+export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/14582229 but removed the ip address section
   var pattern = new RegExp(
     '^((https?:)?\\/\\/)?' + // protocol
@@ -158,32 +158,22 @@ function isValidURL(str: string) {
   return !!pattern.test(str);
 }
 
-function isValidRelativeURL(str: string){
-  var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
-  return !!pattern.test(str);
-}
-
-export function validateSingleProtocol(proto: any){
-  let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
-  if(!validProtocol){
-    return "protocol";
+export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolean {
+  if (scope.endsWith("/") && url.startsWith("/")) {
+      return true;
   }
-
-  // i guess more importantly we should check if its in the scope of the site.
-
-  let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
-
-  if(!validURL){
-    return "url";
+  else if (url.startsWith(scope) || url.startsWith("/")) {
+      return true;
   }
-
-  return "valid";
+  else {
+      return false;
+  }
 }
 
 
 
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
-const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "geo", "gopher", "im", "ipfs", "ipns", "irc", "ircs", "magnet", "mailto", "matrix", "mms", "news", "nntp", "sip", "sms", "smsto", "ssb", "ssh", "tel", "urn", "webcal", "wtai", "xmpp"];
+export const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "geo", "gopher", "im", "ipfs", "ipns", "irc", "ircs", "magnet", "mailto", "matrix", "mms", "news", "nntp", "sip", "sms", "smsto", "ssb", "ssh", "tel", "urn", "webcal", "wtai", "xmpp"];
 export const required_fields = ["icons", "name", "short_name", "start_url"];
 export const reccommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts"];
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];

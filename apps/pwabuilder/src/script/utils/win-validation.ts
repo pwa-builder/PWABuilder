@@ -44,7 +44,7 @@ export interface WindowsPackageOptions  extends PackageOptions {
   };
   images?: WindowsImageOptions;
   publisher: WindowsPublisherOptions;
-  resourceLanguage?: string;
+  resourceLanguage?: string | string[];
   targetDeviceFamilies?: string[];
 }
 

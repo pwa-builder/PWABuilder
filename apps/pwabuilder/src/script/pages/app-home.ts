@@ -41,7 +41,7 @@ export class AppHome extends LitElement {
           --sl-input-focus-ring-color: #4f3fb670;
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
-          --sl-color-primary-300: #4F3FB6;
+          --sl-color-primary-300: var(--primary-color);
         }
 
         #home-block::before {
@@ -75,18 +75,12 @@ export class AppHome extends LitElement {
           z-index: 2;
           border: none;
         }
-        h1 {
-          font-size: var(--xlarge-font-size);
-          line-height: 48px;
-          letter-spacing: -0.015em;
-          margin-bottom: 20px;
-        }
         #input-header {
-          font-size: 1em;
+          font-size: var(--subheader-font-size);
           font-weight: bold;
           margin: 0;
           line-height: 1.75em;
-          color: #4F3FB6;
+          color: var(--primary-color);
         }
         #content-grid {
           padding: 0;
@@ -120,14 +114,14 @@ export class AppHome extends LitElement {
         .grid-item-header a {
           text-decoration: none;
           border-bottom: 1px solid rgb(79, 63, 182);
-          font-size: 1em;
+          font-size: var(--subheader-font-size);
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
           color: rgb(79, 63, 182);
         }
         .grid-item-header a:visited {
-          color: #4F3FB6;
+          color: var(--primary-color);
         }
         .grid-item-header:hover {
           cursor: pointer;
@@ -137,8 +131,8 @@ export class AppHome extends LitElement {
         }
         .intro-grid-item p {
           margin: 0;
-          color: #292C3A;
-          font-size: 16px;
+          color: var(--font-color);
+          font-size:  var(--body-font-size);
           width: 15em;
         }
         #input-form {
@@ -184,7 +178,7 @@ export class AppHome extends LitElement {
         }
         #input-form sl-input::part(base) {
           border: 1px solid #e5e5e5;
-          border-radius: var(--input-radius);
+          border-radius: var(--input-border-radius);
           color: var(--font-color);
           width: 28em;
           font-size: 14px;
@@ -210,7 +204,7 @@ export class AppHome extends LitElement {
         }
 
         #input-form .navigation::part(base) {
-          background-color: black;
+          background-color: var(--font-color);
           color: white;
           font-size: 14px;
           height: 3em;
@@ -230,7 +224,7 @@ export class AppHome extends LitElement {
         }
         #demo {
           font-size: 12px;
-          color: #292C3A;
+          color: var(--font-color);
           margin: 0;
           grid-area: 2 / 1 / auto / 2;
           place-self: start;
@@ -244,12 +238,17 @@ export class AppHome extends LitElement {
           padding: 0;
           font-size: 1em;
           margin-left: 1px;
+          color: var(--font-color);
         }
         #demo-action:hover{
           cursor: pointer;
         }
         #home-header {
           max-width: 498px;
+          line-height: 48px;
+          letter-spacing: -0.015em;
+          margin-bottom: 20px;
+          font-size: var(--title-font-size);
         }
         /* 640px - 1023px */
         ${largeBreakPoint(css`
@@ -340,7 +339,8 @@ export class AppHome extends LitElement {
             width: 400px;
           }
           #home-header {
-            font-size: 1.9em;
+            font-size: 32px;
+            line-height: 36px;
           }
           #content-grid {
             display: flex;
@@ -365,9 +365,6 @@ export class AppHome extends LitElement {
           }
           #input-header-holder img {
             display: none;
-          }
-          #home-header {
-            line-height: 36px;
           }
           #input-form {
             width: 100%;

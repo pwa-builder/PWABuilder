@@ -73,9 +73,15 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p {
+      .form-row p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
+      }
+      sl-input::part(input), 
+      sl-select::part(display-label), 
+      sl-details::part(summary){
+        color: #717171;
       }
       .form-field {
         width: 50%;
@@ -86,7 +92,7 @@ export class ManifestPlatformForm extends LitElement {
       .field-header{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       .color_field {
         display: flex;
@@ -98,6 +104,7 @@ export class ManifestPlatformForm extends LitElement {
         column-gap: 10px;
       }
       .toolTip {
+        font-size: 14px;
         visibility: hidden;
         width: 150px;
         background: black;
@@ -130,6 +137,10 @@ export class ManifestPlatformForm extends LitElement {
       }
       sl-menu {
          width: 100%;
+      }
+      sl-menu-item::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
       }
       #cat-field {
         display: grid;
@@ -187,9 +198,10 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .long-items p {
+      .long-items p:not(.toolTip){
         font-size: 14px;
         margin: 0;
+        color: #717171;
       }
       .long-items .form-field {
         width: 100%;
@@ -221,6 +233,18 @@ export class ManifestPlatformForm extends LitElement {
 
       sl-menu-label::part(base) {
         font-size: 16px;
+      }
+
+      sl-button::part(base):hover {
+        background-color: rgba(79, 63, 182, 0.06);
+        border-color: rgba(79, 63, 182, 0.46);
+        color: rgb(79, 63, 182);
+      }
+
+      sl-checkbox[checked]::part(control) {
+        background-color: #4f3fb6;
+        border-color: #4f3fb6;
+        color: #ffffff;
       }
 
       @media(max-width: 765px){
@@ -275,6 +299,16 @@ export class ManifestPlatformForm extends LitElement {
 
         #cat-field {
           grid-template-columns: repeat(2, auto);
+        }
+
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
         }
         
       }
