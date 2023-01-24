@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement, TemplateResult, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 
 const colorMap = new Map([["green", "#3ba372"], ["yellow", "#ebc157"], ["red", "#eb5757"]]);
@@ -13,6 +13,9 @@ export class ShareCard extends LitElement {
   @property() swData = "";
   @property() securityData = "";
   @property() siteUrl = "";
+
+  @state() dataURL = "";
+  @state() actionButtons: TemplateResult = html``;
 
   static get styles() {
     return css`
@@ -59,7 +62,7 @@ export class ShareCard extends LitElement {
         height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: space-evenly;
       }
 
       #canvas-holder {
@@ -85,9 +88,6 @@ export class ShareCard extends LitElement {
         white-space: nowrap;
         width: 50%;
         height: 100%;
-        background: transparent;
-        color: var(--primary-color);
-        border: 1px solid rgb(79, 63, 182);
         font-size: var(--button-font-size);
         font-weight: bold;
         border-radius: var(--button-border-radius);
@@ -98,17 +98,18 @@ export class ShareCard extends LitElement {
       }
       .standard-button:hover {
         cursor: pointer;
+        box-shadow: var(--button-box-shadow);
       }
-      #share-button {
-        color: white;
-        background-color: #292C3A;
-        border-color: #292C3A;
+      .primary {
+        background-color: var(--font-color);
+        border-color: var(--font-color);
+        color: #ffffff;
       }
-      #download-button:hover, #cancel-button:hover {
-        box-shadow: rgb(0 0 0 / 30%) 0px 0px 10px;
-      }
-      #share-button:hover {
-        outline: rgba(79, 63, 182, 0.7) solid 2px;
+
+      .secondary {
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        background-color: transparent;
       }
 
       .actions-icons {
@@ -122,19 +123,25 @@ export class ShareCard extends LitElement {
           width: 313px;
           height: auto;
         }
-        .standard-button {
-          width: 133px;
+
+        #share-actions {
+          flex-direction: column;
+          width: 100%;
+          margin: 0;
         }
-        #download-button {
-          display: block;
-          flex-direction: row;
-          align-items: center;
-          padding: 0px 15px;  
+        #share-actions > * {
+          width: 100%;
         }
       `)}
     `
   }
-
+  
+  async setup(){
+    await this.draw();
+    let canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
+    this.dataURL = canvas.toDataURL('image/png', 1.0);
+    this.renderShareActionButtons()
+  }
   async draw(){
     // manifest Data
     const maniData = this.manifestData.split('/');
@@ -283,13 +290,11 @@ export class ShareCard extends LitElement {
   }
 
   htmlToImage(shareOption: string) {
-    const canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
-    const dataUrl = canvas.toDataURL('image/png', 1.0);
 
     if (shareOption === "download"){
-      this.downloadImage(dataUrl, `${this.siteUrl}_pwabuilder_score.png`)
+      this.downloadImage(`${this.siteUrl}_pwabuilder_score.png`)
     } else if (shareOption === "share"){
-      const file = this.dataURLtoFile(dataUrl, `${this.siteUrl}_pwabuilder_score.png`);
+      const file = this.dataURLtoFile(this.dataURL, `${this.siteUrl}_pwabuilder_score.png`);
       console.log("file from dataURL()", file);
       this.shareFile(file, `${this.siteUrl} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
     } else {  
@@ -298,9 +303,9 @@ export class ShareCard extends LitElement {
     
   }
 
-  downloadImage(url: string, filename: string) {
+  downloadImage(filename: string) {
     let link = document.createElement('a');
-    link.href = "data:image/png;base64" + url;
+    link.href = "data:image/png;base64" + this.dataURL;
     console.log("File link from downloadImage()", link.href);
     link.download = filename; 
     link.click();
@@ -348,35 +353,36 @@ export class ShareCard extends LitElement {
   }
 
   renderShareActionButtons(){
-    if (navigator.canShare && navigator.canShare({
-      title: 'My Image',
-      text: 'Check out this cool image',
-      url: 'https://www.pwabuilder.com/assets/icons/icon_512.png'
-    })) {
-      console.log("Share API is unavailable in this browser.")
-      return html`
-        <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
-        <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
+    const file = this.dataURLtoFile(this.dataURL, `${this.siteUrl}_pwabuilder_score.png`);
+
+    if (!navigator.canShare || !navigator.canShare({files: [file]})) {
+      //console.log("Share API is unavailable in this browser.")
+      this.actionButtons = html`
+        <button type="button" id="cancel-button" class="standard-button secondary" @click=${() => this.hideDialog()}>Cancel</button>
+        <button type="button" id="download-button" class="standard-button primary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-white.svg" alt="Download image button icon"/>  Download Image</button>
       `
+      return;
     }
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-      console.log("This is a mobile browser");
-      return html`
-        <button type="button" id="cancel-button" class="standard-button" @click=${() => this.hideDialog()}>Cancel</button>
-        <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
+      //console.log("This is a mobile browser with the Share API available.");
+      this.shadowRoot!.getElementById("share-actions")!.style.flexDirection = 'column-reverse';
+      this.actionButtons = html`
+        <button type="button" id="cancel-button" class="standard-button secondary" @click=${() => this.hideDialog()}>Cancel</button>
+        <button type="button" id="share-button" class="standard-button primary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
       `
     } else {
-        console.log("This is a desktop browser");
-        return html`
-        <button type="button" id="download-button" class="standard-button" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
-        <button type="button" id="share-button" class="standard-button" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
+        //console.log("This is a desktop browser with the Share API available.");
+        this.actionButtons = html`
+        <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
+        <button type="button" id="share-button" class="standard-button primary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
       `
     }
+    return;
   }
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => this.draw()} @sl-hide=${() => this.hideDialog()} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => this.setup()} @sl-hide=${() => this.hideDialog()} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="canvas-holder">
@@ -387,7 +393,7 @@ export class ShareCard extends LitElement {
               </canvas>
             </div>
             <div id="share-actions">    
-              ${this.renderShareActionButtons()}    
+              ${this.actionButtons}    
             </div>
           </div>
         </div>
