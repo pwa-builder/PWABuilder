@@ -247,6 +247,16 @@ export class AppReport extends LitElement {
           --indicator-color: var(--success-color);
         }
 
+        div.green {
+          width: 87%;
+          height: 87%;
+          display: flex;
+          align-items: center;
+          background-color: #E3FFF2;
+          justify-content: center;
+          border-radius: 100%;
+        }
+
         .macro_error {
           width: 3em;
           height: auto;
@@ -867,9 +877,10 @@ export class AppReport extends LitElement {
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
-          color: rgb(79, 63, 182);
+          color: var(--primary-color);
           display: flex;
           column-gap: 10px;
+          width: fit-content;
         }
 
         .arrow_anchor:visited {
@@ -2239,7 +2250,7 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
             </div>
