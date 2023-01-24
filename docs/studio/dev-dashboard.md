@@ -7,10 +7,6 @@ The PWABuilder Studio Dev Dashboard gives you easy access to the key actions you
 - Buttons to add key native capabilities to your PWA, such as shortcuts and and file handlers
 - And finally, quick access to packaging your PWA for the Microsoft Store, Apple App Store, and Google Play Store.
 
-<div class="docs-image">
-    <img src="/assets/studio/dev-dashboard/dev-dashboard.png" width=800/>
-</div>
-
 ## Using The Interface
 
 To get started, click either the "PWABuilder Studio" icon in the Activity Bar, or the "PWABuilder Studio" panel in the Explorer View. You will then see the "Dev Dashboard" view. This view has four sections:
@@ -19,6 +15,10 @@ To get started, click either the "PWABuilder Studio" icon in the Activity Bar, o
 - Add Native Features
 - Assets
 - Package
+
+<div class="docs-image">
+    <img src="/assets/studio/dev-dashboard/dev-dashboard.png" width=800/>
+</div>
 
 ### Dev Actions
 The Dev Actions section is powered by your [package.json](https://docs.npmjs.com/files/package.json) file. It parses your package.json file and looks for scripts that match the following names:
@@ -40,10 +40,10 @@ For adding icons and screenshots, you will find two buttons under "Assets". Clic
 - `PWABuilder Studio: Generate Icons`
 - `PWABuilder Studio: Generate Screenshots`
 
-For more info on generating icons and screenshots with PWABuilder Studio, [read our docs here](/studio/assets)
+For more info on generating icons and screenshots with PWABuilder Studio, [read our docs here.](/studio/assets)
 
 ### Package
-The "Package" section allows you to package your PWA for the Microsoft Store, Apple App Store, Google Play Store and Meta Quest devices, using the same services as https://pwabuilder.com. Click the "package" button for the platforms you want to package for, and you'll be guided through the process of packaging your PWA. For more info on packaging with PWABuilder Studio, [read our docs here](/studio/package)
+The "Package" section allows you to package your PWA for the Microsoft Store, Apple App Store, Google Play Store and Meta Quest devices, using the same services as https://pwabuilder.com. Click the "package" button for the platforms you want to package for, and you'll be guided through the process of packaging your PWA. For more info on packaging with PWABuilder Studio, [read our docs here.](/studio/package)
 
 
 
