@@ -37,22 +37,22 @@ export async function testServiceWorker(
   const swTestResult = [
     {
       result: swData.hasSW,
-      infoString: swData.hasSW ? 'Has a Service Worker' : 'Does not have a Service Worker',
+      infoString: 'Has a Service Worker',
       category: 'required',
     },
     {
       result: worksOffline,
-      infoString: worksOffline ? 'Works Offline' : 'Does not work offline',
+      infoString: 'Works Offline',
       category: 'recommended',
     },
     {
       result: swData.hasPeriodicBackgroundSync,
-      infoString: swData.hasPeriodicBackgroundSync ? 'Uses Periodic Sync for a rich offline experience' : 'Does not use Periodic Sync for a rich offline experience',
+      infoString: 'Uses Periodic Sync for a rich offline experience',
       category: 'optional',
     },
     {
       result: swData.hasBackgroundSync,
-      infoString: swData.hasBackgroundSync ? 'Uses Background Sync for a rich offline experience' : 'Does not use Background Sync for a rich offline experience',
+      infoString: 'Uses Background Sync for a rich offline experience',
       category: 'optional',
     },
   ];
