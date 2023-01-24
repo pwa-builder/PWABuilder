@@ -17,7 +17,7 @@ To get started, click either the "PWABuilder Studio" icon in the Activity Bar, o
 - Package
 
 <div class="docs-image">
-    <img src="/assets/studio/dev-dashboard/dev-dashboard.png" width=800/>
+    <img src="/assets/studio/dev-dashboard/dev-dashboard.png" alt="A screenshot of the developer dashboard" width=800/>
 </div>
 
 ### Dev Actions

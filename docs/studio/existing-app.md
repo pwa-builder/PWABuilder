@@ -76,7 +76,7 @@ To generate icons:
 6. Your icons will be automatically added to your web manifest.
 
 <div class="docs-image">
-    <img src="/assets/studio/existing-app/generate-icons.png" width=500>
+    <img src="/assets/studio/existing-app/generate-icons.png" alt="Screenshot of icons generation panel" width=500>
 </div>
 
 ## Generate Screenshots
@@ -98,5 +98,5 @@ To generate icons:
 6. Your screenshots will be automatically added to your web manifest.
 
 <div class="docs-image">
-    <img src="/assets/studio/existing-app/generate-screenshots.png" width=500>
+    <img src="/assets/studio/existing-app/generate-screenshots.png" alt="Screenshot of screenshots generation prompt" width=500>
 </div>
