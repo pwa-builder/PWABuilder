@@ -86,6 +86,10 @@
   --mobile-button-fontsize: 22px;
   --desktop-button-height: 40px;
 
+  /* Cards */
+  --card-padding: 1em;
+  --card-border-radius: 10px;
+
   /* Links */
   --link-color: var(--primary-purple);
   --arrow-link-font-size: 14px;
