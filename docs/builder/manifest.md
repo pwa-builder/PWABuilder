@@ -255,16 +255,44 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### icons: `Array`
 `icons` is a required member that specifies an array of icons to be used by your application for varying contexts and situations, such as in the action bar of your preferred operating system.
+#### PWABuilder Icon Validations
+
+The PWABuilder service enforces several validations to keep the icons for your app optimal:
+
+* Your icons array must have at least one icon with purpose set to `any`.
+
+* Your icons array must have at least one icon with a size of at least `512x512`.
+
+* If your icons array includes a `maskable` icon, this must be included as a **separate** icon, and can't be added as a dual icon type (like `any maskable`, for example).
+
+These validations are implemented so that your progressive web app will always have an icon that looks appropriate, regardless of the operating system or context they are viewed in.
 
 ```json
 "icons": [
   {
-    "src": "assets/icon1.png",
-    "sizes": "48x48 96x96",
+      "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
   },
   {
-    "src": "assets/icon2.png",
-    "sizes": "any"
+      "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+  }
+]
+```
+
+If you only want to provide a single icon, your icons array could also look like this:
+
+```json
+"icons": [
+  {
+      "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
   }
 ]
 ```
