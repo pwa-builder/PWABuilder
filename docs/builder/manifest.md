@@ -263,7 +263,7 @@ The PWABuilder service enforces several validations to keep the icons for your a
 
 * Your icons array must have at least one icon with a size of at least `512x512`.
 
-* If your icons array includes a `maskable` icon, this must be included as a **separate** icon, and can't be added as a dual icon type (like `any maskable`, for example).
+* If your icons array includes a `maskable` icon, this must be included as a **separate** icon, and can't be added as a dual icon type (like `any maskable`, for example). This is because using `maskable` icons as `any` can result in icons not being displayed optimally.
 
 These validations are implemented so that your progressive web app will always have an icon that looks appropriate, regardless of the operating system or context they are viewed in.
 
