@@ -1,6 +1,6 @@
 import { currentManifest } from ".";
-import { Icon, Manifest, singleFieldValidation, Validation } from "./interfaces";
-import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validProtocols } from "./utils/validation-utils";
+import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces";
+import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -478,7 +478,22 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-            return isArray;
+
+            if (isArray) {
+                value.forEach(async (app: RelatedApplication) => {
+                    const check = await validateSingleRelatedApp(app);
+                    if (check !== "valid") {
+                        return false;
+                    }
+                    
+                    return true;
+                })
+
+                return false;
+            }
+            else {
+                return false;
+            }
         },
         errorString: "related_applications should be a non-empty array",
     },
