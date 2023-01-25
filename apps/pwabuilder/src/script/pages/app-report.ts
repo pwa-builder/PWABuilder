@@ -247,34 +247,25 @@ export class AppReport extends LitElement {
           --indicator-color: var(--success-color);
         }
 
-        .inner-ring.green {
+        .inner-ring{
           width: 87%;
           height: 87%;
           display: flex;
           align-items: center;
-          background-color: var(--success-accent-color);
           justify-content: center;
           border-radius: 100%;
+        }
+
+        .inner-ring.green {
+          background-color: var(--success-accent-color);
         }
 
         .inner-ring.yellow {
-          width: 87%;
-          height: 87%;
-          display: flex;
-          align-items: center;
           background-color: var(--warning-accent-color);
-          justify-content: center;
-          border-radius: 100%;
         }
 
         .inner-ring.red {
-          width: 87%;
-          height: 87%;
-          display: flex;
-          align-items: center;
           background-color: var(--error-accent-color);
-          justify-content: center;
-          border-radius: 100%;
         }
 
         .macro_error {
