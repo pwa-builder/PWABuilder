@@ -22,7 +22,7 @@ export async function initDashboard(): Promise<void> {
                         goodDevBuildScript = packageScripts[key];
                         scriptsObject["dev"] = goodDevBuildScript;
                     }
-                    else if (key === "build" || key === "prod" || key === "build-prod") {
+                    else if (key === "build" || key === "build:prod" || key === "build-prod") {
                         goodProdBuildScript = packageScripts[key];
                         scriptsObject["build"] = goodProdBuildScript;
                     }
