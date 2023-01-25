@@ -2505,7 +2505,7 @@ export class AppReport extends LitElement {
                     id="secProgressRing"
                     class=${classMap(this.decideColor("sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="inner-ring ${classMap(this.decideColor("sw"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
+                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="inner-ring ${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
                     `
                   }
 
