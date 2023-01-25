@@ -106,7 +106,7 @@ It has three values to choose from:
 ```
 
 ### lang: `string`
-`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each langauge, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
+`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each language, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
 
 ```json
 "lang": "en"
@@ -120,7 +120,7 @@ It has three values to choose from:
 * `natural`
 * `portrait`
 * `landscape`
-* `potrait-primary`
+* `portrait-primary`
 * `portrait-secondary`
 * `landscape-primary`
 * `landscape-secondary`
@@ -196,7 +196,7 @@ This member is an array of application objects, each of which contains a `platfo
 
 ### prefer_related_applications: `boolean`
 
-`prefer_related_aplications` is an optional member that specifies whether or not `related_applications` should be preferred to this one. This member defaults to `false`, but if set to true, the browser may recommend an alternate application to the user.
+`prefer_related_applications` is an optional member that specifies whether or not `related_applications` should be preferred to this one. This member defaults to `false`, but if set to true, the browser may recommend an alternate application to the user.
 
 ```json
 "prefer_related_applications": true
@@ -208,11 +208,11 @@ This member is an array of application objects, each of which contains a `platfo
 
 The `shortcuts` member is an array of `shortcut` objects, which can contain the following members:
 
-*  `name`: The display name of the shorcut. ***Required member*** 
+*  `name`: The display name of the shortcut. ***Required member*** 
 *  `url`: The url that the shortcut will open to. ***Required member***
 * `short_name`: The shortened display name for when display space is limited.
 * `description`: A string description of the shortcut.
-* `icons`: A set of icons used to represent the shorcut. This array must include a 96x96 icon.
+* `icons`: A set of icons used to represent the shortcut. This array must include a 96x96 icon.
 
 ```json
 "shortcuts": [
