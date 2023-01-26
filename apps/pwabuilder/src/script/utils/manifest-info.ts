@@ -90,7 +90,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       `• natural`,
       `• portrait`,
       `• landscape`,
-      `• potrait-primary`,
+      `• portrait-primary`,
       `• portrait-secondary`,
       `• landscape-primary`,
       `• landscape-secondary`],
