@@ -1,4 +1,4 @@
-name: PWABuiler Preview SWA
+name: PWABuilder Preview CI/CD
 
 on:
   push:
