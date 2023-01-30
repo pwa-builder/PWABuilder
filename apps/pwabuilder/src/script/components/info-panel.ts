@@ -190,7 +190,7 @@ export class InfoPanel extends LitElement {
 
           <div class="block">
             <h2 class="question">How do I implement the ${this.field!} field?</h2>
-            ${ this.info?.example ? html`<p class="answer">${this.info?.example}</p>` : html``}
+            ${ this.info?.example ? html`<p class="answer">${this.info?.example.map((line: String) => html`<p class="desc-line">${line}</p>`)}</p>` : html``}
             <code-editor 
               .startText=${this.info?.code}
               .readOnly=${true}>

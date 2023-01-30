@@ -1,7 +1,7 @@
 export interface infoPanel {
   description: String[];
   purpose?: string | null;
-  example?: string | null;
+  example?: String[] | null;
   code: string;
   required: boolean;
   location?: "info" | "settings" | "platform" | "icons" | "screenshots";
@@ -161,7 +161,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   "prefer_related_applications": {
       description: [`prefer_related_aplications is an optional member that specifies whether or not related_applications should be preferred to this one. This member defaults to false, but if set to true, the browser may recommend an alternate application to the user`],
       purpose:null,
-      example:"It is important that the value of this field is a boolean.",
+      example:["It is important that the value of this field is a boolean."],
       code:`"prefer_related_applications": true`,
       location: "platform",
       required: false
@@ -213,15 +213,22 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   "icons": {
       description:[`icons is a required member that specifies an array of icons to be used by your application for varying contexts and situations, such as in the action bar of your preferred operating system.`],
       purpose:null,
-      example:null,
-      code:`"icons": [
+      example:[`The PWABuilder service enforces several validations to keep the icons for your app optimal:`,
+              `• Your icons array must have at least one icon with a size of at least 512x512.`,
+              `• If your icons array includes a maskable icon, this must be included as a **separate** icon, and can't be added as a dual icon type (like 'any maskable', for example). This is because using maskable icons as any can result in icons not being displayed optimally.`,
+              `These validations are implemented so that your progressive web app will always have an icon that looks appropriate, regardless of the operating system or context they are viewed in.`],
+      code:`"icons": [  
   {
-    "src": "assets/icon1.png",
-    "sizes": "48x48 96x96",
+    "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "any"
   },
   {
-    "src": "assets/icon2.png",
-    "sizes": "any"
+    "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "maskable"
   }
 ]`,
       location: "icons",
