@@ -13,8 +13,6 @@ import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
-import { getManifestEditorManifest, initialized, initManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
-import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
@@ -23,6 +21,8 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
   @property({type: Boolean}) isGenerated: boolean = false;
+  @property({type: Boolean}) backToInfo: boolean = false;
+  @state() alertedFieldChange: boolean = false;
 
   static get styles() {
     return [
@@ -65,6 +65,20 @@ export class ManifestEditorFrame extends LitElement {
         display: flex;
         align-items: center;
         justify-content: space-between;
+      }
+      .back {
+        all: unset;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        color: #4F3FB6;
+        white-space: nowrap;
+        width: fit-content;
+        border-bottom: 1px solid transparent;
+      }
+      .back:hover {
+        cursor: pointer;
+        border-bottom: 1px solid #4F3FB6;
       }
       .arrow_link {
         margin: 0;
@@ -220,46 +234,23 @@ export class ManifestEditorFrame extends LitElement {
   // grabs the manifest, manifest url and site base url on load
   connectedCallback(): void {
     super.connectedCallback();
-    let context = getManifestContext();
-    this.manifestURL = context.manifestUrl;
-    this.baseURL = context.siteUrl;
-  }
-
-  grabCorrectManifest() {
-    let context = getManifestContext();
-    if(!initialized){
-      this.manifest = context.manifest;
-      initManifestEditorManifest(this.manifest);
-    } else {
-      this.manifest = getManifestEditorManifest();
-    }
+    this.manifest = getManifestContext().manifest;
+    this.manifestURL = getManifestContext().manifestUrl;
+    this.baseURL = sessionStorage.getItem("current_url")!;
   }
 
   // downloads manifest and tells the site they need to retest to see new manifest changes
   downloadManifest(){
     let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
     editor.downloadManifest();
-
-    let readyForRetest = new CustomEvent('readyForRetest', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(readyForRetest);
   }
 
   // hides modal
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
-
-      let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as PWAManifestEditor)
-      if(editor && editor!.manifest){
-        updateManifestEditorManifest(editor.manifest);
-      }
-      
       await dialog!.hide();
       recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
-      document.body.style.height = "unset";
     }
   }
 
@@ -274,6 +265,16 @@ export class ManifestEditorFrame extends LitElement {
   }
 
   handleFieldChange(e: CustomEvent){
+    if(!this.alertedFieldChange){
+      let readyForRetest = new CustomEvent('readyForRetest', {
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(readyForRetest);
+
+      this.alertedFieldChange = true;
+    }
+    
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
   }
 
@@ -293,14 +294,21 @@ export class ManifestEditorFrame extends LitElement {
     recordPWABuilderProcessStep(`manifest_editor.upload_icon_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  async goBackToInfo(){
+    let curDialog: any = this.shadowRoot!.querySelector(".dialog");
+    await curDialog.hide();
+    this.dispatchEvent(new CustomEvent('openInfoPanel'));
+  }
+
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => this.grabCorrectManifest()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">
               <h1>${this.isGenerated ? "Generate manifest" : "Edit your manifest"}</h1>
               <p>Update your app name and description, add or update your icons, enable platform capabilities and more by editing the fields below. Once you are done with your changes, download or copy the generated manifest and/or icons and upload them to your site. Once done, re-test the url to make sure your PWA is ready for stores!</p>
+              ${this.backToInfo ? html`<button class="back" type="button" @click=${() => this.goBackToInfo()}>Back to info</button>` : html``}
             </div>
             <pwa-manifest-editor 
               .initialManifest=${this.manifest} 

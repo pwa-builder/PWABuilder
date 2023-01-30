@@ -8,15 +8,12 @@ import '@pwabuilder/code-editor';
 import '@pwabuilder/manifest-editor';
 import { Manifest } from '@pwabuilder/manifest-validation';
 import { getManifestContext } from '../services/app-info';
-import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
-import { getManifestEditorManifest, initialized, initManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
 
 @customElement('info-panel')
 export class InfoPanel extends LitElement {
 
   @property({ type: String}) field: string | undefined;
   @property({ type: Object}) info: infoPanel | undefined;
-  @state() infoShowing: boolean = true;
   @state() manifest: Manifest | undefined;
   @state() manifestURL: string | undefined;
   @state() baseURL: string | undefined;
@@ -121,17 +118,6 @@ export class InfoPanel extends LitElement {
     this.manifestURL = context.manifestUrl;
     this.baseURL = context.siteUrl;
   }
-  
-  grabCorrectManifest() {
-    //document.body.style.height = "100vh"
-    let context = getManifestContext();
-    if(!initialized){
-      this.manifest = context.manifest;
-      initManifestEditorManifest(this.manifest);
-    } else {
-      this.manifest = getManifestEditorManifest();
-    }
-  }
 
   capFirstLetter(field: string) {
     return field?.split("_").map((str: string) => str = str.charAt(0).toUpperCase() + str.slice(1)).join(" ");
@@ -143,15 +129,6 @@ export class InfoPanel extends LitElement {
 
     if(e.target === dialog){
       
-      // reset to info page
-      this.infoShowing = true;
-
-      // save manifest state
-      let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as PWAManifestEditor)
-      if(editor && editor!.manifest){
-        updateManifestEditorManifest(editor.manifest);
-      }
-      
       // hide dialog and record analytics
       await dialog!.hide();
       recordPWABuilderProcessStep("info_panel_closed", AnalyticsBehavior.ProcessCheckpoint);
@@ -159,16 +136,16 @@ export class InfoPanel extends LitElement {
     }
   }
 
-  showEditor(){
-    this.infoShowing = !this.infoShowing;
+  async showEditor(){
+    let curDialog: any = this.shadowRoot!.querySelector(".dialog");
+    await curDialog.hide();
+    this.dispatchEvent(new CustomEvent('openManifestEditor'));
   }
 
   render() {
     return html`
     
-        <sl-dialog class="dialog" @sl-show=${() => this.grabCorrectManifest()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
-        ${this.infoShowing ? 
-        html`  
+        <sl-dialog class="dialog" @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
           <div class="title-block"> 
             <h1 class="title">${this.capFirstLetter(this.field!)}</h1>
             <button type="button" class="alternate" @click=${() => this.showEditor()}>Edit in Manifest</button>
@@ -187,7 +164,6 @@ export class InfoPanel extends LitElement {
             ` : html``
           }
           
-
           <div class="block">
             <h2 class="question">How do I implement the ${this.field!} field?</h2>
             ${ this.info?.example ? html`<p class="answer">${this.info?.example.map((line: String) => html`<p class="desc-line">${line}</p>`)}</p>` : html``}
@@ -195,22 +171,7 @@ export class InfoPanel extends LitElement {
               .startText=${this.info?.code}
               .readOnly=${true}>
             </code-editor>
-          </div>` :
-          html`
-            <div class="editor-wrapper">
-              <button type="button" class="back-button" @click=${() => this.showEditor()}> <img src="/assets/new/back_for_package_form.svg" alt="back info page" /> </button>
-              <h1 class="title">Edit your Manifest</h1>
-              <pwa-manifest-editor 
-                .initialManifest=${this.manifest} 
-                .manifestURL=${this.manifestURL} 
-                .baseURL=${this.baseURL}
-                .startingTab=${this.info!.location}
-                .focusOn=${this.field}
-              ></pwa-manifest-editor>
-            </div>
-          ` 
-        }
-          
+          </div>
         </sl-dialog>
     `
   }

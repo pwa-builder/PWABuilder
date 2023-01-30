@@ -36,7 +36,6 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { infoPanel, manifest_fields } from '../utils/manifest-info';
-import { resetManifestEditorManifest } from '../services/manifest-editor-handler';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -127,6 +126,7 @@ export class AppReport extends LitElement {
 
   @state() createdManifest: boolean = false;  
   @state() manifestContext: ManifestContext | undefined;
+  @state() backToInfo: boolean = false;
 
   @state() todoItems: any[] = [];
 
@@ -1589,8 +1589,6 @@ export class AppReport extends LitElement {
     // last tested
     this.lastTested = "Last tested seconds ago"
 
-    resetManifestEditorManifest();
-
     // hide the detail lists
     let details = this.shadowRoot!.querySelectorAll('sl-details');
 
@@ -1607,7 +1605,8 @@ export class AppReport extends LitElement {
   }
 
   // Opens manifest editor and tracks analytics
-  async openManifestEditorModal() {
+  async openManifestEditorModal(backToInfo: boolean) {
+    this.backToInfo = backToInfo;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
     await dialog!.show();
@@ -1725,9 +1724,15 @@ export class AppReport extends LitElement {
   }
 
   // Scrolls and Shakes the respective item from a click of an action item
-  async showInfoPanel(e: CustomEvent){
+  async showInfoPanel(e: CustomEvent, dataPopulated: boolean){
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
+
+    if(dataPopulated){
+      let dialog: any = this.shadowRoot!.querySelector("info-panel")!.shadowRoot!.querySelector(".dialog");
+      await dialog.show()
+      return;
+    }
 
     // if its a manifest field for now
     if(manifest_fields[e.detail.field]){
@@ -1786,8 +1791,8 @@ export class AppReport extends LitElement {
   }
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
-  addRetestTodo(toAdd: string){
-    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest", "displayString": toAdd});
+  addRetestTodo(toAdd: string, message: string){
+    this.todoItems.push({"card": "retest", "field": toAdd, "fix": message, "status": "retest", "displayString": toAdd});
     this.requestUpdate();
   }
 
@@ -2020,7 +2025,7 @@ export class AppReport extends LitElement {
                     .fix=${todo.fix}
                     .card=${todo.card}
                     .displayString=${todo.displayString}
-                    @todo-clicked=${(e: CustomEvent) => this.showInfoPanel(e)}>
+                    @todo-clicked=${(e: CustomEvent) => this.showInfoPanel(e, false)}>
                   </todo-item>`
               ) : html`<span class="loader"></span>`}
 
@@ -2075,9 +2080,9 @@ export class AppReport extends LitElement {
                       html`
                           <sl-tooltip class="mani-tooltip" open>
                             <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal(false)}>Edit Your Manifest</button>
                           </sl-tooltip>` :
-                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
+                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal(false)}>Edit Your Manifest</button>`
                       }
 
                       <a
@@ -2415,9 +2420,9 @@ export class AppReport extends LitElement {
 
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
-      <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
-      ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!}></info-panel>`}
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .backToInfo=${this.backToInfo} @readyForRetest=${() => this.addRetestTodo("Manifest", "We've noticed that you have made a change to your manifest inside the Manifest Editor. Click here to get the next steps to add it to your site and update your score!")} @openInfoPanel=${(e: any) => this.showInfoPanel(e, true)}></manifest-editor-frame>`}
+      <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker", "We've noticed you downloaded a Service Worker! Click here for next steps to add it to your site and update your score!")}></sw-selector>
+      ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!} @openManifestEditor=${() => this.openManifestEditorModal(true)}></info-panel>`}
       
 
     `;
