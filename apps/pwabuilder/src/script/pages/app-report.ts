@@ -247,27 +247,6 @@ export class AppReport extends LitElement {
           --indicator-color: var(--success-color);
         }
 
-        .inner-ring{
-          width: 87%;
-          height: 87%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 100%;
-        }
-
-        .inner-ring.green {
-          background-color: var(--success-accent-color);
-        }
-
-        .inner-ring.yellow {
-          background-color: var(--warning-accent-color);
-        }
-
-        .inner-ring.red {
-          background-color: var(--error-accent-color);
-        }
-
         .macro_error {
           width: 3em;
           height: auto;
@@ -2261,7 +2240,7 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="inner-ring ${classMap(this.decideColor("manifest"))}">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="${classMap(this.decideColor("manifest"))}">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
             </div>
@@ -2390,7 +2369,7 @@ export class AppReport extends LitElement {
                     id="swProgressRing"
                     class=${classMap(this.decideColor("sw"))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`<div class="inner-ring ${classMap(this.decideColor("sw"))}"> ${this.swValidCounter} / ${this.swTotalScore} </div>`} </sl-progress-ring>
+                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`<div class="${classMap(this.decideColor("sw"))}"> ${this.swValidCounter} / ${this.swTotalScore} </div>`} </sl-progress-ring>
                     `
                   }
                 </div>
@@ -2496,7 +2475,7 @@ export class AppReport extends LitElement {
                     id="secProgressRing"
                     class=${classMap(this.decideColor("sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="inner-ring ${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
+                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
                     `
                   }
 
