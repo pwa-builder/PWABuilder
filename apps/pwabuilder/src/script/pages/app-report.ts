@@ -17,9 +17,6 @@ import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
 
-import { testSecurity } from '../services/tests/security';
-import { testServiceWorker } from '../services/tests/service-worker';
-
 import {
   Icon,
   ManifestContext,
@@ -34,7 +31,8 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
-import { Report, ReportAudit, processManifest, processSecurity, processServiceWorker } from './app-home.helper';
+import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
+import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1329,6 +1327,27 @@ export class AppReport extends LitElement {
   async runAllTests(url: string) {
     this.runningTests = true;
     this.isAppCardInfoLoading = true;
+
+    FindWebManifest(url).then( async (result) => {
+      if (result?.content?.json){
+        this.manifestContext = await processManifest(url, {url: result.content.url, raw: result.content.raw});
+        setManifestContext(this.manifestContext);
+        this.isAppCardInfoLoading = false;
+
+        await this.populateAppCard(this.manifestContext, result.content.url);
+
+        this.testManifest();
+      }
+    });
+    FindServiceWorker(url).then( async (result) => {
+        if (result?.content?.url) {
+          await AuditServiceWorker(result.content.url).then( (result) => {
+            this.testServiceWorker(processServiceWorker(result.content, false));
+          });
+        }
+      }
+    );
+
     this.reportAudit = await Report(url);
 
     console.log(this.reportAudit);
@@ -1340,7 +1359,7 @@ export class AppReport extends LitElement {
     await this.populateAppCard(this.manifestContext, this.reportAudit?.artifacts?.webAppManifest?.url);
 
     // await this.getManifest(url);
-    await Promise.all([ this.testManifest(), this.testServiceWorker(processServiceWorker(this.reportAudit?.audits)), this.testSecurity(processSecurity(this.reportAudit.audits))]).then(() =>
+    await Promise.all([ this.testManifest(), this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score)), this.testSecurity(processSecurity(this.reportAudit.audits))]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
@@ -1373,6 +1392,7 @@ export class AppReport extends LitElement {
         }
       });
       this.manifestTotalScore = this.validationResults.length;
+      this.manifestValidCounter = 0;
 
       this.validationResults.forEach((test: Validation) => {
         if(test.valid){
@@ -1430,6 +1450,7 @@ export class AppReport extends LitElement {
     const serviceWorkerTestResult = serviceWorkerResults;
     this.serviceWorkerResults = serviceWorkerTestResult;
 
+    this.swValidCounter = 0;
     this.serviceWorkerResults.forEach((result: any) => {
       if(result.result){
         this.swValidCounter++;

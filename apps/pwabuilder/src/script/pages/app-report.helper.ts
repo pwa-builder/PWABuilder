@@ -1,73 +1,7 @@
 import { Manifest } from '@pwabuilder/manifest-validation';
-import { env } from '../utils/environment';
-import { ManifestContext, ServiceWorkerDetectionResult, TestResult } from '../utils/interfaces';
+import { ManifestContext, TestResult } from '../utils/interfaces';
 import { createManifestContextFromEmpty } from '../services/manifest';
-
-export type ReportAudit = {
-	audits: {
-		isOnHttps: { score: boolean },
-		installableManifest: {
-		  score: boolean,
-		  details: { url?: string }
-		},
-		serviceWorker: {
-		  score: boolean,
-		  details: {
-			url?: string,
-			scope?: string,
-			features?: { detectedBackgroundSync: boolean,
-				detectedPeriodicBackgroundSync: boolean,
-				detectedPushRegistration: boolean,
-				detectedSignsOfLogic: boolean,
-				raw?: string[] }
-			}
-		  },
-		appleTouchIcon: { score: boolean },
-		maskableIcon: { score: boolean },
-		splashScreen: { score: boolean },
-		themedOmnibox: { score: boolean },
-		viewport: { score: boolean }
-	},
-	artifacts: {
-		webAppManifest: {
-			raw: string,
-			url: string,
-			value: unknown
-		},
-		serviceWorker: {
-			registrations: unknown[],
-			versions: unknown[],
-			raw?: string
-		},
-		url: string,
-		linkElements: unknown[],
-		metaElements: unknown[]
-	}
-}
-
-export async function Report(
-	url: string
-  ): Promise<ReportAudit> {
-	const fetchReport = await fetch(
-	  `${
-		env.apiV2
-	  }/Report?site=${encodeURIComponent(url)}`
-	);
-	if (!fetchReport.ok) {
-	  console.warn(
-		'Unable to audit due to HTTP error',
-		fetchReport.status,
-		fetchReport.statusText
-	  );
-	  throw new Error(
-		`Report audit failed due to HTTP error ${fetchReport.status} ${fetchReport.statusText}`
-	  );
-	}
-
-	const jsonResult: { data: ReportAudit } = await fetchReport.json();
-	console.info('Report audit succeeded', jsonResult?.data);
-	return jsonResult?.data;
-}
+import { ReportAudit } from './app-report.api';
 
 export async function processManifest(appUrl: string, manifestArtifact?: ReportAudit['artifacts']['webAppManifest']): Promise<ManifestContext> {
 	let manifestContext: ManifestContext;
@@ -91,16 +25,16 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(audits: ReportAudit['audits']): Array<TestResult> {
+export function processServiceWorker(serviceWorker: ReportAudit['audits']['serviceWorker'], installable = false): Array<TestResult> {
 	console.info('Testing Service Worker');
 
-	const worksOffline: boolean = audits.installableManifest.score;
-	const swFeatures = audits.serviceWorker.details?.features || null;
+	const worksOffline: boolean = installable;
+	const swFeatures = serviceWorker.details?.features || null;
 
 	const swTestResult = [
 	  {
-		result: audits.serviceWorker.score,
-		infoString: audits.serviceWorker.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
+		result: serviceWorker.score,
+		infoString: serviceWorker.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
 		category: 'required',
 	  },
 	  {
