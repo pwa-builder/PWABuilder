@@ -408,19 +408,19 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-        errorString: "shortcuts should be a non-empty array and should not include webp images",
+        errorString: "shortcuts should not include webp images",
         quickFix: true,
-        test: (value: any[]) => {
+        test: (value: any) => {
+            if(value.length === 0) return true;
+            if(value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
-            if (isArray === true) {
-                // check image types dont include webp
-                const hasWebp = value.some(icon => icon.type === "image/webp");
-                if (hasWebp) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+            if (isArray) {
+                const hasWebP = value.some((shortcut) => {
+                    return shortcut.icons.some((icon: Icon) => {
+                        return icon.type === "image/webp";
+                    });
+                });
+                return hasWebP;
             }
             else {
                 return false;
@@ -438,8 +438,9 @@ export const maniTests: Array<Validation> = [
         errorString: "shortcuts should have atleast one icon with a size of 96x96",
         quickFix: false,
         test: (value: any[]) => {
+            if(value.length === 0) return true;
             const isArray = value && Array.isArray(value);
-            if (isArray === true) {
+            if (isArray) {
                 const has96x96Icon = value.some((shortcut) => {
                     return shortcut.icons.some((icon: Icon) => {
                         return icon.sizes === "96x96";
@@ -478,10 +479,10 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-
+            if(value.length === 0) return true;
             if (isArray) {
                 value.forEach(async (app: RelatedApplication) => {
-                    const check = await validateSingleRelatedApp(app);
+                    const check = validateSingleRelatedApp(app);
                     if (check !== "valid") {
                         return false;
                     }
@@ -495,7 +496,7 @@ export const maniTests: Array<Validation> = [
                 return false;
             }
         },
-        errorString: "related_applications should be a non-empty array",
+        errorString: "related_applications should contain a valid store, url and id",
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",

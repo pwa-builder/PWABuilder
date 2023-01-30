@@ -65,10 +65,12 @@ export class ManifestInfoForm extends LitElement {
         margin: 0;
       }
       .field-desc {
+        white-space: no-wrap;
         font-size: 14px;
         margin: 0;
         color: #717171;
       }
+
       .long .form-field {
         width: 100%;
       }
@@ -158,6 +160,14 @@ export class ManifestInfoForm extends LitElement {
       }
       sl-menu {
         width: 100%;
+      }
+
+      .error-div {
+        font-size: 14px;
+      }
+
+      .error-div p {
+        margin: 0;
       }
 
       .error-color-field{
@@ -278,15 +288,15 @@ export class ManifestInfoForm extends LitElement {
           if(field === "theme_color" || field === "background_color"){
 
             // Remove exisiting error list if there is one.
-            if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-              let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            if(this.shadowRoot!.querySelector(`.error-div`)){
+              let error_div = this.shadowRoot!.querySelector(`.error-div`);
               error_div!.parentElement!.removeChild(error_div!);
             }
 
             // Update new errors list.
             if(validation.errors){
               let div = document.createElement('div');
-              div.classList.add(`${field}-error-div`);
+              div.classList.add(`error-div`);
               validation.errors.forEach((error: string) => {
                 let p = document.createElement('p');
                 p.innerText = error;
@@ -301,15 +311,15 @@ export class ManifestInfoForm extends LitElement {
           } else { // All other fields
             
             // Remove old errors
-            if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-              let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            if(this.shadowRoot!.querySelector(`.error-div`)){
+              let error_div = this.shadowRoot!.querySelector(`.error-div`);
               error_div!.parentElement!.removeChild(error_div!);
             }
   
             // Update with new errors.
             if(validation.errors){
               let div = document.createElement('div');
-              div.classList.add(`${field}-error-div`);
+              div.classList.add(`error-div`);
               validation.errors.forEach((error: string) => {
                 let p = document.createElement('p');
                 p.innerText = error;
@@ -331,13 +341,13 @@ export class ManifestInfoForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
 
-          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+          if(this.shadowRoot!.querySelector(`.error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
 
           let div = document.createElement('div');
-          div.classList.add(`${field}-error-div`);
+          div.classList.add(`error-div`);
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
@@ -425,15 +435,15 @@ export class ManifestInfoForm extends LitElement {
       }
     } else {
 
-      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
-        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
+      if(this.shadowRoot!.querySelector(`.error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.error-div`);
         error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
-        div.classList.add(`${fieldName}-error-div`);
+        div.classList.add(`error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
