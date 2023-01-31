@@ -411,12 +411,12 @@ export const maniTests: Array<Validation> = [
         errorString: "shortcuts should not include webp images",
         quickFix: true,
         test: (value: any) => {
-            if(value.length === 0) return true;
-            if(value.icons.length === 0) return true;
+            if(value && value.length === 0) return true;
+            if(value.icons && value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
                 const hasWebP = value.some((shortcut) => {
-                    return shortcut.icons.some((icon: Icon) => {
+                    return shortcut.icons!.some((icon: Icon) => {
                         return icon.type === "image/webp";
                     });
                 });
@@ -438,11 +438,11 @@ export const maniTests: Array<Validation> = [
         errorString: "shortcuts should have atleast one icon with a size of 96x96",
         quickFix: false,
         test: (value: any[]) => {
-            if(value.length === 0) return true;
+            if(value && value.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
                 const has96x96Icon = value.some((shortcut) => {
-                    return shortcut.icons.some((icon: Icon) => {
+                    return shortcut.icons!.some((icon: Icon) => {
                         return icon.sizes === "96x96";
                     });
                 });
@@ -479,18 +479,13 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-            if(value.length === 0) return true;
+            if(value && value.length === 0) return true;
             if (isArray) {
-                value.forEach(async (app: RelatedApplication) => {
+                let passed = value.every((app: RelatedApplication) => {
                     const check = validateSingleRelatedApp(app);
-                    if (check !== "valid") {
-                        return false;
-                    }
-                    
-                    return true;
-                })
-
-                return false;
+                    return check;
+                });
+                return passed;
             }
             else {
                 return false;

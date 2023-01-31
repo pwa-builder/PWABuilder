@@ -80,6 +80,9 @@ export class ManifestInfoForm extends LitElement {
         display: flex;
         flex-direction: column;
       }
+      .form-field p {
+        font-size: 14px;
+      }
       .field-header{
         display: flex;
         align-items: center;

@@ -89,6 +89,9 @@ export class ManifestPlatformForm extends LitElement {
         display: flex;
         flex-direction: column;
       }
+      .form-field p {
+        font-size: 14px;
+      }
       .field-header{
         display: flex;
         align-items: center;
@@ -365,7 +368,6 @@ export class ManifestPlatformForm extends LitElement {
         
 
         if(!passed){
-          console.log(`${field} failed putting these errors ${validation.errors}`)
           // Remove old errors
           if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
@@ -560,7 +562,7 @@ export class ManifestPlatformForm extends LitElement {
     this.updateShortcutsInManifest(inputs, true);
   }
 
-  async updateShortcutsInManifest(inputs: any, push: boolean, removal: boolean = false;){
+  async updateShortcutsInManifest(inputs: any, push: boolean, removal: boolean = false){
     if(push){
       let name = inputs.filter((input: any) => input.name === "name")[0].value;
       let url = inputs.filter((input: any) => input.name === "url")[0].value;
