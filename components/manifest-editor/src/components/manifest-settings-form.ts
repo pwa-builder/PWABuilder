@@ -139,14 +139,6 @@ export class ManifestSettingsForm extends LitElement {
         width: 100%;
       }
 
-      .error-div {
-        font-size: 14px;
-      }
-
-      .error-div p {
-        margin: 0;
-      }
-
       .error::part(base){
         border-color: #eb5757;
         --sl-input-focus-ring-color: ##eb575770;
@@ -302,15 +294,15 @@ export class ManifestSettingsForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
 
-          if(this.shadowRoot!.querySelector(`.error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.error-div`);
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
           
           // update error list
           if(validation.errors){
             let div = document.createElement('div');
-            div.classList.add(`error-div`);
+            div.classList.add(`${field}-error-div`);
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
@@ -328,13 +320,13 @@ export class ManifestSettingsForm extends LitElement {
           let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
           input!.classList.add("error");
 
-          if(this.shadowRoot!.querySelector(`.error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.error-div`);
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
 
           let div = document.createElement('div');
-          div.classList.add(`error-div`);
+          div.classList.add(`${field}-error-div`);
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
@@ -407,15 +399,15 @@ export class ManifestSettingsForm extends LitElement {
         input!.parentNode!.removeChild(last!)
       }
     } else {
-      if(this.shadowRoot!.querySelector(`.error-div`)){
-        let error_div = this.shadowRoot!.querySelector(`.error-div`);
+      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
         error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
-        div.classList.add(`error-div`);
+        div.classList.add(`${fieldName}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
@@ -503,15 +495,15 @@ export class ManifestSettingsForm extends LitElement {
         last!.parentNode!.removeChild(last!);
       } 
     } else {
-      if(this.shadowRoot!.querySelector(`.error-div`)){
-        let error_div = this.shadowRoot!.querySelector(`.error-div`);
+      if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
         error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
-        div.classList.add(`error-div`);
+        div.classList.add(`${field}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;

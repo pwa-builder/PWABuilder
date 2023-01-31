@@ -219,14 +219,6 @@ export class ManifestPlatformForm extends LitElement {
         justify-content: space-between;
       }
 
-      .error-div {
-        font-size: 14px;
-      }
-
-      .error-div p {
-        margin: 0;
-      }
-
       .error::part(base){
         border-color: #eb5757;
         --sl-input-focus-ring-color: #eb575770;
@@ -373,17 +365,17 @@ export class ManifestPlatformForm extends LitElement {
         
 
         if(!passed){
-          
+          console.log(`${field} failed putting these errors ${validation.errors}`)
           // Remove old errors
-          if(this.shadowRoot!.querySelector(`.error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.error-div`);
+          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
 
           // update error list with new errors
           if(validation.errors){
             let div = document.createElement('div');
-            div.classList.add(`error-div`);
+            div.classList.add(`${field}-error-div`);
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
@@ -568,7 +560,7 @@ export class ManifestPlatformForm extends LitElement {
     this.updateShortcutsInManifest(inputs, true);
   }
 
-  async updateShortcutsInManifest(inputs: any, push: boolean){
+  async updateShortcutsInManifest(inputs: any, push: boolean, removal: boolean = false;){
     if(push){
       let name = inputs.filter((input: any) => input.name === "name")[0].value;
       let url = inputs.filter((input: any) => input.name === "url")[0].value;
@@ -602,7 +594,7 @@ export class ManifestPlatformForm extends LitElement {
 
       this.manifest.shortcuts?.push(scObject)
     }
-    this.validatePlatformList("shortcuts", this.manifest.shortcuts!);
+    this.validatePlatformList("shortcuts", this.manifest.shortcuts!, removal);
   }
 
   addProtocolToManifest(e: any){
@@ -623,7 +615,7 @@ export class ManifestPlatformForm extends LitElement {
     this.updateProtocolsInManifest(inputs, true);
   }
 
-  async updateProtocolsInManifest(inputs: any, push: boolean){
+  async updateProtocolsInManifest(inputs: any, push: boolean, removal: boolean = false){
 
     if(push){
       let protocol: string = inputs.filter((input: any) => input.name === "protocol")[0].value;
@@ -641,7 +633,7 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.protocol_handlers?.push(pObject);
     }
 
-    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!);
+    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!, removal);
   }
 
   addRelatedAppToManifest(e: any){
@@ -664,7 +656,7 @@ export class ManifestPlatformForm extends LitElement {
     
   }
 
-  async updateRelatedAppsInManifest(inputs: any, select: any, push: boolean){
+  async updateRelatedAppsInManifest(inputs: any, select: any, push: boolean, removal: boolean = false){
     
     if(push){
       let platform: string = select.value;
@@ -684,7 +676,7 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.related_applications?.push(appObject);
     }
     
-    this.validatePlatformList("related_applications", this.manifest.related_applications!);
+    this.validatePlatformList("related_applications", this.manifest.related_applications!, removal);
   }
 
   updateCategories(){
@@ -708,7 +700,7 @@ export class ManifestPlatformForm extends LitElement {
     this.validatePlatformList("categories", categories);
   }
 
-  async validatePlatformList(field: string, updatedValue: any[]){
+  async validatePlatformList(field: string, updatedValue: any[], removal: boolean = false){
     if(this.validationPromise){
       await this.validationPromise;
     }
@@ -717,8 +709,7 @@ export class ManifestPlatformForm extends LitElement {
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
 
-    if(passed){
-
+    if(passed || removal){
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
             field: field,
@@ -729,6 +720,9 @@ export class ManifestPlatformForm extends LitElement {
       });
 
       this.dispatchEvent(manifestUpdated);
+    }
+
+    if(passed){
 
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
@@ -746,15 +740,15 @@ export class ManifestPlatformForm extends LitElement {
 
       return true;
     } else {
-      if(this.shadowRoot!.querySelector(`.error-div`)){
-        let error_div = this.shadowRoot!.querySelector(`.error-div`);
+      if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
+        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
         error_div!.parentElement!.removeChild(error_div!);
       }
       
       // update error list
       if(validation.errors){
         let div = document.createElement('div');
-        div.classList.add(`error-div`);
+        div.classList.add(`${field}-error-div`);
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
@@ -788,13 +782,13 @@ export class ManifestPlatformForm extends LitElement {
 
     if(field === "shortcuts"){
       this.manifest.shortcuts = this.manifest.shortcuts!.filter((_item: any, i: number) => i != index );
-      this.updateShortcutsInManifest([], false);
+      this.updateShortcutsInManifest([], false, true);
     } else if(field === "protocol"){
       this.manifest.protocol_handlers = this.manifest.protocol_handlers!.filter((_item: any, i: number) => i != index);
-      this.updateProtocolsInManifest([], false);
+      this.updateProtocolsInManifest([], false, true);
     } else {
       this.manifest.related_applications = this.manifest.related_applications!.filter((_item: any, i: number) => i != index);
-      this.updateRelatedAppsInManifest([], [], false);
+      this.updateRelatedAppsInManifest([], [], false, true);
     }
   }
 
