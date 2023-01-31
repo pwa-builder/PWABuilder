@@ -139,7 +139,15 @@ export class InfoPanel extends LitElement {
   async showEditor(){
     let curDialog: any = this.shadowRoot!.querySelector(".dialog");
     await curDialog.hide();
-    this.dispatchEvent(new CustomEvent('openManifestEditor'));
+
+    const event = new CustomEvent('openManifestEditor', {
+      detail: {
+        startingTab: this.info?.location,
+        focusOn: this.field
+      }
+    });
+    
+    this.dispatchEvent(event);
   }
 
   render() {

@@ -243,13 +243,6 @@ export class ManifestSettingsForm extends LitElement {
     super();
   }
 
-  firstUpdated(){
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
-    }
-  }
-
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(manifestInitialized){
       manifestInitialized = false;
@@ -519,8 +512,17 @@ export class ManifestSettingsForm extends LitElement {
     let decision = this.focusOn === field;
     return {focus: decision}
   }
+  
+  scrollIfNeeded(){
+    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    if(this.focusOn && field){
+      console.log("scrolling", this.focusOn);
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
+  }
 
   render() {
+    this.scrollIfNeeded();
     return html`
       <div id="form-holder">
         <div class="form-row">

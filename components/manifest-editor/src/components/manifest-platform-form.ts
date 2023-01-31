@@ -302,13 +302,6 @@ export class ManifestPlatformForm extends LitElement {
     super();
   }
 
-  firstUpdated(){
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
-    }
-  }
-
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
 
     /* The first two checks are to reset the view with the most up to date manifest fields.
@@ -387,7 +380,6 @@ export class ManifestPlatformForm extends LitElement {
           // Remove old errors
           if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-            console.log(error_div);
             error_div!.parentElement!.removeChild(error_div!);
           }
 
@@ -927,7 +919,15 @@ export class ManifestPlatformForm extends LitElement {
     return {focus: decision}
   }
 
+  scrollIfNeeded(){
+    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    if((this.focusOn && field)){
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
+  }
+
   render() {
+    this.scrollIfNeeded();
     return html`
       <div id="form-holder">
         <div class="form-row">

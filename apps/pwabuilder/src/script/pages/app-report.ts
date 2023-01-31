@@ -127,6 +127,8 @@ export class AppReport extends LitElement {
   @state() createdManifest: boolean = false;  
   @state() manifestContext: ManifestContext | undefined;
   @state() backToInfo: boolean = false;
+  @state() focusForManifestEditor: string = "";
+  @state() startingTabForManifestEditor: string = "";
 
   @state() todoItems: any[] = [];
 
@@ -1605,8 +1607,12 @@ export class AppReport extends LitElement {
   }
 
   // Opens manifest editor and tracks analytics
-  async openManifestEditorModal(backToInfo: boolean) {
+  async openManifestEditorModal(e: CustomEvent, backToInfo: boolean) {
     this.backToInfo = backToInfo;
+    if(backToInfo){
+      this.focusForManifestEditor = e.detail.focusOn;
+      this.startingTabForManifestEditor = e.detail.startingTab;
+    }
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
     await dialog!.show();
@@ -2420,9 +2426,9 @@ export class AppReport extends LitElement {
 
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .backToInfo=${this.backToInfo} @readyForRetest=${() => this.addRetestTodo("Manifest", "We've noticed that you have made a change to your manifest inside the Manifest Editor. Click here to get the next steps to add it to your site and update your score!")} @openInfoPanel=${(e: any) => this.showInfoPanel(e, true)}></manifest-editor-frame>`}
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .backToInfo=${this.backToInfo} .focusOn=${this.focusForManifestEditor} .startingTab=${this.startingTabForManifestEditor} @readyForRetest=${() => this.addRetestTodo("Manifest", "We've noticed that you have made a change to your manifest inside the Manifest Editor. Click here to get the next steps to add it to your site and update your score!")} @openInfoPanel=${(e: any) => this.showInfoPanel(e, true)}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker", "We've noticed you downloaded a Service Worker! Click here for next steps to add it to your site and update your score!")}></sw-selector>
-      ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!} @openManifestEditor=${() => this.openManifestEditorModal(true)}></info-panel>`}
+      ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!} @openManifestEditor=${(e) => this.openManifestEditorModal(e, true)}></info-panel>`}
       
 
     `;
