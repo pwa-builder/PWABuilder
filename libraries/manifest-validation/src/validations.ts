@@ -415,17 +415,21 @@ export const maniTests: Array<Validation> = [
             if(value.icons && value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
-                const hasWebP = value.some((shortcut) => {
+
+                /* this loop makes sure that EVERY shortcut returns true for
+                the below conditions. If one is false, that means there is
+                at least one webp image somewhere in their shortcuts. */
+                const noWebp = value.every((shortcut) => {
+                    // If there are no icons, then it cannot contain webp.
                     if(!shortcut.icons) return true;
-                    return shortcut.icons!.some((icon: Icon) => {
-                        return icon.type === "image/webp";
+                    // this returns TRUE if every icon in the shortcut does not have webp.
+                    return shortcut.icons!.every((icon: Icon) => {
+                        return icon.type !== "image/webp";
                     });
                 });
-                return hasWebP;
+                return noWebp;
             }
-            else {
-                return false;
-            }
+            return true;
         }
     },
     {
@@ -442,8 +446,11 @@ export const maniTests: Array<Validation> = [
             if(value && value.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
-                const has96x96Icon = value.some((shortcut) => {
+                /* we use every here bc every shortcut needs at 
+                least one icon with size 96x96 no  icons at all */
+                const has96x96Icon = value.every((shortcut) => {
                     if(!shortcut.icons) return true;
+                    // we use some here bc only one icon has to be that size
                     return shortcut.icons!.some((icon: Icon) => {
                         return icon.sizes === "96x96";
                     });
