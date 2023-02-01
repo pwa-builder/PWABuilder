@@ -308,7 +308,11 @@ export class ManifestPlatformForm extends LitElement {
      The last check prevents the dropdown selector in related apps from causing everything
      to reset when it changes. It triggers an update event which would cause all of this to
      run again. Its true purpose is to keep the view aligned with the manifest. */
-     
+
+     if(_changedProperties.has("focusOn")){
+      this.scrollIfNeeded();
+     }
+
     if(manifestInitialized){
       manifestInitialized = false;
       if(!fieldsValidated){
@@ -927,7 +931,6 @@ export class ManifestPlatformForm extends LitElement {
   }
 
   render() {
-    this.scrollIfNeeded();
     return html`
       <div id="form-holder">
         <div class="form-row">

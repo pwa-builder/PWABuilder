@@ -228,6 +228,11 @@ export class ManifestInfoForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
+    if(_changedProperties.has("focusOn")){
+      this.scrollIfNeeded();
+     }
+     
     if(manifestInitialized){ // _changedProperties.has("manifest") && _changedProperties.get("manifest") && 
       manifestInitialized = false;
       this.initMissingColors();

@@ -244,6 +244,11 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
+    if(_changedProperties.has("focusOn")){
+      this.scrollIfNeeded();
+     }
+
     if(manifestInitialized){
       manifestInitialized = false;
       this.requestValidateAllFields();
@@ -422,7 +427,7 @@ export class ManifestSettingsForm extends LitElement {
     return "";
   }
 
-  async toggleOverrideList(label: string, e: any){
+  async toggleOverrideList(label: string, origin: string){
 
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
@@ -433,7 +438,9 @@ export class ManifestSettingsForm extends LitElement {
     });
     this.dispatchEvent(fieldChangeAttempted);
 
-    let active = !e.path[0].checked;
+    let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`sl-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`sl-menu-item[value="${label}"]`);
+
+    let active = !(checkbox as HTMLInputElement)!.checked;
     
     if(active){
       // remove from active list
@@ -516,13 +523,11 @@ export class ManifestSettingsForm extends LitElement {
   scrollIfNeeded(){
     let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
     if(this.focusOn && field){
-      console.log("scrolling", this.focusOn);
       setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
     }
   }
 
   render() {
-    this.scrollIfNeeded();
     return html`
       <div id="form-holder">
         <div class="form-row">
@@ -681,7 +686,7 @@ export class ManifestSettingsForm extends LitElement {
                 ${this.activeOverrideItems.length != 0 ?
                 this.activeOverrideItems.map((item: string, index: number) =>
                   html`
-                    <sl-menu-item class="override-item" value=${item} @click=${(e: CustomEvent) => this.toggleOverrideList(item, e)}>
+                    <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, "menu-item")}>
                       <p slot="prefix" class="menu-prefix">${index + 1}</p>
                       ${item}
                     </sl-menu-item>
@@ -692,7 +697,7 @@ export class ManifestSettingsForm extends LitElement {
                 <div id="override-options-grid">
                   ${overrideOptions.map((item: string) =>
                       html`
-                        <sl-checkbox class="override-item" value=${item} @sl-change=${(e: CustomEvent) => this.toggleOverrideList(item, e)} ?checked=${this.activeOverrideItems.includes(item)}>
+                        <sl-checkbox class="override-item" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
                           ${item}
                         </sl-checkbox>
                       `)}

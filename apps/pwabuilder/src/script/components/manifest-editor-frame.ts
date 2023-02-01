@@ -259,6 +259,7 @@ export class ManifestEditorFrame extends LitElement {
   /* Next functions are for analytics */
 
   handleTabSwitch(e: CustomEvent){
+    recordPWABuilderProcessStep(`manifest_editor.tab_switched`, AnalyticsBehavior.ProcessCheckpoint);
     recordPWABuilderProcessStep(`manifest_editor.${e.detail.tab}_tab_selected`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
