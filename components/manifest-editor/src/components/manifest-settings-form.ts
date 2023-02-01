@@ -23,8 +23,8 @@ export class ManifestSettingsForm extends LitElement {
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
-  private errorCount: number = 0;
 
+  @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
 
   static get styles() {
@@ -306,12 +306,13 @@ export class ManifestSettingsForm extends LitElement {
           if(validation.errors){
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
+            this.errorMap[field] = 0;
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
-              this.errorCount++;
+              this.errorMap[field]++;
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
           }
@@ -327,14 +328,14 @@ export class ManifestSettingsForm extends LitElement {
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
-
+          this.errorMap[field] = 0;
           let div = document.createElement('div');
           div.classList.add(`${field}-error-div`);
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
           
         }
@@ -342,7 +343,7 @@ export class ManifestSettingsForm extends LitElement {
     }
 
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "settings"));
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
@@ -397,7 +398,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[fieldName!];
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -411,19 +412,20 @@ export class ManifestSettingsForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
+        this.errorMap[fieldName!] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
       input.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "settings"));
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
@@ -493,7 +495,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[field];
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
@@ -507,19 +509,20 @@ export class ManifestSettingsForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
+        this.errorMap[field] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       input!.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));

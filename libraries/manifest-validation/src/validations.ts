@@ -416,6 +416,7 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value);
             if (isArray) {
                 const hasWebP = value.some((shortcut) => {
+                    if(!shortcut.icons) return true;
                     return shortcut.icons!.some((icon: Icon) => {
                         return icon.type === "image/webp";
                     });
@@ -442,6 +443,7 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value);
             if (isArray) {
                 const has96x96Icon = value.some((shortcut) => {
+                    if(!shortcut.icons) return true;
                     return shortcut.icons!.some((icon: Icon) => {
                         return icon.sizes === "96x96";
                     });

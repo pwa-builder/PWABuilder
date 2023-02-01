@@ -29,10 +29,10 @@ export class ManifestPlatformForm extends LitElement {
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
   @state() relatedAppsHTML: TemplateResult[] = [];
+  @state() errorMap: any = {};
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
-  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -376,6 +376,7 @@ export class ManifestPlatformForm extends LitElement {
 
           // update error list with new errors
           if(validation.errors){
+            this.errorMap[field] = 0;
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
             validation.errors.forEach((error: string) => {
@@ -383,7 +384,7 @@ export class ManifestPlatformForm extends LitElement {
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
-              this.errorCount++;
+              this.errorMap[field]++;
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
           }
@@ -394,7 +395,7 @@ export class ManifestPlatformForm extends LitElement {
       }
     }
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
@@ -463,7 +464,7 @@ export class ManifestPlatformForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[fieldName!];
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
         
@@ -476,6 +477,7 @@ export class ManifestPlatformForm extends LitElement {
       
       // update error list
       if(validation.errors){
+        this.errorMap[fieldName!] = 0;
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
         validation.errors.forEach((error: string) => {
@@ -483,7 +485,7 @@ export class ManifestPlatformForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
@@ -492,7 +494,7 @@ export class ManifestPlatformForm extends LitElement {
       input.classList.add("error");
     }
 
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
@@ -728,19 +730,18 @@ export class ManifestPlatformForm extends LitElement {
 
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[field];
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
       this.requestUpdate();
 
-      if(this.errorCount == 0){
+      if(this.errorMap.length === 0){
         this.dispatchEvent(errorInTab(false, "platform"));
       } else {
         this.dispatchEvent(errorInTab(true, "platform"));
       }
 
-      return true;
     } else {
       if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
         let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
@@ -749,6 +750,7 @@ export class ManifestPlatformForm extends LitElement {
       
       // update error list
       if(validation.errors){
+        this.errorMap[field] = 0;
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
         validation.errors.forEach((error: string) => {
@@ -756,24 +758,23 @@ export class ManifestPlatformForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       input!.classList.add("error");
-
-      if(this.errorCount == 0){
-        this.dispatchEvent(errorInTab(false, "platform"));
-      } else {
-        this.dispatchEvent(errorInTab(true, "platform"));
-      }
-
-      return false;
       
     }
-    
 
+    (Object.keys(this.errorMap).length);
+    if(Object.keys(this.errorMap).length == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "platform"));
+    }
+    
+    return passed;
   }
 
 
