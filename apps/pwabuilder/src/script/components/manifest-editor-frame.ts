@@ -249,6 +249,8 @@ export class ManifestEditorFrame extends LitElement {
 
   // hides modal
   async hideDialog(e: any){
+    this.focusOn = "";
+    this.startingTab = "info";
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
       await dialog!.hide();
@@ -309,9 +311,9 @@ export class ManifestEditorFrame extends LitElement {
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">
+              <!-- ${this.backToInfo ? html`<button class="back" type="button" @click=${() => this.goBackToInfo()}>Back to info</button>` : html``} -->
               <h1>${this.isGenerated ? "Generate manifest" : "Edit your manifest"}</h1>
               <p>Update your app name and description, add or update your icons, enable platform capabilities and more by editing the fields below. Once you are done with your changes, download or copy the generated manifest and/or icons and upload them to your site. Once done, re-test the url to make sure your PWA is ready for stores!</p>
-              ${this.backToInfo ? html`<button class="back" type="button" @click=${() => this.goBackToInfo()}>Back to info</button>` : html``}
             </div>
             <pwa-manifest-editor 
               .initialManifest=${this.manifest} 
