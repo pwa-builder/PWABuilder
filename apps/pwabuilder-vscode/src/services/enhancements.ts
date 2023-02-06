@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getManifest } from "./manifest/manifest-service";
 import { Manifest } from "../interfaces";
+import { trackEvent } from "./usage-analytics";
 
 const shortcutString = new vscode.SnippetString('\,\n\t\"shortcuts\": [\n\t\t\{\n\t\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",\n\t\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",\n\t\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"\n\t\t\}\n\t\]\n');
 const protocolHandlerString = new vscode.SnippetString('\,\n\t\"protocol_handlers\": [\n\t\t\{\n\t\t\t\"protocol\":\"${15:The protocol you would like to handle. For example: web+myapp}\",\n\t\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\"\n\t\t\}\n\t\]\n');
@@ -19,6 +20,10 @@ async function handleInsertSnippet(manifestFile: vscode.TextDocument, snippet: v
 }
 
 export async function addFileHandlers() {
+    trackEvent("add_enhancement", {
+        type: "file_handler"
+    });
+
     const manifest = await getManifest();
 
     if (manifest) {
@@ -61,6 +66,10 @@ export async function addFileHandlers() {
 }
 
 export async function addShortcuts() {
+    trackEvent("add_enhancement", {
+        type: "shortcuts"
+    });
+
     // get manifest.json
     const manifest = await getManifest();
 
@@ -113,6 +122,10 @@ export async function addShortcuts() {
 }
 
 export async function addProtocolHandler() {
+    trackEvent("add_enhancement", {
+        type: "protocol_handler"
+    });
+
     // get manifest.json
     const manifest = await getManifest();
 
@@ -164,6 +177,10 @@ export async function addProtocolHandler() {
 }
 
 export async function addShareTarget() {
+    trackEvent("add_enhancement", {
+        type: "share_target"
+    });
+
     // get manifest.json
     const manifest = await getManifest();
 
