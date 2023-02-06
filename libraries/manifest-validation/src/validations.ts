@@ -374,23 +374,28 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-        errorString: "shortcuts should be a non-empty array and should not include webp images",
+        errorString: "shortcuts should not include webp images",
         quickFix: true,
-        test: (value: any[]) => {
+        test: (value: any) => {
+            if(value && value.length === 0) return true;
+            if(value.icons && value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
-            if (isArray === true) {
-                // check image types dont include webp
-                const hasWebp = value.some(icon => icon.type === "image/webp");
-                if (hasWebp) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+            if (isArray) {
+
+                /* this loop makes sure that EVERY shortcut returns true for
+                the below conditions. If one is false, that means there is
+                at least one webp image somewhere in their shortcuts. */
+                const noWebp = value.every((shortcut) => {
+                    // If there are no icons, then it cannot contain webp.
+                    if(!shortcut.icons) return true;
+                    // this returns TRUE if every icon in the shortcut does not have webp.
+                    return shortcut.icons!.every((icon: Icon) => {
+                        return icon.type !== "image/webp";
+                    });
+                });
+                return noWebp;
             }
-            else {
-                return false;
-            }
+            return true;
         }
     },
     {
@@ -401,13 +406,18 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-        errorString: "shortcuts should have at least one icon with a size of 96x96",
+        errorString: "One or more of your shortcuts has icons but does not have one with size 96x96",
         quickFix: false,
         test: (value: any[]) => {
+            if(value && value.length === 0) return true;
             const isArray = value && Array.isArray(value);
-            if (isArray === true) {
-                const has96x96Icon = value.some((shortcut) => {
-                    return shortcut.icons.some((icon: Icon) => {
+            if (isArray) {
+                /* we use every here bc every shortcut needs at 
+                least one icon with size 96x96 no  icons at all */
+                const has96x96Icon = value.every((shortcut) => {
+                    if(!shortcut.icons) return true;
+                    // we use some here bc only one icon has to be that size
+                    return shortcut.icons!.some((icon: Icon) => {
                         return icon.sizes === "96x96";
                     });
                 });
@@ -444,24 +454,19 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-
+            if(value && value.length === 0) return true;
             if (isArray) {
-                value.forEach(async (app: RelatedApplication) => {
-                    const check = await validateSingleRelatedApp(app);
-                    if (check !== "valid") {
-                        return false;
-                    }
-                    
-                    return true;
-                })
-
-                return false;
+                let passed = value.every((app: RelatedApplication) => {
+                    const check = validateSingleRelatedApp(app);
+                    return check;
+                });
+                return passed;
             }
             else {
                 return false;
             }
         },
-        errorString: "related_applications should be a non-empty array",
+        errorString: "related_applications should contain a valid store, url and id",
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
