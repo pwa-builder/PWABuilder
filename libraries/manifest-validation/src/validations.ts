@@ -1,4 +1,4 @@
-import { currentManifest } from ".";
+// import { currentManifest } from ".";
 import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces";
 import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils";
 
@@ -255,41 +255,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) => {
             if (value && typeof value === "string" && value.length > 0) {
-                try {
-                    // get current manifest
-                    const currentMani = currentManifest;
-
-                    const url = value;
-                    //console.log("test url", url);
-
-                    // is url relative to scope
-                    let relativeToScope = false;
-                    if (currentMani && currentMani.scope) {
-                        //console.log("test scope", currentMani?.scope);
-                        // is url relative to currentMani.scope
-                        const scopeUrl = currentMani.scope;
-                        //console.log("scope url", scopeUrl);
-
-                        if (url.startsWith(scopeUrl)) {
-                          relativeToScope = true;
-                        }
-                        else {
-                            relativeToScope = false;
-                        }
-                    }
-                    else if (currentMani && !currentMani.scope && (url.startsWith("/") || url.startsWith("https"))) {
-                        relativeToScope = true;
-                    }
-                    else {
-                        relativeToScope = false;
-                    }
-
-                    return relativeToScope;
-                    
-                }
-                catch {
-                    return false;
-                }
+                return true;
             }
             else {
                 return false;
