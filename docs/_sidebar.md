@@ -34,6 +34,7 @@
 - **PWABuilder Studio**
   - [Quick Start](/studio/quick-start "PWABuilder Studio - Quick Start")
   - [Create a New PWA](/studio/create-new "PWABuilder Studio - Create a New PWA")
+  - [Dev Dashboard](/studio/dev-dashboard "PWABuilder Studio - Dev Dashboard")
   - [Converting Existing Apps](/studio/existing-app "PWABuilder Studio - Converting Existing Apps")
   - [Package Your PWA](/studio/package "PWABuilder Studio - Package Your PWA For Stores")
   - [Code Snippets](/studio/snippets "PWABuilder Studio - Code Snippets")

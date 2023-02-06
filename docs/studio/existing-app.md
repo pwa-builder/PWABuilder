@@ -22,13 +22,10 @@ To add a manifest using the interface:
 
 5. Your new manifest will automatically open and hitting `Tab` will allow you to navigate between fields to edit.
 
-6. Fill out your manifest to match your application. You can learn more about the Manifest fields [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+6. Your manifest is automatically linked to your index.html
 
-7. Once you're done editing your manifest, add the required `link` tag to your `index.html`:
+7. Fill out your manifest to match your application. You can learn more about the Manifest fields [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
 
-```html
-<link rel="manifest" href="manifest.json">
-```
 
 Next up: adding a service worker! 
 
@@ -72,12 +69,34 @@ To generate icons:
    
 3. Search for and run the command `PWABuilder Studio: Generate Icons`.
    
-4. The generate icon dialogue will open up and ask you to select a file.
+4. The generate icon panel will open up and ask you to select a base icon. This icon is used to generate all of the correctly-sized icons for your PWA. You can also tweak options such as icon padding and background color.
    
 5. Click `Generate Icons`.
    
 6. Your icons will be automatically added to your web manifest.
 
 <div class="docs-image">
-    <img src="/assets/studio/existing-app/generate-icons.png" width=500>
+    <img src="/assets/studio/existing-app/generate-icons.png" alt="Screenshot of icons generation panel" width=500>
+</div>
+
+## Generate Screenshots
+
+App stores and the browser install prompt will also use Screenshots of your app. The PWABuilder Studio extension can help you generate the correct sized screenshots for your application, using the URL to your deployed app, and add them directly to your manifest.
+
+To generate icons:
+
+1. Ensure you have a web manifest. See the [validation documentation.](/studio/package?id=validate-your-pwa)
+   
+2. Hit `ctrl-shift-P` with Code open.
+   
+3. Search for and run the command `PWABuilder Studio: Generate Screenshots`.
+   
+4. The generate screenshot dialogue will open up and ask you to enter the URL to your app.
+   
+5. Click `Generate Screenshots`.
+   
+6. Your screenshots will be automatically added to your web manifest.
+
+<div class="docs-image">
+    <img src="/assets/studio/existing-app/generate-screenshots.png" alt="Screenshot of screenshots generation prompt" width=500>
 </div>
