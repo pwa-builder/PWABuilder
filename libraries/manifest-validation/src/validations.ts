@@ -1,4 +1,4 @@
-import { currentManifest } from ".";
+// import { currentManifest } from ".";
 import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces";
 import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils";
 
