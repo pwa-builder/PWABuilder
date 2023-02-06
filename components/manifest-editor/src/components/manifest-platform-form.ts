@@ -365,8 +365,6 @@ export class ManifestPlatformForm extends LitElement {
         let passed = validation!.valid;
         let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
 
-        
-
         if(!passed){
           // Remove old errors
           if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
@@ -405,6 +403,7 @@ export class ManifestPlatformForm extends LitElement {
   reset() {
     this.initCatGrid();
     this.requestUpdate();
+    fieldsValidated = false;
   }
 
   initCatGrid(){
@@ -511,7 +510,6 @@ export class ManifestPlatformForm extends LitElement {
             <h4 class="shortcut-header">Shortcut #${this.manifest.shortcuts ? this.manifest.shortcuts.length + 1 : 1}</h4>
             <sl-input class="field-input" name="name" placeholder="Shortcut name" /></sl-input>
             <sl-input class="field-input" name="url" placeholder="Shortcut url" /></sl-input>
-            <sl-input class="field-input" name="src" placeholder="Shortcut icon src" /></sl-input>
             <sl-input class="field-input" name="desc" placeholder="Shortcut description" /></sl-input>
             <sl-button type="submit">Add to Manifest</sl-button>
           </form>
@@ -568,28 +566,14 @@ export class ManifestPlatformForm extends LitElement {
     if(push){
       let name = inputs.filter((input: any) => input.name === "name")[0].value;
       let url = inputs.filter((input: any) => input.name === "url")[0].value;
-      let src = inputs.filter((input: any) => input.name === "src")[0].value;
       let desc = inputs.filter((input: any) => input.name === "desc")[0].value;
 
       let scObject: ShortcutItem;
 
-      if(src.length == 0){
-        scObject = {
-          name: name,
-          url: url,
-          description: desc
-        }
-      } else {
-        scObject = {
-          name: name,
-          url: url,
-          icons: [
-            {
-              src: src
-            }
-          ],
-          description: desc
-        }
+      scObject = {
+        name: name,
+        url: url,
+        description: desc
       }
       
       if(!this.manifest.shortcuts){
@@ -973,7 +957,6 @@ export class ManifestPlatformForm extends LitElement {
                       </div>
                       <sl-input class="field-input" name="name" placeholder="Shortcut name" value=${sc.name || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
                       <sl-input class="field-input" name="url" placeholder="Shortcut url" value=${sc.url || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
-                      <sl-input class="field-input" name="src" placeholder="Shortcut icon src" value=${sc.icons ? sc.icons[0].src : ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
                       <sl-input class="field-input" name="desc" placeholder="Shortcut description" value=${sc.description || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
                     </div>
                   `

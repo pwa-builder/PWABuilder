@@ -434,13 +434,13 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
-        displayString: "Shortcuts have atleast a 96x96 icon",
+        displayString: "Shortcuts have at least a 96x96 icon",
         category: "recommended",
         member: "shortcuts",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-        errorString: "shortcuts should have atleast one icon with a size of 96x96",
+        errorString: "One or more of your shortcuts has icons but does not have one with size 96x96",
         quickFix: false,
         test: (value: any[]) => {
             if(value && value.length === 0) return true;

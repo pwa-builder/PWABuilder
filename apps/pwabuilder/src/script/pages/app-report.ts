@@ -1632,6 +1632,9 @@ export class AppReport extends LitElement {
 
     // reset retest data
     this.retestConfirmed = false;
+
+    // reset action items page;
+    this.pageNumber = 1;
   }
 
   copyReportCardLink() {
