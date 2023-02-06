@@ -493,7 +493,7 @@ export class WindowsForm extends AppPackageFormBase {
                       'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
                     inputId: 'widget-checkbox',
                     type: 'checkbox',
-                    checked: false,
+                    checked: this.packageOptions.enableWebAppWidgets,
                     inputHandler: (_val: string, checked: boolean) => 
                       (this.packageOptions.enableWebAppWidgets = checked),
                   })}
