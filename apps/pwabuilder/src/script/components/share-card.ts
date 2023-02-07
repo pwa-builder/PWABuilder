@@ -190,7 +190,7 @@ export class ShareCard extends LitElement {
     // text for url
     ctx!.font = "bold 48px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
-    ctx!.fillText(this.siteUrl, 30, 70);
+    ctx!.fillText(this.siteUrl.replace(/\/$/, ""), 30, 70);
 
     ctx!.textAlign = "center";
 
@@ -202,7 +202,7 @@ export class ShareCard extends LitElement {
     let percentMani = eval(maniPercent);
     if(percentMani === 0){
       // draw exclamation
-      await this.drawExclamation(ctx!, 82.5, 144);
+      await this.drawExclamation(ctx!, 82.5);
 
       ctx!.font = "36px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
@@ -223,7 +223,7 @@ export class ShareCard extends LitElement {
     // indicator
     let percentSW = eval(swPercent);
     if(percentSW === 0){
-      await this.drawExclamation(ctx!, 357.5, 144);
+      await this.drawExclamation(ctx!, 357.5);
 
       ctx!.font = "32px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
@@ -245,7 +245,7 @@ export class ShareCard extends LitElement {
     let percentSec = eval(secPercent);
     if(percentSec === 0) {
       // draw exclamation
-      await this.drawExclamation(ctx!, 632, 144);
+      await this.drawExclamation(ctx!, 632);
 
       ctx!.font = "36px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
@@ -270,14 +270,14 @@ export class ShareCard extends LitElement {
     ctx.stroke();
   }
 
-  async drawExclamation(ctx: CanvasRenderingContext2D, x: number, y: number){
+  async drawExclamation(ctx: CanvasRenderingContext2D, x: number){
     // draw exclamation
     let exclamation = new Image();
     exclamation.src = 'assets/new/macro_error.svg';
     // Use `await` to wait for the image to load
     await new Promise(resolve => exclamation.onload = resolve);
     // Now that the image is loaded, draw it on the canvas
-    ctx!.drawImage(exclamation, x, y, 110, 110);
+    ctx!.drawImage(exclamation, x, 154, 110, 110);
   }
 
   writeText(ctx: CanvasRenderingContext2D, x: number, percent: string, header: string){

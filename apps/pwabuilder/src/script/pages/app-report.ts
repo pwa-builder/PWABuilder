@@ -1396,7 +1396,7 @@ export class AppReport extends LitElement {
         siteName: parsedManifestContext.manifest.short_name
           ? parsedManifestContext.manifest.short_name
           : (parsedManifestContext.manifest.name ? parsedManifestContext.manifest.name : 'Untitled App'),
-        siteUrl: cleanURL,
+        siteUrl: cleanURL.replace(/\/$/, ""),
         iconURL: iconUrl,
         iconAlt: "Your sites logo",
         description: parsedManifestContext.manifest.description
@@ -1416,7 +1416,7 @@ export class AppReport extends LitElement {
     } else {
         this.appCard = {
           siteName: "Missing Name",
-          siteUrl: cleanURL,
+          siteUrl: cleanURL.replace(/\/$/, ""),
           description: "Your manifest description is missing.",
           iconURL: "/assets/new/icon_placeholder.png",
           iconAlt: "A placeholder for you sites icon"
