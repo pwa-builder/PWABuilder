@@ -1,11 +1,11 @@
 var fs = require('fs');
 
-function replaceInFile(filePath: string, replaceRegex: string, newString: string) {
-  fs.readFile(filePath, 'utf8', (err, data) => {
+export function replaceAllInFile(filePath: string, replaceString: string, newString: string) {
+  fs.readFile(filePath, 'utf8', (err, data: string) => {
     if(err) {
       return console.log(err);
     }
-    var result = data.replace(replaceRegex, newString);
+    var result = data.replaceAll(replaceString, newString);
     fs.writeFile(filePath, result, 'utf8', (err) => {
       if(err) {
         return console.log(err);
@@ -14,12 +14,23 @@ function replaceInFile(filePath: string, replaceRegex: string, newString: string
   });
 }
 
-export function replaceInFileList(listOfFilePaths: string[], replaceRegex: string, newString: string) {
+export function replaceInFileList(listOfFilePaths: string[], replaceString: string, newString: string, directory: string = '.') {
   
   const replaceInFileWrapper = (filePath: string) => {
-    replaceInFile(filePath, replaceRegex, newString);
+    replaceAllInFile(directory + "/" + filePath, replaceString, newString);
   };
 
   listOfFilePaths.map(replaceInFileWrapper);
 }
 
+export function removeDirectory(directoryName: string) {
+  fs.rmSync(directoryName, { recursive: true, force: true });
+}
+
+export function createFileAndWrite(filepath: string, content?: string | undefined) {
+  fs.writeFileSync(filepath, content ? content : "");
+}
+
+export function doesFileExist(filepath: string) {
+  return fs.existsSync(filepath);
+}

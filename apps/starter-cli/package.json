@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "npm run clean && tsc && npm link",
+    "clean": "rm -rf dist"
   },
   "author": "",
   "license": "ISC",
