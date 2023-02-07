@@ -24,7 +24,7 @@ import {
   TestResult
 } from '../utils/interfaces';
 
-import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../services/manifest';
+// import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
@@ -482,7 +482,7 @@ export class AppReport extends LitElement {
           gap: .5em;
           background-color: #ffffff;
           color: var(--font-color);
-          box-shadow: rgb(0 0 0 / 15%) 0px 0px 40px;        
+          box-shadow: rgb(0 0 0 / 15%) 0px 0px 40px;
         }
 
         .mani-tooltip-content img {
@@ -1386,11 +1386,11 @@ export class AppReport extends LitElement {
           });
         }
         else {
-          this.testServiceWorker(processServiceWorker({score: false}, false));
+          this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
         }
       }
     ).catch(() => {
-      this.testServiceWorker(processServiceWorker({score: false}, false));
+      this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
     });
 
     try {
@@ -1694,7 +1694,7 @@ export class AppReport extends LitElement {
     navigator.clipboard.writeText(window.location.href).then(() => {
       setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
     })
-  } 
+  }
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
@@ -2456,7 +2456,7 @@ export class AppReport extends LitElement {
         </div>
       </div>
 
-      
+
 
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
         ${this.retestConfirmed ?
