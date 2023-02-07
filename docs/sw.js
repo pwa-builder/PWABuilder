@@ -13,6 +13,7 @@ const HOSTNAME_WHITELIST = [
   'fonts.googleapis.com',
   'cdn.jsdelivr.net'
 ]
+const NETWORK_TIMEOUT_MS = 500
 
 // The Util Function to hack URLs of intercepted requests
 const getFixedUrl = (req) => {
@@ -67,8 +68,16 @@ self.addEventListener('fetch', event => {
     // If the fetch fails (e.g disconnected), wait for the cache.
     // If there’s nothing in cache, wait for the fetch.
     // If neither yields a response, return offline pages.
+
+    // Updated 2/7/2023 by @zteutsch. Switched from pure race between cache and network to a half second (500 ms) timeout
+    // before going to cache. All fallbacks should still work and cache will be updated in the background.
+
+    const delayCacheResponse = new Promise((resolve) => {
+      setTimeout(resolve, NETWORK_TIMEOUT_MS, cached);
+    })
+
     event.respondWith(
-      Promise.race([fetched.catch(_ => cached), cached])
+      Promise.race([fetched.catch(_ => cached), delayCacheResponse])
         .then(resp => resp || fetched)
         .catch(_ => { /* eat any errors */ })
     )
