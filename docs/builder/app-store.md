@@ -129,7 +129,7 @@ Next, you will need to use the Keychain Acess application to create a Certificat
 
 5. Choose the `Saved to disk` option and select `Continue`.
 
-6. You'll be prompted to save a `.certSigngingRequest` file to disk.
+6. You'll be prompted to save a `.certSigningRequest` file to disk.
 
 #### 4. Create a Certificate
 
@@ -225,7 +225,7 @@ Next, you'll need to **assign your project to your account**:
      <img src="/assets/builder/ios/project-navigator.png" alt="">
 </div>
 
-4. Sroll down to the `Signing` section.
+4. Scroll down to the `Signing` section.
 
 5. Under `Code Signing Identity`, set `Release` to `Apple Distribution`.
    
@@ -245,7 +245,7 @@ Next, you'll need to **assign your project to your account**:
      <img src="/assets/builder/ios/development-team.png" alt="">
 </div>
 
-7. On the same project page, select `Signing & Capabilites` and then `Release`.
+7. On the same project page, select `Signing & Capabilities` and then `Release`.
 
 <div class="docs-image">
      <img src="/assets/builder/ios/signing-capabilities.png" alt="">
@@ -290,7 +290,7 @@ Your PWA still has to be approved, but if it is, it will appear in the App Store
 
 Progressive web apps are cross-platform and can be used anywhere! 
 
-After you've sucessfully published your app to the App Store, you can package and publish for other platforms:
+After you've successfully published your app to the App Store, you can package and publish for other platforms:
 
 - [How to Package for Microsoft Store](/builder/windows)
 

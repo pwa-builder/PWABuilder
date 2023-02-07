@@ -9,6 +9,9 @@ on:
       - "apps/pwabuilder/**"
       - "libraries/manifest-validation/**"
       - "libraries/site-analytics/**"
+      - "components/code-editor/**"
+      - "components/manifest-editor/**"
+      - "components/manifest-previewer/**"
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:

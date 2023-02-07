@@ -3,7 +3,7 @@ import { resolve } from "path";
 import * as vscode from "vscode";
 import { trackEvent } from "../usage-analytics";
 
-let manifest: any | undefined;
+let manifest: vscode.Uri | undefined;
 
 export async function generateManifest(skipPrompts?: boolean) {
   trackEvent("generate", { "type": "manifest" })
@@ -234,7 +234,7 @@ export async function chooseManifest() {
 
   if (manifestFile && manifestFile.length > 0) {
     await findManifest(manifestFile);
-    // manifest = manifestFile[0];
+    manifest = manifestFile[0];
   }
 }
 
