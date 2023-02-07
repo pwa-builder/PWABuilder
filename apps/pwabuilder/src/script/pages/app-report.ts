@@ -646,6 +646,11 @@ export class AppReport extends LitElement {
           font-size: var(--subheader-font-size);
         }
 
+        .todo-items-holder {
+          display: grid;
+          grid-template-rows: repeat(5, 1fr);
+        }
+
         #pagination-actions {
           display: flex;
           align-items: center;
@@ -1057,6 +1062,7 @@ export class AppReport extends LitElement {
           color: var(--primary-color);
           box-sizing: border-box;
           animation: animloader 2s linear infinite;
+          grid-row: 3;
         }
 
         @keyframes animloader {
@@ -1396,7 +1402,7 @@ export class AppReport extends LitElement {
         siteName: parsedManifestContext.manifest.short_name
           ? parsedManifestContext.manifest.short_name
           : (parsedManifestContext.manifest.name ? parsedManifestContext.manifest.name : 'Untitled App'),
-        siteUrl: cleanURL.replace(/\/$/, ""),
+        siteUrl: cleanURL,
         iconURL: iconUrl,
         iconAlt: "Your sites logo",
         description: parsedManifestContext.manifest.description
@@ -1416,7 +1422,7 @@ export class AppReport extends LitElement {
     } else {
         this.appCard = {
           siteName: "Missing Name",
-          siteUrl: cleanURL.replace(/\/$/, ""),
+          siteUrl: cleanURL,
           description: "Your manifest description is missing.",
           iconURL: "/assets/new/icon_placeholder.png",
           iconAlt: "A placeholder for you sites icon"
@@ -2147,18 +2153,19 @@ export class AppReport extends LitElement {
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                 
               </div>
-             ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
-                html`
-                  <todo-item
-                    .status=${todo.status}
-                    .field=${todo.field}
-                    .fix=${todo.fix}
-                    .card=${todo.card}
-                    .displayString=${todo.displayString}
-                    @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
-                  </todo-item>`
-              ) : html`<span class="loader"></span>`}
-
+              <div class="todo-items-holder">
+                ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
+                    html`
+                      <todo-item
+                        .status=${todo.status}
+                        .field=${todo.field}
+                        .fix=${todo.fix}
+                        .card=${todo.card}
+                        .displayString=${todo.displayString}
+                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+                      </todo-item>`
+                  ) : html`<span class="loader"></span>`}
+              </div>
             ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
               html`
               <div id="pagination-actions">
