@@ -647,8 +647,6 @@ export class AppReport extends LitElement {
         }
 
         .todo-items-holder {
-          display: grid;
-          grid-template-rows: repeat(5, 1fr);
         }
 
         #pagination-actions {
@@ -1981,7 +1979,20 @@ export class AppReport extends LitElement {
   // Pages the action items
   paginate() {
     let array = this.sortTodos();
-    return array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+    let itemsOnPage = array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+
+    let holder = (this.shadowRoot?.querySelector(".todo-items-holder") as HTMLElement);
+    if(itemsOnPage.length < this.pageSize && this.pageNumber == 1){
+      holder.style.display = 'flex';
+      holder.style.flexDirection = 'column';
+      holder.style.gridTemplateRows = 'unset';
+    } else {
+      holder.style.display = 'grid';
+      holder.style.gridTemplateRows = 'repeat(5, 1fr)';
+      holder.style.flexDirection = 'unset';
+    }
+
+    return itemsOnPage;
   }
 
   // Moves to the next window in the action items list
