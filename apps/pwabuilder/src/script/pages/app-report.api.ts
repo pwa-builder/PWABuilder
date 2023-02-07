@@ -9,7 +9,7 @@ export type ReportAudit = {
 		},
 		serviceWorker: {
 		  score: boolean,
-		  details: {
+		  details?: {
 			url?: string,
 			scope?: string,
 			features?: { detectedBackgroundSync: boolean,
@@ -27,8 +27,8 @@ export type ReportAudit = {
 	},
 	artifacts: {
 		webAppManifest: {
-			raw: string,
-			url: string,
+			raw?: string,
+			url?: string,
 			value?: unknown,
 			json?: unknown
 		},

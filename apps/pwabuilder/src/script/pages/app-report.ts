@@ -1174,24 +1174,24 @@ export class AppReport extends LitElement {
   // Fetches the sites manifest from the URL
   // If it's missing it creates one and sets a flag
   // If it's there then it saves it to sessionStorage
-  async getManifest(url: string): Promise<ManifestContext> {
-    this.isAppCardInfoLoading = true;
-    let manifestContext: ManifestContext | undefined;
+  // async getManifest(url: string): Promise<ManifestContext> {
+  //   this.isAppCardInfoLoading = true;
+  //   let manifestContext: ManifestContext | undefined;
 
-    manifestContext = await fetchOrCreateManifest(url);
-    this.createdManifest = false;
+  //   manifestContext = await fetchOrCreateManifest(url);
+  //   this.createdManifest = false;
 
-    if(!manifestContext){
-      this.createdManifest = true;
-      manifestContext = await createManifestContextFromEmpty(url);
-    }
+  //   if(!manifestContext){
+  //     this.createdManifest = true;
+  //     manifestContext = await createManifestContextFromEmpty(url);
+  //   }
 
-    this.manifestContext = manifestContext;
+  //   this.manifestContext = manifestContext;
 
-    this.isAppCardInfoLoading = false;
-    this.populateAppCard(manifestContext!, url);
-    return manifestContext!;
-  }
+  //   this.isAppCardInfoLoading = false;
+  //   this.populateAppCard(manifestContext!, url);
+  //   return manifestContext!;
+  // }
 
   // Populates the "App Card" from the manifest.
   // Uses the URL for loading the image.
@@ -1323,43 +1323,59 @@ export class AppReport extends LitElement {
     return chosenColor
   }
 
+  private async applyManifestContext(url: string, manifestUrl?: string, manifestRaw?: string) {
+    this.manifestContext = await processManifest(url, {url: manifestUrl, raw: manifestRaw});
+    this.createdManifest = this.manifestContext.isGenerated || false;
+    setManifestContext(this.manifestContext);
+    this.isAppCardInfoLoading = false;
+    await this.populateAppCard(this.manifestContext, manifestUrl);
+  }
+
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
   async runAllTests(url: string) {
     this.runningTests = true;
     this.isAppCardInfoLoading = true;
 
     FindWebManifest(url).then( async (result) => {
-      if (result?.content?.json){
-        this.manifestContext = await processManifest(url, {url: result.content.url, raw: result.content.raw});
-        setManifestContext(this.manifestContext);
-        this.isAppCardInfoLoading = false;
+      await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw || undefined);
+    }).catch(async () => {
+      await this.applyManifestContext(url, undefined, undefined);
+    }).finally(async () => await this.testManifest());
 
-        await this.populateAppCard(this.manifestContext, result.content.url);
-
-        this.testManifest();
-      }
-    });
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url) {
           await AuditServiceWorker(result.content.url).then( (result) => {
             this.testServiceWorker(processServiceWorker(result.content, false));
           });
         }
+        else {
+          this.testServiceWorker(processServiceWorker({score: false}, false));
+        }
       }
-    );
+    ).catch(() => {
+      this.testServiceWorker(processServiceWorker({score: false}, false));
+    });
 
-    this.reportAudit = await Report(url);
+    try {
+      this.reportAudit = await Report(url);
+    } catch (e) {
+      console.error(e);
+      await this.testSecurity(processSecurity());
+      this.runningTests = false;
+      return;
+    }
 
     console.log(this.reportAudit);
 
-    this.manifestContext = await processManifest(url, this.reportAudit?.artifacts?.webAppManifest);
-    setManifestContext(this.manifestContext);
-    this.isAppCardInfoLoading = false;
+    if (this.reportAudit?.artifacts?.webAppManifest)
+      await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifest?.url, this.reportAudit?.artifacts?.webAppManifest?.raw);
 
-    await this.populateAppCard(this.manifestContext, this.reportAudit?.artifacts?.webAppManifest?.url);
-
+    this.todoItems = [];
     // await this.getManifest(url);
-    await Promise.all([ this.testManifest(), this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score)), this.testSecurity(processSecurity(this.reportAudit.audits))]).then(() =>
+    await Promise.all([
+      this.testManifest(),
+      this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score)),
+      this.testSecurity(processSecurity(this.reportAudit?.audits))]).then(() =>
     {
       this.canPackage = this.canPackageList.every((can: boolean) => can);
     });
@@ -1373,7 +1389,7 @@ export class AppReport extends LitElement {
     // note: wrap in try catch (can fail if invalid json)
     this.manifestDataLoading = true;
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
-    details!.disabled = true;
+    details?.disabled && (details.disabled = true);
     let manifest;
 
     if(!this.createdManifest){
@@ -1393,6 +1409,7 @@ export class AppReport extends LitElement {
       });
       this.manifestTotalScore = this.validationResults.length;
       this.manifestValidCounter = 0;
+      this.manifestRequiredCounter = 0;
 
       this.validationResults.forEach((test: Validation) => {
         if(test.valid){
@@ -1429,7 +1446,7 @@ export class AppReport extends LitElement {
     }
 
     this.manifestDataLoading = false;
-    details!.disabled = false;
+    details?.disabled && (details.disabled = false);
 
     sessionStorage.setItem(
       'manifest_tests',
@@ -1443,7 +1460,7 @@ export class AppReport extends LitElement {
   async testServiceWorker(serviceWorkerResults: TestResult[]) {
     //call service worker tests
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
-    details!.disabled = true;
+    details?.disabled && (details.disabled = true);
 
     let missing = false;
 
@@ -1451,6 +1468,7 @@ export class AppReport extends LitElement {
     this.serviceWorkerResults = serviceWorkerTestResult;
 
     this.swValidCounter = 0;
+    this.swRequiredCounter = 0;
     this.serviceWorkerResults.forEach((result: any) => {
       if(result.result){
         this.swValidCounter++;
@@ -1483,7 +1501,7 @@ export class AppReport extends LitElement {
     this.swTotalScore = this.serviceWorkerResults.length;
 
     this.swDataLoading = false;
-    details!.disabled = false;
+    details?.disabled && (details.disabled = false);
 
     //save serviceworker tests in session storage
     sessionStorage.setItem(
@@ -1497,11 +1515,12 @@ export class AppReport extends LitElement {
   async testSecurity(securityAudit: TestResult[]) {
     //Call security tests
     let details = (this.shadowRoot!.getElementById("sec-details") as any);
-    details!.disabled = true;
+    details?.disabled && (details.disabled = true);
 
     const securityTests = securityAudit;
     this.securityResults = securityTests;
 
+    this.secRequiredCounter = 0;
     this.securityResults.forEach((result: any) => {
       if(result.result){
         this.secValidCounter++;
@@ -1530,7 +1549,7 @@ export class AppReport extends LitElement {
     this.secTotalScore = this.securityResults.length;
 
     this.secDataLoading = false;
-    details!.disabled = false;
+    details?.disabled && (details.disabled = false);
 
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));

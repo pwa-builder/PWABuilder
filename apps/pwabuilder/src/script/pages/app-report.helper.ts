@@ -57,25 +57,26 @@ export function processServiceWorker(serviceWorker: ReportAudit['audits']['servi
 	return swTestResult;
   }
 
-  export function processSecurity(audits: ReportAudit['audits']): Array<TestResult> {
+  export function processSecurity(audits?: ReportAudit['audits']): Array<TestResult> {
 
 
 	//TODO: Adjust this to use the new security audits
+	const score = audits?.isOnHttps?.score || false;
 
 	const organizedResults = [
 	  {
-		result: audits.isOnHttps.score,
-		infoString: audits.isOnHttps.score ? 'Uses HTTPS' : 'Does not use HTTPS',
+		result: score,
+		infoString: score ? 'Uses HTTPS' : 'Does not use HTTPS',
 		category: 'required',
 	  },
 	  {
-		result: audits.isOnHttps.score,
-		infoString: audits.isOnHttps.score ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
+		result: score,
+		infoString: score ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
 		category: 'required',
 	  },
 	  {
-		result: audits.isOnHttps.score,
-		infoString: audits.isOnHttps.score ? 'No mixed content on page' : 'Uses mixed content on page',
+		result: score,
+		infoString: score ? 'No mixed content on page' : 'Uses mixed content on page',
 		category: 'required',
 	  },
 	];
