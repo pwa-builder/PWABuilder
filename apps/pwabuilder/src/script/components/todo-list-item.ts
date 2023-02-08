@@ -46,14 +46,25 @@ export class TodoItem extends LitElement {
         padding-top: 3px;
       }
 
+      @media(max-width: 685px){
+        #item-wrapper {
+          height: 60%;
+        }
+      }
+
       /* < 480px */
       ${smallBreakPoint(css`
 
       `)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
 
       `)}
+
+
+      
+
       /* 640px - 1023px */
       ${largeBreakPoint(css`
 
