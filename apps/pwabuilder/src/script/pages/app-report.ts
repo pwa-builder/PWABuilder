@@ -647,7 +647,6 @@ export class AppReport extends LitElement {
         }
 
         .todo-items-holder {
-          
         }
 
         #pagination-actions {
