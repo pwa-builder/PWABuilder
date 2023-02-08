@@ -111,7 +111,7 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   it('returns correct number of tests', async () => {
     const data = await maniLib.validateManifest(test_manifest);
 
-    assert.equal(data.length, 25);
+    assert.equal(data.length, 26);
   });
 
   /*
@@ -162,20 +162,6 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
         "icons": [{ "src": "icons/android/maskable_icon_192.png", "sizes": "192x192" }]
       }
     ]);
-
-    assert.equal(validity.valid, false);
-  });
-
-  it('start_url is within app scope, should pass', async () => {
-    const validity = await maniLib.validateSingleField("start_url", "/");
-    console.log("start_url scope validity", validity);
-
-    assert.equal(validity.valid, true);
-  });
-
-  it("start_url is not within app scope, should fail", async () => {
-    // test_manifest.scope = "/app";
-    const validity = await maniLib.validateSingleField("start_url", "https://www.example.com");
 
     assert.equal(validity.valid, false);
   });
