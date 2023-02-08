@@ -29,6 +29,7 @@ export class TodoItem extends LitElement {
         border-radius: 10px;
         padding: .5em;
         margin-bottom: 10px;
+        height: 30px;
       }
 
       #item-wrapper:hover {
@@ -44,12 +45,6 @@ export class TodoItem extends LitElement {
         vertical-align: middle;
         line-height: 16px;
         padding-top: 3px;
-      }
-
-      @media(max-width: 685px){
-        #item-wrapper {
-          height: 60%;
-        }
       }
 
       /* < 480px */
