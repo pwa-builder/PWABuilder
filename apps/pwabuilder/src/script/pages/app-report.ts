@@ -1987,6 +1987,7 @@ export class AppReport extends LitElement {
       holder.style.flexDirection = 'column';
       holder.style.gridTemplateRows = 'unset';
     } else {
+      holder.style.height = '280px;'
       holder.style.display = 'grid';
       holder.style.gridTemplateRows = 'repeat(5, 1fr)';
       holder.style.flexDirection = 'unset';

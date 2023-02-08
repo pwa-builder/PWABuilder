@@ -29,6 +29,7 @@ export class TodoItem extends LitElement {
         border-radius: 10px;
         padding: .5em;
         margin-bottom: 10px;
+        height: 30px;
       }
 
       #item-wrapper:hover {
@@ -50,10 +51,15 @@ export class TodoItem extends LitElement {
       ${smallBreakPoint(css`
 
       `)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
 
       `)}
+
+
+      
+
       /* 640px - 1023px */
       ${largeBreakPoint(css`
 
