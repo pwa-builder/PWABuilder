@@ -19,6 +19,11 @@ const test_manifest = {
   "related_applications": [],
   "prefer_related_applications": false,
   "handle_links": "preferred",
+  "scope_extensions": [
+    {
+      origin: "example.co.uk"
+    }
+  ],
   "screenshots": [
     {
       "src": "assets/screen.png"

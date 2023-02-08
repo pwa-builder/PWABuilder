@@ -18,7 +18,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
-        displayString: "Manifest has handle_links field",
+        displayString: "Manifest has valid handle_links field",
         category: "recommended",
         member: "handle_links",
         defaultValue: "auto",
@@ -33,6 +33,26 @@ export const maniTests: Array<Validation> = [
                 else {
                     return false;
                 }
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        infoString: "The scope_extensions field allows a PWA to expand its scope to other domains",
+        displayString: "Manifest has valid scope_extensions field",
+        category: "optional",
+        member: "scope_extensions",
+        defaultValue: [],
+        docsLink: "",
+        errorString: "scope_extensions should be an array that contains atleast one object with an origin member",
+        quickFix: false,
+        test: (value: string) => {
+            if (value && Array.isArray(value) && value.length > 0) {
+                // ensure every item of the array contains an origin member
+                const test = value.every((item) => typeof item === "string");
+                return test;
             }
             else {
                 return false;
