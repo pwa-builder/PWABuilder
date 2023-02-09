@@ -25,16 +25,16 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(serviceWorker: ReportAudit['audits']['serviceWorker'], installable = false): Array<TestResult> {
+export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], installable = false): Array<TestResult> {
 	console.info('Testing Service Worker');
 
 	const worksOffline: boolean = installable;
-	const swFeatures = serviceWorker.details?.features || null;
+	const swFeatures = serviceWorker?.details?.features || null;
 
 	const swTestResult = [
 	  {
-		result: serviceWorker.score,
-		infoString: serviceWorker.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
+		result: serviceWorker?.score || false,
+		infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
 		category: 'required',
 	  },
 	  {

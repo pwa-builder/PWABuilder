@@ -69,11 +69,12 @@ export async function Report(
 	url: string
   ): Promise<ReportAudit> {
 	const fetchReport = await fetch(
-	  `${
-		env.apiV2
-	  }/Report?site=${encodeURIComponent(url)}`
+		`${
+			env.apiV2
+		}/Report?site=${encodeURIComponent(url)}`
 	);
-	if (!fetchReport.ok) {
+
+	if (!fetchReport?.ok) {
 	  console.warn(
 		'Unable to audit due to HTTP error',
 		fetchReport.status,
@@ -84,7 +85,7 @@ export async function Report(
 	  );
 	}
 
-	const jsonResult: { data: ReportAudit } = await fetchReport.json();
+	const jsonResult: { data: ReportAudit } = await (fetchReport as Response)?.json?.();
 	console.info('Report audit succeeded', jsonResult?.data);
 	return jsonResult?.data;
 }

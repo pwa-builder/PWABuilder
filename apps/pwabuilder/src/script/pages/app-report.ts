@@ -734,6 +734,7 @@ export class AppReport extends LitElement {
         .flex-col {
           display: flex;
           flex-direction: column;
+          position: relative;
         }
 
         .flex-col-center {
@@ -1000,6 +1001,28 @@ export class AppReport extends LitElement {
           100% {
             box-shadow: 14px 0 0 -2px,  38px 0 0 2px,  -14px 0 0 -2px,  -38px 0 0 -2px;
           }
+        }
+
+        .post-loader{
+          position: relative;
+        }
+        .post-loader::after{
+          content: "";
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          /* background-color: #ffffff75; */
+
+          background: linear-gradient(15deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.10) 100%);
+          background-position: top left;
+          background-repeat: no-repeat;
+          animation: post-loader 2s ease infinite;
+          background-size: 300% 100%;
+          border-radius:10px;
+        }
+
+        @keyframes post-loader {
+          50% {background-position: bottom right;}
         }
 
         @media(max-width: 900px){
@@ -1373,31 +1396,55 @@ export class AppReport extends LitElement {
     this.runningTests = true;
     this.isAppCardInfoLoading = true;
 
+    let findersResults = {
+      manifest: {} as {url?: string, raw?: string, json?: unknown},
+      serviceWorker: {} as {url?: string, raw?: string}
+    }
+
+    // Take only good results, ignore errors.
     FindWebManifest(url).then( async (result) => {
-      await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw || undefined);
-    }).catch(async () => {
-      await this.applyManifestContext(url, undefined, undefined);
-    }).finally(async () => await this.testManifest());
+      if (result?.content?.raw) {
+        // TODO: can use json instead of raw
+        findersResults.manifest = result.content;
+        await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
+        await this.testManifest();
+      }
+    });
+    // .catch(async () => {
+    //   await this.applyManifestContext(url, undefined, undefined);
+    // }).finally(async () => {
+
+    //   await this.testManifest();
+    // });
 
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url) {
           await AuditServiceWorker(result.content.url).then( (result) => {
             this.testServiceWorker(processServiceWorker(result.content, false));
           });
+          findersResults.serviceWorker = result.content;
         }
-        else {
-          this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
-        }
+        // else {
+        //   this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
+        // }
       }
-    ).catch(() => {
-      this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
-    });
+    );
+    // .catch(() => {
+    //   this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
+    // });
 
     try {
       this.reportAudit = await Report(url);
     } catch (e) {
       console.error(e);
       await this.testSecurity(processSecurity());
+      if (!findersResults.manifest?.raw) {
+        await this.applyManifestContext(url, undefined, undefined);
+        this.testManifest();
+      }
+      if (!findersResults.serviceWorker?.raw) {
+        this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
+      }
       this.runningTests = false;
       return;
     }
@@ -1975,7 +2022,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
+            <div id="app-card" class="flex-col ${classMap({'post-loader': this.runningTests})}" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="pwa-image-holder">
                   ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
@@ -2106,7 +2153,7 @@ export class AppReport extends LitElement {
             </sl-details>
           </div>
 
-          <div id="manifest" class="flex-col">
+          <div id="manifest" class="flex-col ${classMap({'post-loader': this.runningTests && !this.manifestDataLoading})} ">
             <div id="manifest-header">
               <div id="mh-content">
                 <div id="mh-text" class="flex-col">
@@ -2272,7 +2319,7 @@ export class AppReport extends LitElement {
           </div>
 
           <div id="two-cell-row">
-            <div id="sw" class="half-width-cards">
+            <div id="sw" class="half-width-cards ${classMap({'post-loader': this.runningTests && !this.swDataLoading})}">
               <div id="sw-header" class="flex-col">
                 <div id="swh-top">
                   <div id="swh-text" class="flex-col">
