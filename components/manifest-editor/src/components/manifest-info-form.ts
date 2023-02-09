@@ -22,10 +22,11 @@ export class ManifestInfoForm extends LitElement {
 
   @state() bgText: string = '';
   @state() themeText: string = '';
+  @state() errorMap: any = {};
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
-  private errorCount: number = 0;
+  
 
   static get styles() {
     return css`
@@ -65,10 +66,12 @@ export class ManifestInfoForm extends LitElement {
         margin: 0;
       }
       .field-desc {
+        white-space: no-wrap;
         font-size: 14px;
         margin: 0;
         color: #717171;
       }
+
       .long .form-field {
         width: 100%;
       }
@@ -77,6 +80,9 @@ export class ManifestInfoForm extends LitElement {
         row-gap: .25em;
         display: flex;
         flex-direction: column;
+      }
+      .form-field p {
+        font-size: 14px;
       }
       .field-header{
         display: flex;
@@ -285,6 +291,7 @@ export class ManifestInfoForm extends LitElement {
 
             // Update new errors list.
             if(validation.errors){
+              this.errorMap[field] = 0;
               let div = document.createElement('div');
               div.classList.add(`${field}-error-div`);
               validation.errors.forEach((error: string) => {
@@ -292,7 +299,7 @@ export class ManifestInfoForm extends LitElement {
                 p.innerText = error;
                 p.style.color = "#eb5757";
                 div.append(p);
-                this.errorCount++;
+                this.errorMap[field]++;
               });
               insertAfter(div, input!.parentNode!.parentNode!.lastElementChild);
             }
@@ -308,6 +315,7 @@ export class ManifestInfoForm extends LitElement {
   
             // Update with new errors.
             if(validation.errors){
+              this.errorMap[field] = 0;
               let div = document.createElement('div');
               div.classList.add(`${field}-error-div`);
               validation.errors.forEach((error: string) => {
@@ -315,7 +323,7 @@ export class ManifestInfoForm extends LitElement {
                 p.innerText = error;
                 p.style.color = "#eb5757";
                 div.append(p);
-                this.errorCount++;
+                this.errorMap[field]++;
               });
               insertAfter(div, input!.parentNode!.lastElementChild);
             }
@@ -335,21 +343,21 @@ export class ManifestInfoForm extends LitElement {
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
-
+          this.errorMap[field] = 0;
           let div = document.createElement('div');
           div.classList.add(`${field}-error-div`);
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
           
         }
       }
     }
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "info"));
     } else {
       this.dispatchEvent(errorInTab(true, "info"));
@@ -419,7 +427,7 @@ export class ManifestInfoForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[fieldName!];
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -434,18 +442,19 @@ export class ManifestInfoForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
+        this.errorMap[fieldName!] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
       input.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "info"));
     } else {
       this.dispatchEvent(errorInTab(true, "info"));
@@ -476,12 +485,12 @@ export class ManifestInfoForm extends LitElement {
 
     if(input.classList.contains("error-color-field")){
       input.classList.toggle("error-color-field");
-      this.errorCount--;
+      delete this.errorMap[field];
       let last = input!.parentNode!.parentNode!.lastElementChild;
       input!.parentNode!.parentNode!.removeChild(last!)
     }
 
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "info"));
     }
   }

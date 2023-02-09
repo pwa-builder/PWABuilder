@@ -46,6 +46,7 @@ export interface WindowsPackageOptions  extends PackageOptions {
   publisher: WindowsPublisherOptions;
   resourceLanguage?: string | string[];
   targetDeviceFamilies?: string[];
+  enableWebAppWidgets?: boolean;
 }
 
 type WindowsPackageValidationError = {
