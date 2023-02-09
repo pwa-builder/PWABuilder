@@ -1,4 +1,4 @@
-name: PWABuilder Preview CI/CD
+name: PWABuilder Performance Testing CI/CD
 
 on:
   workflow_dispatch:
