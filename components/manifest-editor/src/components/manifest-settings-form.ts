@@ -23,8 +23,8 @@ export class ManifestSettingsForm extends LitElement {
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
-  private errorCount: number = 0;
 
+  @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
 
   static get styles() {
@@ -84,6 +84,9 @@ export class ManifestSettingsForm extends LitElement {
         row-gap: .25em;
         display: flex;
         flex-direction: column;
+      }
+      .form-field p {
+        font-size: 14px;
       }
       .field-header{
         display: flex;
@@ -303,12 +306,13 @@ export class ManifestSettingsForm extends LitElement {
           if(validation.errors){
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
+            this.errorMap[field] = 0;
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
-              this.errorCount++;
+              this.errorMap[field]++;
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
           }
@@ -324,14 +328,14 @@ export class ManifestSettingsForm extends LitElement {
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
-
+          this.errorMap[field] = 0;
           let div = document.createElement('div');
           div.classList.add(`${field}-error-div`);
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
           
         }
@@ -339,7 +343,7 @@ export class ManifestSettingsForm extends LitElement {
     }
 
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "settings"));
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
@@ -394,7 +398,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[fieldName!];
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -408,19 +412,20 @@ export class ManifestSettingsForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
+        this.errorMap[fieldName!] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
       input.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "settings"));
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
@@ -435,7 +440,7 @@ export class ManifestSettingsForm extends LitElement {
     return "";
   }
 
-  async toggleOverrideList(label: string, e: any){
+  async toggleOverrideList(label: string, origin: string){
 
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
@@ -446,7 +451,9 @@ export class ManifestSettingsForm extends LitElement {
     });
     this.dispatchEvent(fieldChangeAttempted);
 
-    let active = !e.path[0].checked;
+    let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`sl-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`sl-menu-item[value="${label}"]`);
+
+    let active = !(checkbox as HTMLInputElement)!.checked;
     
     if(active){
       // remove from active list
@@ -488,7 +495,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[field];
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
@@ -502,19 +509,20 @@ export class ManifestSettingsForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
+        this.errorMap[field] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       input!.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
@@ -680,7 +688,7 @@ export class ManifestSettingsForm extends LitElement {
                 ${this.activeOverrideItems.length != 0 ?
                 this.activeOverrideItems.map((item: string, index: number) =>
                   html`
-                    <sl-menu-item class="override-item" value=${item} @click=${(e: CustomEvent) => this.toggleOverrideList(item, e)}>
+                    <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, "menu-item")}>
                       <p slot="prefix" class="menu-prefix">${index + 1}</p>
                       ${item}
                     </sl-menu-item>
@@ -691,7 +699,7 @@ export class ManifestSettingsForm extends LitElement {
                 <div id="override-options-grid">
                   ${overrideOptions.map((item: string) =>
                       html`
-                        <sl-checkbox class="override-item" value=${item} @sl-change=${(e: CustomEvent) => this.toggleOverrideList(item, e)} ?checked=${this.activeOverrideItems.includes(item)}>
+                        <sl-checkbox class="override-item" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
                           ${item}
                         </sl-checkbox>
                       `)}

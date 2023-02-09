@@ -135,14 +135,14 @@ export function isAtLeast(sizes: string, width: number, height: number): boolean
 
 export function validateSingleRelatedApp(ra: RelatedApplication){
   if(!platformOptions.includes(ra.platform)){
-    return "platform";
+    return false;
   }
 
   if(!isValidURL(ra.url!)){
-    return "url";
+    return false;
   }
 
-  return "valid";
+  return true;
 }
 
 export function isValidURL(str: string) {
