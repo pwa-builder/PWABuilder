@@ -1,6 +1,7 @@
 name: PWABuilder Preview CI/CD
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev
@@ -8,7 +9,6 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - dev
-  workflow-dispatch:
 
 jobs:
   build_and_deploy_job:
