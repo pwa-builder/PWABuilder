@@ -1,13 +1,21 @@
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
-
-let reporter: TelemetryReporter | undefined;
 
 export function initAnalytics() {
   try {
-    // https://www.npmjs.com/package/@vscode/extension-telemetry#:~:text=Follow%20guide%20to%20set%20up%20Application%20Insights%20in%20Azure%20and%20get%20your%20key.%20Don%27t%20worry%20about%20hardcoding%20it%2C%20it%20is%20not%20sensitive.
-    reporter = new TelemetryReporter("f6d86710-4415-4bd6-a2e0-e95bbdfe51be");
-    return reporter;
+    // check flag first
+    if (getFlag("analytics") === true) {
+      setup("#{ANALYTICS_CODE}#")
+      .setAutoDependencyCorrelation(false)
+      .setAutoCollectRequests(false)
+      .setAutoCollectPerformance(false, false)
+      .setAutoCollectExceptions(true)
+      .setAutoCollectDependencies(false)
+      .setAutoCollectConsole(false)
+      .setUseDiskRetryCaching(false)
+      .setSendLiveMetrics(false)
+      .start();
+    }
   }
   catch (err) {
     console.error("Error initializing analytics", err);
@@ -16,26 +24,32 @@ export function initAnalytics() {
 
 // function to trackEvent
 export function trackEvent(name: string, properties: any) {
-  if (reporter) {
-    try {
-      reporter.sendTelemetryEvent(name, properties);
+  try {
+    if (getFlag("analytics") === true) {
+
+      defaultClient.trackEvent({ 
+        name,  
+        properties
+      });
     }
-    catch (err) {
-      console.error("Error tracking event", err);
-      throw new Error(`Error tracking event: ${err}`);
-    }
+  }
+  catch (err) {
+    console.error("Error tracking event", err);
+    throw new Error(`Error tracking event: ${err}`);
   }
 }
 
 
 export function trackException(err: Error) {
-  if (reporter) {
-    try {
-      reporter.sendTelemetryException(err);
+  try {
+    if (getFlag("analytics") === true) {
+      defaultClient.trackException({ 
+        exception: err
+      });
     }
-    catch (err) {
-      console.error("Error tracking exception", err);
-      throw new Error(`Error tracking exception: ${err}`);
-    }
+  }
+  catch (err) {
+    console.error("Error tracking exception", err);
+    throw new Error(`Error tracking exception: ${err}`);
   }
 }
