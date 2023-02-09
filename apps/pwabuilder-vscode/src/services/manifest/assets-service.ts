@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 const fetch = require('node-fetch');
 import { writeFile } from 'fs/promises';
 import { Manifest } from '../../interfaces';
-import { trackEvent } from "../usage-analytics";
+import { trackEvent, trackException } from "../usage-analytics";
 import { findManifest } from './manifest-service';
 
 const pwaAssetGenerator = require('pwa-asset-generator');
@@ -52,7 +52,7 @@ export async function generateScreenshots(skipPrompts?: boolean) {
 
                     const screenshots = await handleScreenshots(data, skipPrompts ? true : false);
 
-                    const manifest: vscode.Uri = await findManifest();
+                    const manifest: vscode.Uri = (await findManifest() as vscode.Uri);
 
                     // read manifest file
                     const manifestFile = await vscode.workspace.openTextDocument(
@@ -79,8 +79,9 @@ export async function generateScreenshots(skipPrompts?: boolean) {
 
                     resolve(manifestFile);
 
-                } catch (err) {
+                } catch (err: any) {
                     console.error("error", err);
+                    trackException(err);
                     progress.report({ message: `Screenshots could not be generated: ${err}` });
                     reject(err);
                 }
@@ -91,7 +92,7 @@ export async function generateScreenshots(skipPrompts?: boolean) {
 export async function generateIcons(options: any = {}, skipPrompts?: boolean) {
     return new Promise(async (resolve, reject) => {
         try {
-            trackEvent("generate", { type: "icons" });
+            trackEvent("generate", { "type": "icons" });
 
             let iconFile: vscode.Uri[] | undefined;
 
@@ -141,9 +142,7 @@ export async function generateIcons(options: any = {}, skipPrompts?: boolean) {
                         iconOnly: true
                     });
 
-                console.log(savedImages, htmlMeta, manifestJsonContent);
-
-                const manifest: vscode.Uri = await findManifest();
+                const manifest: vscode.Uri = (await findManifest() as vscode.Uri);
                 if (manifest) {
                     const manifestFile = await vscode.workspace.openTextDocument(
                         manifest
@@ -185,10 +184,12 @@ export async function generateIcons(options: any = {}, skipPrompts?: boolean) {
             });
 
         }
-        catch (err) {
+        catch (err: any) {
             vscode.window.showErrorMessage(
                 `There was an error generaring icons: ${err}`
             );
+
+            trackException(err);
 
             reject(err);
         }

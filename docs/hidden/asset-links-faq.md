@@ -12,7 +12,7 @@ If you're not sure what asset links are or if you don't have an `assetlinks.json
 
 Once you have an `assetlinks.json` file deployed to your server, make sure it's accessible via a web browser at `https://<YOUR-PWA-URL>/.well-known/assetlinks.json`. (Replace `<YOUR-PWA-URL>`) 
 
-It's important that this file be in the `/.well-known` subdirectory as shown above. Chrome on Android will look at this URL for your asset links file, and will show the browser addres bar if it's not found.
+It's important that this file be in the `/.well-known` subdirectory as shown above. Chrome on Android will look at this URL for your asset links file, and will show the browser address bar if it's not found.
 
 ## Add production fingerprint <!-- {docsify-ignore} -->
 

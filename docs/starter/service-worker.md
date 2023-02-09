@@ -25,9 +25,9 @@ self.addEventListener('push', () => {
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
 ```
 
-VitePWA and Workbox will inject our precaching information alongside our custom code at build time, and now you have a service worker!
+VitePWA and Workbox will inject our pre-caching information alongside our custom code at build time, and now you have a service worker!
 
-?> **Note** Workbox uses a "precache manifest" to track what files need to be precached and when they need to be updated. 
+?> **Note** Workbox uses a "pre-cache manifest" to track what files need to be pre-cached and when they need to be updated. 
 In this instance, Workbox is injecting this manifest in the last line, where we see the `self.__WB_MANIFEST` placeholder.
 
 It is important to note that your Service Worker file-name should always be `sw.js` so our registration
@@ -64,13 +64,13 @@ VitePWA({
 })
 ```
 
-With this configuration, our service worker will precache any file that matches a file type of `html`, `js`, `css`, `png`.
+With this configuration, our service worker will pre-cache any file that matches a file type of `html`, `js`, `css`, `png`.
 
 Here's a breakdown of the properties we use to configure our service worker generation:
 
 | Property |Usage |
 | :------|------ |
-| **globDirectory** |The directory to use when searching for files to precache. In our case, our output directory is `dist`.|
+| **globDirectory** |The directory to use when searching for files to pre-cache. In our case, our output directory is `dist`.|
 | **globPatterns** |Array of glob patterns to match files on. In our case, we are matching all files in all subdirectories of file type html, css, js, png, webp, or jpg. |
 | **runtimeCaching** | Parent property for defining runtime caching behavior. You can specify multiple, but the PWA Starter just defines one.    |
 | **urlPattern** | The request URL pattern to match for runtime caching. We are matching requests to unpkg.com, where we source the Fluent Components.|

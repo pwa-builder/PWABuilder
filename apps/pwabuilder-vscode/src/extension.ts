@@ -28,8 +28,11 @@ import { IconViewPanel } from "./views/icon-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initAnalytics } from "./services/usage-analytics";
-import { generateIcons, generateScreenshots } from "./services/manifest/assets-service";
+import { generateScreenshots } from "./services/manifest/assets-service";
 import { updateAdvServiceWorker } from "./services/service-workers/adv-service-worker";
+import { runScript, runTests } from "./services/dashboard/dev-dashboard";
+import { DashboardViewProvider } from "./services/dashboard/dashboard-view";
+import { addFileHandlers, addProtocolHandler, addShareTarget, addShortcuts } from "./services/enhancements";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -48,14 +51,24 @@ const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const handleScreenshotsCommandID = "pwa-studio.generateScreenshots";
 const helpCommandID = "pwa-studio.help";
-const iconViewID = "pwa-studio.iconView";
+const runTestCommandID = "pwa-studio.runTests";
+const runScriptCommandID = "pwa-studio.runScript";
+const addShortcutsCommandID = "pwa-studio.addShortcuts";
+const addShareTargetCommandID = "pwa-studio.addShareTarget";
+const addProtocolHandlerCommandID = "pwa-studio.addProtocolHandler";
+const addFileHandlerCommandID = "pwa-studio.addFileHandler";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
 export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
-  initAnalytics();
+  try {
+    initAnalytics();
+  }
+  catch (err) {
+    console.error("Error activating analytics", err)
+  }
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -87,6 +100,10 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.workspaceFolders[0].uri.fsPath
     );
 
+    const dashboardViewProvider = new DashboardViewProvider(
+      vscode.workspace.workspaceFolders[0].uri.fsPath
+    )
+
     vscode.window.createTreeView("validationPanel", {
       treeDataProvider: maniValidationProvider,
     });
@@ -97,6 +114,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.createTreeView("packagePanel", {
       treeDataProvider: packageViewProvider,
+    });
+
+    vscode.window.createTreeView("dashboardPanel", {
+      treeDataProvider: dashboardViewProvider,
+    });
+
+    vscode.window.createTreeView("explorerPanel", {
+      treeDataProvider: dashboardViewProvider
     });
 
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
@@ -126,18 +151,37 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  /*const generateIconsCommand = vscode.commands.registerCommand(
-    handleIconsCommmandID,
+  const addShortcutsCommand = vscode.commands.registerCommand(
+    addShortcutsCommandID,
     async () => {
-      // IconGenerationPanel.render(context.extensionUri);
-      await generateIcons();
+      await addShortcuts();
     }
-  );*/
+  );
+
+  const addShareTargetCommand = vscode.commands.registerCommand(
+    addShareTargetCommandID,
+    async () => {
+      await addShareTarget();
+    }
+  );
+
+  const addProtocolHandlerCommand = vscode.commands.registerCommand(
+    addProtocolHandlerCommandID,
+    async () => {
+      await addProtocolHandler();
+    }
+  );
+
+  const addFileHandlerCommand = vscode.commands.registerCommand(
+    addFileHandlerCommandID,
+    async () => {
+      await addFileHandlers();
+    }
+  );
 
   const generateScreenshotsCommand = vscode.commands.registerCommand(
     handleScreenshotsCommandID,
     async () => {
-      // ScreenshotGenerationPanel.render(context.extensionUri);
       await generateScreenshots();
     }
   )
@@ -217,6 +261,20 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let runTestCommand = vscode.commands.registerCommand(
+    runTestCommandID,
+    async () => {
+      await runTests();
+    }
+  );
+
+  let runScriptCommand = vscode.commands.registerCommand(
+    runScriptCommandID,
+    async (script: string) => {
+      await runScript(script);
+    }
+  );
+
   // init manifest improvement suggestion
   // to-do: integrate into sideview panel
   // initSuggestions();
@@ -256,9 +314,15 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
+  context.subscriptions.push(runTestCommand);
+  context.subscriptions.push(runScriptCommand);
   context.subscriptions.push(iconView);
   context.subscriptions.push(generateScreenshotsCommand);
   context.subscriptions.push(helpCommand);
+  context.subscriptions.push(addShortcutsCommand);
+  context.subscriptions.push(addShareTargetCommand);
+  context.subscriptions.push(addProtocolHandlerCommand);
+  context.subscriptions.push(addFileHandlerCommand);
 }
 
 export function deactivate() {}

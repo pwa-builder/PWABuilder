@@ -47,11 +47,11 @@ There are a ton of options you can configure when packaging for Android. Here's 
 | Property | Description |
 | :---------------|---------------------------------------------------------------------------------------------------------------- |
 | **Package ID** | The Android identifier unique to your app                                                                                                                                                                                                        |
-| **App name** | The full name of your app. We prepopulate this with the app name from your PWA’s app manifest.                                                                                                                                                     |
-| **Launcher name** | The name of your app in the Android launcher. This is typically the same as app name, or a shortened version of it. We prepopulate this with short_name from your PWA’s app manifest.                                                         |
+| **App name** | The full name of your app. We pre-populate this with the app name from your PWA’s app manifest.                                                                                                                                                     |
+| **Launcher name** | The name of your app in the Android launcher. This is typically the same as app name, or a shortened version of it. We pre-populate this with short_name from your PWA’s app manifest.                                                         |
 | **App version** | This is the version string displayed to end users, e.g. “1.0.0.0”                                                                                                                                                                               |
 | **App version code** | This is an integer used as a private, internal version of your app.                                                                                                                                                                        |
-| **Host, Start URL, Manifest URL** | The URLs used to launch your PWA in the Android app. We prepopulate these for you from your app manifest.                                                                                                                     |
+| **Host, Start URL, Manifest URL** | The URLs used to launch your PWA in the Android app. We pre-populate these for you from your app manifest.                                                                                                                     |
 | **Theme color** | The theme color used for the Android status bar in your app. Typically, this should be set to your manifest's theme_color.                                                                                                                      |
 | **Background color** | The background color to use for your app's splash screen. Typically this is set to your manifest's background_color.                                                                                                                       |
 | **Nav color** | The background color to use for your app's splash screen. Typically this is set to your manifest's background_color.                                                                                                                              |
@@ -60,7 +60,7 @@ There are a ton of options you can configure when packaging for Android. Here's 
 | **Nav divider dark color** | The color of the Android navigation bar divider in your app when the Android device is in dark mode.                                                                                                                                 |
 | **Icon URL** | The URL to a square PNG image to use for your app's icon. Can be absolute or relative to your manifest. Google recommends a 512x512 PNG without shadows.                                                                                           |
 | **Maskable icon URL** | Optional. The URL to a PNG image with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android versions. Google recommends a 512x512 PNG without shadows.                                                      |
-| **Monochrome icon URL** | Optional. The URL to a PNG image containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or Android ontrast settings.                           |
+| **Monochrome icon URL** | Optional. The URL to a PNG image containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or Android contrast settings.                           |
 | **Manifest URL** | The absolute URL of your web manifest.                                                                                                                                                                                                         |
 | **Splash fade out duration (ms)** | How long the splash screen fade out animation should last in milliseconds.                                                                                                                                                    |
 | **Fallback behavior** |  When the full TWA experience isn’t available, how should your app proceed, whether with a web view or [Chrome’s Custom Tabs](https://developer.chrome.com/docs/android/custom-tabs/) feature. We default to the latter.                  |
@@ -104,9 +104,20 @@ This step is required for running the production version of your app. If you ski
 
 1. Once you’ve uploaded your .aab file, Google Play re-signs your app. Because of this, you’ll need to update your asset links file.
    
-2. Go to Google Play Console, select your app release then choose `Setup -> App integrity`, then copy your SHA-256 fingerprint.
-   
-3. Then, paste the fingerprint into your assetlinks.json file:
+2. Go to the Google Play Console and select your app release:
+
+<div class="docs-image">
+    <img src="/assets/builder/android/google-play-app-release.png" alt="Image of where to find your app release in the Google Play Console" width=700>
+</div>
+
+3. Click `Setup` and then `App integrity` in the sidebar. Navigate to the `App signing` tab and copy your SHA-256 fingerprint:
+
+<div class="docs-image">
+    <img src="/assets/builder/android/google-play-sha256.png" alt="Image of where to find your SHA-256 fingerprint in the Google Play Console" width=700>
+</div>
+
+
+4. Then, paste the fingerprint into your assetlinks.json file:
 
 ```json
 [
@@ -124,7 +135,7 @@ This step is required for running the production version of your app. If you ski
 ]
 ```
     
-4. Once your updated assetlinks.json file is deployed to your server, the address bar will disappear from your app.
+5. Once your updated assetlinks.json file is deployed to your server, the address bar will disappear from your app.
 
 
 #### 4. Save your signing key
@@ -156,11 +167,10 @@ PWABuilder will build a package signed with your existing key. When you upload i
 
 Progressive web apps are cross-platform and can be used anywhere! 
 
-After you've sucessfully published your app to the Google Play Store, you can package and publish for other platforms:
+After you've successfully published your app to the Google Play Store, you can package and publish for other platforms:
 
 - [How to Package for Microsoft Store](/builder/windows)
 
 - [How to Package for Meta Quest](/builder/meta)
 
 - [How to Package for the App Store](/builder/app-store)
-

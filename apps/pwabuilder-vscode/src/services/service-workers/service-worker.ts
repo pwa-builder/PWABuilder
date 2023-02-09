@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { handleServiceWorkerCommandAdv } from './adv-service-worker';
 import { handleServiceWorkerCommand } from './simple-service-worker';
+import { trackException } from '../usage-analytics';
 
 export async function handleSW() {
     const answer = await vscode.window.showQuickPick(
@@ -69,7 +70,8 @@ export async function findWorker(): Promise<any | undefined> {
                 // await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
                 resolve(undefined);
             }
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(`Error adding service worker to index file: ${err}`);
         }
     });

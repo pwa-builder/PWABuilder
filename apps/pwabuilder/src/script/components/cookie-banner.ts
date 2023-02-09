@@ -17,7 +17,12 @@ export class CookieBanner extends LitElement {
         justify-content: space-between;
         padding: 16px;
         font-weight: 700;
-        font-size: var(--small-font-size);
+        font-size: var(--footer-font-size);
+        position: fixed;
+        bottom: 0;
+        z-index: 2;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       #cookie-info {
@@ -38,7 +43,7 @@ export class CookieBanner extends LitElement {
       }
 
       #cookie-actions button {
-        border-radius: var(--button-radius);
+        border-radius: var(--button-border-radius);
         border: none;
         padding: 8px;
         font-weight: bold;
@@ -53,11 +58,12 @@ export class CookieBanner extends LitElement {
       }
 
       #cookie-actions #reject-button {
-        background: white;
+        background: #ffffff;
+        color: var(--font-color);
       }
 
       #cookie-actions #accept-button {
-        background: black;
+        background: var(--font-color);
         color: white;
       }
 
@@ -93,7 +99,7 @@ export class CookieBanner extends LitElement {
   firstUpdated() {
     // by default, non essential cookies are denied.
     const savedValue = localStorage.getItem('PWABuilderGDPR');
-
+    
     if (!savedValue) {
       this.show = true;
       localStorage.setItem('PWABuilderGDPR', JSON.stringify(false));

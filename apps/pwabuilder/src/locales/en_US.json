@@ -133,6 +133,7 @@
         "google_play_billing": "Google Play billing",
         "settings_shortcut": "Settings shortcut",
         "chromeos_only": "ChromeOS only",
+        "metaquest": "Meta Quest compatible",
         "generate": "Generate",
         "source_code": "Include source code",
         "none": "None",
@@ -169,7 +170,8 @@
         "location_delegation": "Whether to enable Location Delegation. If enabled, your PWA can acess navigator.geolocation without browser permission prompts.",
         "google_play_billing": "Whether to enable in-app purchases through Google Play Billing and the Digital Goods API.",
         "settings_shortcut": "If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.",
-        "chromeos_only": "If enabled, your Android package will only run on ChromeOS devices",
+        "chromeos_only": "If enabled, your Android package will only run on ChromeOS devices.",
+        "metaquest": "If enabled, your Android package will be compatible with Meta Quest devices.",
         "form_details": "Your download will contain instructions for submitting your app to the Google Play Store.",
         "source_code": "If enabled, your download will include the source code for your Android app.",
         "signing_key": "PWABuilder will generate a new signing key for you and sign your APK with it. Your download will contain the new signing key and passwords.",
@@ -211,7 +213,7 @@
         "discord": "Join us on our Discord Server"
       },
       "description": {
-        "github": "Contribute to this Open Source project by joining our PWA community on GitHub.",
+        "github": "Contribute to this open source project by joining our PWA community on GitHub.",
         "twitter": "Meet our fellow PWA enthusiast and follow our latest releases and updates on Twitter.",
         "discord": "Join the PWABuilder Discord community to connect with the people and resources you need."
       }

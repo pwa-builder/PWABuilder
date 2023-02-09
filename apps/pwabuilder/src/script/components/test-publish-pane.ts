@@ -165,9 +165,9 @@ export class TestPublishPane extends LitElement {
       .package-button::part(base) {
         all: unset;
         width: 75%;
-        background-color: white;
-        color: #4F3FB6;
-        border: 1px solid #4F3FB6;
+        background-color: #ffffff;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
         font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
@@ -179,6 +179,9 @@ export class TestPublishPane extends LitElement {
       }
       .package-button:hover {
         cursor: pointer;
+      }
+      .package-button::part(base):hover{
+        box-shadow: var(--button-box-shadow);
       }
       #info-tooltip {
         height: 20px
@@ -218,6 +221,7 @@ export class TestPublishPane extends LitElement {
         padding: .5em;
         border-radius: 3px;
         width: 100%;
+        word-break: break-word;
       }
 
       .type-error {
@@ -235,6 +239,12 @@ export class TestPublishPane extends LitElement {
       .feedback-holder p {
         margin: 0;
         font-size: 14px;
+      }
+
+      .error-desc {
+        max-height: 175px;
+        overflow-y: auto;
+        line-height: normal;
       }
 
       .error-title {
@@ -322,7 +332,7 @@ export class TestPublishPane extends LitElement {
 
   renderWindowsDownloadButton(): TemplateResult {
     return html`
-      <sl-button id="windows-test-pkg-btn" class="package-button" ?loading=${this.generating} id="test-package-button"
+      <sl-button class="package-button" ?loading=${this.generating} id="test-package-button"
           @click="${this.generateWindowsTestPackage}" .secondary="${true}">
         Download Test Package
       </sl-button>

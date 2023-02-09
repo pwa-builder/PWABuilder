@@ -6,6 +6,7 @@
   - [About](/ "PWABuilder Suite Documentation")
   - [PWA Overview](/home/pwa-intro "Beginner's Guide to PWA")
   - [Service Workers](/home/sw-intro "Introduction to Service Workers")
+  - [Adding Native Features](/home/native-features.md "Adding Native Features to Your PWA")
   - [PWA Workshop](/home/pwa-workshop "Progressive Web App Intro Workshop")
   - [Resources](/home/resources "Resources")
 
@@ -21,6 +22,8 @@
 
 - **PWABuilder**
   - [Quick Start](/builder/quick-start "PWABuilder - Quick Start" )
+  - [Using PWABuilder Features](/builder/using-pwabuilder-features "PWABuilder - Using PWABuilder Features" )
+  - [Manifest Options](/builder/manifest "PWABuilder - Customizing Your Web App Manifest")
   - [Microsoft Store](/builder/windows "PWABuilder - Packaging for the Microsoft Store")
   - [Google Play Store](/builder/android "PWABuilder - Packaging for the Google Play Store")
   - [Other Android](/builder/other-android "PWABuilder - Creating Android Packages")
@@ -31,6 +34,7 @@
 - **PWABuilder Studio**
   - [Quick Start](/studio/quick-start "PWABuilder Studio - Quick Start")
   - [Create a New PWA](/studio/create-new "PWABuilder Studio - Create a New PWA")
+  - [Dev Dashboard](/studio/dev-dashboard "PWABuilder Studio - Dev Dashboard")
   - [Converting Existing Apps](/studio/existing-app "PWABuilder Studio - Converting Existing Apps")
   - [Package Your PWA](/studio/package "PWABuilder Studio - Package Your PWA For Stores")
   - [Code Snippets](/studio/snippets "PWABuilder Studio - Code Snippets")

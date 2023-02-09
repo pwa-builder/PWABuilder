@@ -228,7 +228,7 @@ export class PublishPane extends LitElement {
       .package-button {
         all: unset;
         width: 75%;
-        background-color: black;
+        background-color: var(--font-color);
         color: white;
         font-size: 14px;
         border-radius: 50px;
@@ -245,7 +245,7 @@ export class PublishPane extends LitElement {
         display: flex;
         align-items: baseline;
         width: 100%;
-        border-bottom: 2px solid #5D5DB9;
+        border-bottom: 2px solid var(--primary-color);
         margin-top: 20px;
         margin-bottom: 14px;
       }
@@ -278,8 +278,8 @@ export class PublishPane extends LitElement {
         height: 20px
       }
       .selected-apk {
-        border-bottom: 5px solid #5D5DB9;
-        color: #5D5DB9;
+        border-bottom: 5px solid var(--primary-color);
+        color: var(--primary-color);
       }
 
       .unselected-apk {
@@ -308,7 +308,7 @@ export class PublishPane extends LitElement {
         gap: 1em;
       }
       #pp-form-header-content img {
-        height: 50px;
+        height: 40px;
       }
       #pp-form-header-text {
         display: flex;
@@ -375,7 +375,7 @@ export class PublishPane extends LitElement {
         visibility: hidden;
         font-size: 14px;
         width: 150px;
-        background: black;
+        background: var(--font-color);
         color: white;
         font-weight: 500;
         text-align: center;
@@ -405,6 +405,7 @@ export class PublishPane extends LitElement {
         padding: .5em;
         border-radius: 3px;
         width: 100%;
+        word-break: break-word;
       }
 
       .type-error {
@@ -437,7 +438,7 @@ export class PublishPane extends LitElement {
 
       .error-actions > * {
         all: unset;
-        color: black;
+        color: var(--font-color);
         font-weight: bold;
         font-size: 14px;
         border-bottom: 1px solid transparent;
@@ -445,7 +446,13 @@ export class PublishPane extends LitElement {
 
       .error-actions > *:hover {
         cursor: pointer;
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid var(--font-color);
+      }
+
+      .error-desc {
+        max-height: 175px;
+        overflow-y: auto;
+        line-height: normal;
       }
 
       .close_feedback {
@@ -485,7 +492,7 @@ export class PublishPane extends LitElement {
       }
 
       #generate-submit::part(base) {
-        background-color: black;
+        background-color: var(--font-color);
         color: white;
         height: 3em;
         width: 100%;

@@ -3,6 +3,7 @@ import { readFile } from "fs/promises";
 import { testManifest } from "./validation";
 import { findManifest, getManifest } from "../manifest/manifest-service";
 import { pathExists } from "../../library/file-utils";
+import { trackException } from "../usage-analytics";
 
 /**
  * This is the Web Manifest Panel
@@ -87,7 +88,8 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       const testResults = await testManifest(manifestContents);
 
       return testResults;
-    } catch (err) {
+    } catch (err: any) {
+      trackException(err);
       throw new Error(`Error loading and testing manifest: ${err}`);
     }
   }
@@ -103,12 +105,33 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     let resultsData: ValidationItem[] = [];
     testResults.map((result: any) => {
       if (detail) {
+        let potentialCommand = null;
+
+        switch (result.member) {
+          case "shortcuts":
+            potentialCommand = {
+              command: "pwa-studio.addShortcuts",
+              title: "Add Shortcuts",
+              arguments: [],
+            };
+            break;
+
+          case "icons": 
+            potentialCommand = {
+              command: "pwa-studio.generateIcons",
+              title: "Generate Icons",
+              arguments: [],
+            };
+            break;
+        }
+
         resultsData.push(
           new ValidationItem(
             result.infoString,
             result.docsLink ? result.docsLink : "",
             result.result ? result.result.toString() : "",
-            vscode.TreeItemCollapsibleState.None
+            vscode.TreeItemCollapsibleState.None,
+            potentialCommand ? potentialCommand : undefined
           )
         );
       } else {
@@ -142,17 +165,23 @@ class ValidationItem extends vscode.TreeItem {
     public readonly label: string,
     public readonly docsLink: string,
     private version: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly command?: vscode.Command
   ) {
     super(label, collapsibleState);
     this.tooltip = `${this.label}-${this.version}`;
     this.description = this.version;
 
-    this.command = {
-      command: "vscode.open",
-      title: "Open Web Manifest",
-      arguments: [getManifest()],
-    };
+    if (command && version === "false") {
+      this.command = command;
+    }
+    else {
+      this.command = {
+        command: "vscode.open",
+        title: "Open Web Manifest",
+        arguments: [getManifest()],
+      };
+    }
   }
   
 

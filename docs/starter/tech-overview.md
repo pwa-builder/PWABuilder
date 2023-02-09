@@ -2,7 +2,6 @@
 
 The PWA Starter uses only a handful of libraries in order to remain lightweight and performant, but also while remaining easy and efficient to develop on. 
 
-
 #### Lit
 Lit is the library that we use to build our custom web components for the Starter. Lit adds some simple boilerplate that makes it easy to build standardized web components. 
 If you're new to web components, check out this [resource.](https://developer.mozilla.org/en-US/docs/Web/Web_Components)

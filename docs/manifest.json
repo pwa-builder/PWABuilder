@@ -37,9 +37,48 @@
       ]
     },
     {
+      "name":"Beginner's Guide to PWA",
+      "url":"/#/home/pwa-intro",
+      "description":"Takes you to an introduction to progressive web app technology.",
+      "icons": [
+        {
+          "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
       "name":"PWA Starter",
       "url":"/#/starter/quick-start",
       "description":"Takes you to documentation on using the PWA Starter.",
+      "icons": [
+        {
+          "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name":"PWABuilder Packaging",
+      "url":"/#/builder/quick-start",
+      "description":"Takes you to documentation on using the PWABuilder packaging service.",
+      "icons": [
+        {
+          "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name":"PWABuilder Studio",
+      "url":"/",
+      "description":"Takes you to documentation on using PWABuilder Studio.",
       "icons": [
         {
           "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",

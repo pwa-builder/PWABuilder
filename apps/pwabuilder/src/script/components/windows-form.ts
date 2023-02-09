@@ -1,12 +1,13 @@
-import { css, html } from 'lit';
+import { css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, getManifestUrl } from '../services/app-info';
 import {
   createWindowsPackageOptionsFromManifest,
   emptyWindowsPackageOptions,
+  windowsLanguages,
 } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
-import { AppPackageFormBase } from './app-package-form-base';
+import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
@@ -17,6 +18,8 @@ export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAdvanced = false;
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
+  @state() activeLanguages: string[] = [];
+  @state() activeLanguageCodes: string[] = [];
 
   static get styles() {
     return [
@@ -84,6 +87,57 @@ export class WindowsForm extends AppPackageFormBase {
           font-weight: bold;
         }
 
+        .sub-multi {
+          font-size: var(--body-font-size);
+          margin: 0;
+          color: rgba(0,0,0,.5);
+        }
+
+        :host{
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+        }
+
+        #languageDrop::part(control){
+          min-height: 40px;
+        }
+
+        #languageDrop::part(tag__base){
+          height: 35px;
+          font-size: var(--body-font-size);
+          color: #757575;
+          background-color: #f0f0f0;
+          border-radius: var(--input-border-radius);
+          padding: 8px 15px;
+          gap: 40px;
+        }
+
+        #languageDrop::part(menu){
+          background-color: #ffffff;
+          height: 200px;
+          overflow-y: scroll;
+          border-radius: var(--input-border-radius);
+          border: 1px solid #c5c5c5;
+          margin-top: 3px;
+        }
+
+        #languageDrop sl-menu-item::part(base){
+          font-size: var(--body-font-size);
+          color: #757575;
+        }
+
+        #languageDrop sl-menu-item::part(base):hover{
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
+        #languageDrop::part(display-label){
+          font-size: var(--body-font-size);
+          color: #757575;
+        }
+       
     `
     ];
   }
@@ -92,7 +146,9 @@ export class WindowsForm extends AppPackageFormBase {
     super();
   }
 
-  async firstUpdated() {
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+
     let manifestContext: ManifestContext | undefined = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
@@ -166,7 +222,7 @@ export class WindowsForm extends AppPackageFormBase {
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(90deg)";
   }
-  
+
   public getPackageOptions(): PackageOptions {
     return this.packageOptions;
   }
@@ -174,6 +230,46 @@ export class WindowsForm extends AppPackageFormBase {
   public getForm(): HTMLFormElement {
     return this.shadowRoot!.querySelector("form")!;
   }
+
+  renderMultiSelect(formInput: FormInput): TemplateResult {
+    return html`
+      <label for="${formInput.inputId}">
+        ${formInput.label}
+        ${this.renderTooltip(formInput)}
+      </label>
+      <div id="multiSelectBox">
+        <div class="multi-wrap">
+          <p class="sub-multi">Select Multiple Languages</p>
+          <sl-select id="languageDrop" 
+            placeholder="Select one or more languages"
+            @sl-change=${(e: any) => this.handleLanguage(e)} 
+            .value=${this.packageOptions.resourceLanguage!}
+            ?stayopenonselect=${true} 
+            multiple
+            .maxTagsVisible=${5}
+          >
+          ${windowsLanguages.map((lang: any) => 
+            html`
+              ${lang.codes.map((code: string) =>  
+                html`
+                  <sl-menu-item value=${code}>${lang.name} - ${code}</sl-menu-item>
+                `
+              )}
+            `
+          )} 
+           <!-- ${windowsLanguages.map((lang: any) => html`
+              <sl-menu-item value=${lang.codes[0]}>${lang.name}</sl-menu-item>
+            `)} -->
+          </sl-select>
+        </div>
+      </div>
+    `;
+  }
+
+  handleLanguage(e: any){
+    this.packageOptions.resourceLanguage = e.target.value;
+  }
+
 
   render() {
     return html`
@@ -322,9 +418,9 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-                ${this.renderFormInput({
+                ${this.renderMultiSelect({
                   label: 'Language',
-                  tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
+                  tooltip: `Optional. Select as many languages as your app supports. Additional languages can be specified in Windows Partner Center. If empty, EN-US will be used.`,
                   tooltipLink:
                     'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
                   inputId: 'language-input',
@@ -382,6 +478,24 @@ export class WindowsForm extends AppPackageFormBase {
                     inputHandler: (val: string, checked: boolean) => {
                       this.addOrRemoveDeviceFamily(val, checked);
                     },
+                  })}
+                </div>
+              </div>
+              <div class="form-group" id="target-device-families">
+                <label>Widgets</label>
+                <div class="form-check">
+                  ${this.renderFormInput({
+                    label: 'Enable Widgets',
+                    value: 'Widgets',
+                    tooltip:
+                      'Enables your Windows package to serve the widgets listed in your web manifest to the Widgets Panel.',
+                    tooltipLink:
+                      'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
+                    inputId: 'widget-checkbox',
+                    type: 'checkbox',
+                    checked: this.packageOptions.enableWebAppWidgets,
+                    inputHandler: (_val: string, checked: boolean) => 
+                      (this.packageOptions.enableWebAppWidgets = checked),
                   })}
                 </div>
               </div>
