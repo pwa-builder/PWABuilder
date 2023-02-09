@@ -202,6 +202,11 @@ export class ManifestSettingsForm extends LitElement {
         line-height: 16px;
         margin-left: .25em;
       }
+
+      sl-menu-item:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
       
       sl-menu-item::part(base):hover {
         color: #ffffff;

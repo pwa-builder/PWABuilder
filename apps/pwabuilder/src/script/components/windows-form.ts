@@ -128,6 +128,11 @@ export class WindowsForm extends AppPackageFormBase {
           color: #757575;
         }
 
+        #languageDrop sl-menu-item:focus-within::part(base) {
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
         #languageDrop sl-menu-item::part(base):hover{
           color: #ffffff;
           background-color: #4F3FB6;
