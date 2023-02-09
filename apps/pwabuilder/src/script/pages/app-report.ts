@@ -1440,7 +1440,7 @@ export class AppReport extends LitElement {
       await this.testSecurity(processSecurity());
       if (!findersResults.manifest?.raw) {
         await this.applyManifestContext(url, undefined, undefined);
-        this.testManifest();
+        await this.testManifest();
       }
       if (!findersResults.serviceWorker?.raw) {
         this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
@@ -1451,8 +1451,11 @@ export class AppReport extends LitElement {
 
     console.log(this.reportAudit);
 
-    if (this.reportAudit?.artifacts?.webAppManifest)
+    if (this.reportAudit?.artifacts?.webAppManifest) {
       await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifest?.url, this.reportAudit?.artifacts?.webAppManifest?.raw);
+    } else {
+      await this.applyManifestContext(url, undefined, undefined);
+    }
 
     this.todoItems = [];
     // await this.getManifest(url);
