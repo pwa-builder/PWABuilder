@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - dev
+      - report-function-based
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - dev
+      - report-function-based
 
 jobs:
   build_and_deploy_job:
