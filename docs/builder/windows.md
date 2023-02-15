@@ -33,7 +33,7 @@ In order to create a proper package of your PWA, you'll first need to reserve a 
 5. Once you have reserved your name, you will be able to access your package info. Navigate to the `Product Identity` section and take note of these three values:
 
 <div class="docs-image">
-   <img src="/assets/builder/windows/package-identity.png" alt="Package identiy values open in Partner Center" width=600>
+   <img src="/assets/builder/windows/package-identity.png" alt="Package identity values open in Partner Center" width=600>
 </div>
 
 6. Write the three values down. The first is your `Package ID`, the second is your `Publisher ID`, and the last is your `Publisher Display Name`.
@@ -99,9 +99,9 @@ To submit your PWA through Partner Center:
 
 6. Click `Save`.
 
-7. Your packages are succesfully associate with your submission! Complete the rest of the details for your submission to your liking and click `Submit to Store` when you are ready to have your PWA reviewed.
+7. Your packages are successfully associate with your submission! Complete the rest of the details for your submission to your liking and click `Submit to Store` when you are ready to have your PWA reviewed.
 
-It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Micrsoft Store.
+It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Microsoft Store.
 
 If you want to view information about the status of your app, you can check through Partner Center at any time. This will be your go to spot for interacting with your listing.
 
@@ -109,7 +109,7 @@ If you want to view information about the status of your app, you can check thro
 
 Progressive web apps are cross-platform and can be used anywhere! 
 
-After you've sucessfully published your app to the Microsoft Store, you can package and publish for other platforms:
+After you've successfully published your app to the Microsoft Store, you can package and publish for other platforms:
 
 - [How to Package for the App Store](/builder/app-store)
 

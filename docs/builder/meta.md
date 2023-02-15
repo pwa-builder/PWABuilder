@@ -53,7 +53,7 @@ Here's a breakdown of the properties associated with your package:
 |**App name** | The name of your app as displayed to users.                                                                                                                           |
 |**App version** | This is the version string displayed to end users, e.g. “1.0.0.0”                                                                                                  |
 |**App version code**| This is an integer used as a private, internal version of your app.                                                                                           |
-|**Manifest URL** | The URL of your app manifest. We prepopulate this for you.                                                                                                        |
+|**Manifest URL** | The URL of your app manifest. We pre-populate this for you.                                                                                                        |
 |**Signing key**| How the APK app package will be digitally signed: <br><br> `None`: your app package won’t signed. <br><br> `New`: PWABuilder will create a new signing key for you. The signing key will be included in your zip download. Choosing this will let you fill in details like password, alias, and more. <br><br> `Mine`: Upload an existing .keystore file to use for signing the app package. This should be used if you are updating an existing app. You’ll be prompted to specify your existing key passwords and alias.                                                         |
 
 
@@ -76,7 +76,7 @@ Once you have checked off all the prerequisites, follow the instructions [here](
 
 Progressive web apps are cross-platform and can be used anywhere! 
 
-After you've sucessfully packaged your app for Meta Quest, you can package and publish for other platforms:
+After you've successfully packaged your app for Meta Quest, you can package and publish for other platforms:
 
 - [How to Package for the App Store](/builder/app-store)
 

@@ -39,7 +39,7 @@ It is recommended that `short_name` be 12 characters or less in length.
 "short_name": "WebBoard"
 ```
 
-?> `short_name` isn't required by Web Standards, but is a required member for packaging with the PWABuilder service.
+?> `short_name` isn't required by Web Standards, but is a required member for packaging with the PWABuilder service. `short_name` must be 3 or more characters to ensure you can package for all stores.
 
 ### description: `string`
 
@@ -106,7 +106,7 @@ It has three values to choose from:
 ```
 
 ### lang: `string`
-`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each langauge, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
+`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each language, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
 
 ```json
 "lang": "en"
@@ -120,7 +120,7 @@ It has three values to choose from:
 * `natural`
 * `portrait`
 * `landscape`
-* `potrait-primary`
+* `portrait-primary`
 * `portrait-secondary`
 * `landscape-primary`
 * `landscape-secondary`
@@ -196,7 +196,7 @@ This member is an array of application objects, each of which contains a `platfo
 
 ### prefer_related_applications: `boolean`
 
-`prefer_related_aplications` is an optional member that specifies whether or not `related_applications` should be preferred to this one. This member defaults to `false`, but if set to true, the browser may recommend an alternate application to the user.
+`prefer_related_applications` is an optional member that specifies whether or not `related_applications` should be preferred to this one. This member defaults to `false`, but if set to true, the browser may recommend an alternate application to the user.
 
 ```json
 "prefer_related_applications": true
@@ -208,11 +208,11 @@ This member is an array of application objects, each of which contains a `platfo
 
 The `shortcuts` member is an array of `shortcut` objects, which can contain the following members:
 
-*  `name`: The display name of the shorcut. ***Required member*** 
+*  `name`: The display name of the shortcut. ***Required member*** 
 *  `url`: The url that the shortcut will open to. ***Required member***
 * `short_name`: The shortened display name for when display space is limited.
 * `description`: A string description of the shortcut.
-* `icons`: A set of icons used to represent the shorcut. This array must include a 96x96 icon.
+* `icons`: A set of icons used to represent the shortcut. This array must include a 96x96 icon.
 
 ```json
 "shortcuts": [
@@ -255,16 +255,44 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### icons: `Array`
 `icons` is a required member that specifies an array of icons to be used by your application for varying contexts and situations, such as in the action bar of your preferred operating system.
+#### PWABuilder Icon Validations
+
+The PWABuilder service enforces several validations to keep the icons for your app optimal:
+
+* Your icons array must have at least one icon with purpose set to `any`.
+
+* Your icons array must have at least one icon with a size of at least `512x512`.
+
+* If your icons array includes a `maskable` icon, this must be included as a **separate** icon, and can't be added as a dual icon type (like `any maskable`, for example). This is because using `maskable` icons as `any` can result in icons not being displayed optimally.
+
+These validations are implemented so that your progressive web app will always have an icon that looks appropriate, regardless of the operating system or context they are viewed in.
 
 ```json
 "icons": [
   {
-    "src": "assets/icon1.png",
-    "sizes": "48x48 96x96",
+      "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
   },
   {
-    "src": "assets/icon2.png",
-    "sizes": "any"
+      "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+  }
+]
+```
+
+If you only want to provide a single icon, your icons array could also look like this:
+
+```json
+"icons": [
+  {
+      "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
   }
 ]
 ```

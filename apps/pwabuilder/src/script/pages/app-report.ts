@@ -49,7 +49,7 @@ export class AppReport extends LitElement {
     iconURL: '',
     iconAlt: 'Your sites logo'
   };
-  @property({ type: Object }) CardStyles = { backgroundColor: 'white', color: 'black'};
+  @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a'};
   @property({ type: Object }) BorderStyles = { borderTop: '1px solid #00000033'};
   @property({ type: Object }) LastEditedStyles = { color: '#000000b3'};
   @property() manifestCard = {};
@@ -130,7 +130,7 @@ export class AppReport extends LitElement {
   private possible_messages = [
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
-                  "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommeneded and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
+                  "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommended and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
                   "blocked": "PWABuilder has analyzed your Web Manifest. You have a one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
                   "none": "PWABuilder has analyzed your site and did not find a Web Manifest. Use our Manifest Editor to generate one. You can package for the store once you have a valid manifest.",
                   }
@@ -226,11 +226,11 @@ export class AppReport extends LitElement {
           --track-width: 4px;
           --indicator-width: 8px;
           --size: 100px;
-          font-size: 18px;
+          font-size: var(--subheader-font-size);
         }
 
         sl-progress-ring::part(label){
-          color: #4F3FB6;
+          color: var(--primary-color);
           font-weight: bold;
         }
 
@@ -266,7 +266,7 @@ export class AppReport extends LitElement {
           width: 60%;
           height: 100%;
           border-radius: 10px;
-          background-color: white;
+          background-color: #ffffff;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
@@ -287,7 +287,7 @@ export class AppReport extends LitElement {
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: white;
+          background-color: #ffffff;
           border-radius: 10px;
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
@@ -301,7 +301,7 @@ export class AppReport extends LitElement {
         .proxy-loader {
           width: 48px;
           height: 48px;
-          border: 5px solid #4f3fb6;
+          border: 5px solid var(--primary-color);
           border-bottom-color: transparent;
           border-radius: 50%;
           display: inline-block;
@@ -319,7 +319,7 @@ export class AppReport extends LitElement {
         } 
 
         #site-name {
-          font-size: 24px;
+          font-size: calc(var(--subheader-font-size) + 4px);
         }
         
         #card-info {
@@ -336,9 +336,13 @@ export class AppReport extends LitElement {
           font-size: 16px;
         }
 
+        #site-url {
+          white-space: normal;
+        }
+
         #app-card-desc {
           margin: 0;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
           width: 100%;
           white-space: normal;
           overflow: hidden;
@@ -407,18 +411,10 @@ export class AppReport extends LitElement {
           width: 40%;
           height: 100%;
           border-radius: 10px;
-          background-color: white;
+          background-color: #ffffff;
           align-items: center;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
-        }
-
-        #app-actions button:not(#test-download) {
-          font-weight: bold;
-          white-space: nowrap;
-          padding: .75em 2em;
-          border-radius: 50px;
-          font-size: 16px;
         }
 
         #package {
@@ -427,16 +423,32 @@ export class AppReport extends LitElement {
           padding: 2em;
         }
 
-        #pfs {
-          background-color: black;
-          color: white;
+        #app-actions button:not(#test-download) { // pfs + disabled
+          white-space: nowrap;
+          padding: var(--button-padding);
+          border-radius: var(--button-border-radius);
+          font-size: var(--button-font-size);
+          font-weight: var(--font-bold);
           border: none;
+          color: #ffffff;
+          white-space: nowrap;
+        }
+
+        #test-download:disabled {
+          cursor: no-drop;
+          color: #595959;
+        }
+
+        #test-download:disabled .arrow_link {
+          border-color: #595959;
+        }
+
+        #pfs {
+          background-color: var(--font-color);
         }
 
         #pfs-disabled{
           background-color: #C3C3C3;
-          border: none;
-          color: white;
         }
 
         #pfs-disabled:hover{
@@ -444,16 +456,20 @@ export class AppReport extends LitElement {
         }
 
         #pfs:focus, #pfs:hover {
-          outline: rgb(79 63 182 / 70%) solid 2px;
+          box-shadow: var(--button-box-shadow);
         }
 
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
 
-        .mani-tooltip::part(base){
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        .mani-tooltip::part(body){
+          background-color: #ffffff;
+        }
+
+        .mani-tooltip::part(base__arrow){
+          background-color: #ffffff;
+          z-index: 10;
         }
 
         .mani-tooltip-content {
@@ -464,6 +480,9 @@ export class AppReport extends LitElement {
           justify-content: center;
           border-radius: 10px;
           gap: .5em;
+          background-color: #ffffff;
+          color: var(--font-color);
+          box-shadow: rgb(0 0 0 / 15%) 0px 0px 40px;        
         }
 
         .mani-tooltip-content img {
@@ -478,9 +497,14 @@ export class AppReport extends LitElement {
           padding: .5em;
         }
 
+        #cl-mani-tooltip-content {
+          padding: 5px 10px;
+          font-size: 10px;
+        }
+
         #test-download {
           background-color: transparent;
-          color: #4f3fb6;
+          color: var(--primary-color);
           border: none;
           width: fit-content;
           display: flex;
@@ -489,7 +513,7 @@ export class AppReport extends LitElement {
 
           font-weight: bold;
           white-space: nowrap;
-          font-size: 12px;
+          font-size: var(--arrow-link-font-size);
         }
 
         #test-download:hover img {
@@ -533,7 +557,7 @@ export class AppReport extends LitElement {
         }
 
         #todo-detail::part(summary) {
-          color: #4f3fb6;
+          color: var(--primary-color);
           font-size: 20px;
           font-weight: bold;
         }
@@ -542,6 +566,10 @@ export class AppReport extends LitElement {
           display: flex;
           align-items: center;
           gap: .5em;
+        }
+
+        #todo-summary-left p {
+          font-size: var(--subheader-font-size);
         }
 
         #pagination-actions {
@@ -555,7 +583,7 @@ export class AppReport extends LitElement {
 
         .pageToggles {
           height: 15px;
-          color: #4f3fb6;
+          color: var(--primary-color);
         }
 
         #dots {
@@ -607,7 +635,7 @@ export class AppReport extends LitElement {
         /* Manifest Card */
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
-          background-color: white;
+          background-color: #ffffff;
           border-radius: 10px;
           width: 100%;
         }
@@ -666,7 +694,7 @@ export class AppReport extends LitElement {
 
         #two-cell-row > * {
           width: 49%;
-          background: white;
+          background: #ffffff;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -728,13 +756,17 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
+        .details-summary p {
+          font-size: var(--card-body-font-size);
+        }
+
         .dropdown_icon {
           transform: rotate(0deg);
           transition: transform .5s;
         }
 
         .card-header {
-          font-size: 24px;
+          font-size: calc(var(--subheader-font-size) + 4px);
           font-weight: bold;
           margin: 0;
           white-space: nowrap;
@@ -742,18 +774,22 @@ export class AppReport extends LitElement {
 
         .card-desc {
           margin: 0;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
+        }
+
+        #test-download p {
+          line-height: 1em;
         }
 
         .arrow_link {
           margin: 0;
-          border-bottom: 1px solid #4f3fb6;
+          border-bottom: 1px solid var(--primary-color);
           white-space: nowrap;
         }
 
         .arrow_anchor {
           text-decoration: none;
-          font-size: 14px;
+          font-size: var(--arrow-link-font-size);
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
@@ -763,7 +799,7 @@ export class AppReport extends LitElement {
         }
 
         .arrow_anchor:visited {
-          color: #4f3fb6;
+          color: var(--primary-color);
         }
 
         .arrow_anchor:hover {
@@ -776,15 +812,16 @@ export class AppReport extends LitElement {
 
         #report-wrapper .alternate {
           background: var(--secondary-color);
-          color: #4f3fb6;
-          border: 1px solid #4f3fb6;
-          font-size: 16px;
+          color: var(--primary-color);
+          border: 1px solid var(--primary-color);
+          font-size: var(--button-font-size);
           font-weight: bold;
-          border-radius: 50px;
-          padding: 0.75em 2em;
+          padding: var(--button-padding);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
         }
         #report-wrapper .alternate:hover {
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+          box-shadow: var(--button-box-shadow)
         }
 
         .detail-list {
@@ -811,7 +848,7 @@ export class AppReport extends LitElement {
         }
         .details::part(summary) {
           font-weight: bold;
-          font-size: 14px;
+          font-size: var(--card-body-font-size);
         }
         .details::part(header) {
           height: 40px;
@@ -942,7 +979,7 @@ export class AppReport extends LitElement {
           display: block;
           margin:15px auto;
           position: relative;
-          color: #4F3FB6;
+          color: var(--primary-color);
           box-sizing: border-box;
           animation: animloader 2s linear infinite;
         }
@@ -993,6 +1030,10 @@ export class AppReport extends LitElement {
           }
         }
 
+        /* @media(max-width: 700px){
+          --button-padding
+        } */
+
         @media(max-width: 600px){
           #app-card-header{
             grid-template-columns: 1fr 5fr;
@@ -1025,7 +1066,7 @@ export class AppReport extends LitElement {
           sl-progress-ring {
             --size: 75px;
             --track-width: 4px;
-            font-size: 14px;
+            --subheader-font-size: 14px;
           }
           .progressRingSkeleton::part(base) {
             width: 75px;
@@ -1055,10 +1096,6 @@ export class AppReport extends LitElement {
 
           #app-actions {
             width: 100%;
-          }
-
-          #app-actions button:not(#test-download) { /* #pfs */
-            font-size: 16px;
           }
 
           #app-actions .arrow_link {
@@ -1595,7 +1632,16 @@ export class AppReport extends LitElement {
 
     // reset retest data
     this.retestConfirmed = false;
+
+    // reset action items page;
+    this.pageNumber = 1;
   }
+
+  copyReportCardLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
+    })
+  } 
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
@@ -1876,14 +1922,14 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: 'white', color: '#595959' }) : styleMap(this.CardStyles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="pwa-image-holder">
                   ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                 </div>
                 <div id="card-info" class="flex-col">
                   <p id="site-name">${this.appCard.siteName}</p>
-                  <p>${this.appCard.siteUrl}</p>
+                  <p id="site-url">${this.appCard.siteUrl}</p>
                 </div>
                 <p id="app-card-desc">${this.appCard.description}</p>
               </div>
@@ -1918,7 +1964,7 @@ export class AppReport extends LitElement {
                       id="pfs"
                       @click=${() => this.openPublishModal()}
                     >
-                      Package for stores
+                      Package For Stores
                     </button>
                     ` :
                     html`
@@ -1931,17 +1977,12 @@ export class AppReport extends LitElement {
                           id="pfs-disabled"
                           aria-disabled="true"
                         >
-                          Package for stores
+                          Package For Stores
                         </button>
                     </sl-tooltip>
                     `}
-                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()}>
-                  <p class="arrow_link">Download test package</p>
-                  <img
-                    src="/assets/new/arrow.svg"
-                    alt="arrow"
-                    role="presentation"
-                  />
+                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${this.runningTests || this.createdManifest}>
+                  <p class="arrow_link">Download Test Package</p>
                 </button>
               </div>
               <div id="actions-footer" class="flex-center">
@@ -2060,7 +2101,6 @@ export class AppReport extends LitElement {
                         <img
                           src="/assets/new/arrow.svg"
                           alt="arrow"
-                          role="presentation"
                         />
                       </a>
                   `}
@@ -2234,7 +2274,6 @@ export class AppReport extends LitElement {
                         <img
                           src="/assets/new/arrow.svg"
                           alt="arrow"
-                          role="presentation"
                         />
                       </a>
                     `
@@ -2332,7 +2371,6 @@ export class AppReport extends LitElement {
                         <img
                           src="/assets/new/arrow.svg"
                           alt="arrow"
-                          role="presentation"
                         />
                       </a>
                     `
@@ -2362,9 +2400,10 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-
         </div>
       </div>
+
+      
 
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
         ${this.retestConfirmed ?
@@ -2381,7 +2420,6 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
-
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}

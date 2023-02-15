@@ -11,7 +11,7 @@ For now, we only have guidance for publishing with Azure Static Web Apps and Git
 
 One option for deploying your PWA is Azure Static Web Apps, and can be set up in just minutes using the Azure Static Web Apps command line tool.
 
-The Azure Staic Web Apps CLI is included in the PWA Starter's Node dependencies, and will be installed when you run `npm install`.
+The Azure Static Web Apps CLI is included in the PWA Starter's Node dependencies, and will be installed when you run `npm install`.
 
 You can check out the Azure SWA CLI website [here.](https://azure.github.io/static-web-apps-cli/)
 

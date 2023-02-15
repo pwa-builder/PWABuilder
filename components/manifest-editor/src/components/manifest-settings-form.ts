@@ -23,8 +23,8 @@ export class ManifestSettingsForm extends LitElement {
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
-  private errorCount: number = 0;
 
+  @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
 
   static get styles() {
@@ -66,9 +66,15 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p {
+      .field-desc {
         font-size: 14px;
         margin: 0;
+        color: #717171;
+      }
+      sl-input::part(input), 
+      sl-select::part(display-label), 
+      sl-details::part(summary){
+        color: #717171;
       }
       .long .form-field {
         width: 100%;
@@ -78,6 +84,9 @@ export class ManifestSettingsForm extends LitElement {
         row-gap: .25em;
         display: flex;
         flex-direction: column;
+      }
+      .form-field p {
+        font-size: 14px;
       }
       .field-header{
         display: flex;
@@ -89,7 +98,7 @@ export class ManifestSettingsForm extends LitElement {
       .header-left{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       .color_field {
         display: flex;
@@ -101,6 +110,7 @@ export class ManifestSettingsForm extends LitElement {
         column-gap: 10px;
       }
       .toolTip {
+        font-size: 14px;
         visibility: hidden;
         width: 150px;
         background: black;
@@ -175,6 +185,8 @@ export class ManifestSettingsForm extends LitElement {
         padding: 0 .5em;
         font-weight: 600;
         padding-top: 3px;
+        font-size: 14px;
+        margin: 0;
       }
 
       #override-options-grid{
@@ -190,6 +202,18 @@ export class ManifestSettingsForm extends LitElement {
         line-height: 16px;
         margin-left: .25em;
       }
+      
+      sl-menu-item::part(base):hover {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
+      sl-checkbox[checked]::part(control) {
+        background-color: #4f3fb6;
+        border-color: #4f3fb6;
+        color: #ffffff;
+      }
+
 
       @media(max-width: 765px){
         .form-row {
@@ -216,6 +240,16 @@ export class ManifestSettingsForm extends LitElement {
 
         .form-row h3 {
           font-size: 16px;
+        }
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
+          border-radius: 7px;
         }
       }
     `;
@@ -272,12 +306,13 @@ export class ManifestSettingsForm extends LitElement {
           if(validation.errors){
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
+            this.errorMap[field] = 0;
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
-              this.errorCount++;
+              this.errorMap[field]++;
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
           }
@@ -293,14 +328,14 @@ export class ManifestSettingsForm extends LitElement {
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
             error_div!.parentElement!.removeChild(error_div!);
           }
-
+          this.errorMap[field] = 0;
           let div = document.createElement('div');
           div.classList.add(`${field}-error-div`);
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
           
         }
@@ -308,7 +343,7 @@ export class ManifestSettingsForm extends LitElement {
     }
 
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "settings"));
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
@@ -363,7 +398,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[fieldName!];
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -377,19 +412,20 @@ export class ManifestSettingsForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
+        this.errorMap[fieldName!] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
       
       input.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "settings"));
     } else {
       this.dispatchEvent(errorInTab(true, "settings"));
@@ -404,7 +440,7 @@ export class ManifestSettingsForm extends LitElement {
     return "";
   }
 
-  async toggleOverrideList(label: string, e: any){
+  async toggleOverrideList(label: string, origin: string){
 
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
@@ -415,7 +451,9 @@ export class ManifestSettingsForm extends LitElement {
     });
     this.dispatchEvent(fieldChangeAttempted);
 
-    let active = !e.path[0].checked;
+    let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`sl-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`sl-menu-item[value="${label}"]`);
+
+    let active = !(checkbox as HTMLInputElement)!.checked;
     
     if(active){
       // remove from active list
@@ -457,7 +495,7 @@ export class ManifestSettingsForm extends LitElement {
 
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[field];
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
@@ -471,19 +509,20 @@ export class ManifestSettingsForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
+        this.errorMap[field] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       input!.classList.add("error");
     }
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
@@ -499,7 +538,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Start URL</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -510,9 +549,9 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
 
-              <p>(required)</p>
+              <p class="field-desc">(required)</p>
             </div>
-            <p>The URL that loads when your PWA starts</p>
+            <p class="field-desc">The URL that loads when your PWA starts</p>
             <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
@@ -520,7 +559,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Dir</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -531,7 +570,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The text direction of your PWA</p>
+            <p class="field-desc">The text direction of your PWA</p>
             <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
@@ -543,7 +582,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Scope</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -554,7 +593,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>Which URLs can load within your app</p>
+            <p class="field-desc">Which URLs can load within your app</p>
             <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
           </div>
           
@@ -574,7 +613,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The primary language of your app</p>
+            <p class="field-desc">The primary language of your app</p>
             <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
             </sl-select>
@@ -586,7 +625,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Orientation</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -597,7 +636,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The default screen orientation of your app</p>
+            <p class="field-desc">The default screen orientation of your app</p>
             <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
@@ -607,7 +646,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Display</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=display-string"
                   target="_blank"
                   rel="noopener"
                 >
@@ -618,7 +657,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>The appearance of your app window</p>
+            <p class="field-desc">The appearance of your app window</p>
             <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
               ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
             </sl-select>
@@ -630,7 +669,7 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3>Display Override</h3>
                 <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override"
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"
                   target="_blank"
                   rel="noopener"
                 >
@@ -641,7 +680,7 @@ export class ManifestSettingsForm extends LitElement {
                 </a>
               </div>
             </div>
-            <p>Used to determine the preferred display mode</p>
+            <p class="field-desc">Used to determine the preferred display mode</p>
             <div id="override-list">
             <sl-details summary="Click to edit display override" data-field="display_override">
               <sl-menu>
@@ -649,7 +688,7 @@ export class ManifestSettingsForm extends LitElement {
                 ${this.activeOverrideItems.length != 0 ?
                 this.activeOverrideItems.map((item: string, index: number) =>
                   html`
-                    <sl-menu-item class="override-item" value=${item} @click=${(e: CustomEvent) => this.toggleOverrideList(item, e)}>
+                    <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, "menu-item")}>
                       <p slot="prefix" class="menu-prefix">${index + 1}</p>
                       ${item}
                     </sl-menu-item>
@@ -660,7 +699,7 @@ export class ManifestSettingsForm extends LitElement {
                 <div id="override-options-grid">
                   ${overrideOptions.map((item: string) =>
                       html`
-                        <sl-checkbox class="override-item" value=${item} @sl-change=${(e: CustomEvent) => this.toggleOverrideList(item, e)} ?checked=${this.activeOverrideItems.includes(item)}>
+                        <sl-checkbox class="override-item" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
                           ${item}
                         </sl-checkbox>
                       `)}

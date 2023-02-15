@@ -38,7 +38,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         items.push(
           new ValidationItem(
             "Handles Caching",
-            "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Offline_Service_workers",
+            "https://docs.pwabuilder.com/#/home/sw-intro",
             "true",
             vscode.TreeItemCollapsibleState.None
           )
@@ -47,7 +47,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         items.push(
           new ValidationItem(
             "Handles Caching",
-            "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Offline_Service_workers",
+            "https://docs.pwabuilder.com/#/home/sw-intro",
             "false",
             vscode.TreeItemCollapsibleState.None
           )

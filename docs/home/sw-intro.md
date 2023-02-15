@@ -13,7 +13,7 @@ Service workers are event-driven and run separately from your applications prima
 
 Some common use cases for service workers:
 
-* Precaching assets
+* Pre-caching assets
 
 * Handling asset requests, such as deciding when to use the cache or go to the network
 
@@ -32,7 +32,7 @@ Technically, an empty service worker will be enough for your app to be installab
 #### Scope
 You can place a service worker anywhere in your project, but it will only have access to assets that are at or below it's current directory level. This is called your service workers ***scope***.
 
-A service worker that lives at the root of your project will have a scope that encompases the entirety of your application.
+A service worker that lives at the root of your project will have a scope that encompasses the entirety of your application.
 
 #### Registration
 
@@ -54,22 +54,22 @@ Let's take a look at a basic service worker that we could add to our PWA.
 
 We'll step through it in pieces, but you can find the full source code [here.](https://github.com/pwa-builder/PWABuilder/tree/main/docs/assets/code-examples/example-sw.js)
 
-#### Precaching During the *Install* Event
+#### Pre-caching During the *Install* Event
 
 Service workers that are being installed for the first time emit an `install` event.
 
-We can add a listener for this event to precache essential resources for our application. This will allow our application's assets to be available when used offline.
+We can add a listener for this event to pre-cache essential resources for our application. This will allow our application's assets to be available when used offline.
 
 ```js
 const CACHE_NAME = 'cool-cache';
 
-// Add whichever assets you want to precache here:
+// Add whichever assets you want to pre-cache here:
 const PRECACHE_ASSETS = [
     '/assets/',
     '/src/'
 ]
 
-// Listener for the install event - precaches our assets list on service worker install.
+// Listener for the install event - pre-caches our assets list on service worker install.
 self.addEventListener('install', event => {
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_NAME);
@@ -97,7 +97,7 @@ By default, a newly activated service worker won't claim any clients until they 
 Using `clients.claim()` in our activation listener tells our service worker to take control of new clients right away.
 
 #### Defining A Fetch Strategy
-Once the service worker is precaching assets, we need to provide some functionality for retrieving those assets.
+Once the service worker is pre-caching assets, we need to provide some functionality for retrieving those assets.
 
 We listen to the `fetch` event to allow us to intercept and handle requests for assets:
 
@@ -124,6 +124,17 @@ self.addEventListener('fetch', event => {
 This snippet showcases using a *Cache-First* strategy to fetch resources. When the service worker intercepts a request, it will check the cache first for a response, and then go to the network if it fails to get a response.
 
 The Cache-First strategy is basic and has some cons (for example, updating stale resources), but works great for simple, beginner use cases.
+
+## Security
+
+Service workers have to be served from a secure, HTTPS-enabled endpoint in order to function. Because service workers are essential to progressive web apps, all PWAs must therefore be served on HTTPS to work properly.
+
+For testing purposes, service workers will function without HTTPS when served from `localhost`, but if you want to distribute your PWA, you will need to secure your application.
+
+If you are unfamiliar with creating certificates to secure an endpoint, you can use an app hosting service that comes with HTTPS enabled by default. 
+
+One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI [here.](/starter/publish?id=azure-static-web-apps)
+
 
 ## Next Steps
 

@@ -16,7 +16,7 @@ A good progressive web app can:
 Progressive web apps are applications *first*, and separate themselves from websites and web apps through a combination of technology and design paradigms.
 
 ## What Makes A PWA?
-From a technical perspective, a normal web app only needs two extra pieces to become a progressive web app: a ***web app manifest*** and a ***service worker***.
+From a technical perspective, a normal web app only needs a few extra pieces to become a progressive web app: a ***web app manifest*** and a ***service worker***. It is also important to note that service workers require ***HTTPS*** to work properly, and progressive web apps must be served from a secure endpoint.
 
 #### Web App Manifests
 A web app manifest (often shortened to web manifest, or even just *manifest*) is a `.json` file that tells the browser that your web app is a progressive web app, and is capable of being installed to the OS.
@@ -148,5 +148,3 @@ If you're ready to dive in with building your first PWA, the PWA Starter is a gr
 The PWA Starter is a template that comes with a service worker and manifest built in, and allows you to jump right in with your first PWA. 
 
 Check out the Quick Start [here.](/starter/quick-start)
-
-
