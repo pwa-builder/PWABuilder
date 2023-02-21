@@ -244,6 +244,9 @@ export const maniTests = [
     docsLink:
       "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
     quickFix: true,
+    test: (value: string) => {
+      return value && value.length > 0 ? true : false;
+    }
   },
   {
     infoString:
@@ -253,7 +256,7 @@ export const maniTests = [
     defaultValue: [],
     docsLink:
       "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
-    quickFix: true,
+    quickFix: true
   },
   {
     member: "lang",
@@ -308,20 +311,35 @@ export const maniTests = [
     member: "protocol_handlers",
     infoString:
       "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
-    category: "optional",
-    defaultValue: [],
+    category: "recommended",
+    defaultValue: JSON.stringify([
+      {
+        "protocol": "mailto",
+        "url": "/newEmail?to=%s"
+      }
+    ]),
     docsLink:
       "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
     quickFix: true,
+    test: (value: any[]) => {
+      return value && Array.isArray(value) && value.length > 0 ? true : false;
+    }
   },
   {
     member: "display_override",
     infoString:
       "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
-    category: "optional",
-    defaultValue: [],
+    category: "recommended",
+    defaultValue: JSON.stringify(["window-controls-overlay"]),
     docsLink:
       "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
     quickFix: true,
+    test: (value: any[]) => {
+      if (value && Array.isArray(value) && value.length > 0 ? true : false) {
+        const validValues = ["window-controls-overlay"];
+        const isValid = value.every((val) => validValues.includes(val));
+        return isValid;
+      }
+    }
   },
 ];

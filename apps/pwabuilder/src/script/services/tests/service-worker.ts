@@ -37,8 +37,8 @@ export async function testServiceWorker(
   const swTestResult = [
     {
       result: swData.hasSW,
-      infoString: 'Has a Service Worker',
-      category: 'required',
+      infoString: swData.hasSW ? 'Has a Service Worker' : 'Does not have a Service Worker',
+      category: 'highly recommended',
     },
     {
       result: worksOffline,

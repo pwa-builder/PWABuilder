@@ -28,11 +28,14 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
               fix.diagnostics = [diagnostic];
               fix.edit = new vscode.WorkspaceEdit();
 
+              
+
               if (value.defaultValue) {
                 // special case around quotes for icons and screenshots
                 // and quotes for other members
                 // to-do: Maybe add a "type" field to the manifest vaildations? 
-                if (value.member === "icons" || value.member === "screenshots" || value.member === "shortcuts") {
+                if (value.member === "icons" || value.member === "screenshots" || value.member === "shortcuts" || value.member === "protocol_handlers" || value.member === "display_override") {
+                  console.log("insert", value.defaultValue)
                   fix.edit.insert(
                     document.uri,
                     new vscode.Position(1, 0),

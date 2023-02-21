@@ -128,6 +128,11 @@ export class WindowsForm extends AppPackageFormBase {
           color: #757575;
         }
 
+        #languageDrop sl-menu-item:focus-within::part(base) {
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
         #languageDrop sl-menu-item::part(base):hover{
           color: #ffffff;
           background-color: #4F3FB6;
@@ -478,6 +483,24 @@ export class WindowsForm extends AppPackageFormBase {
                     inputHandler: (val: string, checked: boolean) => {
                       this.addOrRemoveDeviceFamily(val, checked);
                     },
+                  })}
+                </div>
+              </div>
+              <div class="form-group" id="target-device-families">
+                <label>Widgets</label>
+                <div class="form-check">
+                  ${this.renderFormInput({
+                    label: 'Enable Widgets',
+                    value: 'Widgets',
+                    tooltip:
+                      'Enables your Windows package to serve the widgets listed in your web manifest to the Widgets Panel.',
+                    tooltipLink:
+                      'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
+                    inputId: 'widget-checkbox',
+                    type: 'checkbox',
+                    checked: this.packageOptions.enableWebAppWidgets,
+                    inputHandler: (_val: string, checked: boolean) => 
+                      (this.packageOptions.enableWebAppWidgets = checked),
                   })}
                 </div>
               </div>
