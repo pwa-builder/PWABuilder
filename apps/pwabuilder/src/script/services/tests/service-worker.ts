@@ -42,17 +42,17 @@ export async function testServiceWorker(
     },
     {
       result: worksOffline,
-      infoString: worksOffline ? 'Works Offline' : 'Does not work offline',
+      infoString: 'Works Offline',
       category: 'recommended',
     },
     {
       result: swData.hasPeriodicBackgroundSync,
-      infoString: swData.hasPeriodicBackgroundSync ? 'Uses Periodic Sync for a rich offline experience' : 'Does not use Periodic Sync for a rich offline experience',
+      infoString: 'Uses Periodic Sync for a rich offline experience',
       category: 'optional',
     },
     {
       result: swData.hasBackgroundSync,
-      infoString: swData.hasBackgroundSync ? 'Uses Background Sync for a rich offline experience' : 'Does not use Background Sync for a rich offline experience',
+      infoString: 'Uses Background Sync for a rich offline experience',
       category: 'optional',
     },
   ];

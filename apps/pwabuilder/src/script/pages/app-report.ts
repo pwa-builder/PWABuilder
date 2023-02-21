@@ -16,6 +16,7 @@ import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
+import '../components/share-card';
 
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
@@ -459,6 +460,79 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
 
+        #share-card {
+          width: 100%;
+          background: #ffffff;
+          border-radius: 10px;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 22px;
+          position: relative;
+        }
+
+        #share-card-mani{
+          position: absolute;
+          left: 10px;
+          bottom: 0;
+          height: 85px;
+        }
+
+        #share-card-content{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        #share-card-text {
+          font-size: var(--subheader-font-size);
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-left: 115px;
+        }
+
+        #share-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+
+        .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          padding: 10px 20px;
+          background: transparent;
+          color: var(--primary-color);
+          font-size: var(--button-font-size);
+          font-weight: bold;
+          border: 1px solid var(--primary-color);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
+        }
+        .share-banner-buttons:hover {
+          box-shadow: var(--button-box-shadow)
+        }
+
+        #share-button:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #share-button:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+
+        .banner-button-icons {
+          width: 20px;
+          height: auto;
+        }
+        
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -570,6 +644,9 @@ export class AppReport extends LitElement {
 
         #todo-summary-left p {
           font-size: var(--subheader-font-size);
+        }
+
+        .todo-items-holder {
         }
 
         #pagination-actions {
@@ -793,9 +870,10 @@ export class AppReport extends LitElement {
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
-          color: rgb(79, 63, 182);
+          color: var(--primary-color);
           display: flex;
           column-gap: 10px;
+          width: fit-content;
         }
 
         .arrow_anchor:visited {
@@ -982,6 +1060,7 @@ export class AppReport extends LitElement {
           color: var(--primary-color);
           box-sizing: border-box;
           animation: animloader 2s linear infinite;
+          grid-row: 3;
         }
 
         @keyframes animloader {
@@ -1072,7 +1151,26 @@ export class AppReport extends LitElement {
             width: 75px;
             height: 75px;
           }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            margin-bottom: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
+          }
         `)}
+
         ${smallBreakPoint(css`
           sl-progress-ring {
             --size: 75px;
@@ -1152,6 +1250,24 @@ export class AppReport extends LitElement {
           }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
+          }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            margin-bottom: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
           }
         `)}
       `,
@@ -1650,6 +1766,14 @@ export class AppReport extends LitElement {
     })
   } 
 
+  // Opens share card modal and tracks analytics
+  async openShareCardModal() {
+    let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog!.show();
+    recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }  
+
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
@@ -1736,6 +1860,14 @@ export class AppReport extends LitElement {
       return {"green": true, "red": false, "yellow": false};
     }
 
+  }
+
+  getRingColor(card: string) {
+    let ring = this.shadowRoot!.getElementById(`${card}ProgressRing`);
+    if(ring){
+      return ring.classList[0];
+    }
+    return;
   }
 
   // Swaps messages for each card depending on state of each card
@@ -2143,7 +2275,7 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="${classMap(this.decideColor("manifest"))}">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
             </div>
@@ -2272,7 +2404,7 @@ export class AppReport extends LitElement {
                     id="swProgressRing"
                     class=${classMap(this.decideColor("sw"))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`${this.swValidCounter} / ${this.swTotalScore}`}</sl-progress-ring>
+                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`<div class="${classMap(this.decideColor("sw"))}"> ${this.swValidCounter} / ${this.swTotalScore} </div>`} </sl-progress-ring>
                     `
                   }
                 </div>
@@ -2378,7 +2510,7 @@ export class AppReport extends LitElement {
                     id="secProgressRing"
                     class=${classMap(this.decideColor("sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`${this.secValidCounter} / ${this.secTotalScore}`}</sl-progress-ring>
+                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
                     `
                   }
 
@@ -2428,9 +2560,30 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
+
+
+          <div id="share-card">
+            <div id="share-card-content">
+              <img id="share-card-mani" src="/assets/manny_banner_image.png"/>
+              <p id="share-card-text">Proud of your PWA? Share your score with the world!</p>
+            </div>
+            <div id="share-card-actions">
+              <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
+                <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">Link copied</div>
+                <button type="button" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
+              </sl-tooltip>        
+              <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                ${this.runningTests ?
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                } Share score
+              </button>
+            </div>
+          </div>
+
+
         </div>
       </div>
-
       
 
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
@@ -2448,6 +2601,13 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
+
+      <share-card 
+        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
+        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
+        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
+        .siteUrl=${this.appCard.siteUrl}
+      > </share-card>
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
