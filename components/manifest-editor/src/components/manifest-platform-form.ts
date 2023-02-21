@@ -397,6 +397,7 @@ export class ManifestPlatformForm extends LitElement {
         }
       }
     }
+    
     this.validationPromise = undefined;
     if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));
