@@ -1406,13 +1406,13 @@ export class AppReport extends LitElement {
         } else {
           let status ="";
           if(test.category === "required" || test.testRequired){
-            status = "red";
+            status = "required";
             this.manifestRequiredCounter++;
           } else if(test.category === "recommended"){
-            status = "yellow";
+            status = "recommended";
             this.manifestReccCounter++;
           } else {
-            status = "yellow";
+            status = "optional";
           }
 
           this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
@@ -1421,7 +1421,7 @@ export class AppReport extends LitElement {
       });
     } else {
       manifest = {};
-      this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
+      this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
     
     let amt_missing = await this.handleMissingFields(manifest);
@@ -1460,14 +1460,18 @@ export class AppReport extends LitElement {
       if(result.result){
         this.swValidCounter++;
       } else {
-        let status = "yellow";
+        let status = "";
         let card = "sw-details";
         if(result.category === "highly recommended"){
           missing = true;
+          status = "highly recommended";
           this.swRequiredCounter++;
           this.todoItems.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
         } else if(result.category === "recommended"){
+          status = "recommended";
           this.swReccCounter++;
+        } else {
+          status = "optional";
         }
 
         if(!missing){
@@ -1510,13 +1514,13 @@ export class AppReport extends LitElement {
       } else {
         let status ="";
         if(result.category === "required"){
-          status = "red";
+          status = result.category;
           this.secRequiredCounter++;
         } else if(result.category === "recommended"){
-          status = "yellow";
+          status = result.category;
           this.manifestReccCounter++;
         } else {
-          status = "yellow";
+          status = result.category;
         }
 
         this.todoItems.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
@@ -1547,7 +1551,7 @@ export class AppReport extends LitElement {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "red"})
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "required"})
       } else if(reccommended_fields.includes(field)){
         this.reccMissingFields.push(field);
         this.manifestReccCounter++;
@@ -1833,10 +1837,15 @@ export class AppReport extends LitElement {
 
   // Sorts the action items list with the required stuff first
   sortTodos(){
+    console.log(this.todoItems[0])
     this.todoItems.sort((a, b) => {
-      if(a.status === "red" && b.status !== "red"){
+      if(a.status === "required" && b.status !== "required"){
         return -1;
-      } else if(b.status === "red" && a.status !== "red"){
+      } else if(b.status === "required" && a.status !== "required"){
+        return 1;
+      } else if(a.status === "highly recommended" && b.status !== "highly recommended"){
+        return -1;
+      } else if(b.status === "highly recommended" && a.status !== "highly recommended"){
         return 1;
       } else {
         return a.field.localeCompare(b.field);
@@ -1893,7 +1902,7 @@ export class AppReport extends LitElement {
     let red = 0;
 
     this.todoItems.forEach((todo: any) => {
-      if(todo.status == "red"){
+      if(todo.status == "required"){
         red++;
       } else {
         yellow++;
