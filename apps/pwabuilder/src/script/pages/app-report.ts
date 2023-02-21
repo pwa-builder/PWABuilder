@@ -1366,7 +1366,9 @@ export class AppReport extends LitElement {
     await this.getManifest(url);
     await Promise.all([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
     {
-      this.canPackage = this.canPackageList.every((can: boolean) => can);
+      //this.canPackage = this.canPackageList.every((can: boolean) => can);
+      // this.canPackageList: boolean[] = [canPackageManifest?, canPackageSW?, canPackageSec?]
+      this.canPackage = this.canPackageList[0] && this.canPackageList[2];
     });
 
     this.runningTests = false;
@@ -1458,22 +1460,19 @@ export class AppReport extends LitElement {
       if(result.result){
         this.swValidCounter++;
       } else {
-        let status ="";
-        if(result.category === "required"){
-          status = "red";
+        let status = "yellow";
+        let card = "sw-details";
+        if(result.category === "highly recommended"){
           missing = true;
           this.swRequiredCounter++;
-          this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
+          this.todoItems.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
         } else if(result.category === "recommended"){
-          status = "yellow";
           this.swReccCounter++;
-        } else {
-          status = "yellow";
         }
 
         if(!missing){
-          this.todoItems.push({"card": "sw-details", "field": result.infoString, "fix": result.infoString, "status": status});
-        }
+          this.todoItems.push({"card": card, "field": result.infoString, "fix": result.infoString, "status": status});
+        } 
       }
     })
 
@@ -2304,11 +2303,11 @@ export class AppReport extends LitElement {
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
-                    <p class="detail-list-header">Required</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
+                    <p class="detail-list-header">Highly Recommended</p>
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "highly recommended" ?
                     html`
                       <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="invalid result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
                     ` :
