@@ -2176,13 +2176,13 @@ export class AppReport extends LitElement {
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
                   <p>Action Items</p>
-                  ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.renderIndicators() : html``}
+                  ${this.todoItems.length > 0 ? this.renderIndicators() : html``}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                 
               </div>
               <div class="todo-items-holder">
-                ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
+                ${this.todoItems.length > 0 ? this.paginate().map((todo: any) =>
                     html`
                       <todo-item
                         .status=${todo.status}
@@ -2194,7 +2194,7 @@ export class AppReport extends LitElement {
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
-            ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
+            ${(this.todoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
                 <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
