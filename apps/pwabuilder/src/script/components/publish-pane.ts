@@ -289,8 +289,8 @@ export class PublishPane extends LitElement {
         display: flex;
         flex-direction: column;
         background-color: #F2F3FB;
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
+        border-top-left-radius: var(--card-border-radius);
+        border-top-right-radius: var(--card-border-radius);
         padding: 1em;
         gap: .5em;
       }
@@ -355,7 +355,7 @@ export class PublishPane extends LitElement {
         display: flex;
         flex-direction: column;
         align-items: center;
-        border-radius: 20px;
+        border-radius: var(--card-border-radius);
       }
       .dialog::part(overlay){
         backdrop-filter: blur(10px);
@@ -468,8 +468,8 @@ export class PublishPane extends LitElement {
         justify-content: space-between;
         padding: 1.5em 2em;
         background-color: #F2F3FB;
-        border-bottom-right-radius: 20px;
-        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: var(--card-border-radius);
+        border-bottom-left-radius: var(--card-border-radius);
       }
 
       #form-details-block {

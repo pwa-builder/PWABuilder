@@ -31,7 +31,7 @@ export class Infocard extends LitElement {
         align-items: flex-start;
         justify-content: space-between;
         background: #ffffff;
-        border-radius: 4px;
+        border-radius: var(--card-border-radius);
         box-shadow: 0px 16px 24px 0px #00000026;
       }
 
