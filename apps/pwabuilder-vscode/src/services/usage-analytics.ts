@@ -1,6 +1,8 @@
 import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
 
+import * as vscode from 'vscode';
+
 export function initAnalytics() {
   try {
     // check flag first
@@ -22,10 +24,17 @@ export function initAnalytics() {
   }
 }
 
+export function getSesssionID() {
+  return vscode.env.sessionId;
+}
+
 // function to trackEvent
 export function trackEvent(name: string, properties: any) {
   try {
     if (getFlag("analytics") === true) {
+
+      // add session id to properties
+      properties.sessionId = getSesssionID();
 
       defaultClient.trackEvent({ 
         name,  
@@ -44,7 +53,10 @@ export function trackException(err: Error) {
   try {
     if (getFlag("analytics") === true) {
       defaultClient.trackException({ 
-        exception: err
+        exception: err,
+        properties: {
+          sessionId: getSesssionID()
+        }
       });
     }
   }
