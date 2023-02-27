@@ -26,7 +26,7 @@ export class TodoItem extends LitElement {
         align-items: center;
         font-size: 16px;
         background-color: #F1F2FA;
-        border-radius: 10px;
+        border-radius: var(--card-border-radius);
         padding: .5em;
         margin-bottom: 10px;
         height: 30px;

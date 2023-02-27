@@ -265,7 +265,7 @@ export class AppReport extends LitElement {
         #app-card {
           width: 60%;
           height: 100%;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           background-color: #ffffff;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
@@ -288,7 +288,7 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           background-color: #ffffff;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
         
@@ -410,7 +410,7 @@ export class AppReport extends LitElement {
         #app-actions {
           width: 40%;
           height: 100%;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           background-color: #ffffff;
           align-items: center;
           justify-content: space-between;
@@ -478,7 +478,7 @@ export class AppReport extends LitElement {
           max-width: 325px;
           align-items: center;
           justify-content: center;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           gap: .5em;
           background-color: #ffffff;
           color: var(--font-color);
@@ -545,11 +545,11 @@ export class AppReport extends LitElement {
         #todo {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         #todo-detail::part(base) {
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         #todo-detail::part(header) {
@@ -626,7 +626,7 @@ export class AppReport extends LitElement {
           align-items: center;
           background-color: #F1F2FA;
           padding: .25em .5em;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         .indicator p {
@@ -639,7 +639,7 @@ export class AppReport extends LitElement {
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: #ffffff;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           width: 100%;
         }
 
@@ -702,7 +702,7 @@ export class AppReport extends LitElement {
           flex-direction: column;
           justify-content: space-between;
           align-self: flex-start;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         /* SW Card */
@@ -2461,7 +2461,7 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
-
+      
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
