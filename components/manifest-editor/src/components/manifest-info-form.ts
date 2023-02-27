@@ -166,6 +166,16 @@ export class ManifestInfoForm extends LitElement {
         width: 100%;
       }
 
+      sl-menu-item:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
+      sl-menu-item::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
       .error-color-field{
         border: 1px solid #eb5757 !important;
       }
