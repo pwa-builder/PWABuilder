@@ -2,6 +2,17 @@ import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
 
 import * as vscode from 'vscode';
+import { Headers } from 'node-fetch';
+
+const sessionID = getSessionID();
+export const standard_headers = new Headers(
+  { 
+    "content-type": "application/json",
+    "Platform-Identifier": "PWAStudio",
+    "Platform-Identifier-Version": "",
+    "Correlation-Id": sessionID,
+  }
+)
 
 export function initAnalytics() {
   try {
@@ -24,7 +35,7 @@ export function initAnalytics() {
   }
 }
 
-export function getSesssionID() {
+export function getSessionID() {
   return vscode.env.sessionId;
 }
 
@@ -34,10 +45,10 @@ export function trackEvent(name: string, properties: any) {
     if (getFlag("analytics") === true) {
 
       // add session id to properties
-      properties.sessionId = getSesssionID();
+      properties.sessionId = getSessionID();
 
       defaultClient.trackEvent({ 
-        name,  
+        name,
         properties
       });
     }
@@ -55,7 +66,7 @@ export function trackException(err: Error) {
       defaultClient.trackException({ 
         exception: err,
         properties: {
-          sessionId: getSesssionID()
+          sessionId: getSessionID()
         }
       });
     }
