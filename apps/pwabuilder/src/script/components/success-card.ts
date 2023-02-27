@@ -31,7 +31,7 @@ export class SuccessCard extends LitElement {
         align-items: flex-start;
         justify-content: flex-start;
         background: #ffffff;
-        border-radius: 4px;
+        border-radius: var(--card-border-radius);
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         text-decoration: none;
         color: black;

@@ -62,9 +62,23 @@ Some things you’ll need before we get started:
 
 - Personal version of the PWA Starter hosted on Github
 
-#### Building For Deployment
+#### Enabling Github Pages
 
-First, let's bundle and build your PWA for deployment:
+In order to use Github Pages, it has to be enabled for your repository:
+
+1. Navigate to your repository's `Settings` tab.
+
+2. Go to `Pages`.
+
+3. Under `Build and Deployment`, set `Source` to `Github Actions` and you're good to go!
+
+<div class="docs-image">
+   <img src="/assets/starter/publishing/enable-pages.png" alt="Image showing how to enable GitHub pages in repository settings.">
+</div>
+
+#### Deploying to GitHub Pages
+
+Once you've enabled Pages, you just need to run the GitHub action that deploys the Starter to your static GitHub site:
 
 1. Go to your PWA's repository on GitHub.
 
@@ -81,6 +95,8 @@ First, let's bundle and build your PWA for deployment:
 </div>
 
 6. After your PWA has been successfully deployed, you will be able to find your app at the URL formatted like this: `https://[GITHUB USERNAME].github.io/[REPOSITORY NAME]/`
+
+That's it! Your progressive web app is now deployed to GitHub pages.
 
 #### Next Steps
 

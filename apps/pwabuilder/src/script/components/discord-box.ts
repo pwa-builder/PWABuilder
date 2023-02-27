@@ -20,7 +20,7 @@ export class DiscordBox extends LitElement {
         height: 30px;
         background-color: #F5F7FA;
         padding: 10px;
-        border-top-left-radius: 10px;
+        border-top-left-radius: var(--card-border-radius);
         column-gap: 10px;
         align-items: center;
       }
