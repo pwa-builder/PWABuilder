@@ -30,7 +30,7 @@ When you use PWABuilder to package your PWA for iOS, your download will include 
 <details>
   <summary>Service worker support</summary>  
 
-We utilize [App-Bound Domains](<a href="https://webkit.org/blog/10882/app-bound-domains/">) to enable service workers to function when your PWA is run on supported platforms (iOS 14 and above). 
+We utilize [App-Bound Domains](https://webkit.org/blog/10882/app-bound-domains/") to enable service workers to function when your PWA is run on supported platforms (iOS 14 and above). 
 
 </details>
 

@@ -1,7 +1,7 @@
 # Publishing Your PWA
 
 Once you've developed your PWA using the starter, it's time to publish your application to the web. 
-This not only makes your PWA available through the browser, but also allows you to package your application for different app stores with <a href=#/builder/quick-start>PWABuilder.</a>
+This not only makes your PWA available through the browser, but also allows you to package your application for different app stores with [PWABuilder.](/builder/quick-start)
 
 For now, we only have guidance for publishing with Azure Static Web Apps and GitHub Pages, but will be adding additional routes in the future.
 
@@ -19,7 +19,7 @@ You can check out the Azure SWA CLI website [here.](https://azure.github.io/stat
 
 What you'll need before we get started:
   
-* <a href="https://azure.microsoft.com/en-us/free"> Free Azure account </a>
+* [Free Azure account](https://azure.microsoft.com/en-us/free)
 
 #### Step By Step
 
