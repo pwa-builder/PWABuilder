@@ -51,7 +51,7 @@ Has to match the app name you used on PWABuilder:
 
 ## Android
 
-#### Why is the browser address bar still showing still showing in my PWA?
+#### Why is the browser address bar still showing in my PWA?
 
 If your address bar is still showing, it probably means there's a problem with your `assetlinks.json` file.
 
