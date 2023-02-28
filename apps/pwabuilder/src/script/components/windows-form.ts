@@ -499,6 +499,7 @@ export class WindowsForm extends AppPackageFormBase {
                     inputId: 'widget-checkbox',
                     type: 'checkbox',
                     checked: this.packageOptions.enableWebAppWidgets,
+                    disabled: !this.packageOptions.enableWebAppWidgets,
                     inputHandler: (_val: string, checked: boolean) => 
                       (this.packageOptions.enableWebAppWidgets = checked),
                   })}
