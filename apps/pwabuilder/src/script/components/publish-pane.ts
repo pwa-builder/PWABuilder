@@ -160,6 +160,7 @@ export class PublishPane extends LitElement {
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
         padding: 1em;
+        border-radius: var(--card-border-radius);
       }
       .packaged-tracker {
         height: max-content;
