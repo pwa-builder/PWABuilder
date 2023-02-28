@@ -18,6 +18,7 @@ const test_manifest = {
   "background_color": "#FFFFFF",
   "related_applications": [],
   "prefer_related_applications": false,
+  "handle_links": "preferred",
   "screenshots": [
     {
       "src": "assets/screen.png"
@@ -105,7 +106,7 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   it('returns correct number of tests', async () => {
     const data = await maniLib.validateManifest(test_manifest);
 
-    assert.equal(data.length, 24);
+    assert.equal(data.length, 25);
   });
 
   /*
@@ -184,6 +185,18 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
 
     assert.equal(validity.valid, true);
   });
+
+  it("handle_links is valid, should pass", async () => {
+    const validity = await maniLib.validateSingleField("handle_links", "auto");
+
+    assert.equal(validity.valid, true);
+  })
+
+  if ("handle_links is invalid, should fail", async () => {
+    const validity = await maniLib.validateSingleField("handle_links", "justin");
+
+    assert.equal(validity.valid, false);
+  })
 
   /*
    * test validateRequiredFields method

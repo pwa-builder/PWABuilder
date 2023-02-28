@@ -1,13 +1,13 @@
 import { writeFile } from "fs/promises";
 const fetch = require('node-fetch');
-import { Headers, Response } from "node-fetch";
+import { Response } from "node-fetch";
 import { Manifest, MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
 import { AndroidPackageOptions } from "../android-interfaces";
 import { URL } from "url";
 
-import { trackEvent, trackException } from "../services/usage-analytics";
+import { getSessionID, standard_headers, trackEvent, trackException } from "../services/usage-analytics";
 import { getURL } from "../services/web-publish";
 
 export const WindowsDocsURL =
@@ -72,12 +72,13 @@ export async function packageForWindows(options: any) {
   let response: Response | undefined;
 
   try {
+
     response = await fetch(
       "https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip",
       {
         method: "POST",
         body: JSON.stringify(options),
-        headers: new Headers({ "content-type": "application/json" }),
+        headers: standard_headers,
       }
     );
   } catch (err: any) {
@@ -134,7 +135,7 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
     response = await fetch(generateAppUrl, {
       method: "POST",
       body: JSON.stringify(options),
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: standard_headers,
     });
   } catch (err: any) {
     vscode.window.showErrorMessage(
@@ -159,7 +160,7 @@ export async function buildIOSPackage(options: IOSAppPackageOptions) {
     response = await fetch(generateAppUrl, {
       method: "POST",
       body: JSON.stringify(options),
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: standard_headers,
     });
   } catch (err: any) {
     vscode.window.showErrorMessage(
