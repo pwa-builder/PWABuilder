@@ -1,13 +1,17 @@
 const{ execSync } = require('child_process');
 const path = require('path');
 
-const defaultErrorMessage: string = "Add command failed due to unknown error.";
+const defaultErrorMessage: string = "Command failed due to unknown error.";
 
 export function execSyncWrapper(command: string, directory?: string | undefined) {
-  execSync(command, {
-    stdio: [0, 1, 2], // we need this so node will print the command output
-    cwd: path.resolve(process.cwd(), directory ? directory : '')
-  });
+  try{
+    execSync(command, {
+      stdio: [0, 1, 2],
+      cwd: path.resolve(process.cwd(), directory ? directory : '')
+    });
+  } catch (err) {
+    throw err;
+  }
 }
 
 export function outputMessage(message: string) {

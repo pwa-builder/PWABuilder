@@ -1,5 +1,6 @@
 import type { Arguments, CommandBuilder} from "yargs";
 import type { CreateOptions, ResolvedCreateOptions } from "../types/createTypes";
+import { createDescriptions, createErrors } from "../strings/createStrings";
 import * as prompts from "@clack/prompts";
 
 import { litFileReplaceList } from "../util/replaceLists";
@@ -7,7 +8,7 @@ import { replaceInFileList, removeDirectory, doesFileExist } from "../util/fileU
 import { execSyncWrapper } from "../util/util";
 
 export const command: string = 'create [name]';
-export const desc: string = '';
+export const desc: string = createDescriptions.commandDescription;
 const defaultName: string = "pwa-starter";
 
 const templateToRepoURLMap = {
@@ -17,9 +18,10 @@ const templateToRepoURLMap = {
 
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
   yargs.options({
-      template: { type: 'string', alias: 't'}
+      template: { type: 'string', alias: 't', description: createDescriptions.templateDescription}
     })
-    .positional('name', {type: "string", demandOption: false});
+    .positional('name', {type: "string", demandOption: false, description: createDescriptions.nameDescription})
+    .usage("$0 create [name] [-t|--template]");
     
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
@@ -52,7 +54,7 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
       initialValue: defaultName,
       validate(value) {
         if(!validateName(value)) {
-          return "Invalid name. Valid project name must not exist and may only contain alphanumeric characters, dashes, and underscores."
+          return createErrors.invalidName;
         }
       },
     }) as string;
