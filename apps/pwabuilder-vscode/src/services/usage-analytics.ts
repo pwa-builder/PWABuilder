@@ -9,7 +9,6 @@ export const standard_headers = new Headers(
   { 
     "content-type": "application/json",
     "Platform-Identifier": "PWAStudio",
-    "Platform-Identifier-Version": "",
     "Correlation-Id": sessionID,
   }
 )
