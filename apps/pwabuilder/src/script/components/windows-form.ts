@@ -19,6 +19,7 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() customSelected = false;
   @state() initialBgColor: string = '';
+  @state() currentSelectedColor: string = '';
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
   @state() activeLanguages: string[] = [];
   @state() activeLanguageCodes: string[] = [];
@@ -95,6 +96,17 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
+        #color-input-holder {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        #color-input-holder p {
+          margin: 0;
+          color: var(--secondary-font-color);
+        }
+
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;
@@ -152,9 +164,14 @@ export class WindowsForm extends AppPackageFormBase {
 
         sl-color-picker::part(trigger){
           border-radius: 0;
-          height: 45px;
-          width: 100px;
+          height: 25px;
+          width: 75px;
           display: flex;
+        }
+        
+        .color-radio::part(control--checked){
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
         }
        
     `
@@ -180,7 +197,7 @@ export class WindowsForm extends AppPackageFormBase {
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
 
     this.customSelected = this.packageOptions.images?.backgroundColor != 'transparent';
-    this.initialBgColor = (this.packageOptions.images?.backgroundColor as string);
+    this.initialBgColor = this.currentSelectedColor = (this.packageOptions.images?.backgroundColor as string);
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -299,17 +316,22 @@ export class WindowsForm extends AppPackageFormBase {
           <p class="sub-multi">Select your Windows icons background color</p>
           <sl-radio-group 
             id="icon-bg-radio-group" 
-            value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
-            @sl-change=${() => this.toggleIconBgRadios()}>
-            <sl-radio value="transparent">Transparent</sl-radio>
-            <sl-radio value="custom">Custom Color</sl-radio>
+            .value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
+            @sl-change=${() => this.toggleIconBgRadios()}
+          >
+            <sl-radio class="color-radio" value="transparent">Transparent</sl-radio>
+            <sl-radio class="color-radio" value="custom">Custom Color</sl-radio>
           </sl-radio-group>
           ${this.customSelected ? html`
+          <div id="color-input-holder">
             <sl-color-picker
               id="icon-bg-color"
               value=${this.packageOptions.images!.backgroundColor || 'transparent'}
               @sl-change=${() => this.switchIconBgColor()}
+              .swatches=${[]}
             ></sl-color-picker>
+            <p>${this.currentSelectedColor}</p>
+          </div>
           ` : html``}
         </div>
       </div>
@@ -324,13 +346,14 @@ export class WindowsForm extends AppPackageFormBase {
       this.packageOptions.images!.backgroundColor = 'transparent';
     } else {
       this.packageOptions.images!.backgroundColor = this.initialBgColor;
+      this.currentSelectedColor = this.initialBgColor;
     }
   }
 
   switchIconBgColor(){
     let input = (this.shadowRoot?.getElementById("icon-bg-color") as any);
     let formattedValue = input.getFormattedValue('hex')
-    this.packageOptions.images!.backgroundColor = formattedValue;
+    this.packageOptions.images!.backgroundColor = this.currentSelectedColor = formattedValue;
   }
 
   handleLanguage(e: any){
