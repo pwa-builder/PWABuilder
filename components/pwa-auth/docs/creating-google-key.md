@@ -4,9 +4,9 @@ To let your users sign-in with their Google account, you'll need to create a Goo
 
 In short, we'll use Google Developer Console to create a Project, and within that project, create a credential (a key). 
 
-## Step 1: Login to <a href="https://console.developers.google.com/">Google Developer Console</a>
+## Step 1: Login to [Google Developer Console](https://console.developers.google.com/)
 
-Go to the <a href="https://console.developers.google.com/">Google Developer Console</a> and sign-in with your Google account.
+Go to the [Google Developer Console](https://console.developers.google.com/) and sign-in with your Google account.
 
 ## Step 2: Create a new Project
 

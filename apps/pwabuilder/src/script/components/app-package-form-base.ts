@@ -131,6 +131,10 @@ export class AppPackageFormBase extends LitElement {
         border: 1px solid var(--error-color);
       }
 
+      input:disabled {
+        cursor: no-drop;
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
@@ -180,6 +184,7 @@ export class AppPackageFormBase extends LitElement {
         max="${ifDefined(formInput.maxValue)}" pattern="${ifDefined(formInput.pattern)}"
         spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+        ?disabled=${formInput.disabled}
         @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
@@ -284,5 +289,6 @@ export interface FormInput {
   readonly?: boolean;
   validationErrorMessage?: string;
   checked?: boolean;
+  disabled?: boolean;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }
