@@ -34,3 +34,8 @@ export function createFileAndWrite(filepath: string, content?: string | undefine
 export function doesFileExist(filepath: string) {
   return fs.existsSync(filepath);
 }
+
+export function doesStringExistInFile(filePath: string, searchString: string): boolean {
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+  return fileContent.includes(searchString);
+}

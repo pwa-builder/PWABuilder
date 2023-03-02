@@ -68,7 +68,7 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
 async function resolveTemplateArgument(templateArg: string | undefined): Promise<string> {
   let template: string = 'default';
 
-  if(!template || !validateTemplate(template)) {
+  if(!templateArg || !validateTemplate(templateArg)) {
     template = await prompts.select({
       message: 'Select a template for your PWA:',
       options: [

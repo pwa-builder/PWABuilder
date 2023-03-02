@@ -1,3 +1,5 @@
+import { doesStringExistInFile, doesFileExist } from "./fileUtil";
+
 const{ execSync } = require('child_process');
 const path = require('path');
 
@@ -24,4 +26,11 @@ export function outputError(message?: string) {
   } else {
     process.stderr.write(defaultErrorMessage + '\n');
   }
+}
+
+export function isDirectoryTemplate(directory?: string | undefined): boolean {
+  const indexPath: string = directory ? path.resolve(directory, 'index.html') : path.resolve(process.cwd(), 'index.html');
+  const testString: string = "<meta name=\"pwa-starter-template-identity\"";
+
+  return doesFileExist(indexPath) && doesStringExistInFile(indexPath, testString);
 }

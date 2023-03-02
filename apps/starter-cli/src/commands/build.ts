@@ -1,6 +1,6 @@
 import type { CommandBuilder } from "yargs";
-import { execSyncWrapper } from "../util/util";
-import { buildDescriptions } from "../strings/buildStrings";
+import { execSyncWrapper, isDirectoryTemplate, outputError } from "../util/util";
+import { buildDescriptions, buildErrors } from "../strings/buildStrings";
 
 export const command: string = 'build';
 export const desc: string = buildDescriptions.commandDescription;
@@ -10,5 +10,9 @@ export const builder: CommandBuilder = (yargs) =>
     .usage("$0 build");
 
 export const handler = (): void => {
-  execSyncWrapper('npm run build');
+  if(isDirectoryTemplate()) {
+    execSyncWrapper('npm run build');
+  } else {
+    outputError(buildErrors.invalidDirectory);
+  }
 };
