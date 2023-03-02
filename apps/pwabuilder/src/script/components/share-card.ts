@@ -12,7 +12,7 @@ export class ShareCard extends LitElement {
   @property() manifestData = "";
   @property() swData = "";
   @property() securityData = "";
-  @property() siteUrl = "";
+  @property() siteName = "";
 
   @state() dataURL = "";
   @state() actionButtons: TemplateResult = html``;
@@ -31,7 +31,7 @@ export class ShareCard extends LitElement {
       }
       .dialog::part(panel) {
         width: 460px !important;
-        height: 478px;
+        height: auto;
         position: relative;
         display: flex;
         flex-direction: column;
@@ -51,6 +51,13 @@ export class ShareCard extends LitElement {
       }
       .dialog_header {
         height: 12px !important;
+      }
+      .share-modal-header {
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 22px;
+        text-align: center;
+        color: #292C3A;
       }
       #frame-wrapper {
         display: flex;
@@ -73,21 +80,24 @@ export class ShareCard extends LitElement {
 
       #myCanvas {
         width: 413px;
-        height: auto;
+        height: 322px;
+        margin: 20px 0;
       }
       
       #share-actions {
         display: flex;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         margin-bottom: 15px;
         gap: 10px;
+        text-align: center;
       }
       .standard-button {
-        padding: var(--button-padding);
+        padding: 12px 40px;
         white-space: nowrap;
-        width: 50%;
-        height: 100%;
+        width: 80px;
+        height: 45px;
         font-size: var(--button-font-size);
         font-weight: bold;
         border-radius: var(--button-border-radius);
@@ -96,6 +106,17 @@ export class ShareCard extends LitElement {
         justify-content: center;
         gap: 5px;
       }
+
+      #share-button {
+        padding: 12px 30px;
+      }
+
+      .standard-button-label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #292C3A;
+      }
+
       .standard-button:hover {
         cursor: pointer;
         box-shadow: var(--button-box-shadow);
@@ -103,7 +124,7 @@ export class ShareCard extends LitElement {
       .primary {
         background-color: var(--font-color);
         border-color: var(--font-color);
-        color: #ffffff;
+        color: var(--primary-color);
       }
 
       .secondary {
@@ -125,13 +146,13 @@ export class ShareCard extends LitElement {
         }
 
         #share-actions {
-          flex-direction: column;
-          width: 100%;
-          margin: 0;
+          justify-content: space-evenly;
         }
-        #share-actions > * {
-          width: 100%;
+
+        .standard-button {
+          margin-bottom: 8px;
         }
+        
       `)}
     `
   }
@@ -168,7 +189,7 @@ export class ShareCard extends LitElement {
     canvas.width = 824; //413
     canvas.height = 660; //331
 
-    const ringYpos = 209;
+    const ringYpos = 243;
 
     let background = new Image();
     background.src = 'assets/share_score_backdrop.jpg';
@@ -190,48 +211,58 @@ export class ShareCard extends LitElement {
     // text for url
     ctx!.font = "bold 48px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
-    ctx!.fillText(this.siteUrl.replace(/\/$/, ""), 30, 70);
+    ctx!.fillText(this.siteName.replace(/\/$/, ""), 30, 70);
+
+    ctx!.textAlign = "center";
+
+    //brand label
+    ctx!.font = "30px Hind, sans-serif";
+    ctx!.fillStyle = "#292c3a";
+    ctx!.fillText("PWA Score", 105, 115);
 
     ctx!.textAlign = "center";
 
     // --- mani ring ---
     // track
-    this.drawRingPart(ctx!, 6, trackColor, 137.5, ringYpos, 80, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
+    this.drawRingPart(ctx!, 6, trackColor, 200, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
 
     // indicator
-    let percentMani = eval(maniPercent);
+    //let percentMani = eval(maniPercent);
+    let percentMani = 0;
+
     if(percentMani === 0){
       // draw exclamation
-      await this.drawExclamation(ctx!, 82.5);
+      await this.drawExclamation(ctx!, 145);
 
-      ctx!.font = "36px Hind, sans-serif";
+      ctx!.font = "24px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
-      ctx!.fillText(maniHeader, 137.5, 330);
+      ctx!.fillText(maniHeader, 200, 340);
     } else {
       let radiansMani = (360 * percentMani) * (Math.PI / 180);
       let endMani = (start) + radiansMani;
-      this.drawRingPart(ctx!, 12, colorMap.get(maniColor)!, 137.5, ringYpos, 80, start, endMani, false, "transparent");
+      this.drawRingPart(ctx!, 12, colorMap.get(maniColor)!, 200, ringYpos, 57.44, start, endMani, false, "transparent");
       
       // text
-      this.writeText(ctx!, 137.5, maniPercent, maniHeader);
+      this.writeText(ctx!, 200, maniPercent, maniHeader);
     }
 
     // --- sw ring ---
     // track
-    this.drawRingPart(ctx!, 6, trackColor, 412.5, ringYpos, 80, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
+    this.drawRingPart(ctx!, 6, trackColor, 412.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
 
     // indicator
-    let percentSW = eval(swPercent);
+    //let percentSW = eval(swPercent);
+    let percentSW = 0;
     if(percentSW === 0){
       await this.drawExclamation(ctx!, 357.5);
 
-      ctx!.font = "32px Hind, sans-serif";
+      ctx!.font = "24px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
-      ctx!.fillText(swHeader, 412.5, 330);
+      ctx!.fillText(swHeader, 412.5, 340);
     } else {
       let radiansSW = (360 * percentSW) * (Math.PI / 180);
       let endSW = (start) + radiansSW;
-      this.drawRingPart(ctx!, 12, colorMap.get(swColor)!, 412.5, ringYpos, 80, start, endSW, false, "transparent");
+      this.drawRingPart(ctx!, 12, colorMap.get(swColor)!, 412.5, ringYpos, 57.44, start, endSW, false, "transparent");
       
       // text
       this.writeText(ctx!, 412.5, swPercent, swHeader);
@@ -239,24 +270,26 @@ export class ShareCard extends LitElement {
     
     // --- sec ring ---
     // track
-    this.drawRingPart(ctx!, 6, trackColor, 687, ringYpos, 80, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
+    this.drawRingPart(ctx!, 6, trackColor, 624.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
 
     // indicator
-    let percentSec = eval(secPercent);
+    //let percentSec = eval(secPercent);
+    let percentSec = 0;
+
     if(percentSec === 0) {
       // draw exclamation
-      await this.drawExclamation(ctx!, 632);
+      await this.drawExclamation(ctx!, 569.5);
 
-      ctx!.font = "36px Hind, sans-serif";
+      ctx!.font = "24px Hind, sans-serif";
       ctx!.fillStyle = "#292c3a";
-      ctx!.fillText(secHeader, 687, 330);
+      ctx!.fillText(secHeader, 624.5, 340);
     } else {
       let radiansSec = (360 * percentSec) * (Math.PI / 180);
       let endSec = (start) + radiansSec;
-      this.drawRingPart(ctx!, 12, colorMap.get(secColor)!, 687, ringYpos, 80, start, endSec, false, "transparent");
+      this.drawRingPart(ctx!, 12, colorMap.get(secColor)!, 624.5, ringYpos, 57.44, start, endSec, false, "transparent");
 
       // text
-      this.writeText(ctx!, 687, secPercent, secHeader);
+      this.writeText(ctx!, 624.5, secPercent, secHeader);
     }
   }
 
@@ -277,14 +310,14 @@ export class ShareCard extends LitElement {
     // Use `await` to wait for the image to load
     await new Promise(resolve => exclamation.onload = resolve);
     // Now that the image is loaded, draw it on the canvas
-    ctx!.drawImage(exclamation, x, 154, 110, 110);
+    ctx!.drawImage(exclamation, x, 188, 110, 110);
   }
 
   writeText(ctx: CanvasRenderingContext2D, x: number, percent: string, header: string){
-    ctx!.font = "bold 32px Hind, sans-serif";
+    ctx!.font = "bold 24px Hind, sans-serif";
     ctx!.fillStyle = "#4f3fb6";
-    ctx!.fillText(percent, x, 219);
-    ctx!.font = "32px Hind, sans-serif";
+    ctx!.fillText(percent, x, 250);
+    ctx!.font = "24px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
     ctx!.fillText(header, x, 340);
   }
@@ -292,11 +325,11 @@ export class ShareCard extends LitElement {
   htmlToImage(shareOption: string) {
 
     if (shareOption === "download"){
-      this.downloadImage(`${this.siteUrl}_pwabuilder_score.png`)
+      this.downloadImage(`${this.siteName}_pwabuilder_score.png`)
     } else if (shareOption === "share"){
-      const file = this.dataURLtoFile(this.dataURL, `${this.siteUrl}_pwabuilder_score.png`);
+      const file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
       console.log("file from dataURL()", file);
-      this.shareFile(file, `${this.siteUrl} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
+      this.shareFile(file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
     } else {  
       return;
     }
@@ -353,28 +386,45 @@ export class ShareCard extends LitElement {
   }
 
   renderShareActionButtons(){
-    const file = this.dataURLtoFile(this.dataURL, `${this.siteUrl}_pwabuilder_score.png`);
+    const file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
 
     if (!navigator.canShare || !navigator.canShare({files: [file]})) {
       //console.log("Share API is unavailable in this browser.")
       this.actionButtons = html`
         <button type="button" id="cancel-button" class="standard-button secondary" @click=${() => this.hideDialog()}>Cancel</button>
-        <button type="button" id="download-button" class="standard-button primary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-white.svg" alt="Download image button icon"/>  Download Image</button>
-      `
+        <div>
+          <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span class="standard-button-label">Download</span>
+        </div>      `
       return;
     }
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
       //console.log("This is a mobile browser with the Share API available.");
-      this.shadowRoot!.getElementById("share-actions")!.style.flexDirection = 'column-reverse';
+      //this.shadowRoot!.getElementById("share-actions")!.style.flexDirection = 'column-reverse';
       this.actionButtons = html`
-        <button type="button" id="cancel-button" class="standard-button secondary" @click=${() => this.hideDialog()}>Cancel</button>
-        <button type="button" id="share-button" class="standard-button primary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
-      `
+        <div>
+          <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span class="standard-button-label">Download</span>
+        </div>        
+        <div>
+          <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
+          <span class="standard-button-label">Share</span>
+        </div>           `
     } else {
         //console.log("This is a desktop browser with the Share API available.");
         this.actionButtons = html`
-        <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon.svg" alt="Download image button icon"/>  Download Image</button>
-        <button type="button" id="share-button" class="standard-button primary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon_white.svg" alt="Share image button icon"/>  Share</button>                            
+        <div>
+          <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span class="standard-button-label">Copy</span>
+        </div>
+        <div>
+          <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span class="standard-button-label">Download</span>
+        </div>
+        <div>
+          <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
+          <span class="standard-button-label">Share</span>
+        </div>                          
       `
     }
     return;
@@ -383,6 +433,7 @@ export class ShareCard extends LitElement {
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => this.setup()} @sl-hide=${() => this.hideDialog()} noHeader>
+        <div class="share-modal-header">Share this image with the community!</div>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="canvas-holder">

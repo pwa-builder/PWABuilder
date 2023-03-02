@@ -2606,7 +2606,7 @@ export class AppReport extends LitElement {
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
-        .siteUrl=${this.appCard.siteUrl}
+        .siteName=${this.appCard.siteName}
       > </share-card>
       
       <publish-pane></publish-pane>
