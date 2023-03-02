@@ -141,6 +141,11 @@ export class ManifestPlatformForm extends LitElement {
       sl-menu {
          width: 100%;
       }
+      sl-menu-item:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
       sl-menu-item::part(base):hover{
         color: #ffffff;
         background-color: #4F3FB6;
@@ -392,6 +397,7 @@ export class ManifestPlatformForm extends LitElement {
         }
       }
     }
+    
     this.validationPromise = undefined;
     if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));

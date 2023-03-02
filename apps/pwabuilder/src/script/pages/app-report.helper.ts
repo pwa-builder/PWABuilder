@@ -35,7 +35,7 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	  {
 		result: serviceWorker?.score || false,
 		infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
-		category: 'required',
+		category: 'highly recommended',
 	  },
 	  {
 		result: worksOffline,

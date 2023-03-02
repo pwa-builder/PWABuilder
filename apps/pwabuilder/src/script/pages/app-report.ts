@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, setManifestContext } from '../services/app-info';
-import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
+import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -92,7 +92,7 @@ export class AppReport extends LitElement {
   @state() manifestTotalScore: number = 0;
   @state() manifestValidCounter: number = 0;
   @state() manifestRequiredCounter: number = 0;
-  @state() manifestReccCounter: number = 0;
+  @state() manifestRecCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
   @state() manifestMessage: string = "";
   @state() proxyLoadingImage: boolean = false;
@@ -101,7 +101,7 @@ export class AppReport extends LitElement {
   @state() swTotalScore: number = 0;
   @state() swValidCounter: number = 0;
   @state() swRequiredCounter: number = 0;
-  @state() swReccCounter: number = 0;
+  @state() swRecCounter: number = 0;
   @state() swDataLoading: boolean = true;
   @state() swMessage: string = "";
 
@@ -109,12 +109,12 @@ export class AppReport extends LitElement {
   @state() secTotalScore: number = 0;
   @state() secValidCounter: number = 0;
   @state() secRequiredCounter: number = 0;
-  @state() secReccCounter: number = 0;
+  @state() secRecCounter: number = 0;
   @state() secDataLoading: boolean = true;
   @state() secMessage: string = "";
 
   @state() requiredMissingFields: any[] = [];
-  @state() reccMissingFields: any[] = [];
+  @state() recMissingFields: any[] = [];
   @state() optMissingFields: any[] = [];
 
   // Confirm Retest stuff
@@ -139,7 +139,7 @@ export class AppReport extends LitElement {
                       "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great job you have a perfect score!",
                       "yellow": "PWABuilder has analyzed your Service Worker, and has identified additonal features you can add, like offline support, to make your app feel more robust.",
                       "blocked": "",
-                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is required to package for the stores. You can genereate a Service Worker below or use our documentation to make your own.",
+                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recomeneded by PWABuilder as it enables an array of features that can enhance your PWA. You can genereate a Service Worker below or use our documentation to make your own.",
                   },
      },
       {"messages": {
@@ -265,7 +265,7 @@ export class AppReport extends LitElement {
         #app-card {
           width: 60%;
           height: 100%;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           background-color: #ffffff;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
@@ -288,7 +288,7 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           background-color: #ffffff;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
 
@@ -410,7 +410,7 @@ export class AppReport extends LitElement {
         #app-actions {
           width: 40%;
           height: 100%;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           background-color: #ffffff;
           align-items: center;
           justify-content: space-between;
@@ -478,7 +478,7 @@ export class AppReport extends LitElement {
           max-width: 325px;
           align-items: center;
           justify-content: center;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           gap: .5em;
           background-color: #ffffff;
           color: var(--font-color);
@@ -545,11 +545,11 @@ export class AppReport extends LitElement {
         #todo {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         #todo-detail::part(base) {
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         #todo-detail::part(header) {
@@ -570,6 +570,9 @@ export class AppReport extends LitElement {
 
         #todo-summary-left p {
           font-size: var(--subheader-font-size);
+        }
+
+        .todo-items-holder {
         }
 
         #pagination-actions {
@@ -623,7 +626,7 @@ export class AppReport extends LitElement {
           align-items: center;
           background-color: #F1F2FA;
           padding: .25em .5em;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         .indicator p {
@@ -636,7 +639,7 @@ export class AppReport extends LitElement {
         #manifest {
           box-shadow: 0px 4px 30px 0px #00000014;
           background-color: #ffffff;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
           width: 100%;
         }
 
@@ -699,7 +702,7 @@ export class AppReport extends LitElement {
           flex-direction: column;
           justify-content: space-between;
           align-self: flex-start;
-          border-radius: 10px;
+          border-radius: var(--card-border-radius);
         }
 
         /* SW Card */
@@ -794,9 +797,10 @@ export class AppReport extends LitElement {
           font-weight: bold;
           margin: 0px 0.5em 0px 0px;
           line-height: 1em;
-          color: rgb(79, 63, 182);
+          color: var(--primary-color);
           display: flex;
           column-gap: 10px;
+          width: fit-content;
         }
 
         .arrow_anchor:visited {
@@ -983,6 +987,7 @@ export class AppReport extends LitElement {
           color: var(--primary-color);
           box-sizing: border-box;
           animation: animloader 2s linear infinite;
+          grid-row: 3;
         }
 
         @keyframes animloader {
@@ -1096,6 +1101,7 @@ export class AppReport extends LitElement {
             height: 75px;
           }
         `)}
+
         ${smallBreakPoint(css`
           sl-progress-ring {
             --size: 75px;
@@ -1464,7 +1470,9 @@ export class AppReport extends LitElement {
       this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score)),
       this.testSecurity(processSecurity(this.reportAudit?.audits))]).then(() =>
     {
-      this.canPackage = this.canPackageList.every((can: boolean) => can);
+      //this.canPackage = this.canPackageList.every((can: boolean) => can);
+      // this.canPackageList: boolean[] = [canPackageManifest?, canPackageSW?, canPackageSec?]
+      this.canPackage = this.canPackageList[0] && this.canPackageList[2];
     });
 
     this.runningTests = false;
@@ -1504,13 +1512,13 @@ export class AppReport extends LitElement {
         } else {
           let status ="";
           if(test.category === "required" || test.testRequired){
-            status = "red";
+            status = "required";
             this.manifestRequiredCounter++;
           } else if(test.category === "recommended"){
-            status = "yellow";
-            this.manifestReccCounter++;
+            status = "recommended";
+            this.manifestRecCounter++;
           } else {
-            status = "yellow";
+            status = "optional";
           }
 
           this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
@@ -1519,7 +1527,7 @@ export class AppReport extends LitElement {
       });
     } else {
       manifest = {};
-      this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "red"});
+      this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
 
     let amt_missing = await this.handleMissingFields(manifest);
@@ -1560,21 +1568,22 @@ export class AppReport extends LitElement {
       if(result.result){
         this.swValidCounter++;
       } else {
-        let status ="";
-        if(result.category === "required"){
-          status = "red";
+        let status = "";
+        let card = "sw-details";
+        if(result.category === "highly recommended"){
           missing = true;
+          status = "highly recommended";
           this.swRequiredCounter++;
-          this.todoItems.push({"card": "sw-details", "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
+          this.todoItems.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
         } else if(result.category === "recommended"){
-          status = "yellow";
-          this.swReccCounter++;
+          status = "recommended";
+          this.swRecCounter++;
         } else {
-          status = "yellow";
+          status = "optional";
         }
 
         if(!missing){
-          this.todoItems.push({"card": "sw-details", "field": result.infoString, "fix": result.infoString, "status": status});
+          this.todoItems.push({"card": card, "field": result.infoString, "fix": result.infoString, "status": status});
         }
       }
     })
@@ -1614,13 +1623,13 @@ export class AppReport extends LitElement {
       } else {
         let status ="";
         if(result.category === "required"){
-          status = "red";
+          status = result.category;
           this.secRequiredCounter++;
         } else if(result.category === "recommended"){
-          status = "yellow";
-          this.manifestReccCounter++;
+          status = result.category;
+          this.manifestRecCounter++;
         } else {
-          status = "yellow";
+          status = result.category;
         }
 
         this.todoItems.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
@@ -1648,18 +1657,22 @@ export class AppReport extends LitElement {
     let missing = await reportMissing(manifest);
 
     missing.forEach((field: string) => {
+
+      let isRecommended = false;
+
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "red"})
-      } else if(reccommended_fields.includes(field)){
-        this.reccMissingFields.push(field);
-        this.manifestReccCounter++;
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "required"})
+      } else if(recommended_fields.includes(field)){
+        this.recMissingFields.push(field);
+        this.manifestRecCounter++;
+        isRecommended = true;
       } else if(optional_fields.includes(field)){
         this.optMissingFields.push(field)
       }
       if(!this.createdManifest && !required_fields.includes(field)){
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest"})
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", "status": isRecommended ? "recommended" : "optional"})
       }
     });
     let num_missing = missing.length;
@@ -1710,7 +1723,7 @@ export class AppReport extends LitElement {
 
     // reset missing lists
     this.requiredMissingFields = [];
-    this.reccMissingFields = [];
+    this.recMissingFields = [];
     this.optMissingFields = [];
 
     // activate loaders
@@ -1803,7 +1816,7 @@ export class AppReport extends LitElement {
     return undefined;
   }
 
-  // Decides color of Progress rings depending on required and reccommended fields
+  // Decides color of Progress rings depending on required and recommended fields
   decideColor(card: string){
 
     let instantRed = false;
@@ -1817,11 +1830,11 @@ export class AppReport extends LitElement {
 
     let instantYellow = false;
     if(card === "manifest"){
-      instantYellow = this.manifestReccCounter > 0;
+      instantYellow = this.manifestRecCounter > 0;
     } else if(card === "sw"){
-      instantYellow = this.swReccCounter > 0;
+      instantYellow = this.swRecCounter > 0;
     } else {
-      instantYellow = this.secReccCounter > 0;
+      instantYellow = this.secRecCounter > 0;
     }
 
     if(instantRed){
@@ -1832,6 +1845,14 @@ export class AppReport extends LitElement {
       return {"green": true, "red": false, "yellow": false};
     }
 
+  }
+
+  getRingColor(card: string) {
+    let ring = this.shadowRoot!.getElementById(`${card}ProgressRing`);
+    if(ring){
+      return ring.classList[0];
+    }
+    return;
   }
 
   // Swaps messages for each card depending on state of each card
@@ -1937,15 +1958,22 @@ export class AppReport extends LitElement {
 
   // Sorts the action items list with the required stuff first
   sortTodos(){
+    const rank: { [key: string]: number } = {
+      "required": 0,
+      "highly recommended": 1,
+      "recommended": 2,
+      "optional": 3
+    };
     this.todoItems.sort((a, b) => {
-      if(a.status === "red" && b.status !== "red"){
+      if (rank[a.status] < rank[b.status]) {
         return -1;
-      } else if(b.status === "red" && a.status !== "red"){
+      } else if (rank[a.status] > rank[b.status]) {
         return 1;
       } else {
         return a.field.localeCompare(b.field);
       }
-    });
+    }
+    );
 
     return this.todoItems;
   }
@@ -1953,7 +1981,20 @@ export class AppReport extends LitElement {
   // Pages the action items
   paginate() {
     let array = this.sortTodos();
-    return array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+    let itemsOnPage = array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+
+    let holder = (this.shadowRoot?.querySelector(".todo-items-holder") as HTMLElement);
+    if(itemsOnPage.length < this.pageSize && this.pageNumber == 1){
+      holder.style.display = 'flex';
+      holder.style.flexDirection = 'column';
+      holder.style.gridTemplateRows = 'unset';
+    } else {
+      holder.style.height = '280px;'
+      holder.style.display = 'grid';
+      holder.style.gridTemplateRows = 'repeat(5, 1fr)';
+      holder.style.flexDirection = 'unset';
+    }
+    return itemsOnPage;
   }
 
   // Moves to the next window in the action items list
@@ -1984,7 +2025,7 @@ export class AppReport extends LitElement {
     let red = 0;
 
     this.todoItems.forEach((todo: any) => {
-      if(todo.status == "red"){
+      if(todo.status == "required"){
         red++;
       } else {
         yellow++;
@@ -2120,24 +2161,25 @@ export class AppReport extends LitElement {
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
                   <p>Action Items</p>
-                  ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.renderIndicators() : html``}
+                  ${this.todoItems.length > 0 ? this.renderIndicators() : html``}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
 
               </div>
-             ${(!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) ? this.paginate().map((todo: any) =>
-                html`
-                  <todo-item
-                    .status=${todo.status}
-                    .field=${todo.field}
-                    .fix=${todo.fix}
-                    .card=${todo.card}
-                    .displayString=${todo.displayString}
-                    @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
-                  </todo-item>`
-              ) : html`<span class="loader"></span>`}
-
-            ${((!this.manifestDataLoading && !this.swDataLoading && !this.secDataLoading) && (this.todoItems.length > this.pageSize)) ?
+              <div class="todo-items-holder">
+                ${this.todoItems.length > 0 ? this.paginate().map((todo: any) =>
+                    html`
+                      <todo-item
+                        .status=${todo.status}
+                        .field=${todo.field}
+                        .fix=${todo.fix}
+                        .card=${todo.card}
+                        .displayString=${todo.displayString}
+                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+                      </todo-item>`
+                  ) : html`<span class="loader"></span>`}
+              </div>
+            ${(this.todoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
                 <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
@@ -2218,7 +2260,7 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`${this.manifestValidCounter} / ${this.manifestTotalScore}`}</sl-progress-ring>`
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="${classMap(this.decideColor("manifest"))}">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
             </div>
@@ -2262,9 +2304,9 @@ export class AppReport extends LitElement {
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Recommended</p>
-                  ${this.reccMissingFields.length > 0 ?
+                  ${this.recMissingFields.length > 0 ?
                   html`
-                    ${this.reccMissingFields.map((field: string) =>
+                    ${this.recMissingFields.map((field: string) =>
                     html`<div class="test-result" data-field=${field}>
                           <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
                             <img src=${yield_src} alt="yield result icon"/>
@@ -2347,7 +2389,7 @@ export class AppReport extends LitElement {
                     id="swProgressRing"
                     class=${classMap(this.decideColor("sw"))}
                     value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`${this.swValidCounter} / ${this.swTotalScore}`}</sl-progress-ring>
+                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`<div class="${classMap(this.decideColor("sw"))}"> ${this.swValidCounter} / ${this.swTotalScore} </div>`} </sl-progress-ring>
                     `
                   }
                 </div>
@@ -2393,11 +2435,11 @@ export class AppReport extends LitElement {
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
                   <div class="detail-list">
-                    <p class="detail-list-header">Required</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
+                    <p class="detail-list-header">Highly Recommended</p>
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "highly recommended" ?
                     html`
                       <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="invalid result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
                     ` :
@@ -2453,7 +2495,7 @@ export class AppReport extends LitElement {
                     id="secProgressRing"
                     class=${classMap(this.decideColor("sec"))}
                     value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`${this.secValidCounter} / ${this.secTotalScore}`}</sl-progress-ring>
+                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
                     `
                   }
 
@@ -2507,7 +2549,6 @@ export class AppReport extends LitElement {
       </div>
 
 
-
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
         ${this.retestConfirmed ?
           html`
@@ -2523,6 +2564,7 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
+
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}

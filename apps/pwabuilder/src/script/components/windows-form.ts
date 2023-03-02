@@ -128,6 +128,11 @@ export class WindowsForm extends AppPackageFormBase {
           color: #757575;
         }
 
+        #languageDrop sl-menu-item:focus-within::part(base) {
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
         #languageDrop sl-menu-item::part(base):hover{
           color: #ffffff;
           background-color: #4F3FB6;
@@ -494,6 +499,7 @@ export class WindowsForm extends AppPackageFormBase {
                     inputId: 'widget-checkbox',
                     type: 'checkbox',
                     checked: this.packageOptions.enableWebAppWidgets,
+                    disabled: !this.packageOptions.enableWebAppWidgets,
                     inputHandler: (_val: string, checked: boolean) => 
                       (this.packageOptions.enableWebAppWidgets = checked),
                   })}

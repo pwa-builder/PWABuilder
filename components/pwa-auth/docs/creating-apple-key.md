@@ -13,9 +13,9 @@ Before we get started, a few disclosures:
 
 If none of that scares you off, read on.
 
-## Step 1: Sign in to the <a href="https://developer.apple.com/account">Apple Developer Portal</a>
+## Step 1: Sign in to the [Apple Developer Portal](https://developer.apple.com/account)
 
-Go to the <a href="https://developer.apple.com/account">Apple Developer portal</a> and sign-in with your Apple account. 
+Go to the [Apple Developer portal](https://developer.apple.com/account) and sign-in with your Apple account. 
 
 If you're not already a member of Apple's Developer Program, you'll be prompted to [enroll](https://developer.apple.com/programs/enroll/). The cost of enrollment is $99 USD/year, which gives you access to Apple's developer APIs and ability to publish to the iOS and MacOS app stores.
 
