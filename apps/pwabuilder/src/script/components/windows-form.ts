@@ -112,23 +112,23 @@ export class WindowsForm extends AppPackageFormBase {
           --sl-input-focus-ring-color: #4f3fb670;
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-input-font-size-small: 22px;
+          
         }
 
-        #languageDrop::part(control){
+        #languageDrop::part(display-input){
           min-height: 40px;
         }
 
-        #languageDrop::part(tag__base){
-          height: 35px;
+        #languageDrop::part(tag){
           font-size: var(--body-font-size);
+          font-family: Hind;
           color: #757575;
           background-color: #f0f0f0;
           border-radius: var(--input-border-radius);
-          padding: 8px 15px;
-          gap: 40px;
         }
 
-        #languageDrop::part(menu){
+        #languageDrop::part(listbox){
           background-color: #ffffff;
           height: 200px;
           overflow-y: scroll;
@@ -137,17 +137,17 @@ export class WindowsForm extends AppPackageFormBase {
           margin-top: 3px;
         }
 
-        #languageDrop sl-menu-item::part(base){
+        #languageDrop sl-option::part(base){
           font-size: var(--body-font-size);
           color: #757575;
         }
 
-        #languageDrop sl-menu-item:focus-within::part(base) {
+        #languageDrop sl-option:focus-within::part(base) {
           color: #ffffff;
           background-color: #4F3FB6;
         }
 
-        #languageDrop sl-menu-item::part(base):hover{
+        #languageDrop sl-option::part(base):hover{
           color: #ffffff;
           background-color: #4F3FB6;
         }
@@ -168,7 +168,7 @@ export class WindowsForm extends AppPackageFormBase {
           width: 75px;
           display: flex;
         }
-        
+
         .color-radio::part(control--checked){
           background-color: var(--primary-color);
           border-color: var(--primary-color);
@@ -271,6 +271,7 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   renderMultiSelect(formInput: FormInput): TemplateResult {
+    console.log(this.packageOptions.resourceLanguage)
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
@@ -282,23 +283,21 @@ export class WindowsForm extends AppPackageFormBase {
           <sl-select id="languageDrop" 
             placeholder="Select one or more languages"
             @sl-change=${(e: any) => this.handleLanguage(e)} 
-            .value=${this.packageOptions.resourceLanguage!}
+            value=${this.packageOptions.resourceLanguage!}
             ?stayopenonselect=${true} 
             multiple
-            .maxTagsVisible=${5}
+            .maxOptionsVisible=${5}
+            size="small"
           >
           ${windowsLanguages.map((lang: any) => 
             html`
               ${lang.codes.map((code: string) =>  
                 html`
-                  <sl-menu-item value=${code}>${lang.name} - ${code}</sl-menu-item>
+                  <sl-option value=${code}>${lang.name} - ${code}</sl-option>
                 `
               )}
             `
           )} 
-           <!-- ${windowsLanguages.map((lang: any) => html`
-              <sl-menu-item value=${lang.codes[0]}>${lang.name}</sl-menu-item>
-            `)} -->
           </sl-select>
         </div>
       </div>
@@ -319,8 +318,8 @@ export class WindowsForm extends AppPackageFormBase {
             .value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
             @sl-change=${() => this.toggleIconBgRadios()}
           >
-            <sl-radio class="color-radio" value="transparent">Transparent</sl-radio>
-            <sl-radio class="color-radio" value="custom">Custom Color</sl-radio>
+            <sl-radio class="color-radio" size="small" value="transparent">Transparent</sl-radio>
+            <sl-radio class="color-radio" size="small" value="custom">Custom Color</sl-radio>
           </sl-radio-group>
           ${this.customSelected ? html`
           <div id="color-input-holder">
@@ -328,7 +327,6 @@ export class WindowsForm extends AppPackageFormBase {
               id="icon-bg-color"
               value=${this.packageOptions.images!.backgroundColor || 'transparent'}
               @sl-change=${() => this.switchIconBgColor()}
-              .swatches=${[]}
             ></sl-color-picker>
             <p>${this.currentSelectedColor}</p>
           </div>
