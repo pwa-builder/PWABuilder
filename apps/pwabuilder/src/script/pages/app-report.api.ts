@@ -71,7 +71,7 @@ export async function Report(
 	const fetchReport = await fetch(
 		`${
 			env.apiV2
-		}/Report?site=${encodeURIComponent(url)}`
+		}/Report?site=${encodeURIComponent(url)}&desktop=true`
 	);
 
 	if (!fetchReport?.ok) {
