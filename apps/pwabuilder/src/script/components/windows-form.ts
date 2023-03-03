@@ -122,7 +122,6 @@ export class WindowsForm extends AppPackageFormBase {
 
         #languageDrop::part(tag){
           font-size: var(--body-font-size);
-          font-family: Hind;
           color: #757575;
           background-color: #f0f0f0;
           border-radius: var(--input-border-radius);
