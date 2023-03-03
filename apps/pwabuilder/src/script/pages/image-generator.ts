@@ -7,6 +7,7 @@ import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 
 import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { env } from '../utils/environment';
 
 interface PlatformInformation {
   label: string;
@@ -18,14 +19,14 @@ interface ImageGeneratorServicePostResponse {
   Uri: string;
 }
 
-type ColorRadioValues = 'best guess' | 'transparent' | 'custom';
+type ColorRadioValues = 'transparent' | 'custom';
 const loc = localeStrings.imageGenerator;
 const platformsData: Array<PlatformInformation> = [
   { label: loc.windows11, value: 'windows11' },
   { label: loc.android, value: 'android' },
   { label: loc.ios, value: 'ios' }
 ];
-const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+const baseUrl = env.imageGeneratorUrl;
 
 function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
   if (!value || !unknownValue) {
@@ -166,9 +167,6 @@ export class ImageGenerator extends LitElement {
                   <div class="color-radio">
                     <sl-radio-group orientation="vertical" .value=${this.colorOption}
                       @sl-change=${this.handleBackgroundRadioChange}>
-                      <sl-radio name="colorOption" value="best guess">
-                        ${loc.best_guess}
-                      </sl-radio>
                       <sl-radio name="colorOption" value="transparent">
                         ${loc.transparent}
                       </sl-radio>
@@ -194,7 +192,7 @@ export class ImageGenerator extends LitElement {
                   ${localeStrings.button.generate}
 
                 </sl-button>
-      
+
                 ${this.renderError()}
               </section>
             </form>
@@ -287,11 +285,10 @@ export class ImageGenerator extends LitElement {
       this.generating = true;
 
       const form = new FormData();
-      const colorValue =  
+      const colorValue =
         this.colorOption === 'custom' ? this.color : // custom? Then send in the chosen color
-        this.colorOption === 'best guess' ? '' : // best guess? Then send in an empty string, which the API interprets as best guess
-          'transparent'; // otherwise, it must be transparent
-      
+        'transparent'; // otherwise, it must be transparent
+
       form.append('fileName', file as Blob);
       form.append('padding', String(this.padding));
       form.append('color', colorValue);
