@@ -19,6 +19,7 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showAdvanced = false;
   @state() customSelected = false;
   @state() initialBgColor: string = '';
+  @state() currentSelectedColor: string = '';
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
   @state() activeLanguages: string[] = [];
   @state() activeLanguageCodes: string[] = [];
@@ -95,28 +96,38 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
+        #color-input-holder {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        #color-input-holder p {
+          margin: 0;
+          color: var(--secondary-font-color);
+        }
+
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-input-font-size-small: 22px;
+          
         }
 
-        #languageDrop::part(control){
+        #languageDrop::part(display-input){
           min-height: 40px;
         }
 
-        #languageDrop::part(tag__base){
-          height: 35px;
+        #languageDrop::part(tag){
           font-size: var(--body-font-size);
           color: #757575;
           background-color: #f0f0f0;
           border-radius: var(--input-border-radius);
-          padding: 8px 15px;
-          gap: 40px;
         }
 
-        #languageDrop::part(menu){
+        #languageDrop::part(listbox){
           background-color: #ffffff;
           height: 200px;
           overflow-y: scroll;
@@ -125,17 +136,17 @@ export class WindowsForm extends AppPackageFormBase {
           margin-top: 3px;
         }
 
-        #languageDrop sl-menu-item::part(base){
+        #languageDrop sl-option::part(base){
           font-size: var(--body-font-size);
           color: #757575;
         }
 
-        #languageDrop sl-menu-item:focus-within::part(base) {
+        #languageDrop sl-option:focus-within::part(base) {
           color: #ffffff;
           background-color: #4F3FB6;
         }
 
-        #languageDrop sl-menu-item::part(base):hover{
+        #languageDrop sl-option::part(base):hover{
           color: #ffffff;
           background-color: #4F3FB6;
         }
@@ -152,9 +163,14 @@ export class WindowsForm extends AppPackageFormBase {
 
         sl-color-picker::part(trigger){
           border-radius: 0;
-          height: 45px;
-          width: 100px;
+          height: 25px;
+          width: 75px;
           display: flex;
+        }
+
+        .color-radio::part(control--checked){
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
         }
        
     `
@@ -180,7 +196,7 @@ export class WindowsForm extends AppPackageFormBase {
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
 
     this.customSelected = this.packageOptions.images?.backgroundColor != 'transparent';
-    this.initialBgColor = (this.packageOptions.images?.backgroundColor as string);
+    this.initialBgColor = this.currentSelectedColor = (this.packageOptions.images?.backgroundColor as string);
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -254,6 +270,7 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   renderMultiSelect(formInput: FormInput): TemplateResult {
+    console.log(this.packageOptions.resourceLanguage)
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
@@ -265,23 +282,21 @@ export class WindowsForm extends AppPackageFormBase {
           <sl-select id="languageDrop" 
             placeholder="Select one or more languages"
             @sl-change=${(e: any) => this.handleLanguage(e)} 
-            .value=${this.packageOptions.resourceLanguage!}
+            value=${this.packageOptions.resourceLanguage!}
             ?stayopenonselect=${true} 
             multiple
-            .maxTagsVisible=${5}
+            .maxOptionsVisible=${5}
+            size="small"
           >
           ${windowsLanguages.map((lang: any) => 
             html`
               ${lang.codes.map((code: string) =>  
                 html`
-                  <sl-menu-item value=${code}>${lang.name} - ${code}</sl-menu-item>
+                  <sl-option value=${code}>${lang.name} - ${code}</sl-option>
                 `
               )}
             `
           )} 
-           <!-- ${windowsLanguages.map((lang: any) => html`
-              <sl-menu-item value=${lang.codes[0]}>${lang.name}</sl-menu-item>
-            `)} -->
           </sl-select>
         </div>
       </div>
@@ -299,17 +314,21 @@ export class WindowsForm extends AppPackageFormBase {
           <p class="sub-multi">Select your Windows icons background color</p>
           <sl-radio-group 
             id="icon-bg-radio-group" 
-            value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
-            @sl-change=${() => this.toggleIconBgRadios()}>
-            <sl-radio value="transparent">Transparent</sl-radio>
-            <sl-radio value="custom">Custom Color</sl-radio>
+            .value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
+            @sl-change=${() => this.toggleIconBgRadios()}
+          >
+            <sl-radio class="color-radio" size="small" value="transparent">Transparent</sl-radio>
+            <sl-radio class="color-radio" size="small" value="custom">Custom Color</sl-radio>
           </sl-radio-group>
           ${this.customSelected ? html`
+          <div id="color-input-holder">
             <sl-color-picker
               id="icon-bg-color"
               value=${this.packageOptions.images!.backgroundColor || 'transparent'}
               @sl-change=${() => this.switchIconBgColor()}
             ></sl-color-picker>
+            <p>${this.currentSelectedColor}</p>
+          </div>
           ` : html``}
         </div>
       </div>
@@ -324,13 +343,14 @@ export class WindowsForm extends AppPackageFormBase {
       this.packageOptions.images!.backgroundColor = 'transparent';
     } else {
       this.packageOptions.images!.backgroundColor = this.initialBgColor;
+      this.currentSelectedColor = this.initialBgColor;
     }
   }
 
   switchIconBgColor(){
     let input = (this.shadowRoot?.getElementById("icon-bg-color") as any);
     let formattedValue = input.getFormattedValue('hex')
-    this.packageOptions.images!.backgroundColor = formattedValue;
+    this.packageOptions.images!.backgroundColor = this.currentSelectedColor = formattedValue;
   }
 
   handleLanguage(e: any){
