@@ -297,19 +297,17 @@ export class ImageGenerator extends LitElement {
         .filter((_, index) => this.platformSelected[index])
         .forEach(data => form.append('platform', data.value));
 
-      const res = await fetch(`${baseUrl}/api/image`, {
+      const res = await fetch(`${baseUrl}/api/generateIconsZip`, {
         method: 'POST',
         body: form,
       });
 
-      const postRes =
-        (await res.json()) as unknown as ImageGeneratorServicePostResponse;
-
-      if (postRes.Message) {
-        throw new Error('Error from service: ' + postRes.Message);
+      if (!res.ok) {
+        throw new Error('Error from service: ' + res.statusText);
       }
 
-      this.downloadZip(`${baseUrl}${postRes.Uri}`);
+      const postRes = await res.blob();
+      this.downloadZip(postRes);
     } catch (e) {
       console.error(e);
       this.error = (e as Error).message;
@@ -319,11 +317,16 @@ export class ImageGenerator extends LitElement {
     }
   }
 
-  downloadZip(zipUrl: string) {
-    const hyperlink = document.createElement("a");
-    hyperlink.href = zipUrl;
-    hyperlink.download = "";
-    hyperlink.click();
+  downloadZip(blob: Blob) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = "AppImages.zip";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
   }
 
   checkGenerateEnabled() {
