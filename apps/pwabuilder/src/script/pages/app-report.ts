@@ -459,7 +459,7 @@ export class AppReport extends LitElement {
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
         }
-
+        
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -2608,6 +2608,7 @@ export class AppReport extends LitElement {
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
         .siteUrl=${this.appCard.siteUrl}
       > </share-card>
+      
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
