@@ -303,8 +303,6 @@ export class ImageGenerator extends LitElement {
       let platformsForAnalytics: String[] = [];
       selectedPlatforms.forEach(data => platformsForAnalytics.push(data.value));
 
-      console.log(platformsForAnalytics)
-
       recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.ProcessCheckpoint, {
         color: colorValue,
         padding: String(this.padding),
