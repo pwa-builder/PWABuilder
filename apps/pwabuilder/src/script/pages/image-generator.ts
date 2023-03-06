@@ -244,12 +244,14 @@ export class ImageGenerator extends LitElement {
   }
 
   handlePaddingChange(event: Event) {
+    recordProcessStep('image-generation', `padding-changed`, AnalyticsBehavior.ProcessCheckpoint);
     const input = <HTMLInputElement>event.target;
     let updatedValue = input.value;
     this.padding = parseFloat(updatedValue);
   }
 
   handleCheckbox(event: Event) {
+    recordProcessStep('image-generation', `toggled-platforms`, AnalyticsBehavior.ProcessCheckpoint);
     const input = event.target as HTMLInputElement;
     const index = input.dataset['index'];
     this.platformSelected[index as any] = input.checked;
@@ -258,6 +260,7 @@ export class ImageGenerator extends LitElement {
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
+    recordProcessStep('image-generation', `toggled-color-radios`, AnalyticsBehavior.ProcessCheckpoint);
     const value: ColorRadioValues = (<HTMLInputElement>event.target)
       .value as ColorRadioValues;
     this.colorOption = value;
@@ -265,13 +268,13 @@ export class ImageGenerator extends LitElement {
   }
 
   handleThemeColorInputChange(event: Event) {
+    recordProcessStep('image-generation', `custom-color-selected`, AnalyticsBehavior.ProcessCheckpoint);
     const input = event.target as HTMLInputElement;
     this.color = input.value;
     this.checkGenerateEnabled();
   }
 
   async generateZip() {
-    recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.CompleteProcess);
     const file = this.files ? this.files[0] : null;
     if (!file) {
       const errorMessage = 'No file available to generate zip';
@@ -293,9 +296,20 @@ export class ImageGenerator extends LitElement {
       form.append('padding', String(this.padding));
       form.append('color', colorValue);
 
-      platformsData
-        .filter((_, index) => this.platformSelected[index])
-        .forEach(data => form.append('platform', data.value));
+      let selectedPlatforms = platformsData.filter((_, index) => this.platformSelected[index])
+
+      selectedPlatforms.forEach(data => form.append('platform', data.value));
+
+      let platformsForAnalytics: String[] = [];
+      selectedPlatforms.forEach(data => platformsForAnalytics.push(data.value));
+
+      console.log(platformsForAnalytics)
+
+      recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.ProcessCheckpoint, {
+        color: colorValue,
+        padding: String(this.padding),
+        platforms: platformsForAnalytics
+      });
 
       const res = await fetch(`${baseUrl}/api/generateIconsZip`, {
         method: 'POST',
@@ -303,6 +317,9 @@ export class ImageGenerator extends LitElement {
       });
 
       if (!res.ok) {
+        recordProcessStep('image-generation', 'generate-zip-failed', AnalyticsBehavior.CompleteProcess, {
+          error: res.statusText
+        });
         throw new Error('Error from service: ' + res.statusText);
       }
 
@@ -311,6 +328,9 @@ export class ImageGenerator extends LitElement {
     } catch (e) {
       console.error(e);
       this.error = (e as Error).message;
+      recordProcessStep('image-generation', 'generate-zip-failed', AnalyticsBehavior.CompleteProcess, {
+        error: this.error
+      });
     } finally {
       this.generating = false;
       this.generateEnabled = true;
@@ -318,6 +338,7 @@ export class ImageGenerator extends LitElement {
   }
 
   downloadZip(blob: Blob) {
+    recordProcessStep('image-generation', 'generate-zip-successful', AnalyticsBehavior.CompleteProcess);
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.style.display = "none";
