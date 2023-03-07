@@ -1,6 +1,6 @@
 // import { currentManifest } from ".";
 import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces";
-import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils";
+import { isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
