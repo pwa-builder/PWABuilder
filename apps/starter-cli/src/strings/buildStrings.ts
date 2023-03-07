@@ -8,5 +8,5 @@ export const buildDescriptions = {
 
 export const buildErrors ={
   invalidDirectory: `Cannot execute build because the current working directory is not a valid PWA Starter template. 
-    Make sure you are executing the build command from a PWA Starter template directory.`,
+  Make sure you are executing the build command from a PWA Starter template directory.`,
 }

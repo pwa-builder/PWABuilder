@@ -1,19 +1,17 @@
 import type { Arguments, CommandBuilder} from "yargs";
 import type { CreateOptions, ResolvedCreateOptions } from "../types/createTypes";
 import { createDescriptions, createErrors } from "../strings/createStrings";
+import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/replaceLists";
+import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
-
-import { litFileReplaceList } from "../util/replaceLists";
-import { replaceInFileList, removeDirectory, doesFileExist } from "../util/fileUtil";
-import { execSyncWrapper } from "../util/util";
 
 export const command: string = 'create [name]';
 export const desc: string = createDescriptions.commandDescription;
 const defaultName: string = "pwa-starter";
 
 const templateToRepoURLMap = {
-  'default': "https://github.com/pwa-builder/pwa-starter.git",
-  'basic': "https://github.com/pwa-builder/pwa-starter-basic.git"
+  'pwa-starter-main': "https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip",
+  'pwa-starter-basic-main': "https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip"
 };
 
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
@@ -27,14 +25,12 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
 
-  cloneRepoBasedOnTemplate(resolvedTemplate, resolvedName);
-  removeGit(resolvedName);
-  gitInit(resolvedName);
-  npmInit(resolvedName);
-
+  const tempDirectoryName = await fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate]);
+  fixDirectoryStructure(resolvedName, tempDirectoryName, resolvedTemplate);
   if(resolvedName != defaultName) {
-    setNewName(resolvedName, litFileReplaceList);
+    setNewName(resolvedName);
   }
+  
 };
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
@@ -50,8 +46,8 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
   if(!nameArg || !validateName(nameArg)) {
     name = await prompts.text({
       message: "Enter a name for your new PWA: ",
-      placeholder: defaultName,
-      initialValue: defaultName,
+      placeholder: "example-pwa-name",
+      initialValue: incrementToUnusedFilename(),
       validate(value) {
         if(!validateName(value)) {
           return createErrors.invalidName;
@@ -72,8 +68,8 @@ async function resolveTemplateArgument(templateArg: string | undefined): Promise
     template = await prompts.select({
       message: 'Select a template for your PWA:',
       options: [
-        {value: "default", label: "Classic PWA Starter", hint: "Recommended"},
-        {value: "basic", label: "Simplified PWA Starter", hint: "Less dependencies and a vanilla JS service worker."}
+        {value: "pwa-starter-main", label: "Classic PWA Starter", hint: "Recommended"},
+        {value: "pwa-starter-basic-main", label: "Simplified PWA Starter", hint: "Less dependencies and a vanilla JS service worker."}
       ]
     }) as string;
   } else {
@@ -91,33 +87,25 @@ function validateName(name: string): boolean {
   return !doesFileExist(name) && isValidNameRegex.test(name);
 }
 
-function clone(repoUrl: string, name: string) {
-  const cloneCommand: string = 'git clone ' + repoUrl + ' ' + name;
-  execSyncWrapper(cloneCommand);
+function setNewName(newName: string) {
+  replaceInFileList(defaultDevOpsReplaceList, defaultName, newName, newName);
+  replaceInFileList(defaultContentReplaceList, "PWA Starter", newName, newName);
 }
 
-function gitInit(directory: string) {
-  const gitInitCommand: string = 'git init';
-  execSyncWrapper(gitInitCommand, directory);
-}
+function incrementToUnusedFilename(): string {
+  let directoryName: string = defaultName;
+  var iteration: number = 0;
 
-function npmInit(directory: string) {
-  const npmInitCommand: string = 'npm i';
-  execSyncWrapper(npmInitCommand, directory);
-}
-
-function cloneRepoBasedOnTemplate(template : string | undefined, name: string) {
-  if(template) {
-    clone(templateToRepoURLMap[template], name);
-  } else {
-    clone(templateToRepoURLMap['default'], name);
+  while(doesFileExist(directoryName)) {
+    iteration = iteration + 1;
+    directoryName = `${defaultName}-${iteration}`;
   }
+
+  return directoryName;
 }
 
-function removeGit(repoDirectoryName: string) {
-  removeDirectory(repoDirectoryName + "/.git");
-}
-
-function setNewName(newName: string, fileList: string[]) {
-  replaceInFileList(fileList, defaultName, newName, newName);
+function fixDirectoryStructure(newName: string, decompressedName: string, template: string): void {
+  renameDirectory(`${decompressedName}/${template}`, `./${newName}`);
+  removeDirectory(decompressedName);
+  removeDirectory(`${decompressedName}.zip`);
 }

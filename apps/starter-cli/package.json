@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.5.1",
+    "decompress": "^4.2.1",
+    "node-fetch": "^2.6.9",
     "yargs": "^17.6.2"
   }
 }

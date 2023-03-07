@@ -9,5 +9,5 @@ export const createDescriptions = {
 // Errors
 
 export const createErrors = {
-  invalidName: "Invalid name. Valid project name must not exist and may only contain alphanumeric characters, dashes, and underscores.",
+  invalidName: "Invalid name. A valid project name must not already exist and may only contain alphanumeric characters, dashes, and underscores.",
 }
