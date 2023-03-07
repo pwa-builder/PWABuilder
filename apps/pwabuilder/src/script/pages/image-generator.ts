@@ -14,11 +14,6 @@ interface PlatformInformation {
   value: string;
 }
 
-interface ImageGeneratorServicePostResponse {
-  Message: string;
-  Uri: string;
-}
-
 type ColorRadioValues = 'transparent' | 'custom';
 const loc = localeStrings.imageGenerator;
 const platformsData: Array<PlatformInformation> = [
