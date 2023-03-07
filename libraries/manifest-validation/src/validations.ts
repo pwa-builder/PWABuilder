@@ -400,8 +400,8 @@ export const maniTests: Array<Validation> = [
         errorString: "shortcuts should not include webp images",
         quickFix: true,
         test: (value: any) => {
-            if(value && value.length === 0) return true;
-            if(value.icons && value.icons.length === 0) return true;
+            if (value && value.length === 0) return true;
+            if (value.icons && value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
 
@@ -410,7 +410,7 @@ export const maniTests: Array<Validation> = [
                 at least one webp image somewhere in their shortcuts. */
                 const noWebp = value.every((shortcut) => {
                     // If there are no icons, then it cannot contain webp.
-                    if(!shortcut.icons) return true;
+                    if (!shortcut.icons) return true;
                     // this returns TRUE if every icon in the shortcut does not have webp.
                     return shortcut.icons!.every((icon: Icon) => {
                         return icon.type !== "image/webp";
@@ -432,13 +432,13 @@ export const maniTests: Array<Validation> = [
         errorString: "One or more of your shortcuts has icons but does not have one with size 96x96",
         quickFix: false,
         test: (value: any[]) => {
-            if(value && value.length === 0) return true;
+            if (value && value.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
                 /* we use every here bc every shortcut needs at 
                 least one icon with size 96x96 no  icons at all */
                 const has96x96Icon = value.every((shortcut) => {
-                    if(!shortcut.icons) return true;
+                    if (!shortcut.icons) return true;
                     // we use some here bc only one icon has to be that size
                     return shortcut.icons!.some((icon: Icon) => {
                         return icon.sizes === "96x96";
@@ -477,7 +477,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-            if(value && value.length === 0) return true;
+            if (value && value.length === 0) return true;
             if (isArray) {
                 let passed = value.every((app: RelatedApplication) => {
                     const check = validateSingleRelatedApp(app);
@@ -519,7 +519,7 @@ export const maniTests: Array<Validation> = [
         test: (value: any[]) => {
             let isGood;
             if (value) {
-                containsStandardCategory(value) && Array.isArray(value)
+                Array.isArray(value)
                     ?
                     isGood = true
                     :
@@ -761,4 +761,4 @@ export async function findSingleField(field: string, value: any): Promise<single
 
         resolve({ "valid": singleField, "errors": failedTests });
     })
-  }
+}
