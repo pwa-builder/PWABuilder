@@ -17,29 +17,6 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
-        infoString: "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
-        displayString: "Manifest has handle_links field",
-        category: "recommended",
-        member: "handle_links",
-        defaultValue: "auto",
-        docsLink: "",
-        errorString: "handle_links is recommended and should be either auto, preferred or not-proferred",
-        quickFix: true,
-        test: (value: string) => {
-            if (value && typeof value === "string") {
-                if (value === "auto" || "preferred" || "not-preferred") {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    },
-    {
         infoString: "share_target enables your app to get shared content from other apps",
         displayString: "Manifest has share_target field",
         category: "optional",
@@ -51,7 +28,7 @@ export const maniTests: Array<Validation> = [
                 "title": "title",
                 "text": "text",
                 "url": "url"
-            }
+              }
         }),
         docsLink: "https://web.dev/web-share-target/",
         errorString: "share_target must be an object",
@@ -112,7 +89,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-
+            
             if (isArray) {
                 const anyIcon = value.find(icon => icon.purpose === "any");
 
@@ -147,7 +124,7 @@ export const maniTests: Array<Validation> = [
         quickFix: false,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-
+            
             if (isArray) {
                 const anyIcon = value.find(icon => isAtLeast(icon.sizes, 512, 512) && (icon.type === 'image/png' || icon.src.endsWith(".png")));
 
@@ -182,7 +159,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-
+            
             if (isArray) {
                 const wrongIcon = value.find(icon => icon.purpose === "any maskable");
 
@@ -233,8 +210,8 @@ export const maniTests: Array<Validation> = [
         errorString: "short_name is required and must be a string with a length >= 3",
         quickFix: true,
         test: (value: string) => {
-            const existsAndLength = value && value.length >= 3;
-            return existsAndLength;
+          const existsAndLength = value && value.length >= 3;
+          return existsAndLength;
         },
     },
     {
@@ -502,7 +479,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
         quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
         test: (value: any) => {
-            return typeof (value) === "boolean"
+            return typeof(value)  === "boolean"
         },
         errorString: "prefer_related_applications should be set to a boolean value",
     },
@@ -518,12 +495,12 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             let isGood;
-            if (value) {
-                containsStandardCategory(value) && Array.isArray(value)
-                    ?
-                    isGood = true
-                    :
-                    isGood = false;
+            if(value){
+                containsStandardCategory(value) && Array.isArray(value) 
+                ? 
+                isGood = true 
+                : 
+                isGood = false;
             }
 
             return isGood
@@ -541,7 +518,7 @@ export const maniTests: Array<Validation> = [
         errorString: "lang should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
-            value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
+                value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
     },
     {
         member: "dir",
@@ -554,7 +531,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
         quickFix: true,
         test: (value: string) =>
-            value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
+                value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
     },
     {
         member: "description",
@@ -677,88 +654,88 @@ export const maniTests: Array<Validation> = [
 export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
     return new Promise((resolve) => {
         let data: Array<Validation> = [];
-
+  
         const keys = Object.keys(manifest);
-
+  
         keys.forEach((key) => {
             maniTests.forEach(async (test) => {
                 if (test.member === key && test.test) {
                     const testResult = await test.test(manifest[key]);
-
-
-                    if (testResult) {
-                        test.valid = true;
-                        data.push(test);
+  
+    
+                    if(testResult){
+                      test.valid = true;
+                      data.push(test);
                     }
                     else {
-                        test.valid = false;
-                        data.push(test);
+                      test.valid = false;
+                      data.push(test);
                     }
                 }
             })
         })
-
+  
         resolve(data);
     })
-}
-
-export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
+  }
+  
+  export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
     return new Promise((resolve) => {
-        let data: Array<Validation> = [];
-
-        const keys = Object.keys(manifest);
-
-        keys.forEach((key) => {
-            maniTests.forEach(async (test) => {
-                if (test.category === "required") {
-                    if (test.member === key && test.test) {
-                        const testResult = await test.test(manifest[key]);
-
-                        if (testResult === false) {
-                            test.valid = false;
-                            data.push(test);
-                        }
-                        else {
-                            test.valid = true;
-                            data.push(test);
-                        }
-                    }
-                }
-            })
-        })
-
-        resolve(data);
-    })
-}
-
-export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
-    return new Promise(async (resolve) => {
-
-        // For && operations, true is the base.
-        let singleField = true;
-        let failedTests: string[] | undefined = [];
-
-        maniTests.forEach((test) => {
-            if (test.member === field && test.test) {
-
-                const testResult = test.test(value);
-
-                if (!testResult) {
-                    failedTests!.push(test.errorString!);
-                }
-
-                // If the test passes true && true = true.
-                // If the test fails true && false = false
-                // If a field has MULTIPLE tests, they will stack
-                // ie: true (base) && true (test 1) && false (ie test 2 fails).
-                singleField = singleField && testResult;
+      let data: Array<Validation> = [];
+  
+      const keys = Object.keys(manifest);
+  
+      keys.forEach((key) => {
+        maniTests.forEach(async (test) => {
+          if (test.category === "required") {
+            if (test.member === key && test.test) {
+              const testResult = await test.test(manifest[key]);
+  
+              if (testResult === false) {
+                test.valid = false;
+                data.push(test);
+              }
+              else {
+                test.valid = true;
+                data.push(test);
+              }
             }
-        });
-
-        if (singleField) {
-            resolve({ "valid": singleField })
+          }
+        })
+      })
+  
+      resolve(data);
+    })
+  }
+  
+  export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
+    return new Promise(async (resolve) => {
+  
+      // For && operations, true is the base.
+      let singleField = true;
+      let failedTests: string[] | undefined = [];
+  
+      maniTests.forEach((test) => {
+        if (test.member === field && test.test) {
+        
+          const testResult = test.test(value);
+  
+          if(!testResult){
+            failedTests!.push(test.errorString!);
+          }
+  
+          // If the test passes true && true = true.
+          // If the test fails true && false = false
+          // If a field has MULTIPLE tests, they will stack
+          // ie: true (base) && true (test 1) && false (ie test 2 fails).
+          singleField = singleField && testResult;
         }
-
-        resolve({ "valid": singleField, "errors": failedTests });
+      });
+  
+      if(singleField){
+        resolve({"valid": singleField})
+      }
+  
+      resolve({"valid": singleField, "errors": failedTests});
     })
   }

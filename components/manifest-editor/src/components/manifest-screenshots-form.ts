@@ -50,6 +50,7 @@ export class ManifestScreenshotsForm extends LitElement {
         --sl-input-focus-ring-color: #4f3fb670;
         --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
+        --sl-input-font-family: Hind, sans-serif;
       }
       sl-input::part(base),
       sl-select::part(control),
@@ -63,8 +64,6 @@ export class ManifestScreenshotsForm extends LitElement {
       sl-select::part(control){
         background-color: #fbfbfb;
       }
-
-      
       
       #form-holder {
         display: flex;
