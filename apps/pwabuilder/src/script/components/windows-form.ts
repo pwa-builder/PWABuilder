@@ -270,7 +270,6 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   renderMultiSelect(formInput: FormInput): TemplateResult {
-    console.log(this.packageOptions.resourceLanguage)
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
