@@ -1426,7 +1426,7 @@ export class AppReport extends LitElement {
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url) {
           await AuditServiceWorker(result.content.url).then( (result) => {
-            this.testServiceWorker(processServiceWorker(result.content, false));
+            this.testServiceWorker(processServiceWorker(result.content, undefined));
           });
           findersResults.serviceWorker = result.content;
         }
@@ -1570,16 +1570,23 @@ export class AppReport extends LitElement {
       } else {
         let status = "";
         let card = "sw-details";
-        if(result.category === "highly recommended"){
-          missing = true;
-          status = "highly recommended";
-          this.swRequiredCounter++;
-          this.todoItems.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
-        } else if(result.category === "recommended"){
-          status = "recommended";
-          this.swRecCounter++;
-        } else {
-          status = "optional";
+        switch(result.category){
+          case "highly recommended":
+            missing = true;
+            status = "highly recommended";
+            this.swRequiredCounter++;
+            this.todoItems.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
+            break;
+          case "recommended":
+            status = "recommended";
+            this.swRecCounter++;
+            break;
+          case "required":
+            status = "required";
+            this.swRequiredCounter++;
+            break;
+          default:
+            status = "optional";
         }
 
         if(!missing){
@@ -2434,6 +2441,17 @@ export class AppReport extends LitElement {
               >
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
+                <div class="detail-list">
+                    <p class="detail-list-header">Required</p>
+                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
+                    html`
+                      <div class="test-result" data-field=${result.infoString}>
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="invalid result icon"/>`}
+                        <p>${result.infoString}</p>
+                      </div>
+                    ` :
+                    html``)}
+                  </div>
                   <div class="detail-list">
                     <p class="detail-list-header">Highly Recommended</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "highly recommended" ?
@@ -2445,7 +2463,7 @@ export class AppReport extends LitElement {
                     ` :
                     html``)}
                   </div>
-                  <div class="detail-list">
+                  <!-- <div class="detail-list">
                     <p class="detail-list-header">Recommended</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ?
                     html`
@@ -2455,7 +2473,7 @@ export class AppReport extends LitElement {
                       </div>
                     ` :
                     html``)}
-                  </div>
+                  </div> -->
                   <div class="detail-list">
                     <p class="detail-list-header">Optional</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ?

@@ -25,10 +25,9 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], installable = false): Array<TestResult> {
+export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], installable?: boolean): Array<TestResult> {
 	console.info('Testing Service Worker');
 
-	const worksOffline: boolean = installable;
 	const swFeatures = serviceWorker?.details?.features || null;
 
 	const swTestResult = [
@@ -36,11 +35,6 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 		result: serviceWorker?.score || false,
 		infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
 		category: 'highly recommended',
-	  },
-	  {
-		result: worksOffline,
-		infoString: worksOffline ? 'Works Offline' : 'Does not work offline',
-		category: 'recommended',
 	  },
 	  {
 		result: swFeatures?.detectedPeriodicBackgroundSync || false,
@@ -53,6 +47,15 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 		category: 'optional',
 	  },
 	];
+
+	if (typeof installable == 'boolean') {
+		swTestResult.push(
+			{
+			  result: installable,
+			  infoString: installable ? 'Installable' : 'App is not installable',
+			  category: 'required',
+			});
+	}
 
 	return swTestResult;
   }
