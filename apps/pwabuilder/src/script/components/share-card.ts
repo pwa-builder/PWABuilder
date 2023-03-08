@@ -161,7 +161,8 @@ export class ShareCard extends LitElement {
     await this.draw();
     let canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
     this.dataURL = canvas.toDataURL('image/png', 1.0);
-    this.renderShareActionButtons()
+    this.renderShareActionButtons();
+    this.shadowRoot!.getElementById("copy-button-label") ? this.shadowRoot!.getElementById("copy-button-label")!.innerText="Copy" : null;
   }
   async draw(){
     // manifest Data
@@ -227,8 +228,8 @@ export class ShareCard extends LitElement {
     this.drawRingPart(ctx!, 6, trackColor, 200, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
 
     // indicator
-    //let percentMani = eval(maniPercent);
-    let percentMani = 0;
+    let percentMani = eval(maniPercent);
+  
 
     if(percentMani === 0){
       // draw exclamation
@@ -251,8 +252,8 @@ export class ShareCard extends LitElement {
     this.drawRingPart(ctx!, 6, trackColor, 412.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
 
     // indicator
-    //let percentSW = eval(swPercent);
-    let percentSW = 0;
+    let percentSW = eval(swPercent);
+   
     if(percentSW === 0){
       await this.drawExclamation(ctx!, 357.5);
 
@@ -273,8 +274,7 @@ export class ShareCard extends LitElement {
     this.drawRingPart(ctx!, 6, trackColor, 624.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
 
     // indicator
-    //let percentSec = eval(secPercent);
-    let percentSec = 0;
+    let percentSec = eval(secPercent);
 
     if(percentSec === 0) {
       // draw exclamation
@@ -346,6 +346,17 @@ export class ShareCard extends LitElement {
     URL.revokeObjectURL(link.href);
   }
 
+  copyImage() {
+    let canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
+    let copyButtonText = this.shadowRoot!.getElementById("copy-button-label");
+
+    canvas.toBlob(blob => navigator.clipboard
+    .write([new ClipboardItem({'image/png': blob})])
+    .then(()=>{
+      copyButtonText!.innerText="Copied!";
+    }))
+  }
+
   dataURLtoFile(dataurl: string, filename: string) {
     var arr = dataurl.split(","),
     mimeType = arr[0].match(/:(.*?);/)![1],
@@ -391,7 +402,10 @@ export class ShareCard extends LitElement {
     if (!navigator.canShare || !navigator.canShare({files: [file]})) {
       //console.log("Share API is unavailable in this browser.")
       this.actionButtons = html`
-        <button type="button" id="cancel-button" class="standard-button secondary" @click=${() => this.hideDialog()}>Cancel</button>
+        <div>
+          <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span id="copy-button-label" class="standard-button-label">Copy</span>
+        </div>        
         <div>
           <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
           <span class="standard-button-label">Download</span>
@@ -402,6 +416,10 @@ export class ShareCard extends LitElement {
       //console.log("This is a mobile browser with the Share API available.");
       //this.shadowRoot!.getElementById("share-actions")!.style.flexDirection = 'column-reverse';
       this.actionButtons = html`
+        <div>
+          <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span id="copy-button-label" class="standard-button-label">Copy</span>
+        </div>
         <div>
           <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
           <span class="standard-button-label">Download</span>
@@ -414,8 +432,8 @@ export class ShareCard extends LitElement {
         //console.log("This is a desktop browser with the Share API available.");
         this.actionButtons = html`
         <div>
-          <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
-          <span class="standard-button-label">Copy</span>
+          <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
+          <span id="copy-button-label" class="standard-button-label">Copy</span>
         </div>
         <div>
           <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>

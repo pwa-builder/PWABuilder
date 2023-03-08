@@ -274,7 +274,7 @@ export class AppReport extends LitElement {
 
         #app-card-header {
           display: grid;
-          grid-template-columns: 1fr 2fr 4fr;
+          grid-template-columns: 2fr 4fr 1fr;
           gap: 10px;
           align-items: center;
           font-size: 14px;
@@ -293,10 +293,43 @@ export class AppReport extends LitElement {
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
         
-        #app-card-header img {
+        #app-image-skeleton {
           height: 85px;
           width: auto;
           padding: 10px;
+        }
+
+        #pwa-image-holder img{
+          height: 100%;
+          width: 100%;
+          left: 113px;
+          top: 118.951171875px;
+        }
+
+        #app-card-share-cta {
+          display: flex;
+          height: 100%;
+          flex-direction: column;
+          justify-content: start;
+        }
+
+        #app-card-share-cta #share-button {
+          height: 32px;
+          width: 117.5439453125px;
+          left: 509.4560546875px;
+          top: 116.7421875px;
+          border-radius: 20px;
+          text-align: center;
+          font-size: 12px;
+        }
+
+        #share-icon {
+          height: 14px;
+          width: 14.78px;
+          left: 526.8994140625px;
+          top: 125.322265625px;
+          border-radius: 0px;
+
         }
 
         .proxy-loader {
@@ -324,8 +357,9 @@ export class AppReport extends LitElement {
         }
         
         #card-info {
-          overflow: hidden;
+          //overflow: hidden;
           white-space: nowrap;
+          height: 100%;
         }
 
         #card-info p {
@@ -338,19 +372,20 @@ export class AppReport extends LitElement {
         }
 
         #site-url {
-          white-space: normal;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 200px;
         }
 
         #app-card-desc {
-          margin: 0;
-          font-size: var(--card-body-font-size);
-          width: 100%;
-          white-space: normal;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box !important;
-          -webkit-line-clamp: 6;
-          -webkit-box-orient: vertical;
+          max-width: 220px;
+          overflow-y:hidden;
+          text-overflow:ellipsis;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          line-height: 18px;
+          white-space: break-spaces;
         }
 
         #app-card-footer {
@@ -1115,8 +1150,20 @@ export class AppReport extends LitElement {
 
         @media(max-width: 600px){
           #app-card-header{
-            grid-template-columns: 1fr 5fr;
-            grid-template-rows: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+          }
+          #pwa-image-holder {
+            width: 100px;
+            height: auto;
+          }
+          #site-url {
+            margin-bottom: 8px !important;
+          }
+          #app-card-share-cta {
+            justify-content: end;
           }
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
@@ -2058,6 +2105,15 @@ export class AppReport extends LitElement {
     
   }
 
+//truncate app card discription
+  truncateString(str: String) {
+    if (str.length > 150) {
+      return str.substring(0, 150) + "...";
+    } else {
+      return str;
+    }
+  }
+
   render() {
     return html`
       <app-header></app-header>
@@ -2086,11 +2142,19 @@ export class AppReport extends LitElement {
                 <div id="pwa-image-holder">
                   ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                 </div>
-                <div id="card-info" class="flex-col">
+                <div id="card-info" class="flex-row">
                   <p id="site-name">${this.appCard.siteName}</p>
                   <p id="site-url">${this.appCard.siteUrl}</p>
+                  <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
                 </div>
-                <p id="app-card-desc">${this.appCard.description}</p>
+                <div id="app-card-share-cta">
+                  <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                  ${this.runningTests ?
+                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                  } Share score
+                  </button>
+                </div>
               </div>
               <div id="app-card-footer" style=${styleMap(this.BorderStyles)}>
                 <div id="test" style=${styleMap(this.CardStyles)}>
@@ -2560,28 +2624,6 @@ export class AppReport extends LitElement {
               </sl-details>
             </div>
           </div>
-
-
-          <div id="share-card">
-            <div id="share-card-content">
-              <img id="share-card-mani" src="/assets/manny_banner_image.png"/>
-              <p id="share-card-text">Proud of your PWA? Share your score with the world!</p>
-            </div>
-            <div id="share-card-actions">
-              <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
-                <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">Link copied</div>
-                <button type="button" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
-              </sl-tooltip>        
-              <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                ${this.runningTests ?
-                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-                } Share score
-              </button>
-            </div>
-          </div>
-
-
         </div>
       </div>
       
