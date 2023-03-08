@@ -1,5 +1,4 @@
 import type { Arguments, CommandBuilder} from "yargs";
-import type { CreateOptions, ResolvedCreateOptions } from "../types/createTypes";
 import { createDescriptions, createErrors } from "../strings/createStrings";
 import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/replaceLists";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory } from "../util/fileUtil";
@@ -9,6 +8,16 @@ import { execSyncWrapper } from "../util/util";
 export const command: string = 'create [name]';
 export const desc: string = createDescriptions.commandDescription;
 const defaultName: string = "pwa-starter";
+
+type CreateOptions = {
+  name: string | undefined;
+  template: string | undefined;
+}
+
+type ResolvedCreateOptions = {
+  resolvedName: string;
+  resolvedTemplate: string;
+}
 
 const templateToRepoURLMap = {
   'pwa-starter-main': "https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip",

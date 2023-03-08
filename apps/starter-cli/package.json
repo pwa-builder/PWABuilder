@@ -26,7 +26,6 @@
     "@clack/prompts": "^0.5.1",
     "decompress": "^4.2.1",
     "node-fetch": "^2.6.9",
-    "pwa-starter-cli": "^1.0.1",
     "yargs": "^17.6.2"
   }
 }

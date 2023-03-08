@@ -1,10 +1,13 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { execSyncWrapper, outputError, isDirectoryTemplate } from "../util/util";
-import { StartOptions } from "../types/startTypes";
 import { startDescriptions, startErrors } from "../strings/startStrings";
 
 export const command: string = 'start [viteArgs]';
 export const desc: string = startDescriptions.commandDescription;
+
+type StartOptions = {
+  viteArgs: string | undefined;
+}
 
 export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
   yargs
