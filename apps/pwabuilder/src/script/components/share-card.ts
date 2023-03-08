@@ -353,7 +353,7 @@ export class ShareCard extends LitElement {
     canvas.toBlob(blob => navigator.clipboard
     .write([new ClipboardItem({'image/png': blob!})])
     .then(()=>{
-      copyButtonText!.innerText="Copied!";
+      copyButtonText!.innerText="Copied!" ;
     }))
   }
 
