@@ -561,7 +561,8 @@ export class WindowsForm extends AppPackageFormBase {
                   })}
                 </div>
               </div>
-              <div class="form-group" id="widgets-picker">
+
+              <div class="form-group" id="target-device-families">
                 <label>Widgets</label>
                 <div class="form-check">
                   ${this.renderFormInput({
