@@ -4,6 +4,7 @@ import { createDescriptions, createErrors } from "../strings/createStrings";
 import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/replaceLists";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
+import { execSyncWrapper } from "../util/util";
 
 export const command: string = 'create [name]';
 export const desc: string = createDescriptions.commandDescription;
@@ -30,6 +31,8 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
   if(resolvedName != defaultName) {
     setNewName(resolvedName);
   }
+
+  execSyncWrapper('npm i', resolvedName);
   
 };
 

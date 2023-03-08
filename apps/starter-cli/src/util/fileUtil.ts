@@ -5,7 +5,6 @@ import {pipeline} from 'node:stream';
 import {promisify} from 'node:util';
 
 export function replaceAllInFile(filePath: string, replaceString: string, newString: string) {
-  console.log(filePath);
   fs.readFile(filePath, 'utf8', (err, data: string) => {
     if(err) {
       return console.log(err);
