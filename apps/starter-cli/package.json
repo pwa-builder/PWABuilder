@@ -1,6 +1,6 @@
 {
   "name": "pwa-starter-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -10,7 +10,7 @@
     "pwa": "./dist/index.js"
   },
   "scripts": {
-    "prepublishOnly": "tsc",
+    "prepublishOnly": "npm run clean && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run clean && tsc && npm link",
     "clean": "rm -rf dist"
