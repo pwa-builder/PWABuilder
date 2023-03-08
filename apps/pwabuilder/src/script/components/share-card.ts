@@ -351,7 +351,7 @@ export class ShareCard extends LitElement {
     let copyButtonText = this.shadowRoot!.getElementById("copy-button-label");
 
     canvas.toBlob(blob => navigator.clipboard
-    .write([new ClipboardItem({'image/png': blob})])
+    .write([new ClipboardItem({'image/png': blob!})])
     .then(()=>{
       copyButtonText!.innerText="Copied!";
     }))
