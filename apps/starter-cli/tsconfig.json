@@ -7,7 +7,7 @@
     "module": "commonjs",
     "target": "es2021",
     "moduleResolution": "node",
-
+    "declaration": true, 
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -18,6 +18,9 @@
     "sourceMap": true,
 
     "outDir": "dist"
+  },
+  "ts-node": {
+    "transpileOnly": true   /* Skips type checking for faster unit testing */
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"],
