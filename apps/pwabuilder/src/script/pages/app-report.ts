@@ -495,6 +495,7 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
         
+
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -568,6 +569,8 @@ export class AppReport extends LitElement {
           height: auto;
         }
         
+
+
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -2633,6 +2636,7 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
+
 
       <share-card 
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}

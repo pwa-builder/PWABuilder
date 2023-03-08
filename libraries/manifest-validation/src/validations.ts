@@ -377,8 +377,8 @@ export const maniTests: Array<Validation> = [
         errorString: "shortcuts should not include webp images",
         quickFix: true,
         test: (value: any) => {
-            if(value && value.length === 0) return true;
-            if(value.icons && value.icons.length === 0) return true;
+            if (value && value.length === 0) return true;
+            if (value.icons && value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
 
@@ -387,7 +387,7 @@ export const maniTests: Array<Validation> = [
                 at least one webp image somewhere in their shortcuts. */
                 const noWebp = value.every((shortcut) => {
                     // If there are no icons, then it cannot contain webp.
-                    if(!shortcut.icons) return true;
+                    if (!shortcut.icons) return true;
                     // this returns TRUE if every icon in the shortcut does not have webp.
                     return shortcut.icons!.every((icon: Icon) => {
                         return icon.type !== "image/webp";
@@ -409,13 +409,13 @@ export const maniTests: Array<Validation> = [
         errorString: "One or more of your shortcuts has icons but does not have one with size 96x96",
         quickFix: false,
         test: (value: any[]) => {
-            if(value && value.length === 0) return true;
+            if (value && value.length === 0) return true;
             const isArray = value && Array.isArray(value);
             if (isArray) {
                 /* we use every here bc every shortcut needs at 
                 least one icon with size 96x96 no  icons at all */
                 const has96x96Icon = value.every((shortcut) => {
-                    if(!shortcut.icons) return true;
+                    if (!shortcut.icons) return true;
                     // we use some here bc only one icon has to be that size
                     return shortcut.icons!.some((icon: Icon) => {
                         return icon.sizes === "96x96";
@@ -454,7 +454,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-            if(value && value.length === 0) return true;
+            if (value && value.length === 0) return true;
             if (isArray) {
                 let passed = value.every((app: RelatedApplication) => {
                     const check = validateSingleRelatedApp(app);
@@ -677,65 +677,66 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
   
         resolve(data);
     })
-  }
-  
-  export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
+}
+
+export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
     return new Promise((resolve) => {
-      let data: Array<Validation> = [];
-  
-      const keys = Object.keys(manifest);
-  
-      keys.forEach((key) => {
-        maniTests.forEach(async (test) => {
-          if (test.category === "required") {
-            if (test.member === key && test.test) {
-              const testResult = await test.test(manifest[key]);
-  
-              if (testResult === false) {
-                test.valid = false;
-                data.push(test);
-              }
-              else {
-                test.valid = true;
-                data.push(test);
-              }
-            }
-          }
+        let data: Array<Validation> = [];
+
+        const keys = Object.keys(manifest);
+
+        keys.forEach((key) => {
+            maniTests.forEach(async (test) => {
+                if (test.category === "required") {
+                    if (test.member === key && test.test) {
+                        const testResult = await test.test(manifest[key]);
+
+                        if (testResult === false) {
+                            test.valid = false;
+                            data.push(test);
+                        }
+                        else {
+                            test.valid = true;
+                            data.push(test);
+                        }
+                    }
+                }
+            })
         })
-      })
-  
-      resolve(data);
+
+        resolve(data);
     })
-  }
-  
-  export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
+}
+
+export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
     return new Promise(async (resolve) => {
-  
-      // For && operations, true is the base.
-      let singleField = true;
-      let failedTests: string[] | undefined = [];
-  
-      maniTests.forEach((test) => {
-        if (test.member === field && test.test) {
-        
-          const testResult = test.test(value);
-  
-          if(!testResult){
-            failedTests!.push(test.errorString!);
-          }
-  
-          // If the test passes true && true = true.
-          // If the test fails true && false = false
-          // If a field has MULTIPLE tests, they will stack
-          // ie: true (base) && true (test 1) && false (ie test 2 fails).
-          singleField = singleField && testResult;
+
+        // For && operations, true is the base.
+        let singleField = true;
+        let failedTests: string[] | undefined = [];
+
+        maniTests.forEach((test) => {
+            if (test.member === field && test.test) {
+
+                const testResult = test.test(value);
+
+                if (!testResult) {
+                    failedTests!.push(test.errorString!);
+                }
+
+                // If the test passes true && true = true.
+                // If the test fails true && false = false
+                // If a field has MULTIPLE tests, they will stack
+                // ie: true (base) && true (test 1) && false (ie test 2 fails).
+                singleField = singleField && testResult;
+            }
+        });
+
+        if (singleField) {
+            resolve({ "valid": singleField })
         }
-      });
-  
-      if(singleField){
-        resolve({"valid": singleField})
-      }
-  
-      resolve({"valid": singleField, "errors": failedTests});
+
+        resolve({ "valid": singleField, "errors": failedTests });
     })
-  }
+}
+
