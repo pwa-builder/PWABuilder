@@ -72,7 +72,7 @@ export class PWAManifestEditor extends LitElement {
       }
       .error-indicator {
         position: absolute;
-        right: 15px;
+        right: 1.25em;
       }
       sl-tab-group {
         --indicator-color: #4F3FB6;

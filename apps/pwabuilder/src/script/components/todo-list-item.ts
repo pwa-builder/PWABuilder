@@ -29,7 +29,7 @@ export class TodoItem extends LitElement {
         justify-content: space-between;
         font-size: 16px;
         background-color: #F1F2FA;
-        border-radius: 10px;
+        border-radius: var(--card-border-radius);
         padding: .5em;
         margin-bottom: 10px;
         border: 1px solid transparent;
@@ -88,10 +88,15 @@ export class TodoItem extends LitElement {
       ${smallBreakPoint(css`
 
       `)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
 
       `)}
+
+
+      
+
       /* 640px - 1023px */
       ${largeBreakPoint(css`
 

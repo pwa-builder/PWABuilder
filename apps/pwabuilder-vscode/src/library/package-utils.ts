@@ -1,13 +1,13 @@
 import { writeFile } from "fs/promises";
 const fetch = require('node-fetch');
-import { Headers, Response } from "node-fetch";
+import { Response } from "node-fetch";
 import { Manifest, MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
 import { AndroidPackageOptions } from "../android-interfaces";
 import { URL } from "url";
 
-import { trackEvent } from "../services/usage-analytics";
+import { getSessionID, standard_headers, trackEvent, trackException } from "../services/usage-analytics";
 import { getURL } from "../services/web-publish";
 
 export const WindowsDocsURL =
@@ -72,20 +72,22 @@ export async function packageForWindows(options: any) {
   let response: Response | undefined;
 
   try {
+
     response = await fetch(
       "https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip",
       {
         method: "POST",
         body: JSON.stringify(options),
-        headers: new Headers({ "content-type": "application/json" }),
+        headers: standard_headers,
       }
     );
-  } catch (err) {
+  } catch (err: any) {
     vscode.window.showErrorMessage(
       `
         There was an error packaging for Windows: ${err}
       `
     );
+    trackException(err);
   }
 
   return response;
@@ -133,14 +135,16 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
     response = await fetch(generateAppUrl, {
       method: "POST",
       body: JSON.stringify(options),
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: standard_headers,
     });
-  } catch (err) {
+  } catch (err: any) {
     vscode.window.showErrorMessage(
       `
         There was an error packaging for Android: ${err}
       `
     );
+
+    trackException(err);
   }
 
   return response;
@@ -156,14 +160,16 @@ export async function buildIOSPackage(options: IOSAppPackageOptions) {
     response = await fetch(generateAppUrl, {
       method: "POST",
       body: JSON.stringify(options),
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: standard_headers,
     });
-  } catch (err) {
+  } catch (err: any) {
     vscode.window.showErrorMessage(
       `
         There was an error packaging for iOS: ${err}
       `
     );
+
+    trackException(err);
   }
 
   return response;
@@ -174,7 +180,7 @@ export async function packageForIOS(options: any): Promise<any> {
 
   if (responseData) {
     const appUrl = getURL();
-    trackEvent("package", { packageType: "iOS", url: appUrl, stage: "complete" });
+    trackEvent("package", { "packageType": "iOS", "url": appUrl, "stage": "complete" });
 
     return await responseData.blob();
   }
@@ -206,7 +212,7 @@ export async function buildIOSOptions(): Promise<any | undefined> {
       if (manifestData) {
         manifest = manifestData;
       }
-    } catch (err) {
+    } catch (err: any) {
       // show error message
       vscode.window.showErrorMessage(
         `Error generating package: The Web Manifest could not be found at the URL entered.
@@ -215,6 +221,8 @@ export async function buildIOSOptions(): Promise<any | undefined> {
           your web server or hosting service. More info: ${err}
             `
       );
+
+      trackException(err);
     }
 
     const host =
@@ -303,7 +311,7 @@ export async function buildAndroidOptions(): Promise<
       if (manifestData) {
         manifest = (manifestData as Manifest);
       }
-    } catch (err) {
+    } catch (err: any) {
       // show error message
       vscode.window.showErrorMessage(
         `Error generating package: The Web Manifest could not be found at the URL entered.
@@ -312,6 +320,8 @@ export async function buildAndroidOptions(): Promise<
           your web server or hosting service. More info: ${err}
         `
       );
+
+      trackException(err);
     }
 
     // find icon with a size of 512x512 from manifest.icons
@@ -384,6 +394,8 @@ export async function buildAndroidOptions(): Promise<
           await vscode.window.showErrorMessage(
             err ? err.message : "Error writing android settings file"
           );
+
+          trackException(err);
         }
       }
     }
@@ -550,8 +562,9 @@ export function emptyIOSPackageOptions(): IOSAppPackageOptions {
 function tryGetHost(url: string): string | null {
   try {
     return new URL(url).host;
-  } catch (hostError) {
+  } catch (hostError: any) {
     console.warn("Unable to parse host URL due to error", url, hostError);
+    trackException(hostError);
     return null;
   }
 }

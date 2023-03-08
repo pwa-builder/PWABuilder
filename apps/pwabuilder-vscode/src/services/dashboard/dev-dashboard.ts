@@ -1,6 +1,12 @@
 import * as vscode from "vscode";
+import { trackException } from "../usage-analytics";
 
 export let scriptsObject: any = {};
+export let goodProdBuildScript: string | undefined;
+export let goodDevBuildScript: string | undefined;
+export let goodTestScript: string | undefined;
+
+let terminal: vscode.Terminal | undefined;
 
 export async function initDashboard(): Promise<void> {
     const packageJson: vscode.Uri = await findPackageJSON();
@@ -8,36 +14,79 @@ export async function initDashboard(): Promise<void> {
     if (packageJson) {
         const packageScripts: any = await findScripts(packageJson);
         if (packageScripts) {
-            // get keys from packageScripts
             const keys = Object.keys(packageScripts);
+
             keys.map((key) => {
                 if (!scriptsObject[key]) {
-                    scriptsObject[key] = packageScripts[key];
+                    if (key === "start" || key === "dev") {
+                        goodDevBuildScript = packageScripts[key];
+                        scriptsObject["dev"] = goodDevBuildScript;
+                    }
+                    else if (key === "build" || key === "build:prod" || key === "build-prod") {
+                        goodProdBuildScript = packageScripts[key];
+                        scriptsObject["build"] = goodProdBuildScript;
+                    }
+                    else if (key === "test") {
+                        goodTestScript = packageScripts[key];
+                        scriptsObject["test"] = goodTestScript;
+                    }
                 }
             });
         }
     }
 }
 
+export async function stopRunningScript() {
+    terminal?.sendText("Ctrl+C");
+    terminal?.dispose();
+}
+
 export async function runScript(script: string) {
-    const terminal = vscode.window.createTerminal("PWABuilder Studio");
+    terminal = vscode.window.createTerminal(`${script}`);
     terminal.show();
-    terminal.sendText(`npm run ${script}`);
+
+    if (script.includes("npm run")) {
+        terminal.sendText(script)
+    }
+    else {
+        terminal.sendText(`npm run ${script}`)
+    }
 }
 
 export async function runTests() {
     const testScript = scriptsObject["test"];
 
     if (testScript) {
-        const terminal = vscode.window.createTerminal("Test");
+        terminal = vscode.window.createTerminal("Test");
         terminal.sendText(testScript);
         terminal.show();
     }
 }
 
-export async function prodBuild() {
+export async function setupProdBuild() {
     const prodBuildScript = scriptsObject["build"];
-    console.log("prodBuildScript: ", prodBuildScript);
+
+    const prompt = await vscode.window.showInformationMessage(
+        `Is this the production build script?: ${prodBuildScript}`,
+        "Yes",
+        "No"
+    );
+
+    if (prompt === "No") {
+        const prodBuildScriptInput = await vscode.window.showInputBox({
+            placeHolder: "Enter production build script",
+        });
+
+        if (prodBuildScriptInput) {
+            goodProdBuildScript = prodBuildScriptInput;
+        }
+    }
+    else if (prompt === "Yes") {
+        goodProdBuildScript = prodBuildScript;
+    }
+    else {
+        goodProdBuildScript = undefined;
+    }
 
     if (prodBuildScript) {
         const terminal = vscode.window.createTerminal("Build");
@@ -46,9 +95,31 @@ export async function prodBuild() {
     }
 }
 
-export async function devBuild() {
+export async function setupDevBuild() {
     // get dev build script from scriptsObject
     const devBuildScript = scriptsObject["start"] || scriptsObject["dev"];
+
+    const prompt = await vscode.window.showInformationMessage(
+        `Is this the development build script?: ${devBuildScript}`,
+        "Yes",
+        "No"
+    );
+
+    if (prompt === "No") {
+        const devBuildScriptInput = await vscode.window.showInputBox({
+            placeHolder: "Enter development build script",
+        });
+
+        if (devBuildScriptInput) {
+            goodDevBuildScript = devBuildScriptInput;
+        }
+    }
+    else if (prompt === "Yes") {
+        goodDevBuildScript = devBuildScript;
+    }
+    else {
+        goodDevBuildScript = undefined;
+    }
 
     if (devBuildScript) {
         const terminal = vscode.window.createTerminal("Dev");
@@ -71,7 +142,8 @@ export function findPackageJSON(): Promise<vscode.Uri> {
             } else {
                 reject("No package.json found");
             }
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(`Error finding package.json: ${err}`);
         }
     });
@@ -92,7 +164,8 @@ export function findScripts(packageJSON: vscode.Uri) {
             } else {
                 reject("No scripts found in package.json");
             }
-        } catch (err) {
+        } catch (err: any) {
+            trackException(err);
             reject(`Error finding scripts in package.json: ${err}`);
         }
     });

@@ -15,9 +15,9 @@ export class AppFooter extends LitElement {
     return css`
       footer {
         /*temp color*/
-        background: #292C3A;
-        color: white;
-        fill: white;
+        background: var(--font-color);
+        color: #ffffff;
+        fill: #ffffff;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -26,13 +26,13 @@ export class AppFooter extends LitElement {
         padding-left: 37px;
         padding-right: 37px;
         font-weight: 700;
-        font-size: var(--small-font-size);
+        font-size: var(--footer-font-size);
       }
 
 
       sl-icon {
         font-size: var(--font-size);
-        color: white;
+        color: #ffffff;
         pointer-events: none;
       }
 
@@ -54,17 +54,17 @@ export class AppFooter extends LitElement {
 
       #links a {
         margin-right: 12px;
-        color: white;
+        color: #ffffff;
       }
 
       #links a:visited {
-        color: white;
+        color: #ffffff;
       }
 
       @media screen and (-ms-high-contrast: black-on-white) {
           /* All high contrast styling rules */
           sl-icon {
-            color: black;
+            color: var(--font-color);
           }
       } 
 
@@ -101,7 +101,7 @@ export class AppFooter extends LitElement {
           }
 
           #icons {
-            color: white;
+            color: #ffffff;
             width: 10em;
           }
 
@@ -111,7 +111,7 @@ export class AppFooter extends LitElement {
 
           #icons sl-icon {
             font-size: 27px;
-            color: white;
+            color: #ffffff;
           }
         `
       )}

@@ -76,7 +76,7 @@ To add a new page to your PWA, you will need to create a new component, and then
 
 1. Navigate to the `src/pages/` directory.
 
-2. Create a new typscript file called `new-page.ts`
+2. Create a new typescript file called `new-page.ts`
 
 3. Add the basics of a new custom component:
 
@@ -106,7 +106,7 @@ If you're new to Lit or web components in general, check out the [Lit tutorial](
 
 Next we just need to add the route in our `firstUpdated()` function in `src/app-index.ts`.
 
-We can add to our existing list of paths in our `chlildren` property:
+We can add to our existing list of paths in our `children` property:
 
 ```typescript
 {

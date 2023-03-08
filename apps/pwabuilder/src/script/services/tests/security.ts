@@ -52,17 +52,17 @@ export async function testSecurity(url: string): Promise<Array<TestResult>> {
   const organizedResults = [
     {
       result: results.data.isHTTPS,
-      infoString: results.data.isHTTPS ? 'Uses HTTPS' : 'Does not use HTTPS',
+      infoString: 'Uses HTTPS',
       category: 'required',
     },
     {
       result: results.data.valid,
-      infoString: results.data.valid ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
+      infoString: 'Has a valid SSL certificate',
       category: 'required',
     },
     {
       result: results.data.validProtocol,
-      infoString: results.data.validProtocol ? 'No mixed content on page' : 'Uses mixed content on page',
+      infoString: 'No mixed content on page',
       category: 'required',
     },
   ];

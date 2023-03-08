@@ -43,13 +43,6 @@ export class AppHeader extends LitElement {
         height: auto;
       }
 
-      header h1 {
-        margin-top: 0;
-        margin-bottom: 0;
-        font-size: 20px;
-        font-weight: bold;
-      }
-
       nav {
         display: flex;
         justify-content: flex-end;
@@ -67,7 +60,7 @@ export class AppHeader extends LitElement {
         text-decoration: none;
         border-bottom: none;
         font-weight: var(--font-bold);
-        font-size: 20px;
+        font-size: var(--subheader-font-size);
         margin: 0;
       }
 

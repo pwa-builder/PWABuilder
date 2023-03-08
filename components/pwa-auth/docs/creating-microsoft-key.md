@@ -4,7 +4,7 @@ To let your users sign-in with their Microsoft account, you'll need to create a 
 
 In short, we want to create an App Registration in Azure Active Directory, which will give us the key.
 
-## Step 1: Login to <a href="https://portal.azure.com">Azure Portal</a>
+## Step 1: Login to [Azure Portal](https://portal.azure.com)
 
 If you don't yet have an Azure account, [create a free account](https://azure.microsoft.com/en-us/free/).
 
@@ -61,7 +61,7 @@ You're done - you now have a working Microsoft key, allowing users to sign-in wi
 ## Additional notes about the Microsoft sign-in provider
 
 ### Microsoft Authentication Library (MSAL)
-pwa-auth uses <a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview">Microsoft Authentication Library (msal.js)</a> to sign-in and get authentication tokens.
+pwa-auth uses [Microsoft Authentication Library (msal.js)](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview) to sign-in and get authentication tokens.
 
 To keep pwa-auth lightweight, msal.js is lazy-loaded when the user clicks "Sign in with Microsoft". Thus, no JS loading or parsing overhead is incurred if the user doesn't try to sign-in with his Microsoft account.
 
@@ -83,7 +83,7 @@ pwaAuth.addEventListener("signin-completed", e => {
 });
 ```
 
-This access token can then be used to interact with the Microsoft Graph, for example, access the user's profile information, interact with the user's OneDrive, Outlook calendar and inbox, interact with the user's Microsoft Teams account, and so on. See details over at <a href="https://developer.microsoft.com/en-us/graph/graph-explorer#">Microsoft Graph Explorer</a>.
+This access token can then be used to interact with the Microsoft Graph, for example, access the user's profile information, interact with the user's OneDrive, Outlook calendar and inbox, interact with the user's Microsoft Teams account, and so on. See details over at [Microsoft Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer#).
 
 ### Raw `providerData` with Microsoft Sign-In
 When a user signs-in with their Microsoft account, pwa-auth will fire the `signin-completed` event with the usual data -- `email`, `name`, `imageUrl` -- as well as Microsoft-specific sign-in data via `providerData`. The `providerData` will look something like this:

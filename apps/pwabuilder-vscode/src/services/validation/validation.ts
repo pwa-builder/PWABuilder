@@ -2,6 +2,7 @@ import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 import { handleWebhint } from "../../library/handle-webhint";
 import { maniTests } from "../../manifest-utils";
+import { trackException } from "../usage-analytics";
 
 let manifestFileRead: string | undefined;
 
@@ -83,8 +84,9 @@ export function refreshDiagnostics(
 
     maniDiagnostics.set(doc.uri, diagnostics);
   }
-  catch (err) {
+  catch (err: any) {
     // the manifest.json file is most likely empty
+    trackException(err);
     return;
   }
 }
@@ -100,11 +102,11 @@ function createDiagnostic(
   // if globalManifestProblem === true, we dont need to find a range, we just want to return a diagnostic
   if (globalManifestProblem === true) {
     const diagnostic = new vscode.Diagnostic(
-      // range for the first line of the document
-      new vscode.Range(0, 0, 2, 0),
-      `Your Web Manifest is missing the ${testString} field`,
-      severity
-    );
+        // range for the first line of the document
+        new vscode.Range(0, 0, 2, 0),
+        `Your Web Manifest is missing the ${testString} field`,
+        severity
+      );
     diagnostic.code = "global";
     diagnostic.source = testString;
     return diagnostic;
@@ -132,8 +134,9 @@ function createDiagnostic(
 
         testResult = testValue.test(textToTest[testString]);
         test = testValue;
-      } catch (err) {
+      } catch (err: any) {
         console.error("Could not parse JSON value", err);
+        trackException(err);
       }
     }
   });
@@ -581,9 +584,20 @@ export async function testManifest(manifestFile: any): Promise<any[] | undefined
         docsLink:
           "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
       },
+      {
+        infoString: "Utilizes Window Controls Overlay",
+        result:
+          manifest.display_override && manifest.display_override.includes("window-controls-overlay"),
+        category: "recommended",
+        member: "display_override",
+        defaultValue: ["window-controls-overlay"],
+        docsLink:
+          "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
+      }
     ];
   }
-  catch (err) {
+  catch (err: any) {
+    trackException(err);
     return undefined;
   }
 }

@@ -30,8 +30,8 @@ export class Infocard extends LitElement {
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-between;
-        background: white;
-        border-radius: 4px;
+        background: #ffffff;
+        border-radius: var(--card-border-radius);
         box-shadow: 0px 16px 24px 0px #00000026;
       }
 
@@ -48,8 +48,9 @@ export class Infocard extends LitElement {
       }
 
       .card-content h3 {
-        font-size: 1em;
+        font-size: var(--subheader-font-size);
         line-height: 24px;
+        color: var(--font-color);
         font-weight: var(--font-bold);
         margin: 0;
         margin-bottom: .5em;
@@ -59,7 +60,7 @@ export class Infocard extends LitElement {
 
       .card-content p {
         color: var(--secondary-font-color);
-        font-size: .65em;
+        font-size: var(--card-body-font-size);
         line-height: 18px;
         text-align: center;
         margin: 0;
@@ -73,17 +74,60 @@ export class Infocard extends LitElement {
       }
 
       .card-actions a {
-        color: #4F3FB6;
+        color: var(--primary-color);
         font-weight: bold;
-        border-bottom: 1px solid rgb(79, 63, 182);
         text-decoration: none;
-        line-height: 14px;
-        font-size: 14px;
+        font-size: var(--card-body-font-size);
         margin: 0;
       }
 
       .card-actions a:hover {
         cursor: pointer;
+      }
+
+      .arrow_link {
+        margin: 0;
+        border-bottom: 1px solid var(--primary-color);
+        white-space: nowrap;
+      }
+
+      .arrow_anchor {
+        text-decoration: none;
+        font-size: var(--arrow-link-font-size);
+        font-weight: bold;
+        margin: 0px 0.5em 0px 0px;
+        line-height: 1em;
+        color: rgb(79, 63, 182);
+        display: flex;
+        column-gap: 10px;
+      }
+
+      .arrow_anchor:visited {
+        color: var(--primary-color);
+      }
+
+      .arrow_anchor:hover {
+        cursor: pointer;
+      }
+
+      .arrow_anchor:hover img {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateX(-5px);
+        }
+        60% {
+          transform: translateX(5px);
+        }
       }
 
       /* < 480px */
@@ -160,7 +204,20 @@ export class Infocard extends LitElement {
           <p>${this.description}</p>
         </div>
         <div class="card-actions" @click=${() => recordPWABuilderProcessStep("middle." + this.cardTitle + "_learn_more_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-          <a href=${this.linkRoute} target="_blank" rel="noopener" aria-label="Learn more about ${this.cardTitle}, will open separate tab">Learn More</a>
+          <a
+            class="arrow_anchor"
+            href=${this.linkRoute}
+            rel="noopener"
+            target="_blank"
+            aria-label="Learn more about ${this.cardTitle}, will open separate tab"
+          >
+            <p class="arrow_link">Learn More</p>
+            <img
+              src="/assets/new/arrow.svg"
+              alt="arrow"
+              role="presentation"
+            />
+          </a>
         </div>
       </div>
     `;

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
+import { trackException } from "./usage-analytics";
 
 let url: string | undefined = undefined;
 
@@ -72,7 +73,8 @@ async function doCLIDeploy(terminal: vscode.Terminal): Promise<void> {
         resolve();
       }
     }
-    catch (err) {
+    catch (err: any) {
+      trackException(err);
       reject(err);
     }
   })
@@ -114,7 +116,8 @@ async function initPublish(terminal: vscode.Terminal): Promise<void> {
       } else {
         noNpmInstalledWarning();
       }
-    } catch (err) {
+    } catch (err: any) {
+      trackException(err);
       reject(err);
     }
   });

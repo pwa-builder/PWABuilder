@@ -19,7 +19,7 @@ export class AppPackageFormBase extends LitElement {
     const localStyles =  css`
       #form-layout input {
         border: 1px solid rgba(194, 201, 209, 1);
-        border-radius: var(--input-radius);
+        border-radius: var(--input-border-radius);
         color: var(--font-color);
       }
 
@@ -32,21 +32,16 @@ export class AppPackageFormBase extends LitElement {
         font-style: italic;
       }
 
-
-      info-circle-tooltip {
-        margin-top: 4px;
-      }
-
-      sl-button::part(base) {
-        background-color: black;
-        color: white;
+      #form-extras sl-button::part(base) {
+        background-color: var(--font-color);
+        color: #ffffff;
         font-size: 14px;
         height: 3em;
         width: 25%;
-        border-radius: 50px;
+        border-radius: var(--button-border-radius);
       }
 
-      sl-button::part(label){
+      #form-extras sl-button::part(label){
         display: flex;
         align-items: center;
       }
@@ -136,6 +131,10 @@ export class AppPackageFormBase extends LitElement {
         border: 1px solid var(--error-color);
       }
 
+      input:disabled {
+        cursor: no-drop;
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
@@ -185,6 +184,7 @@ export class AppPackageFormBase extends LitElement {
         max="${ifDefined(formInput.maxValue)}" pattern="${ifDefined(formInput.pattern)}"
         spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+        ?disabled=${formInput.disabled}
         @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
@@ -278,7 +278,7 @@ export interface FormInput {
   name?: string;
   type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
   placeholder?: string;
-  value?: string;
+  value?: string | string[];
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -289,5 +289,6 @@ export interface FormInput {
   readonly?: boolean;
   validationErrorMessage?: string;
   checked?: boolean;
+  disabled?: boolean;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }

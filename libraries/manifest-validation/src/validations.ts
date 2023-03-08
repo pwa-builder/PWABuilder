@@ -1,5 +1,6 @@
-import { Manifest, singleFieldValidation, Validation } from "./interfaces";
-import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode } from "./utils/validation-utils";
+// import { currentManifest } from ".";
+import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces";
+import { containsStandardCategory, isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils";
 
 export const maniTests: Array<Validation> = [
     {
@@ -16,6 +17,29 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
+        infoString: "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
+        displayString: "Manifest has handle_links field",
+        category: "recommended",
+        member: "handle_links",
+        defaultValue: "auto",
+        docsLink: "",
+        errorString: "handle_links is recommended and should be either auto, preferred or not-proferred",
+        quickFix: true,
+        test: (value: string) => {
+            if (value && typeof value === "string") {
+                if (value === "auto" || "preferred" || "not-preferred") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
         infoString: "share_target enables your app to get shared content from other apps",
         displayString: "Manifest has share_target field",
         category: "optional",
@@ -27,7 +51,7 @@ export const maniTests: Array<Validation> = [
                 "title": "title",
                 "text": "text",
                 "url": "url"
-              }
+            }
         }),
         docsLink: "https://web.dev/web-share-target/",
         errorString: "share_target must be an object",
@@ -88,7 +112,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-            
+
             if (isArray) {
                 const anyIcon = value.find(icon => icon.purpose === "any");
 
@@ -123,7 +147,7 @@ export const maniTests: Array<Validation> = [
         quickFix: false,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-            
+
             if (isArray) {
                 const anyIcon = value.find(icon => isAtLeast(icon.sizes, 512, 512) && (icon.type === 'image/png' || icon.src.endsWith(".png")));
 
@@ -158,7 +182,7 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-            
+
             if (isArray) {
                 const wrongIcon = value.find(icon => icon.purpose === "any maskable");
 
@@ -200,17 +224,17 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Short name is the correct minimum length (2 characters)",
+        displayString: "Short name is the correct minimum length (3 characters)",
         category: "required",
         member: "short_name",
         defaultValue: "placeholder",
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
-        errorString: "short_name is required and must be a string with a length >= 2",
+        errorString: "short_name is required and must be a string with a length >= 3",
         quickFix: true,
         test: (value: string) => {
-          const existsAndLength = value && value.length >= 2;
-          return existsAndLength;
+            const existsAndLength = value && value.length >= 3;
+            return existsAndLength;
         },
     },
     {
@@ -241,6 +265,26 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0
+    },
+    {
+        infoString: "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
+        displayString: "start_url is valid",
+        category: "required",
+        member: "start_url",
+        defaultValue: "/",
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
+        errorString: "start_url is required and must be a string with a length > 0, must be a valid URL, and must be relative to the app scope (if specified)",
+        quickFix: true,
+        test: (value: string) => {
+            if (value && typeof value === "string" && value.length > 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
     },
     {
         infoString: "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
@@ -353,19 +397,54 @@ export const maniTests: Array<Validation> = [
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-        errorString: "shortcuts should be a non-empty array and should not include webp images",
+        errorString: "shortcuts should not include webp images",
         quickFix: true,
-        test: (value: any[]) => {
+        test: (value: any) => {
+            if (value && value.length === 0) return true;
+            if (value.icons && value.icons.length === 0) return true;
             const isArray = value && Array.isArray(value);
-            if (isArray === true) {
-                // check image types dont include webp
-                const hasWebp = value.some(icon => icon.type === "image/webp");
-                if (hasWebp) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+            if (isArray) {
+
+                /* this loop makes sure that EVERY shortcut returns true for
+                the below conditions. If one is false, that means there is
+                at least one webp image somewhere in their shortcuts. */
+                const noWebp = value.every((shortcut) => {
+                    // If there are no icons, then it cannot contain webp.
+                    if (!shortcut.icons) return true;
+                    // this returns TRUE if every icon in the shortcut does not have webp.
+                    return shortcut.icons!.every((icon: Icon) => {
+                        return icon.type !== "image/webp";
+                    });
+                });
+                return noWebp;
+            }
+            return true;
+        }
+    },
+    {
+        infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
+        displayString: "Shortcuts have at least a 96x96 icon",
+        category: "recommended",
+        member: "shortcuts",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
+        errorString: "One or more of your shortcuts has icons but does not have one with size 96x96",
+        quickFix: false,
+        test: (value: any[]) => {
+            if (value && value.length === 0) return true;
+            const isArray = value && Array.isArray(value);
+            if (isArray) {
+                /* we use every here bc every shortcut needs at 
+                least one icon with size 96x96 no  icons at all */
+                const has96x96Icon = value.every((shortcut) => {
+                    if (!shortcut.icons) return true;
+                    // we use some here bc only one icon has to be that size
+                    return shortcut.icons!.some((icon: Icon) => {
+                        return icon.sizes === "96x96";
+                    });
+                });
+                return has96x96Icon;
             }
             else {
                 return false;
@@ -398,9 +477,19 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
-            return isArray;
+            if (value && value.length === 0) return true;
+            if (isArray) {
+                let passed = value.every((app: RelatedApplication) => {
+                    const check = validateSingleRelatedApp(app);
+                    return check;
+                });
+                return passed;
+            }
+            else {
+                return false;
+            }
         },
-        errorString: "related_applications should be a non-empty array",
+        errorString: "related_applications should contain a valid store, url and id",
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
@@ -413,7 +502,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
         quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
         test: (value: any) => {
-            return typeof(value)  === "boolean"
+            return typeof (value) === "boolean"
         },
         errorString: "prefer_related_applications should be set to a boolean value",
     },
@@ -429,12 +518,12 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         test: (value: any[]) => {
             let isGood;
-            if(value){
-                containsStandardCategory(value) && Array.isArray(value) 
-                ? 
-                isGood = true 
-                : 
-                isGood = false;
+            if (value) {
+                Array.isArray(value)
+                    ?
+                    isGood = true
+                    :
+                    isGood = false;
             }
 
             return isGood
@@ -452,7 +541,7 @@ export const maniTests: Array<Validation> = [
         errorString: "lang should be set to a valid language code",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
+            value && typeof value === "string" && value.length > 0 && isValidLanguageCode(value)
     },
     {
         member: "dir",
@@ -465,7 +554,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
         quickFix: true,
         test: (value: string) =>
-                value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
+            value && typeof value === "string" && value.length > 0 && (value === "ltr" || value === "rtl" || value === "auto")
     },
     {
         member: "description",
@@ -510,6 +599,36 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value);
 
             return isArray;
+        }
+    },
+    {
+        member: "protocol_handlers",
+        displayString: "Protocol handlers field has valid protocol",
+        infoString: "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
+        quickFix: true,
+        errorString: "protocol_handlers should all be relative URLs that are within the scope of the app, should have a url and a valid protocol",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            if (isArray) {
+                const allValid = value.every((protocolHandler: any) => {
+                    const isRelativeUrl = protocolHandler.url && protocolHandler.url.startsWith("/");
+                    const hasProtocol = protocolHandler.protocol && protocolHandler.protocol.length > 0;
+                    const isProtocolValid = hasProtocol && validProtocols.includes(protocolHandler.protocol);
+                    const hasUrl = protocolHandler.url && protocolHandler.url.length > 0;
+
+                    return isRelativeUrl && hasProtocol && hasUrl && isProtocolValid;
+                });
+
+                return allValid;
+            }
+            else {
+                return false;
+            }
         }
     },
     {
@@ -558,88 +677,88 @@ export const maniTests: Array<Validation> = [
 export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
     return new Promise((resolve) => {
         let data: Array<Validation> = [];
-  
+
         const keys = Object.keys(manifest);
-  
+
         keys.forEach((key) => {
             maniTests.forEach(async (test) => {
                 if (test.member === key && test.test) {
                     const testResult = await test.test(manifest[key]);
-  
-    
-                    if(testResult){
-                      test.valid = true;
-                      data.push(test);
+
+
+                    if (testResult) {
+                        test.valid = true;
+                        data.push(test);
                     }
                     else {
-                      test.valid = false;
-                      data.push(test);
+                        test.valid = false;
+                        data.push(test);
                     }
                 }
             })
         })
-  
+
         resolve(data);
     })
-  }
-  
-  export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
+}
+
+export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
     return new Promise((resolve) => {
-      let data: Array<Validation> = [];
-  
-      const keys = Object.keys(manifest);
-  
-      keys.forEach((key) => {
-        maniTests.forEach(async (test) => {
-          if (test.category === "required") {
-            if (test.member === key && test.test) {
-              const testResult = await test.test(manifest[key]);
-  
-              if (testResult === false) {
-                test.valid = false;
-                data.push(test);
-              }
-              else {
-                test.valid = true;
-                data.push(test);
-              }
-            }
-          }
+        let data: Array<Validation> = [];
+
+        const keys = Object.keys(manifest);
+
+        keys.forEach((key) => {
+            maniTests.forEach(async (test) => {
+                if (test.category === "required") {
+                    if (test.member === key && test.test) {
+                        const testResult = await test.test(manifest[key]);
+
+                        if (testResult === false) {
+                            test.valid = false;
+                            data.push(test);
+                        }
+                        else {
+                            test.valid = true;
+                            data.push(test);
+                        }
+                    }
+                }
+            })
         })
-      })
-  
-      resolve(data);
+
+        resolve(data);
     })
-  }
-  
-  export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
+}
+
+export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {
     return new Promise(async (resolve) => {
-  
-      // For && operations, true is the base.
-      let singleField = true;
-      let failedTests: string[] | undefined = [];
-  
-      maniTests.forEach((test) => {
-        if (test.member === field && test.test) {
-        
-          const testResult = test.test(value);
-  
-          if(!testResult){
-            failedTests!.push(test.errorString!);
-          }
-  
-          // If the test passes true && true = true.
-          // If the test fails true && false = false
-          // If a field has MULTIPLE tests, they will stack
-          // ie: true (base) && true (test 1) && false (ie test 2 fails).
-          singleField = singleField && testResult;
+
+        // For && operations, true is the base.
+        let singleField = true;
+        let failedTests: string[] | undefined = [];
+
+        maniTests.forEach((test) => {
+            if (test.member === field && test.test) {
+
+                const testResult = test.test(value);
+
+                if (!testResult) {
+                    failedTests!.push(test.errorString!);
+                }
+
+                // If the test passes true && true = true.
+                // If the test fails true && false = false
+                // If a field has MULTIPLE tests, they will stack
+                // ie: true (base) && true (test 1) && false (ie test 2 fails).
+                singleField = singleField && testResult;
+            }
+        });
+
+        if (singleField) {
+            resolve({ "valid": singleField })
         }
-      });
-  
-      if(singleField){
-        resolve({"valid": singleField})
-      }
-  
-      resolve({"valid": singleField, "errors": failedTests});
+
+        resolve({ "valid": singleField, "errors": failedTests });
     })
-  }
+}

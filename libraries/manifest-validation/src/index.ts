@@ -1,18 +1,20 @@
 import { Manifest, singleFieldValidation, Validation } from "./interfaces";
 export { Manifest, Validation, singleFieldValidation } from "./interfaces";
-import { findMissingKeys, isValidJSON } from "./utils/validation-utils";
-export { required_fields, recommended_fields, optional_fields, validateSingleRelatedApp, validateSingleProtocol } from "./utils/validation-utils";
+import { findMissingKeys, isValidJSON, isValidURL, validProtocols } from "./utils/validation-utils";
+export { required_fields, recommended_fields, optional_fields, validateSingleRelatedApp } from "./utils/validation-utils";
 import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
+
+export let currentManifest: Manifest | undefined;
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
-
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
         }
 
+        currentManifest = manifest;
         let data = await loopThroughKeys(manifest);
 
         resolve(data);
@@ -92,5 +94,27 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
 
     return validations.length === 0;
 }
+
+function isValidRelativeURL(str: string){
+    var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+    return !!pattern.test(str);
+  }
+  
+  export function validateSingleProtocol(proto: any){
+    let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
+    if(!validProtocol){
+      return "protocol";
+    }
+  
+    // i guess more importantly we should check if its in the scope of the site.
+  
+    let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
+  
+    if(!validURL){
+      return "url";
+    }
+  
+    return "valid";
+  }
 
 export * from './interfaces';
