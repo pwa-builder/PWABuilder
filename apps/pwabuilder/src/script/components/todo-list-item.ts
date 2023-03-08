@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import {classMap} from 'lit/directives/class-map.js';
+//import {classMap} from 'lit/directives/class-map.js';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -9,7 +9,7 @@ import {
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { manifest_fields } from '../utils/manifest-info';
-import { recordPWABuilderProcessStep } from '../utils/analytics';
+//import { recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -54,6 +54,13 @@ export class TodoItem extends LitElement {
         gap: .5em;
       }
 
+      .left p {
+        margin: 0;
+        vertical-align: middle;
+        line-height: 16px;
+        padding-top: 3px;
+      }
+
       .right {
         background-color: none;
         border: none;
@@ -68,7 +75,10 @@ export class TodoItem extends LitElement {
         max-width: 220px;
         color: #ffffff;
         padding: 10px;
+        border-radius: var(--card-border-radius);
+        position: relative;
       }
+      
 
       .info-box p {
         margin: 0;
@@ -140,7 +150,7 @@ export class TodoItem extends LitElement {
     return {iwrapper: true, clickable: decision}
   } */
 
-  showMenu(){
+  /* showMenu(){
     let menu = this.shadowRoot!.querySelector("sl-dropdown");
     if(menu!.open){
       //recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
@@ -150,7 +160,7 @@ export class TodoItem extends LitElement {
       menu!.show();
 
     }
-  }
+  } */
 
   render() {
     return html`
@@ -166,8 +176,8 @@ export class TodoItem extends LitElement {
         </div>
         ${manifest_fields[this.field] ? 
           html`
-          <sl-dropdown distance="10">
-            <button slot="trigger" type="button" placement="left" class="right" @mouseover=${() => this.showMenu()} class="nav_link nav_button">
+          <sl-dropdown distance="10" placement="left" >
+            <button slot="trigger" type="button" class="right" class="nav_link nav_button">
               <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
             </button>
             <div class="info-box">

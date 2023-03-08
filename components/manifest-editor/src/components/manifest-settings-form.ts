@@ -25,8 +25,10 @@ export class ManifestSettingsForm extends LitElement {
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
 
+  @property({type: String}) focusOn: string = "";
   @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
+
 
 
   static get styles() {

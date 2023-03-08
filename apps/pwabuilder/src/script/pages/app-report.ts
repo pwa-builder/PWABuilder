@@ -1792,22 +1792,12 @@ export class AppReport extends LitElement {
   }
 
   // Scrolls and Shakes the respective item from a click of an action item
-  async showInfoPanel(e: CustomEvent){
+  async animateItem(e: CustomEvent){
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-    // if its a manifest field for now
-    if(manifest_fields[e.detail.field]){
-      this.infoPanelField = e.detail.field;
-      this.infoPanelData = manifest_fields[e.detail.field];
-
-      let dialog: any = this.shadowRoot!.querySelector("info-panel")!.shadowRoot!.querySelector(".dialog");
-
-      await dialog.show()
-      // could specify field if we wanted in analytics
-      // recordPWABuilderProcessStep("info_panel_opened", AnalyticsBehavior.ProcessCheckpoint);
-    } 
-    else { // animateItem
+    // if its not a manifest field
+    if(!manifest_fields[e.detail.field]){
       if(e.detail.card === "retest"){
         this.thingToAdd = e.detail.displayString;
         this.showConfirmationModal = true;
@@ -1820,36 +1810,38 @@ export class AppReport extends LitElement {
         let frame = this.shadowRoot!.querySelector("sw-selector");
         (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
         return;
-      }
-    }
-    /* 
-      let details = this.shadowRoot!.getElementById(e.detail.card);
-
-      await (details as any)!.show();
-
-      details!.scrollIntoView({behavior: "smooth"});
-      
-      let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
-
-      // The below block is just to get the specific item to animate if a field has more than 1 test.
-      let item: any;
-      if(itemList!.length === 1){
-        item = itemList![0]
       } else {
-        itemList.forEach((temp: any) => {
-          let textSplit = temp.querySelector('p').innerHTML.split("-->");
-          let text = textSplit[textSplit.length - 1]
-          if(text === e.detail.displayString){
-            item = temp;
-          }
-        })
-      }
+        let details = this.shadowRoot!.getElementById(e.detail.card);
 
-      item!.classList.toggle("animate");
-      setTimeout(() => {
+        await (details as any)!.show();
+
+        details!.scrollIntoView({behavior: "smooth"});
+        
+        let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
+
+        // The below block is just to get the specific item to animate if a field has more than 1 test.
+        let item: any;
+        if(itemList!.length === 1){
+          item = itemList![0]
+        } else {
+          itemList.forEach((temp: any) => {
+            let textSplit = temp.querySelector('p').innerHTML.split("-->");
+            let text = textSplit[textSplit.length - 1]
+            if(text === e.detail.displayString){
+              item = temp;
+            }
+          })
+        }
+
         item!.classList.toggle("animate");
-      }, 1000)
-    } */
+        setTimeout(() => {
+          item!.classList.toggle("animate");
+        }, 1000)
+     }
+    
+        
+    }
+
   }
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
