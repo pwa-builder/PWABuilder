@@ -289,7 +289,6 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           background-color: #ffffff;
-          border-radius: var(--card-border-radius);
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
         }
         
@@ -376,6 +375,7 @@ export class AppReport extends LitElement {
           overflow: hidden;
           white-space: nowrap;
           max-width: 200px;
+          margin-bottom: 8px !important;
         }
 
         #app-card-desc {
@@ -1454,16 +1454,6 @@ export class AppReport extends LitElement {
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
-      if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
-        this.CardStyles.backgroundColor = manifestContext.manifest.theme_color;
-        // calculate whether is best to use white or black
-        let color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
-        this.CardStyles.color = color;
-        this.BorderStyles.borderTop = `1px solid ${color + '33'}`
-        this.LastEditedStyles.color = color + 'b3';
-        color === "#ffffff" ? this.retestPath = "/assets/new/retest-white.svg" : "/assets/new/retest-black.svg"
-
-      }
     } else {
         this.appCard = {
           siteName: "Missing Name",
@@ -2107,8 +2097,8 @@ export class AppReport extends LitElement {
 
 //truncate app card discription
   truncateString(str: String) {
-    if (str.length > 150) {
-      return str.substring(0, 150) + "...";
+    if (str.length > 125) {
+      return str.substring(0, 125) + "...";
     } else {
       return str;
     }
