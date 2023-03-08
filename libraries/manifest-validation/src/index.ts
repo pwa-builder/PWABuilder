@@ -1,7 +1,7 @@
 import { Manifest, singleFieldValidation, Validation } from "./interfaces";
 export { Manifest, Validation, singleFieldValidation } from "./interfaces";
 import { findMissingKeys, isValidJSON } from "./utils/validation-utils";
-export { required_fields, reccommended_fields, optional_fields, validateSingleRelatedApp, validateSingleProtocol } from "./utils/validation-utils";
+export { required_fields, recommended_fields, optional_fields, validateSingleRelatedApp, validateSingleProtocol } from "./utils/validation-utils";
 import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {

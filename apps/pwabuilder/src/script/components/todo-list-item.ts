@@ -9,6 +9,7 @@ import {
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { manifest_fields } from '../utils/manifest-info';
+import { recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -53,11 +54,34 @@ export class TodoItem extends LitElement {
         gap: .5em;
       }
 
-      .iwrapper p {
+      .right {
+        background-color: none;
+        border: none;
+      }
+
+      .right:hover {
+        cursor: pointer;      
+      }
+
+      .info-box {
+        background-color: var(--font-color);
+        max-width: 220px;
+        color: #ffffff;
+        padding: 10px;
+      }
+
+      .info-box p {
         margin: 0;
-        vertical-align: middle;
-        line-height: 16px;
-        padding-top: 3px;
+        font-size: 16px;
+      }
+
+      .info-box a {
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .info-box a:visited, .info-box a:active, .info-box a:link {
+        color: #ffffff;
       }
 
       /* < 480px */
@@ -87,7 +111,7 @@ export class TodoItem extends LitElement {
     super();
   }
 
-  bubbleEvent(){
+  /* bubbleEvent(){
     let event = new CustomEvent('todo-clicked', {
       detail: {
           field: this.field,
@@ -109,11 +133,23 @@ export class TodoItem extends LitElement {
       decision = false;
     }
     return {iwrapper: true, clickable: decision}
+  } */
+
+  showMenu(){
+    let menu = this.shadowRoot!.querySelector("sl-dropdown");
+    if(menu!.open){
+      //recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
+      menu!.hide()
+    } else {
+      //recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
+      menu!.show();
+
+    }
   }
 
   render() {
     return html`
-      <div class=${classMap(this.decideClickable(this.field))} @click=${() => this.bubbleEvent()} >
+      <div class="iwrapper">
         <div class="left">
           ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
@@ -123,7 +159,19 @@ export class TodoItem extends LitElement {
               } 
           </p>
         </div>
-        ${manifest_fields[this.field] ? html`<div class="right"><img src="assets/tooltip.svg" alt="info symbol, additional information available on click" /></div>` : html``}
+        ${manifest_fields[this.field] ? 
+          html`
+          <sl-dropdown distance="10">
+            <button slot="trigger" type="button" placement="left" class="right" @mouseover=${() => this.showMenu()} class="nav_link nav_button">
+              <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
+            </button>
+            <div class="info-box">
+              ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
+              <a class="learn-more" href="https://docs.pwabuilder.com" target="blank" rel="noopener noreferrer">Learn More</a>
+            </div>
+          </sl-dropdown>
+          ` 
+          : html``}
       </div>
     `;
   }

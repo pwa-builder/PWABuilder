@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext } from '../services/app-info';
-import { validateManifest, Validation, Manifest, reportMissing, required_fields, reccommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
+import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -1519,7 +1519,7 @@ export class AppReport extends LitElement {
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
         this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "red"})
-      } else if(reccommended_fields.includes(field)){
+      } else if(recommended_fields.includes(field)){
         this.reccMissingFields.push(field);
         this.manifestReccCounter++;
       } else if(optional_fields.includes(field)){
