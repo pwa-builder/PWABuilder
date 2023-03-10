@@ -1,7 +1,6 @@
 import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
 
-
 import * as vscode from 'vscode';
 import { Headers } from 'node-fetch';
 
@@ -13,7 +12,6 @@ export const standard_headers = new Headers(
     "Correlation-Id": sessionID,
   }
 )
-
 
 export function initAnalytics() {
   try {
@@ -34,6 +32,10 @@ export function initAnalytics() {
   catch (err) {
     console.error("Error initializing analytics", err);
   }
+}
+
+export function getSessionID() {
+  return vscode.env.sessionId;
 }
 
 // function to trackEvent

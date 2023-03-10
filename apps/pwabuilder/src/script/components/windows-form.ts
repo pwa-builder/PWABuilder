@@ -17,8 +17,6 @@ import { ManifestContext, PackageOptions } from '../utils/interfaces';
 export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAdvanced = false;
-  @state() customSelected = false;
-  @state() initialBgColor: string = '';
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
   @state() activeLanguages: string[] = [];
   @state() activeLanguageCodes: string[] = [];
@@ -144,18 +142,6 @@ export class WindowsForm extends AppPackageFormBase {
           font-size: var(--body-font-size);
           color: #757575;
         }
-
-        sl-color-picker {
-          --grid-width: 315px;
-          height: 25px;
-        }
-
-        sl-color-picker::part(trigger){
-          border-radius: 0;
-          height: 45px;
-          width: 100px;
-          display: flex;
-        }
        
     `
     ];
@@ -178,9 +164,6 @@ export class WindowsForm extends AppPackageFormBase {
     );
 
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
-
-    this.customSelected = this.packageOptions.images?.backgroundColor != 'transparent';
-    this.initialBgColor = (this.packageOptions.images?.backgroundColor as string);
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -286,51 +269,6 @@ export class WindowsForm extends AppPackageFormBase {
         </div>
       </div>
     `;
-  }
-
-  renderColorPicker(formInput: FormInput): TemplateResult {
-    return html`
-      <label for="${formInput.inputId}">
-        ${formInput.label}
-        ${this.renderTooltip(formInput)}
-      </label>
-      <div id="iconColorPicker">
-        <div class="color-wrap">
-          <p class="sub-multi">Select your Windows icons background color</p>
-          <sl-radio-group 
-            id="icon-bg-radio-group" 
-            value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
-            @sl-change=${() => this.toggleIconBgRadios()}>
-            <sl-radio value="transparent">Transparent</sl-radio>
-            <sl-radio value="custom">Custom Color</sl-radio>
-          </sl-radio-group>
-          ${this.customSelected ? html`
-            <sl-color-picker
-              id="icon-bg-color"
-              value=${this.packageOptions.images!.backgroundColor || 'transparent'}
-              @sl-change=${() => this.switchIconBgColor()}
-            ></sl-color-picker>
-          ` : html``}
-        </div>
-      </div>
-    `;
-  }
-
-  toggleIconBgRadios(){
-    let input = (this.shadowRoot?.getElementById("icon-bg-radio-group") as any);
-    let selected = input.value;
-    this.customSelected = selected !== 'transparent';
-    if(!this.customSelected){
-      this.packageOptions.images!.backgroundColor = 'transparent';
-    } else {
-      this.packageOptions.images!.backgroundColor = this.initialBgColor;
-    }
-  }
-
-  switchIconBgColor(){
-    let input = (this.shadowRoot?.getElementById("icon-bg-color") as any);
-    let formattedValue = input.getFormattedValue('hex')
-    this.packageOptions.images!.backgroundColor = formattedValue;
   }
 
   handleLanguage(e: any){
@@ -485,19 +423,6 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-                ${this.renderColorPicker({
-                  label: 'Icon Background Color',
-                  tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
-                  tooltipLink:
-                    'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
-                  inputId: 'icon-bg-color-input',
-                  value: this.packageOptions.images!.backgroundColor || 'transparent',
-                  placeholder: 'transparent',
-                  inputHandler: (val: string) =>
-                    (this.packageOptions.images!.backgroundColor = val),
-                })}
-              </div>
-              <div class="form-group">
                 ${this.renderMultiSelect({
                   label: 'Language',
                   tooltip: `Optional. Select as many languages as your app supports. Additional languages can be specified in Windows Partner Center. If empty, EN-US will be used.`,
@@ -561,7 +486,6 @@ export class WindowsForm extends AppPackageFormBase {
                   })}
                 </div>
               </div>
-
               <div class="form-group" id="target-device-families">
                 <label>Widgets</label>
                 <div class="form-check">

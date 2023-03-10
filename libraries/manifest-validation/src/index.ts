@@ -8,8 +8,6 @@ export let currentManifest: Manifest | undefined;
 
 export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
-        reject('Manifest is not valid JSON');
-
         const validJSON = isValidJSON(manifest);
 
         if (validJSON === false) {

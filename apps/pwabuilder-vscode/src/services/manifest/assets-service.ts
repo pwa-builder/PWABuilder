@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 const fetch = require('node-fetch');
 import { writeFile } from 'fs/promises';
 import { Manifest } from '../../interfaces';
-import { trackEvent, trackException } from "../usage-analytics";
+import { standard_headers, trackEvent, trackException } from "../usage-analytics";
 import { findManifest } from './manifest-service';
 
 const pwaAssetGenerator = require('pwa-asset-generator');
@@ -40,9 +40,7 @@ export async function generateScreenshots(skipPrompts?: boolean) {
                 try {
                     const response = await fetch(url, {
                         method: 'POST',
-                        headers: {
-                            'content-type': 'application/json',
-                        },
+                        headers: standard_headers,
                         body: JSON.stringify({
                             url: [urlToScreenshot]
                         }),
