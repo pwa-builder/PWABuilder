@@ -270,7 +270,7 @@
     "image_details": "Image Details",
     "image_details_text": "Specify the image details below.",
     "input_image": "Choose your base image",
-    "input_image_help": "You should choose a 512x512 or larger square PNG/SVG/WEBP image. This image will be used to generate all the images for your chosen platforms.",
+    "input_image_help": "You should choose a 512x512 or larger square PNG image. This image will be used to generate all the images for your chosen platforms.",
     "padding": "Padding",
     "padding_text": "0 is no padding, 1 is 100% of the source image. 0.3 is a typical value for most icons. For Windows 11 platform, this value is overriden on individual images based on UX guidelines.",
     "background_color": "Background Color",
