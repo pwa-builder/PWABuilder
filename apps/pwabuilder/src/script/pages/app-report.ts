@@ -274,12 +274,18 @@ export class AppReport extends LitElement {
 
         #app-card-header {
           display: grid;
-          grid-template-columns: 2fr 4fr 1fr;
+          grid-template-rows: auto;
           gap: 10px;
           align-items: center;
           font-size: 14px;
-          padding: 2em;
+          padding: 2em 2em 0;
           width: 100%;
+        }
+
+        #app-card-header-col {
+          display: grid;
+          grid-template-columns: 1fr 4fr 1fr;
+          gap: 15px;
         }
 
         #pwa-image-holder {
@@ -290,6 +296,7 @@ export class AppReport extends LitElement {
           justify-content: center;
           background-color: #ffffff;
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
+          border-radius: 4px;
         }
         
         #app-image-skeleton {
@@ -299,10 +306,11 @@ export class AppReport extends LitElement {
         }
 
         #pwa-image-holder img{
-          height: 100%;
-          width: 100%;
+          height: 115.05px;
+          width: 115.05px;
           left: 113px;
           top: 118.951171875px;
+          border-radius: 4px;
         }
 
         #app-card-share-cta {
@@ -386,6 +394,10 @@ export class AppReport extends LitElement {
           font-weight: 500 !important;
           line-height: 18px;
           white-space: break-spaces;
+        }
+
+        #app-card-desc-mobile {
+          display: none;
         }
 
         #app-card-footer {
@@ -1150,23 +1162,53 @@ export class AppReport extends LitElement {
         /* @media(max-width: 700px){
           --button-padding
         } */
+        @media(max-width: 376px){
+          #pwa-image-holder {
+            width: 61px !important;
+          }
+          #pwa-image-holder img {
+            width: 55px !important;
+          }
+        }
+
 
         @media(max-width: 600px){
-          #app-card-header{
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            text-align: center;
+          #app-card-header-col { 
+            gap: 10px;
           }
           #pwa-image-holder {
-            width: 100px;
+            width: 90px;
             height: auto;
+          }
+          #pwa-image-holder img { 
+            width: 84px;
+            height: auto;
+          }
+          #card-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+          #app-card-desc {
+            max-width: 100%;
+          }
+          #app-card-desc-mobile {
+            display: block;
+          }
+          .app-card-desc-desktop {
+            display: none;
+          }
+          #site-name {
+            font-size: 20px;
           }
           #site-url {
             margin-bottom: 8px !important;
           }
           #app-card-share-cta {
-            justify-content: end;
+            justify-content: start;
+          }
+          #app-card-share-cta #share-button {
+            width: 100px;
           }
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
@@ -2132,24 +2174,29 @@ export class AppReport extends LitElement {
             html`
             <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
-                <div id="pwa-image-holder">
-                  ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                <div id="app-card-header-col">
+                  <div id="pwa-image-holder">
+                    ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                  </div>
+                  <div id="card-info" class="flex-row">
+                    <p id="site-name">${this.appCard.siteName}</p>
+                    <p id="site-url">${this.appCard.siteUrl}</p>
+                    <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
+                  </div>
+                  <div id="app-card-share-cta">
+                    <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                    ${this.runningTests ?
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                    } Share score
+                    </button>
+                  </div>
                 </div>
-                <div id="card-info" class="flex-row">
-                  <p id="site-name">${this.appCard.siteName}</p>
-                  <p id="site-url">${this.appCard.siteUrl}</p>
+                <div id="app-card-desc-mobile">
                   <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
                 </div>
-                <div id="app-card-share-cta">
-                  <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                  ${this.runningTests ?
-                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-                    html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-                  } Share score
-                  </button>
-                </div>
               </div>
-              <div id="app-card-footer" style=${styleMap(this.BorderStyles)}>
+              <div id="app-card-footer">
                 <div id="test" style=${styleMap(this.CardStyles)}>
                   <button
                     type="button"

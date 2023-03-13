@@ -337,13 +337,14 @@ export class ShareCard extends LitElement {
   }
 
   downloadImage(filename: string) {
+    let downloadButtonText = this.shadowRoot!.getElementById("download-button-label");
     let link = document.createElement('a');
     link.href = "data:image/png;base64" + this.dataURL;
-    console.log("File link from downloadImage()", link.href);
     link.download = filename; 
     link.click();
-
     URL.revokeObjectURL(link.href);
+
+    downloadButtonText!.innerText="Downloaded";
   }
 
   copyImage() {
@@ -353,7 +354,7 @@ export class ShareCard extends LitElement {
     canvas.toBlob(blob => navigator.clipboard
     .write([new ClipboardItem({'image/png': blob!})])
     .then(()=>{
-      copyButtonText!.innerText="Copied!";
+      copyButtonText!.innerText="Copied";
     }))
   }
 
@@ -408,7 +409,7 @@ export class ShareCard extends LitElement {
         </div>        
         <div>
           <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
-          <span class="standard-button-label">Download</span>
+          <span id="download-button-label" class="standard-button-label">Download</span>
         </div>      `
       return;
     }
@@ -422,7 +423,7 @@ export class ShareCard extends LitElement {
         </div>
         <div>
           <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
-          <span class="standard-button-label">Download</span>
+          <span id="download-button-label" class="standard-button-label">Download</span>
         </div>        
         <div>
           <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
@@ -437,7 +438,7 @@ export class ShareCard extends LitElement {
         </div>
         <div>
           <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
-          <span class="standard-button-label">Download</span>
+          <span id="download-button-label" class="standard-button-label">Download</span>
         </div>
         <div>
           <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
