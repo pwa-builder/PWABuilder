@@ -2,6 +2,7 @@ import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 import { draw } from '../utils/share-card-helper';
+import { Ref, createRef, ref } from 'lit/directives/ref.js';
 
 @customElement('share-card')
 export class ShareCard extends LitElement {
@@ -14,6 +15,8 @@ export class ShareCard extends LitElement {
 
   @state() dataURL = "";
   @state() actionButtons: TemplateResult = html``;
+
+  shareCanvas: Ref<HTMLCanvasElement> = createRef();
 
   static get styles() {
     return css`
@@ -156,7 +159,7 @@ export class ShareCard extends LitElement {
   }
   
   async setup(){
-    let canvas = (this.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
+    let canvas = (this.shareCanvas.value as HTMLCanvasElement);
     await draw(canvas, this.manifestData, this.swData, this.securityData, this.siteName);
     this.dataURL = canvas.toDataURL('image/png', 1.0);
     this.renderShareActionButtons();
@@ -170,7 +173,6 @@ export class ShareCard extends LitElement {
       this.downloadImage(`${this.siteName}_pwabuilder_score.png`)
     } else if (shareOption === "share"){
       const file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
-      console.log("file from dataURL()", file);
       this.shareFile(file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
     } else {  
       return;
@@ -213,7 +215,6 @@ export class ShareCard extends LitElement {
   };
 
   shareFile(file: File, title: string, text: string) {
-    console.log("File from shareFile():", file);
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator
         .share({
@@ -243,7 +244,6 @@ export class ShareCard extends LitElement {
     const file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
 
     if (!navigator.canShare || !navigator.canShare({files: [file]})) {
-      //console.log("Share API is unavailable in this browser.")
       this.actionButtons = html`
         <div>
           <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
@@ -254,25 +254,7 @@ export class ShareCard extends LitElement {
           <span id="download-button-label" class="standard-button-label">Download</span>
         </div>      `
       return;
-    }
-    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-      //console.log("This is a mobile browser with the Share API available.");
-      //this.shadowRoot!.getElementById("share-actions")!.style.flexDirection = 'column-reverse';
-      this.actionButtons = html`
-        <div>
-          <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
-          <span id="copy-button-label" class="standard-button-label">Copy</span>
-        </div>
-        <div>
-          <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
-          <span id="download-button-label" class="standard-button-label">Download</span>
-        </div>        
-        <div>
-          <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
-          <span class="standard-button-label">Share</span>
-        </div>           `
     } else {
-        //console.log("This is a desktop browser with the Share API available.");
         this.actionButtons = html`
         <div>
           <button type="button" id="copy-button" class="standard-button secondary" @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
@@ -298,9 +280,7 @@ export class ShareCard extends LitElement {
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="canvas-holder">
-              <canvas
-                id="myCanvas"
-              >
+              <canvas id="myCanvas" ${ref(this.shareCanvas)}>
                 Your browser does not support the canvas element.
               </canvas>
             </div>

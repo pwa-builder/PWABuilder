@@ -2,7 +2,7 @@ const colorMap = new Map([["green", "#3ba372"], ["yellow", "#ebc157"], ["red", "
 const accentMap = new Map([["green", "#E3FFF2"], ["yellow", "#FFFAED"], ["red", "#FFF3F3"]]);
 
 
-export async function draw(canvas: any, manifestData: String, swrData: String, securityData: String, siteName: String) {
+export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrData: String, securityData: String, siteName: String) {
   // manifest Data
   const maniData = manifestData.split('/');
   const maniPercent = `${parseFloat(maniData[0])} / ${parseFloat(maniData[1])}`
@@ -22,7 +22,6 @@ export async function draw(canvas: any, manifestData: String, swrData: String, s
   const secHeader = secData[3];
 
   //let canvas = (this!.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
-  console.log("Canvas:", canvas);
   let ctx = canvas!.getContext("2d");
 
   // canvas resolution
