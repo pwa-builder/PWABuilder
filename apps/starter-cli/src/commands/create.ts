@@ -119,5 +119,5 @@ function incrementToUnusedFilename(): string {
 function fixDirectoryStructure(newName: string, decompressedName: string, template: string): void {
   renameDirectory(`${decompressedName}/${template}`, `./${newName}`);
   removeDirectory(decompressedName);
-  removeDirectory(`${decompressedName}.zip`);
+  removeDirectory('fetchedZip.zip');
 }
