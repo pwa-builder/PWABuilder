@@ -29,6 +29,7 @@
   - [Other Android](/builder/other-android "PWABuilder - Creating Android Packages")
   - [Meta Quest](/builder/meta "PWABuilder - Meta Quest")
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
+  - [Asset Links Help](/builder/asset-links-faq "PWABuilder - Fixing Your Android Asset Links")
   - [FAQ](/builder/faq "PWABuilder - FAQ")
   
 - **PWABuilder Studio**
