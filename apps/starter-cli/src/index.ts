@@ -8,4 +8,7 @@ yargs(hideBin(process.argv))
   .scriptName('pwa')
   .strict()
   .alias({ h: 'help' })
+  .command('$0', 'Default command: shows Help.', () => {}, (argv) => {
+    yargs.showHelp();
+  })
   .argv;
