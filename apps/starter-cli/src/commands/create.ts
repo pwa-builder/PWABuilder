@@ -20,8 +20,8 @@ type ResolvedCreateOptions = {
 }
 
 const templateToRepoURLMap = {
-  'pwa-starter-main': "https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip",
-  'pwa-starter-basic-main': "https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip"
+  'default': "https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip",
+  'basic': "https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip"
 };
 
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
@@ -66,6 +66,11 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
         }
       },
     }) as string;
+
+    if(prompts.isCancel(name)) {
+      prompts.cancel('Operation cancelled.');
+      process.exit(0);
+    }
   } else {
     name = nameArg;
   }
@@ -80,10 +85,15 @@ async function resolveTemplateArgument(templateArg: string | undefined): Promise
     template = await prompts.select({
       message: 'Select a template for your PWA:',
       options: [
-        {value: "pwa-starter-main", label: "Classic PWA Starter", hint: "Recommended"},
-        {value: "pwa-starter-basic-main", label: "Simplified PWA Starter", hint: "Less dependencies and a vanilla JS service worker."}
+        {value: "default", label: "Classic PWA Starter", hint: "Recommended"},
+        {value: "basic", label: "Simplified PWA Starter", hint: "Less dependencies and a vanilla JS service worker."}
       ]
     }) as string;
+
+    if(prompts.isCancel(template)) {
+      prompts.cancel('Operation cancelled.');
+      process.exit(0);
+    }
   } else {
     template = templateArg as string;
   }
