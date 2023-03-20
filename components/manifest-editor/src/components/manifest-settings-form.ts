@@ -35,11 +35,13 @@ export class ManifestSettingsForm extends LitElement {
         --sl-input-focus-ring-color: #4f3fb670;
         --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
+        --sl-input-font-family: Hind, sans-serif;
       }
 
       sl-input::part(base),
-      sl-select::part(control),
+      sl-select::part(form-control),
       sl-menu-item::part(base),
+      sl-option::part(base),
       sl-menu-label::part(base),
       sl-checkbox::part(base) {
         --sl-input-font-size-medium: 16px;
@@ -47,9 +49,11 @@ export class ManifestSettingsForm extends LitElement {
         --sl-font-size-small: 14px;
         --sl-input-height-medium: 3em;
         --sl-toggle-size: 16px;
+        --sl-toggle-size-small: 16px;
+        --sl-input-font-size-small: 16px;
       }
       sl-input::part(base),
-      sl-select::part(control),
+      sl-select::part(combobox),
       sl-details::part(base){
         background-color: #fbfbfb;
       }
@@ -72,7 +76,7 @@ export class ManifestSettingsForm extends LitElement {
         color: #717171;
       }
       sl-input::part(input), 
-      sl-select::part(display-label), 
+      sl-select::part(display-input), 
       sl-details::part(summary){
         color: #717171;
       }
@@ -213,6 +217,16 @@ export class ManifestSettingsForm extends LitElement {
         background-color: #4F3FB6;
       }
 
+      sl-option:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+      
+      sl-option::part(base):hover {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
       sl-checkbox[checked]::part(control) {
         background-color: #4f3fb6;
         border-color: #4f3fb6;
@@ -233,7 +247,8 @@ export class ManifestSettingsForm extends LitElement {
       @media(max-width: 480px){
         sl-input::part(base),
         sl-select::part(control),
-        sl-menu-item::part(base) {
+        sl-menu-item::part(base),
+        sl-option::part(base) {
           --sl-input-font-size-medium: 14px;
           --sl-font-size-medium: 14px;
           --sl-input-height-medium: 2.5em;
@@ -577,7 +592,7 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p class="field-desc">The text direction of your PWA</p>
             <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
-              ${dirOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
+              ${dirOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
             </sl-select>
           </div>
         </div>
@@ -620,7 +635,7 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p class="field-desc">The primary language of your app</p>
             <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
-              ${languageCodes.map((lang: langCodes) => html`<sl-menu-item value=${lang.code}>${lang.formatted}</sl-menu-item>`)}
+              ${languageCodes.map((lang: langCodes) => html`<sl-option value=${lang.code}>${lang.formatted}</sl-option>`)}
             </sl-select>
           </div>
         </div>
@@ -643,7 +658,7 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p class="field-desc">The default screen orientation of your app</p>
             <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
-              ${orientationOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
+              ${orientationOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
             </sl-select>
           </div>
           <div class="form-field">
@@ -664,7 +679,7 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p class="field-desc">The appearance of your app window</p>
             <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
-              ${displayOptions.map((option: string) => html`<sl-menu-item value=${option}>${option}</sl-menu-item>`)}
+              ${displayOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
             </sl-select>
           </div>
         </div>
@@ -704,7 +719,7 @@ export class ManifestSettingsForm extends LitElement {
                 <div id="override-options-grid">
                   ${overrideOptions.map((item: string) =>
                       html`
-                        <sl-checkbox class="override-item" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
+                        <sl-checkbox class="override-item" size="small" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
                           ${item}
                         </sl-checkbox>
                       `)}

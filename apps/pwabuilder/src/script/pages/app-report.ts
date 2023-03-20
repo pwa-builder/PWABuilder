@@ -1650,12 +1650,6 @@ export class AppReport extends LitElement {
     this.pageNumber = 1;
   }
 
-  copyReportCardLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
-    })
-  } 
-
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal() {
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
@@ -2461,7 +2455,7 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
-      
+
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
