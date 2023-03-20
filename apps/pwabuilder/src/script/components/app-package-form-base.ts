@@ -135,6 +135,18 @@ export class AppPackageFormBase extends LitElement {
         cursor: no-drop;
       }
 
+      sl-color-picker {
+        --grid-width: 315px;
+        height: 25px;
+      }
+
+      sl-color-picker::part(trigger){
+        border-radius: 0;
+        height: 25px;
+        width: 75px;
+        display: flex;
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
@@ -166,11 +178,42 @@ export class AppPackageFormBase extends LitElement {
       `;
     }
 
+    if(formInput.type === 'color'){
+      return html`
+        ${this.renderFormInputLabel(formInput)}
+        ${this.renderFormColorPicker(formInput)}
+      `;
+    }
+
     // For all others, the label comes first.
     return html`
       ${this.renderFormInputLabel(formInput)}
       ${this.renderFormInputTextbox(formInput)}
     `;
+  }
+
+  private renderFormColorPicker(formInput: FormInput){
+    return html`<sl-color-picker
+              id="${formInput.inputId}" 
+              class="form-control" 
+              placeholder="${formInput.placeholder || ''}"
+              value="${(ifDefined(formInput.value) as string)}" 
+              type="color" 
+              ?required="${formInput.required}"
+              name="${ifDefined(formInput.name)}" 
+              minlength="${ifDefined(formInput.minLength)}"
+              maxlength="${ifDefined(formInput.maxLength)}"
+              min=${ifDefined(formInput.minValue)}
+              max="${ifDefined(formInput.maxValue)}" 
+              pattern="${ifDefined(formInput.pattern)}"
+              spellcheck="${ifDefined(formInput.spellcheck)}" 
+              ?checked="${formInput.checked}" 
+              ?readonly="${formInput.readonly}"
+              custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+              ?disabled=${formInput.disabled}
+              @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}" 
+              @sl-invalid=${this.inputInvalid}
+            ></sl-color-picker>`;
   }
 
   private renderFormInputTextbox(formInput: FormInput): TemplateResult {
@@ -185,7 +228,7 @@ export class AppPackageFormBase extends LitElement {
         spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
         ?disabled=${formInput.disabled}
-        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
+        @input="${(e: UIEvent) => this.colorChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
 
@@ -213,6 +256,25 @@ export class AppPackageFormBase extends LitElement {
       <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
       </info-circle-tooltip>
     `;
+  }
+
+  private colorChanged(e: UIEvent, formInput: FormInput) {
+    const inputElement = e.target as HTMLInputElement | null;
+    let formattedValue = inputElement!.getFormattedValue('hex')
+    
+    if (inputElement) {
+      // Fire the input handler
+      if (formInput.inputHandler) {
+        formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+      }
+
+      // Run validation if necessary.
+      if (formInput.validationErrorMessage) {
+        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+        inputElement.setCustomValidity(errorMessage);
+        inputElement.title = errorMessage;
+      }
+    }
   }
 
   private inputChanged(e: UIEvent, formInput: FormInput) {

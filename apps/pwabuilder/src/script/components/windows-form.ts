@@ -302,7 +302,7 @@ export class WindowsForm extends AppPackageFormBase {
     `;
   }
 
-  renderColorPicker(formInput: FormInput): TemplateResult {
+  renderColorToggle(formInput: FormInput): TemplateResult {
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
@@ -321,11 +321,7 @@ export class WindowsForm extends AppPackageFormBase {
           </sl-radio-group>
           ${this.customSelected ? html`
           <div id="color-input-holder">
-            <sl-color-picker
-              id="icon-bg-color"
-              value=${this.packageOptions.images!.backgroundColor || 'transparent'}
-              @sl-change=${() => this.switchIconBgColor()}
-            ></sl-color-picker>
+            ${this.renderFormInput(formInput)}
             <p>${this.currentSelectedColor}</p>
           </div>
           ` : html``}
@@ -346,14 +342,13 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
-  switchIconBgColor(){
-    let input = (this.shadowRoot?.getElementById("icon-bg-color") as any);
-    let formattedValue = input.getFormattedValue('hex')
-    this.packageOptions.images!.backgroundColor = this.currentSelectedColor = formattedValue;
-  }
-
   handleLanguage(e: any){
     this.packageOptions.resourceLanguage = e.target.value;
+  }
+
+  handleColorUpdate(val: string, inputElement: HTMLInputElement){
+    this.packageOptions.images!.backgroundColor = val;
+    this.currentSelectedColor = inputElement.getFormattedValue('hex');
   }
 
 
@@ -504,16 +499,16 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-                ${this.renderColorPicker({
+                ${this.renderColorToggle({
                   label: 'Icon Background Color',
                   tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
                   tooltipLink:
                     'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
                   inputId: 'icon-bg-color-input',
+                  type: 'color',
                   value: this.packageOptions.images!.backgroundColor || 'transparent',
                   placeholder: 'transparent',
-                  inputHandler: (val: string) =>
-                    (this.packageOptions.images!.backgroundColor = val),
+                  inputHandler: (val: string, _, inputElement) => this.handleColorUpdate(val, inputElement),
                 })}
               </div>
               <div class="form-group">
