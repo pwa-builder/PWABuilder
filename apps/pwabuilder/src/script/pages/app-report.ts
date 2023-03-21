@@ -1842,12 +1842,6 @@ export class AppReport extends LitElement {
     this.pageNumber = 1;
   }
 
-  copyReportCardLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
-    })
-  } 
-
   // Opens share card modal and tracks analytics
   async openShareCardModal() {
     let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
@@ -2685,6 +2679,7 @@ export class AppReport extends LitElement {
       </sl-dialog>
 
 
+
       <share-card 
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
@@ -2692,6 +2687,7 @@ export class AppReport extends LitElement {
         .siteName=${this.appCard.siteName}
       > </share-card>
       
+
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}

@@ -42,11 +42,12 @@ export class ManifestPlatformForm extends LitElement {
         --sl-input-focus-ring-color: #4f3fb670;
         --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
+        --sl-input-font-family: Hind, sans-serif;
       }
 
       sl-input::part(base),
-      sl-select::part(control),
-      sl-menu-item::part(base),
+      sl-select::part(form-control),
+      sl-option::part(base),
       sl-button::part(base),
       sl-checkbox::part(base),
       sl-checkbox::part(control),
@@ -56,8 +57,10 @@ export class ManifestPlatformForm extends LitElement {
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
         --sl-toggle-size: 16px;
+        --sl-toggle-size-small: 16px;
+        --sl-input-font-size-small: 16px;
       }
-      sl-details::part(base), sl-select::part(control), sl-input::part(base){
+      sl-details::part(base), sl-select::part(combobox), sl-input::part(base){
         background-color: #fbfbfb;
       }
       #form-holder {
@@ -79,7 +82,7 @@ export class ManifestPlatformForm extends LitElement {
         color: #717171;
       }
       sl-input::part(input), 
-      sl-select::part(display-label), 
+      sl-select::part(display-input), 
       sl-details::part(summary){
         color: #717171;
       }
@@ -141,12 +144,12 @@ export class ManifestPlatformForm extends LitElement {
       sl-menu {
          width: 100%;
       }
-      sl-menu-item:focus-within::part(base) {
+      sl-option:focus-within::part(base) {
         color: #ffffff;
         background-color: #4F3FB6;
       }
 
-      sl-menu-item::part(base):hover{
+      sl-option::part(base):hover{
         color: #ffffff;
         background-color: #4F3FB6;
       }
@@ -272,7 +275,7 @@ export class ManifestPlatformForm extends LitElement {
         }
       }
 
-      @media(max-width: 600px){
+      @media(max-width: 650px){
         #cat-field {
           grid-template-columns: repeat(3, auto);
         }
@@ -280,8 +283,8 @@ export class ManifestPlatformForm extends LitElement {
 
       @media(max-width: 480px){
         sl-input::part(base),
-        sl-select::part(control),
-        sl-menu-item::part(base),
+        sl-select::part(form-control),
+        sl-option::part(base),
         sl-button::part(base),
         sl-checkbox::part(base),
         sl-checkbox::part(control) {
@@ -538,7 +541,7 @@ export class ManifestPlatformForm extends LitElement {
           <form class="field-holder" @submit=${(e: any) => this.addRelatedAppToManifest(e)}>
             <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
             <sl-select placeholder="Select a Platform" hoist=${true} placement="bottom">
-              ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
+              ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>` )}
             </sl-select>
             <sl-input class="field-input" name="url" placeholder="App URL" /></sl-input>
             <sl-input class="field-input" name="id" placeholder="App ID" /></sl-input>
@@ -893,8 +896,8 @@ export class ManifestPlatformForm extends LitElement {
             </div>
             <p>Should a user prefer a related app to this one</p>
             <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
-              <sl-menu-item value="true">true</sl-menu-item>
-              <sl-menu-item value="false">false</sl-menu-item>
+              <sl-option value="true">true</sl-option>
+              <sl-option value="false">false</sl-option>
             </sl-select>
           </div>
         </div>
@@ -925,7 +928,7 @@ export class ManifestPlatformForm extends LitElement {
                         <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.removeData("related " + i.toString())}></sl-icon-button>
                       </div>
                       <sl-select placeholder="Select a Platform" placement="bottom" hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}>
-                        ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
+                        ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>` )}
                       </sl-select>
                       <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>
                       <sl-input class="field-input" placeholder="App ID" value=${app.id || ""} name="id" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>
@@ -1022,7 +1025,7 @@ export class ManifestPlatformForm extends LitElement {
             <p>The categories your PWA belongs to</p>
               <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
-                    html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
+                    html`<sl-checkbox class="cat-check" size="small" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
                   )}
                     
               </div>
