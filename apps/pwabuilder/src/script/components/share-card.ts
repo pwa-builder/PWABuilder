@@ -19,7 +19,10 @@ export class ShareCard extends LitElement {
   @state() canShare: boolean = true;
 
   shareCanvas: Ref<HTMLCanvasElement> = createRef();
+  downloadText: Ref<HTMLCanvasElement> = createRef();
+  copyText: Ref<HTMLCanvasElement> = createRef();
   file!: File;
+  canvas!: HTMLCanvasElement;
 
 
   static get styles() {
@@ -163,9 +166,9 @@ export class ShareCard extends LitElement {
   }
   
   async setup(){
-    let canvas = (this.shareCanvas.value as HTMLCanvasElement);
-    await draw(canvas, this.manifestData, this.swData, this.securityData, this.siteName);
-    this.dataURL = canvas.toDataURL('image/png', 1.0);
+    this.canvas = (this.shareCanvas.value as HTMLCanvasElement);
+    await draw(this.canvas, this.manifestData, this.swData, this.securityData, this.siteName);
+    this.dataURL = this.canvas.toDataURL('image/png', 1.0);
     this.file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
 
     if (!navigator.canShare || !navigator.canShare({files: [this.file]})) {
@@ -174,8 +177,6 @@ export class ShareCard extends LitElement {
       this.canShare = true;
     }
   }
-
-
 
   htmlToImage(shareOption: string) {
 
@@ -192,26 +193,22 @@ export class ShareCard extends LitElement {
   }
 
   downloadImage(filename: string) {
-    let downloadButtonText = this.shadowRoot!.getElementById("download-button-label");
     let link = document.createElement('a');
     link.href = "data:image/png;base64" + this.dataURL;
     link.download = filename; 
     link.click();
     URL.revokeObjectURL(link.href);
 
-    downloadButtonText!.innerText="Downloaded";
+    this.downloadText.value!.innerText="Downloaded";
   }
 
   copyImage() {
     recordPWABuilderProcessStep(`sharecard.copy_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
-    let canvas = (this.shareCanvas.value as HTMLCanvasElement);
-    let copyButtonText = this.shadowRoot!.getElementById("copy-button-label");
-
-    canvas.toBlob(blob => navigator.clipboard
+    this.canvas.toBlob(blob => navigator.clipboard
     .write([new ClipboardItem({'image/png': blob!})])
     .then(()=>{
-      copyButtonText!.innerText="Copied";
+      this.copyText.value!.innerText = "Copied";
     }))
   }
 
@@ -267,11 +264,11 @@ export class ShareCard extends LitElement {
             <div id="share-actions">
               <div>
                 <button type="button" id="copy-button" class="standard-button secondary"  @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
-                <span id="copy-button-label" class="standard-button-label">Copy</span>
+                <span id="copy-button-label" class="standard-button-label" ${ref(this.copyText)}>Copy</span>
               </div>
               <div>
                 <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
-                <span id="download-button-label" class="standard-button-label">Download</span>
+                <span id="download-button-label" class="standard-button-label" ${ref(this.downloadText)}>Download</span>
               </div>
               ${this.canShare ? html`
                 <div>
