@@ -25,8 +25,8 @@ export const handler = (argv: Arguments<StartOptions>): void => {
 
 function handleStartCommand(viteArgs: string | undefined) {
   if(viteArgs) {
-    execSyncWrapper('npm run dev-task -- ' + viteArgs); 
+    execSyncWrapper('npm run dev-task -- ' + viteArgs, false); 
   } else {
-    execSyncWrapper('npm run dev-server');
+    execSyncWrapper('npm run dev-server', false);
   }
 }

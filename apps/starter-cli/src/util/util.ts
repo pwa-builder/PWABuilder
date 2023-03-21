@@ -5,10 +5,10 @@ const path = require('path');
 
 const defaultErrorMessage: string = "Command failed due to unknown error.";
 
-export function execSyncWrapper(command: string, directory?: string | undefined) {
+export function execSyncWrapper(command: string, suppressOutput: boolean, directory?: string | undefined) {
   try{
     execSync(command, {
-      stdio: [0, 1, 2],
+      stdio: suppressOutput ? 'pipe' : [0, 1, 2],
       cwd: path.resolve(process.cwd(), directory ? directory : '')
     });
   } catch (err) {

@@ -20,8 +20,8 @@ type ResolvedCreateOptions = {
 }
 
 const templateToRepoURLMap = {
-  'default': "https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip",
-  'basic': "https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip"
+  'default': ["https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip", "pwa-starter-main"],
+  'basic': ["https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip", "pwa-starter-basic-main"]
 };
 
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
@@ -34,14 +34,20 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
+  const promptSpinner = prompts.spinner();
+  
+  promptSpinner.start(`Fetching ${resolvedTemplate} PWA Starter template... `);
+  const tempDirectoryName = await fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate][0]);
+  promptSpinner.stop('Done.');
 
-  const tempDirectoryName = await fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate]);
-  fixDirectoryStructure(resolvedName, tempDirectoryName, resolvedTemplate);
+  promptSpinner.start("Preparing your PWA for development... ");
+  fixDirectoryStructure(resolvedName, tempDirectoryName, templateToRepoURLMap[resolvedTemplate][1]);
   if(resolvedName != defaultName) {
     setNewName(resolvedName);
   }
 
-  execSyncWrapper('npm i', resolvedName);
+  execSyncWrapper('npm i', true, resolvedName);
+  promptSpinner.stop(`All set! You can find your new PWA in the "${resolvedName}" directory.`);
   
 };
 

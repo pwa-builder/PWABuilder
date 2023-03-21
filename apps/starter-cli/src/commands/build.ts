@@ -11,7 +11,7 @@ export const builder: CommandBuilder = (yargs) =>
 
 export const handler = (): void => {
   if(isDirectoryTemplate()) {
-    execSyncWrapper('npm run build');
+    execSyncWrapper('npm run build', false);
   } else {
     outputError(buildErrors.invalidDirectory);
   }
