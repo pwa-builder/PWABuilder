@@ -81,21 +81,8 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
 async function resolveTemplateArgument(templateArg: string | undefined): Promise<string> {
   let template: string = 'default';
 
-  if(!templateArg || !validateTemplate(templateArg)) {
-    template = await prompts.select({
-      message: 'Select a template for your PWA:',
-      options: [
-        {value: "default", label: "Classic PWA Starter", hint: "Recommended"},
-        {value: "basic", label: "Simplified PWA Starter", hint: "Less dependencies and a vanilla JS service worker."}
-      ]
-    }) as string;
-
-    if(prompts.isCancel(template)) {
-      prompts.cancel('Operation cancelled.');
-      process.exit(0);
-    }
-  } else {
-    template = templateArg as string;
+  if(templateArg && validateTemplate(templateArg)) {
+    template = templateArg;
   }
 
   return template;
