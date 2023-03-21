@@ -16,8 +16,11 @@ export class ShareCard extends LitElement {
 
   @state() dataURL = "";
   @state() actionButtons: TemplateResult = html``;
+  @state() canShare: boolean = true;
 
   shareCanvas: Ref<HTMLCanvasElement> = createRef();
+  file!: File;
+
 
   static get styles() {
     return css`
@@ -163,7 +166,13 @@ export class ShareCard extends LitElement {
     let canvas = (this.shareCanvas.value as HTMLCanvasElement);
     await draw(canvas, this.manifestData, this.swData, this.securityData, this.siteName);
     this.dataURL = canvas.toDataURL('image/png', 1.0);
-    this.renderShareActionButtons();
+    this.file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
+
+    if (!navigator.canShare || !navigator.canShare({files: [this.file]})) {
+      this.canShare = false;
+    } else {
+      this.canShare = true;
+    }
   }
 
 
@@ -175,8 +184,7 @@ export class ShareCard extends LitElement {
       this.downloadImage(`${this.siteName}_pwabuilder_score.png`)
     } else if (shareOption === "share"){
       recordPWABuilderProcessStep(`sharepwascorecard.share_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-      const file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
-      this.shareFile(file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
+      this.shareFile(this.file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
     } else {  
       return;
     }
@@ -245,22 +253,6 @@ export class ShareCard extends LitElement {
     }
   }
 
-  renderShareActionButtons(){
-    const file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
-
-    if (!navigator.canShare || !navigator.canShare({files: [file]})) {
-      return;
-    } else {
-      this.actionButtons = html`
-        <div>
-          <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
-          <span class="standard-button-label">Share</span>
-        </div>                          
-      `
-    }
-    return;
-  }
-
   render() {
     return html`
       <sl-dialog class="dialog" @sl-show=${() => this.setup()} @sl-hide=${() => this.hideDialog()} noHeader>
@@ -281,7 +273,12 @@ export class ShareCard extends LitElement {
                 <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
                 <span id="download-button-label" class="standard-button-label">Download</span>
               </div>
-              ${this.actionButtons}                  
+              ${this.canShare ? html`
+                <div>
+                  <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
+                  <span class="standard-button-label">Share</span>
+                </div>
+              ` : ''}                  
             </div>
           </div>
         </div>
