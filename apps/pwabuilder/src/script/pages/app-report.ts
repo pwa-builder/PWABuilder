@@ -460,6 +460,8 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
         
+<<<<<<< HEAD
+=======
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -533,6 +535,7 @@ export class AppReport extends LitElement {
           height: auto;
         }
         
+>>>>>>> dev
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -1760,12 +1763,6 @@ export class AppReport extends LitElement {
     this.pageNumber = 1;
   }
 
-  copyReportCardLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
-    })
-  } 
-
   // Opens share card modal and tracks analytics
   async openShareCardModal() {
     let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
@@ -2570,7 +2567,7 @@ export class AppReport extends LitElement {
             <div id="share-card-actions">
               <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
                 <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">Link copied</div>
-                <button type="button" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
+                <button type="button" class="share-banner-buttons"><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
               </sl-tooltip>        
               <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
                 ${this.runningTests ?

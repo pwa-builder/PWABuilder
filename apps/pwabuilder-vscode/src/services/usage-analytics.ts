@@ -22,6 +22,10 @@ export function initAnalytics() {
   }
 }
 
+export function getSessionID() {
+  return vscode.env.sessionId;
+}
+
 // function to trackEvent
 export function trackEvent(name: string, properties: any) {
   try {
