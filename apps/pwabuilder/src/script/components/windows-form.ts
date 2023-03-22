@@ -96,17 +96,6 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
-        #color-input-holder {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        #color-input-holder p {
-          margin: 0;
-          color: var(--secondary-font-color);
-        }
-
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;
@@ -280,7 +269,7 @@ export class WindowsForm extends AppPackageFormBase {
           <p class="sub-multi">Select Multiple Languages</p>
           <sl-select id="languageDrop" 
             placeholder="Select one or more languages"
-            @sl-change=${(e: any) => this.handleLanguage(e)} 
+            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value} 
             value=${this.packageOptions.resourceLanguage!}
             ?stayopenonselect=${true} 
             multiple
@@ -320,10 +309,7 @@ export class WindowsForm extends AppPackageFormBase {
             <sl-radio class="color-radio" size="small" value="custom">Custom Color</sl-radio>
           </sl-radio-group>
           ${this.customSelected ? html`
-          <div id="color-input-holder">
             ${this.renderFormInput(formInput)}
-            <p>${this.currentSelectedColor}</p>
-          </div>
           ` : html``}
         </div>
       </div>
@@ -341,16 +327,6 @@ export class WindowsForm extends AppPackageFormBase {
       this.currentSelectedColor = this.initialBgColor;
     }
   }
-
-  handleLanguage(e: any){
-    this.packageOptions.resourceLanguage = e.target.value;
-  }
-
-  handleColorUpdate(val: string, inputElement: HTMLInputElement){
-    this.packageOptions.images!.backgroundColor = val;
-    this.currentSelectedColor = inputElement.getFormattedValue('hex');
-  }
-
 
   render() {
     return html`
@@ -508,7 +484,7 @@ export class WindowsForm extends AppPackageFormBase {
                   type: 'color',
                   value: this.packageOptions.images!.backgroundColor || 'transparent',
                   placeholder: 'transparent',
-                  inputHandler: (val: string, _, inputElement) => this.handleColorUpdate(val, inputElement),
+                  inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
                 })}
               </div>
               <div class="form-group">

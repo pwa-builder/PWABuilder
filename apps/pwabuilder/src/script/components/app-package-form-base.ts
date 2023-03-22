@@ -7,6 +7,7 @@ import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 import { PackageOptions } from '../utils/interfaces';
+import { SlColorPicker } from '@shoelace-style/shoelace';
 
 /**
  * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.
@@ -147,6 +148,17 @@ export class AppPackageFormBase extends LitElement {
         display: flex;
       }
 
+      .colorPickerAndValue {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .colorPickerAndValue p {
+        margin: 0;
+        color: var(--secondary-font-color);
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
@@ -193,7 +205,9 @@ export class AppPackageFormBase extends LitElement {
   }
 
   private renderFormColorPicker(formInput: FormInput){
-    return html`<sl-color-picker
+    return html`
+    <div class="colorPickerAndValue">
+      <sl-color-picker
               id="${formInput.inputId}" 
               class="form-control" 
               placeholder="${formInput.placeholder || ''}"
@@ -213,7 +227,9 @@ export class AppPackageFormBase extends LitElement {
               ?disabled=${formInput.disabled}
               @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}" 
               @sl-invalid=${this.inputInvalid}
-            ></sl-color-picker>`;
+            ></sl-color-picker>
+            <p>${formInput.value}</p>
+  </div>`;
   }
 
   private renderFormInputTextbox(formInput: FormInput): TemplateResult {
@@ -228,7 +244,7 @@ export class AppPackageFormBase extends LitElement {
         spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
         ?disabled=${formInput.disabled}
-        @input="${(e: UIEvent) => this.colorChanged(e, formInput)}" @invalid=${this.inputInvalid} />
+        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
 
@@ -260,8 +276,11 @@ export class AppPackageFormBase extends LitElement {
 
   private colorChanged(e: UIEvent, formInput: FormInput) {
     const inputElement = e.target as HTMLInputElement | null;
-    let formattedValue = inputElement!.getFormattedValue('hex')
+    let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
     
+    let colorValue = inputElement?.nextElementSibling;
+    colorValue!.innerHTML = formattedValue;
+
     if (inputElement) {
       // Fire the input handler
       if (formInput.inputHandler) {
