@@ -2567,7 +2567,7 @@ export class AppReport extends LitElement {
             <div id="share-card-actions">
               <sl-tooltip id="cl-mani-tooltip" class="mani-tooltip" trigger="click">
                 <div slot="content" id="cl-mani-tooltip-content" class="mani-tooltip-content">Link copied</div>
-                <button type="button" class="share-banner-buttons" @click=${() => this.copyReportCardLink()}><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
+                <button type="button" class="share-banner-buttons"><img class="banner-button-icons" src="/assets/copy_icon.svg"/>Copy link</button>
               </sl-tooltip>        
               <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
                 ${this.runningTests ?
@@ -2599,8 +2599,6 @@ export class AppReport extends LitElement {
 
       </sl-dialog>
 
-<<<<<<< HEAD
-=======
       <share-card 
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
@@ -2608,7 +2606,6 @@ export class AppReport extends LitElement {
         .siteUrl=${this.appCard.siteUrl}
       > </share-card>
       
->>>>>>> dev
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}

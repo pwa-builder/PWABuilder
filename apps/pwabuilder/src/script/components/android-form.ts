@@ -240,11 +240,6 @@ export class AndroidForm extends AppPackageFormBase {
     icon!.style.transform = "rotate(90deg)";
   }
 
-  handleColorUpdate(formSlot: any, colorSlot: string, val: string, inputElement: HTMLInputElement){
-    formSlot = val;
-    colorSlot = inputElement.getFormattedValue('hex');
-  }
-
   public getPackageOptions(): PackageOptions {
     return this.packageOptions;
   }

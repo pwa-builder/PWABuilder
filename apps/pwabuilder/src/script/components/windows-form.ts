@@ -487,27 +487,16 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-<<<<<<< HEAD
                 ${this.renderColorToggle({
-=======
-                ${this.renderColorPicker({
->>>>>>> dev
                   label: 'Icon Background Color',
                   tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
                   tooltipLink:
                     'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
                   inputId: 'icon-bg-color-input',
-<<<<<<< HEAD
                   type: 'color',
                   value: this.packageOptions.images!.backgroundColor || 'transparent',
                   placeholder: 'transparent',
                   inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
-=======
-                  value: this.packageOptions.images!.backgroundColor || 'transparent',
-                  placeholder: 'transparent',
-                  inputHandler: (val: string) =>
-                    (this.packageOptions.images!.backgroundColor = val),
->>>>>>> dev
                 })}
               </div>
               <div class="form-group">
