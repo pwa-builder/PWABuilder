@@ -18,15 +18,6 @@ export class AndroidForm extends AppPackageFormBase {
   @state() packageOptions = emptyAndroidPackageOptions();
   @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
-  // colors
-  @state() currentSelectedThemeColor: string = '';
-  @state() currentSelectedBackgroundColor: string = '';
-  @state() currentSelectedNavColor: string = '';
-  @state() currentSelectedNavDarkColor: string = '';
-  @state() currentSelectedNavDividerColor: string = '';
-  @state() currentSelectedNavDividerDarkColor: string = '';
-
-
   static get styles() {
 
     const localStyles = css`
@@ -103,7 +94,7 @@ export class AndroidForm extends AppPackageFormBase {
         font-weight: bold;
       }
 
-      
+
 
     `;
 
@@ -238,11 +229,6 @@ export class AndroidForm extends AppPackageFormBase {
     recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(90deg)";
-  }
-
-  handleColorUpdate(formSlot: any, colorSlot: string, val: string, inputElement: HTMLInputElement){
-    formSlot = val;
-    colorSlot = inputElement.getFormattedValue('hex');
   }
 
   public getPackageOptions(): PackageOptions {
@@ -760,7 +746,7 @@ export class AndroidForm extends AppPackageFormBase {
           </sl-details>
         </div>
       </form>
-      
+
     </div>
     </div>
     `;
