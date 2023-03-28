@@ -41,12 +41,7 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
   promptSpinner.stop('Done.');
 
   promptSpinner.start("Preparing your PWA for development... ");
-  fixDirectoryStructure(resolvedName, tempDirectoryName, templateToRepoURLMap[resolvedTemplate][1]);
-  if(resolvedName != defaultName) {
-    setNewName(resolvedName);
-  }
-
-  execSyncWrapper('npm i', true, resolvedName);
+  await prepDirectoryForDevelopment(resolvedName, tempDirectoryName, templateToRepoURLMap[resolvedTemplate][1]);
   promptSpinner.stop(`All set! You can find your new PWA in the "${resolvedName}" directory.`);
   
 };
@@ -123,4 +118,13 @@ function fixDirectoryStructure(newName: string, decompressedName: string, templa
   renameDirectory(`${decompressedName}/${template}`, `./${newName}`);
   removeDirectory(decompressedName);
   removeDirectory('fetchedZip.zip');
+}
+
+async function prepDirectoryForDevelopment(newName: string, decompressedName: string, template: string): Promise<void> {
+  fixDirectoryStructure(newName, decompressedName, template);
+  if(newName != defaultName) {
+    setNewName(newName);
+  }
+
+  execSyncWrapper('npm i', true, newName);
 }
