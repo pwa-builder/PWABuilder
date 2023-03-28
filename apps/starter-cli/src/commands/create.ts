@@ -4,6 +4,8 @@ import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/rep
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
 import { execSyncWrapper } from "../util/util";
+import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
+import { CreateEventData } from "../analytics/analytics-interfaces";
 
 export const command: string = 'create [name]';
 export const desc: string = createDescriptions.commandDescription;
@@ -33,6 +35,7 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
     
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
+  const startTime: number = performance.now();
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
   const promptSpinner = prompts.spinner();
   
@@ -43,7 +46,9 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
   promptSpinner.start("Preparing your PWA for development... ");
   await prepDirectoryForDevelopment(resolvedName, tempDirectoryName, templateToRepoURLMap[resolvedTemplate][1]);
   promptSpinner.stop(`All set! You can find your new PWA in the "${resolvedName}" directory.`);
-  
+  const endTime: number = performance.now();
+
+  trackCreateEvent(resolvedTemplate, endTime - startTime, resolvedName);
 };
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
@@ -127,4 +132,16 @@ async function prepDirectoryForDevelopment(newName: string, decompressedName: st
   }
 
   execSyncWrapper('npm i', true, newName);
+}
+
+function trackCreateEvent(template: string, timeMS: number, name: string) {
+  initAnalytics();
+  
+  const createEventData: CreateEventData = {
+    template: template,
+    name: name,
+    timeMS: timeMS
+  }
+
+  trackEvent("create", createEventData);
 }
