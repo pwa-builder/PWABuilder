@@ -415,7 +415,7 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 
 ### launch_handlers: `string` | `Array`
 
-`launch_handlers` is an optional member that controls the launch of a web application. It's singular value `client_mode` can take on the following values:
+`launch_handlers` is an optional member that controls the launch of a web application. It has a single value, `client_mode`, that can take on the following values:
 
 * `auto`: the user agent makes the decision based on the context.
 * `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
