@@ -374,7 +374,7 @@ The `share_target` member is an object which can contain the following members:
 The `file_handlers` member is an array of `file_handler` objects, which can contain the following members:
 
 *  `action`: The URL within the scope of your app that your app will open to when handling the given file type.
-*  `accept`: An object that contains the MIME-types that the above url can handle as keys and file extensions as values.
+* `accept`: An object that contains the MIME-types that the above url can handle as keys and file extensions as values.
 * `icons`: A list of `icon` objects that will show when given the option to open the given file with your app.
 * `launch_type`: Dictates the amount of app instances launch when handling multiple files at once. `single-client` is the default but this field can also be set to `multiple-clients` if you want an app instance to launch for each file  being handled.
 
