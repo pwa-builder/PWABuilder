@@ -452,7 +452,7 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
 
 ### scope_extensions: `Array`
 
-`scope_extensions` is an optional member that specifies a list of origin patterns to associate with. This allows for your app to control multiple subdomains and top level domains to behave as one.
+`scope_extensions` is an optional member that specifies a list of origin patterns to associate with. This allows for your app to control multiple subdomains and top-level domains as a single entity.
 
 ```json
 "scope_extensions": [
