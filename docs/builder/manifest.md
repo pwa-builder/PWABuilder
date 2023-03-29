@@ -322,7 +322,7 @@ If you only want to provide a single icon, your icons array could also look like
 
 ### share_target: `Object`
 
-`share_target` is an optional member that allows installed apps to be registered as a share target in the given operating systems share dialog.
+`share_target` is an optional member that allows your progressive web app to be registered as a share target. Share targets can be shared to from the native operating system's share dialog.
 
 The `share_target` member is an object which can contain the following members:
 
