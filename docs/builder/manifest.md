@@ -369,7 +369,7 @@ The `share_target` member is an object which can contain the following members:
 
 ### file_handlers: `Array`
 
-`file_handlers` is an optional member that specifies an array of file types that your app can handle and how to handle them.
+`file_handlers` is an optional member that specifies how your progressive web app should handle different file types.
 
 The `file_handlers` member is an array of `file_handler` objects, which can contain the following members:
 
