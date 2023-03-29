@@ -134,7 +134,7 @@ async function prepDirectoryForDevelopment(newName: string, decompressedName: st
   execSyncWrapper('npm i', true, newName);
 }
 
-function trackCreateEvent(template: string, timeMS: number, name: string) {
+function trackCreateEvent(template: string, timeMS: number, name: string): void {
   initAnalytics();
   
   const createEventData: CreateEventData = {
