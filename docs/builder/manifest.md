@@ -417,7 +417,7 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 
 `launch_handlers` is an optional member that controls the launch of a web application. It has a single value, `client_mode`, that can take on the following values:
 
-* `auto`: the user agent makes the decision based on the context.
+* `auto`: The user agent makes the decision based on the context.
 * `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
 * `navigate-existing`: If the web app is already open, it is brought into focus and naviagates to the URL made available by `Window.launchQueue`
 * `navigate-new`: A new instance of the web app is opened and it navigates to the URL made available by `Window.launchQueue`
