@@ -168,6 +168,32 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
 
   const fullScopeUrl = new URL(manifest.scope || '.', manifestUrlOrRoot).toString();
 
+  // ensure mime types in share_target with file accept are valid for android
+  // share target gets converted into `<media` fields in the androidManifest.xml
+  // which does not support file endings like .png, but it instead has to be image/png
+  const shareTarget = manifest.share_target;
+  if (shareTarget && shareTarget.params && shareTarget.params.files) {
+    const currentFilesArray = shareTarget.params.files;
+    const newFilesArray = currentFilesArray.map((file) => {
+      if (file.accept) {
+        for (const mimeType of file.accept) {
+          if (mimeType.startsWith('.')) {
+            convertFileMimeType(mimeType);
+          }
+        }
+
+        return file;
+      }
+      else {
+        return file;
+      }
+    });
+
+    if (manifest.share_target && manifest.share_target.params) {
+      manifest.share_target.params.files = newFilesArray;
+    }
+  }
+
   return {
     appVersion: '1.0.0.0',
     appVersionCode: 1,
@@ -296,4 +322,62 @@ function updateAndroidOptionsWithSafeUrls(
     }
   }
   return options;
+}
+
+// This function is used to convert file endings to mime type
+// so that share_target's that are using file endings
+// can be converted to mime types, which Android requires
+// for the <media> entry in the AndroidManifest.xml
+function convertFileMimeType(fileExtension: string): string {
+  // Yes, it is hardcoded, but there is no automatic way
+  // I have found yet to take a file ending and figure out
+  // what its mimeType should be, it has to be referenced to a
+  // hardcoded list of file endings and their mimeTypes
+
+  switch (fileExtension) {
+    case 'png':
+      return 'image/png';
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'gif':
+      return 'image/gif';
+    case 'webp':
+      return 'image/webp';
+    case 'svg':
+      return 'image/svg+xml';
+    case 'pdf':
+      return 'application/pdf';
+    case 'doc':
+    case 'docx':
+      return 'application/msword';
+    case 'xls':
+    case 'xlsx':
+      return 'application/vnd.ms-excel';
+    case 'ppt':
+    case 'pptx':
+      return 'application/vnd.ms-powerpoint';
+    case 'csv':
+      return 'text/csv';
+    case 'txt':
+      return 'text/plain';
+    case 'mp3':
+      return 'audio/mpeg';
+    case 'mp4':
+      return 'video/mp4';
+    case 'webm':
+      return 'video/webm';
+    case 'ogg':
+      return 'audio/ogg';
+    case 'wav':
+      return 'audio/wav';
+    case 'json':
+      return 'application/json';
+    case 'xml':
+      return 'application/xml';
+    case 'zip':
+      return 'application/zip';
+    default:
+      return '';
+  }
 }
