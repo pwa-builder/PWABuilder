@@ -1,6 +1,6 @@
 {
-  "name": "pwa-starter-cli",
-  "version": "1.0.7",
+  "name": "@pwabuilder/cli",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "files": [

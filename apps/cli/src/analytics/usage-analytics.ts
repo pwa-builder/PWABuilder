@@ -1,24 +1,41 @@
 import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
-
-// urls packaged during this session
-const packagedURLs: Array<string> = [];
+import * as crypto from 'crypto';
+import * as os from 'os';
+import * as fs from 'fs';
+import { doesFileExist } from '../util/fileUtil';
 
 export function initAnalytics() {
   try {
     // check flag first
     if (getFlag("analytics") === true) {
-      setup("#{ANALYTICS_CODE}#")
+      setup("InstrumentationKey=44bd4ea2-078f-4dd3-9132-7f5143f71146;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)
       .setAutoCollectPerformance(false, false)
-      .setAutoCollectExceptions(true)
       .setAutoCollectDependencies(false)
       .setAutoCollectConsole(false)
       .setUseDiskRetryCaching(false)
-      .setSendLiveMetrics(false)
       .start();
     }
+
+    // os.homedir() ".pwabuilder"
+
+    var id: string = "";
+
+    if(doesFileExist(os.homedir() + "/.pwabuilder")) {
+      id = fs.readFileSync(os.homedir() + "/.pwabuilder", {encoding: 'utf-8'});
+    } else {
+      id = crypto.randomUUID();
+      fs.writeFileSync(os.homedir() + "/.pwabuilder", id, {encoding: 'utf-8'});
+    }
+    
+    defaultClient.addTelemetryProcessor((envelope, context) => {
+      console.log(context);
+      envelope["tags"]['ai.user.id'] = id;
+      console.log(envelope);
+      return true;
+    });
   }
   catch (err) {
     console.error("Error initializing analytics", err);
