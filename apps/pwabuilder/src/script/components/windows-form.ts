@@ -96,17 +96,6 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
-        #color-input-holder {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        #color-input-holder p {
-          margin: 0;
-          color: var(--secondary-font-color);
-        }
-
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;
@@ -280,7 +269,7 @@ export class WindowsForm extends AppPackageFormBase {
           <p class="sub-multi">Select Multiple Languages</p>
           <sl-select id="languageDrop" 
             placeholder="Select one or more languages"
-            @sl-change=${(e: any) => this.handleLanguage(e)} 
+            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value} 
             value=${this.packageOptions.resourceLanguage!}
             ?stayopenonselect=${true} 
             multiple
@@ -302,7 +291,7 @@ export class WindowsForm extends AppPackageFormBase {
     `;
   }
 
-  renderColorPicker(formInput: FormInput): TemplateResult {
+  renderColorToggle(formInput: FormInput): TemplateResult {
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
@@ -320,14 +309,7 @@ export class WindowsForm extends AppPackageFormBase {
             <sl-radio class="color-radio" size="small" value="custom">Custom Color</sl-radio>
           </sl-radio-group>
           ${this.customSelected ? html`
-          <div id="color-input-holder">
-            <sl-color-picker
-              id="icon-bg-color"
-              value=${this.packageOptions.images!.backgroundColor || 'transparent'}
-              @sl-change=${() => this.switchIconBgColor()}
-            ></sl-color-picker>
-            <p>${this.currentSelectedColor}</p>
-          </div>
+            ${this.renderFormInput(formInput)}
           ` : html``}
         </div>
       </div>
@@ -345,17 +327,6 @@ export class WindowsForm extends AppPackageFormBase {
       this.currentSelectedColor = this.initialBgColor;
     }
   }
-
-  switchIconBgColor(){
-    let input = (this.shadowRoot?.getElementById("icon-bg-color") as any);
-    let formattedValue = input.getFormattedValue('hex')
-    this.packageOptions.images!.backgroundColor = this.currentSelectedColor = formattedValue;
-  }
-
-  handleLanguage(e: any){
-    this.packageOptions.resourceLanguage = e.target.value;
-  }
-
 
   render() {
     return html`
@@ -504,16 +475,16 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-                ${this.renderColorPicker({
+                ${this.renderColorToggle({
                   label: 'Icon Background Color',
                   tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
                   tooltipLink:
                     'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
                   inputId: 'icon-bg-color-input',
+                  type: 'color',
                   value: this.packageOptions.images!.backgroundColor || 'transparent',
                   placeholder: 'transparent',
-                  inputHandler: (val: string) =>
-                    (this.packageOptions.images!.backgroundColor = val),
+                  inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
                 })}
               </div>
               <div class="form-group">
