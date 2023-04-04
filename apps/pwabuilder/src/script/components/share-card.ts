@@ -257,22 +257,22 @@ export class ShareCard extends LitElement {
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="canvas-holder">
-              <canvas id="myCanvas" ${ref(this.shareCanvas)}>
+              <canvas id="myCanvas" ${ref(this.shareCanvas)} aria-label="Shareable PWA Report card score image">
                 Your browser does not support the canvas element.
               </canvas>
             </div>
             <div id="share-actions">
               <div>
-                <button type="button" id="copy-button" class="standard-button secondary"  @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Download image button icon"/></button>
+                <button type="button" id="copy-button" class="standard-button secondary"  @click=${() => this.copyImage()}><img class="actions-icons" src="/assets/copy-icon-standard-color.svg" alt="Click here to copy PWA score image" role="img"/></button>
                 <span id="copy-button-label" class="standard-button-label" ${ref(this.copyText)}>Copy</span>
               </div>
               <div>
-                <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Download image button icon"/></button>
+                <button type="button" id="download-button" class="standard-button secondary" @click=${() => this.htmlToImage('download')}><img class="actions-icons" src="/assets/download-icon-standard-color.svg" alt="Click here to download PWA score image" role="img"/></button>
                 <span id="download-button-label" class="standard-button-label" ${ref(this.downloadText)}>Download</span>
               </div>
               ${this.canShare ? html`
                 <div>
-                  <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Share image button icon"/></button>  
+                  <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Click here to share PWA score image"/></button>  
                   <span class="standard-button-label">Share</span>
                 </div>
               ` : ''}                  
