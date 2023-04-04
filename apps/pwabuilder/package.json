@@ -17,7 +17,8 @@
     "start-remote": "vite --host",
     "postinstall": "npm run copy-sl-assets",
     "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons",
-    "test": "playwright test"
+    "test": "npx nyc@latest playwright test",
+    "coverage": "cd coverage/lcov-report && npx http-server -p 3001"
   },
   "author": "",
   "license": "ISC",
