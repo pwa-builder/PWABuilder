@@ -242,12 +242,14 @@ export class ComapniesPackaged extends LitElement {
         </div>
       </div>
       ${this.paused ? 
-        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}>
-              <sl-icon name="play-fill" aria-label="Play apps scrolling button"></sl-icon>
+        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}  role="button">
+              <sl-icon name="play-fill" alt="Play apps scrolling button" aria-labelledby="play-label" role="img"></sl-icon>
+              <span id="play-label">Click here to play carousel</span>
             </button>` : 
             
-        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}> 
-              <sl-icon name="pause-fill" aria-label="Pause apps scrolling button" role="button"></sl-icon>
+        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()} role="button"> 
+              <sl-icon name="pause-fill" alt="Pause apps scrolling button" role="img" aria-labelledby="pause-label"></sl-icon>
+              <span id="pause-label">Click here to pause carousel</span>
             </button>`}
     </div>
     `;

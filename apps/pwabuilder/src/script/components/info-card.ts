@@ -199,7 +199,7 @@ export class Infocard extends LitElement {
     return html`
       <div class="card">
         <div class="card-content">
-          <img src=${this.imageUrl} alt="${this.cardTitle} icon" role="presentation"/>
+          <img src=${this.imageUrl} alt="${this.cardTitle} icon" role="img"/>
           <h3>${this.cardTitle}</h3>
           <p>${this.description}</p>
         </div>
@@ -214,8 +214,8 @@ export class Infocard extends LitElement {
             <p class="arrow_link">Learn More</p>
             <img
               src="/assets/new/arrow.svg"
-              alt="arrow"
-              role="presentation"
+              alt="Click here to learn more about ${this.cardTitle}, will open separate tab"
+              role="button"
             />
           </a>
         </div>
