@@ -25,11 +25,11 @@ In addition to custom components built with Lit, the Starter also makes use of p
 
 The starter uses [Shoelace](https://shoelace.style/) for its user interface.
 
-#### Vaadin Router
+#### @thepassle/app-tools router
 
-For routing, the Starter uses Vaadin Router, a lightweight client-side router that works easily with web components.
+For routing, the Starter uses the `@thepassle/app-tools` router, a lightweight client-side router that works easily with web components.
 
-Learn more [here.](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos)
+Learn more [here.](https://github.com/thepassle/app-tools/tree/master/router#readme)
 
 ### Development Dependencies
 
