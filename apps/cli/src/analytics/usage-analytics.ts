@@ -4,6 +4,7 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
+import { PWABuilderData } from '../interfaces/pwabuilder-data';
 
 export function initAnalytics() {
   try {
@@ -17,25 +18,10 @@ export function initAnalytics() {
       .setAutoCollectConsole(false)
       .setUseDiskRetryCaching(false)
       .start();
-    }
 
-    // os.homedir() ".pwabuilder"
-
-    var id: string = "";
-
-    if(doesFileExist(os.homedir() + "/.pwabuilder")) {
-      id = fs.readFileSync(os.homedir() + "/.pwabuilder", {encoding: 'utf-8'});
-    } else {
-      id = crypto.randomUUID();
-      fs.writeFileSync(os.homedir() + "/.pwabuilder", id, {encoding: 'utf-8'});
+      addUserIDtoTelemetry(getUserID());
     }
     
-    defaultClient.addTelemetryProcessor((envelope, context) => {
-      console.log(context);
-      envelope["tags"]['ai.user.id'] = id;
-      console.log(envelope);
-      return true;
-    });
   }
   catch (err) {
     console.error("Error initializing analytics", err);
@@ -76,4 +62,31 @@ export function trackException(err: Error) {
     console.error("Error tracking exception", err);
     throw new Error(`Error tracking exception: ${err}`);
   }
+}
+
+function getUserID(): string {
+  const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
+  var userId: string = "";
+
+  if(doesFileExist(pwabuilderDataFilePath)) {
+    const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
+    userId = userData.user.id;
+  } else {
+    userId = crypto.randomUUID();
+    const newUserData: PWABuilderData = {
+      user: {
+        id: userId
+      }
+    }
+    fs.writeFileSync(pwabuilderDataFilePath, JSON.stringify(newUserData), {encoding: 'utf-8'});
+  }
+
+  return userId;
+}
+
+function addUserIDtoTelemetry(id: string): void {
+  defaultClient.addTelemetryProcessor((envelope, context) => {
+    envelope["tags"]['ai.user.id'] = id;
+    return true;
+  });
 }
