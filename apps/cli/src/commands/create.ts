@@ -45,7 +45,14 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
 
   promptSpinner.start("Preparing your PWA for development... ");
   await prepDirectoryForDevelopment(resolvedName, tempDirectoryName, templateToRepoURLMap[resolvedTemplate][1]);
-  promptSpinner.stop(`All set! You can find your new PWA in the "${resolvedName}" directory.`);
+
+  const finalOutputString: string = `All set! To preview your PWA in the browser:
+  
+    1. Run "cd ${resolvedName}" from your command line.
+    2. Run this command to start your PWA: "pwa start".
+    
+  Your PWA should open in a new browser window! Run this command whenever you want to preview any changes you have made.`;
+  promptSpinner.stop(finalOutputString);
   const endTime: number = performance.now();
 
   trackCreateEvent(resolvedTemplate, endTime - startTime, resolvedName);
