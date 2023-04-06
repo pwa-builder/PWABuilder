@@ -120,7 +120,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
 ]`,
       location: "settings",
       required: false,
-      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
+      image: "assets/manifest_examples/display_override_example_image.png"
   },
   "iarc_rating_id": {
       description: [`iarc_rating_id is an optional member that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.`],
@@ -129,7 +130,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       code:`"iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9"`,
       location: "platform",
       required: false,
-      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
+      image: "assets/manifest_examples/iarc_example_image.png"
   },
   "related_applications": {
       description: [
@@ -178,7 +180,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
 ]`,
       location: "platform",
       docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-      required: false
+      required: false,
+      image: "assets/manifest_examples/shortcuts_example_image.png"
   },
   "protocol_handlers": {
       description:[`protocol_handlers is an optional member that specifies an array of protocols that the application can handle. A protocol handler will contain protocol and url members to specify how each valid protocol is handled.`],
@@ -261,7 +264,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
 }`,
     location: "share",
     required: false,
-    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object"
+    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+    image: "assets/manifest_examples/share_target_example_image.jpg"
 },
 "file_handlers": {
   description:[

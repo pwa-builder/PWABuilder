@@ -27,25 +27,20 @@ export class ManifestInfoCard extends LitElement {
 
       .info-box {
         background-color: var(--font-color);
-        max-width: 220px;
+        max-width: 240px;
         color: #ffffff;
         padding: 10px;
         border-radius: var(--card-border-radius);
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
       }
 
       .info-box p {
         margin: 0;
         font-size: 16px;
-      }
-
-      .info-box a {
-        color: #ffffff;
-        font-size: 16px;
-      }
-
-      .info-box a:visited, .info-box a:active, .info-box a:link {
-        color: #ffffff;
       }
 
       .right {
@@ -57,7 +52,38 @@ export class ManifestInfoCard extends LitElement {
       }
 
       .right:hover {
-        cursor: pointer;      
+        cursor: pointer;
+      }
+
+      .image-section {
+        background: linear-gradient(93.16deg, #EAECF4 16%, #CED0EC 87.75%);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .image-section img {
+        padding: 10px 20px;
+        width: 200px;
+        height: auto;
+      }
+
+      .mic-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .mic-actions a {
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .mic-actions a:visited, .mic-actions a:active, .mic-actions a:link {
+        color: #ffffff;
+        font-weight: bold;
       }
 
       /* < 480px */
@@ -102,7 +128,19 @@ export class ManifestInfoCard extends LitElement {
         </button>
         <div class="info-box">
           ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-          <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a>
+          ${manifest_fields[this.field].image ? 
+
+            html`
+               <div class="image-section">
+                  <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
+               </div>
+            ` :
+            html``
+            
+          }
+          <div class="mic-actions">
+            <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a>
+          </div>
         </div>
       </sl-dropdown>
     </div>
