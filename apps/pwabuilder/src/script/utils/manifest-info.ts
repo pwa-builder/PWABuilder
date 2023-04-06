@@ -4,7 +4,9 @@ export interface infoPanel {
   example?: String[] | null;
   code: string;
   required: boolean;
-  location?: "info" | "settings" | "platform" | "icons" | "screenshots";
+  location?: "info" | "settings" | "platform" | "icons" | "screenshots" | "share" | "handlers";
+  docs_link?: string;
+  image?: string;
 }
 
 export const manifest_fields: { [field: string]: infoPanel} = {
@@ -14,7 +16,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example: null,
       code:`"name": "WebBoard: A Drawing App"`,
       location: "info",
-      required: true
+      required: true,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=name-string"
   },
   "short_name": {
       description:[`short_name functions similarly as the name member, except that it will only be used when there is not enough character space to display the applications regular name. It is recommended that short_name be 12 characters or less in length.`],
@@ -22,7 +25,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example:null,
       code:`"short_name": "WebBoard"`,
       location: "info",
-      required: true
+      required: true, 
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string"
   },
   "description": {
       description:[`description is an optional member that can be used to describe the functionality and purpose of your app. Just like short_name, this data should usually align with any store listings.`],
@@ -30,7 +34,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example:null,
       code:`"description": "WebBoard is your go to application for quick doodles, notes, or sketches!"`,
       location: "info",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=description-string"
   },
   "background_color": {
       description: [`background_color is an optional member that represents the page color of the window that your application will be opened in. This is the color that your app will default to before any styles are loaded. Once styles are loaded, your application will use the background color defined in your CSS.  In order to package with PWABuilder, this field must be a hex encoded string.`],
@@ -38,7 +43,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example: null,
       code:`"background_color": "#4F3FB6"`,
       location: "info",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string"
   },
   "theme_color": {
       description:[`theme_color is an optional member that changes the default color used by certain OS features. For example, this would change the color of your title bar when the application is installed on Windows. In order to package with PWABuilder, this field must be a hex encoded string.`],
@@ -46,7 +52,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example: null,
       code:`"theme_color": "#4F3FB6"`,
       location: "info",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string"
   },
   "start_url": {
       description:[`start_url is a required member that specifies that URL that will be launched when a user opens your application. This URL can either be an absolute or relative path.`],
@@ -54,19 +61,17 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example:null,
       code:`"start_url": "https://docs.pwabuilder.com"`,
       location: "settings",
-      required: true
+      required: true,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"
   },
   "dir": {
-      description:[`dir is an optional member that specifies the text direction for your PWA.`,
-                  `It has three values to choose from:`,
-`• auto - No set directionality for your app.`,
-`• ltr - Text will go from left to right.`,
-`• rtl - Text will go from right to left.`],
+      description:[`dir is an optional member that specifies the text direction for your PWA.`],
       purpose:null,
       example:null,
       code:`"dir": "ltr"`,
       location: "settings",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"
   },
   "scope": {
       description: [`scope is an optional member that defines which URL are within the navigation scope of your application. If the user navigates outside of your app's scope, the will be navigated to a normal browser window. scope can often just be set to the base URL of your PWA.`],
@@ -74,7 +79,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example: null,
       code:`"scope": "https://docs.pwabuilder.com"`,
       location: "settings",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"
   },
   "lang": {
       description: [`lang is an optional member that specifies the primary language of your app. The Language member expects a proper subtag for each langauge. For example, to specify English, you would use "en".`],
@@ -82,37 +88,26 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example:null,
       code:`"lang": "en"`,
       location: "settings",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=lang-string"
   },
   "orientation": {
-      description: [`orientation is an optional member that specifies the default display orientation for your application. It can be any of the following values:`,
-      `• any`,
-      `• natural`,
-      `• portrait`,
-      `• landscape`,
-      `• portrait-primary`,
-      `• portrait-secondary`,
-      `• landscape-primary`,
-      `• landscape-secondary`],
+      description: [`orientation is an optional member that specifies the default display orientation for your application.`],
       purpose:`Indicating an orientation will allow your app to opened with an orientation that matches its design. This is especially important if you expect your application to be used on mobile devices.`,
       example: null,
       code:`"orientation": "portrait"`,
       location: "settings",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"
   },
   "display": {
-      description:[`display is an optional member that specifies the display mode that the website should default to.`,
-      `display can take any of the following values:`,
-      `• browser: The applications will open in a standard browser window.`,
-      `• minimal-ui: The application will open in a minimal browser window that still includes certain UI features, such as navigation.`,
-      `• standalone: The application will open in its own window with no browser UI elements.`,
-      `• fullscreen: The application will make use of all available display space.`,
-      `• display will default to browser if not specified.`],
+      description:[`display is an optional member that specifies the display mode that the website should default to.`],
       purpose:`Setting a display will help you control the look and feel of your application. Using an option that minimizes browser UI can make your PWA feel more like an application and less like a website.`,
       example:null,
       code:`"display": "standalone"`,
       location: "settings",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=display-string"
   },
   "display_override": {
       description:[`display_override is similar to the display member, but allows you to select a fallback order for different display modes. In addition to the four display values, display_override can also take the value window-controls-overlay. Window-controls-overlay is a desktop-only display mode and adds a native-style overlay to the top of your application.`],
@@ -124,7 +119,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   "browser"
 ]`,
       location: "settings",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"
   },
   "iarc_rating_id": {
       description: [`iarc_rating_id is an optional member that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.`],
@@ -132,16 +128,13 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example:null,
       code:`"iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9"`,
       location: "platform",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"
   },
   "related_applications": {
       description: [
         `related_applications is an optional member that specifies applications that have similar or adjacent functionality to your application. 
-        This member allows users and store listings to complement your application with related technology. 
-        This member is an array of application objects, each of which contains:`,
-        `• platform: the platform that the application is available on`, 
-        `• url: the web URL where the app can be found`,  
-        `• id: the unique ID that specifies the application on the given platform`],
+        This member allows users and store listings to complement your application with related technology.`],
       purpose:`Including related applications will allow users to find technology that can supplement your own PWA, or perhaps even make it more useful.`,
       example:null,
       code:`"related_applications": [
@@ -156,7 +149,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   }
 ]`,
       location: "platform",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array"
   },
   "prefer_related_applications": {
       description: [`prefer_related_aplications is an optional member that specifies whether or not related_applications should be preferred to this one. This member defaults to false, but if set to true, the browser may recommend an alternate application to the user`],
@@ -164,15 +158,11 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example:["It is important that the value of this field is a boolean."],
       code:`"prefer_related_applications": true`,
       location: "platform",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean"
   },
   "shortcuts": {
-      description:[`shortcuts is an optional member that specifies a list of key tasks within your application. These shortcuts can be displayed by the operating system to allow a user to launch directly to a specific part of the application. The shortcuts member is an array of shortcut objects, which can contain the following members:`,
-      `• name (Required): The display name of the shorcut.`,
-      `• url (Required): The url that the shortcut will open to.`,
-      `• short_name: The shortened display name for when display space is limited.`,
-      `• description: A string description of the shortcut.`,
-      `• icons: A set of icons used to represent the shorcut. This array must include a 96x96 icon.`],
+      description:[`shortcuts is an optional member that specifies a list of key tasks within your application. These shortcuts can be displayed by the operating system to allow a user to launch directly to a specific part of the application.`],
       purpose:`Shortcuts allow users to access certain areas of your PWA quickly and easily. Effectively implemeting shortcuts can reduce friction in your app and make your PWA feel more fully integrated with the native operating system.`,
       example:null,
       code:`"shortcuts": [
@@ -187,6 +177,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   }
 ]`,
       location: "platform",
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
       required: false
   },
   "protocol_handlers": {
@@ -200,7 +191,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   }
 ]`,
       location: "platform",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"
   },
   "categories": {
       description:[`categories is an optional member that specifies an array of categories that the application belongs to.`],
@@ -208,7 +200,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       example: null,
       code:`"categories": ["games", "finance", "navigation"]`,
       location: "platform",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array"
   },
   "icons": {
       description:[`icons is a required member that specifies an array of icons to be used by your application for varying contexts and situations, such as in the action bar of your preferred operating system.`],
@@ -232,7 +225,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   }
 ]`,
       location: "icons",
-      required: true
+      required: true,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=icons-array"
   },
   "screenshots": {
       description:[`screenshots is an optional member that specifies an array of screenshots that can showcase your application in app stores.`],
@@ -247,15 +241,12 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   }
 ]`,
       location: "screenshots",
-      required: false
+      required: false,
+      docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"
   },
-  /* "share_target": {
+  "share_target": {
     description:[
-      `share_target is an optional member that allows installed PWAs to be registered as a target in the system's share dialog. When defining how an application can receive share data, the share_target object in the manifest may contain the following properties:`,
-      `• action (Required): The URL for the web share target.`,
-      `• enctype: The encodeding of the data when a POST request is used. This step is ignored when using a GET request.`,
-      `• method: either GET or POST.`,
-      `• params (Required): An object to configure the share parameters. The keys correspond with the keys of naviagator.share() (title, text, url, files).`
+      `share_target is an optional member that allows installed PWAs to be registered as a target in the system's share dialog. When defining how an application can receive share data.`,
   ],
     purpose: null,
     example: null,
@@ -268,7 +259,75 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       "url": "url"
     }
 }`,
-    location: "info",
-    required: true
-}, */
+    location: "share",
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object"
+},
+"file_handlers": {
+  description:[
+    `file_handlers is an optional member that specifies how your progressive web app should handle different file types.`,
+],
+  purpose: null,
+  example: null,
+  code:`"file_handlers": [
+    {
+      "action": "/open-pdf",
+      "accept": {
+        "application/pdf": [".pdf"]
+      },
+      "icons": [
+        {
+          "src": "pdf-icon.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
+    }
+  }`,
+  location: "handlers",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array"
+}, 
+  "launch_handler": {
+    description:[
+      `launch_handlers is an optional member that controls the launch of a web application.`,
+  ],
+    purpose: null,
+    example: null,
+    code:`"launch_handler": {
+      "client_mode": "navigate-existing"
+  }`,
+    location: "handlers",
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array"
+  },
+  "handle_links": {
+    description:[
+      `handle_links is an optional member that specifies the default link handling for the web app.`,
+  ],
+    purpose: null,
+    example: null,
+    code:`"handle_links": "preferred"`,
+    location: "handlers",
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string"
+  },
+  "scope_extensions": {
+    description:[
+      `scope_extensions is an optional member that specifies a list of origin patterns to associate with. This allows for your app to control multiple subdomains and top-level domains as a single entity.`,
+  ],
+    purpose: null,
+    example: null,
+    code:`"scope_extensions": [
+      {"origin": "*.pwabuilder.com"},
+      {"origin": "docs.pwabuilder.co.uk"},
+      {"origin": "*.pwabuilder.co.uk"},
+    ]
+  `,
+    location: "handlers",
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array"
+  }
+
 };

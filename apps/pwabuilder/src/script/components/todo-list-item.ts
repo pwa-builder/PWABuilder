@@ -10,6 +10,7 @@ import {
 } from '../utils/css/breakpoints';
 import { manifest_fields } from '../utils/manifest-info';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
+import './manifest-info-card'
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -59,39 +60,6 @@ export class TodoItem extends LitElement {
         vertical-align: middle;
         line-height: 16px;
         padding-top: 3px;
-      }
-
-      .right {
-        background-color: none;
-        border: none;
-      }
-
-      .right:hover {
-        cursor: pointer;      
-      }
-
-      .info-box {
-        background-color: var(--font-color);
-        max-width: 220px;
-        color: #ffffff;
-        padding: 10px;
-        border-radius: var(--card-border-radius);
-        position: relative;
-      }
-      
-
-      .info-box p {
-        margin: 0;
-        font-size: 16px;
-      }
-
-      .info-box a {
-        color: #ffffff;
-        font-size: 16px;
-      }
-
-      .info-box a:visited, .info-box a:active, .info-box a:link {
-        color: #ffffff;
       }
 
       /* < 480px */
@@ -176,15 +144,7 @@ export class TodoItem extends LitElement {
         </div>
         ${manifest_fields[this.field] ? 
           html`
-          <sl-dropdown distance="10" placement="left" >
-            <button slot="trigger" type="button" class="right" class="nav_link nav_button">
-              <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
-            </button>
-            <div class="info-box">
-              ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-              <a class="learn-more" href="https://docs.pwabuilder.com" target="blank" rel="noopener noreferrer">Learn More</a>
-            </div>
-          </sl-dropdown>
+            <manifest-info-card .field=${this.field}></manifest-info-card>
           ` 
           : html``}
       </div>
