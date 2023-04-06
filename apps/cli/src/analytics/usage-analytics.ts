@@ -9,7 +9,7 @@ export function initAnalytics() {
   try {
     // check flag first
     if (getFlag("analytics") === true) {
-      setup("InstrumentationKey=44bd4ea2-078f-4dd3-9132-7f5143f71146;IngestionEndpoint=https://westus2-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/")
+      setup("<KEY>")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)
       .setAutoCollectPerformance(false, false)
