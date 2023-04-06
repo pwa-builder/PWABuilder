@@ -18,6 +18,15 @@ export class AndroidForm extends AppPackageFormBase {
   @state() packageOptions = emptyAndroidPackageOptions();
   @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
+  // colors
+  @state() currentSelectedThemeColor: string = '';
+  @state() currentSelectedBackgroundColor: string = '';
+  @state() currentSelectedNavColor: string = '';
+  @state() currentSelectedNavDarkColor: string = '';
+  @state() currentSelectedNavDividerColor: string = '';
+  @state() currentSelectedNavDividerDarkColor: string = '';
+
+
   static get styles() {
 
     const localStyles = css`
