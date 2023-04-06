@@ -7,25 +7,21 @@ import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 
 import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { env } from '../utils/environment';
 
 interface PlatformInformation {
   label: string;
   value: string;
 }
 
-interface ImageGeneratorServicePostResponse {
-  Message: string;
-  Uri: string;
-}
-
-type ColorRadioValues = 'best guess' | 'transparent' | 'custom';
+type ColorRadioValues = 'transparent' | 'custom';
 const loc = localeStrings.imageGenerator;
 const platformsData: Array<PlatformInformation> = [
   { label: loc.windows11, value: 'windows11' },
   { label: loc.android, value: 'android' },
   { label: loc.ios, value: 'ios' }
 ];
-const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+const baseUrl = env.imageGeneratorUrl;
 
 function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
   if (!value || !unknownValue) {
@@ -166,9 +162,6 @@ export class ImageGenerator extends LitElement {
                   <div class="color-radio">
                     <sl-radio-group orientation="vertical" .value=${this.colorOption}
                       @sl-change=${this.handleBackgroundRadioChange}>
-                      <sl-radio name="colorOption" value="best guess">
-                        ${loc.best_guess}
-                      </sl-radio>
                       <sl-radio name="colorOption" value="transparent">
                         ${loc.transparent}
                       </sl-radio>
@@ -194,7 +187,7 @@ export class ImageGenerator extends LitElement {
                   ${localeStrings.button.generate}
 
                 </sl-button>
-      
+
                 ${this.renderError()}
               </section>
             </form>
@@ -246,12 +239,14 @@ export class ImageGenerator extends LitElement {
   }
 
   handlePaddingChange(event: Event) {
+    recordProcessStep('image-generation', `padding-changed`, AnalyticsBehavior.ProcessCheckpoint);
     const input = <HTMLInputElement>event.target;
     let updatedValue = input.value;
     this.padding = parseFloat(updatedValue);
   }
 
   handleCheckbox(event: Event) {
+    recordProcessStep('image-generation', `toggled-platforms`, AnalyticsBehavior.ProcessCheckpoint);
     const input = event.target as HTMLInputElement;
     const index = input.dataset['index'];
     this.platformSelected[index as any] = input.checked;
@@ -260,6 +255,7 @@ export class ImageGenerator extends LitElement {
   }
 
   handleBackgroundRadioChange(event: CustomEvent) {
+    recordProcessStep('image-generation', `toggled-color-radios`, AnalyticsBehavior.ProcessCheckpoint);
     const value: ColorRadioValues = (<HTMLInputElement>event.target)
       .value as ColorRadioValues;
     this.colorOption = value;
@@ -267,13 +263,13 @@ export class ImageGenerator extends LitElement {
   }
 
   handleThemeColorInputChange(event: Event) {
+    recordProcessStep('image-generation', `custom-color-selected`, AnalyticsBehavior.ProcessCheckpoint);
     const input = event.target as HTMLInputElement;
     this.color = input.value;
     this.checkGenerateEnabled();
   }
 
   async generateZip() {
-    recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.CompleteProcess);
     const file = this.files ? this.files[0] : null;
     if (!file) {
       const errorMessage = 'No file available to generate zip';
@@ -287,46 +283,64 @@ export class ImageGenerator extends LitElement {
       this.generating = true;
 
       const form = new FormData();
-      const colorValue =  
+      const colorValue =
         this.colorOption === 'custom' ? this.color : // custom? Then send in the chosen color
-        this.colorOption === 'best guess' ? '' : // best guess? Then send in an empty string, which the API interprets as best guess
-          'transparent'; // otherwise, it must be transparent
-      
+        'transparent'; // otherwise, it must be transparent
+
       form.append('fileName', file as Blob);
       form.append('padding', String(this.padding));
       form.append('color', colorValue);
 
-      platformsData
-        .filter((_, index) => this.platformSelected[index])
-        .forEach(data => form.append('platform', data.value));
+      let selectedPlatforms = platformsData.filter((_, index) => this.platformSelected[index])
 
-      const res = await fetch(`${baseUrl}/api/image`, {
+      selectedPlatforms.forEach(data => form.append('platform', data.value));
+
+      let platformsForAnalytics: String[] = [];
+      selectedPlatforms.forEach(data => platformsForAnalytics.push(data.value));
+
+      recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.ProcessCheckpoint, {
+        color: colorValue,
+        padding: String(this.padding),
+        platforms: platformsForAnalytics
+      });
+
+      const res = await fetch(`${baseUrl}/api/generateIconsZip`, {
         method: 'POST',
         body: form,
       });
 
-      const postRes =
-        (await res.json()) as unknown as ImageGeneratorServicePostResponse;
-
-      if (postRes.Message) {
-        throw new Error('Error from service: ' + postRes.Message);
+      if (!res.ok) {
+        recordProcessStep('image-generation', 'generate-zip-failed', AnalyticsBehavior.CompleteProcess, {
+          error: res.statusText
+        });
+        throw new Error('Error from service: ' + res.statusText);
       }
 
-      this.downloadZip(`${baseUrl}${postRes.Uri}`);
+      const postRes = await res.blob();
+      this.downloadZip(postRes);
     } catch (e) {
       console.error(e);
       this.error = (e as Error).message;
+      recordProcessStep('image-generation', 'generate-zip-failed', AnalyticsBehavior.CompleteProcess, {
+        error: this.error
+      });
     } finally {
       this.generating = false;
       this.generateEnabled = true;
     }
   }
 
-  downloadZip(zipUrl: string) {
-    const hyperlink = document.createElement("a");
-    hyperlink.href = zipUrl;
-    hyperlink.download = "";
-    hyperlink.click();
+  downloadZip(blob: Blob) {
+    recordProcessStep('image-generation', 'generate-zip-successful', AnalyticsBehavior.CompleteProcess);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = "AppImages.zip";
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
   }
 
   checkGenerateEnabled() {
