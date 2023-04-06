@@ -167,7 +167,7 @@ export class CommunityHub extends LitElement {
     return html`
       <div id="community-panel">
         <div id="community-photo">
-          <img src="/assets/new/community-image.png" alt="social hub image" role="presentation"/>
+          <img src="/assets/new/community-image.png" alt="social hub image" role="img"/>
         </div>
         <div id="community-content">
           <h2>Join our community</h2>
