@@ -130,3 +130,9 @@ export interface FilesParams {
   name: string;
   accept: string[];
 }
+
+export interface PWABuilderData {
+  user: {
+    id: string
+  }
+}

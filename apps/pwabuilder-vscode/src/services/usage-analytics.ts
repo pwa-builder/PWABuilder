@@ -2,7 +2,10 @@ import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
 
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as os from 'os';
 import { Headers } from 'node-fetch';
+import { PWABuilderData } from '../interfaces';
 
 const sessionID = getSessionID();
 export const standard_headers = new Headers(
@@ -16,7 +19,7 @@ export const standard_headers = new Headers(
 export function initAnalytics() {
   try {
     // check flag first
-    if (getFlag("analytics") === true) {
+    if (getFlag("analytics")) {
       setup("#{ANALYTICS_CODE}#")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)
@@ -27,6 +30,8 @@ export function initAnalytics() {
       .setUseDiskRetryCaching(false)
       .setSendLiveMetrics(false)
       .start();
+
+      addUserIDtoTelemetry(getUserID());
     }
   }
   catch (err) {
@@ -74,4 +79,31 @@ export function trackException(err: Error) {
     console.error("Error tracking exception", err);
     throw new Error(`Error tracking exception: ${err}`);
   }
+}
+
+function getUserID(): string {
+  const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
+  var userId: string = "";
+
+  if(fs.existsSync(pwabuilderDataFilePath)) {
+    const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
+    userId = userData.user.id;
+  } else {
+    userId = crypto.randomUUID();
+    const newUserData: PWABuilderData = {
+      user: {
+        id: userId
+      }
+    }
+    fs.writeFileSync(pwabuilderDataFilePath, JSON.stringify(newUserData), {encoding: 'utf-8'});
+  }
+
+  return userId;
+}
+
+function addUserIDtoTelemetry(id: string): void {
+  defaultClient.addTelemetryProcessor((envelope, context) => {
+    envelope["tags"]['ai.user.id'] = id;
+    return true;
+  });
 }
