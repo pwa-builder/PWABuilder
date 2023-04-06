@@ -185,7 +185,7 @@ export class ShareCard extends LitElement {
       this.downloadImage(`${this.siteName}_pwabuilder_score.png`)
     } else if (shareOption === "share"){
       recordPWABuilderProcessStep(`sharepwascorecard.share_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-      this.shareFile(this.file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from PWABuilder!")
+      this.shareFile(this.file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from #PWABuilder #BuildPackageShip")
     } else {  
       return;
     }
