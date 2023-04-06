@@ -3,7 +3,7 @@ interface Flag {
 }
 
 const flags: Flag = {
-  "analytics": true
+  "analytics": false
 };
 
 export function setFlag(flag: string, value: boolean): void {

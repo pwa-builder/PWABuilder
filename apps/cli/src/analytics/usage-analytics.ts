@@ -9,7 +9,7 @@ export function initAnalytics() {
   try {
     // check flag first
     if (getFlag("analytics") === true) {
-      setup("<KEY>")
+      setup("")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)
       .setAutoCollectPerformance(false, false)
