@@ -194,6 +194,10 @@ export class ManifestIconsForm extends LitElement {
         color: #ffffff;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
         sl-checkbox::part(base),
         sl-checkbox::part(control) {

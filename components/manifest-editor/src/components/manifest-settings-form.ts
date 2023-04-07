@@ -217,11 +217,9 @@ export class ManifestSettingsForm extends LitElement {
         margin-left: .25em;
       }
 
-<<<<<<< HEAD
       .focus {
         color: #4f3fb6;
       }
-=======
       sl-menu-item:focus-within::part(base) {
         color: #ffffff;
         background-color: #4F3FB6;
@@ -238,7 +236,6 @@ export class ManifestSettingsForm extends LitElement {
         color: #ffffff;
       }
 
->>>>>>> origin
 
       @media(max-width: 765px){
         .form-row {
@@ -292,6 +289,12 @@ export class ManifestSettingsForm extends LitElement {
   }
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
+    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    if(this.focusOn && field){
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
+
     if(manifestInitialized){
       manifestInitialized = false;
       this.requestValidateAllFields();

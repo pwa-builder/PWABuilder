@@ -23,6 +23,8 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
   @property({type: Boolean}) isGenerated: boolean = false;
+  @property({type: String}) startingTab: string = "info";
+  @property({type: String}) focusOn: string = "";
 
   static get styles() {
     return [
@@ -307,6 +309,8 @@ export class ManifestEditorFrame extends LitElement {
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
               .baseURL=${this.baseURL}
+              .startingTab=${this.startingTab}
+              .focusOn=${this.focusOn}
               @tabSwitched=${(e: CustomEvent) => this.handleTabSwitch(e)}
               @manifestDownloaded=${() => this.handleManifestDownloaded()}
               @fieldChangeAttempted=${(e: CustomEvent) => this.handleFieldChange(e)}

@@ -179,6 +179,10 @@ export class ManifestScreenshotsForm extends LitElement {
         color: rgb(79, 63, 182);
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
 
         sl-input {

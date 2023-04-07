@@ -291,7 +291,8 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   }`,
   location: "handlers",
   required: false,
-  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array"
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array",
+  image: "assets/manifest_examples/file_handlers_example_image.jpg"
 }, 
   "launch_handler": {
     description:[

@@ -199,6 +199,10 @@ export class ManifestInfoForm extends LitElement {
         color: #717171;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
         .form-row:not(.color-row) {
           flex-direction: column;
@@ -256,13 +260,16 @@ export class ManifestInfoForm extends LitElement {
   }
 
   firstUpdated(){
+    
+  }
+
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
     let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
     if(this.focusOn && field){
       setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
     }
-  }
 
-  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(manifestInitialized){ // _changedProperties.has("manifest") && _changedProperties.get("manifest") && 
       manifestInitialized = false;
       this.initMissingColors();

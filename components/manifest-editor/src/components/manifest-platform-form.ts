@@ -268,6 +268,10 @@ export class ManifestPlatformForm extends LitElement {
         color: #ffffff;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
@@ -341,13 +345,15 @@ export class ManifestPlatformForm extends LitElement {
   }
 
   firstUpdated(){
+    
+  }
+
+  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
     let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
     if(this.focusOn && field){
       setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
     }
-  }
-
-  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
 
     /* The first two checks are to reset the view with the most up to date manifest fields.
      The last check prevents the dropdown selector in related apps from causing everything

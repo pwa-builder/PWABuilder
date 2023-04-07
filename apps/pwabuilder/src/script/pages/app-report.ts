@@ -98,6 +98,8 @@ export class AppReport extends LitElement {
   @state() manifestRecCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
   @state() manifestMessage: string = "";
+  @state() startingManifestEditorTab: string = "info";
+  @state() focusOnME: string = "";
   @state() proxyLoadingImage: boolean = false;
 
   @state() serviceWorkerResults: any[] = [];
@@ -1666,7 +1668,9 @@ export class AppReport extends LitElement {
   } 
 
   // Opens manifest editor and tracks analytics
-  async openManifestEditorModal() {
+  async openManifestEditorModal(focusOn = "", tab: string = "info") {
+    this.startingManifestEditorTab = tab;
+    this.focusOnME = focusOn;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
     await dialog!.show();
@@ -2089,7 +2093,8 @@ export class AppReport extends LitElement {
                         .fix=${todo.fix}
                         .card=${todo.card}
                         .displayString=${todo.displayString}
-                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
+                        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
@@ -2481,7 +2486,7 @@ export class AppReport extends LitElement {
       
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
       ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!}></info-panel>`}
       

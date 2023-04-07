@@ -10,6 +10,7 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
+import { SlDropdown } from '@shoelace-style/shoelace';
 
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {
@@ -44,7 +45,7 @@ export class ManifestInfoCard extends LitElement {
       }
 
       .right {
-        background-color: none;
+        background-color: transparent;
         border: none;
         display: flex;
         align-items: center;
@@ -119,10 +120,24 @@ export class ManifestInfoCard extends LitElement {
    
   }
 
+  openME(){
+    (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
+    let tab = manifest_fields[this.field].location;
+    let event = new CustomEvent('open-manifest-editor', {
+      detail: {
+          field: this.field,
+          tab: tab
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(event);
+  }
+
   render() {
     return html`
     <div class="mic-wrapper">
-      <sl-dropdown distance="10" placement="left" >
+      <sl-dropdown distance="10" placement="left" class="tooltip">
         <button slot="trigger" type="button" class="right" class="nav_link nav_button">
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>
@@ -140,6 +155,7 @@ export class ManifestInfoCard extends LitElement {
           }
           <div class="mic-actions">
             <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a>
+            <button type="button" @click=${() => this.openME()}>Edit in Manifest</button>
           </div>
         </div>
       </sl-dropdown>
