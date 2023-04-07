@@ -28,7 +28,7 @@ export class ManifestInfoCard extends LitElement {
 
       .info-box {
         background-color: var(--font-color);
-        max-width: 240px;
+        max-width: 340px;
         color: #ffffff;
         padding: 10px;
         border-radius: var(--card-border-radius);
@@ -66,7 +66,7 @@ export class ManifestInfoCard extends LitElement {
 
       .image-section img {
         padding: 10px 20px;
-        width: 200px;
+        width: 300px;
         height: auto;
       }
 
@@ -75,6 +75,7 @@ export class ManifestInfoCard extends LitElement {
         align-items: center;
         justify-content: flex-start;
         width: 100%;
+        gap: 5px;
       }
 
       .mic-actions a {
@@ -86,6 +87,19 @@ export class ManifestInfoCard extends LitElement {
         color: #ffffff;
         font-weight: bold;
       }
+
+      .mic-actions button {
+        background-color: transparent;
+        border: none;
+        color: #ffffff;
+        border-bottom: 2px solid #ffffff;
+        padding: 0;
+      }
+
+      .mic-actions button:hover {
+        cursor: pointer; 
+      }
+
 
       /* < 480px */
       ${smallBreakPoint(css`
