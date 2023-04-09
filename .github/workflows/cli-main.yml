@@ -1,0 +1,74 @@
+name: PWABuilder CLI Main CI/CD
+
+on:
+  push:
+    paths:
+      -"apps/cli/**"
+    branches: [ main ]
+  pull_request:
+    paths:
+      -"apps/cli/**"
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+
+    outputs:
+      latest-version: ${{steps.latest-version.outputs.version}}
+      package-version: ${{steps.package-version.outputs.current-version}}
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get latest version from npm
+        id: latest-version
+        run: echo ::set-output name=version::$(npm show @pwabuilder/cli version)
+
+      - name: Get current package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+
+  publish:
+    runs-on: ubuntu-latest
+    if: needs.version.outputs.latest-version != needs.version.outputs.package-version
+    defaults:
+      run:
+        working-directory: apps/cli
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.5.1
+
+      - name: Replace tokens
+        # You may pin to the exact commit or the version.
+        # uses: cschleiden/replace-tokens@4f7e3d67f3ff2317ae650842145cdbaefba65189
+        uses: cschleiden/replace-tokens@v1.1
+        with:
+          files: '["**/usage-analytics.ts"]'
+        env: 
+          ANALYTICS_CODE: ${{secrets.CLI_ANALYTICS_CODE}}
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+      
+      - name: Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
