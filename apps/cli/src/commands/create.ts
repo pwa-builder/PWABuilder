@@ -50,8 +50,10 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
   
     1. Run "cd ${resolvedName}" from your command line.
     2. Run this command to start your PWA: "pwa start".
+    3. Your PWA will open in a new browser window!
     
-  Your PWA should open in a new browser window! Run this command whenever you want to preview any changes you have made.`;
+  Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
+  
   promptSpinner.stop(finalOutputString);
   const endTime: number = performance.now();
 
