@@ -1,6 +1,6 @@
 # Using the PWABuilder CLI
 
-The PWABuilder allows you to create new progressive web app projects from a template in just a few moments. This article has more in-depth coverage on usage of the CLI. If you want to get started quickly with the PWA Starter, check out the [Quick Start.](/starter/quick-start)
+The PWABuilder allows you to create new progressive web app(PWA) projects from a template in just a few seconds. This article has more in-depth coverage on usage of the CLI. If you want to get started quickly with the PWA Starter, check out the [Quick Start.](/starter/quick-start)
 
 ## create
 
