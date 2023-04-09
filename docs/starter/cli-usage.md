@@ -9,10 +9,10 @@ The `create` command allows you to create a new progressive web app project from
 #### Basic usage
 
 ```
-pwa create
+pwa create <pwa-name>
 ```
 
-This command will prompt you for a name for your app fetch the default version of the PWA Starter template. The name you enter for your app will be used throughout the template.
+If you don't pass a name argument, this command will prompt you to enter one. The name you enter for your app will be used throughout the template.
 
 #### Pass a name as an argument
 
@@ -44,7 +44,7 @@ The `basic` template is a new template that has fewer dependencies and is closer
 
 ## start
 
-The `start` command allows you to start your PWA on a local development server for testing and debugging. The PWA Starter uses [Vite]() for its development server and build processes.
+The `start` command allows you to start your PWA on a local development server for testing and debugging. The PWA Starter uses [Vite](https://vitejs.dev/) for its development server and build processes.
 
 #### Basic usage
 
@@ -81,3 +81,5 @@ To build your app with the CLI, run this command from the root of your project:
 ```
 pwa build
 ```
+
+The build command outputs a transpiled and server-ready version of your application to the `dist` directory. You can use this command once you are ready to deploy your PWA to a production server.

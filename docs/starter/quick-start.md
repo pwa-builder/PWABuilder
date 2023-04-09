@@ -19,21 +19,23 @@ npm install -g @pwabuilder/cli
 
 Once you have installed the CLI, you can use it to create a new progressive web app.
 
+?> **Note** Optionally, you can run the CLI without installing it using `npx`. Guidance on how to do this is included below.
+
 ## Start a New App
 
 To start a new app using the CLI:
 
-1. Run the `create` command:
+1. If you have installed the CLI, run the `create` command and provide a name for your app:
 
 ```
-pwa create
+pwa create <app-name-here>
 ```
 
-2. Enter a name for your progressive web app:
+2. If you are using NPX, you can run the same command like so: 
 
-<div class="docs-image">
-    <img src="assets/starter/quick-start/enter-name-cli.png" alt="Image of prompt for create command in the PWABuilder CLI">
-</div>
+```
+npx @pwabuilder/cli create <app-name-here>
+```
 
 3.  After you hit enter, the CLI will fetch the template for you and install all npm dependencies.
 
