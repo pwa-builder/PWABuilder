@@ -1,6 +1,6 @@
 # PWA Starter Quick Start
 
-You can started with the PWA Starter by using the PWABuilder CLI, which allows you to create a fresh, templated progressive web app projects in just moments.
+You can start with the PWA Starter by using the PWABuilder CLI, which allows you to create a fresh, templated progressive web app (PWA) project in just few seconds.
 
 There are just a couple things you will need before getting started:
 
