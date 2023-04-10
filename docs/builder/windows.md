@@ -16,17 +16,23 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 
-- A Microsoft Developer account with Partner Center (which are available for a one-time fee of $19). Create one [here.](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership)
+- A Windows Developer account with Partner Center (which are available for a one-time fee of $19). Create one [here.](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership)
+
+!> If you want in-depth guidance on how to enroll as a Windows Developer, take a look at [this documentation.](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account)
 
 ## Reserve Your App
 
 In order to create a proper package of your PWA, you'll first need to reserve a name for your application in the Microsoft Partner Center. This will also allow you to get package info that's required for PWABuilder:
 
-1. Log in to the [Partner Center Dashboard](https://partner.microsoft.com/en-us/dashboard/home)
+1. Log in to the [Partner Center Dashboard](https://partner.microsoft.com/en-us/dashboard/home). Remember, you will need to be enrolled as a Windows Developer before you can complete these next steps.
 
-2. Navigate to the `Apps and Games` section.
-   
-3. Click the `+ New Product` button and select `App`.
+2. Navigate to the `Apps and Games` section. If you don't see `Apps and Games` on your dashboard, check the navigation menu in the top left.
+
+3. Click the `+ New Product` button and select `MSIX or PWA app`.
+
+<div class="docs-image">
+    <img src="assets/builder/windows/windows-partner-center-new-product.png" alt="Create a new MSIX or PWA reservation in Partner Center." width=500>
+</div>
 
 4. You'll be prompted to reserve a name for your application submission.
 
