@@ -48,10 +48,9 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
 
   const finalOutputString: string = `All set! To preview your PWA in the browser:
   
-    1. Run "cd ${resolvedName}" from your command line.
-    2. Run this command to start your PWA: "pwa start".
-    3. Your PWA will open in a new browser window!
-    
+    1. Navigate to your project's directory with: "cd ${resolvedName}".
+    2. Start your PWA with: "pwa start".
+
   Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
   
   promptSpinner.stop(finalOutputString);
