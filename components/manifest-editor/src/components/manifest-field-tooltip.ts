@@ -98,7 +98,7 @@ export class ManifestFieldTooltip extends LitElement {
   render() {
     return html`
       <div class="mic-wrapper">
-        <sl-dropdown distance="10" placement="left" class="tooltip">
+        <sl-dropdown distance="10" placement="right" class="tooltip">
           <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()}>
             <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
           </button>

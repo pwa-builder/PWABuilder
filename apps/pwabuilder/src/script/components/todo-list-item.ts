@@ -36,7 +36,7 @@ export class TodoItem extends LitElement {
         border: 1px solid transparent;
       }
 
-      .iwrapper.clickable:hover {
+      .active:hover {
         cursor: pointer;
         border: 1px solid #CBCDEB;
       }
@@ -130,6 +130,15 @@ export class TodoItem extends LitElement {
     }
   } */
 
+  triggerHoverState(e: CustomEvent){
+    let element = this.shadowRoot!.querySelector(".iwrapper");
+    if(e.detail.entering){
+      element?.classList.add("active");
+    } else {
+      element?.classList.remove("active");
+    }
+  }
+
   render() {
     return html`
       <div class="iwrapper">
@@ -144,7 +153,7 @@ export class TodoItem extends LitElement {
         </div>
         ${manifest_fields[this.field] ? 
           html`
-            <manifest-info-card .field=${this.field}></manifest-info-card>
+            <manifest-info-card .field=${this.field} @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}></manifest-info-card>
           ` 
           : html``}
       </div>

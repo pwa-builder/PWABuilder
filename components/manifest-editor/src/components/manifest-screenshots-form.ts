@@ -10,6 +10,7 @@ import {
 import { generateScreenshots } from '../utils/screenshots';
 import { resolveUrl } from '../utils/urls';
 import {classMap} from 'lit/directives/class-map.js';
+import "./manifest-field-tooltip";
 
 let manifestInitialized = false;
 
@@ -551,16 +552,7 @@ export class ManifestScreenshotsForm extends LitElement {
         <div class="form-field">
           <div class="field-header">
             <h3 class=${classMap(this.decideFocus("screenshots"))}>Screenshots</h3>
-            <a
-              href="https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"
-              target="_blank"
-              rel="noopener"
-            >
-              <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-              <p class="toolTip">
-                Click for more info on the screenshots option in your manifest.
-              </p>
-            </a>
+            <manifest-field-tooltip .field=${"screenshots"}></manifest-field-tooltip>
           </div>
           <p>Below are the screenshots that are currently in your manifest.</p>
           <div class="sc-gallery">

@@ -9,6 +9,7 @@ import {
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
 import {classMap} from 'lit/directives/class-map.js';
+import "./manifest-field-tooltip";
 
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 
@@ -540,16 +541,7 @@ export class ManifestIconsForm extends LitElement {
           <div class="field-header">
             <div class="header-left">
               <h3 class=${classMap(this.decideFocus("icons"))}>App Icons</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=icons-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the icons option in your manifest.
-                </p>
-              </a>
+              <manifest-field-tooltip .field=${"icons"}></manifest-field-tooltip>
             </div>
 
             <p>(required)</p>

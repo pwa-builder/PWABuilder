@@ -162,9 +162,13 @@ export class ManifestInfoCard extends LitElement {
     recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  outlineActionItem(entering: boolean){
+    this.dispatchEvent(new CustomEvent('trigger-hover', {detail: {entering: entering}}));
+  }
+
   render() {
     return html`
-    <div class="mic-wrapper">
+    <div class="mic-wrapper" @mouseenter=${() => this.outlineActionItem(true)} @mouseleave=${() => this.outlineActionItem(false)}>
       <sl-dropdown distance="10" placement="left" class="tooltip">
         <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()}>
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
