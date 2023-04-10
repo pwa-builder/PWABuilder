@@ -2696,8 +2696,8 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sec-details"
                 class="details"
-                @sl-show=${(e: Event) => this.rotateNinety(e, "sec-details")}
-                @sl-hide=${(e: Event) => this.rotateZero(e, "sec-details")}
+                @sl-show=${(e: Event) => this.rotateNinety("sec-details", e)}
+                @sl-hide=${(e: Event) => this.rotateZero("sec-details", e)}
                 >
               ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sec-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
