@@ -1199,7 +1199,7 @@ export class AppReport extends LitElement {
 
   // Expands the Action items details on load
   firstUpdated() {
-    this.rotateNinety("todo");
+    this.rotateNinety("todo", undefined, true);
   }
 
   // Polling function that updates the time that the site was last tested
@@ -1855,19 +1855,55 @@ export class AppReport extends LitElement {
   }
 
   // Rotates the icon on each details drop down to 0 degrees
-  rotateZero(card: string){
+  rotateZero(card: string, e?: Event){
     recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
-    let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    if(icon){
+
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+    let target: Node = (e!.target as unknown as Node);
+    let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
+    let allowed: boolean = false;
+
+    // added this code because the tooltips that exist on the action items emit the sl-show and 
+    // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
+    // so this ensures that the target for rotating is a detail card and not a tooltip.
+    for (let i = 0; i < collapsable.length; i++) {
+      if (collapsable[i].isEqualNode(target!)) {
+        allowed = true;
+        break
+      }
+    }
+
+    if(icon && allowed){
       icon!.style.transform = "rotate(0deg)";
     }
   }
 
   // Rotates the icon on each details drop down to 90 degrees
-  rotateNinety(card: string){
+  rotateNinety(card: string, e?: Event, init?: boolean){
     recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
-    let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    if(icon){
+
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+
+    if(icon && init) {
+      icon!.style.transform = "rotate(90deg)";
+      return;
+    }
+
+    let target: Node = (e!.target as unknown as Node);
+    let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
+    let allowed: boolean = false;
+
+    // added this code because the tooltips that exist on the action items emit the sl-show and 
+    // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
+    // so this ensures that the target for rotating is a detail card and not a tooltip.
+    for (let i = 0; i < collapsable.length; i++) {
+      if (collapsable[i].isEqualNode(target!)) {
+        allowed = true;
+        break
+      }
+    }
+
+    if(icon && allowed){
       icon!.style.transform = "rotate(90deg)";
     }
   }
@@ -2072,8 +2108,8 @@ export class AppReport extends LitElement {
           <div id="todo">
             <sl-details
               id="todo-detail"
-              @sl-show=${() => this.rotateNinety("todo")}
-              @sl-hide=${() => this.rotateZero("todo")}
+              @sl-show=${(e: Event) => this.rotateNinety("todo", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("todo", e)}
               open
               >
               <div class="details-summary" slot="summary">
@@ -2186,8 +2222,8 @@ export class AppReport extends LitElement {
             <sl-details
               id="mani-details"
               class="details"
-              @sl-show=${() => this.rotateNinety("mani-details")}
-              @sl-hide=${() => this.rotateZero("mani-details")}
+              @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}
               >
               ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
               <div id="manifest-detail-grid">
@@ -2348,8 +2384,8 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sw-details"
                 class="details"
-                @sl-show=${() => this.rotateNinety("sw-details")}
-                @sl-hide=${() => this.rotateZero("sw-details")}
+                @sl-show=${(e: Event) => this.rotateNinety("sw-details", e)}
+                @sl-hide=${(e: Event) => this.rotateZero("sw-details", e)}
               >
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
@@ -2444,8 +2480,8 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sec-details"
                 class="details"
-                @sl-show=${() => this.rotateNinety("sec-details")}
-                @sl-hide=${() => this.rotateZero("sec-details")}
+                @sl-show=${(e: Event) => this.rotateNinety(e, "sec-details")}
+                @sl-hide=${(e: Event) => this.rotateZero(e, "sec-details")}
                 >
               ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sec-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">

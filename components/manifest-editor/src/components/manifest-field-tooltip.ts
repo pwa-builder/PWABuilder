@@ -20,7 +20,7 @@ export class ManifestFieldTooltip extends LitElement {
 
       .info-box {
         background-color: #292c3a;
-        max-width: 220px;
+        width: 220px;
         color: #ffffff;
         padding: 10px;
         border-radius: 10px;
@@ -83,11 +83,9 @@ export class ManifestFieldTooltip extends LitElement {
   }
 
   trackTooltipOpened(){
-    console.log("tooltip opened");
   }
 
   trackLearnMoreAnalytics(){
-    console.log("learn more clicked");
     // general counter
     //recordPWABuilderProcessStep(`action_item_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 

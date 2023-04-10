@@ -23,7 +23,7 @@ export class ManifestInfoCard extends LitElement {
 
       .info-box {
         background-color: var(--font-color);
-        max-width: 340px;
+        width: 340px;
         color: #ffffff;
         padding: 10px;
         border-radius: var(--card-border-radius);
@@ -37,6 +37,7 @@ export class ManifestInfoCard extends LitElement {
       .info-box p {
         margin: 0;
         font-size: 16px;
+        font-family: var(--font-family);
       }
 
       .right {
@@ -70,7 +71,8 @@ export class ManifestInfoCard extends LitElement {
         align-items: center;
         justify-content: flex-start;
         width: 100%;
-        gap: 5px;
+        gap: 25px;
+        margin: 5px 0;
       }
 
       .mic-actions > * {
@@ -134,8 +136,8 @@ export class ManifestInfoCard extends LitElement {
     recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
-    let tab = manifest_fields[this.field].location;
-    let event = new CustomEvent('open-manifest-editor', {
+    let tab: string = manifest_fields[this.field].location!;
+    let event: CustomEvent = new CustomEvent('open-manifest-editor', {
       detail: {
           field: this.field,
           tab: tab
