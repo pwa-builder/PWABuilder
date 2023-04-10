@@ -4,7 +4,7 @@ on:
   push:
     paths:
       -"apps/cli/**"
-    branches: [ main ]
+    branches: [ main, starter-cli-dev ]
   pull_request:
     paths:
       -"apps/cli/**"
@@ -66,7 +66,6 @@ jobs:
       - name: Build
         run: |
           npm install
-          npm run build
       
       - name: Publish
         run: npm publish
