@@ -28,7 +28,7 @@ To edit your manifest on the PWABuilder site:
 
    * `Platform` contains manifest members that relate to how your application interact with native operating systems and app stores.
 
-   * `Icons` allows you to generate proper icons for your progressive web app.
+   * `Icons` allows you to generate proper icons for your progressive web app. See [Icon Generation]() for more details.
 
    * `Screenshots` allows you to generate screenshots to be displayed with your progressive web app in stores.
 
@@ -57,3 +57,39 @@ To link a manifest to your app:
 ```
 
 That's it! Your web app manifest should now be linked to your web app.
+
+## Icon Generation
+
+You can use the PWABuilder website to generate appropriate-sized icons for your progressive web app. Currently, PWABuilder supports generating the proper icons for Android, Windows, and iOS.
+
+### Downloading Icons from PWABuilder
+
+To get icons from PWABuilder: 
+
+1. From your app's dashboard on PWABuilder, click `Edit Your Manifest`.
+
+2. Navigate to the `Icons` pane using the top-level menu.
+
+3. Click `Upload` and select an image you want to generate platform icons from.
+
+4. Check/Uncheck which platforms you would like to generate icons for and click `Generate Zip`.
+
+5. A zip containing your icons will be downloaded to your Downloads folder.
+
+<div class="docs-image">
+   <img src="assets/builder/using-features/generating-icons.png" alt="Icon generation modal open on the PWABuilder site.">
+</div>
+
+Next, you need to add references to the downloaded icons in your `manifest.json`.
+
+### Adding Downloaded Icons to Your Project
+
+To add generated icons to your project:
+
+1. Decompress the zip archive you downloaded from PWABuilder.
+
+2. Add the folder of images for each platform you generated at the same level as your `manifest.json`.
+
+3. Finally, copy paste the icons field in the `icons.json` field into your `manifest.json`.
+
+Once the folders have been included and the icons member has been added to your manifest, your new icons will be properly associated with your progressive web app.

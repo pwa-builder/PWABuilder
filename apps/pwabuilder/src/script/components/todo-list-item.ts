@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
+//import {classMap} from 'lit/directives/class-map.js';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -8,6 +8,9 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
+import { manifest_fields } from '../utils/manifest-info';
+//import { recordPWABuilderProcessStep } from '../utils/analytics';
+import './manifest-info-card'
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -20,27 +23,39 @@ export class TodoItem extends LitElement {
   static get styles() {
     return [
       css`
-      #item-wrapper {
+      .iwrapper {
         display: flex;
         column-gap: .5em;
         align-items: center;
+        justify-content: space-between;
         font-size: 16px;
         background-color: #F1F2FA;
         border-radius: var(--card-border-radius);
         padding: .5em;
         margin-bottom: 10px;
-        height: 30px;
+        border: 1px solid transparent;
       }
 
-      #item-wrapper:hover {
+      .active:hover {
         cursor: pointer;
+        border: 1px solid #CBCDEB;
       }
 
-      #item-wrapper img {
+      .iwrapper img {
         height: 16px;
       }
 
-      #item-wrapper p {
+      .left, .right {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .left {
+        gap: .5em;
+      }
+
+      .left p {
         margin: 0;
         vertical-align: middle;
         line-height: 16px;
@@ -79,7 +94,7 @@ export class TodoItem extends LitElement {
     super();
   }
 
-  bubbleEvent(){
+  /* bubbleEvent(){
     let event = new CustomEvent('todo-clicked', {
       detail: {
           field: this.field,
@@ -92,16 +107,55 @@ export class TodoItem extends LitElement {
     this.dispatchEvent(event);
   }
 
+  decideClickable(field: string){
+    let decision;
+    if(manifest_fields[field] || this.status === "retest"){
+      decision = true;
+    } // else if(sw_fields[field]){}
+    else {
+      decision = false;
+    }
+    return {iwrapper: true, clickable: decision}
+  } */
+
+  /* showMenu(){
+    let menu = this.shadowRoot!.querySelector("sl-dropdown");
+    if(menu!.open){
+      //recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
+      menu!.hide()
+    } else {
+      //recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
+      menu!.show();
+
+    }
+  } */
+
+  triggerHoverState(e: CustomEvent){
+    let element = this.shadowRoot!.querySelector(".iwrapper");
+    if(e.detail.entering){
+      element?.classList.add("active");
+    } else {
+      element?.classList.remove("active");
+    }
+  }
+
   render() {
     return html`
-      <div id="item-wrapper" @click=${() => this.bubbleEvent()}>
-        ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+      <div class="iwrapper">
+        <div class="left">
+          ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
-        <p>${this.fix.split("~").length > 1 ? 
-            this.fix.split("~").join(" "+ this.field + " ") :
-            this.fix
-            } 
-        </p>
+          <p>${this.fix.split("~").length > 1 ? 
+              this.fix.split("~").join(" "+ this.field + " ") :
+              this.fix
+              } 
+          </p>
+        </div>
+        ${manifest_fields[this.field] ? 
+          html`
+            <manifest-info-card .field=${this.field} @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}></manifest-info-card>
+          ` 
+          : html``}
       </div>
     `;
   }
