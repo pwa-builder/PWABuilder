@@ -16,7 +16,6 @@ import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
-import '../components/info-panel';
 import '../components/share-card';
 
 import { testSecurity } from '../services/tests/security';
@@ -515,7 +514,12 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
         
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> origin/dev
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -541,6 +545,7 @@ export class AppReport extends LitElement {
           justify-content: center;
           gap: 10px;
         }
+<<<<<<< HEAD
 
         #share-card-text {
           font-size: var(--subheader-font-size);
@@ -590,7 +595,57 @@ export class AppReport extends LitElement {
         }
         
 
+=======
+>>>>>>> origin/dev
 
+        #share-card-text {
+          font-size: var(--subheader-font-size);
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-left: 115px;
+        }
+
+        #share-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+
+        .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          padding: 10px 20px;
+          background: transparent;
+          color: var(--primary-color);
+          font-size: var(--button-font-size);
+          font-weight: bold;
+          border: 1px solid var(--primary-color);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
+        }
+        .share-banner-buttons:hover {
+          box-shadow: var(--button-box-shadow)
+        }
+
+        #share-button:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #share-button:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+
+        .banner-button-icons {
+          width: 20px;
+          height: auto;
+        }
+        
+>>>>>>> dev
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -2345,8 +2400,12 @@ export class AppReport extends LitElement {
                         .fix=${todo.fix}
                         .card=${todo.card}
                         .displayString=${todo.displayString}
+<<<<<<< HEAD
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+=======
+                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+>>>>>>> origin/dev
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
@@ -2735,17 +2794,12 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
-
-
-
       <share-card 
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
         .siteName=${this.appCard.siteName}
       > </share-card>
-      
-
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}

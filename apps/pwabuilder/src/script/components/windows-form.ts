@@ -96,6 +96,17 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
+        #color-input-holder {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        #color-input-holder p {
+          margin: 0;
+          color: var(--secondary-font-color);
+        }
+
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;
@@ -259,6 +270,7 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   renderMultiSelect(formInput: FormInput): TemplateResult {
+    console.log(this.packageOptions.resourceLanguage)
     return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
