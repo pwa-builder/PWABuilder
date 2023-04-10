@@ -16,6 +16,7 @@ import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel';
 import '@shoelace-style/shoelace/dist/components/textarea/textarea';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton';
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
 
 // also needed for site

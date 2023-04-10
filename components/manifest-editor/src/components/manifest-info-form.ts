@@ -5,6 +5,8 @@ import { validateSingleField, required_fields, singleFieldValidation } from '@pw
 import { insertAfter, errorInTab } from '../utils/helpers';
 import {classMap} from 'lit/directives/class-map.js';
 
+import "./manifest-field-tooltip";
+
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
 
@@ -391,8 +393,6 @@ export class ManifestInfoForm extends LitElement {
     }
   }
 
-  
-
   initMissingColors(){
     if(!this.manifest.theme_color){
       let manifestUpdated = new CustomEvent('manifestUpdated', {
@@ -535,16 +535,7 @@ export class ManifestInfoForm extends LitElement {
             <div class="field-header">
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("name"))}>Name</h3>
-                <a
-                  href="https://docs.pwabuilder.com/#/builder/manifest?id=name-string"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the name option in your manifest.
-                  </p>
-                </a>
+                <manifest-field-tooltip .field=${"name"}></manifest-field-tooltip>
               </div>
 
               <p class="field-desc">(required)</p>
@@ -556,16 +547,7 @@ export class ManifestInfoForm extends LitElement {
             <div class="field-header">
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("short_name"))}>Short Name</h3>
-                <a
-                  href="https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the short name option in your manifest.
-                  </p>
-                </a>
+                <manifest-field-tooltip .field=${"short_name"}></manifest-field-tooltip>
               </div>
 
               <p class="field-desc">(required)</p>
@@ -579,16 +561,7 @@ export class ManifestInfoForm extends LitElement {
             <div class="field-header">
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("description"))}>Description</h3>
-                <a
-                  href="https://docs.pwabuilder.com/#/builder/manifest?id=description-string"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the description option in your manifest.
-                  </p>
-                </a>
+                <manifest-field-tooltip .field=${"description"}></manifest-field-tooltip>
               </div>
             </div>
             <p class="field-desc">Used in app storefronts and install dialogs</p>
@@ -601,16 +574,7 @@ export class ManifestInfoForm extends LitElement {
             <div class="field-header">
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("background_color"))}>Background Color</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the background color option in your manifest.
-                  </p>
-                </a>
+                <manifest-field-tooltip .field=${"background_color"}></manifest-field-tooltip>
               </div>
             </div>
             <p class="field-desc">Select a Background color</p>
@@ -625,16 +589,7 @@ export class ManifestInfoForm extends LitElement {
             <div class="field-header">
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("theme_color"))}>Theme Color</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the theme color option in your manifest.
-                  </p>
-                </a>
+                <manifest-field-tooltip .field=${"theme_color"}></manifest-field-tooltip>
               </div>
             </div>
             <p class="field-desc">Select a Theme color</p>

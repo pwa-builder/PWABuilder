@@ -2,13 +2,8 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { manifest_fields } from '../utils/manifest-info';
-
 import {
   smallBreakPoint,
-  mediumBreakPoint,
-  largeBreakPoint,
-  xLargeBreakPoint,
-  xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 import { SlDropdown } from '@shoelace-style/shoelace';
 
@@ -78,48 +73,45 @@ export class ManifestInfoCard extends LitElement {
         gap: 5px;
       }
 
-      .mic-actions a {
+      .mic-actions > * {
         color: #ffffff;
         font-size: 16px;
+        font-weight: bold;
+        font-family: var(--font-family);
+      }
+
+      .mic-actions a {
+        line-height: 16px;
       }
 
       .mic-actions a:visited, .mic-actions a:active, .mic-actions a:link {
         color: #ffffff;
-        font-weight: bold;
       }
 
       .mic-actions button {
         background-color: transparent;
         border: none;
         color: #ffffff;
-        border-bottom: 2px solid #ffffff;
         padding: 0;
+        text-decoration: underline;
+        height: 16px;
+        display: flex;
+        align-items: center;
       }
 
       .mic-actions button:hover {
         cursor: pointer; 
       }
 
-
       /* < 480px */
       ${smallBreakPoint(css`
-      `)}
+        .info-box{
+          width: 240px;
+        }
 
-      /* 480px - 639px */
-      ${mediumBreakPoint(css`
-      `)}
-
-      /* 640px - 1023px */
-      ${largeBreakPoint(css`
-      `)}
-
-      /*1024px - 1365px*/
-      ${xLargeBreakPoint(css`
-      `)}
-
-      /* > 1920 */
-      ${xxxLargeBreakPoint(css`
-          
+        .image-section img {
+          width: 200px;
+        }
       `)}
 
     `
@@ -135,6 +127,12 @@ export class ManifestInfoCard extends LitElement {
   }
 
   openME(){
+    // general counter
+    recordPWABuilderProcessStep(`action_item_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+    // specific counter
+    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
     (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
     let tab = manifest_fields[this.field].location;
     let event = new CustomEvent('open-manifest-editor', {
@@ -148,11 +146,27 @@ export class ManifestInfoCard extends LitElement {
     this.dispatchEvent(event);
   }
 
+  trackLearnMoreAnalytics(){
+    // general counter
+    recordPWABuilderProcessStep(`action_item_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+    //specific field counter
+    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
+  trackTooltipOpened(){
+    // general counter
+    recordPWABuilderProcessStep(`action_item_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+
+    //specific field counter
+    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
     <div class="mic-wrapper">
       <sl-dropdown distance="10" placement="left" class="tooltip">
-        <button slot="trigger" type="button" class="right" class="nav_link nav_button">
+        <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()}>
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>
         <div class="info-box">
@@ -168,7 +182,7 @@ export class ManifestInfoCard extends LitElement {
             
           }
           <div class="mic-actions">
-            <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a>
+            <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
             <button type="button" @click=${() => this.openME()}>Edit in Manifest</button>
           </div>
         </div>
