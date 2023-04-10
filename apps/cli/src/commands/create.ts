@@ -48,8 +48,8 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
 
   const finalOutputString: string = `All set! To preview your PWA in the browser:
   
-    1. Navigate to your project's directory with: "cd ${resolvedName}".
-    2. Start your PWA with: "pwa start".
+    1. Navigate to your project's directory with: "cd ${resolvedName}"
+    2. Start your PWA with: "pwa start"
 
   Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
   
@@ -61,8 +61,8 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
   const {name, template} = argv;
+  const resolvedTemplate= await resolveTemplateArgument(template, ('template' in argv));
   const resolvedName = await resolveNameArgument(name);
-  const resolvedTemplate= await resolveTemplateArgument(template);
   return {resolvedName, resolvedTemplate};
 }
 
@@ -92,11 +92,13 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
   return name;
 }
 
-async function resolveTemplateArgument(templateArg: string | undefined): Promise<string> {
+async function resolveTemplateArgument(templateArg: string | undefined, templateProvided: boolean): Promise<string> {
   let template: string = 'default';
 
   if(templateArg && validateTemplate(templateArg)) {
     template = templateArg;
+  } else if (templateProvided) {
+    emitInvalidTemplateError();
   }
 
   return template;
@@ -152,4 +154,13 @@ function trackCreateEvent(template: string, timeMS: number, name: string): void 
   }
 
   trackEvent("create", createEventData);
+}
+
+function emitInvalidTemplateError() {
+  prompts.cancel(`ERROR: Invalid template provided. Cancelling create operation.
+    
+    Valid template names:
+    1. default - Original PWA Starter template
+    2. basic - Simplified PWA Starter with fewer dependencies`);
+    process.exit(0);
 }
