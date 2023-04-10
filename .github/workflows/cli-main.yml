@@ -4,11 +4,15 @@ on:
   push:
     paths:
       -"apps/cli/**"
-    branches: [ main, starter-cli-dev ]
+    branches: 
+      -main 
+      -starter-cli-dev
   pull_request:
     paths:
       -"apps/cli/**"
-    branches: [ main ]
+    branches:
+      -main
+      -starter-cli-dev
   workflow_dispatch:
 
 jobs:
