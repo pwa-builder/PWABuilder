@@ -228,7 +228,7 @@ export const windowsLanguages = [
   { "codes": ["et", "et-ee"], "name": "Estonian" },
   { "codes": ["fil", "fil-latn", "fil-ph"], "name": "Filipino" },
   { "codes": ["fi", "fi-fi"], "name": "Finnish" },
-  { "codes": ["fr", "fr-be ", "fr-ca ", "fr-ch ", "fr-fr ", "fr-lu", "fr-015", "fr-cd", "fr-ci", "fr-cm", "fr-ht", "fr-ma", "fr-mc", "fr-ml", "fr-re", "frc-latn", "frp-latn", "fr-155", "fr-029", "fr-021", "fr-011"], "name": "French" },
+  { "codes": ["fr", "fr-be", "fr-ca", "fr-ch", "fr-fr", "fr-lu", "fr-015", "fr-cd", "fr-ci", "fr-cm", "fr-ht", "fr-ma", "fr-mc", "fr-ml", "fr-re", "frc-latn", "frp-latn", "fr-155", "fr-029", "fr-021", "fr-011"], "name": "French" },
   { "codes": ["gl", "gl-es"], "name": "Galician" },
   { "codes": ["ka", "ka-ge"], "name": "Georgian" },
   { "codes": ["de", "de-at", "de-ch", "de-de", "de-lu", "de-li"], "name": "German" },

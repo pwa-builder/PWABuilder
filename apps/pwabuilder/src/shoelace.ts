@@ -18,7 +18,6 @@ import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
-
 // also needed for site
 import '@shoelace-style/shoelace/dist/components/dialog/dialog';
 import '@shoelace-style/shoelace/dist/components/icon/icon';

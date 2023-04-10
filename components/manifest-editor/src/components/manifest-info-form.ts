@@ -41,11 +41,12 @@ export class ManifestInfoForm extends LitElement {
         --sl-input-focus-ring-color: #4f3fb670;
         --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
+        --sl-input-font-family: Hind, sans-serif;
       }
 
       sl-input::part(base),
       sl-textarea::part(base),
-      sl-menu-item::part(base),
+      sl-option::part(base),
       sl-color-picker::part(base),
       sl-button::part(base) {
         --sl-input-font-size-medium: 16px;
@@ -171,12 +172,12 @@ export class ManifestInfoForm extends LitElement {
         width: 100%;
       }
 
-      sl-menu-item:focus-within::part(base) {
+      sl-option:focus-within::part(base) {
         color: #ffffff;
         background-color: #4F3FB6;
       }
 
-      sl-menu-item::part(base):hover{
+      sl-option::part(base):hover{
         color: #ffffff;
         background-color: #4F3FB6;
       }
@@ -221,7 +222,7 @@ export class ManifestInfoForm extends LitElement {
 
       @media(max-width: 480px){
         sl-input::part(base),
-        sl-menu-item::part(base) {
+        sl-option::part(base) {
           --sl-input-font-size-medium: 14px;
           --sl-font-size-medium: 14px;
           --sl-input-height-medium: 2.5em;
@@ -580,7 +581,7 @@ export class ManifestInfoForm extends LitElement {
             <p class="field-desc">Select a Background color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} hoist=${true} data-field="background_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
+                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} hoist=${true} data-field="background_color" @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
                 <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
@@ -595,7 +596,7 @@ export class ManifestInfoForm extends LitElement {
             <p class="field-desc">Select a Theme color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} hoist=${true} data-field="theme_color" .swatches=${[]} @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
+                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} hoist=${true} data-field="theme_color" @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
                 <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>

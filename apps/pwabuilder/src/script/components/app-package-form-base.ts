@@ -7,6 +7,7 @@ import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 import { PackageOptions } from '../utils/interfaces';
+import { SlColorPicker } from '@shoelace-style/shoelace';
 
 /**
  * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.
@@ -135,6 +136,29 @@ export class AppPackageFormBase extends LitElement {
         cursor: no-drop;
       }
 
+      sl-color-picker {
+        --grid-width: 315px;
+        height: 25px;
+      }
+
+      sl-color-picker::part(trigger){
+        border-radius: 0;
+        height: 25px;
+        width: 75px;
+        display: flex;
+      }
+
+      .colorPickerAndValue {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .colorPickerAndValue p {
+        margin: 0;
+        color: var(--secondary-font-color);
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
@@ -166,11 +190,46 @@ export class AppPackageFormBase extends LitElement {
       `;
     }
 
+    if(formInput.type === 'color'){
+      return html`
+        ${this.renderFormInputLabel(formInput)}
+        ${this.renderFormColorPicker(formInput)}
+      `;
+    }
+
     // For all others, the label comes first.
     return html`
       ${this.renderFormInputLabel(formInput)}
       ${this.renderFormInputTextbox(formInput)}
     `;
+  }
+
+  private renderFormColorPicker(formInput: FormInput){
+    return html`
+    <div class="colorPickerAndValue">
+      <sl-color-picker
+              id="${formInput.inputId}" 
+              class="form-control" 
+              placeholder="${formInput.placeholder || ''}"
+              value="${(ifDefined(formInput.value) as string)}" 
+              type="color" 
+              ?required="${formInput.required}"
+              name="${ifDefined(formInput.name)}" 
+              minlength="${ifDefined(formInput.minLength)}"
+              maxlength="${ifDefined(formInput.maxLength)}"
+              min=${ifDefined(formInput.minValue)}
+              max="${ifDefined(formInput.maxValue)}" 
+              pattern="${ifDefined(formInput.pattern)}"
+              spellcheck="${ifDefined(formInput.spellcheck)}" 
+              ?checked="${formInput.checked}" 
+              ?readonly="${formInput.readonly}"
+              custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+              ?disabled=${formInput.disabled}
+              @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}" 
+              @sl-invalid=${this.inputInvalid}
+            ></sl-color-picker>
+            <p>${formInput.value}</p>
+  </div>`;
   }
 
   private renderFormInputTextbox(formInput: FormInput): TemplateResult {
@@ -213,6 +272,28 @@ export class AppPackageFormBase extends LitElement {
       <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
       </info-circle-tooltip>
     `;
+  }
+
+  private colorChanged(e: UIEvent, formInput: FormInput) {
+    const inputElement = e.target as HTMLInputElement | null;
+    let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
+    
+    let colorValue = inputElement?.nextElementSibling;
+    colorValue!.innerHTML = formattedValue;
+
+    if (inputElement) {
+      // Fire the input handler
+      if (formInput.inputHandler) {
+        formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+      }
+
+      // Run validation if necessary.
+      if (formInput.validationErrorMessage) {
+        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+        inputElement.setCustomValidity(errorMessage);
+        inputElement.title = errorMessage;
+      }
+    }
   }
 
   private inputChanged(e: UIEvent, formInput: FormInput) {

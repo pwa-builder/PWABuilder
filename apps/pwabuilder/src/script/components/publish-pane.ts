@@ -75,9 +75,9 @@ export class PublishPane extends LitElement {
       title: 'Windows',
       factoids: [
         "PWAs can be indistinguishable from native apps on Windows",
-        "PWAs are first class applications.",
-        "Collect 100% of revenue generated via third party commerce platforms.",
-        "1B+ store enabled devices."
+        "PWAs are first class applications",
+        "Collect 100% of revenue generated via third party commerce platforms",
+        "1B+ store enabled devices"
       ],
       isActionCard: true,
       icon: '/assets/Publish_Windows.svg',
@@ -99,8 +99,8 @@ export class PublishPane extends LitElement {
       title: 'iOS',
       factoids: [
         "Leverage same codebase across all platforms",
-        "Large user base.",
-        "Premium devices."
+        "Large user base",
+        "Premium devices"
       ],
       isActionCard: true,
       icon: '/assets/Publish_Apple.svg',

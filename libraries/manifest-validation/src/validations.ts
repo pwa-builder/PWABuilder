@@ -618,7 +618,7 @@ export const maniTests: Array<Validation> = [
                 const allValid = value.every((protocolHandler: any) => {
                     const isRelativeUrl = protocolHandler.url && protocolHandler.url.startsWith("/");
                     const hasProtocol = protocolHandler.protocol && protocolHandler.protocol.length > 0;
-                    const isProtocolValid = hasProtocol && validProtocols.includes(protocolHandler.protocol);
+                    const isProtocolValid = hasProtocol && (validProtocols.includes(protocolHandler.protocol) || protocolHandler.protocol.startsWith("web+"));
                     const hasUrl = protocolHandler.url && protocolHandler.url.length > 0;
 
                     return isRelativeUrl && hasProtocol && hasUrl && isProtocolValid;

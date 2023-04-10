@@ -17,6 +17,7 @@ import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
 import '../components/info-panel';
+import '../components/share-card';
 
 import { testSecurity } from '../services/tests/security';
 import { testServiceWorker } from '../services/tests/service-worker';
@@ -281,12 +282,18 @@ export class AppReport extends LitElement {
 
         #app-card-header {
           display: grid;
-          grid-template-columns: 1fr 2fr 4fr;
+          grid-template-rows: auto;
           gap: 10px;
           align-items: center;
           font-size: 14px;
-          padding: 2em;
+          padding: 2em 2em 0;
           width: 100%;
+        }
+
+        #app-card-header-col {
+          display: grid;
+          grid-template-columns: 1fr 4fr 1fr;
+          gap: 15px;
         }
 
         #pwa-image-holder {
@@ -296,14 +303,48 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           background-color: #ffffff;
-          border-radius: var(--card-border-radius);
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
+          border-radius: 4px;
         }
         
-        #app-card-header img {
+        #app-image-skeleton {
           height: 85px;
           width: auto;
           padding: 10px;
+        }
+
+        #pwa-image-holder img{
+          height: 115.05px;
+          width: 115.05px;
+          left: 113px;
+          top: 118.951171875px;
+          border-radius: 4px;
+        }
+
+        #app-card-share-cta {
+          display: flex;
+          height: 100%;
+          flex-direction: column;
+          justify-content: start;
+        }
+
+        #app-card-share-cta #share-button {
+          height: 32px;
+          width: 117.5439453125px;
+          left: 509.4560546875px;
+          top: 116.7421875px;
+          border-radius: 20px;
+          text-align: center;
+          font-size: 12px;
+        }
+
+        #share-icon {
+          height: 14px;
+          width: 14.78px;
+          left: 526.8994140625px;
+          top: 125.322265625px;
+          border-radius: 0px;
+
         }
 
         .proxy-loader {
@@ -331,8 +372,9 @@ export class AppReport extends LitElement {
         }
         
         #card-info {
-          overflow: hidden;
+          //overflow: hidden;
           white-space: nowrap;
+          height: 100%;
         }
 
         #card-info p {
@@ -345,19 +387,25 @@ export class AppReport extends LitElement {
         }
 
         #site-url {
-          white-space: normal;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 200px;
+          margin-bottom: 8px !important;
         }
 
         #app-card-desc {
-          margin: 0;
-          font-size: var(--card-body-font-size);
-          width: 100%;
-          white-space: normal;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box !important;
-          -webkit-line-clamp: 6;
-          -webkit-box-orient: vertical;
+          max-width: 220px;
+          overflow-y:hidden;
+          text-overflow:ellipsis;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          line-height: 18px;
+          white-space: break-spaces;
+        }
+
+        #app-card-desc-mobile {
+          display: none;
         }
 
         #app-card-footer {
@@ -467,6 +515,82 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
         
+
+        #share-card {
+          width: 100%;
+          background: #ffffff;
+          border-radius: 10px;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 22px;
+          position: relative;
+        }
+
+        #share-card-mani{
+          position: absolute;
+          left: 10px;
+          bottom: 0;
+          height: 85px;
+        }
+
+        #share-card-content{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        #share-card-text {
+          font-size: var(--subheader-font-size);
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-left: 115px;
+        }
+
+        #share-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+
+        .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          padding: 10px 20px;
+          background: transparent;
+          color: var(--primary-color);
+          font-size: var(--button-font-size);
+          font-weight: bold;
+          border: 1px solid var(--primary-color);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
+        }
+        .share-banner-buttons:hover {
+          box-shadow: var(--button-box-shadow)
+        }
+
+        #share-button:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #share-button:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+
+        .banner-button-icons {
+          width: 20px;
+          height: auto;
+        }
+        
+
+
         .mani-tooltip {
           --sl-tooltip-padding: 0;
         }
@@ -1047,11 +1171,53 @@ export class AppReport extends LitElement {
         /* @media(max-width: 700px){
           --button-padding
         } */
+        @media(max-width: 376px){
+          #pwa-image-holder {
+            width: 61px !important;
+          }
+          #pwa-image-holder img {
+            width: 55px !important;
+          }
+        }
+
 
         @media(max-width: 600px){
-          #app-card-header{
-            grid-template-columns: 1fr 5fr;
-            grid-template-rows: 1fr 1fr;
+          #app-card-header-col { 
+            gap: 10px;
+          }
+          #pwa-image-holder {
+            width: 90px;
+            height: auto;
+          }
+          #pwa-image-holder img { 
+            width: 84px;
+            height: auto;
+          }
+          #card-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+          #app-card-desc {
+            max-width: 100%;
+          }
+          #app-card-desc-mobile {
+            display: block;
+          }
+          .app-card-desc-desktop {
+            display: none;
+          }
+          #site-name {
+            font-size: 20px;
+          }
+          #site-url {
+            margin-bottom: 8px !important;
+          }
+          #app-card-share-cta {
+            justify-content: start;
+          }
+          #app-card-share-cta #share-button {
+            width: 100px;
           }
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
@@ -1085,6 +1251,24 @@ export class AppReport extends LitElement {
           .progressRingSkeleton::part(base) {
             width: 75px;
             height: 75px;
+          }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            margin-bottom: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
           }
         `)}
 
@@ -1167,6 +1351,24 @@ export class AppReport extends LitElement {
           }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
+          }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            margin-bottom: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
           }
         `)}
       `,
@@ -1306,16 +1508,6 @@ export class AppReport extends LitElement {
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
-      if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
-        this.CardStyles.backgroundColor = manifestContext.manifest.theme_color;
-        // calculate whether is best to use white or black
-        let color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
-        this.CardStyles.color = color;
-        this.BorderStyles.borderTop = `1px solid ${color + '33'}`
-        this.LastEditedStyles.color = color + 'b3';
-        color === "#ffffff" ? this.retestPath = "/assets/new/retest-white.svg" : "/assets/new/retest-black.svg"
-
-      }
     } else {
         this.appCard = {
           siteName: "Missing Name",
@@ -1661,11 +1853,13 @@ export class AppReport extends LitElement {
     this.pageNumber = 1;
   }
 
-  copyReportCardLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
-    })
-  } 
+  // Opens share card modal and tracks analytics
+  async openShareCardModal() {
+    let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog!.show();
+    recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }  
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal(focusOn = "", tab: string = "info") {
@@ -1997,6 +2191,15 @@ export class AppReport extends LitElement {
     
   }
 
+//truncate app card discription
+  truncateString(str: String) {
+    if (str.length > 125) {
+      return str.substring(0, 125) + "...";
+    } else {
+      return str;
+    }
+  }
+
   render() {
     return html`
       <app-header></app-header>
@@ -2022,16 +2225,29 @@ export class AppReport extends LitElement {
             html`
             <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
-                <div id="pwa-image-holder">
-                  ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                <div id="app-card-header-col">
+                  <div id="pwa-image-holder">
+                    ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                  </div>
+                  <div id="card-info" class="flex-row">
+                    <p id="site-name">${this.appCard.siteName}</p>
+                    <p id="site-url">${this.appCard.siteUrl}</p>
+                    <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
+                  </div>
+                  <div id="app-card-share-cta">
+                    <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                    ${this.runningTests ?
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                    } Share score
+                    </button>
+                  </div>
                 </div>
-                <div id="card-info" class="flex-col">
-                  <p id="site-name">${this.appCard.siteName}</p>
-                  <p id="site-url">${this.appCard.siteUrl}</p>
+                <div id="app-card-desc-mobile">
+                  <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
                 </div>
-                <p id="app-card-desc">${this.appCard.description}</p>
               </div>
-              <div id="app-card-footer" style=${styleMap(this.BorderStyles)}>
+              <div id="app-card-footer">
                 <div id="test" style=${styleMap(this.CardStyles)}>
                   <button
                     type="button"
@@ -2519,7 +2735,17 @@ export class AppReport extends LitElement {
         }
 
       </sl-dialog>
+
+
+
+      <share-card 
+        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
+        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
+        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
+        .siteName=${this.appCard.siteName}
+      > </share-card>
       
+
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}

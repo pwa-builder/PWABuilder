@@ -61,6 +61,11 @@ export class ManifestIconsForm extends LitElement {
   static get styles() {
     return css`
 
+    :host {
+      --sl-input-font-family: Hind, sans-serif;
+    }
+    
+
       sl-checkbox::part(base),
       sl-checkbox::part(control),
       sl-button::part(base) {
