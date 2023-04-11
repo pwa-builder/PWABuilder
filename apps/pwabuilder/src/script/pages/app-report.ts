@@ -2049,7 +2049,7 @@ export class AppReport extends LitElement {
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
-    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest", "displayString": toAdd});
+    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
     this.requestUpdate();
   }
 
@@ -2112,10 +2112,11 @@ export class AppReport extends LitElement {
   // 1 = b wins
   sortTodos(){
     const rank: { [key: string]: number } = { 
-      "required": 0,
-      "highly recommended": 1,
-      "recommended": 2,
-      "optional": 3
+      "retest": 0,
+      "required": 1,
+      "highly recommended": 2,
+      "recommended": 3,
+      "optional": 4
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {

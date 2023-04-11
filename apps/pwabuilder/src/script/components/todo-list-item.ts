@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-//import {classMap} from 'lit/directives/class-map.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -34,6 +34,11 @@ export class TodoItem extends LitElement {
         padding: .5em;
         margin-bottom: 10px;
         border: 1px solid transparent;
+      }
+
+      .clickable:hover {
+        cursor: pointer;
+        border: 1px solid #CBCDEB;
       }
 
       .active:hover {
@@ -94,7 +99,7 @@ export class TodoItem extends LitElement {
     super();
   }
 
-  /* bubbleEvent(){
+  bubbleEvent(){
     let event = new CustomEvent('todo-clicked', {
       detail: {
           field: this.field,
@@ -107,16 +112,17 @@ export class TodoItem extends LitElement {
     this.dispatchEvent(event);
   }
 
-  decideClickable(field: string){
+  // allows for the retest items to be clicked
+  decideClickable(){
     let decision;
-    if(manifest_fields[field] || this.status === "retest"){
+    if(this.status === "retest"){
       decision = true;
     } // else if(sw_fields[field]){}
     else {
       decision = false;
     }
     return {iwrapper: true, clickable: decision}
-  } */
+  }
 
   /* showMenu(){
     let menu = this.shadowRoot!.querySelector("sl-dropdown");
@@ -141,7 +147,7 @@ export class TodoItem extends LitElement {
 
   render() {
     return html`
-      <div class="iwrapper">
+      <div class="${classMap(this.decideClickable())}" @click=${() => this.bubbleEvent()}>
         <div class="left">
           ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
