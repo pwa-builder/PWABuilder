@@ -46,6 +46,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    needs: version
     if: needs.version.outputs.latest-version != needs.version.outputs.package-version
     defaults:
       run:
