@@ -1,16 +1,12 @@
 import { open } from "fs/promises";
 import { resolve } from "path";
 import * as vscode from "vscode";
-import { getAnalyticsClient } from "../usage-analytics";
+import { trackEvent } from "../usage-analytics";
 
-let manifest: any | undefined;
+let manifest: vscode.Uri | undefined;
 
 export async function generateManifest(skipPrompts?: boolean) {
-  const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({
-    name: "generate",
-    properties: { type: "manifest" }
-  });
+  trackEvent("generate", { "type": "manifest" })
 
   // open information message about generating manifest
   // with an ok button
@@ -144,7 +140,7 @@ export async function generateManifest(skipPrompts?: boolean) {
         "\n" +
         "]," +
         "\n" +
-        '"prefer_related_applications": "${15|false, true|}",' +
+        '"prefer_related_applications": ${15|false, true|},' +
         "\n" +
         '"shortcuts": [' +
         "\n" +
@@ -238,7 +234,7 @@ export async function chooseManifest() {
 
   if (manifestFile && manifestFile.length > 0) {
     await findManifest(manifestFile);
-    // manifest = manifestFile[0];
+    manifest = manifestFile[0];
   }
 }
 

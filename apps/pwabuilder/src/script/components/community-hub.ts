@@ -22,7 +22,7 @@ export class CommunityHub extends LitElement {
         display: flex;
         align-items: flex-start;
         justify-content: center;
-        background: white;
+        background: #ffffff;
         padding: 2em;
         column-gap: 1em;
       }
@@ -47,11 +47,11 @@ export class CommunityHub extends LitElement {
       }
 
       #community-content h2 {
-        color: black;
+        color: var(--font-color);
         margin: 0;
         margin-bottom: 1em;
         font-weight: bold;
-        font-size: 1.55em;
+        font-size: var(--header-font-size);
       }
 
       #community-cards {
@@ -167,10 +167,10 @@ export class CommunityHub extends LitElement {
     return html`
       <div id="community-panel">
         <div id="community-photo">
-          <img src="/assets/new/community-image.png" alt="social hub image" role="presentation"/>
+          <img src="/assets/new/community-image.png" alt="social hub image" role="img"/>
         </div>
         <div id="community-content">
-          <h2>Join our Community</h2>
+          <h2>Join our community</h2>
           <div id="community-cards">
             ${this.cards.map((card: any) => html`
               <community-card

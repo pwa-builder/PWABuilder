@@ -39,7 +39,7 @@ export class ManifestEditorFrame extends LitElement {
         display: flex;
         flex-direction: column;
         row-gap: 1em;
-        padding: 1em;
+        padding: 1.5em;
       }
       #frame-header {
         display: flex;
@@ -58,8 +58,8 @@ export class ManifestEditorFrame extends LitElement {
       #frame-footer {
         background-color: #F2F3FB;
         padding: 1.5em 2em;
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: var(--card-border-radius);
+        border-bottom-right-radius: var(--card-border-radius);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -146,7 +146,7 @@ export class ManifestEditorFrame extends LitElement {
       }
       .dialog::part(panel) {
         position: relative;
-        border-radius: 20px;
+        border-radius: var(--card-border-radius);
       }
       .dialog::part(overlay){
           backdrop-filter: blur(10px);
@@ -248,6 +248,7 @@ export class ManifestEditorFrame extends LitElement {
   /* Next functions are for analytics */
 
   handleTabSwitch(e: CustomEvent){
+    recordPWABuilderProcessStep(`manifest_editor.tab_switched`, AnalyticsBehavior.ProcessCheckpoint);
     recordPWABuilderProcessStep(`manifest_editor.${e.detail.tab}_tab_selected`, AnalyticsBehavior.ProcessCheckpoint);
   }
 

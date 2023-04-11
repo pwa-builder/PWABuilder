@@ -18,6 +18,9 @@ on:
 jobs:
   version:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/cli
 
     outputs:
       latest-version: ${{steps.latest-version.outputs.version}}

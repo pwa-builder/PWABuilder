@@ -4,9 +4,9 @@ To let your users sign-in with their Facebook account, you'll need to create a F
 
 In short, we'll go to the Facebook Developer portal, create a new Facebook App, configure it to allow Facebook Sign In, and grab the key.
 
-## Step 1: Login to <a href="https://developers.facebook.com/">Facebook Developer portal</a>
+## Step 1: Login to [Facebook Developer portal](https://developers.facebook.com/)
 
-Go to the <a href="https://developers.facebook.com/">Facebook Developer portal</a> and sign-in with your Facebook account.
+Go to the [Facebook Developer portal](https://developers.facebook.com/) and sign-in with your Facebook account.
 
 ## Step 2: Create a new App
 

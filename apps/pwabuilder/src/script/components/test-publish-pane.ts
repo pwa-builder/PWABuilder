@@ -45,9 +45,9 @@ export class TestPublishPane extends LitElement {
       title: 'Windows',
       factoids: [
         "PWAs can be indistinguishable from native apps on Windows",
-        "PWAs are first class applications.",
-        "Collect 100% of revenue generated via third party commerce platforms.",
-        "1B+ store enabled devices."
+        "PWAs are first class applications",
+        "Collect 100% of revenue generated via third party commerce platforms",
+        "1B+ store enabled devices"
       ],
       isActionCard: true,
       icon: '/assets/Publish_Windows.svg',
@@ -95,6 +95,7 @@ export class TestPublishPane extends LitElement {
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
         padding: 1em;
+        border-radius: var(--card-border-radius);
       }
       .packaged-tracker {
         height: max-content;
@@ -165,9 +166,9 @@ export class TestPublishPane extends LitElement {
       .package-button::part(base) {
         all: unset;
         width: 75%;
-        background-color: white;
-        color: #4F3FB6;
-        border: 1px solid #4F3FB6;
+        background-color: #ffffff;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
         font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
@@ -179,6 +180,9 @@ export class TestPublishPane extends LitElement {
       }
       .package-button:hover {
         cursor: pointer;
+      }
+      .package-button::part(base):hover{
+        box-shadow: var(--button-box-shadow);
       }
       #info-tooltip {
         height: 20px
@@ -329,7 +333,7 @@ export class TestPublishPane extends LitElement {
 
   renderWindowsDownloadButton(): TemplateResult {
     return html`
-      <sl-button id="windows-test-pkg-btn" class="package-button" ?loading=${this.generating} id="test-package-button"
+      <sl-button class="package-button" ?loading=${this.generating} id="test-package-button"
           @click="${this.generateWindowsTestPackage}" .secondary="${true}">
         Download Test Package
       </sl-button>

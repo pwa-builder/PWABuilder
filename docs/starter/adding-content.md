@@ -2,7 +2,7 @@
 
 The PWA Starter is a [Single-Page Application](https://developer.mozilla.org/en-US/docs/Glossary/SPA) and uses a client-side router to navigate between pages. 
 
-To this end, we use [Vaadin Router](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos), which is a simple, declarative router that allows you to define a route, such as `/about`, and it's corresponding web-component. 
+To this end, we use the router found in [@thepassle/app-tools](https://github.com/thepassle/app-tools/tree/master/router), which is a simple, declarative router that allows you to define a route, such as `/about`, and it's corresponding web-component. 
 
 The starter makes use of both pre-built ([Fluent Components](https://docs.microsoft.com/en-us/fluent-ui/web-components/)) and custom web components ([Lit](https://lit.dev/)) to define both entire pages, and the smaller, functional components that make up those pages.
 
@@ -13,58 +13,45 @@ The PWA Starter uses *client-side routing* to navigate between pages, which allo
 
 As far as progressive web apps are concerned, this allows for a user experience that is more consistent with expectations for native applications.
 
-In the case of the PWA Starter, each page is it's own custom web component, and they are mapped to URLs using [Vaadin Router](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos).
+In the case of the PWA Starter, each page is it's own custom web component, and they are mapped to URLs using [@thepassle/app-tools](https://github.com/thepassle/app-tools/tree/master/router#usage).
 
 #### Setting Routes
 
 All of the routing logic for the PWA Starter can be found in `src/app-index.ts`, which is our root index component that we include in our normal `index.html` file.
 
-Let's take a look at this block of code within `firstUpdated()` function contained in `app-index.ts`, where we use the `setRoutes()` function to define our PWA's navigation:
+Let's take a look at the router config contained in `src/router.ts`, where we define our PWA's navigation:
 
 ```typescript
-const router = new Router(this.shadowRoot?.querySelector('#routerOutlet')); 
-router.setRoutes([
-  {
-    path: '', // our root path
-    animate: true,
-    children: [ // the children of this path
-      { path: '/', component: 'app-home' }, // our default URL
+export const router = new Router({
+    routes: [
       {
-        path: '/about', // while this route will take us to the app-about component
-        component: 'app-about',
-        action: async () => { // load our component asynchronously
-          await import('./pages/app-about.js'); 
-        },
+        path: '/',
+        title: 'home',
+        render: () => html`<app-home></app-home>`
       },
-    ],
-  } as any, // temporarily cast to any because of a Type bug with the router
-]);
+      {
+        path: '/about',
+        title: 'about',
+        plugins: [
+          lazy(() => import('./pages/app-about/app-about.js')),
+        ],
+        render: () => html`<app-about></app-about>`
+      }
+    ]
+});
 ```
 
 In this snippet, we have a `app-home` component that lives at `/`, and a `app-about` component that lives at `/about`. 
 
-The bare minimum you need to declare a route is a `path` and `component`, but the starter also makes use of several other properties:
+The bare minimum you need to declare a route is a `path`, a `component`, and a `render` function but the starter also makes use of several other properties:
 
 | Property |Usage |
 | :------|------ |
 | **path** (*Required*)  |The path we want to use to define our route. For example: `/about`|
 | **component** (*Required*) |The component we want associated with our route. For example: `app-about` |
-| **animate** | Whether or not to animate between pages during navigation. You can configure this animation with CSS. Learn more [here.](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-animated-transitions-demos)   |
-| **children** | The children array for our path. For example, if our `/about` route had a child with the path `/faq`, that page could be found at `/about/faq`|
-| **action** | The action to take when navigating to this page. For example, the PWA Starter uses this to asynchronously load our pages. |
+| **render** (*Required*) | The function to execute when navigating to this page. For example, because the PWA Starter is built with web components, all we need to pass is the component itself, such as `<app-home></app-home>. |
+| **plugins** | An array of plugins that we may want to use in our router. The `@thepassle/app-tools` router supports plugins, which are bits of functionality you can add to the router. By default, we use the `lazy` plugin to `lazy-load` our pages, however there are [other plugins you can add](https://github.com/thepassle/app-tools/tree/master/router#composable)
 
-
-If you wanted a simpler approach to routing, it could look more like this:
-
-
-```typescript
-const router = new Router(this.shadowRoot?.querySelector('#routerOutlet'));
-router.setRoutes([
-      { path: '/', component: 'app-home' },
-      { path: '/about', component: 'app-about'}])
-```
-
-?> **Note** In this case, you would need to import your components in your `app-index.ts` file if you aren't going to load them asynchronously.
 
 Next, we'll take a look at adding a new page to the starter:
 
@@ -76,7 +63,7 @@ To add a new page to your PWA, you will need to create a new component, and then
 
 1. Navigate to the `src/pages/` directory.
 
-2. Create a new typscript file called `new-page.ts`
+2. Create a new typescript file called `new-page.ts`
 
 3. Add the basics of a new custom component:
 
@@ -104,47 +91,49 @@ If you're new to Lit or web components in general, check out the [Lit tutorial](
 
 #### Adding the Route
 
-Next we just need to add the route in our `firstUpdated()` function in `src/app-index.ts`.
+Next we just need to add the route in our router config defined in `src/router.ts`.
 
-We can add to our existing list of paths in our `chlildren` property:
+We can add to our existing list of paths in our router config:
 
 ```typescript
 {
   path: '/new-page',
-  component: 'new-page',
-  action: async () => { 
-    await import('./pages/new-page.js'); 
-  },
+  title: 'new page',
+  plugins: [
+    lazy(() => import('./pages/new-page.js')),
+  ],
+  render: () => html`<new-page></new-page>`
 }
 ```
 
-And our overall `setRoutes()` function will now look like this: 
+And our overall config will now look like this: 
 
 ```typescript
-const router = new Router(this.shadowRoot?.querySelector('#routerOutlet')); 
-router.setRoutes([
-  {
-    path: '', // our root path
-    animate: true,
-    children: [ // the children of this path
-      { path: '/', component: 'app-home' }, // our default URL
+export const router = new Router({
+    routes: [
       {
-        path: '/about', // while this route will take us to the app-about component
-        component: 'app-about',
-        action: async () => { // load our component asynchronously
-          await import('./script/app-about.js'); 
-        },
+        path: '/',
+        title: 'home',
+        render: () => html`<app-home></app-home>`
+      },
+      {
+        path: '/about',
+        title: 'about',
+        plugins: [
+          lazy(() => import('./pages/app-about/app-about.js')),
+        ],
+        render: () => html`<app-about></app-about>`
       },
       {
         path: '/new-page',
-        component: 'new-page',
-        action: async () => { 
-          await import('./script/new-page.js'); 
-        },
+        title: 'new page',
+        plugins: [
+          lazy(() => import('./pages/new-page.js')),
+        ],
+        render: () => html`<new-page></new-page>`
       }
-    ],
-  } as any, // temporarily cast to any because of a Type bug with the router
-]);
+    ]
+});
 ```
 
 That's it! Our new page is added.
