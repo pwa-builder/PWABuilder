@@ -16,7 +16,6 @@ import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
-import '../components/info-panel';
 import '../components/share-card';
 
 import { testSecurity } from '../services/tests/security';
@@ -36,8 +35,9 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
-import { infoPanel, manifest_fields } from '../utils/manifest-info';
+import { manifest_fields } from '../../../../../libraries/manifest-information/manifest-info';
 import { resetManifestEditorManifest } from '../services/manifest-editor-handler';
+import { SlDropdown } from '@shoelace-style/shoelace';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -132,9 +132,7 @@ export class AppReport extends LitElement {
   @state() manifestContext: ManifestContext | undefined;
 
   @state() todoItems: any[] = [];
-
-  @state() infoPanelField: string | undefined;
-  @state() infoPanelData: infoPanel | undefined;
+  @state() openTooltips: SlDropdown[] = [];
 
   private possible_messages = [
     {"messages": {
@@ -328,7 +326,7 @@ export class AppReport extends LitElement {
           justify-content: start;
         }
 
-        #app-card-share-cta #share-button {
+        #app-card-share-cta #share-button-desktop {
           height: 32px;
           width: 117.5439453125px;
           left: 509.4560546875px;
@@ -368,6 +366,8 @@ export class AppReport extends LitElement {
         } 
 
         #site-name {
+          margin: 0;
+          font-weight: bold;
           font-size: calc(var(--subheader-font-size) + 4px);
         }
         
@@ -375,15 +375,14 @@ export class AppReport extends LitElement {
           //overflow: hidden;
           white-space: nowrap;
           height: 100%;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          gap: 5px;
         }
 
         #card-info p {
           margin: 0;
-          font-weight: bold;
-        }
-
-        #card-info p:not(#site-name) {
-          font-size: 16px;
         }
 
         #site-url {
@@ -391,15 +390,15 @@ export class AppReport extends LitElement {
           overflow: hidden;
           white-space: nowrap;
           max-width: 200px;
-          margin-bottom: 8px !important;
+          font-weight: bold;
+          font-size: 16px;
         }
 
         #app-card-desc {
-          max-width: 220px;
           overflow-y:hidden;
           text-overflow:ellipsis;
-          font-size: 14px !important;
-          font-weight: 500 !important;
+          font-size: 14px;
+          font-weight: 500;
           line-height: 18px;
           white-space: break-spaces;
         }
@@ -574,12 +573,12 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow)
         }
 
-        #share-button:disabled {
+        #share-button-desktop:disabled, #share-button-mobile:disabled {
           color: #C3C3C3;
           border-color: #C3C3C3;
         }
 
-        #share-button:disabled:hover {
+        #share-button-desktop:disabled:hover, #share-button-mobile:disabled:hover {
           cursor: no-drop;
           box-shadow: none;
         }
@@ -1201,8 +1200,15 @@ export class AppReport extends LitElement {
           #app-card-desc {
             max-width: 100%;
           }
+          #share-button-desktop {
+            display: none;
+          }
+          #share-button-mobile {
+            display: flex;
+          }
           #app-card-desc-mobile {
-            display: block;
+            display: flex;
+            flex-direction: column;
           }
           .app-card-desc-desktop {
             display: none;
@@ -1216,7 +1222,7 @@ export class AppReport extends LitElement {
           #app-card-share-cta {
             justify-content: start;
           }
-          #app-card-share-cta #share-button {
+          #app-card-share-cta #share-button-mobile {
             width: 100px;
           }
           #app-card-desc, .skeleton-desc {
@@ -1621,7 +1627,6 @@ export class AppReport extends LitElement {
           } else {
             status = "optional";
           }
-
           this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
           
         }
@@ -2200,6 +2205,21 @@ export class AppReport extends LitElement {
     }
   }
 
+  handleShowingTooltip(e: CustomEvent){
+    if(e.detail.entering){
+      e.detail.tooltip.show();
+
+      if(this.openTooltips.length > 0){
+        this.openTooltips[0].hide();
+        this.openTooltips = [];
+      }
+  
+      this.openTooltips.push(e.detail.tooltip)
+    }
+
+    
+  }
+
   render() {
     return html`
       <app-header></app-header>
@@ -2235,7 +2255,7 @@ export class AppReport extends LitElement {
                     <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
                   </div>
                   <div id="app-card-share-cta">
-                    <button type="button" id="share-button" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                    <button type="button" id="share-button-desktop" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
                     ${this.runningTests ?
                       html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
                       html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
@@ -2245,6 +2265,12 @@ export class AppReport extends LitElement {
                 </div>
                 <div id="app-card-desc-mobile">
                   <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
+                  <button type="button" id="share-button-mobile" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                    ${this.runningTests ?
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                    } Share score
+                    </button>
                 </div>
               </div>
               <div id="app-card-footer">
@@ -2346,7 +2372,8 @@ export class AppReport extends LitElement {
                         .card=${todo.card}
                         .displayString=${todo.displayString}
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
-                        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+                        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
@@ -2750,7 +2777,6 @@ export class AppReport extends LitElement {
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
-      ${this.manifestDataLoading ? html`` : html`<info-panel .field=${this.infoPanelField} .info=${this.infoPanelData!}></info-panel>`}
       
 
     `;

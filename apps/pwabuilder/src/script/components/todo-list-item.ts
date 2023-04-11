@@ -8,7 +8,7 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
-import { manifest_fields } from '../utils/manifest-info';
+import { manifest_fields } from '../../../../../libraries/manifest-information/manifest-info';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
 
@@ -143,7 +143,7 @@ export class TodoItem extends LitElement {
     return html`
       <div class="iwrapper">
         <div class="left">
-          ${this.status === "red" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+          ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
 
           <p>${this.fix.split("~").length > 1 ? 
               this.fix.split("~").join(" "+ this.field + " ") :
