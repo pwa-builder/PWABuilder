@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { manifest_fields } from '../utils/manifest-info';
+import { manifest_fields } from '../../../../libraries/manifest-information/manifest-info';
 
 @customElement('manifest-field-tooltip')
 export class ManifestFieldTooltip extends LitElement {
@@ -54,6 +54,7 @@ export class ManifestFieldTooltip extends LitElement {
         justify-content: flex-start;
         width: 100%;
         gap: 5px;
+        margin-bottom: 5px;
       }
 
       .mic-actions > * {

@@ -249,7 +249,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   },
   "share_target": {
     description:[
-      `share_target is an optional member that allows installed PWAs to be registered as a target in the system's share dialog. When defining how an application can receive share data.`,
+      `share_target is an optional member that allows installed PWAs to be registered as a target in the system's share dialog.`,
   ],
     purpose: null,
     example: null,
@@ -262,7 +262,6 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       "url": "url"
     }
 }`,
-    location: "share",
     required: false,
     docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
     image: "assets/manifest_examples/share_target_example_image.jpg"
