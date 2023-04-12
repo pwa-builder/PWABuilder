@@ -1,3 +1,4 @@
+import { FilesParams } from '@pwabuilder/manifest-validation';
 import {
   validateAndroidOptions,
   AndroidPackageOptions,
@@ -167,6 +168,32 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
     : maniUrl;
 
   const fullScopeUrl = new URL(manifest.scope || '.', manifestUrlOrRoot).toString();
+
+
+  // Need to remove file endings, like .png, from the share_target config
+  // so that Android can parse it correctly.
+  // https://github.com/pwa-builder/PWABuilder/issues/3846
+
+  const shareTarget = manifest.share_target;
+  if (shareTarget) {
+    const toParseFiles = shareTarget.params?.files;
+
+    let goodFiles: string[] = [];
+
+    if (toParseFiles) {
+      for (const files of toParseFiles) {
+        if (files.accept) {
+          files.accept.forEach((accept) => {
+            if (accept.startsWith(".") === false) {
+              goodFiles.push(accept);
+            }
+          })
+
+          files.accept = goodFiles;
+        }
+      }
+    }
+  }
 
   return {
     appVersion: '1.0.0.0',
