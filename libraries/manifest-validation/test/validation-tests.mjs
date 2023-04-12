@@ -76,7 +76,10 @@ const test_manifest = {
       "src": "icons/android/android-launchericon-28-28.png",
       "sizes": "28x28"
     }
-  ]
+  ],
+  "edge_side_panel": {
+    "preferred_width": 600
+  }
 };
 
 let realWorldManifest = undefined;

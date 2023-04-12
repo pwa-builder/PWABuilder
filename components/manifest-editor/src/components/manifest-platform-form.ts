@@ -9,7 +9,7 @@ const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 
 // How to handle categories field?
-const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories"];
+const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories", "edge_side_panel"];
 let manifestInitialized: boolean = false;
 let fieldsValidated: boolean = false;
 
@@ -454,7 +454,17 @@ export class ManifestPlatformForm extends LitElement {
         updatedValue = JSON.parse(updatedValue);
     }
 
-    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
+    // special situation for edge side panel
+    // since its value is an object we have to validate an object not a string
+    let objectValue = {};
+    let useOV = false;
+    if(fieldName === "edge_side_panel"){
+      if(updatedValue === "") updatedValue = '0';
+      objectValue = {"preferred_width": parseInt(updatedValue)};
+      useOV = true;
+    }
+
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, useOV ? objectValue : updatedValue)
     let passed = validation!.valid;
 
     if(passed){
@@ -462,7 +472,7 @@ export class ManifestPlatformForm extends LitElement {
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
             field: fieldName,
-            change: updatedValue
+            change: useOV ? objectValue : updatedValue
         },
         bubbles: true,
         composed: true
@@ -1030,6 +1040,30 @@ export class ManifestPlatformForm extends LitElement {
                     
               </div>
           </div>
+          <div class="form-row">
+          <div class="form-field">
+            <div class="field-header">
+              <h3>Edge Side Panel</h3>
+              <a
+                href="https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md"
+                target="_blank"
+                rel="noopener"
+              >
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                <p class="toolTip">
+                  Click for more info on the Edge Side Panel option in your manifest.
+                </p>
+              </a>
+            </div>
+            <p>Indicates whether your PWA supports the side panel in the Edge Browser</p>
+            <sl-input 
+              type="number"
+              placeholder="Preferred Width" 
+              value=${this.manifest.edge_side_panel?.preferred_width ?? ""} 
+              data-field="edge_side_panel" 
+              @sl-change=${this.handleInputChange}></sl-input>
+          </div>
+        </div>
         </div>
       </div>
     `;
