@@ -241,12 +241,6 @@ export class ManifestEditorFrame extends LitElement {
   downloadManifest(){
     let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
     editor.downloadManifest();
-
-    let readyForRetest = new CustomEvent('readyForRetest', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(readyForRetest);
   }
 
   // hides modal
@@ -278,6 +272,11 @@ export class ManifestEditorFrame extends LitElement {
 
   handleFieldChange(e: CustomEvent){
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
   }
 
   handleManifestCopied(){

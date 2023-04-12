@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { manifest_fields } from '../utils/manifest-info';
+import { manifest_fields } from '../../../../../libraries/manifest-information/manifest-info';
 import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
@@ -164,15 +164,32 @@ export class ManifestInfoCard extends LitElement {
     recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  outlineActionItem(entering: boolean){
-    this.dispatchEvent(new CustomEvent('trigger-hover', {detail: {entering: entering}}));
+  // opens tooltip 
+  handleHover(entering: boolean){
+    this.trackTooltipOpened()
+    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+
+    this.dispatchEvent(new CustomEvent('trigger-hover', 
+    {
+      detail: {
+        tooltip: tooltip,
+        entering: entering
+      },
+      bubbles: true,
+      composed: true
+    }));
+
   }
 
   render() {
     return html`
-    <div class="mic-wrapper" @mouseenter=${() => this.outlineActionItem(true)} @mouseleave=${() => this.outlineActionItem(false)}>
-      <sl-dropdown distance="10" placement="left" class="tooltip">
-        <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()}>
+    <div class="mic-wrapper">
+      <sl-dropdown 
+        distance="10" 
+        placement="left" 
+        class="tooltip"
+        @sl-show=${() => this.trackTooltipOpened()}>
+        <button slot="trigger" type="button" class="right" class="nav_link nav_button"  @mouseenter=${() => this.handleHover(true)}>
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>
         <div class="info-box">
@@ -189,7 +206,7 @@ export class ManifestInfoCard extends LitElement {
           }
           <div class="mic-actions">
             <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
-            <button type="button" @click=${() => this.openME()}>Edit in Manifest</button>
+            ${manifest_fields[this.field].location ? html`<button type="button" @click=${() => this.openME()}>Edit in Manifest</button>` : html``}
           </div>
         </div>
       </sl-dropdown>
