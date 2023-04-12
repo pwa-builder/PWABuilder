@@ -134,9 +134,6 @@ export class AppReport extends LitElement {
   @state() todoItems: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
 
-  @state() infoPanelField: string | undefined;
-  @state() infoPanelData: infoPanel | undefined;
-
   private possible_messages = [
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
