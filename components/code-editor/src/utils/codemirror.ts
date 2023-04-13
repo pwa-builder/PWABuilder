@@ -12,19 +12,16 @@ import {
   highlightSpecialChars,
   highlightActiveLine,
   EditorView,
+  lineNumbers,
+  rectangularSelection
 } from '@codemirror/view';
-import { defaultKeymap } from '@codemirror/commands';
-import { history, historyKeymap } from '@codemirror/history';
-import { foldGutter, foldKeymap } from '@codemirror/fold';
-import { indentOnInput } from '@codemirror/language';
-import { lineNumbers } from '@codemirror/gutter';
-import { bracketMatching } from '@codemirror/matchbrackets';
-import { closeBrackets, closeBracketsKeymap } from '@codemirror/closebrackets';
+import { 
+  defaultKeymap, 
+  history, 
+  historyKeymap,} from '@codemirror/commands';
+import { indentOnInput, foldGutter, foldKeymap, bracketMatching } from '@codemirror/language';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
-import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
-import { commentKeymap } from '@codemirror/comment';
-import { rectangularSelection } from '@codemirror/rectangular-selection';
-import { defaultHighlightStyle } from '@codemirror/highlight';
+import { autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { lintKeymap } from '@codemirror/lint';
 import { json } from '@codemirror/lang-json';
 import {
@@ -58,7 +55,6 @@ export function getEditorState(
       highlightActiveLine(),
       highlightSelectionMatches(),
       highlightSpecialChars(),
-      defaultHighlightStyle.fallback,
       bracketMatching(),
       closeBrackets(),
       autocompletion(),
@@ -71,7 +67,6 @@ export function getEditorState(
         ...defaultKeymap,
         ...foldKeymap,
         ...historyKeymap,
-        ...commentKeymap,
         ...searchKeymap,
         ...lintKeymap,
         ...closeBracketsKeymap,
