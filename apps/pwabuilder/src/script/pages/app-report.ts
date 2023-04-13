@@ -36,7 +36,6 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '../../../../../libraries/manifest-information/manifest-info';
-import { resetManifestEditorManifest } from '../services/manifest-editor-handler';
 import { SlDropdown } from '@shoelace-style/shoelace';
 
 const valid_src = "/assets/new/valid.svg";
@@ -1885,8 +1884,6 @@ export class AppReport extends LitElement {
 
     // last tested
     this.lastTested = "Last tested seconds ago"
-
-    resetManifestEditorManifest();
 
     // hide the detail lists
     let details = this.shadowRoot!.querySelectorAll('sl-details');

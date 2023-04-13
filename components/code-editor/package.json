@@ -20,6 +20,7 @@
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.9.4",
     "@codemirror/search": "6.3.0",
+    "@codemirror/lang-javascript": "^6.1.6",
     "codemirror": "^6.0.1",
     "lit": "^2.2.1",
     "lodash-es": "^4.17.21"

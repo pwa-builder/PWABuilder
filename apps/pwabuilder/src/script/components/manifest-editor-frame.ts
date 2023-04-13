@@ -13,8 +13,6 @@ import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
-import { getManifestEditorManifest, initialized, initManifestEditorManifest, updateManifestEditorManifest } from '../services/manifest-editor-handler';
-import { PWAManifestEditor } from '@pwabuilder/manifest-editor';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
@@ -23,8 +21,6 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
   @property({type: Boolean}) isGenerated: boolean = false;
-  @property({type: String}) startingTab: string = "info";
-  @property({type: String}) focusOn: string = "";
 
   static get styles() {
     return [
@@ -222,37 +218,27 @@ export class ManifestEditorFrame extends LitElement {
   // grabs the manifest, manifest url and site base url on load
   connectedCallback(): void {
     super.connectedCallback();
-    let context = getManifestContext();
-    this.manifestURL = context.manifestUrl;
-    this.baseURL = context.siteUrl;
-  }
-
-  grabCorrectManifest() {
-    let context = getManifestContext();
-    if(!initialized){
-      this.manifest = context.manifest;
-      initManifestEditorManifest(this.manifest);
-    } else {
-      this.manifest = getManifestEditorManifest();
-    }
+    this.manifest = getManifestContext().manifest;
+    this.manifestURL = getManifestContext().manifestUrl;
+    this.baseURL = sessionStorage.getItem("current_url")!;
   }
 
   // downloads manifest and tells the site they need to retest to see new manifest changes
   downloadManifest(){
     let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
     editor.downloadManifest();
+
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
   }
 
   // hides modal
   async hideDialog(e: any){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
-
-      let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as PWAManifestEditor)
-      if(editor && editor!.manifest){
-        updateManifestEditorManifest(editor.manifest);
-      }
-      
       await dialog!.hide();
       recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
@@ -272,11 +258,6 @@ export class ManifestEditorFrame extends LitElement {
 
   handleFieldChange(e: CustomEvent){
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
-    let readyForRetest = new CustomEvent('readyForRetest', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(readyForRetest);
   }
 
   handleManifestCopied(){
@@ -297,7 +278,7 @@ export class ManifestEditorFrame extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => this.grabCorrectManifest()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">
@@ -308,8 +289,6 @@ export class ManifestEditorFrame extends LitElement {
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
               .baseURL=${this.baseURL}
-              .startingTab=${this.startingTab}
-              .focusOn=${this.focusOn}
               @tabSwitched=${(e: CustomEvent) => this.handleTabSwitch(e)}
               @manifestDownloaded=${() => this.handleManifestDownloaded()}
               @fieldChangeAttempted=${(e: CustomEvent) => this.handleFieldChange(e)}
