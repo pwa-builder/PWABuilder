@@ -7,15 +7,12 @@
     "preinstall": "node ../../scripts/setupDeps.js",
     "dev": "vite --open",
     "dev-task": "vite",
-    "start-for-tests": "npm run build && vite --port 3000",
     "dev:deps": "concurrently \"node ../../scripts/watchDeps.js\" \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
     "build": "tsc && vite build",
     "start": "npm run build && npx nodemon server.js",
     "start-remote": "vite --host",
     "postinstall": "npm run copy-sl-assets",
-    "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons",
-    "test": "npx nyc@latest playwright test",
-    "coverage": "cd coverage/lcov-report && npx http-server -p 3001"
+    "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons"
   },
   "author": "",
   "license": "ISC",
@@ -35,7 +32,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@playwright/test": "^1.32.0",
+    "@playwright/test": "^1.12.3",
     "@types/chai": "^4.2.21",
     "@types/lodash-es": "^4.17.4",
     "@types/mocha": "^8.2.3",

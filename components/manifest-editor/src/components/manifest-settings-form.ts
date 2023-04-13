@@ -4,8 +4,6 @@ import { Manifest } from '../utils/interfaces';
 import { langCodes, languageCodes } from '../locales';
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
-import {classMap} from 'lit/directives/class-map.js';
-import "./manifest-field-tooltip";
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
@@ -26,11 +24,8 @@ export class ManifestSettingsForm extends LitElement {
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
 
-  @property({type: String}) focusOn: string = "";
   @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
-
-
 
   static get styles() {
     return css`
@@ -190,16 +185,6 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 16px;
       }
 
-      sl-details:focus {
-        outline: 5px solid var(--sl-input-focus-ring-color);
-        border-radius: 5px;
-      }
-
-      sl-details.error:focus {
-        outline: 5px solid #eb575770;
-        border-radius: 5px;
-      }
-
       .menu-prefix {
         padding: 0 .5em;
         font-weight: 600;
@@ -222,9 +207,6 @@ export class ManifestSettingsForm extends LitElement {
         margin-left: .25em;
       }
 
-      .focus {
-        color: #4f3fb6;
-      }
       sl-menu-item:focus-within::part(base) {
         color: #ffffff;
         background-color: #4F3FB6;
@@ -297,20 +279,7 @@ export class ManifestSettingsForm extends LitElement {
     super();
   }
 
-  firstUpdated(){
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
-    }
-  }
-
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
-    }
-
     if(manifestInitialized){
       manifestInitialized = false;
       this.requestValidateAllFields();
@@ -580,11 +549,6 @@ export class ManifestSettingsForm extends LitElement {
     }
   }
 
-  decideFocus(field: string){
-    let decision = this.focusOn === field;
-    return {focus: decision}
-  }
-
   render() {
     return html`
       <div id="form-holder">
@@ -592,8 +556,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("start_url"))}>Start URL</h3>
-                <manifest-field-tooltip .field=${"start_url"}></manifest-field-tooltip>
+                <h3>Start URL</h3>
+                <a
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the start url option in your manifest.
+                  </p>
+                </a>
               </div>
 
               <p class="field-desc">(required)</p>
@@ -604,8 +577,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("dir"))}>Dir</h3>
-                <manifest-field-tooltip .field=${"dir"}></manifest-field-tooltip>
+                <h3>Dir</h3>
+                <a
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the dir option in your manifest.
+                  </p>
+                </a>
               </div>
             </div>
             <p class="field-desc">The text direction of your PWA</p>
@@ -618,8 +600,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("scope"))}>Scope</h3>
-                <manifest-field-tooltip .field=${"scope"}></manifest-field-tooltip>
+                <h3>Scope</h3>
+                <a
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the scope option in your manifest.
+                  </p>
+                </a>
               </div>
             </div>
             <p class="field-desc">Which URLs can load within your app</p>
@@ -629,8 +620,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("lang"))}>Language</h3>
-                <manifest-field-tooltip .field=${"lang"}></manifest-field-tooltip>
+                <h3>Language</h3>
+                <a
+                  href="https://www.w3.org/TR/appmanifest/#lang-member"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the language option in your manifest.
+                  </p>
+                </a>
               </div>
             </div>
             <p class="field-desc">The primary language of your app</p>
@@ -643,8 +643,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("orientation"))}>Orientation</h3>
-                <manifest-field-tooltip .field=${"orientation"}></manifest-field-tooltip>
+                <h3>Orientation</h3>
+                <a
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the orientaiton option in your manifest.
+                  </p>
+                </a>
               </div>
             </div>
             <p class="field-desc">The default screen orientation of your app</p>
@@ -655,8 +664,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("display"))}>Display</h3>
-                <manifest-field-tooltip .field=${"display"}></manifest-field-tooltip>
+                <h3>Display</h3>
+                <a
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=display-string"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the display option in your manifest.
+                  </p>
+                </a>
               </div>
             </div>
             <p class="field-desc">The appearance of your app window</p>
@@ -669,8 +687,17 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("display_override"))}>Display Override</h3>
-                <manifest-field-tooltip .field=${"display_override"}></manifest-field-tooltip>
+                <h3>Display Override</h3>
+                <a
+                  href="https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                  <p class="toolTip">
+                    Click for more info on the display override option in your manifest.
+                  </p>
+                </a>
               </div>
             </div>
             <p class="field-desc">Used to determine the preferred display mode</p>
