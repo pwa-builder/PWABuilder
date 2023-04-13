@@ -24,7 +24,6 @@
   "license": "ISC",
   "dependencies": {
     "@pwabuilder/code-editor": "file:../../components/code-editor",
-    "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@shoelace-style/shoelace": "^2.2.0",
