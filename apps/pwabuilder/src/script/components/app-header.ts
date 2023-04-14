@@ -105,7 +105,7 @@ export class AppHeader extends LitElement {
         height: 15px;
         width: 15px;
         transform: rotate(45deg);
-        background-color: #ffffff;
+        background-color: white;
         position: absolute;
         top: -5px;
         right: 45px;
