@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { manifest_fields } from '../../../../../libraries/manifest-information/manifest-info';
+import { manifest_fields } from '@pwabuilder/manifest-information';
 import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
@@ -189,7 +189,7 @@ export class ManifestInfoCard extends LitElement {
         placement="left" 
         class="tooltip"
         @sl-show=${() => this.trackTooltipOpened()}>
-        <button slot="trigger" type="button" class="right" class="nav_link nav_button"  @mouseenter=${() => this.handleHover(true)}>
+        <button slot="trigger" type="button" class="right" class="nav_link nav_button" @mouseenter=${() => this.handleHover(true)}>
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>
         <div class="info-box">

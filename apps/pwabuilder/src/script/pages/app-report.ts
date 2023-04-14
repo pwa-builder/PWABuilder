@@ -35,6 +35,8 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
+import { manifest_fields } from '@pwabuilder/manifest-information';
+import { SlDropdown } from '@shoelace-style/shoelace';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -457,11 +459,6 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow);
         }
         
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -487,8 +484,7 @@ export class AppReport extends LitElement {
           justify-content: center;
           gap: 10px;
         }
-<<<<<<< HEAD
-
+        
         #share-card-text {
           font-size: var(--subheader-font-size);
           color: var(--primary-color);
@@ -535,10 +531,6 @@ export class AppReport extends LitElement {
           width: 20px;
           height: auto;
         }
-        
-
-=======
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
 
         #share-card-text {
           font-size: var(--subheader-font-size);
@@ -1170,7 +1162,6 @@ export class AppReport extends LitElement {
         } */
 
         @media(max-width: 600px){
-<<<<<<< HEAD
           #app-card-header-col { 
             gap: 10px;
           }
@@ -1214,11 +1205,6 @@ export class AppReport extends LitElement {
           }
           #app-card-share-cta #share-button-mobile {
             width: 100px;
-=======
-          #app-card-header{
-            grid-template-columns: 1fr 5fr;
-            grid-template-rows: 1fr 1fr;
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
           }
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
@@ -2154,7 +2140,6 @@ export class AppReport extends LitElement {
     
   }
 
-<<<<<<< HEAD
 //truncate app card discription
   truncateString(str: String) {
     if (str.length > 125) {
@@ -2178,9 +2163,7 @@ export class AppReport extends LitElement {
 
     
   }
-
-=======
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
+  
   render() {
     return html`
       <app-header></app-header>
@@ -2206,7 +2189,6 @@ export class AppReport extends LitElement {
             html`
             <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
-<<<<<<< HEAD
                 <div id="app-card-header-col">
                   <div id="pwa-image-holder">
                     ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
@@ -2233,14 +2215,6 @@ export class AppReport extends LitElement {
                       html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
                     } Share score
                     </button>
-=======
-                <div id="pwa-image-holder">
-                  ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
-                </div>
-                <div id="card-info" class="flex-col">
-                  <p id="site-name">${this.appCard.siteName}</p>
-                  <p id="site-url">${this.appCard.siteUrl}</p>
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
                 </div>
                 <p id="app-card-desc">${this.appCard.description}</p>
               </div>
@@ -2342,14 +2316,9 @@ export class AppReport extends LitElement {
                         .fix=${todo.fix}
                         .card=${todo.card}
                         .displayString=${todo.displayString}
-<<<<<<< HEAD
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
-
-=======
-                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
@@ -2767,20 +2736,10 @@ export class AppReport extends LitElement {
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
         .siteUrl=${this.appCard.siteUrl}
       > </share-card>
-<<<<<<< HEAD
-
-=======
-      
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
-<<<<<<< HEAD
-
-      
-=======
->>>>>>> parent of 04f5e869 (Preview of the new action items work (#3971))
 
     `;
   }

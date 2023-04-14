@@ -13,6 +13,7 @@ import "./manifest-code-form"
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
+import { SlTabGroup, SlDropdown } from '@shoelace-style/shoelace
 /* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
@@ -59,6 +60,7 @@ export class PWAManifestEditor extends LitElement {
 
   @state() manifest: Manifest = {};
   @state() selectedTab: string = "info";
+  @state() openTooltips: SlDropdown[] = [];
 
   static get styles() {
     return css`
@@ -241,14 +243,29 @@ export class PWAManifestEditor extends LitElement {
     this.dispatchEvent(tabSwitched);
   }
 
+  handleShowingTooltip(e: CustomEvent){
+    if(e.detail.entering){
+      e.detail.tooltip.show();
+
+      if(this.openTooltips.length > 0){
+        this.openTooltips[0].hide();
+        this.openTooltips = [];
+      }
+  
+      this.openTooltips.push(e.detail.tooltip)
+    }
+
+    
+  }
+
   render() {
     return html`
-      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)}>
-        <sl-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</sl-tab>
-        <sl-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</sl-tab>
-        <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
-        <sl-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</sl-tab>
-        <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
+      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)} @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+        <sl-tab slot="nav" panel="info">Info</sl-tab>
+        <sl-tab slot="nav" panel="settings">Settings</sl-tab>
+        <sl-tab slot="nav" panel="platform">Platform</sl-tab>
+        <sl-tab slot="nav" panel="icons">Icons</sl-tab>
+        <sl-tab slot="nav" panel="screenshots">Screenshots</sl-tab>
         <!-- <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
         <sl-tab slot="nav" panel="code">Code</sl-tab>
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-info-form></sl-tab-panel>

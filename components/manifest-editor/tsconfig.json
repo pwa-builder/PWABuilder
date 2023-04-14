@@ -18,6 +18,6 @@
       "isolatedModules": true,
       "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/index.ts", "src/**/*.ts"],
   "exclude": ["node_modules"]
 }

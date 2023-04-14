@@ -9,7 +9,7 @@ import {
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
-//import '@pwabuilder/manifest-editor';
+import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
@@ -225,8 +225,8 @@ export class ManifestEditorFrame extends LitElement {
 
   // downloads manifest and tells the site they need to retest to see new manifest changes
   downloadManifest(){
-    /* let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
-    editor.downloadManifest(); */
+    let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
+    editor.downloadManifest();
 
     let readyForRetest = new CustomEvent('readyForRetest', {
       bubbles: true,
@@ -285,8 +285,7 @@ export class ManifestEditorFrame extends LitElement {
               <h1>${this.isGenerated ? "Generate manifest" : "Edit your manifest"}</h1>
               <p>Update your app name and description, add or update your icons, enable platform capabilities and more by editing the fields below. Once you are done with your changes, download or copy the generated manifest and/or icons and upload them to your site. Once done, re-test the url to make sure your PWA is ready for stores!</p>
             </div>
-            Removed ME
-            <!-- <pwa-manifest-editor 
+            <pwa-manifest-editor 
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
               .baseURL=${this.baseURL}
@@ -297,7 +296,7 @@ export class ManifestEditorFrame extends LitElement {
               @generateScreenshotsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "screenshots")}
               @uploadIcons=${() => this.handleUploadIcon()}
               @generateIconsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "icons")}
-            ></pwa-manifest-editor> -->
+            ></pwa-manifest-editor>
             
           </div>
           <div id="frame-footer" slot="footer">
