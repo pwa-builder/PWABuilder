@@ -13,7 +13,7 @@ import "./manifest-code-form"
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-import { SlTabGroup, SlDropdown } from '@shoelace-style/shoelace
+import {  SlDropdown } from '@shoelace-style/shoelace';
 /* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
