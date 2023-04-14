@@ -23,6 +23,7 @@
     "@pwabuilder/code-editor": "file:../../components/code-editor",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
+    "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@shoelace-style/shoelace": "^2.2.0",
     "@vaadin/router": "^1.7.4",

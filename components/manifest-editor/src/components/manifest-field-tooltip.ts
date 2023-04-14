@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { manifest_fields } from '../../../../libraries/manifest-information/manifest-info';
+import { manifest_fields } from '@pwabuilder/manifest-information';
+import { SlDropdown } from '@shoelace-style/shoelace';
 
 @customElement('manifest-field-tooltip')
 export class ManifestFieldTooltip extends LitElement {
@@ -94,11 +95,28 @@ export class ManifestFieldTooltip extends LitElement {
     //recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  // opens tooltip 
+  handleHover(entering: boolean){
+    this.trackTooltipOpened()
+    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+
+    this.dispatchEvent(new CustomEvent('trigger-hover', 
+    {
+      detail: {
+        tooltip: tooltip,
+        entering: entering
+      },
+      bubbles: true,
+      composed: true
+    }));
+
+  }
+
   render() {
     return html`
       <div class="mic-wrapper">
         <sl-dropdown distance="10" placement="right" class="tooltip">
-          <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()}>
+          <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()} @mouseenter=${() => this.handleHover(true)}>
             <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
           </button>
           <div class="info-box">

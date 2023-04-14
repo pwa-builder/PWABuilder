@@ -13,7 +13,7 @@ import "./manifest-code-form"
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-import { SlTabGroup } from '@shoelace-style/shoelace';
+import { SlTabGroup, SlDropdown } from '@shoelace-style/shoelace';
 /* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
@@ -62,6 +62,7 @@ export class PWAManifestEditor extends LitElement {
 
   @state() manifest: Manifest = {};
   @state() selectedTab: string = "info";
+  @state() openTooltips: SlDropdown[] = [];
 
   static get styles() {
     return css`
@@ -246,9 +247,24 @@ export class PWAManifestEditor extends LitElement {
     this.dispatchEvent(tabSwitched);
   }
 
+  handleShowingTooltip(e: CustomEvent){
+    if(e.detail.entering){
+      e.detail.tooltip.show();
+
+      if(this.openTooltips.length > 0){
+        this.openTooltips[0].hide();
+        this.openTooltips = [];
+      }
+  
+      this.openTooltips.push(e.detail.tooltip)
+    }
+
+    
+  }
+
   render() {
     return html`
-      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)}>
+      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)} @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
         <sl-tab slot="nav" panel="info">Info</sl-tab>
         <sl-tab slot="nav" panel="settings">Settings</sl-tab>
         <sl-tab slot="nav" panel="platform">Platform</sl-tab>

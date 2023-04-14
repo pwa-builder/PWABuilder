@@ -35,7 +35,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
-import { manifest_fields } from '../../../../../libraries/manifest-information/manifest-info';
+import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
 
 const valid_src = "/assets/new/valid.svg";
