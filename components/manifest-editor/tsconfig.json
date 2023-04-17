@@ -17,7 +17,6 @@
       "useDefineForClassFields": false,
       "isolatedModules": true,
       "resolveJsonModule": true,
-      "skipLibCheck": true,
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
