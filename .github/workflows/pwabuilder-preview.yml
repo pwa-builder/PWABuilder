@@ -20,7 +20,7 @@ jobs:
         with:
           submodules: true
       - name: clean npm cache
-        run: sudo npm cache clean --force
+        run: sudo sudo chown -R 1001:123 "/home/.npm"
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
