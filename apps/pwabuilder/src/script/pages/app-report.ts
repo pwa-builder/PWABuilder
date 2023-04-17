@@ -538,7 +538,6 @@ export class AppReport extends LitElement {
           justify-content: center;
           gap: 10px;
         }
-
         #share-card-text {
           font-size: var(--subheader-font-size);
           color: var(--primary-color);
@@ -585,8 +584,6 @@ export class AppReport extends LitElement {
           width: 20px;
           height: auto;
         }
-        
-
 
         #share-card-text {
           font-size: var(--subheader-font-size);
@@ -2265,7 +2262,7 @@ export class AppReport extends LitElement {
 
     
   }
-
+  
   render() {
     return html`
       <app-header></app-header>
@@ -2420,7 +2417,6 @@ export class AppReport extends LitElement {
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
-
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
@@ -2816,13 +2812,11 @@ export class AppReport extends LitElement {
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
         .siteName=${this.appCard.siteName}
       > </share-card>
-
+      
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
-
-      
 
     `;
   }

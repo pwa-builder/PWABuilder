@@ -7,6 +7,7 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
+import { manifest_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
 
