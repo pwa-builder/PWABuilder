@@ -19,6 +19,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: clean npm cache
+        run: |
+            npm cache clean --force
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
