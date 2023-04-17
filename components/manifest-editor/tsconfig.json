@@ -16,7 +16,8 @@
       "forceConsistentCasingInFileNames": true,
       "useDefineForClassFields": false,
       "isolatedModules": true,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      "skipLibCheck": true,
   },
   "include": ["src/index.ts", "src/**/*.ts"],
   "exclude": ["node_modules"]
