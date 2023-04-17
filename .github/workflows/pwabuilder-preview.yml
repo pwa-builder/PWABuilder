@@ -20,7 +20,7 @@ jobs:
         with:
           submodules: true
       - name: Fix cache folder ownership
-        run: sudo chown -R $USER:$USER $HOME/.npm
+        run: sudo chown -R 1001:123 ~/.npm
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
