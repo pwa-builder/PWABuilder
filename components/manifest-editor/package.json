@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
   "main": "dist/index.js",
-  "module": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "run-p build:watch serve",
@@ -19,7 +18,7 @@
     "@pwabuilder/manifest-validation":  "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
-    "@shoelace-style/shoelace": "^2.0.0-beta.83",
+    "@shoelace-style/shoelace": "^2.2.0",
     "lit": "^2.2.1"
   },
   "devDependencies": {
