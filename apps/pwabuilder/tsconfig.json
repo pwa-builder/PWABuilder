@@ -18,7 +18,6 @@
       "useDefineForClassFields": false,
       "isolatedModules": true,
       "resolveJsonModule": true,
-      "skipLibCheck": true,
       "types": [
           "node"
       ]
