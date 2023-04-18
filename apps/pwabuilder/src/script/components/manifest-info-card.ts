@@ -72,7 +72,7 @@ export class ManifestInfoCard extends LitElement {
         align-items: center;
         justify-content: flex-start;
         width: 100%;
-        gap: 25px;
+        gap: 15px;
         margin: 5px 0;
       }
 
