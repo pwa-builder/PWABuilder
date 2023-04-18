@@ -725,6 +725,7 @@ export class AppReport extends LitElement {
 
         #todo-detail::part(base) {
           border-radius: var(--card-border-radius);
+          border: none;
         }
 
         #todo-detail::part(header) {
