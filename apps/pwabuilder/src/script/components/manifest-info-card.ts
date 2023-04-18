@@ -84,7 +84,7 @@ export class ManifestInfoCard extends LitElement {
       }
 
       .mic-actions a {
-        line-height: 16px;
+        line-height: 17px;
       }
 
       .mic-actions a:visited, .mic-actions a:active, .mic-actions a:link {
