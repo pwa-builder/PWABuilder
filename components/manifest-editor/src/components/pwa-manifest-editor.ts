@@ -257,7 +257,10 @@ export class PWAManifestEditor extends LitElement {
   
       e.detail.tooltip.show();
       this.openTooltips.push(e.detail.tooltip)
-    } 
+    } else {
+      e.detail.tooltip.hide();
+      this.openTooltips = [];
+    }
 
   }
 

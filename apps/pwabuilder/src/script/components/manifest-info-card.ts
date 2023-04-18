@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import {
@@ -10,6 +10,7 @@ import { SlDropdown } from '@shoelace-style/shoelace';
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
+  @state() currentlyHovering: boolean = false;
 
   static get styles() {
     return [
@@ -77,7 +78,7 @@ export class ManifestInfoCard extends LitElement {
 
       .mic-actions > * {
         color: #ffffff;
-        font-size: 16px;
+        font-size: var(--card-body-font-size);
         font-weight: bold;
         font-family: var(--font-family);
       }
@@ -166,30 +167,41 @@ export class ManifestInfoCard extends LitElement {
 
   // opens tooltip 
   handleHover(entering: boolean){
-    this.trackTooltipOpened()
+    this.trackTooltipOpened();
+    this.currentlyHovering = entering;
     let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+    let myEvent = new CustomEvent('trigger-hover', 
+      {
+        detail: {
+          tooltip: tooltip,
+          entering: entering
+        },
+        bubbles: true,
+        composed: true
+      });
+    if(!entering){
+      setTimeout(() => { this.closeTooltip(myEvent) }, 500)
+    } else {
+      this.dispatchEvent(myEvent);
+    }
 
-    this.dispatchEvent(new CustomEvent('trigger-hover', 
-    {
-      detail: {
-        tooltip: tooltip,
-        entering: entering
-      },
-      bubbles: true,
-      composed: true
-    }));
+  }
 
+  closeTooltip(e: CustomEvent){
+    if(!this.currentlyHovering){
+      this.dispatchEvent(e);
+    }
   }
 
   render() {
     return html`
-    <div class="mic-wrapper">
+    <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
       <sl-dropdown 
         distance="10" 
         placement="left" 
         class="tooltip"
         @sl-show=${() => this.trackTooltipOpened()}>
-        <button slot="trigger" type="button" class="right" class="nav_link nav_button" @mouseenter=${() => this.handleHover(true)}>
+        <button slot="trigger" type="button" class="right" class="nav_link nav_button">
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>
         <div class="info-box">
