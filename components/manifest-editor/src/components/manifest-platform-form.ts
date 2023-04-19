@@ -429,7 +429,31 @@ export class ManifestPlatformForm extends LitElement {
   }
 
   
+dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
+  let manifestUpdated = new CustomEvent('manifestUpdated', {
+    detail: {
+        field: field,
+        change: change,
+        removal: removal
+    },
+    bubbles: true,
+    composed: true
+  });
+  this.dispatchEvent(manifestUpdated);
 
+  if(removal){
+    let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+    if(input!.classList.contains("error")){
+      input!.classList.toggle("error");
+      delete this.errorMap[field!];
+      let last = input!.parentNode!.lastElementChild
+      input!.parentNode!.removeChild(last!)
+    }
+    if(Object.keys(this.errorMap).length == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } 
+  }
+}
 
   async handleInputChange(event: InputEvent){
 
@@ -459,7 +483,10 @@ export class ManifestPlatformForm extends LitElement {
     let objectValue = {};
     let useOV = false;
     if(fieldName === "edge_side_panel"){
-      if(updatedValue === "") updatedValue = '0';
+      if(updatedValue === "") {
+        this.dispatchUpdateEvent(fieldName, 0, true)
+        return;
+      }
       objectValue = {"preferred_width": parseInt(updatedValue)};
       useOV = true;
     }
@@ -469,16 +496,7 @@ export class ManifestPlatformForm extends LitElement {
 
     if(passed){
       // Since we already validated, we only send valid updates.
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: fieldName,
-            change: useOV ? objectValue : updatedValue
-        },
-        bubbles: true,
-        composed: true
-      });
-      this.dispatchEvent(manifestUpdated);
-
+      this.dispatchUpdateEvent(fieldName!, useOV ? objectValue : updatedValue, false)
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
@@ -600,9 +618,13 @@ export class ManifestPlatformForm extends LitElement {
       }
 
       this.manifest.shortcuts?.push(scObject)
+      this.validatePlatformList("shortcuts", this.manifest.shortcuts!, removal);
     }
-    this.validatePlatformList("shortcuts", this.manifest.shortcuts!, removal);
+    if(this.manifest.shortcuts!.length == 0 && !push){
+      this.dispatchUpdateEvent("shortcuts", 0, true)
+    }
   }
+
 
   addProtocolToManifest(e: any){
     e.preventDefault();
@@ -638,9 +660,13 @@ export class ManifestPlatformForm extends LitElement {
       }
   
       this.manifest.protocol_handlers?.push(pObject);
+      this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!, removal);
     }
 
-    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!, removal);
+    if(this.manifest.protocol_handlers!.length == 0 && !push){
+      this.dispatchUpdateEvent("protocol_handlers", 0, true)
+    }
+
   }
 
   addRelatedAppToManifest(e: any){
@@ -679,11 +705,15 @@ export class ManifestPlatformForm extends LitElement {
       if(!this.manifest.related_applications){
         this.manifest.related_applications = []
       }
-    
+
       this.manifest.related_applications?.push(appObject);
+      
+      this.validatePlatformList("related_applications", this.manifest.related_applications!, removal);
     }
-    
-    this.validatePlatformList("related_applications", this.manifest.related_applications!, removal);
+
+    if(this.manifest.related_applications!.length == 0 && !push){
+      this.dispatchUpdateEvent("related_applications", 0, true)
+    }
   }
 
   updateCategories(){
@@ -716,17 +746,9 @@ export class ManifestPlatformForm extends LitElement {
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
 
-    if(passed || removal){
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: field,
-            change: [...updatedValue]
-        },
-        bubbles: true,
-        composed: true
-      });
 
-      this.dispatchEvent(manifestUpdated);
+    if(passed || removal){
+      this.dispatchUpdateEvent(field!, [...updatedValue])
     }
 
     if(passed){
@@ -792,9 +814,11 @@ export class ManifestPlatformForm extends LitElement {
     } else if(field === "protocol"){
       this.manifest.protocol_handlers = this.manifest.protocol_handlers!.filter((_item: any, i: number) => i != index);
       this.updateProtocolsInManifest([], false, true);
-    } else {
+    } else if(field === "related") {
       this.manifest.related_applications = this.manifest.related_applications!.filter((_item: any, i: number) => i != index);
       this.updateRelatedAppsInManifest([], [], false, true);
+    } else {
+      return console.error(`${field} not an accepted value for this function`);
     }
   }
 

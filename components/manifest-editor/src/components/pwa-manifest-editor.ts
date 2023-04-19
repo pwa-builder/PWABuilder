@@ -115,7 +115,11 @@ export class PWAManifestEditor extends LitElement {
     //console.log(await validateRequiredFields(this._initialManifest))
   }
 
-  private updateManifest(field: any, change: any){
+  private updateManifest(e: CustomEvent){
+
+    let field = e.detail.field;
+    let change = e.detail.change;
+    let removal = e.detail.removal;
 
     // we want to add generated photos to the current
     // field instead of replacing them
@@ -125,6 +129,12 @@ export class PWAManifestEditor extends LitElement {
         cur.push(ele);
       });
       change = cur;
+    }
+
+    if(removal){
+      delete this.manifest[field];
+      this.manifest = {...this.manifest};
+      return;
     }
 
     this.manifest = {...this.manifest, [field]: change};
@@ -243,7 +253,12 @@ export class PWAManifestEditor extends LitElement {
 
   render() {
     return html`
-      <sl-tab-group id="editor-tabs" @sl-tab-show=${(e: any) => this.setSelectedTab(e)}>
+      <sl-tab-group 
+        id="editor-tabs" 
+        @sl-tab-show=${(e: any) => this.setSelectedTab(e)}
+        @manifestUpdated=${(e: any) => this.updateManifest(e)}
+        @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}
+      >
         <sl-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</sl-tab>
         <sl-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</sl-tab>
         <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
@@ -251,13 +266,13 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
         <!-- <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
         <sl-tab slot="nav" panel="code">Code</sl-tab>
-        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-info-form></sl-tab-panel>
-        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-settings-form></sl-tab-panel>
-        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-platform-form></sl-tab-panel>
-        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-icons-form></sl-tab-panel>
-        <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)} @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}></manifest-screenshots-form></sl-tab-panel>
-        <!-- <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-preview-form></sl-tab-panel> -->
-        <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest} @manifestUpdated=${(e: any) => this.updateManifest(e.detail.field, e.detail.change)}></manifest-code-form></sl-tab-panel>
+        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest}></manifest-info-form></sl-tab-panel>
+        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest}></manifest-settings-form></sl-tab-panel>
+        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest}></manifest-platform-form></sl-tab-panel>
+        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)}></manifest-icons-form></sl-tab-panel>
+        <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form></sl-tab-panel>
+        <!-- <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)}</manifest-preview-form></sl-tab-panel> -->
+        <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest}></manifest-code-form></sl-tab-panel>
       </sl-tab-group>
     `;
   }
