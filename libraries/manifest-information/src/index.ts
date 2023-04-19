@@ -56,7 +56,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string"
   },
   "start_url": {
-      description:[`start_url is a required member that specifies that URL that will be launched when a user opens your application. This URL can either be an absolute or relative path.`],
+      description:[`start_url is a required member that specifies the URL that will be launched when a user opens your application. This URL can either be an absolute or relative path.`],
       purpose:null,
       example:null,
       code:`"start_url": "https://docs.pwabuilder.com"`,
@@ -74,7 +74,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"
   },
   "scope": {
-      description: [`scope is an optional member that defines which URL are within the navigation scope of your application. If the user navigates outside of your app's scope, the will be navigated to a normal browser window. scope can often just be set to the base URL of your PWA.`],
+      description: [`scope is an optional member that defines which URL are within the navigation scope of your application. If the user navigates outside of your app's scope, they will be navigated to a normal browser window. scope can often just be set to the base URL of your PWA.`],
       purpose: "Setting a scope ensures that your PWA only navigates within its desired context. Your PWA can maintain UI/UX consistency by opening external content in the browser.",
       example: null,
       code:`"scope": "https://docs.pwabuilder.com"`,
@@ -83,7 +83,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"
   },
   "lang": {
-      description: [`lang is an optional member that specifies the primary language of your app. The Language member expects a proper subtag for each langauge. For example, to specify English, you would use "en".`],
+      description: [`lang is an optional member that specifies the primary language of your app. The language member expects a proper subtag for each langauge. For example, to specify English, you would use "en".`],
       purpose:null,
       example:null,
       code:`"lang": "en"`,
@@ -124,7 +124,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       image: "assets/manifest_examples/display_override_example_image.png"
   },
   "iarc_rating_id": {
-      description: [`iarc_rating_id is an optional member that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.`],
+      description: [`iarc_rating_id is an optional member that allows you to specify a suitable age range for your application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.`],
       purpose:`Having an IARC Rating ID associated with your app allows users to asses if your app may be suitable for children or if it is intended as a product primarily for adults.`,
       example:null,
       code:`"iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9"`,
@@ -295,7 +295,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
 }, 
   "launch_handler": {
     description:[
-      `launch_handlers is an optional member that controls the launch of a web application.`,
+      `launch_handlers is an optional member that controls the launch behvaior of a web application.`,
   ],
     purpose: null,
     example: null,
@@ -308,7 +308,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   },
   "handle_links": {
     description:[
-      `handle_links is an optional member that specifies the default link handling for the web app.`,
+      `handle_links is an optional member that specifies the default link handling for the web application.`,
   ],
     purpose: null,
     example: null,
