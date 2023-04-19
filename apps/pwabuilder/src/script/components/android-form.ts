@@ -18,15 +18,6 @@ export class AndroidForm extends AppPackageFormBase {
   @state() packageOptions = emptyAndroidPackageOptions();
   @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
-  // colors
-  @state() currentSelectedThemeColor: string = '';
-  @state() currentSelectedBackgroundColor: string = '';
-  @state() currentSelectedNavColor: string = '';
-  @state() currentSelectedNavDarkColor: string = '';
-  @state() currentSelectedNavDividerColor: string = '';
-  @state() currentSelectedNavDividerDarkColor: string = '';
-
-
   static get styles() {
 
     const localStyles = css`
@@ -102,8 +93,6 @@ export class AndroidForm extends AppPackageFormBase {
         font-size: 18px;
         font-weight: bold;
       }
-
-      
 
     `;
 
@@ -755,7 +744,6 @@ export class AndroidForm extends AppPackageFormBase {
           </sl-details>
         </div>
       </form>
-      
     </div>
     </div>
     `;

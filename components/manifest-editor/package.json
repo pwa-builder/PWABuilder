@@ -18,7 +18,6 @@
     "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@shoelace-style/shoelace": "^2.4.0",
     "lit": "^2.2.1"
   },
