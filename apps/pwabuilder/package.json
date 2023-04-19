@@ -26,7 +26,6 @@
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@shoelace-style/shoelace": "^2.4.0",
-
     "@vaadin/router": "^1.7.4",
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
