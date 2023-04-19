@@ -27,6 +27,7 @@ export class ManifestSettingsForm extends LitElement {
   private validationPromise: Promise<void> | undefined;
 
   @property({type: String}) focusOn: string = "";
+
   @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
 
@@ -225,6 +226,7 @@ export class ManifestSettingsForm extends LitElement {
       .focus {
         color: #4f3fb6;
       }
+
       sl-menu-item:focus-within::part(base) {
         color: #ffffff;
         background-color: #4F3FB6;

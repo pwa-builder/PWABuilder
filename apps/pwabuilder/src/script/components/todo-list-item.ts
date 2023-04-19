@@ -63,10 +63,10 @@ export class TodoItem extends LitElement {
       /* < 480px */
       ${smallBreakPoint(css`
       `)}
+
       /* 480px - 639px */
       ${mediumBreakPoint(css`
       `)}
-      
       /* 640px - 1023px */
       ${largeBreakPoint(css`
       `)}

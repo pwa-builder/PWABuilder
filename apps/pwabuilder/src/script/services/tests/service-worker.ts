@@ -53,6 +53,7 @@ export async function testServiceWorker(
     {
       result: swData.hasBackgroundSync,
       infoString: 'Uses background sync for a rich offline experience',
+
       category: 'optional',
     },
   ];
