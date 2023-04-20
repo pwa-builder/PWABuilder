@@ -15,9 +15,11 @@
   "dependencies": {
     "@ionic/core": "^6.1.4",
     "@pwabuilder/code-editor": "file:../code-editor",
-    "@pwabuilder/manifest-validation":  "file:../../libraries/manifest-validation",
+    "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
+    "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    "@shoelace-style/shoelace": "^2.0.0-beta.83",
+    "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
+    "@shoelace-style/shoelace": "^2.4.0",
     "lit": "^2.2.1"
   },
   "devDependencies": {

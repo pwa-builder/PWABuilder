@@ -93,7 +93,7 @@ If you're new to Lit or web components in general, check out the [Lit tutorial](
 
 Next we just need to add the route in our router config defined in `src/router.ts`.
 
-We can add to our existing list of paths in our router config:
+We can add to our existing list of paths in our `children` property:
 
 ```typescript
 {

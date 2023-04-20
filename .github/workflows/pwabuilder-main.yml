@@ -20,6 +20,9 @@ on:
       - "apps/pwabuilder/**"
       - "libraries/manifest-validation/**"
       - "libraries/site-analytics/**"
+      - "components/code-editor/**"
+      - "components/manifest-editor/**"
+      - "components/manifest-previewer/**"
 
 jobs:
   build_and_deploy_job:

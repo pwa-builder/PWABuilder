@@ -16,11 +16,14 @@ import { Manifest } from '@pwabuilder/manifest-validation';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
+  
+  @property({type: Boolean}) isGenerated: boolean = false;
+  @property({type: String}) startingTab: string = "info";
+  @property({type: String}) focusOn: string = "";
 
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
-  @property({type: Boolean}) isGenerated: boolean = false;
 
   static get styles() {
     return [
@@ -289,6 +292,8 @@ export class ManifestEditorFrame extends LitElement {
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
               .baseURL=${this.baseURL}
+              .focusOn=${this.focusOn}
+              .startingTab=${this.startingTab}
               @tabSwitched=${(e: CustomEvent) => this.handleTabSwitch(e)}
               @manifestDownloaded=${() => this.handleManifestDownloaded()}
               @fieldChangeAttempted=${(e: CustomEvent) => this.handleFieldChange(e)}
