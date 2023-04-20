@@ -1,1 +1,5 @@
-{}
+{
+  "devDependencies": {
+    "@types/node": "^18.15.12"
+  }
+}
