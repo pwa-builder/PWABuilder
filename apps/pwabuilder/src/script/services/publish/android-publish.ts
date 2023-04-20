@@ -1,4 +1,3 @@
-import { FilesParams } from '@pwabuilder/manifest-validation';
 import {
   validateAndroidOptions,
   AndroidPackageOptions,
