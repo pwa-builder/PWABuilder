@@ -22,17 +22,19 @@
   <div class="grid gap-3 my-8">
     {% for post in posts %}
       {% if not post.data.draft and post.data.trending %}
-        <a href="{{ post.url | url }}">
-          <div class="mb-4">
-            <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
-            </span>
-            <h3 class="mt-1 mb-4">
-              {{ post.data.title }}
-            </h3>
-            <p class="mb-4 opacity-75">{{ post.data.description }}</p>
+        
+        <div class="mb-4">
+          <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
+          </span>
+          <h3 class="mt-1 mb-4">
+            {{ post.data.title }}
+          </h3>
+          <p class="mb-4 opacity-75">{{ post.data.description }}</p>
+          <a href="{{ post.url | url }}">
             <p class="">Continue reading {{ post.data.title }}</p>
-          </div>
-        </a>
+          </a>
+        </div>
+        
       {% endif %}
     {% endfor %}
 
@@ -43,17 +45,19 @@
   <div class="grid gap-3 my-8">
     {% for post in posts %}
       {% if not post.data.draft %}
-        <a class="doc-link" href="{{ post.url | url }}">
-          <div class="mb-4">
-            <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
-            </span>
-            <h3 class="mt-1 mb-4">
-              {{ post.data.title }}
-            </h3>
-            <p class="mb-4 opacity-75">{{ post.data.description }}</p>
+        
+        <div class="mb-4">
+          <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
+          </span>
+          <h3 class="mt-1 mb-4">
+            {{ post.data.title }}
+          </h3>
+          <p class="mb-4 opacity-75">{{ post.data.description }}</p>
+          <a class="doc-link" href="{{ post.url | url }}">
             <p class="">Continue reading {{ post.data.title }}</p>
-          </div>
-        </a>
+          </a>
+        </div>
+       
       {% endif %}
     {% endfor %}
 
@@ -61,7 +65,7 @@
 {% endmacro %}
 
 {% macro card(post) %}
-  <a class="doc-link" href="{{ post.url | url }}">
+  
     <div class="w-full h-full featured-post relative shadow rounded p-2">
       <span
           class="text-primary-font top-0 left-0 p-2"
@@ -75,8 +79,10 @@
           {{ post.data.title }}
         </h3>
         <p class="opacity-75 mb-8">{{ post.data.excerpt }}</p>
-        <span class="text-link p-1 text-xs">Keep reading...</span>
+        <a class="doc-link" href="{{ post.url | url }}">
+          <span class="p-1 text-xs">Keep reading...</span>
+        </a>
       </div>
     </div>
-  </a>
+
 {% endmacro %}
