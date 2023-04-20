@@ -3,17 +3,16 @@ const version = '1.0.0';
 
 function getUID(){
   let uid = "";
-  for (let i = 0; i < 16; i++) {  
+   
+  for (let k = 0; k < 32;k++) {  
     let randomValue = Math.random() * 16 | 0;  
   
-    if (i == 4 || i == 8 || i == 12) {  
+    if (k == 8 || k == 12 || k == 16 || k == 20) {  
       uid += "-"  
     }  
-    uid += (i == 12 ? 
-      4 : 
-      (i == 16 ? (randomValue & 3 | 8) : randomValue)).toString(16);  
+    uid += (k == 12 ? 4 : (k == 16 ? (randomValue & 3 | 8) : randomValue)).toString(16);  
   }  
-  return uid;  
+  return uid;
 }  
 
 export function getHeaders(){
