@@ -2,6 +2,7 @@ import { generatePackageId } from "../../utils/android-validation";
 import { env } from "../../utils/environment";
 import { ManifestContext } from "../../utils/interfaces";
 import { OculusAppPackageOptions, SigningKeyInfo, SigningMode, validateOculusOptions } from "../../utils/oculus-validation";
+import { getHeaders } from "../../utils/platformTrackingHeaders";
 
 export let hasGeneratedOculusPackage = false;
 
@@ -15,11 +16,13 @@ export async function generateOculusPackage(
     );
   }
 
+  let headers = {...getHeaders(), 'content-type': 'application/json' };
+
   const createPackageUrl = `${env.oculusPackageGeneratorUrl}`;
   const createPackageResponse = await fetch(createPackageUrl, {
     method: 'POST',
     body: JSON.stringify(options),
-    headers: new Headers({ 'content-type': 'application/json' }),
+    headers: new Headers(headers),
   });
 
   if (!createPackageResponse.ok) {
