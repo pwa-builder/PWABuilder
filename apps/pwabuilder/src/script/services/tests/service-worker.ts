@@ -3,6 +3,7 @@ import {
   ServiceWorkerDetectionResult,
   TestResult,
 } from '../../utils/interfaces';
+import { getHeaders } from '../../utils/platformTrackingHeaders';
 
 export async function testServiceWorker(
   url: string
@@ -63,10 +64,13 @@ export async function testServiceWorker(
 async function detectServiceWorker(
   url: string
 ): Promise<ServiceWorkerDetectionResult> {
+
+  let headers = getHeaders();
+
   const fetchResult = await fetch(
-    `${
-      env.serviceWorkerUrl
-    }/serviceWorker/runAllChecks?url=${encodeURIComponent(url)}`
+    `${env.serviceWorkerUrl}/serviceWorker/runAllChecks?url=${encodeURIComponent(url)}`, {
+      headers: new Headers(headers)
+    }
   );
   if (!fetchResult.ok) {
     console.warn(
@@ -120,10 +124,14 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
 }
 
 async function detectOfflineSupportPuppeteer(url: string) {
+  let headers = getHeaders();
   const fetchResult = await fetch(
     `${
       env.serviceWorkerUrl
-    }/serviceworker/GetOfflineSupport?url=${encodeURIComponent(url)}`
+    }/serviceworker/GetOfflineSupport?url=${encodeURIComponent(url)}`,
+    {
+      headers: new Headers(headers)
+    }
   );
   if (!fetchResult.ok) {
     console.warn(

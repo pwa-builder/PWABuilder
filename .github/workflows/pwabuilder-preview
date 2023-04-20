@@ -1,3 +1,4 @@
+<<<<<<< HEAD:.github/workflows/pwabuilder-preview
 name: PWABuilder Preview CI/CD
 
 on:
@@ -44,7 +45,6 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GLACIER_097FE8710 }}
           action: "close"
 =======
->>>>>>> dev
 name: PWABuilder Performance Testing CI/CD
 
 on:
@@ -92,7 +92,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GLACIER_097FE8710 }}
           action: "close"
-<<<<<<< HEAD
-=======
 >>>>>>> dev:.github/workflows/perf-testing-pwabuilder-preview.yml
->>>>>>> dev
