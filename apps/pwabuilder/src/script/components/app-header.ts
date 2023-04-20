@@ -208,6 +208,7 @@ export class AppHeader extends LitElement {
   }
 
   recordGoingHome() {
+    window.location.href = "/";
     recordPWABuilderProcessStep(`header.logo_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
@@ -226,10 +227,10 @@ export class AppHeader extends LitElement {
   render() {
     return html`
       <header part="header">
-        <a href="/" @click=${() => this.recordGoingHome()}>
-          <img tabindex="0" id="header-icon" src="/assets/logos/header_logo.png"
-          alt="PWABuilder logo" />
-        </a>
+       
+          <img id="header-icon" tabindex="0" src="/assets/logos/header_logo.png" 
+          alt="PWABuilder logo" @click=${() => this.recordGoingHome()}/>
+       
 
         <nav id="desktop-nav">
           <a
