@@ -20,7 +20,8 @@
       "resolveJsonModule": true,
       "types": [
           "node"
-      ]
+      ],
+      "sourceMap": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

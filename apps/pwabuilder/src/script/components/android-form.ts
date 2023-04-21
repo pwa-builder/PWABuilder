@@ -103,8 +103,6 @@ export class AndroidForm extends AppPackageFormBase {
         font-weight: bold;
       }
 
-      
-
     `;
 
     return [
@@ -755,7 +753,6 @@ export class AndroidForm extends AppPackageFormBase {
           </sl-details>
         </div>
       </form>
-      
     </div>
     </div>
     `;

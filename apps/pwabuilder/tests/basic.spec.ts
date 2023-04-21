@@ -48,3 +48,4 @@ test('ensure application loads', async ({ page }) => {
     // expect loginButton to exist and be visible
     await expect(loginButton).toBeVisible();
 });
+
