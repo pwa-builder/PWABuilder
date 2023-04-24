@@ -332,6 +332,20 @@ export const manifest_fields: { [field: string]: infoPanel} = {
     location: "handlers",
     required: false,
     docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array"
+  },
+  "edge_side_panel": {
+    description:[
+      `The edge_side_panel member specifies if your app supports the side panel in the Edge browser and if you do, the preferred width for when it opens.`,
+  ],
+    purpose: null,
+    example: null,
+    code:`"edge_side_panel": {
+      "preferred_width": 600
+    }
+  `,
+    location: "platform",
+    required: false,
+    docs_link: "https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md"
   }
 
 };
