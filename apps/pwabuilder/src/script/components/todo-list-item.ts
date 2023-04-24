@@ -100,7 +100,7 @@ export class TodoItem extends LitElement {
   // allows for the retest items to be clicked
   decideClickable(){
     let decision;
-    if(this.status === "retest"){
+    if(this.status === "retest" || this.field.startsWith("Open")){
       decision = true;
     } // else if(sw_fields[field]){}
     else {
@@ -108,17 +108,6 @@ export class TodoItem extends LitElement {
     }
     return {iwrapper: true, clickable: decision}
   }
-
-  /* showMenu(){
-    let menu = this.shadowRoot!.querySelector("sl-dropdown");
-    if(menu!.open){
-      //recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
-      menu!.hide()
-    } else {
-      //recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
-      menu!.show();
-    }
-  } */
 
   triggerHoverState(e: CustomEvent){
     let element = this.shadowRoot!.querySelector(".iwrapper");
@@ -129,16 +118,19 @@ export class TodoItem extends LitElement {
     }
   }
 
+  formatFix(fix: string){
+    if(fix.split("~").length > 1){
+      return fix.split("~").join(" "+ this.field + " ");
+    }
+    return fix;
+  }
+
   render() {
     return html`
       <div class="${classMap(this.decideClickable())}" @click=${() => this.bubbleEvent()}>
         <div class="left">
           ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-          <p>${this.fix.split("~").length > 1 ? 
-              this.fix.split("~").join(" "+ this.field + " ") :
-              this.fix
-              } 
-          </p>
+          <p>${this.formatFix(this.fix)}</p>
         </div>
         ${manifest_fields[this.field] ? 
           html`

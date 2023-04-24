@@ -260,6 +260,11 @@ export class ManifestEditorFrame extends LitElement {
   }
 
   handleFieldChange(e: CustomEvent){
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
   }
 
