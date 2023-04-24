@@ -382,9 +382,9 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@vscode/extension-telemetry": "^0.7.3-preview",
+    "@vscode/extension-telemetry": "^0.7.7",
     "@vscode/webview-ui-toolkit": "^0.9.0",
-    "applicationinsights": "^2.3.3",
+    "applicationinsights": "^2.5.0",
     "dotenv": "^16.0.1",
     "formdata-node": "^4.3.2",
     "formdata-polyfill": "^4.0.10",
