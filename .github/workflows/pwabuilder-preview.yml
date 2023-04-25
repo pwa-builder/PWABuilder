@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - dev     
+      - staging     
     paths:
       - "apps/pwabuilder/**"
       - "libraries/manifest-validation/**"
@@ -15,7 +15,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - dev
+      - staging
     paths:
       - "apps/pwabuilder/**"
       - "libraries/manifest-validation/**"
