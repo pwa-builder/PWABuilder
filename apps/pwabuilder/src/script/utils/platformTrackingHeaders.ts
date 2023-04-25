@@ -5,7 +5,8 @@ function getUID(){
   let uid = "";
    
   for (let k = 0; k < 32;k++) {  
-    let randomValue = Math.random() * 16 | 0;  
+    // more secure than math.random()
+    let randomValue = (window.crypto.getRandomValues(new Uint8Array(1))[0] % 16) + 1;
   
     if (k == 8 || k == 12 || k == 16 || k == 20) {  
       uid += "-"  
