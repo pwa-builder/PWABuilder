@@ -7,7 +7,6 @@
     "preinstall": "node ../../scripts/setupDeps.js",
     "dev": "vite --open",
     "dev-task": "vite",
-    "start-for-tests": "npm run build && vite --port 3000",
     "dev:deps": "concurrently \"node ../../scripts/watchDeps.js\" \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
     "build": "tsc && vite build",
     "start": "npm run build && npx nodemon server.js",
