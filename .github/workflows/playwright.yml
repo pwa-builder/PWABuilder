@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/pwabuilder-vscode
+        working-directory: apps/pwabuilder
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
