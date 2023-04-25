@@ -13,13 +13,14 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/pwabuilder-vscode
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
         node-version: 16
-    - name: cd into apps/pwabuilder
-      run: cd apps/pwabuilder
     - name: Install dependencies
       run: npm install
     - name: Install Playwright Browsers
