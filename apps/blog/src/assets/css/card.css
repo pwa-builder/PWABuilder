@@ -3,10 +3,14 @@
 }
 
 .doc-link {
-  color: var(--primary-font-color);
-  text-decoration: none;
+  color: #342a6a;
+  text-decoration: underline;
 }
 
 .doc-link p {
   font-weight: normal;
+}
+
+.doc-link:hover {
+  cursor: pointer;
 }
