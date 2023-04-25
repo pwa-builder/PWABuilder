@@ -1562,12 +1562,14 @@ export class AppReport extends LitElement {
   async runAllTests(url: string) {
     this.runningTests = true;
     await this.getManifest(url);
-    await Promise.all([ this.testManifest(), this.testServiceWorker(url), this.testSecurity(url)]).then(() =>
+    await Promise.all([ this.testManifest(), this.testSecurity(url)]).then(() =>
     {
       //this.canPackage = this.canPackageList.every((can: boolean) => can);
       // this.canPackageList: boolean[] = [canPackageManifest?, canPackageSW?, canPackageSec?]
       this.canPackage = this.canPackageList[0] && this.canPackageList[2];
     });
+
+    await this.testServiceWorker(url);
 
     this.runningTests = false;
   }
