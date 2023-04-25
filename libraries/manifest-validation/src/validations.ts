@@ -679,7 +679,7 @@ export const maniTests: Array<Validation> = [
         category: "optional",
         defaultValue: "",
         docsLink: "https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md",
-        errorString: "edge_side_panel should be a number",
+        errorString: "The value entered for edge_side_panel.preferred_width should be a number",
         quickFix: false,
         test: (value: any) => {
             let valid: boolean = value && typeof value === "object";
