@@ -13,6 +13,7 @@ import "./manifest-code-form"
 import { prettyString } from '../utils/pretty-json';
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
+import { SlDropdown, SlTabGroup } from '@shoelace-style/shoelace';
 /* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
@@ -57,8 +58,11 @@ export class PWAManifestEditor extends LitElement {
 
   @property({type: String}) startingTab: string = "info";
 
+  @property({type: String}) focusOn: string = "";
+
   @state() manifest: Manifest = {};
   @state() selectedTab: string = "info";
+  @state() openTooltips: SlDropdown[] = [];
 
   static get styles() {
     return css`
@@ -111,8 +115,9 @@ export class PWAManifestEditor extends LitElement {
     super();
   }
 
-  async firstUpdated() {
+  async updated() {
     //console.log(await validateRequiredFields(this._initialManifest))
+    (this.shadowRoot?.querySelector('sl-tab-group') as unknown as SlTabGroup).show(this.startingTab);
   }
 
   private updateManifest(e: CustomEvent){
@@ -139,9 +144,9 @@ export class PWAManifestEditor extends LitElement {
 
     this.manifest = {...this.manifest, [field]: change};
 
-    //console.log("Manifest Successfuly Updated.")
+    /* console.log("Manifest Successfuly Updated.")
 
-    //console.log(`updated manifest with new field ${field}`, this.manifest);
+    console.log(`updated manifest with new field ${field}`, this.manifest); */
   }
 
   public resetManifest(){
@@ -241,6 +246,7 @@ export class PWAManifestEditor extends LitElement {
 
   setSelectedTab(e: any){
     this.selectedTab = e.detail.name;
+    this.startingTab = this.selectedTab;
     let tabSwitched = new CustomEvent('tabSwitched', {
       detail: {
           tab: this.selectedTab,
@@ -251,6 +257,23 @@ export class PWAManifestEditor extends LitElement {
     this.dispatchEvent(tabSwitched);
   }
 
+  handleShowingTooltip(e: CustomEvent){
+    if(e.detail.entering){
+
+      if(this.openTooltips.length > 0){
+        this.openTooltips[0].hide();
+        this.openTooltips = [];
+      }
+  
+      e.detail.tooltip.show();
+      this.openTooltips.push(e.detail.tooltip)
+    } else {
+      e.detail.tooltip.hide();
+      this.openTooltips = [];
+    }
+
+  }
+
   render() {
     return html`
       <sl-tab-group 
@@ -258,6 +281,7 @@ export class PWAManifestEditor extends LitElement {
         @sl-tab-show=${(e: any) => this.setSelectedTab(e)}
         @manifestUpdated=${(e: any) => this.updateManifest(e)}
         @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}
+        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
       >
         <sl-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</sl-tab>
         <sl-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</sl-tab>
@@ -273,6 +297,7 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form></sl-tab-panel>
         <!-- <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)}</manifest-preview-form></sl-tab-panel> -->
         <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest}></manifest-code-form></sl-tab-panel>
+
       </sl-tab-group>
     `;
   }

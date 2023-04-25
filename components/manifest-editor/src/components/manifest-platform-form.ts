@@ -4,6 +4,8 @@ import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../
 import { standardCategories } from '../locales/categories';
 import { singleFieldValidation, validateSingleField } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
+import {classMap} from 'lit/directives/class-map.js';
+import "./manifest-field-tooltip";
 
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
@@ -25,6 +27,8 @@ export class ManifestPlatformForm extends LitElement {
     }
     return value !== oldValue;
   }}) manifest: Manifest = {};
+
+  @property({type: String}) focusOn: string = "";
 
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
@@ -179,6 +183,16 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 16px;
       }
 
+      sl-details:focus {
+        outline: 5px solid var(--sl-input-focus-ring-color);
+        border-radius: 5px;
+      }
+
+      sl-details.error:focus {
+        outline: 5px solid #eb575770;
+        border-radius: 5px;
+      }
+
       .field-holder {
         display: flex;
         flex-direction: column;
@@ -258,6 +272,10 @@ export class ManifestPlatformForm extends LitElement {
         color: #ffffff;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
@@ -330,7 +348,16 @@ export class ManifestPlatformForm extends LitElement {
     super();
   }
 
+  firstUpdated(){
+    
+  }
+
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
+    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    if(this.focusOn && field){
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
 
     /* The first two checks are to reset the view with the most up to date manifest fields.
      The last check prevents the dropdown selector in related apps from causing everything
@@ -343,7 +370,7 @@ export class ManifestPlatformForm extends LitElement {
         this.requestValidateAllFields();
         fieldsValidated = true;
       }
-      this.reset();
+      //this.reset();
     }
   }
 
@@ -427,7 +454,6 @@ export class ManifestPlatformForm extends LitElement {
       });
     }
   }
-
   
 dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
   let manifestUpdated = new CustomEvent('manifestUpdated', {
@@ -536,8 +562,6 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
       this.dispatchEvent(errorInTab(true, "platform"));
     }
   }
-
-  
 
   addFieldToHTML(field: string){
     if(field === "shortcuts"){
@@ -893,40 +917,27 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
 
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>IARC Rating ID</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the IARC rating id option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("iarc_rating_id"))}>IARC Rating ID</h3>
+              <manifest-field-tooltip .field=${"iarc_rating_id"}></manifest-field-tooltip>
             </div>
             <p>Displays what ages are suitable for your PWA</p>
             <sl-input placeholder="PWA IARC Rating ID" value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Prefer Related Applications</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip special-tip">
-                  Click for more info on the prefer related applications option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("prefer_related_applications"))}>Prefer Related Applications</h3>
+              <manifest-field-tooltip .field=${"prefer_related_applications"}></manifest-field-tooltip>
             </div>
             <p>Should a user prefer a related app to this one</p>
             <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
@@ -938,17 +949,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
         <div class="long-items">
           <div class="form-field">
             <div class="field-header">
-              <h3>Related Applications</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the related applications option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("related_applications"))}>Related Applications</h3>
+              <manifest-field-tooltip .field=${"related_applications"}></manifest-field-tooltip>
             </div>
             <p>Applications that provide similar functionality to your PWA</p>
             <sl-details class="field-details" summary="Click to edit related apps" data-field="related_applications">
@@ -975,17 +977,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Shortcuts</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the shortcuts option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("shortcuts"))}>Shortcuts</h3>
+              <manifest-field-tooltip .field=${"shortcuts"}></manifest-field-tooltip>
             </div>
             <p>Links to key tasks or pages within your PWA</p>
             <sl-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts">
@@ -1010,17 +1003,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Protocol Handlers</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the protocol handlers option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("protocol_handlers"))}>Protocol Handlers</h3>
+              <manifest-field-tooltip .field=${"protocol_handlers"}></manifest-field-tooltip>
             </div>
             <p>Protocols this web app can register and handle</p>
             <sl-details class="field-details" summary="Click to edit protocol handlers" data-field="protocol_handlers">
@@ -1044,17 +1028,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
           </div>
           <div class="form-field">
             <div class="field-header">
-              <h3>Categories</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=categories-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the categories option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("categories"))}>Categories</h3>
+              <manifest-field-tooltip .field=${"categories"}></manifest-field-tooltip>
             </div>
             <p>The categories your PWA belongs to</p>
               <div id="cat-field"  data-field="categories">
