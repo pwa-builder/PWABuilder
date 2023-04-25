@@ -12,27 +12,24 @@ import {
   highlightSpecialChars,
   highlightActiveLine,
   EditorView,
+  lineNumbers,
+  rectangularSelection
 } from '@codemirror/view';
-import { defaultKeymap } from '@codemirror/commands';
-import { history, historyKeymap } from '@codemirror/history';
-import { foldGutter, foldKeymap } from '@codemirror/fold';
-import { indentOnInput } from '@codemirror/language';
-import { lineNumbers } from '@codemirror/gutter';
-import { bracketMatching } from '@codemirror/matchbrackets';
-import { closeBrackets, closeBracketsKeymap } from '@codemirror/closebrackets';
+import { 
+  defaultKeymap, 
+  history, 
+  historyKeymap,} from '@codemirror/commands';
+import { indentOnInput, foldGutter, foldKeymap, bracketMatching, HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
-import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
-import { commentKeymap } from '@codemirror/comment';
-import { rectangularSelection } from '@codemirror/rectangular-selection';
-import { defaultHighlightStyle } from '@codemirror/highlight';
+import { autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { lintKeymap } from '@codemirror/lint';
 import { json } from '@codemirror/lang-json';
+import { javascript } from '@codemirror/lang-javascript';
+import {tags} from "@lezer/highlight"
 import {
   CodeEditorEvents,
   CodeEditorUpdateEvent,
 } from './helpers';
-
-type EditorStateType = 'json';
 
 export const emitter = new EventTarget();
 
@@ -40,9 +37,18 @@ export const dispatchEvent = debounce((event: Event) => {
   emitter.dispatchEvent(event);
 }, 1500);
 
+// Define the highlight style.
+const myHighlightStyle = HighlightStyle.define([
+  { tag: tags.keyword, color: '#708' },
+  { tag: tags.name, color: '#292c3a' },
+  { tag: tags.string, color: '#aa1111' },
+  { tag: tags.comment, color: '#292c3a' },
+  { tag: tags.bool, color: '#221199'}
+]);
+
 export function getEditorState(
   text: string,
-  editorType: EditorStateType,
+  editorType: string,
   extensions: Array<Extension> = [],
   editable: boolean
 ) {
@@ -58,7 +64,7 @@ export function getEditorState(
       highlightActiveLine(),
       highlightSelectionMatches(),
       highlightSpecialChars(),
-      defaultHighlightStyle.fallback,
+      syntaxHighlighting(myHighlightStyle),
       bracketMatching(),
       closeBrackets(),
       autocompletion(),
@@ -71,7 +77,6 @@ export function getEditorState(
         ...defaultKeymap,
         ...foldKeymap,
         ...historyKeymap,
-        ...commentKeymap,
         ...searchKeymap,
         ...lintKeymap,
         ...closeBracketsKeymap,
@@ -83,11 +88,11 @@ export function getEditorState(
   });
 }
 
-function fromEditorType(editorType: EditorStateType) {
-  if (editorType !== 'json') {
-    console.log('TODO');
-  }
-
+function fromEditorType(editorType: string) {
+  if(editorType === "javascript") return javascript();
+  if(editorType === "json") return json();
+  
+  console.log(`Unknown editor type: ${editorType}. Using JSON syntax highlighter.`);
   return json();
 }
 
