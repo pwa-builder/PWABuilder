@@ -38,7 +38,7 @@ export class AppHome extends LitElement {
 
         :host {
           --sl-focus-ring-width: 3px;
-          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-input-focus-ring-color: #595959;
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
           --sl-color-primary-300: var(--primary-color);

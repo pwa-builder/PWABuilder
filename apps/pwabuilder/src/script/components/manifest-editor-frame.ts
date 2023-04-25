@@ -16,11 +16,14 @@ import { Manifest } from '@pwabuilder/manifest-validation';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
+  
+  @property({type: Boolean}) isGenerated: boolean = false;
+  @property({type: String}) startingTab: string = "info";
+  @property({type: String}) focusOn: string = "";
 
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
-  @property({type: Boolean}) isGenerated: boolean = false;
 
   static get styles() {
     return [
@@ -257,6 +260,11 @@ export class ManifestEditorFrame extends LitElement {
   }
 
   handleFieldChange(e: CustomEvent){
+    let readyForRetest = new CustomEvent('readyForRetest', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(readyForRetest);
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
   }
 
@@ -289,6 +297,8 @@ export class ManifestEditorFrame extends LitElement {
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
               .baseURL=${this.baseURL}
+              .focusOn=${this.focusOn}
+              .startingTab=${this.startingTab}
               @tabSwitched=${(e: CustomEvent) => this.handleTabSwitch(e)}
               @manifestDownloaded=${() => this.handleManifestDownloaded()}
               @fieldChangeAttempted=${(e: CustomEvent) => this.handleFieldChange(e)}
