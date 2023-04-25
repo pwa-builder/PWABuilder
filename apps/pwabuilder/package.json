@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@playwright/test": "^1.32.0",
+    "@playwright/test": "^1.32.3",
     "@types/chai": "^4.2.21",
     "@types/lodash-es": "^4.17.4",
     "@types/mocha": "^8.2.3",
