@@ -41,9 +41,9 @@ Purpose: main is only for in-production code. Main is auto deployed to productio
 
 ---  
 
-Branch Name: dev 
+Branch Name: staging 
 
-Purpose: dev is our beta branch. The dev branch is auto deployed to `preview.pwabuilder.com` and is meant to be used for code that needs to be tested before going into production. All new features should be merged to this branch first 
+Purpose: staging is our beta branch. The staging branch is auto deployed to `preview.pwabuilder.com` and is meant to be used for code that needs to be tested before going into production. All new features should be merged to this branch first 
 
 
 ### Scenarios 
@@ -64,17 +64,17 @@ This section is meant to help you figure out what you should do branch wise for 
 
 - Request a review from someone 
 
-- When this PR is merged, make a new PR to update dev from main, and merge this new PR yourself. This will keep dev updated, while also ensuring that bug fixes get out quickly to our users 
+- When this PR is merged, make a new PR to update staging from main, and merge this new PR yourself. This will keep staging updated, while also ensuring that bug fixes get out quickly to our users 
 
 #### Features and other enhancements 
 
-- Make your branch from dev 
+- Make your branch from staging 
 
 - Do your work in that new branch 
 
 - Test the feature on your machine and ensure it works as you expect 
 
-- Make a PR targeted at the dev branch 
+- Make a PR targeted at the staging branch 
 
 - Request a review from someone 
 
@@ -84,7 +84,7 @@ When this PR is merged, dev.pwabuilder.com will be updated. Test your feature on
 
 Once a month, unless we are planning a release around a specific timeline, our “code leader” (Justin W will take on this task at first, but we should explore sharing this position if the team thinks this would be useful) will: 
 
-- Do a PR from dev that targets main 
+- Do a PR from staging that targets main 
 
 - Make a page in our “Advocacy Materials” section in Loop 
 
