@@ -1079,7 +1079,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
                 </p>
               </a>
             </div>
-            <p>Indicates whether your PWA supports the side panel in the Edge Browser</p>
+            <p>Indicates whether your PWA supports the side panel in Microsoft Edge</p>
             <sl-input 
               type="number"
               placeholder="Preferred Width" 
