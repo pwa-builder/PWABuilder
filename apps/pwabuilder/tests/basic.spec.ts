@@ -7,8 +7,6 @@ let currentPage: Page | null = null;
 // before each test
 test.beforeEach(async ({ page }) => {
     currentPage = page;
-
-    await page.coverage.startJSCoverage();
     await page.goto(url);
 });
 
