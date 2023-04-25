@@ -34,19 +34,16 @@ export class Infocard extends LitElement {
         border-radius: var(--card-border-radius);
         box-shadow: 0px 16px 24px 0px #00000026;
       }
-
       .card-content {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
       }
-
       .card-content img {
         width: 4em;
         height: auto;
       }
-
       .card-content h3 {
         font-size: var(--subheader-font-size);
         line-height: 24px;
@@ -57,7 +54,6 @@ export class Infocard extends LitElement {
         text-align: center;
         white-space: nowrap;
       }
-
       .card-content p {
         color: var(--secondary-font-color);
         font-size: var(--card-body-font-size);
@@ -65,14 +61,12 @@ export class Infocard extends LitElement {
         text-align: center;
         margin: 0;
       }
-
       .card-actions {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%
       }
-
       .card-actions a {
         color: var(--primary-color);
         font-weight: bold;
@@ -80,17 +74,14 @@ export class Infocard extends LitElement {
         font-size: var(--card-body-font-size);
         margin: 0;
       }
-
       .card-actions a:hover {
         cursor: pointer;
       }
-
       .arrow_link {
         margin: 0;
         border-bottom: 1px solid var(--primary-color);
         white-space: nowrap;
       }
-
       .arrow_anchor {
         text-decoration: none;
         font-size: var(--arrow-link-font-size);
@@ -101,19 +92,15 @@ export class Infocard extends LitElement {
         display: flex;
         column-gap: 10px;
       }
-
       .arrow_anchor:visited {
         color: var(--primary-color);
       }
-
       .arrow_anchor:hover {
         cursor: pointer;
       }
-
       .arrow_anchor:hover img {
         animation: bounce 1s;
       }
-
       @keyframes bounce {
         0%,
         20%,
@@ -129,7 +116,6 @@ export class Infocard extends LitElement {
           transform: translateX(5px);
         }
       }
-
       /* < 480px */
       ${smallBreakPoint(css`
           .card {
@@ -147,7 +133,6 @@ export class Infocard extends LitElement {
             font-size: 20px;
           }
       `)}
-
       /* 480px - 639px */
       ${mediumBreakPoint(css`
         .card {
@@ -162,7 +147,6 @@ export class Infocard extends LitElement {
             font-size: 20px;
           }
       `)}
-
       /* 640px - 1023px */
       ${largeBreakPoint(css`
         .card {
@@ -173,16 +157,13 @@ export class Infocard extends LitElement {
           padding-bottom: 1.25em;
         }
       `)}
-
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
       `)}
-
       /* > 1920 */
       ${xxxLargeBreakPoint(css`
           
       `)}
-
     `
     ];
   }
