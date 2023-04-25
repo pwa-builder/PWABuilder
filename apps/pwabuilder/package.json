@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
-  "engines": {
-    "node": "14.15.1"
-  },
   "scripts": {
     "preinstall": "node ../../scripts/setupDeps.js",
     "dev": "vite --open",
@@ -25,9 +22,10 @@
   "dependencies": {
     "@pwabuilder/code-editor": "file:../../components/code-editor",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
+    "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    "@shoelace-style/shoelace": "^2.2.0",
+    "@shoelace-style/shoelace": "^2.4.0",
     "@vaadin/router": "^1.7.4",
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
