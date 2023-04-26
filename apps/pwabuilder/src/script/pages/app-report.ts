@@ -2047,7 +2047,8 @@ export class AppReport extends LitElement {
     if(!manifest_fields[e.detail.field]){
       let frame;
       switch(e.detail.field){
-        case "Manifest" || "SW":
+        case "Manifest":
+        case "Service Worker":
           this.thingToAdd = e.detail.displayString;
           this.showConfirmationModal = true;
           return;

@@ -85,6 +85,11 @@ export class TodoItem extends LitElement {
   }
 
   bubbleEvent(){
+    if(manifest_fields[this.field]){
+      let tooltip = (this.shadowRoot!.querySelector('manifest-info-card') as any);
+      tooltip.handleHover(true);
+    }
+
     let event = new CustomEvent('todo-clicked', {
       detail: {
           field: this.field,
@@ -100,7 +105,7 @@ export class TodoItem extends LitElement {
   // allows for the retest items to be clicked
   decideClickable(){
     let decision;
-    if(this.status === "retest" || this.field.startsWith("Open")){
+    if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field]){
       decision = true;
     } // else if(sw_fields[field]){}
     else {
