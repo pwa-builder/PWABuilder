@@ -2228,7 +2228,6 @@ export class AppReport extends LitElement {
   
   handleShowingTooltip(e: CustomEvent){
     if(e.detail.entering){
-
       if(this.openTooltips.length > 0){
         this.openTooltips[0].hide();
         this.openTooltips = [];

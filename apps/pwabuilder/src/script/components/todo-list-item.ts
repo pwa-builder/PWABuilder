@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {
   smallBreakPoint,
@@ -19,6 +19,8 @@ export class TodoItem extends LitElement {
   @property({ type: String }) fix: string = "";
   @property({ type: String }) status: string = "";
   @property({ type: String }) displayString: string = "";
+
+  @state() isOpen: boolean = false;
 
   static get styles() {
     return [
@@ -87,7 +89,7 @@ export class TodoItem extends LitElement {
   bubbleEvent(){
     if(manifest_fields[this.field]){
       let tooltip = (this.shadowRoot!.querySelector('manifest-info-card') as any);
-      tooltip.handleHover(true);
+      tooltip.handleHover(!this.isOpen);
     }
 
     let event = new CustomEvent('todo-clicked', {
@@ -118,8 +120,10 @@ export class TodoItem extends LitElement {
     let element = this.shadowRoot!.querySelector(".iwrapper");
     if(e.detail.entering){
       element?.classList.add("active");
+      this.isOpen = true;
     } else {
       element?.classList.remove("active");
+      this.isOpen = false;
     }
   }
 
