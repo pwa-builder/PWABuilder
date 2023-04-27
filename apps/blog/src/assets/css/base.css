@@ -227,6 +227,14 @@ img[role="presentation"] {
   margin: 0;
 }
 
+#backToHomeButton {
+  text-decoration: none;
+}
+
+#backToHomeButton:focus, #backToHomeButton:hover {
+  text-decoration: underline;
+}
+
 /*
 Leave it for testing margins, paddings, spacing
 
