@@ -38,4 +38,4 @@ These actions save our users time and effort, as they no longer have to search f
 
 Moving forward, we plan to add more information for the service worker and security action items and all future manifest fields that are added to the site will have these tooltips as well. The manifest editor has also been updated to include these new tooltips. Previously, clicking on the (i) would lead users straight out to the PWABuilder documentation suite, but now the tooltips include the same brief description and a "Learn more" link if additional information is required.
 
-The Action items tooltips feature is now live on [PWABuilder](https://www.pwabuilder.com/) visit now to give it a try!
+The Action items tooltips feature is now live on [PWABuilder](https://www.pwabuilder.com/), give it a try!
