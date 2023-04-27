@@ -24,7 +24,7 @@ With the revamp of the report card page, PWABuilder saw the introduction of the 
 
 <img src="/posts/introducing-action-item-tooltips/tooltips-cover-photo.png" alt="image showing tooltips in use for the display override field">
 
-In the image above you can see the tooltip that would be shown for the `display_override` field. There is a brief description, a photo showing the field in use, and a couple of quick actions at the bottom of the tooltip. It is important to not that photos will only show for fields where the name alone may not directly imply how the field will present in your PWA.
+In the image above you can see the tooltip that would be shown for the `display_override` field. There is a brief description, a photo showing the field in use, and a couple of quick actions at the bottom of the tooltip. It is important to note that photos will only show for fields where the name alone may not directly imply how the field will present in your PWA.
 
 <img src="/posts/introducing-action-item-tooltips/edit-in-manifest-example.png" alt="image showing highlighted display override field in manifest editor">
 
