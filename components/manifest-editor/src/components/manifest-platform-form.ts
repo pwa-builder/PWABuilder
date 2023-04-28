@@ -11,7 +11,7 @@ const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 
 // How to handle categories field?
-const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories"];
+const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories", "edge_side_panel"];
 let manifestInitialized: boolean = false;
 let fieldsValidated: boolean = false;
 
@@ -454,6 +454,32 @@ export class ManifestPlatformForm extends LitElement {
       });
     }
   }
+  
+dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
+  let manifestUpdated = new CustomEvent('manifestUpdated', {
+    detail: {
+        field: field,
+        change: change,
+        removal: removal
+    },
+    bubbles: true,
+    composed: true
+  });
+  this.dispatchEvent(manifestUpdated);
+
+  if(removal){
+    let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+    if(input!.classList.contains("error")){
+      input!.classList.toggle("error");
+      delete this.errorMap[field!];
+      let last = input!.parentNode!.lastElementChild
+      input!.parentNode!.removeChild(last!)
+    }
+    if(Object.keys(this.errorMap).length == 0){
+      this.dispatchEvent(errorInTab(false, "platform"));
+    } 
+  }
+}
 
   async handleInputChange(event: InputEvent){
 
@@ -478,21 +504,25 @@ export class ManifestPlatformForm extends LitElement {
         updatedValue = JSON.parse(updatedValue);
     }
 
-    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue)
+    // special situation for edge side panel
+    // since its value is an object we have to validate an object not a string
+    let objectValue = {};
+    let useOV = false;
+    if(fieldName === "edge_side_panel"){
+      if(updatedValue === "") {
+        this.dispatchUpdateEvent(fieldName, 0, true)
+        return;
+      }
+      objectValue = {"preferred_width": parseInt(updatedValue)};
+      useOV = true;
+    }
+
+    const validation: singleFieldValidation = await validateSingleField(fieldName!, useOV ? objectValue : updatedValue)
     let passed = validation!.valid;
 
     if(passed){
       // Since we already validated, we only send valid updates.
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: fieldName,
-            change: updatedValue
-        },
-        bubbles: true,
-        composed: true
-      });
-      this.dispatchEvent(manifestUpdated);
-
+      this.dispatchUpdateEvent(fieldName!, useOV ? objectValue : updatedValue, false)
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
@@ -612,9 +642,13 @@ export class ManifestPlatformForm extends LitElement {
       }
 
       this.manifest.shortcuts?.push(scObject)
+      this.validatePlatformList("shortcuts", this.manifest.shortcuts!, removal);
     }
-    this.validatePlatformList("shortcuts", this.manifest.shortcuts!, removal);
+    if(this.manifest.shortcuts!.length == 0 && !push){
+      this.dispatchUpdateEvent("shortcuts", 0, true)
+    }
   }
+
 
   addProtocolToManifest(e: any){
     e.preventDefault();
@@ -650,9 +684,13 @@ export class ManifestPlatformForm extends LitElement {
       }
   
       this.manifest.protocol_handlers?.push(pObject);
+      this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!, removal);
     }
 
-    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!, removal);
+    if(this.manifest.protocol_handlers!.length == 0 && !push){
+      this.dispatchUpdateEvent("protocol_handlers", 0, true)
+    }
+
   }
 
   addRelatedAppToManifest(e: any){
@@ -691,11 +729,15 @@ export class ManifestPlatformForm extends LitElement {
       if(!this.manifest.related_applications){
         this.manifest.related_applications = []
       }
-    
+
       this.manifest.related_applications?.push(appObject);
+      
+      this.validatePlatformList("related_applications", this.manifest.related_applications!, removal);
     }
-    
-    this.validatePlatformList("related_applications", this.manifest.related_applications!, removal);
+
+    if(this.manifest.related_applications!.length == 0 && !push){
+      this.dispatchUpdateEvent("related_applications", 0, true)
+    }
   }
 
   updateCategories(){
@@ -728,17 +770,9 @@ export class ManifestPlatformForm extends LitElement {
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
 
-    if(passed || removal){
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: field,
-            change: [...updatedValue]
-        },
-        bubbles: true,
-        composed: true
-      });
 
-      this.dispatchEvent(manifestUpdated);
+    if(passed || removal){
+      this.dispatchUpdateEvent(field!, [...updatedValue])
     }
 
     if(passed){
@@ -804,9 +838,11 @@ export class ManifestPlatformForm extends LitElement {
     } else if(field === "protocol"){
       this.manifest.protocol_handlers = this.manifest.protocol_handlers!.filter((_item: any, i: number) => i != index);
       this.updateProtocolsInManifest([], false, true);
-    } else {
+    } else if(field === "related") {
       this.manifest.related_applications = this.manifest.related_applications!.filter((_item: any, i: number) => i != index);
       this.updateRelatedAppsInManifest([], [], false, true);
+    } else {
+      return console.error(`${field} not an accepted value for this function`);
     }
   }
 
@@ -1003,6 +1039,30 @@ export class ManifestPlatformForm extends LitElement {
                     
               </div>
           </div>
+          <div class="form-row">
+          <div class="form-field">
+            <div class="field-header">
+              <h3>Edge Side Panel</h3>
+              <a
+                href="https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md"
+                target="_blank"
+                rel="noopener"
+              >
+                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
+                <p class="toolTip">
+                  Click for more info on the Edge Side Panel option in your manifest.
+                </p>
+              </a>
+            </div>
+            <p>Indicates whether your PWA supports the side panel in Microsoft Edge</p>
+            <sl-input 
+              type="number"
+              placeholder="Preferred Width" 
+              value=${this.manifest.edge_side_panel?.preferred_width ?? ""} 
+              data-field="edge_side_panel" 
+              @sl-change=${this.handleInputChange}></sl-input>
+          </div>
+        </div>
         </div>
       </div>
     `;
