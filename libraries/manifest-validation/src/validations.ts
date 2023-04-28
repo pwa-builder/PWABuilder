@@ -678,7 +678,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
         category: "optional",
         defaultValue: "",
-        docsLink: "https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md",
+        docsLink: "https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar",
         errorString: "The value entered for edge_side_panel.preferred_width should be a number",
         quickFix: false,
         test: (value: any) => {

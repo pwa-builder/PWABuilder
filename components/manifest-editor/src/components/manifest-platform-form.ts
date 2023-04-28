@@ -1044,7 +1044,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
             <div class="field-header">
               <h3>Edge Side Panel</h3>
               <a
-                href="https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md"
+                href="https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar"
                 target="_blank"
                 rel="noopener"
               >
