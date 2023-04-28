@@ -1446,8 +1446,14 @@ export class AppReport extends LitElement {
     }
 
     setInterval(() => this.pollLastTested(), 120000);
+    
+    window.addEventListener('scroll', this.closeTooltipOnScroll.bind(this));
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('scroll', this.closeTooltipOnScroll.bind(this));
+  }
 
   // Expands the Action items details on load
   firstUpdated() {
@@ -2240,6 +2246,13 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
+  }
+
+  closeTooltipOnScroll() {
+    if(this.openTooltips.length > 0){
+      this.openTooltips[0].hide();
+      this.openTooltips = [];
+    }
   }
   
   render() {
