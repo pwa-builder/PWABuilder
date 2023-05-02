@@ -2,6 +2,7 @@ import { env } from "../../utils/environment";
 import { findBestAppIcon } from "../../utils/icons";
 import { ManifestContext } from "../../utils/interfaces";
 import { generateBundleId, IOSAppPackageOptions, validateIOSOptions } from "../../utils/ios-validation";
+import { getHeaders } from "../../utils/platformTrackingHeaders";
 
 export let hasGeneratedIOSPackage = false;
 
@@ -15,11 +16,13 @@ export async function generateIOSPackage(
     );
   }
 
+  let headers = {...getHeaders(), 'content-type': 'application/json' };
+
   const createPackageUrl = `${env.iosPackageGeneratorUrl}`;
   const createPackageResponse = await fetch(createPackageUrl, {
     method: 'POST',
     body: JSON.stringify(options),
-    headers: new Headers({ 'content-type': 'application/json' }),
+    headers: new Headers(headers),
   });
 
   if (!createPackageResponse.ok) {
