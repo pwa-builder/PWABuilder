@@ -21,7 +21,8 @@ const possibleManiKeys = [
   "iarc_rating_id",
   "icons",
   "share_target",
-  "display_override"
+  "display_override",
+  "edge_side_panel"
 ];
 
 export function isStandardOrientation(orientation: string): boolean {
