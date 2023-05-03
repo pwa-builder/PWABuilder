@@ -1,6 +1,7 @@
 import { SecurityDataResults, TestResult } from '../../utils/interfaces';
 import { env } from '../../utils/environment';
 import { default_timeout } from '../../utils/api';
+import { getHeaders } from '../../utils/platformTrackingHeaders';
 
 export const default_results = [
   {
@@ -28,7 +29,8 @@ export async function testSecurity(url: string): Promise<Array<TestResult>> {
 
   const encodedUrl = encodeURIComponent(url);
   const securityUrl = `${env.api}/Security?site=${encodedUrl}`;
-  const fetchResult = fetch(securityUrl);
+  let headers = getHeaders();
+  const fetchResult = fetch(securityUrl, { headers: new Headers(headers)});
 
   const fetchResultOrTimeout: void | Response = await Promise.race([
     twentySecondTimeout,
