@@ -40,4 +40,5 @@
   - [FAQ](/studio/faq "PWABuilder Studio - FAQ")
 
 - **Release Notes**
+  - [2023](/release-notes/2023 "Release Notes - 2023")
   - [2022](/release-notes/2022 "Release Notes - 2022")

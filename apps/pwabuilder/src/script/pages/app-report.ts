@@ -2344,7 +2344,7 @@ export class AppReport extends LitElement {
                         </button>
                     </sl-tooltip>
                     `}
-                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${this.runningTests || this.createdManifest}>
+                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${!this.canPackage || this.createdManifest}>
                   <p class="arrow_link">Download Test Package</p>
                 </button>
               </div>
