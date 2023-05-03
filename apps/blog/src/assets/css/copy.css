@@ -6,6 +6,7 @@ pre[class*="language-"] .copy {
   cursor: pointer;
   transition: all 200ms ease;
   @apply flex justify-center items-center absolute top-0 right-0 rounded-t px-2 py-1 text-secondary-font bg-secondary;
+  display: none;
 }
 pre[class*="language-"]:hover .copy:hover {
   transform: translate(-10px, -100%);
