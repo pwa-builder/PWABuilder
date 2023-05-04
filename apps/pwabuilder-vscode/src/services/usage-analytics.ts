@@ -1,12 +1,16 @@
-import { setup, defaultClient } from 'applicationinsights';
-import { checkTelem, getFlag } from '../flags';
+// import { setup, defaultClient } from 'applicationinsights';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { getFlag } from '../flags';
 
 import * as vscode from 'vscode';
 import { Headers } from 'node-fetch';
 
+export let reporter: TelemetryReporter | undefined;
+const key = "#{ANALYTICS_KEY}#";
+
 const sessionID = getSessionID();
 export const standard_headers = new Headers(
-  { 
+  {
     "content-type": "application/json",
     "Platform-Identifier": "PWAStudio",
     "Correlation-Id": sessionID,
@@ -15,19 +19,7 @@ export const standard_headers = new Headers(
 
 export function initAnalytics() {
   try {
-    // check flag first
-    if (getFlag("analytics") === true && checkTelem() === true) {
-      setup("#{ANALYTICS_CODE}#")
-      .setAutoDependencyCorrelation(false)
-      .setAutoCollectRequests(false)
-      .setAutoCollectPerformance(false, false)
-      .setAutoCollectExceptions(true)
-      .setAutoCollectDependencies(false)
-      .setAutoCollectConsole(false)
-      .setUseDiskRetryCaching(false)
-      .setSendLiveMetrics(false)
-      .start();
-    }
+    reporter = new TelemetryReporter(key);
   }
   catch (err) {
     console.error("Error initializing analytics", err);
@@ -46,10 +38,7 @@ export function trackEvent(name: string, properties: any) {
       // add session id to properties
       properties.sessionId = getSessionID();
 
-      defaultClient.trackEvent({ 
-        name,
-        properties
-      });
+      reporter?.sendTelemetryEvent(name, properties);
     }
   }
   catch (err) {
@@ -62,12 +51,7 @@ export function trackEvent(name: string, properties: any) {
 export function trackException(err: Error) {
   try {
     if (getFlag("analytics") === true) {
-      defaultClient.trackException({ 
-        exception: err,
-        properties: {
-          sessionId: getSessionID()
-        }
-      });
+      reporter?.sendTelemetryException(err, { sessionId: getSessionID() });
     }
   }
   catch (err) {
