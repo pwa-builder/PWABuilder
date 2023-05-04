@@ -18,9 +18,6 @@ import '../components/test-publish-pane';
 import '../components/sw-selector';
 import '../components/share-card';
 
-import { testSecurity } from '../services/tests/security';
-import { testServiceWorker } from '../services/tests/service-worker';
-
 import {
   Icon,
   ManifestContext,
@@ -306,7 +303,7 @@ export class AppReport extends LitElement {
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
           border-radius: 4px;
         }
-        
+
         #app-image-skeleton {
           height: 85px;
           width: auto;
@@ -420,13 +417,23 @@ export class AppReport extends LitElement {
         }
 
         #last-edited {
-          font-size: 12px;
           white-space: nowrap;
           margin: 0;
         }
 
-        #test {
-          font-size: 10px;
+        #test, #last-edited {
+          font-size: 12px;
+          line-height: 18px;
+        }
+
+
+        #test.in-progress{
+          color: #767676;
+
+          align-items: center;
+          display: flex;
+          gap: 10px;
+          line-height: 10px;
         }
 
         #test img {
@@ -514,7 +521,7 @@ export class AppReport extends LitElement {
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
         }
-        
+
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -633,7 +640,7 @@ export class AppReport extends LitElement {
           width: 20px;
           height: auto;
         }
-        
+
 
 
         .mani-tooltip {
@@ -1187,26 +1194,50 @@ export class AppReport extends LitElement {
           }
         }
 
-        .post-loader{
+        .loader-round {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
           position: relative;
+          flex-shrink: 0;
+          animation: rotate 1s linear infinite
         }
-        .post-loader::after{
+        .loader-round::before {
           content: "";
-          width: 100%;
-          height: 100%;
+          box-sizing: border-box;
           position: absolute;
-          /* background-color: #ffffff75; */
-
-          background: linear-gradient(15deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.10) 100%);
-          background-position: top left;
-          background-repeat: no-repeat;
-          animation: post-loader 2s ease infinite;
-          background-size: 300% 100%;
-          border-radius:10px;
+          inset: 0px;
+          border-radius: 50%;
+          border: 2px solid #D6D6D6;
+          animation: prixClipFix 2s linear infinite ;
         }
 
-        @keyframes post-loader {
-          50% {background-position: bottom right;}
+        .loader-round.large{
+          width: 96px;
+          height: 96px;
+          margin: 2px;
+        }
+        .loader-round.large::before{
+          border-width: 4px;
+        }
+
+        .loader-round.skeleton{
+          animation: none;
+        }
+        .loader-round.skeleton::before{
+          animation: none;
+        }
+
+        @keyframes rotate {
+          100%   {transform: rotate(360deg)}
+        }
+
+        @keyframes prixClipFix {
+            0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,15% 0)}
+            25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+            50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+            75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+            100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
         }
 
         @media(max-width: 900px){
@@ -1251,14 +1282,14 @@ export class AppReport extends LitElement {
 
 
         @media(max-width: 600px){
-          #app-card-header-col { 
+          #app-card-header-col {
             gap: 10px;
           }
           #pwa-image-holder {
             width: 90px;
             height: auto;
           }
-          #pwa-image-holder img { 
+          #pwa-image-holder img {
             width: 84px;
             height: auto;
           }
@@ -1729,7 +1760,7 @@ export class AppReport extends LitElement {
       this.canPackage = this.canPackageList[0] && this.canPackageList[2];
     });
 
-    await this.testServiceWorker(url);
+    // await this.testServiceWorker(url);
 
     this.runningTests = false;
   }
@@ -2021,7 +2052,7 @@ export class AppReport extends LitElement {
 
     await dialog!.show();
     recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
-  }  
+  }
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal(focusOn = "", tab: string = "info") {
@@ -2164,12 +2195,12 @@ export class AppReport extends LitElement {
           this.thingToAdd = e.detail.displayString;
           this.showConfirmationModal = true;
           return;
-        
+
         case "Open Manifest Modal":
           frame = this.shadowRoot!.querySelector("manifest-editor-frame");
           (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
           return;
-        
+
         case "Open SW Modal":
           frame = this.shadowRoot!.querySelector("sw-selector");
           (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
@@ -2194,7 +2225,7 @@ export class AppReport extends LitElement {
     let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
     let allowed: boolean = false;
 
-    // added this code because the tooltips that exist on the action items emit the sl-show and 
+    // added this code because the tooltips that exist on the action items emit the sl-show and
     // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
     // so this ensures that the target for rotating is a detail card and not a tooltip.
     for (let i = 0; i < collapsable.length; i++) {
@@ -2224,7 +2255,7 @@ export class AppReport extends LitElement {
     let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
     let allowed: boolean = false;
 
-    // added this code because the tooltips that exist on the action items emit the sl-show and 
+    // added this code because the tooltips that exist on the action items emit the sl-show and
     // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
     // so this ensures that the target for rotating is a detail card and not a tooltip.
     for (let i = 0; i < collapsable.length; i++) {
@@ -2243,7 +2274,7 @@ export class AppReport extends LitElement {
   // -1 = a wins
   // 1 = b wins
   sortTodos(){
-    const rank: { [key: string]: number } = { 
+    const rank: { [key: string]: number } = {
       "retest": 0,
       "required": 1,
       "highly recommended": 2,
@@ -2337,7 +2368,7 @@ export class AppReport extends LitElement {
       return str;
     }
   }
-  
+
   handleShowingTooltip(e: CustomEvent){
     if(e.detail.entering){
 
@@ -2345,7 +2376,7 @@ export class AppReport extends LitElement {
         this.openTooltips[0].hide();
         this.openTooltips = [];
       }
-  
+
       e.detail.tooltip.show();
       this.openTooltips.push(e.detail.tooltip)
     } else {
@@ -2354,7 +2385,7 @@ export class AppReport extends LitElement {
     }
 
   }
-  
+
   render() {
     return html`
       <app-header></app-header>
@@ -2378,7 +2409,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col ${classMap({'post-loader': this.runningTests})}" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="app-card-header-col">
                   <div id="pwa-image-holder">
@@ -2410,24 +2441,30 @@ export class AppReport extends LitElement {
                 </div>
               </div>
               <div id="app-card-footer">
-                <div id="test" style=${styleMap(this.CardStyles)}>
-                  <button
-                    type="button"
-                    id="retest"
-                    @click=${() => {
-                      this.retest(false);
-                    }}
-                    ?disabled=${this.runningTests}
-                  >
-                    <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
+                ${this.runningTests ? html`
+                    <div id="test" class="in-progress">
+                      <span>testing in progress</span>
+                      <div class="loader-round"></div>
+                    </div>
+                `:
+                  html`
+                  <div id="test" style=${styleMap(this.CardStyles)}>
+                    <button
+                      type="button"
+                      id="retest"
+                      @click=${() => {
+                        this.retest(false);
+                      }}>
+                      <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
 
-                    <img
-                      src=${this.retestPath}
-                      alt="retest site"
-                      role="presentation"
-                    />
-                  </button>
-                </div>
+                      <img
+                        src=${this.retestPath}
+                        alt="retest site"
+                        role="presentation"
+                      />
+                    </button>
+                  </div>`
+                }
               </div>
 
             </div>`}
@@ -2533,7 +2570,7 @@ export class AppReport extends LitElement {
             </sl-details>
           </div>
 
-          <div id="manifest" class="flex-col ${classMap({'post-loader': this.runningTests && !this.manifestDataLoading})} ">
+          <div id="manifest" class="flex-col">
             <div id="manifest-header">
               <div id="mh-content">
                 <div id="mh-text" class="flex-col">
@@ -2589,8 +2626,8 @@ export class AppReport extends LitElement {
               </div>
 
               <div id="mh-right">
-                ${this.manifestDataLoading ?
-                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                ${this.runningTests ?
+                    html`<div class="loader-round large ${classMap({'skeleton': this.manifestDataLoading})}"></div>` :
                     html`<sl-progress-ring
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
@@ -2699,7 +2736,7 @@ export class AppReport extends LitElement {
           </div>
 
           <div id="two-cell-row">
-            <div id="sw" class="half-width-cards ${classMap({'post-loader': this.runningTests && !this.swDataLoading})}">
+            <div id="sw" class="half-width-cards">
               <div id="sw-header" class="flex-col">
                 <div id="swh-top">
                   <div id="swh-text" class="flex-col">
@@ -2718,8 +2755,8 @@ export class AppReport extends LitElement {
                       `
                         }
                   </div>
-                  ${this.swDataLoading ?
-                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                  ${this.runningTests ?
+                    html`<div class="loader-round large ${classMap({'skeleton': this.swDataLoading})}"></div>` :
                     html`<sl-progress-ring
                     id="swProgressRing"
                     class=${classMap(this.decideColor("sw"))}
@@ -2791,7 +2828,7 @@ export class AppReport extends LitElement {
                     ` :
                     html``)}
                   </div>
-                  <div class="detail-list">
+                  <!-- <div class="detail-list">
                     <p class="detail-list-header">Recommended</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ?
                     html`
@@ -2801,7 +2838,7 @@ export class AppReport extends LitElement {
                       </div>
                     ` :
                     html``)}
-                  </div>
+                  </div> -->
                   <div class="detail-list">
                     <p class="detail-list-header">Optional</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ?
@@ -2835,8 +2872,8 @@ export class AppReport extends LitElement {
                       `
                         }
                   </div>
-                  ${this.secDataLoading ?
-                    html`<sl-skeleton class="progressRingSkeleton" effect="pulse"></sl-skeleton>` :
+                  ${this.runningTests ?
+                    html`<div class="loader-round large ${classMap({'skeleton': this.secDataLoading})}"></div>` :
                     html`<sl-progress-ring
                     id="secProgressRing"
                     class=${classMap(this.decideColor("sec"))}
@@ -2911,7 +2948,7 @@ export class AppReport extends LitElement {
 
       </sl-dialog>
 
-      <share-card 
+      <share-card
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
         .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
