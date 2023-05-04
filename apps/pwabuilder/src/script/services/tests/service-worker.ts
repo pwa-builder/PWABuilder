@@ -3,6 +3,7 @@ import {
   ServiceWorkerDetectionResult,
   TestResult,
 } from '../../utils/interfaces';
+import { getHeaders } from '../../utils/platformTrackingHeaders';
 
 export async function testServiceWorker(
   url: string
@@ -37,22 +38,23 @@ export async function testServiceWorker(
   const swTestResult = [
     {
       result: swData.hasSW,
-      infoString: swData.hasSW ? 'Has a Service Worker' : 'Does not have a Service Worker',
+      infoString: swData.hasSW ? 'Has a service worker' : 'Does not have a service worker',
       category: 'highly recommended',
     },
     {
       result: worksOffline,
-      infoString: 'Works Offline',
+      infoString: 'Works offline',
       category: 'recommended',
     },
     {
       result: swData.hasPeriodicBackgroundSync,
-      infoString: 'Uses Periodic Sync for a rich offline experience',
+      infoString: 'Uses periodic sync for a rich offline experience',
       category: 'optional',
     },
     {
       result: swData.hasBackgroundSync,
-      infoString: 'Uses Background Sync for a rich offline experience',
+      infoString: 'Uses background sync for a rich offline experience',
+
       category: 'optional',
     },
   ];
@@ -63,10 +65,13 @@ export async function testServiceWorker(
 async function detectServiceWorker(
   url: string
 ): Promise<ServiceWorkerDetectionResult> {
+
+  let headers = getHeaders();
+
   const fetchResult = await fetch(
-    `${
-      env.serviceWorkerUrl
-    }/serviceWorker/runAllChecks?url=${encodeURIComponent(url)}`
+    `${env.serviceWorkerUrl}/serviceWorker/runAllChecks?url=${encodeURIComponent(url)}`, {
+      headers: new Headers(headers)
+    }
   );
   if (!fetchResult.ok) {
     console.warn(
@@ -120,10 +125,14 @@ async function detectOfflineSupport(url: string): Promise<boolean> {
 }
 
 async function detectOfflineSupportPuppeteer(url: string) {
+  let headers = getHeaders();
   const fetchResult = await fetch(
     `${
       env.serviceWorkerUrl
-    }/serviceworker/GetOfflineSupport?url=${encodeURIComponent(url)}`
+    }/serviceworker/GetOfflineSupport?url=${encodeURIComponent(url)}`,
+    {
+      headers: new Headers(headers)
+    }
   );
   if (!fetchResult.ok) {
     console.warn(

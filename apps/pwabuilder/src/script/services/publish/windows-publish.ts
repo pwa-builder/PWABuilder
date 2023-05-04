@@ -8,6 +8,7 @@ import {
 } from '../../utils/win-validation';
 import { getURL, getManifestUrl } from '../app-info';
 import { fetchOrCreateManifest } from '../manifest';
+import { getHeaders } from '../../utils/platformTrackingHeaders';
 
 export let hasGeneratedWindowsPackage = false;
 
@@ -35,11 +36,14 @@ export async function generateWindowsPackage(
         validationErrors.map(a => a.error).join('\n')
     );
   }
+
+  let headers = {...getHeaders(), 'content-type': 'application/json' };
+
   //console.info('Before fetching windows package');
   const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
     method: 'POST',
     body: JSON.stringify(windowsOptions),
-    headers: new Headers({ 'content-type': 'application/json' }),
+    headers: new Headers(headers),
   });
   //console.info('After fetching windows package', response);
   if (response.status === 200) {
@@ -228,7 +232,7 @@ export const windowsLanguages = [
   { "codes": ["et", "et-ee"], "name": "Estonian" },
   { "codes": ["fil", "fil-latn", "fil-ph"], "name": "Filipino" },
   { "codes": ["fi", "fi-fi"], "name": "Finnish" },
-  { "codes": ["fr", "fr-be ", "fr-ca ", "fr-ch ", "fr-fr ", "fr-lu", "fr-015", "fr-cd", "fr-ci", "fr-cm", "fr-ht", "fr-ma", "fr-mc", "fr-ml", "fr-re", "frc-latn", "frp-latn", "fr-155", "fr-029", "fr-021", "fr-011"], "name": "French" },
+  { "codes": ["fr", "fr-be", "fr-ca", "fr-ch", "fr-fr", "fr-lu", "fr-015", "fr-cd", "fr-ci", "fr-cm", "fr-ht", "fr-ma", "fr-mc", "fr-ml", "fr-re", "frc-latn", "frp-latn", "fr-155", "fr-029", "fr-021", "fr-011"], "name": "French" },
   { "codes": ["gl", "gl-es"], "name": "Galician" },
   { "codes": ["ka", "ka-ge"], "name": "Georgian" },
   { "codes": ["de", "de-at", "de-ch", "de-de", "de-lu", "de-li"], "name": "German" },

@@ -15,9 +15,7 @@
   - [Routing](/starter/adding-content "PWA Starter - Routing and Navigation")
   - [Service Workers](/starter/service-worker "PWA Starter - Using Service Workers")
   - [Publish Your PWA](/starter/publish "PWA Starter - Publish Your PWA to the Web")
-  - [Using UI Libraries](/starter/ui-components "PWA Starter - How to Use Different UI Component Libraries")
   - [Tech Overview](/starter/tech-overview "PWA Starter - Tech Overview")
-  - [Folder Structure](/starter/folder-structure "PWA Starter - Folder Structure")
   - [FAQ](/starter/faq "PWA Starter - FAQ")
 
 - **PWABuilder**
@@ -29,6 +27,7 @@
   - [Other Android](/builder/other-android "PWABuilder - Creating Android Packages")
   - [Meta Quest](/builder/meta "PWABuilder - Meta Quest")
   - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
+  - [Asset Links Help](/builder/asset-links-faq "PWABuilder - Fixing Your Android Asset Links")
   - [FAQ](/builder/faq "PWABuilder - FAQ")
   
 - **PWABuilder Studio**
@@ -41,4 +40,5 @@
   - [FAQ](/studio/faq "PWABuilder Studio - FAQ")
 
 - **Release Notes**
+  - [2023](/release-notes/2023 "Release Notes - 2023")
   - [2022](/release-notes/2022 "Release Notes - 2022")
