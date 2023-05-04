@@ -1,5 +1,5 @@
 import { setup, defaultClient } from 'applicationinsights';
-import { getFlag } from '../flags';
+import { checkTelem, getFlag } from '../flags';
 
 import * as vscode from 'vscode';
 import { Headers } from 'node-fetch';
@@ -16,7 +16,7 @@ export const standard_headers = new Headers(
 export function initAnalytics() {
   try {
     // check flag first
-    if (getFlag("analytics") === true) {
+    if (getFlag("analytics") === true && checkTelem() === true) {
       setup("#{ANALYTICS_CODE}#")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)

@@ -1,3 +1,5 @@
+import * as vscode from 'vscode';
+
 export interface Flag {
     [key: string]: boolean;
 }
@@ -16,3 +18,7 @@ export function setFlag(flag: string, value: boolean): void {
 export function getFlag(flag: string): boolean {
     return flags[flag];
 };
+
+export function checkTelem(): boolean {
+    return vscode.env.isTelemetryEnabled;
+}
