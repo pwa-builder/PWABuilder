@@ -43,9 +43,9 @@ export async function getManifest(
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
   //TODO: Replace with prod
-  const manifestTestUrl = env.api + `/FetchWebManifest?site=${encodedUrl}`;
+  const manifestTestUrl = env.api + `/FindWebManifest?site=${encodedUrl}`;
   let headers = getHeaders();
-  
+
   try {
     const response = await fetch(manifestTestUrl, {
       method: 'POST',
