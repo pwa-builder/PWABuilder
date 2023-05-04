@@ -60,6 +60,7 @@ export class SWPanel extends LitElement {
             copyText="Copy Service Worker"
             .startText=${this.sw.code}
             .readOnly=${true}
+            .editorStateType=${'javascript'}
           >
         </code-editor>
         </div>

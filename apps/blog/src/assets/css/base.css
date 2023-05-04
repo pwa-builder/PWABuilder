@@ -184,6 +184,18 @@ code {
   }
 }
 
+@media screen and (-ms-high-contrast: white-on-black) {
+  .bg-primary {
+    border: 4px solid #ffffff;
+  }
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+  .bg-primary {
+    border: 4px solid #ffffff;
+  }
+}
+
 /**
  * Disable animations if the user has turned on the a11y option for reduced motion due to 
  * vestibular disorders etc.
@@ -213,6 +225,14 @@ img[role="presentation"] {
 
 .post-excerpt {
   margin: 0;
+}
+
+#backToHomeButton {
+  text-decoration: none;
+}
+
+#backToHomeButton:focus, #backToHomeButton:hover {
+  text-decoration: underline;
 }
 
 /*

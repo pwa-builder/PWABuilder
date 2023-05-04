@@ -16,6 +16,10 @@ import '../components/manifest-editor-frame';
 import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
+import '../components/share-card';
+
+import { testSecurity } from '../services/tests/security';
+import { testServiceWorker } from '../services/tests/service-worker';
 
 import {
   Icon,
@@ -31,6 +35,8 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
+import { manifest_fields } from '@pwabuilder/manifest-information';
+import { SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 
@@ -95,6 +101,8 @@ export class AppReport extends LitElement {
   @state() manifestRecCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
   @state() manifestMessage: string = "";
+  @state() startingManifestEditorTab: string = "info";
+  @state() focusOnME: string = "";
   @state() proxyLoadingImage: boolean = false;
 
   @state() serviceWorkerResults: any[] = [];
@@ -126,6 +134,7 @@ export class AppReport extends LitElement {
   @state() manifestContext: ManifestContext | undefined;
 
   @state() todoItems: any[] = [];
+  @state() openTooltips: SlDropdown[] = [];
 
   private possible_messages = [
     {"messages": {
@@ -273,12 +282,18 @@ export class AppReport extends LitElement {
 
         #app-card-header {
           display: grid;
-          grid-template-columns: 1fr 2fr 4fr;
+          grid-template-rows: auto;
           gap: 10px;
           align-items: center;
           font-size: 14px;
-          padding: 2em;
+          padding: 2em 2em 0;
           width: 100%;
+        }
+
+        #app-card-header-col {
+          display: grid;
+          grid-template-columns: 1fr 4fr 1fr;
+          gap: 15px;
         }
 
         #pwa-image-holder {
@@ -288,14 +303,48 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           background-color: #ffffff;
-          border-radius: var(--card-border-radius);
           box-shadow: rgb(0 0 0 / 20%) 0px 4px 10px 0px;
+          border-radius: 4px;
         }
-
-        #app-card-header img {
+        
+        #app-image-skeleton {
           height: 85px;
           width: auto;
           padding: 10px;
+        }
+
+        #pwa-image-holder img{
+          height: 115.05px;
+          width: 115.05px;
+          left: 113px;
+          top: 118.951171875px;
+          border-radius: 4px;
+        }
+
+        #app-card-share-cta {
+          display: flex;
+          height: 100%;
+          flex-direction: column;
+          justify-content: start;
+        }
+
+        #app-card-share-cta #share-button-desktop {
+          height: 32px;
+          width: 117.5439453125px;
+          left: 509.4560546875px;
+          top: 116.7421875px;
+          border-radius: 20px;
+          text-align: center;
+          font-size: 12px;
+        }
+
+        #share-icon {
+          height: 14px;
+          width: 14.78px;
+          left: 526.8994140625px;
+          top: 125.322265625px;
+          border-radius: 0px;
+
         }
 
         .proxy-loader {
@@ -319,37 +368,44 @@ export class AppReport extends LitElement {
         }
 
         #site-name {
+          margin: 0;
+          font-weight: bold;
           font-size: calc(var(--subheader-font-size) + 4px);
         }
 
         #card-info {
-          overflow: hidden;
+          //overflow: hidden;
           white-space: nowrap;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          gap: 5px;
         }
 
         #card-info p {
           margin: 0;
-          font-weight: bold;
-        }
-
-        #card-info p:not(#site-name) {
-          font-size: 16px;
         }
 
         #site-url {
-          white-space: normal;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 200px;
+          font-weight: bold;
+          font-size: 16px;
         }
 
         #app-card-desc {
-          margin: 0;
-          font-size: var(--card-body-font-size);
-          width: 100%;
-          white-space: normal;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box !important;
-          -webkit-line-clamp: 6;
-          -webkit-box-orient: vertical;
+          overflow-y:hidden;
+          text-overflow:ellipsis;
+          font-size: 14px;
+          font-weight: 500;
+          line-height: 18px;
+          white-space: break-spaces;
+        }
+        #app-card-desc-mobile {
+          display: none;
         }
 
         #app-card-footer {
@@ -458,6 +514,127 @@ export class AppReport extends LitElement {
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
         }
+        
+        #share-card {
+          width: 100%;
+          background: #ffffff;
+          border-radius: 10px;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 22px;
+          position: relative;
+        }
+
+        #share-card-mani{
+          position: absolute;
+          left: 10px;
+          bottom: 0;
+          height: 85px;
+        }
+
+        #share-card-content{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        #share-card-text {
+          font-size: var(--subheader-font-size);
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-left: 115px;
+        }
+
+        #share-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+
+        .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          padding: 10px 20px;
+          background: transparent;
+          color: var(--primary-color);
+          font-size: var(--button-font-size);
+          font-weight: bold;
+          border: 1px solid var(--primary-color);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
+        }
+        .share-banner-buttons:hover {
+          box-shadow: var(--button-box-shadow)
+        }
+
+        #share-button:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #share-button:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+
+        .banner-button-icons {
+          width: 20px;
+          height: auto;
+        }
+        #share-card-text {
+          font-size: var(--subheader-font-size);
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-left: 115px;
+        }
+
+        #share-card-actions {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+        }
+
+        .share-banner-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 5px;
+          padding: 10px 20px;
+          background: transparent;
+          color: var(--primary-color);
+          font-size: var(--button-font-size);
+          font-weight: bold;
+          border: 1px solid var(--primary-color);
+          border-radius: var(--button-border-radius);
+          white-space: nowrap;
+        }
+        .share-banner-buttons:hover {
+          box-shadow: var(--button-box-shadow)
+        }
+
+        #share-button-desktop:disabled, #share-button-mobile:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #share-button-desktop:disabled:hover, #share-button-mobile:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+
+        .banner-button-icons {
+          width: 20px;
+          height: auto;
+        }
+        
+
 
         .mani-tooltip {
           --sl-tooltip-padding: 0;
@@ -550,6 +727,7 @@ export class AppReport extends LitElement {
 
         #todo-detail::part(base) {
           border-radius: var(--card-border-radius);
+          border: none;
         }
 
         #todo-detail::part(header) {
@@ -956,6 +1134,7 @@ export class AppReport extends LitElement {
           flex-direction: column;
           align-items: center;
           width: 65%;
+          position: relative;
         }
         .dialog::part(overlay){
           backdrop-filter: blur(10px);
@@ -1061,11 +1240,60 @@ export class AppReport extends LitElement {
         /* @media(max-width: 700px){
           --button-padding
         } */
+        @media(max-width: 376px){
+          #pwa-image-holder {
+            width: 61px !important;
+          }
+          #pwa-image-holder img {
+            width: 55px !important;
+          }
+        }
+
 
         @media(max-width: 600px){
-          #app-card-header{
-            grid-template-columns: 1fr 5fr;
-            grid-template-rows: 1fr 1fr;
+          #app-card-header-col { 
+            gap: 10px;
+          }
+          #pwa-image-holder {
+            width: 90px;
+            height: auto;
+          }
+          #pwa-image-holder img { 
+            width: 84px;
+            height: auto;
+          }
+          #card-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+          #app-card-desc {
+            max-width: 100%;
+          }
+          #share-button-desktop {
+            display: none;
+          }
+          #share-button-mobile {
+            display: flex;
+          }
+          #app-card-desc-mobile {
+            display: flex;
+            flex-direction: column;
+          }
+          .app-card-desc-desktop {
+            display: none;
+          }
+          #site-name {
+            font-size: 20px;
+          }
+          #site-url {
+            margin-bottom: 8px !important;
+          }
+          #app-card-share-cta {
+            justify-content: start;
+          }
+          #app-card-share-cta #share-button-mobile {
+            width: 100px;
           }
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
@@ -1099,6 +1327,24 @@ export class AppReport extends LitElement {
           .progressRingSkeleton::part(base) {
             width: 75px;
             height: 75px;
+          }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            margin-bottom: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
           }
         `)}
 
@@ -1182,6 +1428,24 @@ export class AppReport extends LitElement {
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
           }
+
+          #share-card {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-content {
+            flex-direction: column-reverse;
+          }
+
+          #share-card-text {
+            margin-left: 0;
+            margin-bottom: 0;
+            text-align: center;
+          }
+
+          #share-card-mani {
+            position: unset;
+          }
         `)}
       `,
     ];
@@ -1213,7 +1477,7 @@ export class AppReport extends LitElement {
 
   // Expands the Action items details on load
   firstUpdated() {
-    this.rotateNinety("todo");
+    this.rotateNinety("todo", undefined, true);
   }
 
   // Polling function that updates the time that the site was last tested
@@ -1320,16 +1584,6 @@ export class AppReport extends LitElement {
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
       };
-      if(manifestContext.manifest.theme_color && manifestContext.manifest.theme_color !== 'none'){
-        this.CardStyles.backgroundColor = manifestContext.manifest.theme_color;
-        // calculate whether is best to use white or black
-        let color = this.pickTextColorBasedOnBgColorAdvanced(manifestContext.manifest.theme_color, '#ffffff', '#000000');
-        this.CardStyles.color = color;
-        this.BorderStyles.borderTop = `1px solid ${color + '33'}`
-        this.LastEditedStyles.color = color + 'b3';
-        color === "#ffffff" ? this.retestPath = "/assets/new/retest-white.svg" : "/assets/new/retest-black.svg"
-
-      }
     } else {
         this.appCard = {
           siteName: "Missing Name",
@@ -1475,6 +1729,8 @@ export class AppReport extends LitElement {
       this.canPackage = this.canPackageList[0] && this.canPackageList[2];
     });
 
+    await this.testServiceWorker(url);
+
     this.runningTests = false;
   }
 
@@ -1520,7 +1776,6 @@ export class AppReport extends LitElement {
           } else {
             status = "optional";
           }
-
           this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
 
         }
@@ -1760,14 +2015,18 @@ export class AppReport extends LitElement {
     this.pageNumber = 1;
   }
 
-  copyReportCardLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setTimeout(() =>{this.shadowRoot!.querySelector("#cl-mani-tooltip")!.removeAttribute('open')}, 2000)
-    })
-  }
+  // Opens share card modal and tracks analytics
+  async openShareCardModal() {
+    let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
+
+    await dialog!.show();
+    recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
+  }  
 
   // Opens manifest editor and tracks analytics
-  async openManifestEditorModal() {
+  async openManifestEditorModal(focusOn = "", tab: string = "info") {
+    this.startingManifestEditorTab = tab;
+    this.focusOnME = focusOn;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
 
     await dialog!.show();
@@ -1897,79 +2156,99 @@ export class AppReport extends LitElement {
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-    if(e.detail.card === "retest"){
-      this.thingToAdd = e.detail.displayString;
-      this.showConfirmationModal = true;
-      return;
-    } else if(e.detail.field === "Open Manifest Modal"){
-      let frame = this.shadowRoot!.querySelector("manifest-editor-frame");
-      (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
-      return;
-    } else if(e.detail.field === "Open SW Modal"){
-      let frame = this.shadowRoot!.querySelector("sw-selector");
-      (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
-      return;
+    // if its not a manifest field
+    if(!manifest_fields[e.detail.field]){
+      let frame;
+      switch(e.detail.field){
+        case "Manifest" || "SW":
+          this.thingToAdd = e.detail.displayString;
+          this.showConfirmationModal = true;
+          return;
+        
+        case "Open Manifest Modal":
+          frame = this.shadowRoot!.querySelector("manifest-editor-frame");
+          (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+          return;
+        
+        case "Open SW Modal":
+          frame = this.shadowRoot!.querySelector("sw-selector");
+          (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+          return;
+      }
     }
-
-    let details = this.shadowRoot!.getElementById(e.detail.card);
-
-    await (details as any)!.show();
-
-    details!.scrollIntoView({behavior: "smooth"});
-
-    let itemList = this.shadowRoot!.querySelectorAll('[data-field="' + e.detail.field + '"]');
-
-    // The below block is just to get the specific item to animate if a field has more than 1 test.
-    let item: any;
-    if(itemList!.length === 1){
-      item = itemList![0]
-    } else {
-      itemList.forEach((temp: any) => {
-        let textSplit = temp.querySelector('p').innerHTML.split("-->");
-        let text = textSplit[textSplit.length - 1]
-        if(text === e.detail.displayString){
-          item = temp;
-        }
-      })
-    }
-
-    item!.classList.toggle("animate");
-    setTimeout(() => {
-      item!.classList.toggle("animate");
-    }, 1000)
+    return;
   }
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
-    this.todoItems.push({"card": "retest", "field": "Manifest", "fix": "Add " + toAdd + " to your server and retest your site!", "status": "retest", "displayString": toAdd});
+    this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
     this.requestUpdate();
   }
 
   // Rotates the icon on each details drop down to 0 degrees
-  rotateZero(card: string){
+  rotateZero(card: string, e?: Event){
     recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
-    let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    if(icon){
+
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+    let target: Node = (e!.target as unknown as Node);
+    let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
+    let allowed: boolean = false;
+
+    // added this code because the tooltips that exist on the action items emit the sl-show and 
+    // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
+    // so this ensures that the target for rotating is a detail card and not a tooltip.
+    for (let i = 0; i < collapsable.length; i++) {
+      if (collapsable[i].isEqualNode(target!)) {
+        allowed = true;
+        break
+      }
+    }
+
+    if(icon && allowed){
       icon!.style.transform = "rotate(0deg)";
     }
   }
 
   // Rotates the icon on each details drop down to 90 degrees
-  rotateNinety(card: string){
+  rotateNinety(card: string, e?: Event, init?: boolean){
     recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
-    let icon: any = this.shadowRoot!.querySelector('[data-card="' + card + '"]');
-    if(icon){
+
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+
+    if(icon && init) {
+      icon!.style.transform = "rotate(90deg)";
+      return;
+    }
+
+    let target: Node = (e!.target as unknown as Node);
+    let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
+    let allowed: boolean = false;
+
+    // added this code because the tooltips that exist on the action items emit the sl-show and 
+    // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
+    // so this ensures that the target for rotating is a detail card and not a tooltip.
+    for (let i = 0; i < collapsable.length; i++) {
+      if (collapsable[i].isEqualNode(target!)) {
+        allowed = true;
+        break
+      }
+    }
+
+    if(icon && allowed){
       icon!.style.transform = "rotate(90deg)";
     }
   }
 
   // Sorts the action items list with the required stuff first
+  // -1 = a wins
+  // 1 = b wins
   sortTodos(){
-    const rank: { [key: string]: number } = {
-      "required": 0,
-      "highly recommended": 1,
-      "recommended": 2,
-      "optional": 3
+    const rank: { [key: string]: number } = { 
+      "retest": 0,
+      "required": 1,
+      "highly recommended": 2,
+      "recommended": 3,
+      "optional": 4
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
@@ -2050,6 +2329,32 @@ export class AppReport extends LitElement {
 
   }
 
+//truncate app card discription
+  truncateString(str: String) {
+    if (str.length > 125) {
+      return str.substring(0, 125) + "...";
+    } else {
+      return str;
+    }
+  }
+  
+  handleShowingTooltip(e: CustomEvent){
+    if(e.detail.entering){
+
+      if(this.openTooltips.length > 0){
+        this.openTooltips[0].hide();
+        this.openTooltips = [];
+      }
+  
+      e.detail.tooltip.show();
+      this.openTooltips.push(e.detail.tooltip)
+    } else {
+      e.detail.tooltip.hide();
+      this.openTooltips = [];
+    }
+
+  }
+  
   render() {
     return html`
       <app-header></app-header>
@@ -2075,16 +2380,36 @@ export class AppReport extends LitElement {
             html`
             <div id="app-card" class="flex-col ${classMap({'post-loader': this.runningTests})}" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
-                <div id="pwa-image-holder">
-                  ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                <div id="app-card-header-col">
+                  <div id="pwa-image-holder">
+                    ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                  </div>
+                  <div id="card-info" class="flex-row">
+                    <p id="site-name">${this.appCard.siteName}</p>
+                    <p id="site-url">${this.appCard.siteUrl}</p>
+                    <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
+                  </div>
+                  <div id="app-card-share-cta">
+                    <button type="button" id="share-button-desktop" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                    ${this.runningTests ?
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                    } Share score
+                    </button>
+                  </div>
                 </div>
-                <div id="card-info" class="flex-col">
-                  <p id="site-name">${this.appCard.siteName}</p>
-                  <p id="site-url">${this.appCard.siteUrl}</p>
+                <div id="app-card-desc-mobile">
+                  <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
+                  <button type="button" id="share-button-mobile" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                    ${this.runningTests ?
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                    } Share score
+                    </button>
+
                 </div>
-                <p id="app-card-desc">${this.appCard.description}</p>
               </div>
-              <div id="app-card-footer" style=${styleMap(this.BorderStyles)}>
+              <div id="app-card-footer">
                 <div id="test" style=${styleMap(this.CardStyles)}>
                   <button
                     type="button"
@@ -2132,7 +2457,7 @@ export class AppReport extends LitElement {
                         </button>
                     </sl-tooltip>
                     `}
-                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${this.runningTests || this.createdManifest}>
+                <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${!this.canPackage || this.createdManifest}>
                   <p class="arrow_link">Download Test Package</p>
                 </button>
               </div>
@@ -2161,8 +2486,8 @@ export class AppReport extends LitElement {
           <div id="todo">
             <sl-details
               id="todo-detail"
-              @sl-show=${() => this.rotateNinety("todo")}
-              @sl-hide=${() => this.rotateZero("todo")}
+              @sl-show=${(e: Event) => this.rotateNinety("todo", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("todo", e)}
               open
               >
               <div class="details-summary" slot="summary">
@@ -2182,7 +2507,10 @@ export class AppReport extends LitElement {
                         .fix=${todo.fix}
                         .card=${todo.card}
                         .displayString=${todo.displayString}
-                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}>
+                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
+                        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
@@ -2274,8 +2602,8 @@ export class AppReport extends LitElement {
             <sl-details
               id="mani-details"
               class="details"
-              @sl-show=${() => this.rotateNinety("mani-details")}
-              @sl-hide=${() => this.rotateZero("mani-details")}
+              @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}
               >
               ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
               <div id="manifest-detail-grid">
@@ -2436,8 +2764,8 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sw-details"
                 class="details"
-                @sl-show=${() => this.rotateNinety("sw-details")}
-                @sl-hide=${() => this.rotateZero("sw-details")}
+                @sl-show=${(e: Event) => this.rotateNinety("sw-details", e)}
+                @sl-hide=${(e: Event) => this.rotateZero("sw-details", e)}
               >
                 ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
@@ -2463,7 +2791,7 @@ export class AppReport extends LitElement {
                     ` :
                     html``)}
                   </div>
-                  <!-- <div class="detail-list">
+                  <div class="detail-list">
                     <p class="detail-list-header">Recommended</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ?
                     html`
@@ -2473,7 +2801,7 @@ export class AppReport extends LitElement {
                       </div>
                     ` :
                     html``)}
-                  </div> -->
+                  </div>
                   <div class="detail-list">
                     <p class="detail-list-header">Optional</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ?
@@ -2543,8 +2871,8 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sec-details"
                 class="details"
-                @sl-show=${() => this.rotateNinety("sec-details")}
-                @sl-hide=${() => this.rotateZero("sec-details")}
+                @sl-show=${(e: Event) => this.rotateNinety("sec-details", e)}
+                @sl-hide=${(e: Event) => this.rotateZero("sec-details", e)}
                 >
               ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sec-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
                 <div class="detail-grid">
@@ -2583,11 +2911,19 @@ export class AppReport extends LitElement {
 
       </sl-dialog>
 
+      <share-card 
+        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
+        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
+        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
+        .siteName=${this.appCard.siteName}
+      > </share-card>
+
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;
   }
 }
+

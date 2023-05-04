@@ -22,24 +22,26 @@
     <div class="grid gap-3 my-8">
       {% for doc in docs %}
         {% if not doc.data.draft and doc.data.trending %}
-          <a class="doc-link" href="{{ doc.url | url }}">
-            <div class="mb-4">
-              <span class="text-xs" datetime="{{ doc.data.date }}">{{ doc.data.date | dateDisplay }}
-              </span>
-              <h3 class="mt-1 mb-4">
-                <p class="block text-2xl">{{ doc.data.title }}</p>
-              </h3>
-              <p class="mb-4 opacity-75">{{ doc.data.description }}</p>
+          
+          <div class="mb-4">
+            <span class="text-xs" datetime="{{ doc.data.date }}">{{ doc.data.date | dateDisplay }}
+            </span>
+            <h3 class="mt-1 mb-4">
+              <p class="block text-2xl">{{ doc.data.title }}</p>
+            </h3>
+            <p class="mb-4 opacity-75">{{ doc.data.description }}</p>
+            <a class="doc-link" href="{{ doc.url | url }}">
               <p class="">Continue reading {{ doc.data.title }}</p>
-            </div>
-          </a>
+            </a>
+          </div>
+          
         {% endif %}
       {% endfor %}
     </div>
 {% endmacro %}
 
 {% macro card(doc) %}
-  <a class="doc-link" href="{{ doc.url | url }}">
+  
     <div class="w-full h-full featured-post relative shadow rounded p-2">
       <div class="p-3 flex flex-col">
         <span
@@ -51,8 +53,10 @@
         <h3 class="mt-1">
           {{ doc.data.title }}
         </h3>
-        <p class="opacity-75 post-excerpt">{{ doc.data.excerpt }}</p>
+        <a class="doc-link" href="{{ doc.url | url }}">
+          <p class="opacity-75 post-excerpt">{{ doc.data.excerpt }}</p>
+        </a>
       </div>
     </div>
-  </a>
+  
 {% endmacro %}

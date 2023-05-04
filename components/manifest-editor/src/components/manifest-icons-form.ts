@@ -8,6 +8,8 @@ import {
   Manifest,
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
+import {classMap} from 'lit/directives/class-map.js';
+import "./manifest-field-tooltip";
 
 const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
 
@@ -41,6 +43,7 @@ export class ManifestIconsForm extends LitElement {
   }}) manifest: Manifest = {};
 
   @property({type: String}) manifestURL: string = "";
+  @property({type: String}) focusOn: string = "";
 
   // Icon state vars
   @state() uploadSelectedImageFile: Lazy<File>;
@@ -57,6 +60,11 @@ export class ManifestIconsForm extends LitElement {
 
   static get styles() {
     return css`
+
+    :host {
+      --sl-input-font-family: Hind, sans-serif;
+    }
+    
 
       sl-checkbox::part(base),
       sl-checkbox::part(control),
@@ -192,6 +200,10 @@ export class ManifestIconsForm extends LitElement {
         color: #ffffff;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
         sl-checkbox::part(base),
         sl-checkbox::part(control) {
@@ -293,8 +305,6 @@ export class ManifestIconsForm extends LitElement {
         }
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
-
-        
 
         if(validation.errors){
           validation.errors.forEach((error: string) => {
@@ -524,23 +534,19 @@ export class ManifestIconsForm extends LitElement {
     hyperlink.click();
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
             <div class="header-left">
-              <h3>App Icons</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=icons-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the icons option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("icons"))}>App Icons</h3>
+              <manifest-field-tooltip .field=${"icons"}></manifest-field-tooltip>
             </div>
 
             <p>(required)</p>
