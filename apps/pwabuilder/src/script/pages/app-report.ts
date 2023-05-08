@@ -282,9 +282,17 @@ export class AppReport extends LitElement {
           grid-template-rows: auto;
           gap: 10px;
           align-items: center;
-          font-size: 14px;
           padding: 2em 2em 0;
           width: 100%;
+        }
+
+        #app-card-header.skeleton{
+          grid-template-columns: 0fr 1fr;
+          grid-template-rows: 1fr 0fr;
+        }
+
+        #app-card-header, #app-card-footer{
+          font-size: 14px;
         }
 
         #app-card-header-col {
@@ -304,11 +312,11 @@ export class AppReport extends LitElement {
           border-radius: 4px;
         }
 
-        #app-image-skeleton {
+        /* #app-image-skeleton {
           height: 85px;
-          width: auto;
+          width: 85px;
           padding: 10px;
-        }
+        } */
 
         #pwa-image-holder img{
           height: 115.05px;
@@ -406,7 +414,8 @@ export class AppReport extends LitElement {
         }
 
         #app-card-footer {
-          padding: .432em 1em;
+          padding: 0em 2em;
+          min-height: 41px;
           display: flex;
           width: 100%;
           align-items: center;
@@ -453,9 +462,9 @@ export class AppReport extends LitElement {
         }
 
         #app-image-skeleton {
-          height: 85px;
-          width: 130px;
-          --border-radius: 0;
+          height: 115px;
+          width: 115px;
+          --border-radius: 4px;
         }
 
         .app-info-skeleton {
@@ -1106,8 +1115,12 @@ export class AppReport extends LitElement {
         .desc-skeleton {
           --color: #d0d0d3
         }
-        .desc-skeleton::part(base), .summary-skeleton::part(base) {
+        .desc-skeleton::part(base), .summary-skeleton::part(base), .app-info-skeleton::part(base){
           min-height: .8rem;
+        }
+        .app-info-skeleton-half::part(base){
+          min-height: .8rem;
+          max-height: .8rem;
         }
         .gap {
           gap: .5em;
@@ -2427,13 +2440,13 @@ export class AppReport extends LitElement {
           ${this.isAppCardInfoLoading ?
           html`
             <div id="app-card" class="flex-col skeleton-effects">
-              <div id="app-card-header">
+              <div id="app-card-header" class="skeleton">
                 <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
                 <div id="card-info" class="flex-col">
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                 </div>
-                <sl-skeleton class="app-info-skeleton skeleton-desc" effect="pulse"></sl-skeleton>
+                <!-- <sl-skeleton class="app-info-skeleton skeleton-desc" effect="pulse"></sl-skeleton> -->
               </div>
               <div id="app-card-footer">
                 <sl-skeleton class="app-info-skeleton-half" effect="pulse"></sl-skeleton>
