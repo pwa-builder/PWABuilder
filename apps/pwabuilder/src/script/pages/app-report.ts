@@ -1096,6 +1096,9 @@ export class AppReport extends LitElement {
         .desc-skeleton {
           --color: #d0d0d3
         }
+        .desc-skeleton::part(base), .summary-skeleton::part(base) {
+          min-height: .8rem;
+        }
         .gap {
           gap: .5em;
         }
@@ -1200,7 +1203,7 @@ export class AppReport extends LitElement {
           border-radius: 50%;
           position: relative;
           flex-shrink: 0;
-          animation: rotate 1s linear infinite
+          animation: rotate .8s linear infinite
         }
         .loader-round::before {
           content: "";
@@ -1209,7 +1212,8 @@ export class AppReport extends LitElement {
           inset: 0px;
           border-radius: 50%;
           border: 2px solid #D6D6D6;
-          animation: prixClipFix 2s linear infinite ;
+          /* animation: prixClipFix 2s linear infinite, 2s ease-in-out 0.5s infinite normal none running pulse; */
+          clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 50%)
         }
 
         .loader-round.large{
@@ -1219,26 +1223,41 @@ export class AppReport extends LitElement {
         }
         .loader-round.large::before{
           border-width: 4px;
+          animation: 2s ease-in-out 0.5s infinite normal none running pulse;
         }
 
         .loader-round.skeleton{
           animation: none;
+          /* clip-path: none; */
         }
         .loader-round.skeleton::before{
-          animation: none;
+          /* animation: 2s ease-in-out 0.5s infinite normal none running pulse; */
+          clip-path: none;
         }
 
         @keyframes rotate {
           100%   {transform: rotate(360deg)}
         }
 
-        @keyframes prixClipFix {
+        @keyframes pulse {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        /* @keyframes prixClipFix {
             0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,15% 0)}
             25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
             50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
             75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
-            100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
-        }
+            100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 25%)}
+        } */
 
         @media(max-width: 900px){
           #header-row {
@@ -1771,7 +1790,7 @@ export class AppReport extends LitElement {
     // note: wrap in try catch (can fail if invalid json)
     this.manifestDataLoading = true;
     let details = (this.shadowRoot!.getElementById("mani-details") as any);
-    details?.disabled && (details.disabled = true);
+    // details?.disabled && (details.disabled = true);
     let manifest;
 
     if(!this.createdManifest){
@@ -1827,7 +1846,7 @@ export class AppReport extends LitElement {
     }
 
     this.manifestDataLoading = false;
-    details?.disabled && (details.disabled = false);
+    // details?.disabled && (details.disabled = false);
 
     sessionStorage.setItem(
       'manifest_tests',
@@ -1841,7 +1860,7 @@ export class AppReport extends LitElement {
   async testServiceWorker(serviceWorkerResults: TestResult[]) {
     //call service worker tests
     let details = (this.shadowRoot!.getElementById("sw-details") as any);
-    details?.disabled && (details.disabled = true);
+    // details?.disabled && (details.disabled = true);
 
     let missing = false;
 
@@ -1890,7 +1909,7 @@ export class AppReport extends LitElement {
     this.swTotalScore = this.serviceWorkerResults.length;
 
     this.swDataLoading = false;
-    details?.disabled && (details.disabled = false);
+    // details?.disabled && (details.disabled = false);
 
     //save serviceworker tests in session storage
     sessionStorage.setItem(
@@ -2639,10 +2658,13 @@ export class AppReport extends LitElement {
             <sl-details
               id="mani-details"
               class="details"
+              ?disabled=${this.runningTests || this.manifestDataLoading}
               @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)}
               @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}
               >
-              ${this.manifestDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
+              ${this.runningTests ? html`
+              <div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` :
+              html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
               <div id="manifest-detail-grid">
                 <div class="detail-list">
                   <p class="detail-list-header">Required</p>
@@ -2731,7 +2753,7 @@ export class AppReport extends LitElement {
                     </div>
                   ` : html``)}
                 </div>
-              </div>
+              </div>`}
             </sl-details>
           </div>
 
@@ -2801,10 +2823,12 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sw-details"
                 class="details"
+                ?disabled=${this.runningTests || this.swDataLoading}
                 @sl-show=${(e: Event) => this.rotateNinety("sw-details", e)}
                 @sl-hide=${(e: Event) => this.rotateZero("sw-details", e)}
               >
-                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
+                ${this.runningTests ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>`
+                : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
                 <div class="detail-grid">
                 <div class="detail-list">
                     <p class="detail-list-header">Required</p>
@@ -2850,7 +2874,7 @@ export class AppReport extends LitElement {
                     ` :
                     html``)}
                   </div>
-                </div>
+                </div>`}
               </sl-details>
             </div>
             <div id="security" class="half-width-cards">
@@ -2908,6 +2932,7 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sec-details"
                 class="details"
+                ?disabled=${this.runningTests || this.secDataLoading}
                 @sl-show=${(e: Event) => this.rotateNinety("sec-details", e)}
                 @sl-hide=${(e: Event) => this.rotateZero("sec-details", e)}
                 >
