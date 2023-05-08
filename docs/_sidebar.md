@@ -3,41 +3,11 @@
 </div>
 
 - **Home** 
-  - [About](/ "PWABuilder Suite Documentation")
-  - [PWA Overview](/home/pwa-intro "Beginner's Guide to PWA")
-  - [Service Workers](/home/sw-intro "Introduction to Service Workers")
-  - [Adding Native Features](/home/native-features.md "Adding Native Features to Your PWA")
-  - [PWA Workshop](/home/pwa-workshop "Progressive Web App Intro Workshop")
-  - [Resources](/home/resources "Resources")
-
-- **PWA Starter** 
-  - [Quick Start](/starter/quick-start "PWA Starter - Quick Start")
-  - [Routing](/starter/adding-content "PWA Starter - Routing and Navigation")
-  - [Service Workers](/starter/service-worker "PWA Starter - Using Service Workers")
-  - [Publish Your PWA](/starter/publish "PWA Starter - Publish Your PWA to the Web")
-  - [Tech Overview](/starter/tech-overview "PWA Starter - Tech Overview")
-  - [FAQ](/starter/faq "PWA Starter - FAQ")
-
-- **PWABuilder**
-  - [Quick Start](/builder/quick-start "PWABuilder - Quick Start" )
-  - [Using PWABuilder Features](/builder/using-pwabuilder-features "PWABuilder - Using PWABuilder Features" )
-  - [Manifest Options](/builder/manifest "PWABuilder - Customizing Your Web App Manifest")
-  - [Microsoft Store](/builder/windows "PWABuilder - Packaging for the Microsoft Store")
-  - [Google Play Store](/builder/android "PWABuilder - Packaging for the Google Play Store")
-  - [Other Android](/builder/other-android "PWABuilder - Creating Android Packages")
-  - [Meta Quest](/builder/meta "PWABuilder - Meta Quest")
-  - [iOS App Store](/builder/app-store "PWABuilder - Packaging for the App Store")
-  - [Asset Links Help](/builder/asset-links-faq "PWABuilder - Fixing Your Android Asset Links")
-  - [FAQ](/builder/faq "PWABuilder - FAQ")
-  
-- **PWABuilder Studio**
-  - [Quick Start](/studio/quick-start "PWABuilder Studio - Quick Start")
-  - [Create a New PWA](/studio/create-new "PWABuilder Studio - Create a New PWA")
-  - [Dev Dashboard](/studio/dev-dashboard "PWABuilder Studio - Dev Dashboard")
-  - [Converting Existing Apps](/studio/existing-app "PWABuilder Studio - Converting Existing Apps")
-  - [Package Your PWA](/studio/package "PWABuilder Studio - Package Your PWA For Stores")
-  - [Code Snippets](/studio/snippets "PWABuilder Studio - Code Snippets")
-  - [FAQ](/studio/faq "PWABuilder Studio - FAQ")
+  - [About PWABuilder](/ "PWABuilder Suite Documentation")
+  - [PWABuilder](/builder/quick-start "PWABuilder - Quick Start" )
+  - [PWA Starter](/starter/quick-start "PWA Starter - Quick Start")
+  - [PWABuilder Studio](/studio/quick-start "PWABuilder Studio - Quick Start")
+  - [Learn PWA](/home/pwa-intro "Learn PWA - PWA Overview")
 
 - **Release Notes**
   - [2023](/release-notes/2023 "Release Notes - 2023")
