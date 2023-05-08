@@ -1,5 +1,5 @@
-import { Manifest, RelatedApplication } from "../interfaces";
-import { langCodes, languageCodes } from "../locales";
+import { Manifest, RelatedApplication } from "../interfaces.js";
+import { langCodes, languageCodes } from "../locales/locales.js";
 
 const possibleManiKeys = [
   "background_color",

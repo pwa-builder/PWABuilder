@@ -1,8 +1,8 @@
-import { Manifest, singleFieldValidation, Validation } from "./interfaces";
-export { Manifest, Validation, singleFieldValidation } from "./interfaces";
-import { findMissingKeys, isValidJSON, isValidURL, validProtocols } from "./utils/validation-utils";
-export { required_fields, recommended_fields, optional_fields, validateSingleRelatedApp } from "./utils/validation-utils";
-import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations";
+import { Manifest, singleFieldValidation, Validation } from "./interfaces.js";
+export { Manifest, Validation, singleFieldValidation } from "./interfaces.js";
+import { findMissingKeys, isValidJSON, isValidURL, validProtocols } from "./utils/validation-utils.js";
+export { required_fields, recommended_fields, optional_fields, validateSingleRelatedApp } from "./utils/validation-utils.js";
+import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } from "./validations.js";
 
 export let currentManifest: Manifest | undefined;
 
@@ -117,4 +117,4 @@ function isValidRelativeURL(str: string){
     return "valid";
   }
 
-export * from './interfaces';
+export * from './interfaces.js';
