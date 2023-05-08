@@ -1014,6 +1014,16 @@ export class AppReport extends LitElement {
           box-shadow: var(--button-box-shadow)
         }
 
+        #report-wrapper .alternate:disabled {
+          color: #C3C3C3;
+          border-color: #C3C3C3;
+        }
+
+        #report-wrapper .alternate:disabled:hover {
+          cursor: no-drop;
+          box-shadow: none;
+        }
+
         .detail-list {
           display: flex;
           flex-direction: column;
@@ -2075,6 +2085,9 @@ export class AppReport extends LitElement {
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal(focusOn = "", tab: string = "info") {
+    if (this.runningTests)
+      return undefined;
+
     this.startingManifestEditorTab = tab;
     this.focusOnME = focusOn;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
@@ -2559,7 +2572,7 @@ export class AppReport extends LitElement {
                     html`
                       <todo-item
                         .status=${todo.status}
-                        .field=${todo.field}
+                        .field=${!this.runningTests ? todo.field : ''}
                         .fix=${todo.fix}
                         .card=${todo.card}
                         .displayString=${todo.displayString}
@@ -2621,9 +2634,9 @@ export class AppReport extends LitElement {
                       html`
                           <sl-tooltip class="mani-tooltip" open>
                             <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+                            <button type="button" class="alternate" ?disabled=${this.runningTests} @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
                           </sl-tooltip>` :
-                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
+                      html`<button type="button" class="alternate" ?disabled=${this.runningTests} @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
                       }
 
                       <a
