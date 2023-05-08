@@ -1998,7 +1998,7 @@ export class AppReport extends LitElement {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "required"})
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, status: "required"})
       } else if(recommended_fields.includes(field)){
         this.recMissingFields.push(field);
         this.manifestRecCounter++;
@@ -2007,7 +2007,7 @@ export class AppReport extends LitElement {
         this.optMissingFields.push(field)
       }
       if(!this.createdManifest && !required_fields.includes(field)){
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", "status": isRecommended ? "recommended" : "optional"})
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, "status": isRecommended ? "recommended" : "optional"})
       }
     });
     let num_missing = missing.length;
