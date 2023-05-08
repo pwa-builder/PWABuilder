@@ -2,9 +2,9 @@ import { env } from './environment';
 
 export const api = {
   imageGenerator: {
-    post: `${env.imageGeneratorUrl}`,
+    post: `${env.imageGeneratorUrl}/api/image`,
     download: function (id: string) {
-      return `${env.imageGeneratorUrl}/${id}`;
+      return `${env.imageGeneratorUrl}/api/image/${id}`;
     },
   },
 };

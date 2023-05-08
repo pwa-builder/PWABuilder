@@ -1226,7 +1226,7 @@ export class AppReport extends LitElement {
           border-radius: 50%;
           position: relative;
           flex-shrink: 0;
-          animation: rotate .8s linear infinite
+          animation: rotate 1s linear infinite
         }
         .loader-round::before {
           content: "";
@@ -1812,7 +1812,7 @@ export class AppReport extends LitElement {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     this.manifestDataLoading = true;
-    let details = (this.shadowRoot!.getElementById("mani-details") as any);
+    // let details = (this.shadowRoot!.getElementById("mani-details") as any);
     // details?.disabled && (details.disabled = true);
     let manifest;
 
@@ -1882,7 +1882,7 @@ export class AppReport extends LitElement {
   // Tests the SW and populates the SW card detail dropdown
   async testServiceWorker(serviceWorkerResults: TestResult[]) {
     //call service worker tests
-    let details = (this.shadowRoot!.getElementById("sw-details") as any);
+    // let details = (this.shadowRoot!.getElementById("sw-details") as any);
     // details?.disabled && (details.disabled = true);
 
     let missing = false;
@@ -2097,7 +2097,7 @@ export class AppReport extends LitElement {
   }
 
   // Opens manifest editor and tracks analytics
-  async openManifestEditorModal(focusOn = "", tab: string = "info") {
+  async openManifestEditorModal(focusOn = "", tab: string = "info"): Promise<void | undefined> {
     if (this.runningTests)
       return undefined;
 

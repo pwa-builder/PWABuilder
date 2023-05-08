@@ -70,7 +70,7 @@ export async function Report(
   ): Promise<ReportAudit> {
 	const fetchReport = await fetch(
 		`${
-			env.apiV2
+			env.api
 		}/Report?site=${encodeURIComponent(url)}&desktop=true`
 	);
 
@@ -95,7 +95,7 @@ export async function FindWebManifest(
   ): Promise<FindWebManifestResult> {
 	const fetchReport = await fetch(
 	  `${
-		env.apiV2
+		env.api
 	  }/FindWebManifest?site=${encodeURIComponent(site)}`
 	);
 	if (!fetchReport.ok) {
@@ -119,7 +119,7 @@ export async function FindServiceWorker(
   ): Promise<FindServiceWorkerResult> {
 	const fetchReport = await fetch(
 	  `${
-		env.apiV2
+		env.api
 	  }/FindServiceWorker?site=${encodeURIComponent(site)}`
 	);
 	if (!fetchReport.ok) {
@@ -143,7 +143,7 @@ export async function AuditServiceWorker(
   ): Promise<AuditServiceWorkerResult> {
 	const fetchReport = await fetch(
 	  `${
-		env.apiV2
+		env.api
 	  }/AuditServiceWorker?url=${encodeURIComponent(url)}`
 	);
 	if (!fetchReport.ok) {
