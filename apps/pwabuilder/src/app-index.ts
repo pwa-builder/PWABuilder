@@ -7,7 +7,7 @@ import './script/pages/app-home';
 import './script/components/app-footer';
 import './script/components/app-header';
 import './script/components/app-button';
-import './script/components/cookie-banner';
+//import './script/components/cookie-banner';
 import './script/components/discord-box';
 import { recordPageView } from './script/utils/analytics';
 
@@ -140,8 +140,8 @@ export class AppIndex extends LitElement {
   render() {
     return html`
       <div id="wrapper">
-        <!--required cookie banner-->
-        <cookie-banner></cookie-banner>
+        <!-- cookie banner not required so long as we only have essential cookies -->
+        <!-- <cookie-banner></cookie-banner> -->
 
         <div id="content">
           <div id="router-outlet"></div>
