@@ -47,7 +47,7 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 		category: 'optional',
 	  },
 	];
-
+	// TODO: move installability from here
 	if (typeof installable == 'boolean') {
 		swTestResult.push(
 			{

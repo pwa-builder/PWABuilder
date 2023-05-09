@@ -1731,80 +1731,84 @@ export class AppReport extends LitElement {
 
     let findersResults = {
       manifest: {} as {url?: string, raw?: string, json?: unknown},
-      serviceWorker: {} as {url?: string, raw?: string}
+      serviceWorker: {} as {url?: string, raw?: string},
+      manifestTodos: [] as unknown[],
+      workerTodos: [] as unknown[]
     }
+    this.reportAudit = undefined;
 
     // Take only good results, ignore errors.
     FindWebManifest(url).then( async (result) => {
-      if (result?.content?.raw) {
+      if (result?.content?.raw && !this.reportAudit?.artifacts?.webAppManifest?.raw) {
         // TODO: can use json instead of raw
         findersResults.manifest = result.content;
         await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
-        await this.testManifest();
+        findersResults.manifestTodos = await this.testManifest();
+        this.todoItems.push(...findersResults.manifestTodos);
+        this.requestUpdate();
       }
     });
-    // .catch(async () => {
-    //   await this.applyManifestContext(url, undefined, undefined);
-    // }).finally(async () => {
-
-    //   await this.testManifest();
-    // });
 
     FindServiceWorker(url).then( async (result) => {
-        if (result?.content?.url) {
-          await AuditServiceWorker(result.content.url).then( (result) => {
-            this.testServiceWorker(processServiceWorker(result.content, undefined));
+        if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
+          await AuditServiceWorker(result.content.url).then( async (result) => {
+            findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content, undefined));
+            this.todoItems.push(...findersResults.workerTodos);
+            this.requestUpdate();
           });
           findersResults.serviceWorker = result.content;
         }
-        // else {
-        //   this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
-        // }
       }
     );
-    // .catch(() => {
-    //   this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
-    // });
 
     try {
       this.reportAudit = await Report(url);
     } catch (e) {
       console.error(e);
-      await this.testSecurity(processSecurity());
+      this.todoItems.push(...await this.testSecurity(processSecurity()));
       if (!findersResults.manifest?.raw) {
         await this.applyManifestContext(url, undefined, undefined);
-        await this.testManifest();
+        this.todoItems.push(...await this.testManifest());
       }
       if (!findersResults.serviceWorker?.raw) {
-        this.testServiceWorker(processServiceWorker({score: false, details: {}}, false));
+        this.todoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}}, false)));
       }
       this.runningTests = false;
+      this.requestUpdate();
       return;
     }
 
     console.log(this.reportAudit);
 
-    if (this.reportAudit?.artifacts?.webAppManifest) {
-      await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifest?.url, this.reportAudit?.artifacts?.webAppManifest?.raw);
+    // Check for previously successfull FindMani
+    if (this.reportAudit?.artifacts?.webAppManifest?.raw) {
+      if (!findersResults.manifest.raw || this.reportAudit?.artifacts.webAppManifest.raw != findersResults.manifest.raw) {
+        await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifest?.url, this.reportAudit?.artifacts?.webAppManifest?.raw);
+        findersResults.manifestTodos = [];
+      }
     } else {
-      await this.applyManifestContext(url, undefined, undefined);
+      if (!findersResults.manifest?.raw) {
+        await this.applyManifestContext(url, undefined, undefined);
+      }
     }
 
+    // Reapply mani todos from FindMani
     this.todoItems = [];
-    // await this.getManifest(url);
-    await Promise.all([
-      this.testManifest(),
-      this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score)),
-      this.testSecurity(processSecurity(this.reportAudit?.audits))]).then(() =>
-    {
-      //this.canPackage = this.canPackageList.every((can: boolean) => can);
-      // this.canPackageList: boolean[] = [canPackageManifest?, canPackageSW?, canPackageSec?]
-      this.canPackage = this.canPackageList[0] && this.canPackageList[2];
-    });
+    if (findersResults.manifestTodos.length){
+      this.todoItems.push(...findersResults.manifestTodos)
+    }
+    else {
+      this.todoItems.push(...await this.testManifest());
+    }
 
-    // await this.testServiceWorker(url);
+    // TODO: move installability score to different place
+    this.todoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score))),
+    this.todoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
+
+    this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
 
     this.runningTests = false;
+    this.requestUpdate();
   }
 
   // Tests the Manifest and populates the manifest card detail dropdown
@@ -1812,9 +1816,8 @@ export class AppReport extends LitElement {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     this.manifestDataLoading = true;
-    // let details = (this.shadowRoot!.getElementById("mani-details") as any);
-    // details?.disabled && (details.disabled = true);
     let manifest;
+    let todos: unknown[] = [];
 
     if(!this.createdManifest){
       manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
@@ -1849,18 +1852,18 @@ export class AppReport extends LitElement {
           } else {
             status = "optional";
           }
-          this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
 
         }
       });
     } else {
       manifest = {};
-      this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
+      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
 
-    let amt_missing = await this.handleMissingFields(manifest);
+    let { num_missing, details } = await this.handleMissingFields(manifest);
 
-    this.manifestTotalScore += amt_missing;
+    this.manifestTotalScore += num_missing;
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -1876,16 +1879,15 @@ export class AppReport extends LitElement {
       JSON.stringify(this.validationResults)
     );
     //TODO: Fire event when ready
-    this.requestUpdate();
+    // this.requestUpdate();
+    return todos.concat(details);
   }
 
   // Tests the SW and populates the SW card detail dropdown
   async testServiceWorker(serviceWorkerResults: TestResult[]) {
     //call service worker tests
-    // let details = (this.shadowRoot!.getElementById("sw-details") as any);
-    // details?.disabled && (details.disabled = true);
 
-    let missing = false;
+    let todos: unknown[] = [];
 
     const serviceWorkerTestResult = serviceWorkerResults;
     this.serviceWorkerResults = serviceWorkerTestResult;
@@ -1898,12 +1900,13 @@ export class AppReport extends LitElement {
       } else {
         let status = "";
         let card = "sw-details";
+        let missing = false;
         switch(result.category){
           case "highly recommended":
             missing = true;
             status = "highly recommended";
-            this.swRequiredCounter++;
-            this.todoItems.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
+            this.swRecCounter++;
+            todos.push({"card": card, "field": "Open SW Modal", "fix": "Add Service Worker to Base Package (SW not found before detection tests timed out)", "status": status});
             break;
           case "recommended":
             status = "recommended";
@@ -1918,7 +1921,7 @@ export class AppReport extends LitElement {
         }
 
         if(!missing){
-          this.todoItems.push({"card": card, "field": result.infoString, "fix": result.infoString, "status": status});
+          todos.push({"card": card, "field": result.infoString, "fix": result.infoString, "status": status});
         }
       }
     })
@@ -1932,21 +1935,20 @@ export class AppReport extends LitElement {
     this.swTotalScore = this.serviceWorkerResults.length;
 
     this.swDataLoading = false;
-    // details?.disabled && (details.disabled = false);
 
     //save serviceworker tests in session storage
     sessionStorage.setItem(
       'service_worker_tests',
       JSON.stringify(serviceWorkerTestResult)
     );
-    this.requestUpdate();
+    // this.requestUpdate();
+    return todos;
   }
 
   // Tests the Security and populates the Security card detail dropdown
   async testSecurity(securityAudit: TestResult[]) {
     //Call security tests
-    let details = (this.shadowRoot!.getElementById("sec-details") as any);
-    details?.disabled && (details.disabled = true);
+    let todos: unknown[] = [];
 
     const securityTests = securityAudit;
     this.securityResults = securityTests;
@@ -1967,7 +1969,7 @@ export class AppReport extends LitElement {
           status = result.category;
         }
 
-        this.todoItems.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
+        todos.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
       }
     })
 
@@ -1980,16 +1982,18 @@ export class AppReport extends LitElement {
     this.secTotalScore = this.securityResults.length;
 
     this.secDataLoading = false;
-    details?.disabled && (details.disabled = false);
 
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
     this.requestUpdate();
+    return todos;
   }
 
   // If some manifest fields are missing it adds it to the drop down and returns the number that were missing
   async handleMissingFields(manifest: Manifest){
     let missing = await reportMissing(manifest);
+    let todos: unknown[] = [];
+    this.requiredMissingFields, this.recMissingFields, this.optMissingFields = [];
 
     missing.forEach((field: string) => {
 
@@ -1998,7 +2002,7 @@ export class AppReport extends LitElement {
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, status: "required"})
+        todos.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, status: "required"})
       } else if(recommended_fields.includes(field)){
         this.recMissingFields.push(field);
         this.manifestRecCounter++;
@@ -2007,11 +2011,14 @@ export class AppReport extends LitElement {
         this.optMissingFields.push(field)
       }
       if(!this.createdManifest && !required_fields.includes(field)){
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, "status": isRecommended ? "recommended" : "optional"})
+        todos.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, "status": isRecommended ? "recommended" : "optional"})
       }
     });
     let num_missing = missing.length;
-    return num_missing
+    return {
+      details: todos,
+      num_missing
+    }
   }
 
   /**
@@ -2098,9 +2105,6 @@ export class AppReport extends LitElement {
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal(focusOn = "", tab: string = "info"): Promise<void | undefined> {
-    if (this.runningTests)
-      return undefined;
-
     this.startingManifestEditorTab = tab;
     this.focusOnME = focusOn;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
@@ -2585,7 +2589,7 @@ export class AppReport extends LitElement {
                     html`
                       <todo-item
                         .status=${todo.status}
-                        .field=${!this.runningTests ? todo.field : ''}
+                        .field=${todo.field}
                         .fix=${todo.fix}
                         .card=${todo.card}
                         .displayString=${todo.displayString}
@@ -2647,9 +2651,9 @@ export class AppReport extends LitElement {
                       html`
                           <sl-tooltip class="mani-tooltip" open>
                             <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                            <button type="button" class="alternate" ?disabled=${this.runningTests} @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
                           </sl-tooltip>` :
-                      html`<button type="button" class="alternate" ?disabled=${this.runningTests} @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
+                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
                       }
 
                       <a
@@ -2671,8 +2675,8 @@ export class AppReport extends LitElement {
               </div>
 
               <div id="mh-right">
-                ${this.runningTests ?
-                    html`<div class="loader-round large ${classMap({'skeleton': this.manifestDataLoading})}"></div>` :
+                ${this.manifestDataLoading ?
+                    html`<div class="loader-round large skeleton"></div>` :
                     html`<sl-progress-ring
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
@@ -2684,11 +2688,11 @@ export class AppReport extends LitElement {
             <sl-details
               id="mani-details"
               class="details"
-              ?disabled=${this.runningTests || this.manifestDataLoading}
+              ?disabled=${this.manifestDataLoading}
               @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)}
               @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}
               >
-              ${this.runningTests ? html`
+              ${this.manifestDataLoading ? html`
               <div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` :
               html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
               <div id="manifest-detail-grid">
@@ -2857,11 +2861,11 @@ export class AppReport extends LitElement {
                 : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
                 <div class="detail-grid">
                 <div class="detail-list">
-                    <p class="detail-list-header">Required</p>
                     ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
                     html`
+                      <p class="detail-list-header">Required</p>
                       <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="invalid result icon"/>`}
+                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
                         <p>${result.infoString}</p>
                       </div>
                     ` :
