@@ -7,7 +7,7 @@ import "./manifest-settings-form"
 import "./manifest-platform-form"
 import "./manifest-icons-form"
 import "./manifest-screenshots-form"
-// import "./manifest-preview-form"
+import "./manifest-share-form"
 import "./manifest-code-form"
 
 import { prettyString } from '../utils/pretty-json';
@@ -288,14 +288,14 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
         <sl-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</sl-tab>
         <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
-        <!-- <sl-tab slot="nav" panel="preview">Preview</sl-tab> -->
+        <sl-tab slot="nav" panel="share" ?active=${this.startingTab === "share"}>Share</sl-tab>
         <sl-tab slot="nav" panel="code">Code</sl-tab>
-        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest}></manifest-info-form></sl-tab-panel>
-        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest}></manifest-settings-form></sl-tab-panel>
-        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest}></manifest-platform-form></sl-tab-panel>
-        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)}></manifest-icons-form></sl-tab-panel>
-        <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form></sl-tab-panel>
-        <!-- <sl-tab-panel name="preview"><manifest-preview-form .manifest=${this.manifest} .manifestURL=${this.cleanUrl(this.manifestURL)}</manifest-preview-form></sl-tab-panel> -->
+        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-info-form></sl-tab-panel>
+        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-settings-form></sl-tab-panel>
+        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-platform-form></sl-tab-panel>
+        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)}></manifest-icons-form></sl-tab-panel>
+        <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form></sl-tab-panel>
+        <sl-tab-panel name="share"><manifest-share-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)}</manifest-share-form></sl-tab-panel>
         <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest}></manifest-code-form></sl-tab-panel>
 
       </sl-tab-group>
