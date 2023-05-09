@@ -8,7 +8,7 @@ import {
 } from '../utils/interfaces';
 //import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
-import { SlSelect } from '@shoelace-style/shoelace';
+import { SlSelect, SlTag } from '@shoelace-style/shoelace';
 
 let manifestInitialized = false;
 
@@ -95,6 +95,9 @@ export class ManifestShareForm extends LitElement {
         color: #292C3A;
         font-size: 14px;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
 
       .form-row {
@@ -153,6 +156,41 @@ export class ManifestShareForm extends LitElement {
         border: 1px solid #C0C0C0;
         border-radius: 8px;
         padding: 10px;
+        position: relative;
+      }
+
+      .remove-file {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
+      .type-box {
+        max-width: 265px;
+        min-height: 40px;
+        border: 1px solid #d4d4d8;
+        border-radius: .25rem;
+        padding: 2px;
+        transition: all .1s ease-in-out;
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .type-box input {
+        border: none;
+        font-size: 16px;
+        width: 2ch;
+      }
+
+      .type-box input:focus, input:active, input:focus-visible {
+        border: none;
+        outline: none;
+      }
+
+      .type-box:hover {
+        border: 1px solid #a1a1aa;
       }
 
       .error {
@@ -316,7 +354,7 @@ export class ManifestShareForm extends LitElement {
                   <div class="field-header">
                     <div class="header-left">
                       <h5 class="sub">Name</h5>
-                      <manifest-field-tooltip .field=${"share_target.share_target.params.files.name"}></manifest-field-tooltip>
+                      <manifest-field-tooltip .field=${"share_target.params.files.name"}></manifest-field-tooltip>
                     </div>
                   </div>
                   <sl-input placeholder="Add name" value=${file.name || ""} data-field="share_target.params.url"></sl-input>
@@ -325,18 +363,46 @@ export class ManifestShareForm extends LitElement {
                   <div class="field-header">
                     <div class="header-left">
                       <h5 class="sub">Accept</h5>
-                      <manifest-field-tooltip .field=${"share_target.share_target.params.files.accept"}></manifest-field-tooltip>
+                      <manifest-field-tooltip .field=${"share_target.params.files.accept"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  ${file.accept.map((type: string) => html`${type}`)}
+                  <div class="type-box" @click=${() => this.focusInput(i)}>
+                    ${file.accept.map((type: string) => html`<sl-tag size="small" removable>${type}</sl-tag>`)}
+                    <input data-index=${i} @keydown=${(e: KeyboardEvent) => this.handleNewType(e)} />
+                  </div>
                 </div>
               </div>
+              <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
             </div>
           `
         )
       }
     }
-    console.log(this.files)
+  }
+
+  focusInput(index: number){
+    let input = (this.shadowRoot!.querySelector(`[data-index="${index}"]`) as HTMLInputElement);
+    input.focus();
+  }
+
+  handleNewType(e: KeyboardEvent){
+    let input: HTMLInputElement = e.target as HTMLInputElement;
+    this.resizeInput(input);
+    if(e.key === 'Enter' && input.value.length > 1){
+      let tag = document.createElement('sl-tag');
+      tag.innerHTML = input.value;
+      tag.setAttribute('removable', 'true');
+      tag.setAttribute('size', 'small');
+      let box = input.parentElement;
+      box!.insertBefore(tag, input);
+      input.value = "";
+      input.style.width = "2ch";
+    }
+    return false;
+  }
+
+  resizeInput(input: HTMLInputElement){
+    input.style.width = (input.value.length + 2) + "ch";
   }
 
   pushEmptyFile(){
@@ -348,7 +414,7 @@ export class ManifestShareForm extends LitElement {
               <div class="field-header">
                 <div class="header-left">
                   <h5 class="sub">Name</h5>
-                  <manifest-field-tooltip .field=${"share_target.share_target.params.files.name"}></manifest-field-tooltip>
+                  <manifest-field-tooltip .field=${"share_target.params.files.name"}></manifest-field-tooltip>
                 </div>
               </div>
               <sl-input placeholder="Add name" value=${""} data-field="share_target.params.url"></sl-input>
@@ -357,16 +423,23 @@ export class ManifestShareForm extends LitElement {
               <div class="field-header">
                 <div class="header-left">
                   <h5 class="sub">Accept</h5>
-                  <manifest-field-tooltip .field=${"share_target.share_target.params.files.accept"}></manifest-field-tooltip>
+                  <manifest-field-tooltip .field=${"share_target.params.files.accept"}></manifest-field-tooltip>
                 </div>
               </div>
-              <!-- TODO: Insert empty list -->
+              <div class="type-box" @click=${() => this.focusInput(this.files.length)}>
+                <input data-index=${this.files.length} @keydown=${(e: KeyboardEvent) => this.handleNewType(e)} />
+              </div>
             </div>
           </div>
+          <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
         </div>
       `
     )
     this.requestUpdate();
+  }
+
+  updateShareTarget(e: Event){
+    e.preventDefault();
   }
 
   render() {
@@ -375,29 +448,29 @@ export class ManifestShareForm extends LitElement {
         <div id="action-holder">
         ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
           html`
-            <sl-button class="toggle-button" @click=${() => this.toggleForm(false)}><!-- <img src="assets/minus.svg" alt="minus symbol" />  -->Remove Share Target</sl-button>
+            <sl-button class="toggle-button" @click=${() => this.toggleForm(false)}><img src="../assets/minus.svg" alt="minus symbol" /> Remove Share Target</sl-button>
           ` :
           html`
-            <sl-button class="toggle-button" @click=${() => this.toggleForm(true)}><!-- <img src="assets/plus.svg" alt="plus symbol" /> -->Add Share Target</sl-button>
+            <sl-button class="toggle-button" @click=${() => this.toggleForm(true)}><img src="assets/plus.svg" alt="plus symbol" />Add Share Target</sl-button>
           `
         }
         </div>
 
         ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
           html`
-            <form id="share-target-form">
+            <form id="share-target-form" @submit=${(e: Event) => this.updateShareTarget(e)}>
               <div class="form-row">
                 <div class="form-field">
                   <div class="field-header">
                     <div class="header-left">
                       <h3>Action</h3>
-                      <manifest-field-tooltip .field=${"share_target.name"}></manifest-field-tooltip>
+                      <manifest-field-tooltip .field=${"share_target.action"}></manifest-field-tooltip>
                     </div>
 
                     <p class="field-desc">(required)</p>
                   </div>
                   <p class="field-desc">The URL for the web share target </p>
-                  <sl-input placeholder="Add action" value=${this.manifest.share_target?.action! || ""} data-field="share_target.name"></sl-input>
+                  <sl-input placeholder="Add action" value=${this.manifest.share_target?.action! || ""} data-field="share_target.action"></sl-input>
                 </div>
                 <div class="form-field">
                   <div class="field-header">
@@ -419,7 +492,7 @@ export class ManifestShareForm extends LitElement {
                   <div class="form-field">
                     <div class="field-header">
                       <div class="header-left">
-                        <h3>enctype</h3>
+                        <h3>Enctype</h3>
                         <manifest-field-tooltip .field=${"share_target.enctype"}></manifest-field-tooltip>
                       </div>
                     </div>
@@ -447,7 +520,7 @@ export class ManifestShareForm extends LitElement {
                   <div class="field-header">
                     <div class="header-left">
                       <h4 class="sub">Title</h4>
-                      <manifest-field-tooltip .field=${"share_target.parameters.title"}></manifest-field-tooltip>
+                      <manifest-field-tooltip .field=${"share_target.params.title"}></manifest-field-tooltip>
                     </div>
                   </div>
                   <sl-input placeholder="Add title" value=${this.manifest.share_target?.params?.title! || ""} data-field="share_target.params.title"></sl-input>
