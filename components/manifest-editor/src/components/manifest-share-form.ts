@@ -10,7 +10,6 @@ import {
 import "./manifest-field-tooltip";
 import "./search-extensions";
 import { SlSelect } from '@shoelace-style/shoelace';
-import { extensions } from '../utils/extensions';
 
 let manifestInitialized = false;
 
@@ -388,10 +387,6 @@ export class ManifestShareForm extends LitElement {
     return this.files;
   }
 
-  updateShareTarget(e: Event){
-    e.preventDefault();
-  }
-
   render() {
     return html`
       <div id="form-holder">
@@ -408,7 +403,7 @@ export class ManifestShareForm extends LitElement {
 
         ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
           html`
-            <form id="share-target-form" @submit=${(e: Event) => this.updateShareTarget(e)}>
+            <form id="share-target-form">
               <div class="form-row">
                 <div class="form-field">
                   <div class="field-header">
