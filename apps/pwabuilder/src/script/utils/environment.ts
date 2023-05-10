@@ -1,6 +1,5 @@
 export const env = {
   isProduction: false,
-  manifestFinderUrl: '',
   manifestCreatorUrl: '',
   serviceWorkerUrl: '',
   api: '',
@@ -10,22 +9,18 @@ export const env = {
   oculusPackageGeneratorUrl: '',
   imageGeneratorUrl: '',
   safeUrlFetcher: '',
-  webPackageGeneratorUrl: '',
   webPackageGeneratorFormUrl: '',
-  ratingUrl: '',
   zipCreatorUrl: '',
 };
 
 //@ts-ignore
 if (import.meta.env.PROD) {
   env.isProduction = true;
-  env.manifestFinderUrl =
-    'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest';
+  env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.serviceWorkerUrl =
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
-  env.api = 'https://pwabuilder-tests.azurewebsites.net/api';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
@@ -35,40 +30,30 @@ if (import.meta.env.PROD) {
   env.oculusPackageGeneratorUrl =
     'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
   env.imageGeneratorUrl =
-    'https://appimagegenerator-prod.azurewebsites.net/api/image';
+    'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
     'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
-  env.webPackageGeneratorUrl =
-    'https://pwabuilder-web-platform.azurewebsites.net/';
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
-  env.ratingUrl =
-    'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 } else {
-  env.manifestFinderUrl =
-    'https://pwabuilder-manifest-finder.azurewebsites.net/api/findmanifest';
+  env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.serviceWorkerUrl =
     'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
-  env.api = 'https://pwabuilder-tests.azurewebsites.net/api';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
-    'https://pwabuilder-cloudapk.azurewebsites.net'; // changed
+    'https://pwabuilder-cloudapk.azurewebsites.net';
   env.iosPackageGeneratorUrl =
     'https://pwabuilder-ios.azurewebsites.net/packages/create';
   env.oculusPackageGeneratorUrl =
     'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
-  env.imageGeneratorUrl = 'https://appimagegenerator-pre.azurewebsites.net'; // changed
+  env.imageGeneratorUrl = 'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
     'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
-  env.webPackageGeneratorUrl =
-    'https://pwabuilder-web-platform.azurewebsites.net/';
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
-  env.ratingUrl =
-    'https://pwabuilder-url-logger-api.azurewebsites.net/api/analyses/getaveragescores';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
 }
