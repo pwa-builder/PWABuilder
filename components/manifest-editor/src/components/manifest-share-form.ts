@@ -8,7 +8,9 @@ import {
 } from '../utils/interfaces';
 //import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
-import { SlSelect, SlTag } from '@shoelace-style/shoelace';
+import "./search-extensions";
+import { SlSelect } from '@shoelace-style/shoelace';
+import { extensions } from '../utils/extensions';
 
 let manifestInitialized = false;
 
@@ -29,7 +31,9 @@ export class ManifestShareForm extends LitElement {
   @state() addingTarget: boolean = false;
   @state() removeClicked: boolean = false;
   @state() postSelected: boolean = false;
-  @state() files: TemplateResult[] = [];
+  @state() files: TemplateResult = html``;
+  @state() numOfFiles: number = -1;
+  @state() filteredList: string[] = [];
   @state() errored: boolean = false;
 
   private shouldValidateAllFields: boolean = true;
@@ -163,34 +167,6 @@ export class ManifestShareForm extends LitElement {
         position: absolute;
         top: 5px;
         right: 5px;
-      }
-
-      .type-box {
-        max-width: 265px;
-        min-height: 40px;
-        border: 1px solid #d4d4d8;
-        border-radius: .25rem;
-        padding: 2px;
-        transition: all .1s ease-in-out;
-        display: flex;
-        gap: 5px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-
-      .type-box input {
-        border: none;
-        font-size: 16px;
-        width: 2ch;
-      }
-
-      .type-box input:focus, input:active, input:focus-visible {
-        border: none;
-        outline: none;
-      }
-
-      .type-box:hover {
-        border: 1px solid #a1a1aa;
       }
 
       .error {
@@ -346,8 +322,8 @@ export class ManifestShareForm extends LitElement {
       for(let i = 0; i < filesField.length; i++){
         let file: FilesParams = filesField[i];
 
-        this.files.push(
-          html`
+        this.files = html`
+          ${this.files}
             <div class="file-holder">
               <div class="form-row long">
                 <div class="form-field">
@@ -366,49 +342,22 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.files.accept"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <div class="type-box" @click=${() => this.focusInput(i)}>
-                    ${file.accept.map((type: string) => html`<sl-tag size="small" removable>${type}</sl-tag>`)}
-                    <input data-index=${i} @keydown=${(e: KeyboardEvent) => this.handleNewType(e)} />
-                  </div>
+                  <search-extensions .index=${i} .empty=${false} .file=${file}></search-extensions>
                 </div>
               </div>
               <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
             </div>
-          `
-        )
+        `
+        this.numOfFiles++;
       }
     }
   }
 
-  focusInput(index: number){
-    let input = (this.shadowRoot!.querySelector(`[data-index="${index}"]`) as HTMLInputElement);
-    input.focus();
-  }
-
-  handleNewType(e: KeyboardEvent){
-    let input: HTMLInputElement = e.target as HTMLInputElement;
-    this.resizeInput(input);
-    if(e.key === 'Enter' && input.value.length > 1){
-      let tag = document.createElement('sl-tag');
-      tag.innerHTML = input.value;
-      tag.setAttribute('removable', 'true');
-      tag.setAttribute('size', 'small');
-      let box = input.parentElement;
-      box!.insertBefore(tag, input);
-      input.value = "";
-      input.style.width = "2ch";
-    }
-    return false;
-  }
-
-  resizeInput(input: HTMLInputElement){
-    input.style.width = (input.value.length + 2) + "ch";
-  }
-
   pushEmptyFile(){
-    this.files.push(
-      html`
-        <div class="file-holder">
+    this.numOfFiles++;
+    this.files = html`
+      ${this.files}
+      <div class="file-holder">
           <div class="form-row long">
             <div class="form-field">
               <div class="field-header">
@@ -426,16 +375,17 @@ export class ManifestShareForm extends LitElement {
                   <manifest-field-tooltip .field=${"share_target.params.files.accept"}></manifest-field-tooltip>
                 </div>
               </div>
-              <div class="type-box" @click=${() => this.focusInput(this.files.length)}>
-                <input data-index=${this.files.length} @keydown=${(e: KeyboardEvent) => this.handleNewType(e)} />
-              </div>
+              <search-extensions .index=${this.numOfFiles} .empty=${true}></search-extensions>
             </div>
           </div>
           <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
         </div>
-      `
-    )
+    `
     this.requestUpdate();
+  }
+
+  renderFiles(){
+    return this.files;
   }
 
   updateShareTarget(e: Event){
@@ -446,14 +396,14 @@ export class ManifestShareForm extends LitElement {
     return html`
       <div id="form-holder">
         <div id="action-holder">
-        ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
-          html`
-            <sl-button class="toggle-button" @click=${() => this.toggleForm(false)}><img src="../assets/minus.svg" alt="minus symbol" /> Remove Share Target</sl-button>
-          ` :
-          html`
-            <sl-button class="toggle-button" @click=${() => this.toggleForm(true)}><img src="assets/plus.svg" alt="plus symbol" />Add Share Target</sl-button>
-          `
-        }
+          ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
+            html`
+              <sl-button class="toggle-button" @click=${() => this.toggleForm(false)}><img src="../assets/minus.svg" alt="minus symbol" /> Remove Share Target</sl-button>
+            ` :
+            html`
+              <sl-button class="toggle-button" @click=${() => this.toggleForm(true)}><img src="assets/plus.svg" alt="plus symbol" />Add Share Target</sl-button>
+            `
+          }
         </div>
 
         ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
@@ -553,7 +503,7 @@ export class ManifestShareForm extends LitElement {
                     </div>
                   </div>
                   <p class="field-desc">An object (or an array of objects) defining which files are accepted by the share target</p>
-                  ${this.files.map((template: TemplateResult) => template)}
+                  ${this.renderFiles()}
                   <sl-button @click=${() => this.pushEmptyFile()}>Add File</sl-button>
                 </div>
               </div>
