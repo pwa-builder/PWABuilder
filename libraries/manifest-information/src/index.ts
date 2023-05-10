@@ -345,7 +345,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   `,
     location: "platform",
     required: false,
-    docs_link: "https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md"
+    docs_link: "https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar"
   }
 
 };
