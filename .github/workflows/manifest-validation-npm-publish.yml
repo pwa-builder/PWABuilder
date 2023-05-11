@@ -4,6 +4,7 @@ on:
   push:
     paths:
       -"libraries/manifest-validation/**"
+      -".github/workflows/**" #TODO: Delete before merge to staging
     branches: 
       -main 
       -gleb/manifest-library-npm  #TODO: Remove this before merge to staging
