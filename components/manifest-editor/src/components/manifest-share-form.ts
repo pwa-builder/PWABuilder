@@ -9,7 +9,7 @@ import {
 //import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
 import "./search-extensions";
-import { SlSelect } from '@shoelace-style/shoelace';
+import { SlInput, SlSelect } from '@shoelace-style/shoelace';
 
 let manifestInitialized = false;
 
@@ -154,22 +154,29 @@ export class ManifestShareForm extends LitElement {
         column-gap: 10px;
       }
 
-      .file-holder {
-        background: #FBFBFB;
-        border: 1px solid #C0C0C0;
-        border-radius: 8px;
-        padding: 10px;
-        position: relative;
-      }
-
       .remove-file {
         position: absolute;
         top: 5px;
         right: 5px;
       }
 
-      .error {
-        color: #292c3a;
+      .error::part(base){
+        border-color: #eb5757;
+        --sl-input-focus-ring-color: #eb575770;
+        --sl-focus-ring-width: 3px;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+        --sl-input-border-color-focus: #eb5757ac;
+      }
+
+      .error::part(control){
+        border-color: #eb5757;
+      }
+
+      .error-message {
+        color: #eb5757;
+        margin: 5px 0;
+        font-size: 14px;
+        display: none;
       }
 
       sl-button::part(base):hover {
@@ -209,6 +216,49 @@ export class ManifestShareForm extends LitElement {
     if(manifestInitialized){
       manifestInitialized = false;
       this.requestValidateAllFields();
+    }
+
+    // inital validation for action being required
+    let input = (this.shadowRoot!.querySelector(`[data-field="share_target.action"]`) as unknown as SlInput);
+    if(input && input.value.length === 0){
+      input.classList.add("error");
+      let container = (this.shadowRoot!.querySelector(`.action-error-message`) as HTMLElement);
+      container!.style.display = "block";
+    } 
+
+    // initial validaiton for params being required
+    let param_inputs = this.shadowRoot!.querySelectorAll(".params");
+    let all_empty = true;
+    for(let i = 0; i < param_inputs.length; i++){
+      let param = (param_inputs[i] as SlInput);
+      if(param.value.length !== 0){
+        all_empty = false;
+        return;
+      }
+    }
+
+    if(param_inputs && all_empty){
+      for(let i = 0; i < param_inputs.length; i++){
+        let param = (param_inputs[i] as SlInput);
+        param.classList.add("error");
+      }
+      let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
+      if(error_div){
+        error_div.style.display = "block";
+      }
+    }
+
+    // validation for enctype being required if you specify post
+    let enc_input = (this.shadowRoot!.querySelector(`[data-field="share_target.enctype"]`) as unknown as SlInput);
+    if(this.postSelected && enc_input.value.length === 0){
+      // place error border 
+      enc_input.classList.add("error")
+
+      // place error message
+      let error_div = (this.shadowRoot!.querySelector(`.enctype-error-message`) as HTMLElement);
+      if(error_div){
+        error_div.style.display = "block";
+      }
     }
   }
 
@@ -303,15 +353,37 @@ export class ManifestShareForm extends LitElement {
     if(adding){
       this.addingTarget = true;
       this.removeClicked = false;
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: "share_target",
+            change: {}
+        },
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(manifestUpdated);
+
     } else {
       this.addingTarget = false;
       this.removeClicked = true;
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: "share_target",
+            removal: true
+        },
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(manifestUpdated);
+
     }
+    
   }
 
   handleMethodChange(){
     let select = (this.shadowRoot!.querySelector(".method") as unknown as SlSelect);
     this.postSelected = select.value === "POST";
+    this.handleTopLevelInputChange("method");
   }
 
   initFiles(){
@@ -323,29 +395,8 @@ export class ManifestShareForm extends LitElement {
 
         this.files = html`
           ${this.files}
-            <div class="file-holder">
-              <div class="form-row long">
-                <div class="form-field">
-                  <div class="field-header">
-                    <div class="header-left">
-                      <h5 class="sub">Name</h5>
-                      <manifest-field-tooltip .field=${"share_target.params.files.name"}></manifest-field-tooltip>
-                    </div>
-                  </div>
-                  <sl-input placeholder="Add name" value=${file.name || ""} data-field="share_target.params.url"></sl-input>
-                </div>
-                <div class="form-field">
-                  <div class="field-header">
-                    <div class="header-left">
-                      <h5 class="sub">Accept</h5>
-                      <manifest-field-tooltip .field=${"share_target.params.files.accept"}></manifest-field-tooltip>
-                    </div>
-                  </div>
-                  <search-extensions .index=${i} .empty=${false} .file=${file}></search-extensions>
-                </div>
-              </div>
-              <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
-            </div>
+            
+          <search-extensions .index=${i} .empty=${false} .file=${file} .share_target=${this.manifest.share_target} @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>
         `
         this.numOfFiles++;
       }
@@ -356,35 +407,161 @@ export class ManifestShareForm extends LitElement {
     this.numOfFiles++;
     this.files = html`
       ${this.files}
-      <div class="file-holder">
-          <div class="form-row long">
-            <div class="form-field">
-              <div class="field-header">
-                <div class="header-left">
-                  <h5 class="sub">Name</h5>
-                  <manifest-field-tooltip .field=${"share_target.params.files.name"}></manifest-field-tooltip>
-                </div>
-              </div>
-              <sl-input placeholder="Add name" value=${""} data-field="share_target.params.url"></sl-input>
-            </div>
-            <div class="form-field">
-              <div class="field-header">
-                <div class="header-left">
-                  <h5 class="sub">Accept</h5>
-                  <manifest-field-tooltip .field=${"share_target.params.files.accept"}></manifest-field-tooltip>
-                </div>
-              </div>
-              <search-extensions .index=${this.numOfFiles} .empty=${true}></search-extensions>
-            </div>
-          </div>
-          <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
-        </div>
+      <search-extensions .index=${this.numOfFiles} .empty=${true} .share_target=${this.manifest.share_target}  @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>   
     `
+    if(!this.manifest.share_target?.params){
+      this.manifest.share_target!["params"] = {};
+    }
+    if(!this.manifest.share_target?.params.files){
+      this.manifest.share_target!.params!["files"] = [];
+    }
+    let temp = this.manifest.share_target!
+    temp.params!.files!.push({
+      "name": "",
+      "accept": []
+    })
+    // update manifest
+    let manifestUpdated = new CustomEvent('manifestUpdated', {
+      detail: {
+          field: "share_target",
+          change: temp
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(manifestUpdated);
     this.requestUpdate();
   }
 
   renderFiles(){
     return this.files;
+  }
+
+  async handleTopLevelInputChange(field: string){
+    const form = (this.shadowRoot!.querySelector('form') as HTMLFormElement);
+    const formData = new FormData(form);
+    const change = formData.get(field);
+
+    let temp: any = this.manifest.share_target;
+    if(temp){
+      temp[field] = change;
+    }
+
+    const validation: singleFieldValidation = await validateSingleField("share_target", temp);
+    let passed = validation!.valid;
+
+    if(field === "enctype"){
+      console.log(validation)
+    }
+
+    if(passed){
+      // remove error border 
+      let input = (this.shadowRoot!.querySelector(`[data-field="share_target.${field}"]`) as unknown as SlInput);
+      input.classList.remove("error")
+
+      // remove error message
+      let error_div = (this.shadowRoot!.querySelector(`.${field}-error-message`) as HTMLElement);
+      if(error_div){
+        error_div.style.display = "none";
+      }
+
+      // update manifest
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: "share_target",
+            change: temp
+        },
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(manifestUpdated);
+
+    } else {
+      // place error border 
+      let input = (this.shadowRoot!.querySelector(`[data-field="share_target.action"]`) as unknown as SlInput);
+      input.classList.add("error")
+
+      // place error message
+      let error_div = (this.shadowRoot!.querySelector(`.${field}-error-message`) as HTMLElement);
+      if(error_div){
+        error_div.style.display = "block";
+      }
+    }
+  }
+
+  async handleParameterInputChange(field: string){
+    const form = (this.shadowRoot!.querySelector('form') as HTMLFormElement);
+    const formData = new FormData(form);
+    const change = formData.get(`${field}`);
+
+    let temp: any = this.manifest.share_target;
+    if(!temp["params"]){
+      temp["params"] = {}
+    }
+    if(temp){
+      temp["params"][field] = change;
+    }
+
+    const validation: singleFieldValidation = await validateSingleField("share_target", temp);
+    let passed = validation!.valid;
+
+    if(field === "enctype"){
+      console.log(validation)
+    }
+
+    if(passed){
+      // remove error fields
+      let param_inputs = this.shadowRoot!.querySelectorAll(".params");
+      if(param_inputs){
+        for(let i = 0; i < param_inputs.length; i++){
+          let param = (param_inputs[i] as SlInput);
+          param.classList.remove("error");
+        }
+        let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
+        if(error_div){
+          error_div.style.display = "none";
+        }
+      }
+
+      // update manifest
+      let manifestUpdated = new CustomEvent('manifestUpdated', {
+        detail: {
+            field: "share_target",
+            change: temp
+        },
+        bubbles: true,
+        composed: true
+      });
+      this.dispatchEvent(manifestUpdated);
+
+    } else {
+      // initial validaiton for params being required
+      let param_inputs = this.shadowRoot!.querySelectorAll(".params");
+      let all_empty = true;
+      for(let i = 0; i < param_inputs.length; i++){
+        let param = (param_inputs[i] as SlInput);
+        if(param.value.length !== 0){
+          all_empty = false;
+          return;
+        }
+      }
+
+      if(param_inputs && all_empty){
+        for(let i = 0; i < param_inputs.length; i++){
+          let param = (param_inputs[i] as SlInput);
+          param.classList.add("error");
+        }
+        let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
+        error_div.style.display = "block";
+      }
+    }
+  }
+
+  async handleFileChange(e: CustomEvent){
+    console.log(e.detail);
+    // always editing a preexisiting field bc we add on button press.
+    // get index and update the file at that index
+    
   }
 
   render() {
@@ -415,7 +592,8 @@ export class ManifestShareForm extends LitElement {
                     <p class="field-desc">(required)</p>
                   </div>
                   <p class="field-desc">The URL for the web share target </p>
-                  <sl-input placeholder="Add action" value=${this.manifest.share_target?.action! || ""} data-field="share_target.action"></sl-input>
+                  <sl-input name="action" placeholder="Add action" value=${this.manifest.share_target?.action! || ""} @sl-change=${() => this.handleTopLevelInputChange("action")} data-field="share_target.action"></sl-input>
+                  <p class="action-error-message error-message">Action is a required field and must be in the scope of your PWA</p>
                 </div>
                 <div class="form-field">
                   <div class="field-header">
@@ -425,7 +603,7 @@ export class ManifestShareForm extends LitElement {
                     </div>
                   </div>
                   <p class="field-desc">The HTTP request method to use</p>
-                  <sl-select placeholder="Select a method" class="method" value=${this.manifest.share_target?.method! || ""} data-field="share_target.method" @sl-change=${() => this.handleMethodChange()}>
+                  <sl-select name="method" placeholder="Select a method" class="method" value=${this.manifest.share_target?.method! || ""} data-field="share_target.method" @sl-change=${() => this.handleMethodChange()}>
                     <sl-option value=${"GET"}>GET</sl-option>
                     <sl-option value=${"POST"}>POST</sl-option>
                   </sl-select>
@@ -442,7 +620,8 @@ export class ManifestShareForm extends LitElement {
                       </div>
                     </div>
                     <p class="field-desc">The encoding of the share data when a POST request is used</p>
-                    <sl-input placeholder="Add encytpe" value=${this.manifest.share_target?.enctype! || ""} data-field="share_target.enctype"></sl-input>
+                    <sl-input name="enctype" placeholder="Add enctype" value=${this.manifest.share_target?.enctype! || ""} @sl-change=${() => this.handleTopLevelInputChange("enctype")} data-field="share_target.enctype"></sl-input>
+                    <p class="enctype-error-message error-message">If you have specified POST as your method, specify the encoding of your share data.</p>
                   </div>
                 </div>
                 ` :
@@ -458,6 +637,7 @@ export class ManifestShareForm extends LitElement {
                     <p class="field-desc">(required)</p>
                   </div>
                   <p class="field-desc">An object to configure the share parameters. The object keys correspond to the data object in navigator.share(). The object values can be specified and will be used as query parameters:</p>
+                  <p class="params-error-message error-message">Specifying at least one parameter is required.</p>
                 </div>
               </div>
               <div class="form-row multi">
@@ -468,7 +648,7 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.title"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <sl-input placeholder="Add title" value=${this.manifest.share_target?.params?.title! || ""} data-field="share_target.params.title"></sl-input>
+                  <sl-input name="title" class="params" placeholder="Add title" value=${this.manifest.share_target?.params?.title! || ""} @sl-change=${() => this.handleParameterInputChange("title")} data-field="share_target.params.title"></sl-input>
                 </div>
                 <div class="form-field">
                   <div class="field-header">
@@ -477,7 +657,7 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.text"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <sl-input placeholder="Add text" value=${this.manifest.share_target?.params?.text! || ""} data-field="share_target.params.text"></sl-input>
+                  <sl-input name="text" class="params" placeholder="Add text" value=${this.manifest.share_target?.params?.text! || ""} @sl-change=${() => this.handleParameterInputChange("text")} data-field="share_target.params.text"></sl-input>
                 </div>
                 <div class="form-field">
                   <div class="field-header">
@@ -486,7 +666,7 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.url"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <sl-input placeholder="Add url" value=${this.manifest.share_target?.params?.url! || ""} data-field="share_target.params.url"></sl-input>
+                  <sl-input name="url" class="params" placeholder="Add url" value=${this.manifest.share_target?.params?.url! || ""} @sl-change=${() => this.handleParameterInputChange("url")} data-field="share_target.params.url"></sl-input>
                 </div>
               </div>
               <div class="form-row long">
