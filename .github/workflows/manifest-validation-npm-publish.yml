@@ -6,7 +6,8 @@ on:
       -"libraries/manifest-validation/**"
     branches: 
       -main 
-      -staging  #TODO: Remove this after testing on staging
+      -gleb/manifest-library-npm  #TODO: Remove this before merge to staging
+
   workflow_dispatch:
   
 jobs:
