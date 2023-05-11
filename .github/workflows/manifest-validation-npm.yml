@@ -2,13 +2,11 @@ name: Manifest Validation Lib Publish to NPM
 
 on:
   push:
-#    paths:
-#      -"libraries/manifest-validation/**"
-#      -".github/workflows/**" #TODO: Delete before merge to staging
+    paths:
+     -"libraries/manifest-validation/**"
+     -".github/workflows/**" 
     branches: 
-#      -main 
-      -gleb/manifest-library-npm  #TODO: Remove this before merge to staging
-
+     -gleb/manifest-library-npm  
   workflow_dispatch:
   
 jobs:
