@@ -4,7 +4,7 @@ on:
   push:
     paths:
      -"libraries/manifest-validation/**"
-     -".github/workflows/**" 
+     -".github/workflows/manifest-validation-npm.yml" 
     branches: 
      -gleb/manifest-library-npm  
   workflow_dispatch:
