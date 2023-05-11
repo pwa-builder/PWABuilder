@@ -5,7 +5,7 @@ import { SlInput } from '@shoelace-style/shoelace';
 
 @customElement('search-extensions')
 export class SearchExtensions extends LitElement {
-  @property({ type: Number }) index = 0;
+  @property({ type: Number }) index: any;
   @property({ type: Boolean }) empty = false;
   @property({ type: Object }) share_target: any;
   @property({ type: Object }) file: any = 0;
@@ -220,6 +220,8 @@ export class SearchExtensions extends LitElement {
       this.filteredList = [];
       let suggestions = (this.shadowRoot!.querySelector(`.suggestions[data-index="${this.index}"]`) as HTMLElement);
       suggestions.style.display = "none";
+
+      this.handleTagChange()
     }
 
     return false;
@@ -293,8 +295,7 @@ export class SearchExtensions extends LitElement {
 
     // update tag list
     this.file.accept.push(ext);
-
-    console.log(this.file)
+    this.handleTagChange();
   }
 
   renderTags(type: string){
@@ -307,7 +308,6 @@ export class SearchExtensions extends LitElement {
     // check if name field is filled out, if not add error.
     if(name_input.value.length === 0){
       // add error border 
-      let name_input = (this.shadowRoot!.querySelector(`[data-field="share_target.params.files.name"]`) as unknown as SlInput);
       name_input.classList.add("error");
 
       // add error message
@@ -371,6 +371,7 @@ export class SearchExtensions extends LitElement {
       error_div.style.display = "none";
     }
 
+    console.log("index sending to change file", this.index)
     // do validation
     let fileChanged = new CustomEvent('fileChanged', {
       detail: {
@@ -406,7 +407,7 @@ export class SearchExtensions extends LitElement {
           </div>
           <div class="type-box" @click=${() => this.focusInput()} data-index=${this.index}>
             ${(!this.empty || (this.file.accept && this.file.accept.length > 0)) ? this.file!.accept.map((type: string) => this.renderTags(type)) : html``}
-            <input data-index=${this.index} @keyup=${(e: KeyboardEvent) => this.handleNewType(e)} @blur=${() => this.removeFocus()} @change=${() => this.handleTagChange()} />
+            <input data-index=${this.index} @keyup=${(e: KeyboardEvent) => this.handleNewType(e)} @blur=${() => this.removeFocus()} />
             <div class="suggestions" data-index=${this.index}>
               ${this.filteredList && this.filteredList.length > 0 ? 
                 this.filteredList.map((ext: string) => 

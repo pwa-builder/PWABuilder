@@ -30,8 +30,8 @@ export class ManifestShareForm extends LitElement {
   @state() addingTarget: boolean = false;
   @state() removeClicked: boolean = false;
   @state() postSelected: boolean = false;
-  @state() files: TemplateResult = html``;
-  @state() numOfFiles: number = -1;
+  @state() files: TemplateResult[] = [];
+  @state() numOfFiles: number = 0;
   @state() filteredList: string[] = [];
   @state() errored: boolean = false;
 
@@ -393,22 +393,15 @@ export class ManifestShareForm extends LitElement {
       for(let i = 0; i < filesField.length; i++){
         let file: FilesParams = filesField[i];
 
-        this.files = html`
-          ${this.files}
-            
+        this.files.push(html`
           <search-extensions .index=${i} .empty=${false} .file=${file} .share_target=${this.manifest.share_target} @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>
-        `
+        `)
         this.numOfFiles++;
       }
     }
   }
 
   pushEmptyFile(){
-    this.numOfFiles++;
-    this.files = html`
-      ${this.files}
-      <search-extensions .index=${this.numOfFiles} .empty=${true} .share_target=${this.manifest.share_target}  @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>   
-    `
     if(!this.manifest.share_target?.params){
       this.manifest.share_target!["params"] = {};
     }
@@ -420,6 +413,12 @@ export class ManifestShareForm extends LitElement {
       "name": "",
       "accept": []
     })
+
+    let index = this.manifest.share_target!.params!.files?.length - 1;
+    this.files.push(html`
+      <search-extensions .index=${index} .empty=${true} .share_target=${this.manifest.share_target}  @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>   
+    `)
+
     // update manifest
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
@@ -449,10 +448,6 @@ export class ManifestShareForm extends LitElement {
 
     const validation: singleFieldValidation = await validateSingleField("share_target", temp);
     let passed = validation!.valid;
-
-    if(field === "enctype"){
-      console.log(validation)
-    }
 
     if(passed){
       // remove error border 
@@ -505,10 +500,6 @@ export class ManifestShareForm extends LitElement {
     const validation: singleFieldValidation = await validateSingleField("share_target", temp);
     let passed = validation!.valid;
 
-    if(field === "enctype"){
-      console.log(validation)
-    }
-
     if(passed){
       // remove error fields
       let param_inputs = this.shadowRoot!.querySelectorAll(".params");
@@ -558,10 +549,23 @@ export class ManifestShareForm extends LitElement {
   }
 
   async handleFileChange(e: CustomEvent){
-    console.log(e.detail);
-    // always editing a preexisiting field bc we add on button press.
-    // get index and update the file at that index
+    let file = e.detail.file;
+
+    let temp = this.manifest.share_target!
+    temp.params!.files![e.detail.index] = file;
+
+    // update manifest
+    let manifestUpdated = new CustomEvent('manifestUpdated', {
+      detail: {
+          field: "share_target",
+          change: temp
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(manifestUpdated);
     
+
   }
 
   render() {
@@ -678,7 +682,7 @@ export class ManifestShareForm extends LitElement {
                     </div>
                   </div>
                   <p class="field-desc">An object (or an array of objects) defining which files are accepted by the share target</p>
-                  ${this.renderFiles()}
+                  ${this.files.map((file: TemplateResult) => file)}
                   <sl-button @click=${() => this.pushEmptyFile()}>Add File</sl-button>
                 </div>
               </div>
