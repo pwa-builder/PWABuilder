@@ -13,6 +13,8 @@ export class SearchExtensions extends LitElement {
   @state() filteredList: string[] = [];
   @state() emptyName = false;
 
+  private errorCount: number = 0;
+
   static get styles() {
     return css`
 
@@ -187,7 +189,19 @@ export class SearchExtensions extends LitElement {
         display: none;
       }
 
-
+      @media(max-width: 600px){
+        .form-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .form-field {
+          width: 100%;
+        }
+        .type-box{
+          max-width: unset;
+          width: 100%;
+        }
+      }
       
     `;
   }
@@ -215,7 +229,7 @@ export class SearchExtensions extends LitElement {
 
       // reset input
       input.value = "";
-      input.style.width = "2ch";
+      input.style.width = "3ch";
       
       // clear suggestion list and hide drop down
       this.filteredList = [];
@@ -320,6 +334,8 @@ export class SearchExtensions extends LitElement {
       let error_div = (this.shadowRoot!.querySelector(`.name1-error-message`) as HTMLElement);
       if(error_div){
         error_div.style.display = "block";
+        this.errorCount++;
+        console.log(`inc error count bc adding name error message`)
       }
     }
 
@@ -332,6 +348,8 @@ export class SearchExtensions extends LitElement {
     let error_div = (this.shadowRoot!.querySelector(`.accept-error-message`) as HTMLElement);
     if(error_div){
       error_div.style.display = "none";
+      this.errorCount--;
+      console.log(`dec error count bc removing accept error message`)
     }
     
     // do validation
@@ -344,6 +362,8 @@ export class SearchExtensions extends LitElement {
       composed: true
     });
     this.dispatchEvent(fileChanged);
+
+    this.updateError()
   }
 
   handleNameChange(){
@@ -359,6 +379,8 @@ export class SearchExtensions extends LitElement {
       let error_div = (this.shadowRoot!.querySelector(`.accept-error-message`) as HTMLElement);
       if(error_div){
         error_div.style.display = "block";
+        this.errorCount++;
+        console.log(`inc error count bc adding accept error message`)
       }
     } 
 
@@ -373,6 +395,8 @@ export class SearchExtensions extends LitElement {
     let error_div = (this.shadowRoot!.querySelector(`.name-error-message`) as HTMLElement);
     if(error_div){
       error_div.style.display = "none";
+      this.errorCount--;
+      console.log(`dec error count bc removing name error message`)
     }
 
     // do validation
@@ -385,6 +409,8 @@ export class SearchExtensions extends LitElement {
       composed: true
     });
     this.dispatchEvent(fileChanged);
+
+    this.updateError();
   }
 
   removeFile(){
@@ -397,6 +423,19 @@ export class SearchExtensions extends LitElement {
       composed: true
     });
     this.dispatchEvent(deleteFilte);
+  }
+
+  updateError(){
+    let inc = false;
+    this.errorCount === 0 ? inc = false : inc = true;
+    let errorTracker = new CustomEvent('errorTracker', {
+      detail: {
+          inc: inc
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(errorTracker);
   }
 
   

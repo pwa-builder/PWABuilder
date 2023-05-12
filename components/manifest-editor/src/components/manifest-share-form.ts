@@ -33,7 +33,7 @@ export class ManifestShareForm extends LitElement {
   @state() files: any = [];
   @state() numOfFiles: number = 0;
   @state() filteredList: string[] = [];
-  @state() errored: boolean = false;
+  @state() confirmRemove: boolean = false;
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
@@ -189,11 +189,115 @@ export class ManifestShareForm extends LitElement {
         color: #4f3fb6;
       }
 
-      @media(max-width: 765px){
+      .confirm {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        background-color: #F2F3FB;
+        border: 1px dashed #4F3FB6;
+        border-radius: 8px;
+        gap: 10px;
+        padding: 3.5px;
+      }
+
+      #class-actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .confirm p {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .confirm sl-button::part(base){
+        padding: 10px;
+        height: 25px;
+      }
+
+      .confirm sl-button::part(label){
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      #extra-step{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .arrow_link {
+        margin: 0;
+        border-bottom: 1px solid var(--primary-color);
+        white-space: nowrap;
+      }
+
+      .arrow_anchor {
+        text-decoration: none;
+        font-size: var(--arrow-link-font-size);
+        font-weight: bold;
+        margin: 0px 0.5em 0px 0px;
+        line-height: 1em;
+        color: var(--primary-color);
+        display: flex;
+        column-gap: 10px;
+        width: fit-content;
+      }
+
+      .arrow_anchor:visited {
+        color: var(--primary-color);
+      }
+
+      .arrow_anchor:hover {
+        cursor: pointer;
+      }
+
+      .arrow_anchor:hover img {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
       }
 
       @media(max-width: 600px){
-        
+        .form-row {
+           flex-direction: column;
+        }
+        .form-field {
+          width: 100%;
+        }
+
+        .multi {
+          display: flex;
+        }
+
+        .confirm {
+          flex-direction: column;
+          gap: 5px;
+          padding: 10px;
+        }
       }
 
       @media(max-width: 480px){
@@ -215,6 +319,7 @@ export class ManifestShareForm extends LitElement {
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     if(manifestInitialized){
       manifestInitialized = false;
+      this.errorCount = 0;
       this.requestValidateAllFields();
     }
 
@@ -224,6 +329,7 @@ export class ManifestShareForm extends LitElement {
       input.classList.add("error");
       let container = (this.shadowRoot!.querySelector(`.action-error-message`) as HTMLElement);
       container!.style.display = "block";
+      this.errorCount++;
     } 
 
     // initial validaiton for params being required
@@ -246,6 +352,7 @@ export class ManifestShareForm extends LitElement {
       if(error_div){
         error_div.style.display = "block";
       }
+      this.errorCount++;
     }
 
     // validation for enctype being required if you specify post
@@ -259,6 +366,16 @@ export class ManifestShareForm extends LitElement {
       if(error_div){
         error_div.style.display = "block";
       }
+      this.errorCount++;
+    }
+    this.handleErrorCount()
+  }
+
+  handleErrorCount(){
+    if(this.errorCount == 0){
+      this.dispatchEvent(errorInTab(false, "share"));
+    } else {
+      this.dispatchEvent(errorInTab(true, "share"));
     }
   }
 
@@ -306,29 +423,7 @@ export class ManifestShareForm extends LitElement {
           });
         }
       }
-    } else {
-      /* This handles the case where the field is not in the manifest.. 
-      we only want to make it red if its REQUIRED. */
-      if(required_fields.includes(field)){
-        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-        input!.classList.add("error");
-
-        if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-          let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-          error_div!.parentElement!.removeChild(error_div!);
-        }
-
-        let div = document.createElement('div');
-        div.classList.add(`${field}-error-div`);
-        let p = document.createElement('p');
-        p.innerText = `${field} is required and is missing from your manifest.`;
-        p.style.color = "#eb5757";
-        div.append(p);
-        this.errorCount++;
-        insertAfter(div, input!.parentNode!.lastElementChild);
-        
-      }
-    }
+    } 
     this.validationPromise = undefined;
     if(this.errorCount == 0){
       this.dispatchEvent(errorInTab(false, "share"));
@@ -350,6 +445,7 @@ export class ManifestShareForm extends LitElement {
   }
 
   toggleForm(adding: boolean){
+    this.confirmRemove = false;
     if(adding){
       this.addingTarget = true;
       this.removeClicked = false;
@@ -364,18 +460,7 @@ export class ManifestShareForm extends LitElement {
       this.dispatchEvent(manifestUpdated);
 
     } else {
-      this.addingTarget = false;
-      this.removeClicked = true;
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: "share_target",
-            removal: true
-        },
-        bubbles: true,
-        composed: true
-      });
-      this.dispatchEvent(manifestUpdated);
-
+      this.confirmRemove = true;
     }
     
   }
@@ -401,7 +486,8 @@ export class ManifestShareForm extends LitElement {
             .file=${file} 
             .share_target=${this.manifest.share_target} 
             @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}
-            @deleteFilte=${(e: CustomEvent) => this.removeFile(e)}>
+            @deleteFilte=${(e: CustomEvent) => this.removeFile(e)}
+            @errorTracker=${(e: CustomEvent) => this.handleFileError(e)}>
           </search-extensions>
         `})
         this.numOfFiles++;
@@ -409,7 +495,10 @@ export class ManifestShareForm extends LitElement {
     }
   }
 
-  
+  handleFileError(e: CustomEvent){
+    e.detail.inc ? this.errorCount++ : this.errorCount--;
+    this.handleErrorCount();
+  }
 
   pushEmptyFile(){
     if(!this.manifest.share_target?.params){
@@ -429,7 +518,8 @@ export class ManifestShareForm extends LitElement {
         .index=${index} .empty=${true} 
         .share_target=${this.manifest.share_target}  
         @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}
-        @deleteFilte=${(e: CustomEvent) => this.removeFile(e)}>
+        @deleteFilte=${(e: CustomEvent) => this.removeFile(e)}
+        @errorTracker=${(e: CustomEvent) => this.handleFileError(e)}>
       </search-extensions>   
     `})
 
@@ -524,7 +614,7 @@ export class ManifestShareForm extends LitElement {
         composed: true
       });
       this.dispatchEvent(manifestUpdated);
-
+      this.errorCount--;
     } else {
       // place error border 
       let input = (this.shadowRoot!.querySelector(`[data-field="share_target.action"]`) as unknown as SlInput);
@@ -535,7 +625,9 @@ export class ManifestShareForm extends LitElement {
       if(error_div){
         error_div.style.display = "block";
       }
+      this.errorCount++;
     }
+    this.handleErrorCount();
   }
 
   async handleParameterInputChange(field: string){
@@ -566,6 +658,7 @@ export class ManifestShareForm extends LitElement {
         if(error_div){
           error_div.style.display = "none";
         }
+        this.errorCount--;
       }
 
       // update manifest
@@ -598,8 +691,10 @@ export class ManifestShareForm extends LitElement {
         }
         let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
         error_div.style.display = "block";
+        this.errorCount++;
       }
     }
+    this.handleErrorCount();
   }
 
   async handleFileChange(e: CustomEvent){
@@ -622,22 +717,73 @@ export class ManifestShareForm extends LitElement {
 
   }
 
+  renderAddorRemove(){
+    if((this.manifest.share_target && !this.removeClicked) || this.addingTarget){
+      if(!this.confirmRemove){
+        return html`
+          <sl-button class="toggle-button" @click=${() => this.toggleForm(false)}><img src="../assets/minus.svg" alt="minus symbol" /> Remove Share Target</sl-button>
+        ` 
+      } else {
+        return html`
+          <div class="confirm">
+            <p>Are you sure you want to remove the share target?</p>
+            <div id="class-actions">
+              <sl-button @click=${() => this.removeShareTarget()}>Yes</sl-button>
+              <sl-button @click=${() => this.goBackToAdding()}>No</sl-button>
+            </div>
+          </div>`
+      }
+    } else {
+      return html`
+        <sl-button class="toggle-button" @click=${() => this.toggleForm(true)}><img src="assets/plus.svg" alt="plus symbol" />Add Share Target</sl-button>
+      `
+    }
+  }
+
+  goBackToAdding(){
+    this.addingTarget = true;
+    this.confirmRemove = false;
+  }
+
+  removeShareTarget(){
+    this.addingTarget = false;
+    this.removeClicked = true;
+    let manifestUpdated = new CustomEvent('manifestUpdated', {
+      detail: {
+          field: "share_target",
+          removal: true
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(manifestUpdated);
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div id="action-holder">
-          ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
-            html`
-              <sl-button class="toggle-button" @click=${() => this.toggleForm(false)}><img src="../assets/minus.svg" alt="minus symbol" /> Remove Share Target</sl-button>
-            ` :
-            html`
-              <sl-button class="toggle-button" @click=${() => this.toggleForm(true)}><img src="assets/plus.svg" alt="plus symbol" />Add Share Target</sl-button>
-            `
-          }
+          ${this.renderAddorRemove()}
         </div>
+        
 
         ${((this.manifest.share_target && !this.removeClicked) || this.addingTarget) ?
           html`
+            <div id="extra-step">
+              <manifest-field-tooltip .field=${"share_target.extra-step"}></manifest-field-tooltip>
+              <a
+                class="arrow_anchor"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/share_target#examples"
+                rel="noopener"
+                target="_blank"
+              >
+                <p class="arrow_link">Handle receiving share data in your code</p>
+                <img
+                  src="/assets/new/arrow.svg"
+                  alt="arrow"
+                />
+              </a>
+            </div>
             <form id="share-target-form">
               <div class="form-row">
                 <div class="form-field">
@@ -737,7 +883,7 @@ export class ManifestShareForm extends LitElement {
                   </div>
                   <p class="field-desc">An object (or an array of objects) defining which files are accepted by the share target</p>
                   ${this.files.map((file: any) => file.html)}
-                  <sl-button @click=${() => this.pushEmptyFile()}>Add File</sl-button>
+                  <sl-button id="add-new-file" @click=${() => this.pushEmptyFile()}>Add File</sl-button>
                 </div>
               </div>
               

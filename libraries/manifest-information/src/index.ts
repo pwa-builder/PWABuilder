@@ -500,5 +500,23 @@ export const manifest_fields: { [field: string]: infoPanel} = {
   required: false,
   docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
 },
+"share_target.extra-step": {
+  description:[
+    `When a user selects your app in the system's share dialog, your PWA is launched, and a HTTP request is made to the provided URL. You will need to add this scriot to your SW.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false
+},
 
 };
