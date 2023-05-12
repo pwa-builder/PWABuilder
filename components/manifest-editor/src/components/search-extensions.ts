@@ -300,7 +300,12 @@ export class SearchExtensions extends LitElement {
   }
 
   renderTags(type: string){
-    return html`<sl-tag size="small" removable>${type}</sl-tag>`
+    return html`<sl-tag size="small" removable @sl-remove=${() => this.removeAcceptEntry(type)}>${type}</sl-tag>`
+  }
+
+  removeAcceptEntry(type: string){
+    this.file.accept = this.file.accept.filter((ext: string) => ext != type);
+    this.requestUpdate("file")
   }
 
   handleTagChange(){
