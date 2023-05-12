@@ -1,5 +1,5 @@
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
-import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
+import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { errorInTab, insertAfter } from '../utils/helpers';
 import {
@@ -30,7 +30,7 @@ export class ManifestShareForm extends LitElement {
   @state() addingTarget: boolean = false;
   @state() removeClicked: boolean = false;
   @state() postSelected: boolean = false;
-  @state() files: TemplateResult[] = [];
+  @state() files: any = [];
   @state() numOfFiles: number = 0;
   @state() filteredList: string[] = [];
   @state() errored: boolean = false;
@@ -341,7 +341,7 @@ export class ManifestShareForm extends LitElement {
     if(this.manifest.share_target?.method === "POST"){
       this.postSelected = true;
     }
-    this.initFiles();
+    this.composeFiles(this.manifest!.share_target!.params!.files!);
   }
 
   decideFocus(field: string){
@@ -386,20 +386,30 @@ export class ManifestShareForm extends LitElement {
     this.handleTopLevelInputChange("method");
   }
 
-  initFiles(){
-    let filesField = this.manifest.share_target?.params?.files;
+  composeFiles(data: FilesParams[]){
+    if(data){
+      this.files = [];
+      for(let i = 0; i < data.length; i++){
+        let file: FilesParams = data[i];
 
-    if(filesField){
-      for(let i = 0; i < filesField.length; i++){
-        let file: FilesParams = filesField[i];
-
-        this.files.push(html`
-          <search-extensions .index=${i} .empty=${false} .file=${file} .share_target=${this.manifest.share_target} @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>
-        `)
+        this.files.push({
+          index: i,
+          html: html`
+          <search-extensions 
+            .index=${i} 
+            .empty=${false} 
+            .file=${file} 
+            .share_target=${this.manifest.share_target} 
+            @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}
+            @deleteFilte=${(e: CustomEvent) => this.removeFile(e)}>
+          </search-extensions>
+        `})
         this.numOfFiles++;
       }
     }
   }
+
+  
 
   pushEmptyFile(){
     if(!this.manifest.share_target?.params){
@@ -409,15 +419,24 @@ export class ManifestShareForm extends LitElement {
       this.manifest.share_target!.params!["files"] = [];
     }
     let temp = this.manifest.share_target!
+    
+
+    let index = this.manifest.share_target!.params!.files?.length;
+    this.files.push({
+      index: index,
+      html: html`
+      <search-extensions 
+        .index=${index} .empty=${true} 
+        .share_target=${this.manifest.share_target}  
+        @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}
+        @deleteFilte=${(e: CustomEvent) => this.removeFile(e)}>
+      </search-extensions>   
+    `})
+
     temp.params!.files!.push({
       "name": "",
       "accept": []
     })
-
-    let index = this.manifest.share_target!.params!.files?.length - 1;
-    this.files.push(html`
-      <search-extensions .index=${index} .empty=${true} .share_target=${this.manifest.share_target}  @fileChanged=${(e: CustomEvent) => this.handleFileChange(e)}></search-extensions>   
-    `)
 
     // update manifest
     let manifestUpdated = new CustomEvent('manifestUpdated', {
@@ -430,6 +449,41 @@ export class ManifestShareForm extends LitElement {
     });
     this.dispatchEvent(manifestUpdated);
     this.requestUpdate();
+  }
+
+  removeFile(e: CustomEvent){
+    let files = this.manifest.share_target?.params?.files;
+    let temp_files: FilesParams[] = [];
+    
+    // remove matching file
+    let i = 0;
+    while(files![i].name !== e.detail.file.name){
+      temp_files.push(files![i]);
+      i++;
+    }
+
+    // the break ensures that we only delete the first of 
+    // files with the same name. files shouldn't have the same name
+    // so this shouldn't be an issue but just in case
+    temp_files.push(...files!.slice(i + 1));
+
+    // update changedValue with updated list
+    let temp = this.manifest.share_target;
+    temp!.params!.files = temp_files;
+
+    // update manifest
+    let manifestUpdated = new CustomEvent('manifestUpdated', {
+      detail: {
+          field: "share_target",
+          change: temp
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(manifestUpdated);
+
+    this.composeFiles(temp_files);
+
   }
 
   renderFiles(){
@@ -682,7 +736,7 @@ export class ManifestShareForm extends LitElement {
                     </div>
                   </div>
                   <p class="field-desc">An object (or an array of objects) defining which files are accepted by the share target</p>
-                  ${this.files.map((file: TemplateResult) => file)}
+                  ${this.files.map((file: any) => file.html)}
                   <sl-button @click=${() => this.pushEmptyFile()}>Add File</sl-button>
                 </div>
               </div>

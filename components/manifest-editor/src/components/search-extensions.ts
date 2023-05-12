@@ -11,6 +11,7 @@ export class SearchExtensions extends LitElement {
   @property({ type: Object }) file: any = 0;
   @property({ type: Object }) tags: string[] = [];
   @state() filteredList: string[] = [];
+  @state() emptyName = false;
 
   static get styles() {
     return css`
@@ -311,11 +312,10 @@ export class SearchExtensions extends LitElement {
       name_input.classList.add("error");
 
       // add error message
-      let error_div = (this.shadowRoot!.querySelector(`.name-error-message`) as HTMLElement);
+      let error_div = (this.shadowRoot!.querySelector(`.name1-error-message`) as HTMLElement);
       if(error_div){
         error_div.style.display = "block";
       }
-      return;
     }
 
     // remove our own errors
@@ -355,7 +355,6 @@ export class SearchExtensions extends LitElement {
       if(error_div){
         error_div.style.display = "block";
       }
-      return;
     } 
 
     // remove error border from tags
@@ -371,7 +370,6 @@ export class SearchExtensions extends LitElement {
       error_div.style.display = "none";
     }
 
-    console.log("index sending to change file", this.index)
     // do validation
     let fileChanged = new CustomEvent('fileChanged', {
       detail: {
@@ -382,6 +380,18 @@ export class SearchExtensions extends LitElement {
       composed: true
     });
     this.dispatchEvent(fileChanged);
+  }
+
+  removeFile(){
+    let deleteFilte = new CustomEvent('deleteFilte', {
+      detail: {
+          file: this.file,
+          index: this.index
+      },
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(deleteFilte);
   }
 
   
@@ -420,9 +430,10 @@ export class SearchExtensions extends LitElement {
           </div>
         </div>
       </div>
-      <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;"></sl-icon-button>
+      <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;" @click=${() => this.removeFile()}></sl-icon-button>
       <p class="accept-error-message error-message">Be sure to specify which file types your share target accepts</p>
-      <p class="name-error-message error-message">Be sure to specify the name of the form field used to share files.</p>
+      <p class="name1-error-message error-message">Be sure to specify the name of the form field used to share files.</p>
+      <p class="name2-error-message error-message">Duplicate value for the name field, manifest not updated.</p>
     </div>
 
       
