@@ -11,7 +11,7 @@ import { resolveUrl } from '../utils/urls';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
 
-const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+const baseUrl = 'https://appimagegenerator-prod-dev.azurewebsites.net';
 
 let manifestInitialized = false;
 
