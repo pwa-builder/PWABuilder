@@ -195,8 +195,8 @@ export class ManifestShareForm extends LitElement {
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        background-color: #F2F3FB;
-        border: 1px dashed #4F3FB6;
+        background-color: #ffffff;
+        border: 1px dashed #4f3fb67f;
         border-radius: 8px;
         gap: 10px;
         padding: 3.5px;
@@ -219,6 +219,12 @@ export class ManifestShareForm extends LitElement {
       .confirm sl-button::part(base){
         padding: 10px;
         height: 25px;
+        border-color: #4f3fb6;
+        background-color: #F2F3FB;
+      }
+
+      .confirm sl-button::part(base):hover{
+        background-color: #dfe2f5;
       }
 
       .confirm sl-button::part(label){
@@ -264,6 +270,30 @@ export class ManifestShareForm extends LitElement {
 
       .arrow_anchor:hover img {
         animation: bounce 1s;
+      }
+
+      #add-new-file {
+        width: fit-content
+      }
+
+      #add-new-file::part(base){
+        padding: 15px 20px;
+        height: 30px;
+        border-color: #4f3fb6;
+        background-color: #F2F3FB;
+        min-width: 15%;
+        width: fit-content;
+      }
+
+      #add-new-file::part(base):hover{
+        background-color: #dfe2f5;
+      }
+
+      #add-new-file::part(label){
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
       }
 
       @keyframes bounce {
@@ -332,6 +362,21 @@ export class ManifestShareForm extends LitElement {
       container!.style.display = "block";
       this.errorCount++;
     } 
+
+    // initial validation for method = GET or POST
+    const validMethods: string[] = ["GET", "POST"]
+    let select: SlSelect = this.shadowRoot!.querySelector(`sl-select[data-field="share_target.method"]`) as unknown as SlSelect;
+    let container = (this.shadowRoot!.querySelector(`.method-error-message`) as HTMLElement);
+
+    if(!validMethods.includes(this.manifest.share_target!.method!)){
+      select.classList.add("error");
+      container!.style.display = "block";
+      this.errorCount++;
+    } else {
+      select.classList.remove("error");
+      container!.style.display = "none";
+      this.errorCount--;
+    }
 
     // initial validaiton for params being required
     let param_inputs: NodeList = this.shadowRoot!.querySelectorAll(".params");
@@ -622,6 +667,23 @@ export class ManifestShareForm extends LitElement {
     const formData = new FormData(form);
     const change = (formData.get(field) as string);
 
+    if(field === "method"){
+      // validation for method = GET or POST
+      const validMethods: string[] = ["GET", "POST"]
+      let select: SlSelect = this.shadowRoot!.querySelector(`sl-select[data-field="share_target.method"]`) as unknown as SlSelect;
+      let container = (this.shadowRoot!.querySelector(`.method-error-message`) as HTMLElement);
+
+      if(!validMethods.includes(change)){
+        select.classList.add("error");
+        container!.style.display = "block";
+        this.errorCount++;
+      } else {
+        select.classList.remove("error");
+        container!.style.display = "none";
+        this.errorCount--;
+      }
+    }
+
     if(field === "enctype" && change.trim() === ""){
         let enc_input = (this.shadowRoot!.querySelector(`[data-field="share_target.enctype"]`) as unknown as SlInput);
         
@@ -635,7 +697,7 @@ export class ManifestShareForm extends LitElement {
         this.errorCount++;
         this.requestUpdate();
         return;
-    } else {
+    } else if(field === "enctype"){
       let enc_input = (this.shadowRoot!.querySelector(`[data-field="share_target.enctype"]`) as unknown as SlInput);
       // place error border 
       enc_input.classList.remove("error")
@@ -794,6 +856,9 @@ export class ManifestShareForm extends LitElement {
   removeShareTarget(){
     this.addingTarget = false;
     this.removeClicked = true;
+    this.postSelected = false;
+    this.files = [];
+
     let manifestUpdated = new CustomEvent('manifestUpdated', {
       detail: {
           field: "share_target",
@@ -857,6 +922,8 @@ export class ManifestShareForm extends LitElement {
                     <sl-option value=${"GET"}>GET</sl-option>
                     <sl-option value=${"POST"}>POST</sl-option>
                   </sl-select>
+                  <p class="method-error-message error-message">Method must be set to GET or POST only.</p>
+
                 </div>
               </div>
               ${this.postSelected ? 
