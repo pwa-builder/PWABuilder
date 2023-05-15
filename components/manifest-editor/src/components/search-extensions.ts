@@ -331,11 +331,10 @@ export class SearchExtensions extends LitElement {
       name_input.classList.add("error");
 
       // add error message
-      let error_div = (this.shadowRoot!.querySelector(`.name1-error-message`) as HTMLElement);
+      let error_div = (this.shadowRoot!.querySelector(`.name-error-message`) as HTMLElement);
       if(error_div){
         error_div.style.display = "block";
         this.errorCount++;
-        console.log(`inc error count bc adding name error message`)
       }
     }
 
@@ -343,13 +342,12 @@ export class SearchExtensions extends LitElement {
     // remove error border 
     let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as SlInput);
     file_input.classList.remove("error");
-
+    
     // remove error message
     let error_div = (this.shadowRoot!.querySelector(`.accept-error-message`) as HTMLElement);
-    if(error_div){
+    if(error_div && error_div.style.display === "block"){
       error_div.style.display = "none";
       this.errorCount--;
-      console.log(`dec error count bc removing accept error message`)
     }
     
     // do validation
@@ -380,24 +378,23 @@ export class SearchExtensions extends LitElement {
       if(error_div){
         error_div.style.display = "block";
         this.errorCount++;
-        console.log(`inc error count bc adding accept error message`)
       }
     } 
 
-    // remove error border from tags
+    // remove error border from tags if necessary
     let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as SlInput);
     file_input.classList.remove("error");
 
-    // remove own error border
-    input.classList.remove("error");
-
     // remove error message
     let error_div = (this.shadowRoot!.querySelector(`.name-error-message`) as HTMLElement);
-    if(error_div){
+    if(error_div && error_div.style.display === "block"){
       error_div.style.display = "none";
       this.errorCount--;
-      console.log(`dec error count bc removing name error message`)
     }
+
+    // remove own error border
+    input.classList.remove("error");
+    
 
     // do validation
     let fileChanged = new CustomEvent('fileChanged', {
@@ -414,6 +411,11 @@ export class SearchExtensions extends LitElement {
   }
 
   removeFile(){
+    let errors = this.shadowRoot!.querySelectorAll(".error-message")
+    if(errors.length > 0){
+      this.errorCount = 0;
+      this.updateError();
+    }
     let deleteFilte = new CustomEvent('deleteFilte', {
       detail: {
           file: this.file,
@@ -426,11 +428,9 @@ export class SearchExtensions extends LitElement {
   }
 
   updateError(){
-    let inc = false;
-    this.errorCount === 0 ? inc = false : inc = true;
     let errorTracker = new CustomEvent('errorTracker', {
       detail: {
-          inc: inc
+          count: this.errorCount
       },
       bubbles: true,
       composed: true
@@ -476,8 +476,7 @@ export class SearchExtensions extends LitElement {
       </div>
       <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;" @click=${() => this.removeFile()}></sl-icon-button>
       <p class="accept-error-message error-message">Be sure to specify which file types your share target accepts</p>
-      <p class="name1-error-message error-message">Be sure to specify the name of the form field used to share files.</p>
-      <p class="name2-error-message error-message">Duplicate value for the name field, manifest not updated.</p>
+      <p class="name-error-message error-message">Be sure to specify the name of the form field used to share files.</p>
     </div>
 
       

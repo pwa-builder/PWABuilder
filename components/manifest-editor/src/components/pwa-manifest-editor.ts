@@ -193,8 +193,6 @@ export class PWAManifestEditor extends LitElement {
     let panel = e.detail.panel;
     let areThereErrors = e.detail.areThereErrors;
 
-    panel === "share" ? console.log(panel, areThereErrors) : console.log();
-
     tabs.forEach((temp: any) => {
       if(temp.panel === panel){
         tab = temp;

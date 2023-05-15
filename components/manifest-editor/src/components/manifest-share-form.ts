@@ -1,4 +1,4 @@
-import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { errorInTab, insertAfter } from '../utils/helpers';
@@ -38,6 +38,7 @@ export class ManifestShareForm extends LitElement {
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
   private errorCount: number = 0;
+  private fileError: number = 0;
 
   static get styles() {
     return css`
@@ -333,26 +334,11 @@ export class ManifestShareForm extends LitElement {
     } 
 
     // initial validaiton for params being required
-    let param_inputs = this.shadowRoot!.querySelectorAll(".params");
-    let all_empty = true;
-    for(let i = 0; i < param_inputs.length; i++){
-      let param = (param_inputs[i] as SlInput);
-      if(param.value.length !== 0){
-        all_empty = false;
-        return;
-      }
-    }
+    let param_inputs: NodeList = this.shadowRoot!.querySelectorAll(".params");
+    let all_empty = this.areParamsEmpty(param_inputs)
 
-    if(param_inputs && all_empty){
-      for(let i = 0; i < param_inputs.length; i++){
-        let param = (param_inputs[i] as SlInput);
-        param.classList.add("error");
-      }
-      let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
-      if(error_div){
-        error_div.style.display = "block";
-      }
-      this.errorCount++;
+    if(this.addingTarget && param_inputs && all_empty && !this.manifest.share_target?.params?.files){
+      this.parameterErrors(true)
     }
 
     // validation for enctype being required if you specify post
@@ -372,7 +358,7 @@ export class ManifestShareForm extends LitElement {
   }
 
   handleErrorCount(){
-    if(this.errorCount == 0){
+    if(this.errorCount == 0 && this.fileError == 0){
       this.dispatchEvent(errorInTab(false, "share"));
     } else {
       this.dispatchEvent(errorInTab(true, "share"));
@@ -425,18 +411,16 @@ export class ManifestShareForm extends LitElement {
       }
     } 
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
-      this.dispatchEvent(errorInTab(false, "share"));
-    } else {
-      this.dispatchEvent(errorInTab(true, "share"));
-    }
+    this.handleErrorCount();
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     if(this.manifest.share_target?.method === "POST"){
       this.postSelected = true;
     }
-    this.composeFiles(this.manifest!.share_target!.params!.files!);
+    if(this.manifest.share_target?.params?.files){
+      this.composeFiles(this.manifest!.share_target!.params!.files!);
+    }
   }
 
   decideFocus(field: string){
@@ -496,11 +480,55 @@ export class ManifestShareForm extends LitElement {
   }
 
   handleFileError(e: CustomEvent){
-    e.detail.inc ? this.errorCount++ : this.errorCount--;
+    this.fileError = e.detail.count;
     this.handleErrorCount();
   }
 
+  parameterErrors(addingErrors: boolean){
+    
+    let param_inputs = this.shadowRoot!.querySelectorAll(".params");
+    if(addingErrors){
+      for(let i = 0; i < param_inputs.length; i++){
+        let param = (param_inputs[i] as SlInput);
+        param.classList.add("error");
+      }
+      let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
+      if(error_div){
+        error_div.style.display = "block";
+      }
+      this.errorCount++;
+      
+    } else {
+      // remove error fields
+      if(param_inputs){
+        for(let i = 0; i < param_inputs.length; i++){
+          let param = (param_inputs[i] as SlInput);
+          param.classList.remove("error");
+        }
+        let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
+        if(error_div){
+          error_div.style.display = "none";
+        }
+        this.errorCount--;
+      }
+    }
+  }
+
+  areParamsEmpty(param_inputs: NodeList): boolean {
+    
+    for(let i = 0; i < param_inputs.length; i++){
+      let param = (param_inputs[i] as SlInput);
+      if(param.value.length !== 0){
+        return false;
+      }
+    }
+    return true;
+  }
+
   pushEmptyFile(){
+
+    this.parameterErrors(false)
+
     if(!this.manifest.share_target?.params){
       this.manifest.share_target!["params"] = {};
     }
@@ -538,6 +566,7 @@ export class ManifestShareForm extends LitElement {
       composed: true
     });
     this.dispatchEvent(manifestUpdated);
+    this.handleErrorCount();
     this.requestUpdate();
   }
 
@@ -556,6 +585,14 @@ export class ManifestShareForm extends LitElement {
     // files with the same name. files shouldn't have the same name
     // so this shouldn't be an issue but just in case
     temp_files.push(...files!.slice(i + 1));
+
+    if(temp_files.length == 0){
+      let param_inputs: NodeList = this.shadowRoot!.querySelectorAll(".params");
+      let all_empty = this.areParamsEmpty(param_inputs);
+      if(all_empty){
+        this.parameterErrors(true);
+      }
+    }
 
     // update changedValue with updated list
     let temp = this.manifest.share_target;
@@ -583,7 +620,33 @@ export class ManifestShareForm extends LitElement {
   async handleTopLevelInputChange(field: string){
     const form = (this.shadowRoot!.querySelector('form') as HTMLFormElement);
     const formData = new FormData(form);
-    const change = formData.get(field);
+    const change = (formData.get(field) as string);
+
+    if(field === "enctype" && change.trim() === ""){
+        let enc_input = (this.shadowRoot!.querySelector(`[data-field="share_target.enctype"]`) as unknown as SlInput);
+        
+        // place error border 
+        enc_input.classList.add("error")
+        // place error message
+        let error_div = (this.shadowRoot!.querySelector(`.enctype-error-message`) as HTMLElement);
+        if(error_div){
+          error_div.style.display = "block";
+        }
+        this.errorCount++;
+        this.requestUpdate();
+        return;
+    } else {
+      let enc_input = (this.shadowRoot!.querySelector(`[data-field="share_target.enctype"]`) as unknown as SlInput);
+      // place error border 
+      enc_input.classList.remove("error")
+
+      // place error message
+      let error_div = (this.shadowRoot!.querySelector(`.enctype-error-message`) as HTMLElement);
+      if(error_div){
+        error_div.style.display = "none";
+      }
+      this.errorCount--;
+    }
 
     let temp: any = this.manifest.share_target;
     if(temp){
@@ -633,7 +696,15 @@ export class ManifestShareForm extends LitElement {
   async handleParameterInputChange(field: string){
     const form = (this.shadowRoot!.querySelector('form') as HTMLFormElement);
     const formData = new FormData(form);
-    const change = formData.get(`${field}`);
+    const change = (formData.get(`${field}`) as string);
+
+    if(change.trim() == ""){
+      let param_inputs: NodeList = this.shadowRoot!.querySelectorAll(".params");
+      let all_empty = this.areParamsEmpty(param_inputs);
+      if(all_empty){
+        this.parameterErrors(true);
+      }
+    }
 
     let temp: any = this.manifest.share_target;
     if(!temp["params"]){
@@ -647,19 +718,7 @@ export class ManifestShareForm extends LitElement {
     let passed = validation!.valid;
 
     if(passed){
-      // remove error fields
-      let param_inputs = this.shadowRoot!.querySelectorAll(".params");
-      if(param_inputs){
-        for(let i = 0; i < param_inputs.length; i++){
-          let param = (param_inputs[i] as SlInput);
-          param.classList.remove("error");
-        }
-        let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
-        if(error_div){
-          error_div.style.display = "none";
-        }
-        this.errorCount--;
-      }
+      this.parameterErrors(false)
 
       // update manifest
       let manifestUpdated = new CustomEvent('manifestUpdated', {
@@ -674,24 +733,11 @@ export class ManifestShareForm extends LitElement {
 
     } else {
       // initial validaiton for params being required
-      let param_inputs = this.shadowRoot!.querySelectorAll(".params");
-      let all_empty = true;
-      for(let i = 0; i < param_inputs.length; i++){
-        let param = (param_inputs[i] as SlInput);
-        if(param.value.length !== 0){
-          all_empty = false;
-          return;
-        }
-      }
+      let param_inputs: NodeList = this.shadowRoot!.querySelectorAll(".params");
+      let all_empty = this.areParamsEmpty(param_inputs)
 
       if(param_inputs && all_empty){
-        for(let i = 0; i < param_inputs.length; i++){
-          let param = (param_inputs[i] as SlInput);
-          param.classList.add("error");
-        }
-        let error_div = (this.shadowRoot!.querySelector(`.params-error-message`) as HTMLElement);
-        error_div.style.display = "block";
-        this.errorCount++;
+        this.parameterErrors(true)
       }
     }
     this.handleErrorCount();
@@ -836,7 +882,7 @@ export class ManifestShareForm extends LitElement {
                   <div class="field-header">
                     <div class="header-left">
                       <h3>Parameters</h3>
-                      <manifest-field-tooltip .field=${"share_target.params"}></manifest-field-tooltip>
+                      <!-- <manifest-field-tooltip .field=${"share_target.params"}></manifest-field-tooltip> -->
                     </div>
                     <p class="field-desc">(required)</p>
                   </div>
@@ -878,12 +924,12 @@ export class ManifestShareForm extends LitElement {
                   <div class="field-header">
                     <div class="header-left">
                       <h4 class="sub">Files</h4>
-                      <manifest-field-tooltip .field=${"share_target.params.files"}></manifest-field-tooltip>
+                      <!-- <manifest-field-tooltip .field=${"share_target.params.files"}></manifest-field-tooltip> -->
                     </div>
                   </div>
                   <p class="field-desc">An object (or an array of objects) defining which files are accepted by the share target</p>
                   ${this.files.map((file: any) => file.html)}
-                  <sl-button id="add-new-file" @click=${() => this.pushEmptyFile()}>Add File</sl-button>
+                  <sl-button id="add-new-file" class="params" @click=${() => this.pushEmptyFile()}>Add File</sl-button>
                 </div>
               </div>
               
