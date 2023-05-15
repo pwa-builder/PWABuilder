@@ -461,7 +461,7 @@ export class SearchExtensions extends LitElement {
           </div>
           <div class="type-box" @click=${() => this.focusInput()} data-index=${this.index}>
             ${(!this.empty || (this.file.accept && this.file.accept.length > 0)) ? this.file!.accept.map((type: string) => this.renderTags(type)) : html``}
-            <input data-index=${this.index} @keyup=${(e: KeyboardEvent) => this.handleNewType(e)} @blur=${() => this.removeFocus()} />
+            <input name=${`tag-input-${this.index}`} data-index=${this.index} @keyup=${(e: KeyboardEvent) => this.handleNewType(e)} @blur=${() => this.removeFocus()} />
             <div class="suggestions" data-index=${this.index}>
               ${this.filteredList && this.filteredList.length > 0 ? 
                 this.filteredList.map((ext: string) => 

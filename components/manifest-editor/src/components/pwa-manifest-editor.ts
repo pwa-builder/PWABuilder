@@ -288,7 +288,7 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
         <sl-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</sl-tab>
         <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
-        <sl-tab slot="nav" panel="share" ?active=${this.startingTab === "share"}>Share</sl-tab>
+        <sl-tab slot="nav" panel="share" ?active=${this.startingTab === "share"}>Share Target</sl-tab>
         <sl-tab slot="nav" panel="code">Code</sl-tab>
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-info-form></sl-tab-panel>
         <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-settings-form></sl-tab-panel>
