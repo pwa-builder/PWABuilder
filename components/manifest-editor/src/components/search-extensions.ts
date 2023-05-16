@@ -103,7 +103,7 @@ export class SearchExtensions extends LitElement {
       .form-field p {
         font-size: 14px;
       }
-
+      
       .suggestions {
         display: none;
         position: absolute;
@@ -156,6 +156,7 @@ export class SearchExtensions extends LitElement {
         display: flex;
         flex-direction: column;
       }
+     
       .field-header{
         display: flex;
         align-items: center;

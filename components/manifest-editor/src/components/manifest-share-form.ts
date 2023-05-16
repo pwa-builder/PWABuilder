@@ -299,26 +299,26 @@ export class ManifestShareForm extends LitElement {
         color: #4f3fb6;
       }
 
-        .method sl-option::part(base){
-          font-size: var(--body-font-size);
-          color: #757575;
-        }
+      .method sl-option::part(base){
+        font-size: var(--body-font-size);
+        color: #757575;
+      }
 
-        .method sl-option:focus-within::part(base) {
-          color: #ffffff;
-          background-color: #4F3FB6;
-        }
+      .method sl-option:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
 
-        .method sl-option::part(base):hover{
-          color: #ffffff;
-          background-color: #4F3FB6;
-        }
+      .method sl-option::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
 
-        .method::part(display-label){
-          font-size: var(--body-font-size);
-          color: #757575;
-        }
-
+      .method::part(display-label){
+        font-size: var(--body-font-size);
+        color: #757575;
+      }
+        
       @keyframes bounce {
           0%,
           20%,
@@ -521,7 +521,6 @@ export class ManifestShareForm extends LitElement {
   }
 
   handleMethodChange(){
-    console.log("hit")
     let select = (this.shadowRoot!.querySelector(".method") as unknown as SlSelect);
     this.postSelected = select.value === "POST";
     this.handleTopLevelInputChange("method");
