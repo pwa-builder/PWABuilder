@@ -335,7 +335,7 @@ The `share_target` member is an object which can contain the following members:
     * `url`: Name of the query parameter for the URL being shared.
     * `files`
         * `name`: Name of the form field used to share files.
-        * `accept`: A string or array of strings of accepted MIME types of extensions.
+        * `accept`: A string or array of strings of accepted MIME types or extensions.
 
 ```json
 "share_target": {

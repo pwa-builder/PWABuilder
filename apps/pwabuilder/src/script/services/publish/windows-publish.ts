@@ -26,7 +26,9 @@ export async function generateWindowsPackage(
   } 
   // the api expects a comma separated string instead of a list, so we do it this way
   else {
-    windowsOptions.resourceLanguage = (windowsOptions.resourceLanguage as string[])!.join(",");
+    if(typeof(windowsOptions.resourceLanguage) != "string"){
+      windowsOptions.resourceLanguage = (windowsOptions.resourceLanguage as string[])!.join(",");
+    }
   }
 
   const validationErrors = validateWindowsOptions(windowsOptions);

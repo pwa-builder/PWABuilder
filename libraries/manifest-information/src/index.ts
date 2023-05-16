@@ -262,6 +262,7 @@ export const manifest_fields: { [field: string]: infoPanel} = {
       "url": "url"
     }
 }`,
+    location: "share",
     required: false,
     docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
     image: "assets/manifest_examples/share_target_example_image.jpg"
@@ -346,6 +347,176 @@ export const manifest_fields: { [field: string]: infoPanel} = {
     location: "platform",
     required: false,
     docs_link: "https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md"
+  },
+  "share_target.action": {
+    description:[
+      `The URL within the scope of your app that your app will handle the share action.`,
+  ],
+    purpose: null,
+    example: null,
+    code:`"share_target": {
+  "action": "/share-target/",
+  "methods": ["GET"],
+  "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+}`,
+    location: "share",
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.method": {
+  description:[
+    `GET or POST. Use POST if the shared data includes binary data like images.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
   }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.enctype": {
+  description:[
+    `The encoding of the data when the method is a POST request. Otherwise, ignored.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.params.title": {
+  description:[
+    `Name of the query parameter for the title of the doucument being shared.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.params.text": {
+  description:[
+    `Name of the query parameter for the body of the message being shared.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.params.url": {
+  description:[
+    `Name of the query parameter for the URL being shared.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.params.files.name": {
+  description:[
+    `Name of the form field used to share files.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.params.files.accept": {
+  description:[
+    `A string or array of strings of accepted MIME types or extensions.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false,
+  docs_link: "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+},
+"share_target.extra-step": {
+  description:[
+    `When a user selects your app in the system's share dialog, your PWA is launched, and a HTTP request is made to the provided URL. You will need to add this scriot to your SW.`,
+],
+  purpose: null,
+  example: null,
+  code:`"share_target": {
+"action": "/share-target/",
+"methods": ["GET"],
+"params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}`,
+  location: "share",
+  required: false
+},
 
 };
