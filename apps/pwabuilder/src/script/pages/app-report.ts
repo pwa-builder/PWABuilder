@@ -489,11 +489,11 @@ export class AppReport extends LitElement {
 
         #test-download:disabled {
           cursor: no-drop;
-          color: #595959;
+          color: #757575;
         }
 
         #test-download:disabled .arrow_link {
-          border-color: #595959;
+          border-color: #757575;
         }
 
         #pfs {
@@ -2265,7 +2265,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#757575' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="app-card-header-col">
                   <div id="pwa-image-holder">
