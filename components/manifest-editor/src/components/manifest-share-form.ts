@@ -910,7 +910,7 @@ export class ManifestShareForm extends LitElement {
               <manifest-field-tooltip .field=${"share_target.extra-step"}></manifest-field-tooltip>
               <a
                 class="arrow_anchor"
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/share_target#examples"
+                href="https://docs.pwabuilder.com/#/home/native-features?id=how-to-share-to-your-pwa"
                 rel="noopener"
                 target="_blank"
               >
