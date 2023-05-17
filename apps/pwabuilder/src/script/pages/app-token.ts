@@ -156,11 +156,11 @@ export class AppToken extends LitElement {
       `
     }
 
-    let returnHTML;
+    let banner = html``;
 
     // if tests complete but its a dupe url
     if(!this.testsInProgress && this.dupeURL){
-      returnHTML = html`
+      banner = html`
         <!-- error banner -->
       `
     }
@@ -169,7 +169,7 @@ export class AppToken extends LitElement {
       // Show card with app info + results
 
       return html`
-        ${returnHTML} <!-- Error Banner + the results below -->
+        ${banner} <!-- Error Banner + the results below -->
         <!-- Show card with results + error banner -->
       `
   }
