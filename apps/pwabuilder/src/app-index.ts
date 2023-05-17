@@ -131,6 +131,13 @@ export class AppIndex extends LitElement {
             action: async () => {
               await import('./script/pages/image-generator.js');
             },
+          },
+          {
+            path: '/giveaway', // token giveaway page
+            component: 'app-token',
+            action: async () => {
+              await import('./script/pages/app-token.js');
+            },
           }
         ] as Route[],
       },
