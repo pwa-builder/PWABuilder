@@ -174,22 +174,78 @@ The only primary change here is that we are making a call to `navigator.canShare
 
 You can also enable your progressive web app to receive shared files from the native operating system. This is enabled in your PWA's web app manifest by adding the `share_target` member.
 
-Here is an example of how to handle a shared URL:
+#### Adding Share Target To Your Manifest
+
+You can add the `share_target` field to your Manifest like this:
 
 ```json
 "share_target": {
-      "action": "index.html?share-action",
-      "method": "GET",
-      "enctype": "application/x-www-form-urlencoded",
-      "params": {
-        "title": "title",
-        "text": "text",
-        "url": "url"
-      }
+    "action": "/share-action/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text"
     }
+}
 ```
 
 The key field here is `action`. This allows you to set a specific URL that will open and handle a shared link of this type. If you want to execute functionality based on a shared link, you can have this page parse a link and determine how to handle the shared data.
+
+Also, you can use the `params` field to specify which data will be parsed from the shared URL. For our above snippet, an example URL could look like:
+
+```
+/share-action/?title=example+share+title&text=example+share+text
+```
+
+#### Accessing Shared Data
+To handle data shared through the Web Share API (`title` and `text` from the example above), you can add an event listener to the `action` URL that you specified for your share target:
+
+```js
+window.addEventListener('DOMContentLoaded', () => {
+  const parsedUrl = new URL(window.location);
+  const sharedTitle = parsedUrl.searchParams.get('title');
+  const sharedText = = parsedUrl.searchParams.get('text');
+
+  // Do something with the parsed data
+});
+```
+
+Once you have parsed the data from the share, you can do whatever you would like with it.
+
+#### Receiving Share Data Sent With POST
+
+In the above example, we handled data shared with `GET`, but you can also use the Web Share API to handle `POST` requests. Unlike `GET`, data shared with `POST` is handled by your service worker.
+
+First, you need to specify in the `share_target` field of your Web Manifest that your application accepts POST requests for sharing data:
+
+```json
+"share_target": {
+    "action": "/post-action-url/",
+    "method": "POST",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text"
+    }
+}
+```
+
+Next, you need to add handling for POST requests in a `fetch` handler in your service worker:
+
+```js
+self.addEventListener('fetch', (event) => {
+  // Check if we are handling the proper request
+  if(event.request.url.endsWith("/post-action-url/") && event.request.method === 'POST') {
+    // Parse parameters from POST into proper URL Search Params format
+    const params = new URLSearchParams(Array.from(event.request.url.searchParams.entries()));
+    // Redirect to our page for handling shared data, forward the params
+    return event.respondWith(Response.redirect(`/share-target/?${params.toString()}`, 303));
+  }
+});
+```
+
+Once you have redirected to your share target, you can handle the data just like you would with `GET`.
 
 ## Badging
 
