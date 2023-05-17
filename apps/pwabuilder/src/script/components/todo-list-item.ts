@@ -203,7 +203,7 @@ export class TodoItem extends LitElement {
   }
 
   goToGiveaway(){
-    Router.go("/giveaway")
+    Router.go("/giveaway?site=https://webboard.app")
   }
 
   render() {
