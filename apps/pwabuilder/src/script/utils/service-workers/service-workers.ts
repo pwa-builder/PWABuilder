@@ -52,7 +52,7 @@ self.addEventListener('fetch', (event) => {
   },
   {
     type: "Offline Page Copy of Pages",
-    desc: "A solution that expands the offline capabilities of your app. A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline",
+    desc: "A solution that expands the offline capabilities of your app. A copy of each page is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline",
     code: `// This is the "Offline copy of pages" service worker
 
 const CACHE = "pwabuilder-offline";
@@ -74,7 +74,7 @@ workbox.routing.registerRoute(
   },
   {
     type: "Offline Copy with Backup Offline Page",
-    desc: 'A copy of each pages is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline. This then adds the "offline page" that allows you to customize the message and experience if the app is offline, and the page is not in the cache.',
+    desc: 'A copy of each page is stored in the cache as your visitors view them. This allows a visitor to load any previously viewed page while they are offline. This then adds the "offline page" that allows you to customize the message and experience if the app is offline, and the page is not in the cache.',
     code: `// This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
 
 const CACHE = "pwabuilder-offline-page";
