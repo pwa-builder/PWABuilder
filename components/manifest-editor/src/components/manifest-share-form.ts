@@ -92,7 +92,7 @@ export class ManifestShareForm extends LitElement {
       .toggle-button::part(base) {
         background-color: #F2F3FB;
         border: 1px dashed #4F3FB6;
-        border-radius: 8px;
+        border-radius: 5.5px;
       }
 
       .toggle-button::part(label) {
@@ -116,6 +116,7 @@ export class ManifestShareForm extends LitElement {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         gap: 10px;
+        margin-top: -15px;
       }
       .multi .form-field {
         width: 100%;
@@ -197,7 +198,7 @@ export class ManifestShareForm extends LitElement {
         justify-content: center;
         background-color: #ffffff;
         border: 1px dashed #4f3fb67f;
-        border-radius: 8px;
+        border-radius: 5.5px;
         gap: 10px;
         padding: 3.5px;
       }
@@ -294,8 +295,30 @@ export class ManifestShareForm extends LitElement {
         align-items: center;
         justify-content: center;
         padding: 0;
+        font-weight: 600;
+        color: #4f3fb6;
       }
 
+      .method sl-option::part(base){
+        font-size: var(--body-font-size);
+        color: #757575;
+      }
+
+      .method sl-option:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
+      .method sl-option::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
+      .method::part(display-label){
+        font-size: var(--body-font-size);
+        color: #757575;
+      }
+        
       @keyframes bounce {
           0%,
           20%,
@@ -368,14 +391,17 @@ export class ManifestShareForm extends LitElement {
     let select: SlSelect = this.shadowRoot!.querySelector(`sl-select[data-field="share_target.method"]`) as unknown as SlSelect;
     let container = (this.shadowRoot!.querySelector(`.method-error-message`) as HTMLElement);
 
-    if(!validMethods.includes(this.manifest.share_target!.method!)){
+    let listedMethod = "";
+    (this.manifest.share_target && this.manifest.share_target.method) ? listedMethod = this.manifest.share_target!.method : listedMethod = "";
+
+    if(listedMethod && !validMethods.includes(listedMethod)){
       select.classList.add("error");
       container!.style.display = "block";
       this.errorCount++;
     } else {
-      select.classList.remove("error");
-      container!.style.display = "none";
-      this.errorCount--;
+      if(select) select.classList.remove("error");
+      if(container) container!.style.display = "none";
+      if(this.errorCount > 0) this.errorCount--;
     }
 
     // initial validaiton for params being required
@@ -481,7 +507,7 @@ export class ManifestShareForm extends LitElement {
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
             field: "share_target",
-            change: {}
+            change: {method: "GET"}
         },
         bubbles: true,
         composed: true
@@ -884,7 +910,7 @@ export class ManifestShareForm extends LitElement {
               <manifest-field-tooltip .field=${"share_target.extra-step"}></manifest-field-tooltip>
               <a
                 class="arrow_anchor"
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/share_target#examples"
+                href="https://docs.pwabuilder.com/#/home/native-features?id=how-to-share-to-your-pwa"
                 rel="noopener"
                 target="_blank"
               >
@@ -907,7 +933,7 @@ export class ManifestShareForm extends LitElement {
                     <p class="field-desc">(required)</p>
                   </div>
                   <p class="field-desc">The URL for the web share target </p>
-                  <sl-input name="action" placeholder="Add action" value=${this.manifest.share_target?.action! || ""} @sl-change=${() => this.handleTopLevelInputChange("action")} data-field="share_target.action"></sl-input>
+                  <sl-input name="action" placeholder="Add action (ex: /share-receiver)" value=${this.manifest.share_target?.action! || ""} @sl-change=${() => this.handleTopLevelInputChange("action")} data-field="share_target.action"></sl-input>
                   <p class="action-error-message error-message">Action is a required field and must be in the scope of your PWA</p>
                 </div>
                 <div class="form-field">
@@ -918,7 +944,7 @@ export class ManifestShareForm extends LitElement {
                     </div>
                   </div>
                   <p class="field-desc">The HTTP request method to use</p>
-                  <sl-select name="method" placeholder="Select a method" class="method" value=${this.manifest.share_target?.method! || ""} data-field="share_target.method" @sl-change=${() => this.handleMethodChange()}>
+                  <sl-select name="method" placeholder="Select a method" class="method" value=${this.manifest.share_target?.method! || "GET"} data-field="share_target.method" @sl-change=${() => this.handleMethodChange()}>
                     <sl-option value=${"GET"}>GET</sl-option>
                     <sl-option value=${"POST"}>POST</sl-option>
                   </sl-select>
