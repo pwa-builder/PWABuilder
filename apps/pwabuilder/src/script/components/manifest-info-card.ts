@@ -200,7 +200,8 @@ export class ManifestInfoCard extends LitElement {
         distance="10" 
         placement="left" 
         class="tooltip"
-        @sl-show=${() => this.trackTooltipOpened()}>
+        @sl-show=${() => this.trackTooltipOpened()}
+        @sl-hide=${() => this.handleHover(false)}>
         <button slot="trigger" type="button" class="right" class="nav_link nav_button">
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>
