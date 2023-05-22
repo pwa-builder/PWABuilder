@@ -25,7 +25,7 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], installable?: boolean): Array<TestResult> {
+export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker']/*,installable?: boolean*/): Array<TestResult> {
 	console.info('Testing Service Worker');
 
 	const swFeatures = serviceWorker?.details?.features || null;
@@ -48,14 +48,14 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	  },
 	];
 	// TODO: move installability from here
-	if (typeof installable == 'boolean') {
-		swTestResult.push(
-			{
-			  result: installable,
-			  infoString: installable ? 'Installable' : 'App is not installable',
-			  category: 'required',
-			});
-	}
+	// if (typeof installable == 'boolean') {
+	// 	swTestResult.push(
+	// 		{
+	// 		  result: installable,
+	// 		  infoString: installable ? 'Installable' : 'App is not installable',
+	// 		  category: 'required',
+	// 		});
+	// }
 
 	return swTestResult;
   }
@@ -63,23 +63,25 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
   export function processSecurity(audits?: ReportAudit['audits']): Array<TestResult> {
 
 
-	//TODO: Adjust this to use the new security audits
-	const score = audits?.isOnHttps?.score || false;
+	// TODO: Adjust this to use the new security audits
+	// Installable can't be not on https, probably mixed content due redirects.
+	const isOnHttps = audits?.isOnHttps?.score || audits?.installableManifest?.score || false;
+	const noMixedContent = audits?.isOnHttps?.score || false;
 
 	const organizedResults = [
 	  {
-		result: score,
-		infoString: score ? 'Uses HTTPS' : 'Does not use HTTPS',
+		result: isOnHttps,
+		infoString: isOnHttps ? 'Uses HTTPS' : 'Does not use HTTPS',
 		category: 'required',
 	  },
 	  {
-		result: score,
-		infoString: score ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
+		result: isOnHttps,
+		infoString: isOnHttps ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
 		category: 'required',
 	  },
 	  {
-		result: score,
-		infoString: score ? 'No mixed content on page' : 'Uses mixed content on page',
+		result: noMixedContent,
+		infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page',
 		category: 'required',
 	  },
 	];

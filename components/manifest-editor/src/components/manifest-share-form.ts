@@ -368,13 +368,16 @@ export class ManifestShareForm extends LitElement {
     let select: SlSelect = this.shadowRoot!.querySelector(`sl-select[data-field="share_target.method"]`) as unknown as SlSelect;
     let container = (this.shadowRoot!.querySelector(`.method-error-message`) as HTMLElement);
 
-    if(!validMethods.includes(this.manifest.share_target!.method!)){
+    if (!select || !container || !this.manifest?.share_target?.method)
+      return;
+
+    if(validMethods.includes(this.manifest.share_target.method)){
       select.classList.add("error");
-      container!.style.display = "block";
+      container.style.display = "block";
       this.errorCount++;
     } else {
       select.classList.remove("error");
-      container!.style.display = "none";
+      container.style.display = "none";
       this.errorCount--;
     }
 

@@ -1752,7 +1752,7 @@ export class AppReport extends LitElement {
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
-            findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content, undefined));
+            findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content));
             this.todoItems.push(...findersResults.workerTodos);
             this.requestUpdate();
           });
@@ -1771,7 +1771,7 @@ export class AppReport extends LitElement {
         this.todoItems.push(...await this.testManifest());
       }
       if (!findersResults.serviceWorker?.raw) {
-        this.todoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}}, false)));
+        this.todoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}})));
       }
       this.runningTests = false;
       this.requestUpdate();
@@ -1802,7 +1802,7 @@ export class AppReport extends LitElement {
     }
 
     // TODO: move installability score to different place
-    this.todoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit?.audits?.installableManifest?.score))),
+    this.todoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
     this.todoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
 
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
@@ -2190,7 +2190,6 @@ export class AppReport extends LitElement {
     } else {
       return {"green": true, "red": false, "yellow": false};
     }
-
   }
 
   getRingColor(card: string) {
@@ -2676,7 +2675,7 @@ export class AppReport extends LitElement {
 
               <div id="mh-right">
                 ${this.manifestDataLoading ?
-                    html`<div class="loader-round large skeleton"></div>` :
+                    html`<div class="loader-round large"></div>` :
                     html`<sl-progress-ring
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
@@ -2807,8 +2806,8 @@ export class AppReport extends LitElement {
                       `
                         }
                   </div>
-                  ${this.runningTests ?
-                    html`<div class="loader-round large ${classMap({'skeleton': this.swDataLoading})}"></div>` :
+                  ${this.swDataLoading ?
+                    html`<div class="loader-round large"></div>` :
                     html`<sl-progress-ring
                     id="swProgressRing"
                     class=${classMap(this.decideColor("sw"))}
@@ -2853,11 +2852,11 @@ export class AppReport extends LitElement {
               <sl-details
                 id="sw-details"
                 class="details"
-                ?disabled=${this.runningTests || this.swDataLoading}
+                ?disabled=${this.swDataLoading}
                 @sl-show=${(e: Event) => this.rotateNinety("sw-details", e)}
                 @sl-hide=${(e: Event) => this.rotateZero("sw-details", e)}
               >
-                ${this.runningTests ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>`
+                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>`
                 : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
                 <div class="detail-grid">
                 <div class="detail-list">
@@ -2926,8 +2925,8 @@ export class AppReport extends LitElement {
                       `
                         }
                   </div>
-                  ${this.runningTests ?
-                    html`<div class="loader-round large ${classMap({'skeleton': this.secDataLoading})}"></div>` :
+                  ${this.secDataLoading ?
+                    html`<div class="loader-round large"></div>` :
                     html`<sl-progress-ring
                     id="secProgressRing"
                     class=${classMap(this.decideColor("sec"))}
