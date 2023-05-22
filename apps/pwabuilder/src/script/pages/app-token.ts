@@ -1,5 +1,7 @@
-import { LitElement, css, html } from 'lit';
+import { Router } from '@vaadin/router';
+import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -15,6 +17,24 @@ export class AppToken extends LitElement {
     iconURL: '',
     iconAlt: 'Your sites logo'
   };
+  @state() installablePassed: boolean = true;
+  @state() installableRatio = 0;
+  @state() installableTodos: TemplateResult[] = [];
+  @state() installableClassMap = {red: false, yellow: false, green: false};
+
+  @state() requiredPassed: boolean = true;
+  @state() requiredRatio = 0;
+  @state() requiredTodos: TemplateResult[] = [];
+  @state() requiredClassMap = {red: false, yellow: false, green: false};
+
+  @state() enhancementsPassed: boolean = true;
+  @state() enhancementsRatio = 0;
+  @state() enhancementsTodos: TemplateResult[] = [];
+  @state() enhancementsClassMap = {red: false, yellow: false, green: false};
+  @state() enhancementsIndicator = "";
+
+  @state() proceed: boolean = false;
+
 
   static get styles() {
     return [
@@ -36,7 +56,7 @@ export class AppToken extends LitElement {
         #hero-section {
           padding: 50px 100px;
           background-image: url("/assets/new/giveaway_banner.png");
-          height: 250px;
+          height: 300px;
           background-repeat: no-repeat;
           background-size: cover;
           background-position: center;
@@ -86,6 +106,7 @@ export class AppToken extends LitElement {
           box-shadow: 0px 4px 30px 0px #00000014;
           gap: 15px;
           padding: 25px;
+          margin-top: -8%;
         }
 
         .square::part(indicator) {
@@ -275,6 +296,118 @@ export class AppToken extends LitElement {
         display: none;
       }
 
+      sl-progress-ring {
+        height: fit-content;
+        --track-width: 4px;
+        --indicator-width: 8px;
+        --size: 100px;
+        font-size: var(--subheader-font-size);
+      }
+
+      sl-progress-ring::part(label){
+        color: var(--primary-color);
+        font-weight: bold;
+      }
+
+      .red {
+        --indicator-color: var(--error-color);
+      }
+
+      .yellow {
+        --indicator-color: var(--warning-color);
+      }
+
+      .green {
+        --indicator-color: var(--success-color);
+      }
+
+      .macro {
+        width: 3em;
+        height: auto;
+      }
+      
+      #categories {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+      }
+
+      .inner-details::part(base) {
+        border: none;
+        background-color: #F1F1F1;
+      }
+
+      .inner-details::part(header) {
+        padding: 0;
+      }
+
+      sl-details::part(header):focus {
+        outline: none;
+      }
+
+      #qual-details::part(content) {
+        padding-top: 0;
+      }
+
+      .inner-details::part(content) {
+        padding: 20px;
+        padding-top: 0;
+      }
+
+      .inner-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 5px 10px;
+      }
+
+      .inner-summary h3 {
+        font-size: 14px;
+        font-weight: normal;
+        color: var(--font-color);
+        margin: 0;
+      }
+
+      .summary-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .todos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(3, 1fr);
+      }
+
+      .inner-todo {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .inner-todo p {
+        margin: 0;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .inner-todo img {
+        width: 13px;
+        height: auto;
+      }
+
+      #enhancements-details::part(base) {
+        background-color: #F1F2FA;
+      }
+
+      .dropdown_icon {
+        transform: rotate(0deg);
+        transition: transform .5s;
+      }
+
       `
     ]
   }
@@ -299,14 +432,18 @@ export class AppToken extends LitElement {
 
     this.testsInProgress = false;
 
+    this.handleInstallable(token.installable);
+    this.handleRequired(token.required);
+    this.handleEnhancements(token.progressive);
+
+    let results = [this.installablePassed, this.requiredPassed, this.enhancementsPassed]
+    this.proceed = results.every((res: boolean) => res === true);
+
     /* if(true) { // replace with: if(dupe url)
       this.dupeURL = true;
+      this.proceed = false;
     } */
-
-    if(true){ // replace with: if(validations pass)
-      this.testsPassed = true;
-    }
-
+    
     this.populateAppCard();
 
   }
@@ -380,15 +517,15 @@ export class AppToken extends LitElement {
           <div id="rings">
             <div class="card-holder">
               <div class="loader-round"></div>
-              <p>Manifest</p>
+              <p>Installable</p>
             </div>
             <div class="card-holder">
               <div class="loader-round"></div>
-              <p>Service Worker</p>
+              <p>Required Fields</p>
             </div>
             <div class="card-holder">
               <div class="loader-round"></div>
-              <p>Security</p>
+              <p>Enhancements</p>
             </div>
           </div>
         </div>
@@ -428,16 +565,26 @@ export class AppToken extends LitElement {
           </div>
           <div id="rings">
             <div class="card-holder">
-              <sl-progress-ring value=${77}>14/18</sl-progress-ring>
-              <p>Manifest</p>
+              <sl-progress-ring class=${classMap(this.installableClassMap)} value=${this.installableRatio}>
+                ${this.installablePassed ? 
+                  html`<img class="macro" src="assets/new/macro_passed.svg" />` : 
+                  html`<img class="macro" src="assets/new/macro_error.svg" />`}
+              </sl-progress-ring>
+              <p>Installable</p>
             </div>
             <div class="card-holder">
-            <sl-progress-ring value=${50}>2/4</sl-progress-ring>
-              <p>Service Worker</p>
+            <sl-progress-ring class=${classMap(this.requiredClassMap)} value=${this.requiredRatio}>
+                ${this.requiredPassed ? 
+                  html`<img class="macro" src="assets/new/macro_passed.svg" />` : 
+                  html`<img class="macro" src="assets/new/macro_error.svg" />`}
+              </sl-progress-ring>
+              <p>Required Fields</p>
             </div>
             <div class="card-holder">
-            <sl-progress-ring value=${100}>3/3</sl-progress-ring>
-              <p>Security</p>
+              <sl-progress-ring class=${classMap(this.enhancementsClassMap)} value=${this.enhancementsRatio}>
+                <img class="macro" src=${this.enhancementsIndicator} />
+              </sl-progress-ring>
+              <p>Enhancements</p>
             </div>
           </div>
         </div>
@@ -460,23 +607,10 @@ export class AppToken extends LitElement {
   // Rotates the icon on each details drop down to 0 degrees
   rotateZero(card: string, e?: Event){
     //recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
-
+    e?.stopPropagation();
     let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
-    let target: Node = (e!.target as unknown as Node);
-    let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
-    let allowed: boolean = false;
 
-    // added this code because the tooltips that exist on the action items emit the sl-show and 
-    // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
-    // so this ensures that the target for rotating is a detail card and not a tooltip.
-    for (let i = 0; i < collapsable.length; i++) {
-      if (collapsable[i].isEqualNode(target!)) {
-        allowed = true;
-        break
-      }
-    }
-
-    if(icon && allowed){
+    if(icon){
       icon!.style.transform = "rotate(0deg)";
     }
   }
@@ -484,7 +618,7 @@ export class AppToken extends LitElement {
   // Rotates the icon on each details drop down to 90 degrees
   rotateNinety(card: string, e?: Event, init?: boolean){
     //recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
-
+    e?.stopPropagation();
     let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
 
     if(icon && init) {
@@ -492,22 +626,98 @@ export class AppToken extends LitElement {
       return;
     }
 
-    let target: Node = (e!.target as unknown as Node);
-    let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
-    let allowed: boolean = false;
+    if(icon){
+      icon!.style.transform = "rotate(90deg)";
+    }
+  }
 
-    // added this code because the tooltips that exist on the action items emit the sl-show and 
-    // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
-    // so this ensures that the target for rotating is a detail card and not a tooltip.
-    for (let i = 0; i < collapsable.length; i++) {
-      if (collapsable[i].isEqualNode(target!)) {
-        allowed = true;
-        break
-      }
+  handleInstallable(installable: any){
+
+    let passedCount = 0;
+
+    for (let key in installable) {
+      let test = installable[key]
+      this.installableTodos.push(
+        html`
+          <div class="inner-todo">
+            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            <p>${test.displayString}</p>
+          </div>
+        `
+      )
+      this.installablePassed = this.installablePassed && test.valid;
+      if(test.valid) passedCount++;
     }
 
-    if(icon && allowed){
-      icon!.style.transform = "rotate(90deg)";
+    this.installableRatio = (passedCount / Object.keys(installable).length) * 100;
+
+    if(this.installablePassed){
+      this.installableClassMap["green"] = true;
+    } else {
+      this.installableClassMap["red"] = true;
+    }
+    
+  }
+
+  handleRequired(required: any){
+
+    let passedCount = 0;
+
+    for (let key in required) {
+      let test = required[key]
+      this.requiredTodos.push(
+        html`
+          <div class="inner-todo">
+            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            <p>${test.displayString}</p>
+          </div>
+        `
+      )
+      this.requiredPassed = this.requiredPassed && test.valid;
+      if(test.valid) passedCount++;
+    }
+
+    this.requiredRatio = (passedCount / Object.keys(required).length) * 100;
+
+    if(this.requiredPassed){
+      this.requiredClassMap["green"] = true;
+    } else {
+      this.requiredClassMap["red"] = true;
+    }
+    
+  }
+
+  handleEnhancements(enhancements: any){
+    let passedCount = 0;
+
+    for (let key in enhancements) {
+      let test = enhancements[key]
+      this.enhancementsTodos.push(
+        html`
+          <div class="inner-todo">
+            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            <p>${key}</p>
+          </div>
+        `
+      )
+      if(test.valid) passedCount++;
+    }
+
+    if(passedCount > 1){
+      this.enhancementsRatio = 100;
+      this.enhancementsClassMap["green"] = true;
+      this.enhancementsPassed = true;
+      this.enhancementsIndicator = "assets/new/macro_passed.svg";
+    } else if (passedCount == 1) {
+      this.enhancementsRatio = 50;
+      this.enhancementsClassMap["yellow"] = true;
+      this.enhancementsPassed = false;
+      this.enhancementsIndicator = "assets/new/yellow_exclamation.svg";
+    } else {
+      this.enhancementsRatio = 0;
+      this.enhancementsClassMap["red"] = true;
+      this.enhancementsPassed = false;
+      this.enhancementsIndicator = "assets/new/macro_error.svg";
     }
   }
 
@@ -531,10 +741,66 @@ export class AppToken extends LitElement {
             <h2>Technical Qualifications</h2>
             <img class="dropdown_icon" data-card="qual-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
           </div>
+          <div id="categories">
+            <sl-details 
+              id="installable-details" 
+              class="inner-details"
+              @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}>
+              <div slot="summary" class="inner-summary">
+                <div class="summary-left">
+                  ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
+                  <h3>PWA is installable</h3>
+                </div>
+                <img class="dropdown_icon" data-card="installable-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              </div>
+              <div class="todos">
+                ${this.installableTodos.length > 0 ? this.installableTodos.map((todo: TemplateResult) => todo) : html``}
+              </div>
+            </sl-details>
+            <sl-details 
+              id="required-details" 
+              class="inner-details"
+              @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}>
+              <div slot="summary" class="inner-summary">
+                <div class="summary-left">
+                  ${this.requiredPassed ? html`<img class="" src=${valid_src} alt="required tests passed icon"/>` : html`<img class="" src=${stop_src} alt="required tests failed icon"/>`}
+                  <h3>Manifest has required fields</h3>
+                </div>
+                <img class="dropdown_icon" data-card="required-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              </div>
+              <div class="todos">
+                ${this.requiredTodos.length > 0 ? this.requiredTodos.map((todo: TemplateResult) => todo) : html``}
+              </div>
+            </sl-details>
+            <sl-details 
+              id="enhancements-details" 
+              class="inner-details"
+              @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
+              @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}>
+              <div slot="summary" class="inner-summary">
+                <div class="summary-left">
+                  ${this.enhancementsPassed ? html`<img class="" src=${valid_src} alt="enhancements tests passed icon"/>` : html`<img class="" src=${stop_src} alt="enhancements tests failed icon"/>`}
+                  <h3>Includes two or more desktop enhancements</h3>
+                </div>
+                <img class="dropdown_icon" data-card="enhancements-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              </div>
+              <div class="todos">
+                ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : html``}
+              </div>
+            </sl-details>
+          </div>
         </sl-details>
       </div>
       <div id="qual-section"></div>
-      <div id="sign-in-section"></div>
+      ${!this.testsInProgress ? 
+        html`
+          <div id="sign-in-section">
+            ${this.proceed ? html`sign in button` : html`<sl-button @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+          </div>
+        ` : html``}
+      
     </div>
     `
   }
@@ -548,3 +814,104 @@ const qual: string[] = [
   "Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here",
   "Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)",
 ]
+
+const valid_src = "/assets/new/valid.svg";
+const stop_src = "/assets/new/stop.svg";
+
+const token = {
+  "installable": {
+    "short_name": {
+      "member": "short_name",
+      "displayString": "Short name atleat 3 characters",
+      "valid": true
+    },
+    "name": {
+      "member": "name",
+      "displayString": "Manifest has name field",
+      "valid": true
+    },
+    "description": {
+      "member": "description",
+      "displayString": "Manifest has description field",
+      "valid": true
+    },
+    "display": {
+      "displayString": "Manifest has display field",
+      "member": "display",
+      "valid": true
+    },
+    "icons": {
+      "displayString": "Icons have at least one PNG icon 512x512 or larger",
+      "member": "icons",
+      "valid": true
+    },
+    "hasSW": {
+      "displayString": "PWA has a service worker",
+      "member": "service worker",
+      "valid": true
+    }
+  },
+  "required": {
+    "name": {
+      "displayString": "Manifest has valid name field",
+      "valid": true
+    },
+    "short_name": {
+      "displayString": "Manifest has valid short_name field",
+      "valid": true
+    },
+    "start_url": {
+      "displayString": "Manifest has valid start_url field",
+      "member": "start_url",
+      "valid": true
+    },
+    "description": {
+      "displayString": "Manifest has valid description field",
+      "member": "description",
+      "valid": true
+    },
+    "icons": {
+      "displayString": "Manifest has valid icons field",
+      "member": "icons",
+      "valid": true
+    },
+    
+  },
+  "progressive": {
+    "share_target": {
+      "valid": true
+    },
+    "protocol_handlers": {
+      "valid": true
+    },
+    "file_handlers": {
+      "valid": false
+    },
+    "shortcuts": {
+      "displayString": "Manifest has shortcuts field",
+      "member": "shortcuts",
+      "valid": false
+    },
+    "display_override": {
+      "valid": false
+    },
+    "edge_side_panel": {
+      "valid": false
+    },
+    "scope_extensions": {
+      "valid": false
+    },
+    "widgets": {
+      "valid": false
+    },
+    "webpush": {
+      "valid": false
+    },
+    "background_sync": {
+      "valid": false
+    },
+    "periodic_sync": {
+      "valid": false
+    }
+  }
+}
