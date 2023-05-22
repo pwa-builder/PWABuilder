@@ -3,6 +3,11 @@ import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
+import '../components/arrow-link'
+import { SlInput } from '@shoelace-style/shoelace';
+import { cleanUrl, isValidURL } from '../utils/url';
+import { localeStrings } from '../../locales';
+
 @customElement('app-token')
 export class AppToken extends LitElement {
 
@@ -33,12 +38,21 @@ export class AppToken extends LitElement {
   @state() enhancementsClassMap = {red: false, yellow: false, green: false};
   @state() enhancementsIndicator = "";
 
-  @state() proceed: boolean = false;
+  @state() errorGettingURL = false;
+  @state() errorMessage: string | undefined;
 
 
   static get styles() {
     return [
       css`
+      :host {
+        --sl-focus-ring-width: 3px;
+        --sl-input-focus-ring-color: #595959;
+        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+        --sl-input-border-color-focus: #4F3FB6ac;
+        --sl-color-primary-300: var(--primary-color);
+        }
+
         #wrapper {
           display: flex;
           flex-direction: column;
@@ -51,6 +65,10 @@ export class AppToken extends LitElement {
 
         #wrapper > * {
           box-sizing: border-box;
+        }
+
+        #wrapper:last-child {
+          margin-bottom: 30px;
         }
 
         #hero-section {
@@ -95,6 +113,39 @@ export class AppToken extends LitElement {
           width: 50%;
         }
 
+        .input-area {
+          display: flex; 
+          gap: 10px;
+          margin-top: 20px;
+        }
+
+        #hero-section sl-input::part(base) {
+          border: 1px solid #e5e5e5;
+          border-radius: var(--input-border-radius);
+          color: var(--font-color);
+          width: 28em;
+          font-size: 14px;
+          height: 3em;
+        }
+
+        #hero-section sl-input::part(input) {
+          height: 3em;
+        }
+
+        /* #hero-section .error::part(base){
+          border-color: #eb5757;
+          --sl-input-focus-ring-color: #eb575770;
+          --sl-focus-ring-width: 3px;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #eb5757ac;
+        }
+
+        .error-message {
+          color: var(--error-color);
+          font-size: var(--small-font-size);
+          margin-top: 6px;
+        } */
+
         #app-info-section {
           display: flex;
           flex-direction: column;
@@ -106,7 +157,6 @@ export class AppToken extends LitElement {
           box-shadow: 0px 4px 30px 0px #00000014;
           gap: 15px;
           padding: 25px;
-          margin-top: -8%;
         }
 
         .square::part(indicator) {
@@ -158,12 +208,17 @@ export class AppToken extends LitElement {
           width: 60%;
         }
 
+        #categories > *::part(indicator) {
+          height: 46px;
+        }
+
        .card-holder {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           gap: 10px;
+          min-width: 92px;
        }
 
        .card-holder p {
@@ -179,7 +234,8 @@ export class AppToken extends LitElement {
        }
 
        #rings {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 20px;
         box-shadow: 0px 4px 30px 0px #00000014;
         border-radius: 10px;
@@ -239,6 +295,7 @@ export class AppToken extends LitElement {
         border-radius: 3px;
         width: 100%;
         word-break: break-word;
+        box-sizing: border-box;
       }
 
       .type-error {
@@ -262,14 +319,21 @@ export class AppToken extends LitElement {
         line-height: normal;
       }
 
+      #qual-div {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+      }
+
       #qual-sum {
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
+        margin-bottom: 20px;
       }
 
-      #qual-sum h2 {
+      #qual-sum h2, #qual-section h2 {
         font-size: 18px;
         color: #4F3FB6;
         margin: 0;
@@ -408,6 +472,119 @@ export class AppToken extends LitElement {
         transition: transform .5s;
       }
 
+      #sign-in-section {
+        width: 75%;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .primary::part(base) {
+        background-color: var(--font-color);
+        color: white;
+        font-size: 14px;
+        height: 3em;
+        border-radius: 50px;
+      }
+
+      .primary::part(label){
+        display: flex;
+        align-items: center;
+        padding: var(--button-padding);
+      }
+
+      .primary::part(base):hover {
+        border-color: var(--primary-color);
+      }
+
+      #qual-section {
+        width: 75%;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #ffffff;
+      }
+
+      #qual-section li {
+        font-size: 14px;
+      }
+
+      #qual-section ul {
+        margin: 20px 0;
+      }
+
+      #footer-section {
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        position: relative;
+      }
+
+      #footer-section-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        width: 80%;
+        column-gap: 20px;
+        row-gap: 50px;
+      }
+
+      #marketing-img {
+        border-radius: 10px;
+        width: 430px;
+        height: auto;
+      }
+
+      .footer-text {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        place-self: center;
+      }
+
+      .footer-text > * {
+        margin: 0;
+      }
+
+      .footer-text sl-button::part(base){
+        width: 35%;
+      }
+
+      .subheader {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--font-color);
+      }
+
+      .body-text {
+        font-size: 16px;
+        color: var(--font-color);
+      }
+
+      .large-subheader {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--font-color);
+        line-height: 40px;
+      }
+
+      .large-body-text {
+        font-size: 20px;
+        color: var(--font-color);
+        width: 76%;
+      }
+
+      .wheel-img {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 500px;
+      }
+
+      
+
       `
     ]
   }
@@ -437,11 +614,11 @@ export class AppToken extends LitElement {
     this.handleEnhancements(token.progressive);
 
     let results = [this.installablePassed, this.requiredPassed, this.enhancementsPassed]
-    this.proceed = results.every((res: boolean) => res === true);
+    this.testsPassed = results.every((res: boolean) => res === true);
 
     /* if(true) { // replace with: if(dupe url)
       this.dupeURL = true;
-      this.proceed = false;
+      this.testsPassed = false;
     } */
     
     this.populateAppCard();
@@ -454,9 +631,9 @@ export class AppToken extends LitElement {
       return html`
         <h1>Get a Free Windows Developer Account on the Microsoft Store</h1>
         <p>Check below to see if your PWA qualifies </p>
-        <div>
-          <sl-input placeholder="Enter URL"></sl-input>
-          <button type="button">Start</button>
+        <div class="input-area">
+          <sl-input placeholder="Enter URL" class="url-input" required></sl-input>
+          <sl-button type="button" class="primary" @click=${() => this.handleEnteredURL()}>Start</sl-button>
         </div>
       `
     }
@@ -721,85 +898,146 @@ export class AppToken extends LitElement {
     }
   }
 
+  handleEnteredURL(){
+    let input: SlInput = this.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
+    let url: string = input.value;
+
+    try {
+      url = cleanUrl(url);
+    } catch {
+      input.setCustomValidity(localeStrings.input.home.error.invalidURL);
+      input.reportValidity();
+      return;
+    }
+
+    const isValidUrl = isValidURL(url);
+
+    if(isValidUrl){
+      input.setCustomValidity("");
+      this.siteURL = url;
+      this.runGiveawayTests(url);
+    } else {
+      input.setCustomValidity(localeStrings.input.home.error.invalidURL);
+      input.reportValidity();
+      this.requestUpdate();
+      return;
+    }
+  }
+
   render(){
     return html`
     <div id="wrapper">
       <div id="hero-section">
         ${this.decideHeroSection()}
       </div>
-      <div id="app-info-section">
-        ${this.renderAppCard()}
-      </div>
-      <div id="action-items-section">
-        <sl-details
-          id="qual-details"
-          class="details"
-          @sl-show=${(e: Event) => this.rotateNinety("qual-details", e)}
-          @sl-hide=${(e: Event) => this.rotateZero("qual-details", e)}
-        >
-          <div id="qual-sum" slot="summary">
-            <h2>Technical Qualifications</h2>
-            <img class="dropdown_icon" data-card="qual-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+      ${this.siteURL ? 
+        html`
+          <div id="app-info-section">
+            ${this.renderAppCard()}
           </div>
-          <div id="categories">
-            <sl-details 
-              id="installable-details" 
-              class="inner-details"
-              @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
-              @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}>
-              <div slot="summary" class="inner-summary">
-                <div class="summary-left">
-                  ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
-                  <h3>PWA is installable</h3>
-                </div>
-                <img class="dropdown_icon" data-card="installable-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+          <div id="action-items-section">
+            <div id="qual-div">
+              <div id="qual-sum">
+                <h2>Technical Qualifications</h2>
               </div>
-              <div class="todos">
-                ${this.installableTodos.length > 0 ? this.installableTodos.map((todo: TemplateResult) => todo) : html``}
+              <div id="categories">
+                ${this.testsInProgress ? 
+                  html`
+                    <sl-skeleton effect="sheen"></sl-skeleton>
+                    <sl-skeleton effect="sheen"></sl-skeleton>
+                    <sl-skeleton effect="sheen"></sl-skeleton>
+                  ` :
+                  html`
+                    <sl-details 
+                      id="installable-details" 
+                      class="inner-details"
+                      @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
+                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}>
+                      <div slot="summary" class="inner-summary">
+                        <div class="summary-left">
+                          ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
+                          <h3>PWA is installable</h3>
+                        </div>
+                        <img class="dropdown_icon" data-card="installable-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                      </div>
+                      <div class="todos">
+                        ${this.installableTodos.length > 0 ? this.installableTodos.map((todo: TemplateResult) => todo) : html``}
+                      </div>
+                    </sl-details>
+                    <sl-details 
+                      id="required-details" 
+                      class="inner-details"
+                      @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
+                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}>
+                      <div slot="summary" class="inner-summary">
+                        <div class="summary-left">
+                          ${this.requiredPassed ? html`<img class="" src=${valid_src} alt="required tests passed icon"/>` : html`<img class="" src=${stop_src} alt="required tests failed icon"/>`}
+                          <h3>Manifest has required fields</h3>
+                        </div>
+                        <img class="dropdown_icon" data-card="required-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                      </div>
+                      <div class="todos">
+                        ${this.requiredTodos.length > 0 ? this.requiredTodos.map((todo: TemplateResult) => todo) : html``}
+                      </div>
+                    </sl-details>
+                    <sl-details 
+                      id="enhancements-details" 
+                      class="inner-details"
+                      @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
+                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}>
+                      <div slot="summary" class="inner-summary">
+                        <div class="summary-left">
+                          ${this.enhancementsPassed ? html`<img class="" src=${valid_src} alt="enhancements tests passed icon"/>` : html`<img class="" src=${stop_src} alt="enhancements tests failed icon"/>`}
+                          <h3>Includes two or more desktop enhancements</h3>
+                        </div>
+                        <img class="dropdown_icon" data-card="enhancements-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+                      </div>
+                      <div class="todos">
+                        ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : html``}
+                      </div>
+                    </sl-details>
+                  `
+                }
               </div>
-            </sl-details>
-            <sl-details 
-              id="required-details" 
-              class="inner-details"
-              @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
-              @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}>
-              <div slot="summary" class="inner-summary">
-                <div class="summary-left">
-                  ${this.requiredPassed ? html`<img class="" src=${valid_src} alt="required tests passed icon"/>` : html`<img class="" src=${stop_src} alt="required tests failed icon"/>`}
-                  <h3>Manifest has required fields</h3>
-                </div>
-                <img class="dropdown_icon" data-card="required-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
-              </div>
-              <div class="todos">
-                ${this.requiredTodos.length > 0 ? this.requiredTodos.map((todo: TemplateResult) => todo) : html``}
-              </div>
-            </sl-details>
-            <sl-details 
-              id="enhancements-details" 
-              class="inner-details"
-              @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
-              @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}>
-              <div slot="summary" class="inner-summary">
-                <div class="summary-left">
-                  ${this.enhancementsPassed ? html`<img class="" src=${valid_src} alt="enhancements tests passed icon"/>` : html`<img class="" src=${stop_src} alt="enhancements tests failed icon"/>`}
-                  <h3>Includes two or more desktop enhancements</h3>
-                </div>
-                <img class="dropdown_icon" data-card="enhancements-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
-              </div>
-              <div class="todos">
-                ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : html``}
-              </div>
-            </sl-details>
+            </div>
           </div>
-        </sl-details>
+        ` : 
+        html`
+        
+        `}
+      
+      <div id="qual-section">
+        <h2>Qualifications</h2>
+        <ul>
+          ${qual.map((point: string) => html`<li>${point}</li>`)}
+        </ul>
+        <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
       </div>
-      <div id="qual-section"></div>
       ${!this.testsInProgress ? 
         html`
           <div id="sign-in-section">
-            ${this.proceed ? html`sign in button` : html`<sl-button @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+            ${this.testsPassed ? html`sign in button` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
           </div>
         ` : html``}
+      ${!this.siteURL ?
+        html`
+          <div id="footer-section">
+            <div id="footer-section-grid">
+              <img id="marketing-img" src="/assets/new/pwabuilder-sc.png" alt="pwabuilder home page" />
+              <div class="footer-text">
+                <p class="subheader">Ship your PWAs to App Store</p>
+                <p class="body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
+                <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
+              </div>
+              <div class="footer-text">
+                <p class="large-subheader">Find your success in the Microsoft Store</p>
+                <p class="large-body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
+              </div>
+              <img class="wheel-img" src="/assets/new/marketing-img2.png" alt="Logos of PWAs in the microsoft store" />
+            </div>
+          </div>
+        ` : html``
+      }
       
     </div>
     `
@@ -807,7 +1045,7 @@ export class AppToken extends LitElement {
 }
 
 const qual: string[] = [
-  "Own a PWA that meets the technical requirements listed here",
+  "Own a PWA that meets the technical requirements listed above",
   "You are legally residing in [what countries can we say?]",
   "Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account",
   "Not have an existing Microsoft Store on Windows individual developer/publisher account",
@@ -879,7 +1117,7 @@ const token = {
   },
   "progressive": {
     "share_target": {
-      "valid": true
+      "valid": false
     },
     "protocol_handlers": {
       "valid": true
