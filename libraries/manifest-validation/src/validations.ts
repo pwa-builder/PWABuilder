@@ -4,6 +4,19 @@ import { isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRe
 
 export const maniTests: Array<Validation> = [
     {
+        infoString: "The id member is a string that represents the identity of the web application — the unique identifier for the web application. If the web application ID does not match an existing ID, the application will be treated as a unique identity even if it is from the same URL",
+        displayString: "Manifest has id",
+        category: "recommended",
+        member: "id",
+        defaultValue: "?homescreen=1",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/id",
+        errorString: "id is required and must be a string with a length > 0",
+        quickFix: true,
+        test: (value: string) => {
+            return value && typeof value === "string" && value.length > 0;
+        }
+    },
+    {
         infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
         displayString: "Manifest has name field",
         category: "required",
@@ -632,6 +645,50 @@ export const maniTests: Array<Validation> = [
         }
     },
     {
+        member: "file_handlers",
+        displayString: "Manifest has file handlers field",
+        infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://developer.mozilla.org/en-US/docs/Web/Manifest/file_handlers",
+        quickFix: true,
+        errorString: "file_handlers should be a non-empty array",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            return isArray;
+        }
+    },
+    {
+        member: "file_handlers",
+        displayString: "File handlers has valid fields",
+        infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://developer.mozilla.org/en-US/docs/Web/Manifest/file_handlers",
+        quickFix: true,
+        errorString: "file_handlers array should have objects with action and accept fields",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            if (isArray) {
+                const allValid = value.every((fileHandler: any) => {
+                    const hasAction = fileHandler.action && typeof fileHandler.action == 'string' && fileHandler.action.length;
+                    const hasAccept = fileHandler.accept && typeof fileHandler.accept == 'object';
+
+                    return hasAction && hasAccept;
+                });
+
+                return allValid;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
         member: "display_override",
         displayString: "Manifest has display override field",
         infoString: "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
@@ -693,22 +750,15 @@ export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validat
     return new Promise((resolve) => {
         let data: Array<Validation> = [];
 
-        const keys = Object.keys(manifest);
+        const maniFields = Object.keys(manifest);
 
-        keys.forEach((key) => {
-            maniTests.forEach(async (test) => {
-                if (test.member === key && test.test) {
-                    const testResult = await test.test(manifest[key]);
+        maniTests.forEach((test) => {
+            maniFields.forEach(async (field) => {
+                if (test.member === field && test.test) {
+                    const testResult = await test.test(manifest[field]);
 
-
-                    if (testResult) {
-                        test.valid = true;
-                        data.push(test);
-                    }
-                    else {
-                        test.valid = false;
-                        data.push(test);
-                    }
+                    test.valid = testResult? true: false;
+                    data.push(test);
                 }
             })
         })
@@ -721,25 +771,19 @@ export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array
     return new Promise((resolve) => {
         let data: Array<Validation> = [];
 
-        const keys = Object.keys(manifest);
+        const maniFields = Object.keys(manifest);
 
-        keys.forEach((key) => {
-            maniTests.forEach(async (test) => {
-                if (test.category === "required") {
-                    if (test.member === key && test.test) {
-                        const testResult = await test.test(manifest[key]);
+        maniTests.forEach((test) => {
+            if (test.category === "required") {
+                maniFields.forEach(async (field) => {
+                    if (test.member === field && test.test) {
+                        const testResult = await test.test(manifest[field]);
 
-                        if (testResult === false) {
-                            test.valid = false;
-                            data.push(test);
-                        }
-                        else {
-                            test.valid = true;
-                            data.push(test);
-                        }
+                        test.valid = testResult? true: false;
+                        data.push(test);
                     }
-                }
-            })
+                })
+            }
         })
 
         resolve(data);

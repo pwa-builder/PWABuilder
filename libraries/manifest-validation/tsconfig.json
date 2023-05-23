@@ -6,7 +6,7 @@
     "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
     "removeComments": true,                           /* Disable emitting comments. */
     "moduleResolution": "nodenext",
-    "esModuleInterop": true,
+    // "esModuleInterop": true,
     "module": "ES2020",
   }
 }
