@@ -2,6 +2,12 @@
 import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces.js";
 import { isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils.js";
 
+import { widgetsSchema } from "./utils/widgets-schema.js";
+import Ajv from "ajv";
+
+const ajv = new Ajv();
+const widgetsValidator = ajv.compile(widgetsSchema);
+
 export const maniTests: Array<Validation> = [
     {
         infoString: "The id member is a string that represents the identity of the web application — the unique identifier for the web application. If the web application ID does not match an existing ID, the application will be treated as a unique identity even if it is from the same URL",
@@ -676,7 +682,7 @@ export const maniTests: Array<Validation> = [
             if (isArray) {
                 const allValid = value.every((fileHandler: any) => {
                     const hasAction = fileHandler.action && typeof fileHandler.action == 'string' && fileHandler.action.length;
-                    const hasAccept = fileHandler.accept && typeof fileHandler.accept == 'object';
+                    const hasAccept = fileHandler.accept && typeof fileHandler.accept == 'object' && !Array.isArray(fileHandler.accept);
 
                     return hasAction && hasAccept;
                 });
@@ -702,6 +708,63 @@ export const maniTests: Array<Validation> = [
             const isArray = value && Array.isArray(value);
 
             return isArray;
+        }
+    },
+    {
+        member: "display_override",
+        displayString: "Manifest has display_override with window-controls-overlay",
+        infoString: "This display mode only applies when the application is in a separate PWA window and on a desktop operating system. The application will opt-in to the Window Controls Overlay feature, where the full window surface area will be available for the app's web content",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
+        quickFix: true,
+        errorString: "display_override must be a non-empty array",
+        test: (value: any[]) => {
+            return value && Array.isArray(value) && value.some(override => override == 'window-controls-overlay');
+        }
+    },
+    {
+        member: "scope_extensions",
+        displayString: "Manifest has scope_extensions field",
+        infoString: "Allow PWA that control multiple subdomains and top level domains to behave as one contiguous app. E.g. a site may span example.com, example.co.uk and support.example.com",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md",
+        quickFix: true,
+        errorString: "scope_extensions must be a non-empty array",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value);
+
+            if (isArray) {
+                const allValid = value.every((extensions: any) => {
+                    return typeof extensions == 'object' && typeof extensions.origin == 'string';
+                });
+
+                return allValid;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+    {
+        member: "widgets",
+        displayString: "Manifest has widgets field",
+        infoString: "Allow PWA enable Windows 11 widgets board support",
+        category: "optional",
+        defaultValue: [],
+        docsLink:
+            "https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets",
+        quickFix: true,
+        errorString: "widgets object have invalid structure",
+        test: (value: any[]) => {
+            const validation = widgetsValidator(value);
+            if (validation && !validation.errors){
+                return true;
+            }
+            return false;
         }
     },
     {

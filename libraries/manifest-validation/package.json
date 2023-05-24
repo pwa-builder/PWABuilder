@@ -22,10 +22,11 @@
     "prepublishOnly": "tsc"
   },
   "devDependencies": {
-    "typescript": "^5.0.4",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
+    "ajv": "^8.12.0",
     "node-fetch": "^3.3.0"
   },
   "bugs": {
