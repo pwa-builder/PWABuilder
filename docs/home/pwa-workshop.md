@@ -89,9 +89,9 @@ Let's install the extension and follow these [steps](/studio/quick-start) to cre
 Before you start coding, let's explore the generated solution. The PWABuilder Studio extension was created based on the PWABuilder [pwa-starter](https://aka.ms/learn-pwa/workshop/github.com/pwa-builder/pwa-starter) project. It uses the following tech stack:
 
 - [**lit**](https://lit.dev/): PWABuilder team's framework of choice. This means you will also be using lit as a web component framework to build your PWA.
-- [**@fluent/web-components**](https://aka.ms/learn-pwa/workshop/docs.microsoft.com/fluent-ui/web-components/): The Fluent Web Components are a set of UI components, like [Ionic](https://ionicframework.com/), or the [Material Design Web Components](https://material.io/develop/web). This provides a set of modern UI components that are ready to use and can be easily customized.
+- [**Shoelace Components**](https://shoelace.style/): Shoelace Components is a set of UI web components, like [Ionic](https://ionicframework.com/), or the [Material Design Web Components](https://material.io/develop/web). This provides a set of modern UI components that are ready to use and can be easily customized.
 - [**Vite**](https://vitejs.dev/): Vite handles bundling the code, generating the Service Worker and more! We will dig a little deeper into this later when we talk about the Service Worker and cache strategy.
-- [**Vaadin Router**](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos): For routing, this project uses the Vaadin router.
+- [**The Passle Router**](https://github.com/thepassle/app-tools/tree/master/router#readme): For routing, the Starter uses the `@thepassle/app-tools` router, a lightweight client-side router that works easily with web components.
 - [**TypeScript**](https://aka.ms/learn-pwa/workshop/www.typescriptlang.org/): TypeScript gives you features such as auto complete in your code editor that helps make the development process easier and faster.
 
 Next, let's look at the file structure of the generated solution.
@@ -102,7 +102,8 @@ Next, let's look at the file structure of the generated solution.
 | `index.html` | This is the main HTML file that is served to the browser and the entry point of your source code. |
 | `public/manifest.json` | This is the manifest file that is used to configure your PWA. |
 | `src` | This folder contains all the source code for your app. |
-| `src/app-index.ts` | This file is the main entry point for your app code. The router is configured here, as well as service worker registration. |
+| `src/app-index.ts` | This file is the main entry point for your app code. You can find your service worker registration here as well. |
+| `src/router.ts` | This file contains the configuration for our router. |
 | `src/components` | This folder contains reusable components of your app. |
 | `src/pages` | This folder contains different pages of your app. Each page owns their css styles in the default setup. |
 | `src/styles` | This folder contains css stylesheets. |
