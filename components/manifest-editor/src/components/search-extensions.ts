@@ -100,6 +100,10 @@ export class SearchExtensions extends LitElement {
         outline: 3px solid #4f3fb670;
       }
 
+      .form-field p {
+        font-size: 14px;
+      }
+      
       .suggestions {
         display: none;
         position: absolute;
@@ -121,9 +125,9 @@ export class SearchExtensions extends LitElement {
       }
 
       .suggestions p {
-        font-size: 14px;
+        font-size: 16px;
         margin: 0;
-        padding: 5px 10px;
+        padding: 11px 22px;
       }
 
       .suggestions p:hover {
@@ -152,9 +156,7 @@ export class SearchExtensions extends LitElement {
         display: flex;
         flex-direction: column;
       }
-      .form-field p {
-        font-size: 14px;
-      }
+     
       .field-header{
         display: flex;
         align-items: center;
@@ -169,8 +171,12 @@ export class SearchExtensions extends LitElement {
       
       .remove-file {
         position: absolute;
-        top: 5px;
-        right: 5px;
+        top: 0;
+        right: 0;
+      }
+
+      .remove-file::part(base):hover {
+        color: #4f3fb6;
       }
 
       .error:not(sl-input){
@@ -474,7 +480,7 @@ export class SearchExtensions extends LitElement {
           </div>
         </div>
       </div>
-      <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .5rem;" @click=${() => this.removeFile()}></sl-icon-button>
+      <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .65rem;" @click=${() => this.removeFile()}></sl-icon-button>
       <p class="accept-error-message error-message">Be sure to specify which file types your share target accepts</p>
       <p class="name-error-message error-message">Be sure to specify the name of the form field used to share files.</p>
     </div>

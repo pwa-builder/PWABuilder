@@ -4,9 +4,9 @@ on:
   push:
     paths:
      -"libraries/manifest-validation/**"
-     -".github/workflows/manifest-validation-npm.yml" 
     branches: 
      -gleb/manifest-library-npm  
+     -main
   workflow_dispatch:
   
 jobs:
@@ -64,6 +64,6 @@ jobs:
           npm install
       
       - name: Publish
-        run: npm publish --access public
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }
