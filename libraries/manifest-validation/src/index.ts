@@ -6,7 +6,7 @@ import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } 
 
 export let currentManifest: Manifest | undefined;
 
-export async function validateManifest(manifest: Manifest): Promise<Validation[]> {
+export async function validateManifest(manifest: Manifest, includeAllTests?: boolean): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
@@ -15,7 +15,7 @@ export async function validateManifest(manifest: Manifest): Promise<Validation[]
         }
 
         currentManifest = manifest;
-        let data = await loopThroughKeys(manifest);
+        let data = await loopThroughKeys(manifest, includeAllTests);
 
         resolve(data);
     });

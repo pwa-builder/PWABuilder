@@ -4,83 +4,7 @@ import fetch from 'node-fetch';
 
 import * as maniLib from "../dist/index.js";
 
-const test_manifest = {
-  "dir": "ltr",
-  "lang": "en",
-  "name": "Webboard",
-  "scope": "/",
-  "display": "standalone",
-  "start_url": "/",
-  "short_name": "Webboard",
-  "theme_color": "#FFFFFF",
-  "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
-  "orientation": "any",
-  "background_color": "#FFFFFF",
-  "related_applications": [],
-  "prefer_related_applications": false,
-  "handle_links": "preferred",
-  "screenshots": [
-    {
-      "src": "assets/screen.png"
-    },
-    {
-      "src": "assets/screen.png"
-    },
-    {
-      "src": "assets/screen.png"
-    }
-  ],
-  "features": [
-    "Cross Platform",
-    "low-latency inking",
-    "fast",
-    "useful AI"
-  ],
-  "shortcuts": [
-    {
-      "name": "Start Live Session",
-      "short_name": "Start Live",
-      "description": "Jump direction into starting or joining a live session",
-      "url": "/?startLive",
-      "icons": [
-        {
-          "src": "icons/android/maskable_icon_192.png",
-          "sizes": "192x192"
-        },
-        {
-          "src": "icons/android/maskable_icon_96.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "icons": [
-    {
-      "src": "icons/android/android-launchericon-64-64.png",
-      "sizes": "64x64"
-    },
-    {
-      "src": "icons/android/maskable_icon_192.png",
-      "sizes": "192x192",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icons/android/android-launchericon-48-48.png",
-      "sizes": "48x48"
-    },
-    {
-      "src": "icons/android/android-launchericon-512-512.png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "icons/android/android-launchericon-28-28.png",
-      "sizes": "28x28"
-    }
-  ],
-  "edge_side_panel": {
-    "preferred_width": 600
-  }
-};
+import test_manifest from "./test-manifest.json" assert { type: "json" };
 
 let realWorldManifest = undefined;
 let realWorldURLs = [
@@ -109,7 +33,14 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   it('returns correct number of tests', async () => {
     const data = await maniLib.validateManifest(test_manifest);
 
-    assert.equal(data.length, 26);
+    assert.equal(data.length, 29);
+  });
+
+
+  it('number of invalid tests is 0', async () => {
+    const results = await maniLib.validateManifest(test_manifest);
+    const invalid = results.reduce((amount, result) => amount + !result.valid? 1 : 0, 0);
+    assert.equal(invalid, 0, results.filter((result) => !result.valid).map((result) => result.errorString).toString());
   });
 
   /*

@@ -2,26 +2,15 @@
 import { Icon, Manifest, RelatedApplication, singleFieldValidation, Validation } from "./interfaces.js";
 import { isAtLeast, isStandardOrientation, isValidLanguageCode, validateSingleRelatedApp, validProtocols } from "./utils/validation-utils.js";
 
-import { widgetsSchema } from "./utils/widgets-schema.js";
-import Ajv from "ajv";
+import { widgetsSchema, fileHandlersSchema } from "./utils/values-schema.js";
+import ajvModule from "ajv";
+const Ajv = ajvModule.default;
+const ajv = new Ajv({allErrors: true});
 
-const ajv = new Ajv();
 const widgetsValidator = ajv.compile(widgetsSchema);
+const fileHandlersValidator = ajv.compile(fileHandlersSchema);
 
 export const maniTests: Array<Validation> = [
-    {
-        infoString: "The id member is a string that represents the identity of the web application — the unique identifier for the web application. If the web application ID does not match an existing ID, the application will be treated as a unique identity even if it is from the same URL",
-        displayString: "Manifest has id",
-        category: "recommended",
-        member: "id",
-        defaultValue: "?homescreen=1",
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/id",
-        errorString: "id is required and must be a string with a length > 0",
-        quickFix: true,
-        test: (value: string) => {
-            return value && typeof value === "string" && value.length > 0;
-        }
-    },
     {
         infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
         displayString: "Manifest has name field",
@@ -258,7 +247,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "short_name",
-        displayString: "Short name field doesn't have leading or trailing whitespace",
+        displayString: "The short_name field doesn't have leading or trailing whitespace",
         testName: "whitespace",
         category: "required",
         errorString: "short_name should not have any leading or trailing whitespace",
@@ -322,7 +311,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
-        displayString: "Manifest has hex encoded background color",
+        displayString: "Manifest has hex encoded background_color",
         category: "recommended",
         testRequired: true,
         member: "background_color",
@@ -343,7 +332,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
-        displayString: "Manifest has hex encoded theme color",
+        displayString: "Manifest has hex encoded theme_color",
         category: "recommended",
         testRequired: true,
         member: "theme_color",
@@ -472,7 +461,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The iarc_rating_id member is a string that represents the International Age Rating Coalition (IARC) certification code of the web application. It is intended to be used to determine which ages the web application is appropriate for.",
-        displayString: "Manifest has IARC Rating ID field",
+        displayString: "Manifest has iarc_rating_id field",
         category: "optional",
         member: "iarc_rating_id",
         defaultValue: "",
@@ -487,7 +476,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The related_applications field is an array of objects specifying native applications that are installable by, or accessible to, the underlying platform — for example, a platform-specific (native) Windows application.",
-        displayString: "Manifest has related applications field",
+        displayString: "Manifest has related_applications field",
         category: "optional",
         member: "related_applications",
         defaultValue: [],
@@ -512,7 +501,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
-        displayString: "Manifest properly sets prefer related applications field",
+        displayString: "Manifest properly sets prefer_related_applications field",
         category: "optional",
         testRequired: true,
         member: "prefer_related_applications",
@@ -652,23 +641,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "file_handlers",
-        displayString: "Manifest has file handlers field",
-        infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
-        category: "optional",
-        defaultValue: [],
-        docsLink:
-            "https://developer.mozilla.org/en-US/docs/Web/Manifest/file_handlers",
-        quickFix: true,
-        errorString: "file_handlers should be a non-empty array",
-        test: (value: any[]) => {
-            const isArray = value && Array.isArray(value);
-
-            return isArray;
-        }
-    },
-    {
-        member: "file_handlers",
-        displayString: "File handlers has valid fields",
+        displayString: "Manifest has valid file_handlers field",
         infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
         category: "optional",
         defaultValue: [],
@@ -677,28 +650,16 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         errorString: "file_handlers array should have objects with action and accept fields",
         test: (value: any[]) => {
-            const isArray = value && Array.isArray(value);
-
-            if (isArray) {
-                const allValid = value.every((fileHandler: any) => {
-                    const hasAction = fileHandler.action && typeof fileHandler.action == 'string' && fileHandler.action.length;
-                    const hasAccept = fileHandler.accept && typeof fileHandler.accept == 'object' && !Array.isArray(fileHandler.accept);
-
-                    return hasAction && hasAccept;
-                });
-
-                return allValid;
-            }
-            else {
-                return false;
-            }
+            const validation = fileHandlersValidator(value);
+            // fileHandlersValidator.errors
+            return validation;
         }
     },
     {
         member: "display_override",
         displayString: "Manifest has display override field",
         infoString: "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
-        category: "optional",
+        category: "recommended",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
@@ -714,26 +675,26 @@ export const maniTests: Array<Validation> = [
         member: "display_override",
         displayString: "Manifest has display_override with window-controls-overlay",
         infoString: "This display mode only applies when the application is in a separate PWA window and on a desktop operating system. The application will opt-in to the Window Controls Overlay feature, where the full window surface area will be available for the app's web content",
-        category: "optional",
+        category: "recommended",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
         quickFix: true,
-        errorString: "display_override must be a non-empty array",
+        errorString: "display_override array should have window-controls-overlay value",
         test: (value: any[]) => {
             return value && Array.isArray(value) && value.some(override => override == 'window-controls-overlay');
         }
     },
     {
         member: "scope_extensions",
-        displayString: "Manifest has scope_extensions field",
+        displayString: "Manifest has valid scope_extensions field",
         infoString: "Allow PWA that control multiple subdomains and top level domains to behave as one contiguous app. E.g. a site may span example.com, example.co.uk and support.example.com",
         category: "optional",
         defaultValue: [],
         docsLink:
             "https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md",
         quickFix: true,
-        errorString: "scope_extensions must be a non-empty array",
+        errorString: "scope_extensions should be a valid array",
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value);
 
@@ -751,20 +712,18 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "widgets",
-        displayString: "Manifest has widgets field",
-        infoString: "Allow PWA enable Windows 11 widgets board support",
+        displayString: "Manifest has valid widgets field",
+        infoString: "Enable Windows 11 widgets board support",
         category: "optional",
         defaultValue: [],
         docsLink:
             "https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets",
         quickFix: true,
-        errorString: "widgets object have invalid structure",
-        test: (value: any[]) => {
+        errorString: "widgets should be an array of valid objects",
+        test: (value: unknown[]) => {
             const validation = widgetsValidator(value);
-            if (validation && !validation.errors){
-                return true;
-            }
-            return false;
+            // widgetsValidator.errors;
+            return validation;
         }
     },
     {
@@ -809,21 +768,27 @@ export const maniTests: Array<Validation> = [
     }
 ];
 
-export async function loopThroughKeys(manifest: Manifest): Promise<Array<Validation>> {
+export async function loopThroughKeys(manifest: Manifest, includeAllTests = false): Promise<Array<Validation>> {
     return new Promise((resolve) => {
         let data: Array<Validation> = [];
 
         const maniFields = Object.keys(manifest);
 
         maniTests.forEach((test) => {
-            maniFields.forEach(async (field) => {
+            const tested = maniFields.some((field) => {
                 if (test.member === field && test.test) {
-                    const testResult = await test.test(manifest[field]);
+                    const testResult = test.test(manifest[field]);
 
                     test.valid = testResult? true: false;
                     data.push(test);
+
+                    return true;
                 }
-            })
+                return false;
+            });
+            if (!tested && includeAllTests) {
+                data.push({...test, valid: false});
+            }
         })
 
         resolve(data);
@@ -838,13 +803,16 @@ export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array
 
         maniTests.forEach((test) => {
             if (test.category === "required") {
-                maniFields.forEach(async (field) => {
+                maniFields.some((field) => {
                     if (test.member === field && test.test) {
-                        const testResult = await test.test(manifest[field]);
+                        const testResult = test.test(manifest[field]);
 
                         test.valid = testResult? true: false;
                         data.push(test);
+
+                        return true;
                     }
+                    return false;
                 })
             }
         })

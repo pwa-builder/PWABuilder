@@ -1,0 +1,114 @@
+{
+  "id": "?id=4815162342",
+  "dir": "ltr",
+  "lang": "en",
+  "name": "Webboard",
+  "scope": "/",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "Webboard",
+  "theme_color": "#FFFFFF",
+  "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
+  "orientation": "any",
+  "background_color": "#FFFFFF",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "handle_links": "preferred",
+  "screenshots": [
+    {
+      "src": "assets/screen.png"
+    },
+    {
+      "src": "assets/screen.png"
+    },
+    {
+      "src": "assets/screen.png"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "low-latency inking",
+    "fast",
+    "useful AI"
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Live Session",
+      "short_name": "Start Live",
+      "description": "Jump direction into starting or joining a live session",
+      "url": "/?startLive",
+      "icons": [
+        {
+          "src": "icons/android/maskable_icon_192.png",
+          "sizes": "192x192"
+        },
+        {
+          "src": "icons/android/maskable_icon_96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "icons/android/android-launchericon-64-64.png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "icons/android/maskable_icon_192.png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/android/android-launchericon-48-48.png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "icons/android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+	  "purpose": "any"
+    },
+    {
+      "src": "icons/android/android-launchericon-28-28.png",
+      "sizes": "28x28"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 600
+  },
+  "file_handlers": [
+    {
+      "action": "/handle-audio-file",
+      "accept": {
+        "audio/wav": [".wav"],
+        "audio/x-wav": [".wav"]
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "name": "PWAmp mini player",
+      "description": "widget to control the PWAmp music player",
+      "tag": "pwamp",
+      "template": "pwamp-template",
+      "ms_ac_template": "widgets/mini-player-template.json",
+      "data": "widgets/mini-player-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "./screenshot-widget.png",
+          "sizes": "600x400",
+          "label": "The PWAmp mini-player widget"
+        }
+      ],
+      "icons": [
+        {
+          "src": "./favicon-16.png",
+          "sizes": "16x16"
+        }
+      ],
+      "auth": false,
+      "update": 86400
+    }
+  ]
+}

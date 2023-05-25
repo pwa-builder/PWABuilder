@@ -1,6 +1,6 @@
 {
   "name": "@pwabuilder/manifest-validation",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "pwa-builder",
   "license": "ISC",
   "description": "Manifest validation library by PWABuilder criteria",
