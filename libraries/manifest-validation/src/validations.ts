@@ -4,13 +4,16 @@ import { maniTests as Tests } from "./mani-tests.js"
 
 export const maniTests: Array<Validation> = Tests;
 
-export async function loopThroughKeys(manifest: Manifest, includeAllTests = false): Promise<Array<Validation>> {
+export async function loopThroughKeys(manifest: Manifest, requiredOnly = false, includeMissedTests = false): Promise<Array<Validation>> {
     return new Promise((resolve) => {
         let data: Array<Validation> = [];
 
         const maniFields = Object.keys(manifest);
 
         maniTests.forEach((test) => {
+            if (requiredOnly && test.category !== "required") {
+                return;
+            }
             const tested = maniFields.some((field) => {
                 if (test.member === field && test.test) {
                     const testResult = test.test(manifest[field]);
@@ -22,7 +25,8 @@ export async function loopThroughKeys(manifest: Manifest, includeAllTests = fals
                 }
                 return false;
             });
-            if (!tested && includeAllTests) {
+            if (!tested && includeMissedTests) {
+                test.test && test.test(undefined);
                 data.push({...test, valid: false});
             }
         })
@@ -31,29 +35,37 @@ export async function loopThroughKeys(manifest: Manifest, includeAllTests = fals
     })
 }
 
-export async function loopThroughRequiredKeys(manifest: Manifest): Promise<Array<Validation>> {
-    return new Promise((resolve) => {
-        let data: Array<Validation> = [];
-
-        const maniFields = Object.keys(manifest);
-
-        maniTests.forEach((test) => {
-            if (test.category === "required") {
-                maniFields.some((field) => {
-                    if (test.member === field && test.test) {
-                        const testResult = test.test(manifest[field]);
-
-                        test.valid = testResult? true: false;
-                        data.push(test);
-
-                        return true;
-                    }
-                    return false;
-                })
-            }
+export async function loopThroughRequiredKeys(manifest: Manifest, includeMissedTests = false): Promise<Array<Validation>> {
+    return new Promise((resolve, reject) => {
+        loopThroughKeys(manifest, true, includeMissedTests).then((data) => {
+            resolve(data);
+        }).catch((err: unknown) => {
+            console.error(err);
+            reject(err);
         })
 
-        resolve(data);
+
+        // let data: Array<Validation> = [];
+
+        // const maniFields = Object.keys(manifest);
+
+        // maniTests.forEach((test) => {
+        //     if (test.category === "required") {
+        //         maniFields.some((field) => {
+        //             if (test.member === field && test.test) {
+        //                 const testResult = test.test(manifest[field]);
+
+        //                 test.valid = testResult? true: false;
+        //                 data.push(test);
+
+        //                 return true;
+        //             }
+        //             return false;
+        //         })
+        //     }
+        // })
+
+        // resolve(data);
     })
 }
 

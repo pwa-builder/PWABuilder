@@ -25,7 +25,7 @@ export const maniTests: Array<Validation> = [
                 this.errorString = "name is required and must be a string with a length > 0";
                 return false;
             }
-            const valid = value.trim() !== value;
+            const valid = value.trim() == value;
             if (!valid) {
                 this.errorString = "name should not have any leading or trailing whitespace";
                 return false;
@@ -122,11 +122,11 @@ export const maniTests: Array<Validation> = [
                 this.errorString = "icons is required and must be non-empty array";
                 return false;
             }
-            const anyIcon = value.find(icon => icon.purpose === "any");
-            if (!anyIcon) {
-                this.errorString = "Need at least one icon with purpose set to any";
-                return false;
-            }
+            // const anyIcon = value.find(icon => icon.purpose === "any");
+            // if (!anyIcon) {
+            //     this.errorString = "Need at least one icon with purpose set to any";
+            //     return false;
+            // }
             const wrongIcon = value.find(icon => icon.purpose === "any maskable");
             if (wrongIcon) {
                 this.errorString = "Seperate Icons are needed for both maskable and any";
@@ -140,41 +140,41 @@ export const maniTests: Array<Validation> = [
             return true;
         }
     },
-    // {
-    //     infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-    //     displayString: "Icons have at least one icon with purpose any",
-    //     category: "recommended",
-    //     member: "icons",
-    //     defaultValue: JSON.stringify([
-    //         {
-    //             "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
-    //             "sizes": "192x192",
-    //             "type": "image/png",
-    //             "purpose": "any"
-    //         },
-    //         {
-    //             "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
-    //             "sizes": "512x512",
-    //             "type": "image/png",
-    //             "purpose": "maskable"
-    //         }
-    //     ]),
-    //     docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
-    //     errorString: "Need at least one icon with purpose set to any",
-    //     quickFix: true,
-    //     test: (value: any[]) => {
-    //         const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+    {
+        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+        displayString: "Icons have at least one icon with purpose any",
+        category: "recommended",
+        member: "icons",
+        defaultValue: JSON.stringify([
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
+            },
+            {
+                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "maskable"
+            }
+        ]),
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+        errorString: "Need at least one icon with purpose set to any",
+        quickFix: true,
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
-    //         if (isArray) {
-    //             const anyIcon = value.find(icon => icon.purpose === "any");
+            if (isArray) {
+                const anyIcon = value.find(icon => icon.purpose === "any");
 
-    //             return anyIcon ? true : false;
-    //         }
-    //         else {
-    //             return false;
-    //         }
-    //     }
-    // },
+                return anyIcon ? true : false;
+            }
+            else {
+                return false;
+            }
+        }
+    },
     // {
     //     infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
     //     displayString: "Icons have at least one PNG icon 512x512 or larger",
@@ -274,7 +274,7 @@ export const maniTests: Array<Validation> = [
                 this.errorString = "short_name is required and must be a string with a length >= 3";
                 return false;
             }
-            const valid = value.trim() !== value;
+            const valid = value.trim() == value;
             if (!valid) {
                 this.errorString = "short_name should not have any leading or trailing whitespace";
                 return false;
@@ -644,7 +644,7 @@ export const maniTests: Array<Validation> = [
                 this.errorString = "description must be a string with a length > 0";
                 return false;
             }
-            const valid = value.trim() !== value;
+            const valid = value.trim() == value;
             if (!valid) {
                 this.errorString = "description should not have any leading or trailing whitespace";
                 return false;

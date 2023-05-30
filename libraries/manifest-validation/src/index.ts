@@ -1,4 +1,4 @@
-import { Manifest, singleFieldValidation, Validation } from "./interfaces.js";
+import { TokensValidation, Manifest, singleFieldValidation, Validation } from "./interfaces.js";
 export { Manifest, Validation, singleFieldValidation } from "./interfaces.js";
 import { findMissingKeys, isValidJSON, isValidURL, validProtocols } from "./utils/validation-utils.js";
 export { required_fields, recommended_fields, optional_fields, validateSingleRelatedApp } from "./utils/validation-utils.js";
@@ -6,7 +6,7 @@ import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } 
 
 export let currentManifest: Manifest | undefined;
 
-export async function validateManifest(manifest: Manifest, includeAllTests?: boolean): Promise<Validation[]> {
+export async function validateManifest(manifest: Manifest, includeMissedTests?: boolean): Promise<Validation[]> {
     return new Promise(async(resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
@@ -15,7 +15,7 @@ export async function validateManifest(manifest: Manifest, includeAllTests?: boo
         }
 
         currentManifest = manifest;
-        let data = await loopThroughKeys(manifest, includeAllTests);
+        let data = await loopThroughKeys(manifest, includeMissedTests);
 
         resolve(data);
     });
@@ -52,7 +52,7 @@ export async function validateRequiredFields(manifest: Manifest): Promise<Valida
             reject('Manifest is not valid JSON');
         }
 
-        let data = await loopThroughRequiredKeys(manifest);
+        let data = await loopThroughRequiredKeys(manifest, true);
         if (data && data.length > 0) {
             resolve(data);
         }
@@ -115,6 +115,64 @@ export function validateSingleProtocol(proto: any){
     }
 
     return "valid";
+}
+
+export async function groupedValidation(manifest: Manifest): Promise<TokensValidation> {
+    return new Promise(async(resolve, reject) => {
+        const validJSON = isValidJSON(manifest);
+
+        if (validJSON === false) {
+            reject('Manifest is not valid JSON');
+        }
+
+        currentManifest = manifest;
+        const testResults = await loopThroughKeys(manifest, false, true);
+        const resultsGrouped = testResults.reduce((acc, curr) => {
+            const curTrimmed = { member: curr.member, valid: curr.valid, displayString: curr.displayString, errorString: curr.errorString, infoString: curr.infoString };
+            if (acc[curr.member]) {
+                acc[curr.member].push(curTrimmed);
+            } else {
+                acc[curr.member] = [curTrimmed];
+            }
+            return acc;
+        }, {} as any);
+
+        Object.keys(resultsGrouped).forEach(key => {
+            if (resultsGrouped[key].length > 1)
+                resultsGrouped[key] = (resultsGrouped[key] as Validation[]).filter((item: Validation) => item.category === 'required');
+        });
+
+        const groupedValidation: TokensValidation = {
+            installable: {
+                short_name: resultsGrouped['short_name'][0],
+                name: resultsGrouped['name'][0],
+                description: resultsGrouped['description'][0],
+                display: resultsGrouped['display'][0],
+                icons: resultsGrouped['icons'][0],
+            },
+            additional: {
+                id: resultsGrouped['id'][0],
+                launch_handler: resultsGrouped['launch_handler'][0],
+                orientation: resultsGrouped['orientation'][0],
+                background_color: resultsGrouped['background_color'][0],
+                theme_color: resultsGrouped['theme_color'][0],
+                screenshots: resultsGrouped['screenshots'][0],
+                categories: resultsGrouped['categories'][0]
+            },
+            progressive: {
+                share_target: resultsGrouped['share_target'][0],
+                protocol_handlers: resultsGrouped['protocol_handlers'][0],
+                file_handlers: resultsGrouped['file_handlers'][0],
+                shortcuts: resultsGrouped['shortcuts'][0],
+                display_override: resultsGrouped['display_override'][0],
+                edge_side_panel: resultsGrouped['edge_side_panel'][0],
+                scope_extensions: resultsGrouped['scope_extensions'][0],
+                widgets: resultsGrouped['widgets'][0]
+            }
+        }
+
+        resolve(groupedValidation);
+    });
 }
 
 export * from './interfaces.js';

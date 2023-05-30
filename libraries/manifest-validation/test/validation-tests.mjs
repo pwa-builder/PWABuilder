@@ -33,7 +33,7 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   it('returns correct number of tests', async () => {
     const data = await maniLib.validateManifest(test_manifest);
 
-    assert.equal(data.length, 29);
+    assert.equal(data.length, 22);
   });
 
 
@@ -41,6 +41,13 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
     const results = await maniLib.validateManifest(test_manifest);
     const invalid = results.reduce((amount, result) => amount + !result.valid? 1 : 0, 0);
     assert.equal(invalid, 0, results.filter((result) => !result.valid).map((result) => result.errorString).toString());
+  });
+
+  it('grouped tokens validation', async () => {
+    const results = await maniLib.groupedValidation(test_manifest);
+    console.log(JSON.stringify(results));
+    assert.ok(results);
+    
   });
 
   /*
