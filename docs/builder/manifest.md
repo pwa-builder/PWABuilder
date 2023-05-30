@@ -41,6 +41,16 @@ It is recommended that `short_name` be 12 characters or less in length.
 
 ?> `short_name` isn't required by Web Standards, but is a required member for packaging with the PWABuilder service. `short_name` must be 3 or more characters to ensure you can package for all stores.
 
+### id: `string`
+
+`id` is an optional member that functions as a unique identifier for your Progressive Web App that is separate from members that may change over time (such as `name` or `start_url`). `id` allows the browser to properly associate your app's identity with a specific install, regardless of whether or not the value of other manifest members changes.
+
+```json
+{
+  id: "/?homescreen=1"
+}
+```
+
 ### description: `string`
 
 `description` is an optional member that can be used to describe the functionality and purpose of your app.
@@ -249,6 +259,20 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ```json
 "categories": ["games", "finance", "navigation"]
+```
+
+### edge_side_panel: `Object`
+
+`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases [here.](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md)
+
+You can also specify the `preferred_width` member as part of your `edge_side_panel` specification.
+
+```json
+{
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
 ```
 
 ## Icons
