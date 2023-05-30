@@ -247,7 +247,7 @@ export const maniTests: Array<Validation> = [
     // },
     {
         infoString: "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
-        displayString: "Manifest has a scope field",
+        displayString: "Manifest has scope field",
         category: "optional",
         member: "scope",
         defaultValue: "/",
@@ -260,7 +260,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
-        displayString: "Short name is the correct minimum length (3 characters)",
+        displayString: "Manifest has a short_name field",
         category: "required",
         member: "short_name",
         defaultValue: "placeholder",

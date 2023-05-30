@@ -15,7 +15,7 @@ export async function validateManifest(manifest: Manifest, includeMissedTests?: 
         }
 
         currentManifest = manifest;
-        let data = await loopThroughKeys(manifest, includeMissedTests);
+        let data = await loopThroughKeys(manifest, false, includeMissedTests);
 
         resolve(data);
     });
