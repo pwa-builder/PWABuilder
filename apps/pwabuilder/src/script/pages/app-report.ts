@@ -489,11 +489,11 @@ export class AppReport extends LitElement {
 
         #test-download:disabled {
           cursor: no-drop;
-          color: #595959;
+          color: #757575;
         }
 
         #test-download:disabled .arrow_link {
-          border-color: #595959;
+          border-color: #757575;
         }
 
         #pfs {
@@ -1446,8 +1446,14 @@ export class AppReport extends LitElement {
     }
 
     setInterval(() => this.pollLastTested(), 120000);
+    
+    window.addEventListener('scroll', this.closeTooltipOnScroll.bind(this));
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('scroll', this.closeTooltipOnScroll.bind(this));
+  }
 
   // Expands the Action items details on load
   firstUpdated() {
@@ -2047,7 +2053,8 @@ export class AppReport extends LitElement {
     if(!manifest_fields[e.detail.field]){
       let frame;
       switch(e.detail.field){
-        case "Manifest" || "SW":
+        case "Manifest":
+        case "Service Worker":
           this.thingToAdd = e.detail.displayString;
           this.showConfirmationModal = true;
           return;
@@ -2227,7 +2234,6 @@ export class AppReport extends LitElement {
   
   handleShowingTooltip(e: CustomEvent){
     if(e.detail.entering){
-
       if(this.openTooltips.length > 0){
         this.openTooltips[0].hide();
         this.openTooltips = [];
@@ -2240,6 +2246,13 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
+  }
+
+  closeTooltipOnScroll() {
+    if(this.openTooltips.length > 0){
+      this.openTooltips[0].hide();
+      this.openTooltips = [];
+    }
   }
   
   render() {
@@ -2265,7 +2278,7 @@ export class AppReport extends LitElement {
             </div>`
             :
             html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#595959' }) : styleMap(this.CardStyles)}>
+            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#757575' }) : styleMap(this.CardStyles)}>
               <div id="app-card-header">
                 <div id="app-card-header-col">
                   <div id="pwa-image-holder">
