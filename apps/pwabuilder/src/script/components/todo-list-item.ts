@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import { AuthModule } from '../services/auth_service';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -202,8 +203,26 @@ export class TodoItem extends LitElement {
     return html`<img src=${yield_src} alt="yield result icon"/>`
   }
 
-  goToGiveaway(){
-    Router.go("/giveaway?site=https://webboard.app")
+  async signInUser() {
+    const authModule = new AuthModule();
+    try {
+    const result = await authModule.signIn();
+    if(result != null && result != undefined && "idToken" in result){
+      return result;
+    }
+    else
+      return null;
+    }
+    catch(e) {
+      console.log("Authentication Error");
+    } 
+    return null;
+  }
+
+  async goToGiveaway(){
+    const result = await this.signInUser();
+    if(result != null && result != undefined && "idToken" in result)
+      Router.go("/giveaway?site=https://webboard.app") 
   }
 
   render() {
