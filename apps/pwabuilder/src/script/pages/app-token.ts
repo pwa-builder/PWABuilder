@@ -67,7 +67,11 @@ export class AppToken extends LitElement {
           box-sizing: border-box;
         }
 
-        #wrapper:last-child {
+        #wrapper > *:not(#hero-section){
+          max-width: 1366px;
+        }
+
+        #wrapper > :last-child:not(#footer-section) {
           margin-bottom: 30px;
         }
 
@@ -520,6 +524,7 @@ export class AppToken extends LitElement {
         justify-content: center;
         padding: 40px;
         position: relative;
+        width: 100%;
       }
 
       #footer-section-grid {
