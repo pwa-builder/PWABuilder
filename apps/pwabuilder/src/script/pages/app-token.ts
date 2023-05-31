@@ -89,7 +89,6 @@ export class AppToken extends LitElement {
 
           align-items: flex-start;
           justify-content: center;
-          margin-bottom: 10px;
           width: 100%;
         }
 
@@ -161,6 +160,15 @@ export class AppToken extends LitElement {
           box-shadow: 0px 4px 30px 0px #00000014;
           gap: 15px;
           padding: 25px;
+          margin-top: -95px;
+        }
+
+        #logo-and-text {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          gap: 15px;
         }
 
         .square::part(indicator) {
@@ -240,6 +248,7 @@ export class AppToken extends LitElement {
        #rings {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
+        place-items: center;
         gap: 20px;
         box-shadow: 0px 4px 30px 0px #00000014;
         border-radius: 10px;
@@ -588,6 +597,21 @@ export class AppToken extends LitElement {
         width: 500px;
       }
 
+      @media(max-width: 1024px){
+
+        #app-info {
+          flex-direction: column;
+        }
+        #rings {
+          display: flex;
+          justify-content: space-evenly;
+        }
+        .card-holder {
+          min-width: 50px;
+        }
+
+      }
+
       
 
       `
@@ -689,13 +713,16 @@ export class AppToken extends LitElement {
       return html`
         <!-- Show card with skeleton -->
         <div id="app-info">
-          <sl-skeleton class="square" effect="sheen"></sl-skeleton>
-          <div id="words">
-            <sl-skeleton effect="sheen"></sl-skeleton>
-            <sl-skeleton effect="sheen"></sl-skeleton>
-            <sl-skeleton effect="sheen"></sl-skeleton>
-            <sl-skeleton effect="sheen"></sl-skeleton>
+          <div id="logo-and-text">
+            <sl-skeleton class="square" effect="sheen"></sl-skeleton>
+            <div id="words">
+              <sl-skeleton effect="sheen"></sl-skeleton>
+              <sl-skeleton effect="sheen"></sl-skeleton>
+              <sl-skeleton effect="sheen"></sl-skeleton>
+              <sl-skeleton effect="sheen"></sl-skeleton>
+            </div>
           </div>
+          
           <div id="rings">
             <div class="card-holder">
               <div class="loader-round"></div>
@@ -737,13 +764,15 @@ export class AppToken extends LitElement {
         ${banner} <!-- Error Banner + the results below -->
         <!-- Show card with results + error banner -->
         <div id="app-info">
-          <div id="img-holder">
-            <img class="square" src="${this.appCard.iconURL}" alt="${this.appCard.iconAlt}"/>
-          </div>
-          <div id="words">
-            <p>${this.appCard.siteName}</p>
-            <p>${this.appCard.siteUrl}</p>
-            <p>${this.appCard.description}</p>
+          <div id="logo-and-text">
+            <div id="img-holder">
+              <img class="square" src="${this.appCard.iconURL}" alt="${this.appCard.iconAlt}"/>
+            </div>
+            <div id="words">
+              <p>${this.appCard.siteName}</p>
+              <p>${this.appCard.siteUrl}</p>
+              <p>${this.appCard.description}</p>
+            </div>
           </div>
           <div id="rings">
             <div class="card-holder">
