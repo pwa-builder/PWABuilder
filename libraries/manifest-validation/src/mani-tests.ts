@@ -301,7 +301,7 @@ export const maniTests: Array<Validation> = [
     // },
     {
         infoString: "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
-        displayString: "Manifest has start url field",
+        displayString: "Manifest has start_url field",
         category: "required",
         member: "start_url",
         defaultValue: "/",
@@ -362,7 +362,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
         displayString: "Manifest has hex encoded background_color",
         category: "recommended",
-        testRequired: true,
+        // testRequired: true,
         member: "background_color",
         defaultValue: "#000000",
         docsLink:
@@ -383,7 +383,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
         displayString: "Manifest has hex encoded theme_color",
         category: "recommended",
-        testRequired: true,
+        // testRequired: true,
         member: "theme_color",
         defaultValue: "#000000",
         docsLink:
@@ -567,7 +567,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
         displayString: "Manifest properly sets prefer_related_applications field",
         category: "optional",
-        testRequired: true,
+        // testRequired: true,
         member: "prefer_related_applications",
         defaultValue: false,
         docsLink:
@@ -582,7 +582,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
         displayString: "Manifest has categories field",
         category: "optional",
-        testRequired: true,
+        // testRequired: true,
         member: "categories",
         defaultValue: [],
         docsLink:
@@ -670,7 +670,7 @@ export const maniTests: Array<Validation> = [
     // },
     {
         member: "protocol_handlers",
-        displayString: "Manifest has protocol handlers field",
+        displayString: "Manifest has protocol_handlers field",
         infoString: "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
         category: "optional",
         defaultValue: [],
@@ -749,7 +749,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "display_override",
-        displayString: "Manifest has display override field",
+        displayString: "Manifest has display_override field",
         infoString: "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
         category: "recommended",
         defaultValue: [],
@@ -842,7 +842,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "launch_handler",
-        displayString: "Manifest has launch handler field",
+        displayString: "Manifest has launch_handler field",
         infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
         category: "recommended",
         defaultValue: "",
@@ -866,7 +866,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "edge_side_panel",
-        displayString: "Manifest has edge side panel field",
+        displayString: "Manifest has edge_side_panel field",
         infoString: "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
         category: "recommended",
         defaultValue: "",
