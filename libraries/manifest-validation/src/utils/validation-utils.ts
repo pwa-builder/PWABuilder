@@ -176,5 +176,14 @@ export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolea
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 export const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "geo", "gopher", "im", "ipfs", "ipns", "irc", "ircs", "magnet", "mailto", "matrix", "mms", "news", "nntp", "sip", "sms", "smsto", "ssb", "ssh", "tel", "urn", "webcal", "wtai", "xmpp"];
 export const required_fields = ["icons", "name", "short_name", "start_url"];
-export const recommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "shortcuts", "edge_side_panel"];
-export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "display_override", "share_target", "scope", "categories"];
+export const recommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots"];
+export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "scope", "categories"];
+export const enhanced_fields = ["share_target", "shortcuts", "display_override", "widgets", "edge_side_panel"]
+
+export const enhancement_goals ={
+  "share_target": "Be a share target for other apps",
+	"shortcuts": "Add quick access with shortcuts",
+  "display_override": "Make your PWA feel more like an app with window controls overalay",
+  "widgets": "Increase reach with widgets",
+  "edge_side_panel": "Participate in the Edge Side panel"
+}

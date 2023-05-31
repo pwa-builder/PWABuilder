@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext } from '../services/app-info';
-import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
+import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields, enhanced_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
   mediumBreakPoint,
@@ -37,10 +37,12 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
+import { enhancement_goals } from '@pwabuilder/manifest-validation';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
+const enhancement_src = "/assets/new/enhancement.svg";
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -96,6 +98,7 @@ export class AppReport extends LitElement {
   @state() manifestValidCounter: number = 0;
   @state() manifestRequiredCounter: number = 0;
   @state() manifestRecCounter: number = 0;
+  @state() manifestEnhancementCounter: number = 0;
   @state() manifestDataLoading: boolean = true;
   @state() manifestMessage: string = "";
   @state() startingManifestEditorTab: string = "info";
@@ -121,6 +124,7 @@ export class AppReport extends LitElement {
   @state() requiredMissingFields: any[] = [];
   @state() recMissingFields: any[] = [];
   @state() optMissingFields: any[] = [];
+  @state() enhMissingFields: any[] = [];
 
   // Confirm Retest stuff
   @state() showConfirmationModal: boolean = false;
@@ -1669,15 +1673,14 @@ export class AppReport extends LitElement {
         if(test.valid){
           this.manifestValidCounter++;
         } else {
-          let status ="";
+          let status = test.category;
           if(test.category === "required" || test.testRequired){
-            status = "required";
             this.manifestRequiredCounter++;
           } else if(test.category === "recommended"){
-            status = "recommended";
             this.manifestRecCounter++;
+          } else if(test.category === "desktop_enhancement"){
+            this.manifestEnhancementCounter++;
           } else {
-            status = "optional";
           }
           this.todoItems.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
           
@@ -1812,22 +1815,32 @@ export class AppReport extends LitElement {
     let missing = await reportMissing(manifest);
 
     missing.forEach((field: string) => {
-      
-      let isRecommended = false;
-
+      let status = "";
       if(required_fields.includes(field)){
         this.requiredMissingFields.push(field);
         this.manifestRequiredCounter++;
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", status: "required"})
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, status: "required"})
       } else if(recommended_fields.includes(field)){
         this.recMissingFields.push(field);
         this.manifestRecCounter++;
-        isRecommended = true;
+        status = "recommended";
       } else if(optional_fields.includes(field)){
         this.optMissingFields.push(field)
+        status = "optional";
+      } else if(enhanced_fields.includes(field)){
+        this.enhMissingFields.push(field)
+        status = "desktop_enhancement";
       }
+
+      let fix = '';
+      if(status === "desktop_enhancement"){
+        fix = enhancement_goals[field];
+      } else {
+        fix = `Add ${field} to your manifest`;
+      }
+
       if(!this.createdManifest && !required_fields.includes(field)){
-        this.todoItems.push({"card": "mani-details", "field": field, "fix": "Add~to your manifest", "status": isRecommended ? "recommended" : "optional"})
+        this.todoItems.push({"card": "mani-details", "field": field, "fix": fix, status: status})
       }
     });
     let num_missing = missing.length;
@@ -2140,9 +2153,10 @@ export class AppReport extends LitElement {
     const rank: { [key: string]: number } = { 
       "retest": 0,
       "required": 1,
-      "highly recommended": 2,
-      "recommended": 3,
-      "optional": 4
+      "desktop_enhancement": 2,
+      "highly recommended": 3,
+      "recommended": 4,
+      "optional": 5
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
@@ -2203,10 +2217,13 @@ export class AppReport extends LitElement {
   renderIndicators(){
     let yellow = 0;
     let red = 0;
+    let enh = 0;
 
     this.todoItems.forEach((todo: any) => {
       if(todo.status == "required"){
         red++;
+      } else if(todo.status === "desktop_enhancement") {
+        enh++;
       } else {
         yellow++;
       }
@@ -2216,6 +2233,7 @@ export class AppReport extends LitElement {
       return html`
       <div id="indicators-holder">
         ${red != 0 ? html`<div class="indicator"><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
+        ${enh != 0 ? html`<div class="indicator"><img src=${enhancement_src} alt="yield result icon"/><p>${enh}</p></div>` : html``}
         ${yellow != 0 ? html`<div class="indicator"><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
       </div>`
     }
@@ -2565,6 +2583,34 @@ export class AppReport extends LitElement {
                   ` : html``)}
                 </div>
                 <div class="detail-list">
+                  <p class="detail-list-header">Desktop Enhancments</p>
+                    ${this.enhMissingFields.length > 0 ?
+                    html`
+                      ${this.enhMissingFields.map((field: string) =>
+                      html`
+                          <div class="test-result" data-field=${field}>
+                            <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
+                              <img src=${yield_src} alt="yield result icon"/>
+                            </sl-tooltip>
+                            <p>Manifest includes ${field} field</p>
+                          </div>`
+                      )}
+                    ` :
+                    html``}
+
+                    ${this.validationResults.map((result: Validation) => result.category === "desktop_enhancement" && ((result.testRequired && result.valid) || !result.testRequired) ?
+                    html`
+                      <div class="test-result" data-field=${result.member}>
+                        ${result.valid ?
+                          html`<img src=${enhancement_src} alt="enhancement result icon"/>` :
+                          html`
+                            <sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
+                              <img src=${yield_src} alt="yield result icon"/>
+                            </sl-tooltip>
+                          `}
+                        <p>${result.displayString}</p>
+                      </div>
+                    ` : html``)}
                   <p class="detail-list-header">Optional</p>
                   ${this.optMissingFields.length > 0 ?
                   html`

@@ -42,7 +42,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "share_target enables your app to get shared content from other apps",
         displayString: "Manifest has share_target field",
-        category: "optional",
+        category: "desktop_enhancement", 
         member: "share_target",
         defaultValue: JSON.stringify({
             "action": "/share-target/",
@@ -392,7 +392,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
         displayString: "Manifest has shortcuts field",
-        category: "recommended",
+        category: "desktop_enhancement",
         member: "shortcuts",
         defaultValue: [],
         docsLink:
@@ -635,7 +635,7 @@ export const maniTests: Array<Validation> = [
         member: "display_override",
         displayString: "Manifest has display override field",
         infoString: "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
-        category: "optional",
+        category: "desktop_enhancement",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
@@ -676,7 +676,7 @@ export const maniTests: Array<Validation> = [
         member: "edge_side_panel",
         displayString: "Manifest has edge side panel field",
         infoString: "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
-        category: "recommended",
+        category: "desktop_enhancement",
         defaultValue: "",
         docsLink: "https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar",
         errorString: "The value entered for edge_side_panel.preferred_width should be a number",
