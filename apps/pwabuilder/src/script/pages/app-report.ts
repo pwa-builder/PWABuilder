@@ -133,6 +133,8 @@ export class AppReport extends LitElement {
   @state() todoItems: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
 
+  @state() addedRetestTodo: any = {"manifest": false, "service worker": false}
+
   private possible_messages = [
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
@@ -2075,6 +2077,16 @@ export class AppReport extends LitElement {
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
+    
+    // just makes sure that once we add this todo once, we don't repetitively add it for subsequent edits.
+    if(toAdd.toLocaleLowerCase() === "manifest" && this.addedRetestTodo[toAdd.toLocaleLowerCase()]){
+      return;
+    } else if(toAdd.toLocaleLowerCase() === "service worker" && this.addedRetestTodo[toAdd.toLocaleLowerCase()]) {
+      return;
+    }
+
+    this.addedRetestTodo[toAdd.toLocaleLowerCase()] = true;
+
     this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
     this.requestUpdate();
   }

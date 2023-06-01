@@ -6,6 +6,7 @@ import { insertAfter, errorInTab } from '../utils/helpers';
 import {classMap} from 'lit/directives/class-map.js';
 
 import "./manifest-field-tooltip";
+import { SlInput, SlSelect } from '@shoelace-style/shoelace';
 
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
@@ -71,11 +72,34 @@ export class ManifestInfoForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
+
+      .attribute-box {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        gap: 5px;
+      }
+
       .field-desc {
         white-space: no-wrap;
         font-size: 14px;
         margin: 0;
         color: #717171;
+      }
+
+      .edited-notification {
+        display: none;
+        height: 14px;
+        align-items: center;
+      }
+
+      .edited-notification.show {
+        display: flex;
+      }
+
+      .edited-notification.neighbor {
+        border-left: 1px solid #717171;
+        padding-left: 5px;
       }
 
       .long .form-field {
@@ -425,9 +449,22 @@ export class ManifestInfoForm extends LitElement {
       await this.validationPromise;
     }
 
-    const input = <HTMLInputElement | HTMLSelectElement>event.target;
+    const input = <SlInput | SlSelect>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
+
+    const editedNotification = this.shadowRoot!.querySelector(`.edited-notification[data-field="${fieldName}"]`) as HTMLParagraphElement;
+    if(editedNotification){
+      if(updatedValue !== input.defaultValue){
+        editedNotification.classList.add("show");
+        if(editedNotification.parentElement?.childElementCount == 2){
+          editedNotification.classList.add("neighbor")
+        }
+      } else {
+        editedNotification.classList.remove("show");
+      }
+      
+    }
 
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
@@ -502,6 +539,16 @@ export class ManifestInfoForm extends LitElement {
     });
     this.dispatchEvent(manifestUpdated);
 
+    const editedNotification = this.shadowRoot!.querySelector(`.edited-notification[data-field="${field}"]`) as HTMLParagraphElement;
+    if(editedNotification){
+      if(color.toLocaleUpperCase() != input.defaultValue.toLocaleUpperCase()){
+        editedNotification.classList.add("show");
+      } else {
+        editedNotification.classList.remove("show");
+      }
+      
+    }
+
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
           field: field,
@@ -539,7 +586,10 @@ export class ManifestInfoForm extends LitElement {
                 <manifest-field-tooltip .field=${"name"}></manifest-field-tooltip>
               </div>
 
-              <p class="field-desc">(required)</p>
+              <div class="attribute-box">
+                <p class="field-desc">(required)</p>
+                <p class="field-desc edited-notification" data-field="name">edited</p>
+              </div>
             </div>
             <p class="field-desc">The name of your app as displayed to the user</p>
             <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
@@ -551,7 +601,10 @@ export class ManifestInfoForm extends LitElement {
                 <manifest-field-tooltip .field=${"short_name"}></manifest-field-tooltip>
               </div>
 
-              <p class="field-desc">(required)</p>
+              <div class="attribute-box">
+                <p class="field-desc">(required)</p>
+                <p class="field-desc edited-notification" data-field="short_name">edited</p>
+              </div>
             </div>
             <p class="field-desc">Used in app launchers</p>
             <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
@@ -563,6 +616,9 @@ export class ManifestInfoForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("description"))}>Description</h3>
                 <manifest-field-tooltip .field=${"description"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="description">edited</p>
               </div>
             </div>
             <p class="field-desc">Used in app storefronts and install dialogs</p>
@@ -576,6 +632,9 @@ export class ManifestInfoForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("background_color"))}>Background Color</h3>
                 <manifest-field-tooltip .field=${"background_color"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="background_color">edited</p>
               </div>
             </div>
             <p class="field-desc">Select a Background color</p>
@@ -591,6 +650,9 @@ export class ManifestInfoForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("theme_color"))}>Theme Color</h3>
                 <manifest-field-tooltip .field=${"theme_color"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="theme_color">edited</p>
               </div>
             </div>
             <p class="field-desc">Select a Theme color</p>

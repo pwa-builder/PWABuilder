@@ -6,11 +6,13 @@ import { required_fields, validateSingleField, singleFieldValidation } from '@pw
 import { errorInTab, insertAfter } from '../utils/helpers';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
+import { SlInput, SlSelect } from '@shoelace-style/shoelace';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
 const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
 let manifestInitialized: boolean = false;
+let displayOverrideInitialized: boolean = false;
 
 @customElement('manifest-settings-form')
 export class ManifestSettingsForm extends LitElement {
@@ -30,8 +32,7 @@ export class ManifestSettingsForm extends LitElement {
 
   @state() errorMap: any = {};
   @state() activeOverrideItems: string[] = [];
-
-
+  @state() initialDO: string[] = [];
 
   static get styles() {
     return css`
@@ -76,11 +77,35 @@ export class ManifestSettingsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
+
+      .attribute-box {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        gap: 5px;
+      }
+
       .field-desc {
         font-size: 14px;
         margin: 0;
         color: #717171;
       }
+
+      .edited-notification {
+        display: none;
+        height: 14px;
+        align-items: center;
+      }
+
+      .edited-notification.show {
+        display: flex;
+      }
+
+      .edited-notification.neighbor {
+        border-left: 1px solid #717171;
+        padding-left: 5px;
+      }
+
       sl-input::part(input), 
       sl-select::part(display-input), 
       sl-details::part(summary){
@@ -299,12 +324,12 @@ export class ManifestSettingsForm extends LitElement {
     super();
   }
 
-  firstUpdated(){
+  /* firstUpdated(){
     let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
     if(this.focusOn && field){
       setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
     }
-  }
+  } */
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
 
@@ -317,6 +342,8 @@ export class ManifestSettingsForm extends LitElement {
       manifestInitialized = false;
       this.requestValidateAllFields();
       this.initOverrideList();
+      
+      displayOverrideInitialized = true;
     }
   }
 
@@ -411,7 +438,6 @@ export class ManifestSettingsForm extends LitElement {
         this.activeOverrideItems.push(item);
       });
     }
-
   }
 
   async handleInputChange(event: InputEvent){
@@ -420,9 +446,21 @@ export class ManifestSettingsForm extends LitElement {
       await this.validationPromise;
     }
 
-    const input = <HTMLInputElement | HTMLSelectElement>event.target;
+    const input = <SlInput | SlSelect>event.target;
     let updatedValue = input.value;
     const fieldName = input.dataset['field'];
+
+    const editedNotification = this.shadowRoot!.querySelector(`.edited-notification[data-field="${fieldName}"]`) as HTMLParagraphElement;
+    if(editedNotification){
+      if(updatedValue !== input.defaultValue){
+        editedNotification.classList.add("show");
+        if(editedNotification.parentElement?.childElementCount == 2){
+          editedNotification.classList.add("neighbor")
+        }
+      } else {
+        editedNotification.classList.remove("show");
+      }
+    }
 
     let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
       detail: {
@@ -518,9 +556,35 @@ export class ManifestSettingsForm extends LitElement {
       this.activeOverrideItems.push(label);
     }
 
+    const editedNotification = this.shadowRoot!.querySelector(`.edited-notification[data-field="display_override"]`) as HTMLParagraphElement;
+    if(editedNotification){
+      if(!this.compareLists(this.activeOverrideItems, this.initialDO)){
+        editedNotification.classList.add("show");
+      } else {
+        editedNotification.classList.remove("show");
+      }
+    }
+
     this.validatePlatformList("display_override", this.activeOverrideItems!);
 
     this.requestUpdate();
+  }
+
+  compareLists(list1: any[], list2: any[]): boolean {
+    if (list1.length !== list2.length) {
+      return false;
+    }
+
+    list1 = list1.sort();
+    list2 = list2.sort();
+  
+    for (let i = 0; i < list1.length; i++) {
+      if (list1[i] !== list2[i]) {
+        return false;
+      }
+    }
+  
+    return true;
   }
 
   async validatePlatformList(field: string, updatedValue: any[]){
@@ -598,7 +662,10 @@ export class ManifestSettingsForm extends LitElement {
                 <manifest-field-tooltip .field=${"start_url"}></manifest-field-tooltip>
               </div>
 
-              <p class="field-desc">(required)</p>
+              <div class="attribute-box">
+                <p class="field-desc">(required)</p>
+                <p class="field-desc edited-notification" data-field="start_url">edited</p>
+              </div>
             </div>
             <p class="field-desc">The URL that loads when your PWA starts</p>
             <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
@@ -608,6 +675,9 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("dir"))}>Dir</h3>
                 <manifest-field-tooltip .field=${"dir"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="dir">edited</p>
               </div>
             </div>
             <p class="field-desc">The text direction of your PWA</p>
@@ -623,6 +693,9 @@ export class ManifestSettingsForm extends LitElement {
                 <h3 class=${classMap(this.decideFocus("scope"))}>Scope</h3>
                 <manifest-field-tooltip .field=${"scope"}></manifest-field-tooltip>
               </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="scope">edited</p>
+              </div>
             </div>
             <p class="field-desc">Which URLs can load within your app</p>
             <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
@@ -633,6 +706,9 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("lang"))}>Language</h3>
                 <manifest-field-tooltip .field=${"lang"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="lang">edited</p>
               </div>
             </div>
             <p class="field-desc">The primary language of your app</p>
@@ -648,6 +724,9 @@ export class ManifestSettingsForm extends LitElement {
                 <h3 class=${classMap(this.decideFocus("orientation"))}>Orientation</h3>
                 <manifest-field-tooltip .field=${"orientation"}></manifest-field-tooltip>
               </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="orientation">edited</p>
+              </div>
             </div>
             <p class="field-desc">The default screen orientation of your app</p>
             <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
@@ -659,6 +738,9 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("display"))}>Display</h3>
                 <manifest-field-tooltip .field=${"display"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="display">edited</p>
               </div>
             </div>
             <p class="field-desc">The appearance of your app window</p>
@@ -673,6 +755,9 @@ export class ManifestSettingsForm extends LitElement {
               <div class="header-left">
                 <h3 class=${classMap(this.decideFocus("display_override"))}>Display Override</h3>
                 <manifest-field-tooltip .field=${"display_override"}></manifest-field-tooltip>
+              </div>
+              <div class="attribute-box">
+                <p class="field-desc edited-notification" data-field="display_override">edited</p>
               </div>
             </div>
             <p class="field-desc">Used to determine the preferred display mode</p>
