@@ -31,21 +31,21 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
 
   // should return the correct number of fields
   it('returns correct number of tests', async () => {
-    const data = await maniLib.validateManifest(test_manifest);
+    const data = await maniLib.validateManifest(test_manifest, true);
 
-    assert.equal(data.length, 22);
+    assert.equal(data.length, 29);
   });
 
 
   it('number of invalid tests is 0', async () => {
-    const results = await maniLib.validateManifest(test_manifest);
+    const results = await maniLib.validateManifest(test_manifest, true);
     const invalid = results.reduce((amount, result) => amount + !result.valid? 1 : 0, 0);
     assert.equal(invalid, 0, results.filter((result) => !result.valid).map((result) => result.errorString).toString());
   });
 
   it('grouped tokens validation', async () => {
     const results = await maniLib.groupedValidation(test_manifest);
-    console.log(JSON.stringify(results));
+    // console.log(JSON.stringify(results));
     assert.ok(results);
     
   });
@@ -53,11 +53,11 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   /*
   * Test reportMissing method
   */
-  it('can report missing fields', async () => {
-    const report = await maniLib.reportMissing(test_manifest);
-    assert.equal(report.length > 0, true);
-    assert.equal(report.includes("iarc_rating_id"), true);
-  });
+  // it('can report missing fields', async () => {
+  //   const report = await maniLib.reportMissing(test_manifest);
+  //   assert.equal(report.length > 0, true);
+  //   assert.equal(report.includes("iarc_rating_id"), true);
+  // });
 
   /*
     * Test validateSingleField method

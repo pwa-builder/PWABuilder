@@ -362,19 +362,25 @@ export const maniTests: Array<Validation> = [
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
         displayString: "Manifest has hex encoded background_color",
         category: "recommended",
-        // testRequired: true,
+        testRequired: undefined,
         member: "background_color",
         defaultValue: "#000000",
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
         errorString: "background_color should be a valid hex color",
         quickFix: true,
-        test: (value: string) => {
-            if (value) {
+        test: function (value: string) {
+            if (typeof value === "undefined") {
+                this.testRequired = false;
+                return false;
+            }
+            if (typeof value === "string") {
                 const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+                this.testRequired = true;
                 return hexRegex.test(value);
             }
             else {
+                this.testRequired = true;
                 return false;
             }
         },
@@ -383,19 +389,25 @@ export const maniTests: Array<Validation> = [
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
         displayString: "Manifest has hex encoded theme_color",
         category: "recommended",
-        // testRequired: true,
+        testRequired: undefined,
         member: "theme_color",
         defaultValue: "#000000",
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
         errorString: "theme_color should be a valid hex color",
         quickFix: true,
-        test: (value: string) => {
-            if (value) {
+        test: function(value: string) {
+            if (typeof value === "undefined") {
+                this.testRequired = false;
+                return false;
+            }
+            if (value && typeof value === "string") {
                 const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+                this.testRequired = true;
                 return hexRegex.test(value);
             }
             else {
+                this.testRequired = true;
                 return false;
             }
         },
@@ -567,13 +579,18 @@ export const maniTests: Array<Validation> = [
         infoString: "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
         displayString: "Manifest properly sets prefer_related_applications field",
         category: "optional",
-        // testRequired: true,
+        testRequired: undefined,
         member: "prefer_related_applications",
         defaultValue: false,
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
         quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
-        test: (value: any) => {
+        test: function(value: any) {
+            if (typeof value === "undefined") {
+                this.testRequired = false;
+                return false;
+            }
+            this.testRequired = true;
             return typeof (value) === "boolean"
         },
         errorString: "prefer_related_applications should be set to a boolean value",
@@ -582,23 +599,19 @@ export const maniTests: Array<Validation> = [
         infoString: "The categories member is an array of strings that represent the categories of the web application.",
         displayString: "Manifest has categories field",
         category: "optional",
-        // testRequired: true,
+        testRequired: undefined,
         member: "categories",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
         quickFix: true,
-        test: (value: any[]) => {
-            let isGood;
-            if (value) {
-                Array.isArray(value)
-                    ?
-                    isGood = true
-                    :
-                    isGood = false;
+        test: function(value: any[]) {
+            if (typeof value === "undefined") {
+                this.testRequired = false;
+                return false;
             }
-
-            return isGood
+            this.testRequired = true;
+            return value && Array.isArray(value) && value.length > 0;
         },
         errorString: "categories should be a non-empty array"
     },

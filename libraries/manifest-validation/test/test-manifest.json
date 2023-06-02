@@ -1,5 +1,6 @@
 {
   "id": "?id=4815162342",
+  "iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9",
   "dir": "ltr",
   "lang": "en",
   "name": "Webboard",
@@ -26,6 +27,12 @@
     }
   ],
   "features": [
+    "Cross Platform",
+    "low-latency inking",
+    "fast",
+    "useful AI"
+  ],
+  "categories": [
     "Cross Platform",
     "low-latency inking",
     "fast",
@@ -85,6 +92,33 @@
       }
     }
   ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+music",
+      "url": "/play?track=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/handle-shared-content/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "url": "url"
+    }
+  },
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "browser"
+  ],
+  "scope_extensions": [
+    {"origin": "*.pwabuilder.com"},
+    {"origin": "docs.pwabuilder.co.uk"},
+    {"origin": "*.pwabuilder.co.uk"}
+  ],
+  "launch_handler": {
+    "client_mode": ["navigate-existing, auto"]
+  },
   "widgets": [
     {
       "name": "PWAmp mini player",
