@@ -7,6 +7,11 @@ Welcome to the PWA Builder FAQ!
 Questions are separated by platform. If you're looking for a specific answer and don't see it right away, try entering some keywords in the search feature on the sidebar.
 
 If you have a question that isn't addressed here or elsewhere in the documentation, feel free to open an [issue.](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
+## General
+
+#### How do I update my store listings? Do I have to republish my PWA?
+
+You don't have to republish to stores when you want to deliver new content to your progressive web app. Just update the content that is being served on the web, and those changes will be automatically reflected in the versions installed from app stores.
 
 ## Windows
 

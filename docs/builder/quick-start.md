@@ -45,7 +45,13 @@ You can have an application package for your PWA in just a few steps:
      <img src="../assets/builder/quick-start/package-download.png" alt="" width=600>
 </div>
 
-## Next Steps 
+## Updating Packages
+
+Progressive Web Apps that are published to app stores using PWA Builder have a huge benefit: they don't need to be republished to their respective listings when you update the content of your apps.
+
+In order to deliver a new version of your app, you just need to update the version of your PWA being served on the web, and this will be reflected in all distributions of your app. The only time a user might see outdated data is if they are using a cached version of your app or aren't currently connected to the web.
+
+## Next Steps
 
 If you're looking for more specific guidance on how to publish a PWA to a specific store, check out the platform-specific articles:
 
