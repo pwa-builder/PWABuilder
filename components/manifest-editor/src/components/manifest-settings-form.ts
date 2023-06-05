@@ -324,13 +324,6 @@ export class ManifestSettingsForm extends LitElement {
     super();
   }
 
-  /* firstUpdated(){
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
-    }
-  } */
-
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
 
     let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
@@ -342,7 +335,6 @@ export class ManifestSettingsForm extends LitElement {
       manifestInitialized = false;
       this.requestValidateAllFields();
       this.initOverrideList();
-      
       displayOverrideInitialized = true;
     }
   }
