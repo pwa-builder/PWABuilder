@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/arrow-link'
-import { SlInput } from '@shoelace-style/shoelace';
+import { SlDetails, SlInput } from '@shoelace-style/shoelace';
 import { cleanUrl, isValidURL } from '../utils/url';
 import { localeStrings } from '../../locales';
 
@@ -830,7 +830,7 @@ export class AppToken extends LitElement {
   rotateNinety(card: string, e?: Event, init?: boolean){
     //recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
     e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
 
     if(icon && init) {
       icon!.style.transform = "rotate(90deg)";
@@ -840,6 +840,14 @@ export class AppToken extends LitElement {
     if(icon){
       icon!.style.transform = "rotate(90deg)";
     }
+
+    // only allow one details to be open at a time
+    let details = this.shadowRoot!.querySelectorAll("sl-details");
+    details.forEach((detail: SlDetails) => {
+      if(detail.dataset.card !== card){
+        detail.hide();
+      }
+    })
   }
 
   handleInstallable(installable: any){
@@ -986,7 +994,8 @@ export class AppToken extends LitElement {
                       id="installable-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}>
+                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}
+                      data-card="installable-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
@@ -1002,7 +1011,8 @@ export class AppToken extends LitElement {
                       id="required-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}>
+                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}
+                      data-card="required-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.requiredPassed ? html`<img class="" src=${valid_src} alt="required tests passed icon"/>` : html`<img class="" src=${stop_src} alt="required tests failed icon"/>`}
@@ -1018,7 +1028,8 @@ export class AppToken extends LitElement {
                       id="enhancements-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}>
+                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}
+                      data-card="enhancements-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.enhancementsPassed ? html`<img class="" src=${valid_src} alt="enhancements tests passed icon"/>` : html`<img class="" src=${stop_src} alt="enhancements tests failed icon"/>`}
