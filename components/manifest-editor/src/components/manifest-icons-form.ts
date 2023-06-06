@@ -204,6 +204,14 @@ export class ManifestIconsForm extends LitElement {
         color: #4f3fb6;
       }
 
+      .center_text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-size: 16px;
+      }
+
       @media(max-width: 765px){
         sl-checkbox::part(base),
         sl-checkbox::part(control) {
@@ -266,7 +274,7 @@ export class ManifestIconsForm extends LitElement {
 
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(manifestInitialized){
+    if(manifestInitialized && this.manifest.icons){
       manifestInitialized = false;
       this.requestValidateAllFields();
       await this.iconSrcListParse();
@@ -553,7 +561,13 @@ export class ManifestIconsForm extends LitElement {
           </div>
           <p>Below are the current Icons in your apps Manifest</p>
           <div class="icon-gallery">
-            ${this.srcList.map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
+            ${this.srcList.length > 0 ? 
+              this.srcList.map((img: any) => 
+                html`
+                  <div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>
+                `
+                ) : 
+              html`<div class="center_text"><sl-icon name="card-image"></sl-icon> There are no icons in your manifest</div>`}
           </div>
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
