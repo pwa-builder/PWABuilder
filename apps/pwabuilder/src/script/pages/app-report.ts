@@ -2583,7 +2583,7 @@ export class AppReport extends LitElement {
                   ` : html``)}
                 </div>
                 <div class="detail-list">
-                  <p class="detail-list-header">Desktop Enhancments</p>
+                  <p class="detail-list-header">Desktop Enhancements</p>
                     ${this.enhMissingFields.length > 0 ?
                     html`
                       ${this.enhMissingFields.map((field: string) =>
