@@ -1886,7 +1886,7 @@ export class AppReport extends LitElement {
     );
     //TODO: Fire event when ready
     // this.requestUpdate();
-    return todos.concat(details);
+    return todos;
   }
 
   // Tests the SW and populates the SW card detail dropdown
