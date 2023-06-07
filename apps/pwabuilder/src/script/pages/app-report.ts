@@ -137,7 +137,7 @@ export class AppReport extends LitElement {
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
                   "yellow": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! We have identified recommended and optional fields that you can include to make your PWA better. Use our Manifest Editor to edit and update those fields.",
-                  "blocked": "PWABuilder has analyzed your Web Manifest. You have a one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
+                  "blocked": "PWABuilder has analyzed your Web Manifest. You have one or more fields that need to be updated before you can pacakge. Use our Manifest Editor to edit and update those fields. You can package for the store once you have a valid manifest.",
                   "none": "PWABuilder has analyzed your site and did not find a Web Manifest. Use our Manifest Editor to generate one. You can package for the store once you have a valid manifest.",
                   }
     },
@@ -313,6 +313,7 @@ export class AppReport extends LitElement {
         }
 
         /* #app-image-skeleton {
+
           height: 85px;
           width: 85px;
           padding: 10px;
@@ -1545,7 +1546,7 @@ export class AppReport extends LitElement {
     }
 
     setInterval(() => this.pollLastTested(), 120000);
-    
+
     window.addEventListener('scroll', this.closeTooltipOnScroll.bind(this));
   }
 
@@ -1827,7 +1828,7 @@ export class AppReport extends LitElement {
 
     if(!this.createdManifest){
       manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
-      this.validationResults = await validateManifest(manifest);
+      this.validationResults = await validateManifest(manifest, true);
 
       //  This just makes it so that the valid things are first
       // and the invalid things show after.
@@ -1859,17 +1860,16 @@ export class AppReport extends LitElement {
             status = "optional";
           }
           todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
-
         }
       });
     } else {
       manifest = {};
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
+    // let amt_missing = await this.handleMissingFields(manifest);
 
-    let { num_missing, details } = await this.handleMissingFields(manifest);
+    // this.manifestTotalScore += amt_missing;
 
-    this.manifestTotalScore += num_missing;
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -1953,6 +1953,7 @@ export class AppReport extends LitElement {
 
   // Tests the Security and populates the Security card detail dropdown
   async testSecurity(securityAudit: TestResult[]) {
+
     //Call security tests
     let todos: unknown[] = [];
 
