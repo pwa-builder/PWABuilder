@@ -391,12 +391,13 @@ export class ManifestShareForm extends LitElement {
     let select: SlSelect = this.shadowRoot!.querySelector(`sl-select[data-field="share_target.method"]`) as unknown as SlSelect;
     let container = (this.shadowRoot!.querySelector(`.method-error-message`) as HTMLElement);
 
+
     let listedMethod = "";
     (this.manifest.share_target && this.manifest.share_target.method) ? listedMethod = this.manifest.share_target!.method : listedMethod = "";
 
     if(listedMethod && !validMethods.includes(listedMethod)){
       select.classList.add("error");
-      container!.style.display = "block";
+      container.style.display = "block";
       this.errorCount++;
     } else {
       if(select) select.classList.remove("error");
