@@ -1042,17 +1042,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
           <div class="form-row">
           <div class="form-field">
             <div class="field-header">
-              <h3>Edge Side Panel</h3>
-              <a
-                href="https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the Edge Side Panel option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("edge_side_panel"))}>Edge Side Panel</h3>
+              <manifest-field-tooltip .field=${"edge_side_panel"}></manifest-field-tooltip>
             </div>
             <p>Indicates whether your PWA supports the side panel in Microsoft Edge</p>
             <sl-input 
