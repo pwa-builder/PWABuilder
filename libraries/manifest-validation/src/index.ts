@@ -128,7 +128,7 @@ export async function groupedValidation(manifest: Manifest): Promise<TokensValid
         currentManifest = manifest;
         const testResults = await loopThroughKeys(manifest, false, true);
         const resultsGrouped = testResults.reduce((acc, curr) => {
-            const curTrimmed = { member: curr.member, valid: curr.valid, displayString: curr.displayString, errorString: curr.errorString, infoString: curr.infoString };
+            const curTrimmed = { category: curr.category, member: curr.member, valid: curr.valid, displayString: curr.displayString, errorString: curr.errorString, infoString: curr.infoString };
             if (acc[curr.member]) {
                 acc[curr.member].push(curTrimmed);
             } else {
@@ -137,10 +137,16 @@ export async function groupedValidation(manifest: Manifest): Promise<TokensValid
             return acc;
         }, {} as any);
 
-        Object.keys(resultsGrouped).forEach(key => {
-            if (resultsGrouped[key].length > 1)
+        // remove duplicate icons and remove category after
+        Object.keys(resultsGrouped).some(key => {
+            if (key == 'icons' && (resultsGrouped[key].length > 1)) {
                 resultsGrouped[key] = (resultsGrouped[key] as Validation[]).filter((item: Validation) => item.category === 'required');
+                return true;
+            }
+            return false;
         });
+        Object.keys(resultsGrouped).forEach(key => { delete resultsGrouped[key][0].category }  );
+
 
         const groupedValidation: TokensValidation = {
             installable: {
