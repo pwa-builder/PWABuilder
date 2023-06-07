@@ -121,7 +121,7 @@ export class TestPublishPane extends LitElement {
       .experimental-tracker {
         height: max-content;
         width: 33%;
-        background-color: #fecaca;
+        background-color: #F2F3FB;
         align-self: flex-end;
         justify-self: flex-end;
         border-bottom-left-radius: 5px;
@@ -134,7 +134,7 @@ export class TestPublishPane extends LitElement {
       .experimental-tracker p {
         margin: 0;
         text-align: center;
-        color: #dc2626;
+        color: #4F3FB6;
         font-size: 10px;
         line-height: 12px;
         font-weight: bold;
