@@ -37,6 +37,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
+import { Router } from '@vaadin/router';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -2253,6 +2254,10 @@ export class AppReport extends LitElement {
     }
 
   }
+
+  goToGiveawayPage(){
+    Router.go(`/giveaway?site=${this.siteURL}`);
+  }
   
   render() {
     return html`
@@ -2408,7 +2413,8 @@ export class AppReport extends LitElement {
                         .displayString=${todo.displayString}
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
+                        @giveawayEvent=${() => this.goToGiveawayPage()}>
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}

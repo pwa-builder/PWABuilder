@@ -11,7 +11,6 @@ import {
 import { manifest_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
-import { Router } from '@vaadin/router';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -203,7 +202,8 @@ export class TodoItem extends LitElement {
   }
 
   goToGiveaway(){
-    Router.go("/giveaway?site=https://webboard.app")
+    let event = new CustomEvent('giveawayEvent', {});
+    this.dispatchEvent(event);
   }
 
   render() {

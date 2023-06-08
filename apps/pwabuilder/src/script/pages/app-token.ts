@@ -5,8 +5,11 @@ import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/arrow-link'
 import { SlDetails, SlInput } from '@shoelace-style/shoelace';
-import { cleanUrl, isValidURL } from '../utils/url';
+import { cleanUrl, isValidURL, resolveUrl } from '../utils/url';
 import { localeStrings } from '../../locales';
+import { env } from '../utils/environment'
+import { getHeaders } from '../utils/platformTrackingHeaders';
+import { Icon, Manifest } from '@pwabuilder/manifest-validation';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -40,6 +43,11 @@ export class AppToken extends LitElement {
 
   @state() errorGettingURL = false;
   @state() errorMessage: string | undefined;
+
+  @state() testResults: any = {};
+  @state() manifest: Manifest = {};
+  @state() manifestUrl: string = '';
+  @state() proxyLoadingImage: boolean = false;
 
 
   static get styles() {
@@ -624,34 +632,71 @@ export class AppToken extends LitElement {
     const site = search.get('site');
     if (site) {
       this.siteURL = site;
-      this.runGiveawayTests(this.siteURL);
+      this.runGiveawayTests();
     }
   }
 
-  async runGiveawayTests(url: string){
+  async runGiveawayTests(){
     // run giveaway validation suite.
     this.testsInProgress = true;
 
     // pretending to test for now replace with: call to api for test results
-    let delay = new Promise(resolve => setTimeout(resolve, 5000));
-    await delay;
+    await this.validateUrl();
 
     this.testsInProgress = false;
 
-    this.handleInstallable(token.installable);
-    this.handleRequired(token.required);
-    this.handleEnhancements(token.progressive);
-
-    let results = [this.installablePassed, this.requiredPassed, this.enhancementsPassed]
-    this.testsPassed = results.every((res: boolean) => res === true);
-
-    /* if(true) { // replace with: if(dupe url)
-      this.dupeURL = true;
-      this.testsPassed = false;
-    } */
+    this.handleInstallable(this.testResults.installable);
+    this.handleRequired(this.testResults.additional);
+    this.handleEnhancements(this.testResults.progressive);
     
     this.populateAppCard();
 
+  }
+
+  async validateUrl(){
+    const encodedUrl = encodeURIComponent(this.siteURL);
+
+    const validateGiveawayUrl = env.validateGiveawayUrl + `?site=${encodedUrl}`;
+    let headers = getHeaders();
+
+    try {
+      const response = await fetch(validateGiveawayUrl, {
+        method: 'GET',
+        headers: new Headers(headers)
+      });
+
+      const responseData = await response.json();
+
+      if(responseData) {
+        console.log(responseData);
+        this.testResults = responseData.testResults;
+        this.manifest = responseData.manifestJson;
+        this.manifestUrl = responseData.manifestUrl;
+        this.testsPassed = responseData.isEligibleForToken
+      }
+      /* if (!response.ok) {
+        console.warn('Validation Failed', response.statusText);
+
+        throw new Error(
+          `Unable to fetch response using ${validateGiveawayUrl}. Response status  ${response}`
+        );
+      }
+
+      const responseData = await response.json();
+      if (!responseData) {
+        console.warn(
+          'Validating Url failed due to no response data',
+          response
+        );
+        throw new Error(`Unable to get JSON from ${validateGiveawayUrl}`);
+      }
+
+      if (responseData.content && responseData.content.json) {
+        console.log(responseData)
+      } */
+    } catch (e) {
+      console.warn('Try failed', e);
+    }
   }
 
   decideHeroSection(){
@@ -804,22 +849,133 @@ export class AppToken extends LitElement {
   }
 
   async populateAppCard() {
-    
-    let iconUrl: string = "/assets/icons/icon_512.png";
-    this.appCard = {
-      siteName: "short_name",
-      siteUrl: "sitename.com",
-      iconURL: iconUrl,
-      iconAlt: "Your sites logo",
-      description: 'Site app description blah blah blah',
-    };
+    let cleanURL = this.siteURL.replace(/(^\w+:|^)\/\//, '')
+
+    if(this.manifest) {
+
+      let icons = this.manifest.icons;
+
+      let chosenIcon: any;
+
+      if(icons){
+        let maxSize = 0;
+        for(let i = 0; i < icons.length; i++){
+          let icon = icons[i];
+          let size = icon.sizes?.split("x")[0];
+          if(size === '512'){
+            chosenIcon = icon;
+            break;
+          } else{
+            if(parseInt(size!) > maxSize){
+              maxSize = parseInt(size!);
+              chosenIcon = icon;
+            }
+          }
+        }
+      }
+
+      let iconUrl: string;
+      if(chosenIcon){
+        iconUrl = this.iconSrcListParse(chosenIcon);
+      } else {
+        iconUrl = "/assets/icons/icon_512.png"
+      }
+
+      
+      this.proxyLoadingImage = true;
+      await this.testImage(iconUrl).then(
+        function fulfilled(_img) {
+          //console.log('That image is found and loaded', img);
+        },
+
+        function rejected() {
+          //console.log('That image was not found');
+          iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
+        }
+      );
+      this.proxyLoadingImage = false;
+
+      this.appCard = {
+        siteName: this.manifest.short_name
+          ? this.manifest.short_name
+          : (this.manifest.name ? this.manifest.name : 'Untitled App'),
+        siteUrl: cleanURL,
+        iconURL: iconUrl,
+        iconAlt: "Your sites logo",
+        description: this.manifest.description
+          ? this.manifest.description
+          : 'Add an app description to your manifest',
+      };
+    } else {
+        this.appCard = {
+          siteName: "Missing Name",
+          siteUrl: cleanURL,
+          description: "Your manifest description is missing.",
+          iconURL: "/assets/new/icon_placeholder.png",
+          iconAlt: "A placeholder for you sites icon"
+        };
+    }
+  }
+
+  // Gets full icon URL from manifest given a manifest icon object
+  iconSrcListParse(icon: any) {
+    let manifest = this.manifest;
+    let manifestURL = this.manifestUrl;
+    let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
+
+    return iconURL;
+  }
+
+  // Tests if an image will load
+  // If it fails, we use our proxy service to fetch it
+  // If it succeeds, we load it
+  testImage(url: string) {
+
+    // Define the promise
+    const imgPromise = new Promise(function imgPromise(resolve, reject) {
+
+        // Create the image
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            resolve(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            reject();
+        })
+
+        // Assign URL
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
+  }
+
+  // Makes sure the icon URL is valid
+  handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
+    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
+      return icon.src;
+    }
+
+    let url = resolveUrl(manifestURL, manifest?.startUrl);
+    url = resolveUrl(url?.href, icon.src);
+
+    if (url) {
+      return url.href;
+    }
+
+    return undefined;
   }
 
   // Rotates the icon on each details drop down to 0 degrees
   rotateZero(card: string, e?: Event){
     //recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
     e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
 
     if(icon){
       icon!.style.transform = "rotate(0deg)";
@@ -827,15 +983,10 @@ export class AppToken extends LitElement {
   }
 
   // Rotates the icon on each details drop down to 90 degrees
-  rotateNinety(card: string, e?: Event, init?: boolean){
+  rotateNinety(card: string, e?: Event){
     //recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
     e?.stopPropagation();
     let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
-
-    if(icon && init) {
-      icon!.style.transform = "rotate(90deg)";
-      return;
-    }
 
     if(icon){
       icon!.style.transform = "rotate(90deg)";
@@ -957,7 +1108,7 @@ export class AppToken extends LitElement {
     if(isValidUrl){
       input.setCustomValidity("");
       this.siteURL = url;
-      this.runGiveawayTests(url);
+      Router.go(`/giveaway?site=${this.siteURL}`)
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
       input.reportValidity();
@@ -1058,7 +1209,7 @@ export class AppToken extends LitElement {
         </ul>
         <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
       </div>
-      ${!this.testsInProgress ? 
+      ${this.siteURL ? 
         html`
           <div id="sign-in-section">
             ${this.testsPassed ? html`sign in button` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
@@ -1100,101 +1251,3 @@ const qual: string[] = [
 
 const valid_src = "/assets/new/valid.svg";
 const stop_src = "/assets/new/stop.svg";
-
-const token = {
-  "installable": {
-    "short_name": {
-      "member": "short_name",
-      "displayString": "Short name atleat 3 characters",
-      "valid": true
-    },
-    "name": {
-      "member": "name",
-      "displayString": "Manifest has name field",
-      "valid": true
-    },
-    "description": {
-      "member": "description",
-      "displayString": "Manifest has description field",
-      "valid": true
-    },
-    "display": {
-      "displayString": "Manifest has display field",
-      "member": "display",
-      "valid": true
-    },
-    "icons": {
-      "displayString": "Icons have at least one PNG icon 512x512 or larger",
-      "member": "icons",
-      "valid": true
-    },
-    "hasSW": {
-      "displayString": "PWA has a service worker",
-      "member": "service worker",
-      "valid": true
-    }
-  },
-  "required": {
-    "name": {
-      "displayString": "Manifest has valid name field",
-      "valid": true
-    },
-    "short_name": {
-      "displayString": "Manifest has valid short_name field",
-      "valid": true
-    },
-    "start_url": {
-      "displayString": "Manifest has valid start_url field",
-      "member": "start_url",
-      "valid": true
-    },
-    "description": {
-      "displayString": "Manifest has valid description field",
-      "member": "description",
-      "valid": true
-    },
-    "icons": {
-      "displayString": "Manifest has valid icons field",
-      "member": "icons",
-      "valid": true
-    },
-    
-  },
-  "progressive": {
-    "share_target": {
-      "valid": false
-    },
-    "protocol_handlers": {
-      "valid": true
-    },
-    "file_handlers": {
-      "valid": false
-    },
-    "shortcuts": {
-      "displayString": "Manifest has shortcuts field",
-      "member": "shortcuts",
-      "valid": false
-    },
-    "display_override": {
-      "valid": false
-    },
-    "edge_side_panel": {
-      "valid": false
-    },
-    "scope_extensions": {
-      "valid": false
-    },
-    "widgets": {
-      "valid": false
-    },
-    "webpush": {
-      "valid": false
-    },
-    "background_sync": {
-      "valid": false
-    },
-    "periodic_sync": {
-      "valid": false
-    }
-  }
-}
