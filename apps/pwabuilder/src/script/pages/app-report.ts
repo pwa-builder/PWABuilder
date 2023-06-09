@@ -1398,7 +1398,7 @@ export class AppReport extends LitElement {
             --track-width: 4px;
             --subheader-font-size: 14px;
           }
-          .progressRingSkeleton::part(base) {
+          .progressRingSkeleton::part(base), .loader-round.large  {
             width: 75px;
             height: 75px;
           }
@@ -1426,10 +1426,11 @@ export class AppReport extends LitElement {
           sl-progress-ring {
             --size: 75px;
             --track-width: 4px;
+            --indicator-width: 6px;
             font-size: 14px;
           }
 
-          .progressRingSkeleton::part(base) {
+          .progressRingSkeleton::part(base), .loader-round.large {
             width: 75px;
             height: 75px;
           }
