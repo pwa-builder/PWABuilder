@@ -1683,16 +1683,18 @@ export class AppReport extends LitElement {
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
 
-    // adding todo for token giveaway item
-    this.todoItems.push(
-      {
-        "card": "giveaay", 
-        "field": "giveaway", 
-        "fix": `Your PWA may qualify for a free Microsoft store account.`, 
-        "status": "giveaway", 
-        "displayString": `Your PWA may qualify for a free Microsoft store account`
-      }
-    );
+    // adding todo for token giveaway item if theres at least a manifest
+    if(!this.createdManifest){
+      this.todoItems.push(
+        {
+          "card": "giveaway", 
+          "field": "giveaway", 
+          "fix": `Your PWA may qualify for a free Microsoft store account.`, 
+          "status": "giveaway", 
+          "displayString": `Your PWA may qualify for a free Microsoft store account`
+        }
+      );
+    }
     
     let amt_missing = await this.handleMissingFields(manifest);
 

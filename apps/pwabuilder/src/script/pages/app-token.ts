@@ -47,6 +47,8 @@ export class AppToken extends LitElement {
   @state() testResults: any = {};
   @state() manifest: Manifest = {};
   @state() manifestUrl: string = '';
+  @state() noManifest: boolean = false;
+
   @state() proxyLoadingImage: boolean = false;
 
 
@@ -54,11 +56,14 @@ export class AppToken extends LitElement {
     return [
       css`
       :host {
-        --sl-focus-ring-width: 3px;
-        --sl-input-focus-ring-color: #595959;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #4F3FB6ac;
-        --sl-color-primary-300: var(--primary-color);
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #595959;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-color-primary-300: var(--primary-color);
+        }
+        sl-tooltip::part(base){
+          --sl-tooltip-font-size: 14px;
         }
 
         #wrapper {
@@ -641,15 +646,24 @@ export class AppToken extends LitElement {
     this.testsInProgress = true;
 
     // pretending to test for now replace with: call to api for test results
-    await this.validateUrl();
+    let valid = await this.validateUrl();
 
     this.testsInProgress = false;
 
-    this.handleInstallable(this.testResults.installable);
-    this.handleRequired(this.testResults.additional);
-    this.handleEnhancements(this.testResults.progressive);
-    
-    this.populateAppCard();
+    if(valid){
+      this.handleInstallable(this.testResults.installable);
+      this.handleRequired(this.testResults.additional);
+      this.handleEnhancements(this.testResults.progressive);
+      this.populateAppCard();
+    } else {
+      this.noManifest = true;
+      /* let app_card = this.shadowRoot!.querySelector('#app-info-section') as HTMLDivElement;
+      let action_items = this.shadowRoot!.querySelector('#action-items-section') as HTMLDivElement;
+      let quals = this.shadowRoot!.querySelector('#qual-section') as HTMLDivElement;
+      app_card.style.display = 'none';
+      action_items.style.display = 'none';
+      quals.style.display = 'none'; */
+    }
 
   }
 
@@ -664,17 +678,8 @@ export class AppToken extends LitElement {
         method: 'GET',
         headers: new Headers(headers)
       });
-
-      const responseData = await response.json();
-
-      if(responseData) {
-        console.log(responseData);
-        this.testResults = responseData.testResults;
-        this.manifest = responseData.manifestJson;
-        this.manifestUrl = responseData.manifestUrl;
-        this.testsPassed = responseData.isEligibleForToken
-      }
-      /* if (!response.ok) {
+      
+      if (!response.ok) {
         console.warn('Validation Failed', response.statusText);
 
         throw new Error(
@@ -683,19 +688,32 @@ export class AppToken extends LitElement {
       }
 
       const responseData = await response.json();
-      if (!responseData) {
+
+      if(!responseData){
         console.warn(
-          'Validating Url failed due to no response data',
+          'Validating url failed due to no response data',
           response
         );
         throw new Error(`Unable to get JSON from ${validateGiveawayUrl}`);
       }
 
-      if (responseData.content && responseData.content.json) {
-        console.log(responseData)
-      } */
+      console.log(responseData);
+
+      if(responseData.error){
+        console.error(responseData.error)
+        return false;
+      }
+
+      this.testResults = responseData.testResults;
+      this.manifest = responseData.manifestJson;
+      this.manifestUrl = responseData.manifestUrl;
+      this.testsPassed = responseData.isEligibleForToken;
+
+      return true;
+
     } catch (e) {
-      console.warn('Try failed', e);
+      console.error(e);
+      return false;
     }
   }
 
@@ -725,6 +743,14 @@ export class AppToken extends LitElement {
       return html`
         <h1>Oops!</h1>
         <p>Something is wrong. Please use another URL and try again.</p>
+      `
+    }
+
+    // if tests complete and validations pass
+    if(!this.testsInProgress && this.noManifest){
+      return html`
+        <h1>Oops!</h1>
+        <p>You must at least have a manifest for us to run our tests! Go back to PWABuilder to create your manifest now!</p>
       `
     }
 
@@ -1010,7 +1036,18 @@ export class AppToken extends LitElement {
       this.installableTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            ${test.valid ? 
+              html`<img src=${valid_src} alt="passed test icon" />` : 
+              html`
+                ${test.errorString ? 
+                  html`<sl-tooltip content=${test.errorString} placement="right">
+                        <img src=${stop_src} alt="failed test icon" />
+                      </sl-tooltip>` : 
+                  html`
+                    <img src=${stop_src} alt="failed test icon" />
+                  `
+                  }
+              `}
             <p>${test.displayString}</p>
           </div>
         `
@@ -1038,7 +1075,18 @@ export class AppToken extends LitElement {
       this.requiredTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            ${test.valid ? 
+              html`<img src=${valid_src} alt="passed test icon" />` : 
+              html`
+                ${test.errorString ? 
+                  html`<sl-tooltip content=${test.errorString} placement="right">
+                        <img src=${stop_src} alt="failed test icon" />
+                      </sl-tooltip>` : 
+                  html`
+                    <img src=${stop_src} alt="failed test icon" />
+                  `
+                  }
+              `}
             <p>${test.displayString}</p>
           </div>
         `
@@ -1065,8 +1113,19 @@ export class AppToken extends LitElement {
       this.enhancementsTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
-            <p>${key}</p>
+            ${test.valid ? 
+              html`<img src=${valid_src} alt="passed test icon" />` : 
+              html`
+                ${test.errorString ? 
+                  html`<sl-tooltip content=${test.errorString} placement="right">
+                        <img src=${stop_src} alt="failed test icon" />
+                      </sl-tooltip>` : 
+                  html`
+                    <img src=${stop_src} alt="failed test icon" />
+                  `
+                  }
+              `}
+            <p>${test.displayString}</p>
           </div>
         `
       )
@@ -1141,7 +1200,7 @@ export class AppToken extends LitElement {
                     <sl-skeleton effect="sheen"></sl-skeleton>
                   ` :
                   html`
-                    <sl-details 
+                    <sl-details
                       id="installable-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
@@ -1192,15 +1251,14 @@ export class AppToken extends LitElement {
                         ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : html``}
                       </div>
                     </sl-details>
-                  `
+                    `
                 }
               </div>
             </div>
           </div>
         ` : 
-        html`
-        
-        `}
+        html``
+      }
       
       <div id="qual-section">
         <h2>Qualifications</h2>
