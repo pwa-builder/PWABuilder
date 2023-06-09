@@ -198,6 +198,7 @@ export class AppToken extends LitElement {
         }
 
         #img-holder {
+          height: 120px;
           border-radius: 10px;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
@@ -646,24 +647,14 @@ export class AppToken extends LitElement {
     this.testsInProgress = true;
 
     // pretending to test for now replace with: call to api for test results
-    let valid = await this.validateUrl();
+    await this.validateUrl();
 
     this.testsInProgress = false;
 
-    if(valid){
-      this.handleInstallable(this.testResults.installable);
-      this.handleRequired(this.testResults.additional);
-      this.handleEnhancements(this.testResults.progressive);
-      this.populateAppCard();
-    } else {
-      this.noManifest = true;
-      /* let app_card = this.shadowRoot!.querySelector('#app-info-section') as HTMLDivElement;
-      let action_items = this.shadowRoot!.querySelector('#action-items-section') as HTMLDivElement;
-      let quals = this.shadowRoot!.querySelector('#qual-section') as HTMLDivElement;
-      app_card.style.display = 'none';
-      action_items.style.display = 'none';
-      quals.style.display = 'none'; */
-    }
+    this.handleInstallable(this.testResults.installable);
+    this.handleRequired(this.testResults.additional);
+    this.handleEnhancements(this.testResults.progressive);
+    this.populateAppCard();
 
   }
 
@@ -701,7 +692,7 @@ export class AppToken extends LitElement {
 
       if(responseData.error){
         console.error(responseData.error)
-        return false;
+        this.noManifest = true;
       }
 
       this.testResults = responseData.testResults;
@@ -709,11 +700,8 @@ export class AppToken extends LitElement {
       this.manifestUrl = responseData.manifestUrl;
       this.testsPassed = responseData.isEligibleForToken;
 
-      return true;
-
     } catch (e) {
       console.error(e);
-      return false;
     }
   }
 
