@@ -888,7 +888,7 @@ export const maniTests: Array<Validation> = [
         quickFix: false,
         test: (value: any) => {
             let valid: boolean = value && typeof value === "object";
-            valid = valid && (typeof value.preferred_width === "number");
+            valid = valid && (typeof value.preferred_width === "number" || !value.hasOwnProperty("preferred_width"));
             return valid;
         }
     }
