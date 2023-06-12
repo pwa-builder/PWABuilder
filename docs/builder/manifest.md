@@ -437,9 +437,9 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 ]
 ```
 
-### launch_handlers: `string` | `Array`
+### launch_handler: `string` | `Array`
 
-`launch_handlers` is an optional member that controls the launch of a web application. It has a single value, `client_mode`, that can take on the following values:
+`launch_handler` is an optional member that controls the launch of a web application. It has a single value, `client_mode`, that can take on the following values:
 
 * `auto`: The user agent makes the decision based on the context.
 * `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
@@ -449,10 +449,12 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 In the second example below, if `navigate-existing` is unavailable it will fallback to the next value in the list.
 
 ```json
+// launch_handler with a single client_mode option
 "launch_handler": {
     "client_mode": "navigate-existing"
 }
 
+// launch_handler with a fallback priority list for client_mode
 "launch_handler": {
     "client_mode": ["navigate-existing, auto"]
 }
