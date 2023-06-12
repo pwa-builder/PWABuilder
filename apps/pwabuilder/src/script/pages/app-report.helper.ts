@@ -81,7 +81,7 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	  },
 	  {
 		result: noMixedContent,
-		infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page',
+		infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page or http redirect on loads',
 		category: 'required',
 	  },
 	];

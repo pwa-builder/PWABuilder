@@ -645,7 +645,7 @@ export const maniTests: Array<Validation> = [
         member: "description",
         displayString: "Manifest has description field",
         infoString: "The description member is a string that represents the description of your PWA.",
-        category: "optional",
+        category: "recommended",
         defaultValue: "",
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
