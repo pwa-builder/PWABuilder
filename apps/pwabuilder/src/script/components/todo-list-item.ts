@@ -1,7 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import { AuthModule } from '../services/auth_service';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -12,7 +11,6 @@ import {
 import { manifest_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
-import { Router } from '@vaadin/router';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -203,26 +201,9 @@ export class TodoItem extends LitElement {
     return html`<img src=${yield_src} alt="yield result icon"/>`
   }
 
-  async signInUser() {
-    const authModule = new AuthModule();
-    try {
-    const result = await authModule.signIn();
-    if(result != null && result != undefined && "idToken" in result){
-      return result;
-    }
-    else
-      return null;
-    }
-    catch(e) {
-      console.log("Authentication Error");
-    } 
-    return null;
-  }
-
-  async goToGiveaway(){
-    const result = await this.signInUser();
-    if(result != null && result != undefined && "idToken" in result)
-      Router.go("/giveaway?site=https://webboard.app") 
+  goToGiveaway(){
+    let event = new CustomEvent('giveawayEvent', {});
+    this.dispatchEvent(event);
   }
 
   render() {

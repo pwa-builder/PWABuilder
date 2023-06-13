@@ -4,9 +4,13 @@ import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 import '../components/arrow-link'
-import { SlInput } from '@shoelace-style/shoelace';
-import { cleanUrl, isValidURL } from '../utils/url';
+import { SlDetails, SlInput } from '@shoelace-style/shoelace';
+import { cleanUrl, isValidURL, resolveUrl } from '../utils/url';
 import { localeStrings } from '../../locales';
+import { env } from '../utils/environment'
+import { getHeaders } from '../utils/platformTrackingHeaders';
+import { Icon, Manifest } from '@pwabuilder/manifest-validation';
+import { AuthModule } from '../services/auth_service';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -41,16 +45,26 @@ export class AppToken extends LitElement {
   @state() errorGettingURL = false;
   @state() errorMessage: string | undefined;
 
+  @state() testResults: any = {};
+  @state() manifest: Manifest = {};
+  @state() manifestUrl: string = '';
+  @state() noManifest: boolean = false;
+
+  @state() proxyLoadingImage: boolean = false;
+
 
   static get styles() {
     return [
       css`
       :host {
-        --sl-focus-ring-width: 3px;
-        --sl-input-focus-ring-color: #595959;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #4F3FB6ac;
-        --sl-color-primary-300: var(--primary-color);
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #595959;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-color-primary-300: var(--primary-color);
+        }
+        sl-tooltip::part(base){
+          --sl-tooltip-font-size: 14px;
         }
 
         #wrapper {
@@ -185,6 +199,7 @@ export class AppToken extends LitElement {
         }
 
         #img-holder {
+          height: 120px;
           border-radius: 10px;
           box-shadow: 0px 4px 30px 0px #00000014;
         }
@@ -624,34 +639,71 @@ export class AppToken extends LitElement {
     const site = search.get('site');
     if (site) {
       this.siteURL = site;
-      this.runGiveawayTests(this.siteURL);
+      this.runGiveawayTests();
     }
   }
 
-  async runGiveawayTests(url: string){
+  async runGiveawayTests(){
     // run giveaway validation suite.
     this.testsInProgress = true;
 
     // pretending to test for now replace with: call to api for test results
-    let delay = new Promise(resolve => setTimeout(resolve, 5000));
-    await delay;
+    await this.validateUrl();
 
     this.testsInProgress = false;
 
-    this.handleInstallable(token.installable);
-    this.handleRequired(token.required);
-    this.handleEnhancements(token.progressive);
-
-    let results = [this.installablePassed, this.requiredPassed, this.enhancementsPassed]
-    this.testsPassed = results.every((res: boolean) => res === true);
-
-    /* if(true) { // replace with: if(dupe url)
-      this.dupeURL = true;
-      this.testsPassed = false;
-    } */
-    
+    this.handleInstallable(this.testResults.installable);
+    this.handleRequired(this.testResults.additional);
+    this.handleEnhancements(this.testResults.progressive);
     this.populateAppCard();
 
+  }
+
+  async validateUrl(){
+    const encodedUrl = encodeURIComponent(this.siteURL);
+
+    const validateGiveawayUrl = env.validateGiveawayUrl + `?site=${encodedUrl}`;
+    let headers = getHeaders();
+
+    try {
+      const response = await fetch(validateGiveawayUrl, {
+        method: 'GET',
+        headers: new Headers(headers)
+      });
+      
+      if (!response.ok) {
+        console.warn('Validation Failed', response.statusText);
+
+        throw new Error(
+          `Unable to fetch response using ${validateGiveawayUrl}. Response status  ${response}`
+        );
+      }
+
+      const responseData = await response.json();
+
+      if(!responseData){
+        console.warn(
+          'Validating url failed due to no response data',
+          response
+        );
+        throw new Error(`Unable to get JSON from ${validateGiveawayUrl}`);
+      }
+
+      console.log(responseData);
+
+      if(responseData.error){
+        console.error(responseData.error)
+        this.noManifest = true;
+      }
+
+      this.testResults = responseData.testResults;
+      this.manifest = responseData.manifestJson;
+      this.manifestUrl = responseData.manifestUrl;
+      this.testsPassed = responseData.isEligibleForToken;
+
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   decideHeroSection(){
@@ -680,6 +732,14 @@ export class AppToken extends LitElement {
       return html`
         <h1>Oops!</h1>
         <p>Something is wrong. Please use another URL and try again.</p>
+      `
+    }
+
+    // if tests complete and validations pass
+    if(!this.testsInProgress && this.noManifest){
+      return html`
+        <h1>Oops!</h1>
+        <p>You must at least have a manifest for us to run our tests! Go back to PWABuilder to create your manifest now!</p>
       `
     }
 
@@ -804,22 +864,133 @@ export class AppToken extends LitElement {
   }
 
   async populateAppCard() {
-    
-    let iconUrl: string = "/assets/icons/icon_512.png";
-    this.appCard = {
-      siteName: "short_name",
-      siteUrl: "sitename.com",
-      iconURL: iconUrl,
-      iconAlt: "Your sites logo",
-      description: 'Site app description blah blah blah',
-    };
+    let cleanURL = this.siteURL.replace(/(^\w+:|^)\/\//, '')
+
+    if(this.manifest) {
+
+      let icons = this.manifest.icons;
+
+      let chosenIcon: any;
+
+      if(icons){
+        let maxSize = 0;
+        for(let i = 0; i < icons.length; i++){
+          let icon = icons[i];
+          let size = icon.sizes?.split("x")[0];
+          if(size === '512'){
+            chosenIcon = icon;
+            break;
+          } else{
+            if(parseInt(size!) > maxSize){
+              maxSize = parseInt(size!);
+              chosenIcon = icon;
+            }
+          }
+        }
+      }
+
+      let iconUrl: string;
+      if(chosenIcon){
+        iconUrl = this.iconSrcListParse(chosenIcon);
+      } else {
+        iconUrl = "/assets/icons/icon_512.png"
+      }
+
+      
+      this.proxyLoadingImage = true;
+      await this.testImage(iconUrl).then(
+        function fulfilled(_img) {
+          //console.log('That image is found and loaded', img);
+        },
+
+        function rejected() {
+          //console.log('That image was not found');
+          iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
+        }
+      );
+      this.proxyLoadingImage = false;
+
+      this.appCard = {
+        siteName: this.manifest.short_name
+          ? this.manifest.short_name
+          : (this.manifest.name ? this.manifest.name : 'Untitled App'),
+        siteUrl: cleanURL,
+        iconURL: iconUrl,
+        iconAlt: "Your sites logo",
+        description: this.manifest.description
+          ? this.manifest.description
+          : 'Add an app description to your manifest',
+      };
+    } else {
+        this.appCard = {
+          siteName: "Missing Name",
+          siteUrl: cleanURL,
+          description: "Your manifest description is missing.",
+          iconURL: "/assets/new/icon_placeholder.png",
+          iconAlt: "A placeholder for you sites icon"
+        };
+    }
+  }
+
+  // Gets full icon URL from manifest given a manifest icon object
+  iconSrcListParse(icon: any) {
+    let manifest = this.manifest;
+    let manifestURL = this.manifestUrl;
+    let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
+
+    return iconURL;
+  }
+
+  // Tests if an image will load
+  // If it fails, we use our proxy service to fetch it
+  // If it succeeds, we load it
+  testImage(url: string) {
+
+    // Define the promise
+    const imgPromise = new Promise(function imgPromise(resolve, reject) {
+
+        // Create the image
+        const imgElement = new Image();
+
+        // When image is loaded, resolve the promise
+        imgElement.addEventListener('load', function imgOnLoad() {
+            resolve(this);
+        });
+
+        // When there's an error during load, reject the promise
+        imgElement.addEventListener('error', function imgOnError() {
+            reject();
+        })
+
+        // Assign URL
+        imgElement.src = url;
+
+    });
+
+    return imgPromise;
+  }
+
+  // Makes sure the icon URL is valid
+  handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
+    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
+      return icon.src;
+    }
+
+    let url = resolveUrl(manifestURL, manifest?.startUrl);
+    url = resolveUrl(url?.href, icon.src);
+
+    if (url) {
+      return url.href;
+    }
+
+    return undefined;
   }
 
   // Rotates the icon on each details drop down to 0 degrees
   rotateZero(card: string, e?: Event){
     //recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
     e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
 
     if(icon){
       icon!.style.transform = "rotate(0deg)";
@@ -827,19 +998,22 @@ export class AppToken extends LitElement {
   }
 
   // Rotates the icon on each details drop down to 90 degrees
-  rotateNinety(card: string, e?: Event, init?: boolean){
+  rotateNinety(card: string, e?: Event){
     //recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
     e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
-
-    if(icon && init) {
-      icon!.style.transform = "rotate(90deg)";
-      return;
-    }
+    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
 
     if(icon){
       icon!.style.transform = "rotate(90deg)";
     }
+
+    // only allow one details to be open at a time
+    let details = this.shadowRoot!.querySelectorAll("sl-details");
+    details.forEach((detail: SlDetails) => {
+      if(detail.dataset.card !== card){
+        detail.hide();
+      }
+    })
   }
 
   handleInstallable(installable: any){
@@ -851,7 +1025,18 @@ export class AppToken extends LitElement {
       this.installableTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            ${test.valid ? 
+              html`<img src=${valid_src} alt="passed test icon" />` : 
+              html`
+                ${test.errorString ? 
+                  html`<sl-tooltip content=${test.errorString} placement="right">
+                        <img src=${stop_src} alt="failed test icon" />
+                      </sl-tooltip>` : 
+                  html`
+                    <img src=${stop_src} alt="failed test icon" />
+                  `
+                  }
+              `}
             <p>${test.displayString}</p>
           </div>
         `
@@ -879,7 +1064,18 @@ export class AppToken extends LitElement {
       this.requiredTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
+            ${test.valid ? 
+              html`<img src=${valid_src} alt="passed test icon" />` : 
+              html`
+                ${test.errorString ? 
+                  html`<sl-tooltip content=${test.errorString} placement="right">
+                        <img src=${stop_src} alt="failed test icon" />
+                      </sl-tooltip>` : 
+                  html`
+                    <img src=${stop_src} alt="failed test icon" />
+                  `
+                  }
+              `}
             <p>${test.displayString}</p>
           </div>
         `
@@ -906,8 +1102,19 @@ export class AppToken extends LitElement {
       this.enhancementsTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? html`<img src=${valid_src} alt="passed test icon" />` : html`<img src=${stop_src} alt="failed test icon" />`}
-            <p>${key}</p>
+            ${test.valid ? 
+              html`<img src=${valid_src} alt="passed test icon" />` : 
+              html`
+                ${test.errorString ? 
+                  html`<sl-tooltip content=${test.errorString} placement="right">
+                        <img src=${stop_src} alt="failed test icon" />
+                      </sl-tooltip>` : 
+                  html`
+                    <img src=${stop_src} alt="failed test icon" />
+                  `
+                  }
+              `}
+            <p>${test.displayString}</p>
           </div>
         `
       )
@@ -932,6 +1139,31 @@ export class AppToken extends LitElement {
     }
   }
 
+  async signInUser() {
+    const authModule = new AuthModule();
+    try {
+    const result = await authModule.signIn();
+    if(result != null && result != undefined && "idToken" in result){
+      return result;
+    }
+    else
+      return null;
+    }
+    catch(e) {
+      console.log("Authentication Error");
+    } 
+    return null;
+  }
+
+  async getUserToken() {
+    const userResult = await this.signInUser();
+    if(userResult != null) {
+      const token = userResult.idToken;
+      console.log(token);
+      //Navigate to congrats
+    }
+  }
+
   handleEnteredURL(){
     let input: SlInput = this.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
     let url: string = input.value;
@@ -949,7 +1181,7 @@ export class AppToken extends LitElement {
     if(isValidUrl){
       input.setCustomValidity("");
       this.siteURL = url;
-      this.runGiveawayTests(url);
+      Router.go(`/giveaway?site=${this.siteURL}`)
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
       input.reportValidity();
@@ -982,11 +1214,12 @@ export class AppToken extends LitElement {
                     <sl-skeleton effect="sheen"></sl-skeleton>
                   ` :
                   html`
-                    <sl-details 
+                    <sl-details
                       id="installable-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}>
+                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}
+                      data-card="installable-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
@@ -1002,7 +1235,8 @@ export class AppToken extends LitElement {
                       id="required-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}>
+                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}
+                      data-card="required-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.requiredPassed ? html`<img class="" src=${valid_src} alt="required tests passed icon"/>` : html`<img class="" src=${stop_src} alt="required tests failed icon"/>`}
@@ -1018,7 +1252,8 @@ export class AppToken extends LitElement {
                       id="enhancements-details" 
                       class="inner-details"
                       @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}>
+                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}
+                      data-card="enhancements-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.enhancementsPassed ? html`<img class="" src=${valid_src} alt="enhancements tests passed icon"/>` : html`<img class="" src=${stop_src} alt="enhancements tests failed icon"/>`}
@@ -1030,15 +1265,14 @@ export class AppToken extends LitElement {
                         ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : html``}
                       </div>
                     </sl-details>
-                  `
+                    `
                 }
               </div>
             </div>
           </div>
         ` : 
-        html`
-        
-        `}
+        html``
+      }
       
       <div id="qual-section">
         <h2>Qualifications</h2>
@@ -1047,10 +1281,10 @@ export class AppToken extends LitElement {
         </ul>
         <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
       </div>
-      ${!this.testsInProgress ? 
+      ${this.siteURL ? 
         html`
           <div id="sign-in-section">
-            ${this.testsPassed ? html`sign in button` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+            ${this.testsPassed ? html`<sl-button class="primary" @click=${() => this.getUserToken()}>Fake sign in button</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
           </div>
         ` : html``}
       ${!this.siteURL ?
@@ -1089,101 +1323,3 @@ const qual: string[] = [
 
 const valid_src = "/assets/new/valid.svg";
 const stop_src = "/assets/new/stop.svg";
-
-const token = {
-  "installable": {
-    "short_name": {
-      "member": "short_name",
-      "displayString": "Short name atleat 3 characters",
-      "valid": true
-    },
-    "name": {
-      "member": "name",
-      "displayString": "Manifest has name field",
-      "valid": true
-    },
-    "description": {
-      "member": "description",
-      "displayString": "Manifest has description field",
-      "valid": true
-    },
-    "display": {
-      "displayString": "Manifest has display field",
-      "member": "display",
-      "valid": true
-    },
-    "icons": {
-      "displayString": "Icons have at least one PNG icon 512x512 or larger",
-      "member": "icons",
-      "valid": true
-    },
-    "hasSW": {
-      "displayString": "PWA has a service worker",
-      "member": "service worker",
-      "valid": true
-    }
-  },
-  "required": {
-    "name": {
-      "displayString": "Manifest has valid name field",
-      "valid": true
-    },
-    "short_name": {
-      "displayString": "Manifest has valid short_name field",
-      "valid": true
-    },
-    "start_url": {
-      "displayString": "Manifest has valid start_url field",
-      "member": "start_url",
-      "valid": true
-    },
-    "description": {
-      "displayString": "Manifest has valid description field",
-      "member": "description",
-      "valid": true
-    },
-    "icons": {
-      "displayString": "Manifest has valid icons field",
-      "member": "icons",
-      "valid": true
-    },
-    
-  },
-  "progressive": {
-    "share_target": {
-      "valid": false
-    },
-    "protocol_handlers": {
-      "valid": true
-    },
-    "file_handlers": {
-      "valid": false
-    },
-    "shortcuts": {
-      "displayString": "Manifest has shortcuts field",
-      "member": "shortcuts",
-      "valid": false
-    },
-    "display_override": {
-      "valid": false
-    },
-    "edge_side_panel": {
-      "valid": false
-    },
-    "scope_extensions": {
-      "valid": false
-    },
-    "widgets": {
-      "valid": false
-    },
-    "webpush": {
-      "valid": false
-    },
-    "background_sync": {
-      "valid": false
-    },
-    "periodic_sync": {
-      "valid": false
-    }
-  }
-}

@@ -39,7 +39,6 @@ export class AuthModule {
       const loginResponse = await this.getAccessToken();
       if (loginResponse) {
         const loginResult = await this.getLoginResult(loginResponse);
-        console.log("LOGIN RESULT", loginResult);
         return loginResult;
       }
       throw new Error('No login result');
