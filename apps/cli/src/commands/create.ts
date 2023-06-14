@@ -144,16 +144,17 @@ async function prepDirectoryForDevelopment(newName: string, decompressedName: st
   execSyncWrapper('npm i', true, newName);
 }
 
-function trackCreateEvent(template: string, timeMS: number, name: string): void {
-  initAnalytics();
-  
-  const createEventData: CreateEventData = {
-    template: template,
-    name: name,
-    timeMS: timeMS
-  }
+async function trackCreateEvent(template: string, timeMS: number, name: string): Promise<void> {
+    if(await initAnalytics()){
+    
+    const createEventData: CreateEventData = {
+      template: template,
+      name: name,
+      timeMS: timeMS
+    }
 
-  trackEvent("create", createEventData);
+    trackEvent("create", createEventData);
+  }
 }
 
 function emitInvalidTemplateError() {

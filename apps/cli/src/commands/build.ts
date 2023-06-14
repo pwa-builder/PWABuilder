@@ -1,7 +1,7 @@
 import type { CommandBuilder } from "yargs";
 import { execSyncWrapper, isDirectoryTemplate, outputError } from "../util/util";
 import { buildDescriptions, buildErrors } from "../strings/buildStrings";
-import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
+import { initAnalytics, trackEvent, checkForDataPermission } from "../analytics/usage-analytics";
 import { BuildEventData } from "../analytics/analytics-interfaces";
 
 export const command: string = 'build';
@@ -23,12 +23,11 @@ export const handler = (): void => {
   trackBuildEvent(endTime - startTime);
 };
 
-function trackBuildEvent(timeMS: number): void {
-  initAnalytics();
-  
-  const buildEventData: BuildEventData = {
-    timeMS: timeMS
-  }
-
-  trackEvent("build", buildEventData);
+async function trackBuildEvent(timeMS: number): Promise<void> {
+  if(await initAnalytics()) {
+    const buildEventData: BuildEventData = {
+      timeMS: timeMS
+    }
+    trackEvent("build", buildEventData);
+  } 
 }

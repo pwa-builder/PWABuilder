@@ -1,5 +1,5 @@
 export interface PWABuilderData {
   user: {
-    id: string
+    id?: string,
   }
 }

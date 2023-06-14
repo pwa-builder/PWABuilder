@@ -37,13 +37,14 @@ function handleStartCommand(viteArgs: string | undefined) {
   }
 }
 
-function trackStartEvent(timeMS: number, options: string): void {
-  initAnalytics();
-  
-  const startEventData: StartEventData = {
-    timeMS: timeMS,
-    options: options
-  }
+async function trackStartEvent(timeMS: number, options: string): Promise<void> {
+  if(await initAnalytics()){
 
-  trackEvent("start", startEventData);
+    const startEventData: StartEventData = {
+      timeMS: timeMS,
+      options: options
+    }
+
+    trackEvent("start", startEventData);
+  }
 }
