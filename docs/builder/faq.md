@@ -51,11 +51,11 @@ Has to match the app name you used on PWABuilder:
 
 ## Android
 
-#### Why is the browser address bar still showing still showing in my PWA?
+#### Why is the browser address bar still showing in my PWA?
 
 If your address bar is still showing, it probably means there's a problem with your `assetlinks.json` file.
 
-Check out <a href="#/hidden/asset-links-faq">this article </a> for info on debugging `assetlinks.json` issues.
+Check out [this article](/builder/asset-links-faq) for info on debugging `assetlinks.json` issues.
 
 ## iOS
 
@@ -69,7 +69,7 @@ No, not currently. You'll need Xcode to build your project, which is only availa
 
 In the meantime, there are 3rd party build services, such as [AppVeyor](https://www.appveyor.com/pricing/) or [GitHub Actions with Xcode Archive](https://github.com/marketplace/actions/xcode-archive), that can build Xcode projects as part of your continuous integration (CI) pipeline. 
 
-Additionally, there are inexpesive services, such as [Macincloud](https://www.macincloud.com/), which let you remote into a Mac with Xcode already installed. You can use those services to build your PWA iOS app package.
+Additionally, there are inexpensive services, such as [Macincloud](https://www.macincloud.com/), which let you remote into a Mac with Xcode already installed. You can use those services to build your PWA iOS app package.
 
 #### What PWA features can I use on iOS?
 

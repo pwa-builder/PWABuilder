@@ -13,13 +13,14 @@
     "prepublishOnly": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run clean && tsc && npm link",
-    "clean": "rm -rf dist"
+    "clean": "shx rm -rf dist"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.11.10",
     "@types/yargs": "^17.0.15",
+    "shx": "^0.3.4",
     "typescript": "^4.9.3"
   },
   "dependencies": {

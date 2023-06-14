@@ -23,7 +23,7 @@ export class CommunityCard extends LitElement {
         width: max-content;
         max-width: 480px;
         height: max-content;
-        color: #292C3A;
+        color: var(--font-color);
         display: flex;
         align-items: flex-start;
         column-gap: 1.5em;
@@ -45,18 +45,19 @@ export class CommunityCard extends LitElement {
 
       .community-card-content h3 {
         margin: 0;
-        font-size: 1em;
+        font-size: var(--subheader-font-size);
+        font-weight: var(--font-bold);
       }
 
       .community-card-content p {
-        font-size: .75em;
+        font-size:  var(--body-font-size);
         margin-top: 0;
         margin-bottom: .25em;
       }
 
       .community-card-actions {
-        color:  #4F3FB6;
-        fill: #4F3FB6;
+        color: var(--primary-color);
+        fill: var(--primary-color);
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -64,8 +65,8 @@ export class CommunityCard extends LitElement {
       }
 
       .community-card-actions a {
-        color: #4F3FB6;
-        font-size: 14px;
+        color: var(--primary-color);;
+        font-size: var(--arrow-link-font-size);
         font-weight: bold;
         margin-right: .5em;
         width: 100%;
@@ -91,7 +92,7 @@ export class CommunityCard extends LitElement {
       }
 
       .community-card-actions a:visited {
-        color:  #4F3FB6;
+        color:  var(--primary-color);;
       }
       .card-link-box img {
         width: .5em;
@@ -164,7 +165,7 @@ export class CommunityCard extends LitElement {
               html`
               <div class="card-link-box">
                 <a @click=${() => recordPWABuilderProcessStep("bottom." + link.text + "_clicked", AnalyticsBehavior.ProcessCheckpoint)} href=${link.link} target="_blank" rel="noopener" aria-label="${link.text}, will open in separate tab">${link.text}</a>
-                <img src="/assets/new/arrow.svg" alt="arrow" role="presentation"/>
+                <img src="/assets/new/arrow.svg" alt="Click here to ${link.text}, will open separate tab" role="button"/>
               </div>
               `
             )}

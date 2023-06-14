@@ -1,12 +1,13 @@
-import { css, html } from 'lit';
+import { css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, getManifestUrl } from '../services/app-info';
 import {
   createWindowsPackageOptionsFromManifest,
   emptyWindowsPackageOptions,
+  windowsLanguages,
 } from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
-import { AppPackageFormBase } from './app-package-form-base';
+import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
@@ -16,7 +17,12 @@ import { ManifestContext, PackageOptions } from '../utils/interfaces';
 export class WindowsForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAdvanced = false;
+  @state() customSelected = false;
+  @state() initialBgColor: string = '';
+  @state() currentSelectedColor: string = '';
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
+  @state() activeLanguages: string[] = [];
+  @state() activeLanguageCodes: string[] = [];
 
   static get styles() {
     return [
@@ -84,6 +90,78 @@ export class WindowsForm extends AppPackageFormBase {
           font-weight: bold;
         }
 
+        .sub-multi {
+          font-size: var(--body-font-size);
+          margin: 0;
+          color: rgba(0,0,0,.5);
+        }
+
+        :host{
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-input-font-size-small: 22px;
+          
+        }
+
+        #languageDrop::part(display-input){
+          min-height: 40px;
+        }
+
+        #languageDrop::part(tag){
+          font-size: var(--body-font-size);
+          color: #757575;
+          background-color: #f0f0f0;
+          border-radius: var(--input-border-radius);
+        }
+
+        #languageDrop::part(listbox){
+          background-color: #ffffff;
+          height: 200px;
+          overflow-y: scroll;
+          border-radius: var(--input-border-radius);
+          border: 1px solid #c5c5c5;
+          margin-top: 3px;
+        }
+
+        #languageDrop sl-option::part(base){
+          font-size: var(--body-font-size);
+          color: #757575;
+        }
+
+        #languageDrop sl-option:focus-within::part(base) {
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
+        #languageDrop sl-option::part(base):hover{
+          color: #ffffff;
+          background-color: #4F3FB6;
+        }
+
+        #languageDrop::part(display-label){
+          font-size: var(--body-font-size);
+          color: #757575;
+        }
+
+        sl-color-picker {
+          --grid-width: 315px;
+          height: 25px;
+        }
+
+        sl-color-picker::part(trigger){
+          border-radius: 0;
+          height: 25px;
+          width: 75px;
+          display: flex;
+        }
+
+        .color-radio::part(control--checked){
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+        }
+       
     `
     ];
   }
@@ -92,7 +170,9 @@ export class WindowsForm extends AppPackageFormBase {
     super();
   }
 
-  async firstUpdated() {
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+
     let manifestContext: ManifestContext | undefined = getManifestContext();
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
@@ -103,6 +183,9 @@ export class WindowsForm extends AppPackageFormBase {
     );
 
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
+
+    this.customSelected = this.packageOptions.images?.backgroundColor != 'transparent';
+    this.initialBgColor = this.currentSelectedColor = (this.packageOptions.images?.backgroundColor as string);
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -166,13 +249,83 @@ export class WindowsForm extends AppPackageFormBase {
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
     icon!.style.transform = "rotate(90deg)";
   }
-  
+
   public getPackageOptions(): PackageOptions {
     return this.packageOptions;
   }
 
   public getForm(): HTMLFormElement {
     return this.shadowRoot!.querySelector("form")!;
+  }
+
+  renderMultiSelect(formInput: FormInput): TemplateResult {
+    return html`
+      <label for="${formInput.inputId}">
+        ${formInput.label}
+        ${this.renderTooltip(formInput)}
+      </label>
+      <div id="multiSelectBox">
+        <div class="multi-wrap">
+          <p class="sub-multi">Select Multiple Languages</p>
+          <sl-select id="languageDrop" 
+            placeholder="Select one or more languages"
+            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value} 
+            value=${this.packageOptions.resourceLanguage!}
+            ?stayopenonselect=${true} 
+            multiple
+            .maxOptionsVisible=${5}
+            size="small"
+          >
+          ${windowsLanguages.map((lang: any) => 
+            html`
+              ${lang.codes.map((code: string) =>  
+                html`
+                  <sl-option value=${code}>${lang.name} - ${code}</sl-option>
+                `
+              )}
+            `
+          )} 
+          </sl-select>
+        </div>
+      </div>
+    `;
+  }
+
+  renderColorToggle(formInput: FormInput): TemplateResult {
+    return html`
+      <label for="${formInput.inputId}">
+        ${formInput.label}
+        ${this.renderTooltip(formInput)}
+      </label>
+      <div id="iconColorPicker">
+        <div class="color-wrap">
+          <p class="sub-multi">Select your Windows icons background color</p>
+          <sl-radio-group 
+            id="icon-bg-radio-group" 
+            .value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
+            @sl-change=${() => this.toggleIconBgRadios()}
+          >
+            <sl-radio class="color-radio" size="small" value="transparent">Transparent</sl-radio>
+            <sl-radio class="color-radio" size="small" value="custom">Custom Color</sl-radio>
+          </sl-radio-group>
+          ${this.customSelected ? html`
+            ${this.renderFormInput(formInput)}
+          ` : html``}
+        </div>
+      </div>
+    `;
+  }
+
+  toggleIconBgRadios(){
+    let input = (this.shadowRoot?.getElementById("icon-bg-radio-group") as any);
+    let selected = input.value;
+    this.customSelected = selected !== 'transparent';
+    if(!this.customSelected){
+      this.packageOptions.images!.backgroundColor = 'transparent';
+    } else {
+      this.packageOptions.images!.backgroundColor = this.initialBgColor;
+      this.currentSelectedColor = this.initialBgColor;
+    }
   }
 
   render() {
@@ -322,9 +475,22 @@ export class WindowsForm extends AppPackageFormBase {
                 })}
               </div>
               <div class="form-group">
-                ${this.renderFormInput({
+                ${this.renderColorToggle({
+                  label: 'Icon Background Color',
+                  tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
+                  tooltipLink:
+                    'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
+                  inputId: 'icon-bg-color-input',
+                  type: 'color',
+                  value: this.packageOptions.images!.backgroundColor || 'transparent',
+                  placeholder: 'transparent',
+                  inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
+                })}
+              </div>
+              <div class="form-group">
+                ${this.renderMultiSelect({
                   label: 'Language',
-                  tooltip: `Optional. The primary language for your app package. Additional languages can be specified in Windows Partner Center. If empty, EN-US will beused.`,
+                  tooltip: `Optional. Select as many languages as your app supports. Additional languages can be specified in Windows Partner Center. If empty, EN-US will be used.`,
                   tooltipLink:
                     'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
                   inputId: 'language-input',
@@ -382,6 +548,25 @@ export class WindowsForm extends AppPackageFormBase {
                     inputHandler: (val: string, checked: boolean) => {
                       this.addOrRemoveDeviceFamily(val, checked);
                     },
+                  })}
+                </div>
+              </div>
+              <div class="form-group" id="widgets-picker">
+                <label>Widgets</label>
+                <div class="form-check">
+                  ${this.renderFormInput({
+                    label: 'Enable Widgets',
+                    value: 'Widgets',
+                    tooltip:
+                      'Enables your Windows package to serve the widgets listed in your web manifest to the Widgets Panel.',
+                    tooltipLink:
+                      'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
+                    inputId: 'widget-checkbox',
+                    type: 'checkbox',
+                    checked: this.packageOptions.enableWebAppWidgets,
+                    disabled: !this.packageOptions.enableWebAppWidgets,
+                    inputHandler: (_val: string, checked: boolean) => 
+                      (this.packageOptions.enableWebAppWidgets = checked),
                   })}
                 </div>
               </div>

@@ -30,8 +30,8 @@ export class SuccessCard extends LitElement {
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-        background: white;
-        border-radius: 4px;
+        background: #ffffff;
+        border-radius: var(--card-border-radius);
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         text-decoration: none;
         color: black;
@@ -44,14 +44,16 @@ export class SuccessCard extends LitElement {
         width: 100%;
         /* for screen reader scan */
         flex-direction: row-reverse;
+        color: var(--font-color);
       }
 
       .success-stat {
         margin: 0;
-        font-size: 20px;
+        font-size: var(--subheader-font-size);
         line-height: 28px;
-        font-weight: bold;
+        font-weight: var(--font-bold);
         margin-bottom: .75em;
+        color: var(--font-color);
       }
 
       .success-stat span {
@@ -63,14 +65,14 @@ export class SuccessCard extends LitElement {
 
       .success-desc {
         margin: 0;
-        font-size: 14px;
+        font-size:  var(--card-body-font-size);
         line-height: 18px;
         color: var(--secondary-font-color);
       }
 
       @media screen and (-ms-high-contrast: white-on-black) {
         .success-card:focus{
-          border: 4px solid white;
+          border: 4px solid #ffffff;
           border-radius: 5px;
         }
       }

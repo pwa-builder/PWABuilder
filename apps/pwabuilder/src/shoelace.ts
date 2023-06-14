@@ -16,6 +16,7 @@ import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel';
 import '@shoelace-style/shoelace/dist/components/textarea/textarea';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton';
+import '@shoelace-style/shoelace/dist/components/option/option';
 
 
 // also needed for site
@@ -24,6 +25,7 @@ import '@shoelace-style/shoelace/dist/components/icon/icon';
 import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group';
 import '@shoelace-style/shoelace/dist/components/radio/radio';
+import '@shoelace-style/shoelace/dist/components/tag/tag.js';
 
 // setting basepath so icons can be resolved
 // see package.json where icons are copied to public folder during npm i

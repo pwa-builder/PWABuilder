@@ -69,7 +69,7 @@ export class SWSelector extends LitElement {
         }
       .dialog::part(panel) {
         position: relative;
-        border-radius: 20px;
+        border-radius: var(--card-border-radius);
       }
       .dialog::part(close-button__base){
         position: absolute;
@@ -81,8 +81,8 @@ export class SWSelector extends LitElement {
       #frame-footer {
         background-color: #F2F3FB;
         padding: 1.5em 2em;
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: var(--card-border-radius);
+        border-bottom-right-radius: var(--card-border-radius);
         display: flex;
         align-items: center;
         justify-content: space-between;

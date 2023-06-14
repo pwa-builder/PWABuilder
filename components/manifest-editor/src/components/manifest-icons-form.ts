@@ -58,6 +58,11 @@ export class ManifestIconsForm extends LitElement {
   static get styles() {
     return css`
 
+    :host {
+      --sl-input-font-family: Hind, sans-serif;
+    }
+    
+
       sl-checkbox::part(base),
       sl-checkbox::part(control),
       sl-button::part(base) {
@@ -85,25 +90,27 @@ export class ManifestIconsForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-field p {
+      .form-field p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
       }
 
       .field-header{
         display: flex;
         align-items: center;
         justify-content: space-between;
-        column-gap: 5px;
+        column-gap: 10px;
       }
 
       .header-left{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       
       .toolTip {
+        font-size: 14px;
         visibility: hidden;
         width: 150px;
         background: black;
@@ -175,7 +182,19 @@ export class ManifestIconsForm extends LitElement {
         row-gap: 5px;
       }
       .error {
-        color: #eb5757
+        color: #292c3a;
+      }
+
+      sl-button::part(base):hover {
+        background-color: rgba(79, 63, 182, 0.06);
+        border-color: rgba(79, 63, 182, 0.46);
+        color: rgb(79, 63, 182);
+      }
+
+      sl-checkbox[checked]::part(control) {
+        background-color: #4f3fb6;
+        border-color: #4f3fb6;
+        color: #ffffff;
       }
 
       @media(max-width: 765px){
@@ -217,6 +236,16 @@ export class ManifestIconsForm extends LitElement {
 
         #selected-icon {
           max-width: 70px;
+        }
+
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
         }
         
       }

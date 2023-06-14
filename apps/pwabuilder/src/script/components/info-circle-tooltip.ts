@@ -15,11 +15,14 @@ import '../components/hover-tooltip';
 
   static get styles() {
     return css`
+      .holder {
+        display: flex;
+        height: fit-content;
+      }
       .info-circle-img {
-        height: 12px;
-        width: 12px;
+        height: 16px;
+        width: 16px;
         border-radius: 50%;
-        background: #e5e5e5;
         padding: 4px;
         margin-left: 6px;
       }
@@ -32,11 +35,13 @@ import '../components/hover-tooltip';
 
   render(): TemplateResult {
     return html`
-      <img id="${this.circleId}" class="info-circle-img" src="assets/images/help-outline.svg" alt="help outline"
-        aria-hidden="true" />
+      <div class="holder">
+        <img id="${this.circleId}" class="info-circle-img" src="assets/tooltip.svg" alt="help outline"
+          aria-hidden="true" />
 
-      <hover-tooltip anchor="${this.circleId}" text="${this.text}" link="${ifDefined(this.link)}">
-      </hover-tooltip>
+        <hover-tooltip anchor="${this.circleId}" text="${this.text}" link="${ifDefined(this.link)}">
+        </hover-tooltip>
+      </div>
     `;
   }
  }

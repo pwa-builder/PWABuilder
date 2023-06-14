@@ -45,14 +45,63 @@
     border-radius: 3px;
 }
 
-.pwa-summit-banner strong {
-    color: var(--sl-color-green-950);
-    font-size: medium;
+/* Home Nav CSS START */
+
+.home-nav-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-.pwa-summit-banner a {
-    color: var(--sl-color-green-700);
+.home-nav-card {
+    width: 33%;
+    margin: 10px;
+    text-align: center;
+    justify-content: space-around;
+    --border-color: #491576;
 }
+
+@media (max-width: 875px) {
+    .home-nav-container {
+        flex-direction: column;
+    }
+
+    .home-nav-card {
+        width: 100%;
+    }
+}
+.home-nav-container sl-button::part(base) {
+    background-color: #9C8DAB;
+    color: white;
+}
+
+.home-nav-container sl-button::part(base):hover {
+    border-color: #491576;
+}
+
+
+
+.home-nav-card::part(base) {
+    justify-self: stretch;
+    height: 100%;
+}
+
+.home-nav-card h3 {
+    text-align: center;
+}
+.home-nav-card::part(body) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.home-nav-card sl-button {
+    margin-top: 10px;
+}
+
+/* Home Nav CSS END */
 
 sl-button {
     width: 100%;

@@ -33,20 +33,20 @@ export class ComapniesPackaged extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: #292C3A;
+        color: var(--font-color);
         margin-bottom: 1em;
       }
 
       #success-title h2 {
         text-align: center;
-        font-size: 1.6em;
+        font-size: var(--header-font-size);
         margin: 0;
       }
 
       #success-title p {
         text-align: center;
         margin: 0;
-        font-size: .75em;
+        font-size:  var(--body-font-size);
       }
 
       #success-wrapper #img-box {
@@ -59,7 +59,7 @@ export class ComapniesPackaged extends LitElement {
       .controls {
         height: 25px;
         width: 25px;
-        border: 1px solid #4F3FB6;
+        border: 1px solid var(--primary-color);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -72,7 +72,7 @@ export class ComapniesPackaged extends LitElement {
       }
 
       sl-icon {
-        color: #4F3FB6;
+        color: var(--primary-color);
         font-size: 15px;
       }
 
@@ -89,7 +89,7 @@ export class ComapniesPackaged extends LitElement {
       }
 
       .slider {
-        background: white;
+        background: #ffffff;
         height: var(--slide-height);
         overflow:hidden;
         position: relative;
@@ -168,8 +168,8 @@ export class ComapniesPackaged extends LitElement {
 
       @media screen and (-ms-high-contrast: white-on-black) {
         .controls sl-icon {
-          color: white;
-          border-color: white;
+          color: #ffffff;
+          border-color: #ffffff;
         }
       }
     `
@@ -222,7 +222,7 @@ export class ComapniesPackaged extends LitElement {
     return html`
     <div id="success-wrapper">
       <div id="success-title">
-          <h2>Apps Packaged</h2>
+          <h2>Apps packaged</h2>
           <p>Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
       </div>
       <div class="slider">
@@ -242,12 +242,12 @@ export class ComapniesPackaged extends LitElement {
         </div>
       </div>
       ${this.paused ? 
-        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}>
-              <sl-icon name="play-fill" aria-label="Play apps scrolling button"></sl-icon>
+        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}  role="button" aria-label="Click here to play carousel">
+              <sl-icon name="play-fill" alt="Play apps scrolling button"  role="img"></sl-icon>
             </button>` : 
             
-        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}> 
-              <sl-icon name="pause-fill" aria-label="Pause apps scrolling button"></sl-icon>
+        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()} role="button" aria-label="Click here to pause carousel"> 
+              <sl-icon name="pause-fill" alt="Pause apps scrolling button" role="img"></sl-icon>
             </button>`}
     </div>
     `;

@@ -7,6 +7,7 @@ import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 import { PackageOptions } from '../utils/interfaces';
+import { SlColorPicker } from '@shoelace-style/shoelace';
 
 /**
  * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.
@@ -19,7 +20,7 @@ export class AppPackageFormBase extends LitElement {
     const localStyles =  css`
       #form-layout input {
         border: 1px solid rgba(194, 201, 209, 1);
-        border-radius: var(--input-radius);
+        border-radius: var(--input-border-radius);
         color: var(--font-color);
       }
 
@@ -32,21 +33,16 @@ export class AppPackageFormBase extends LitElement {
         font-style: italic;
       }
 
-
-      info-circle-tooltip {
-        margin-top: 4px;
-      }
-
-      sl-button::part(base) {
-        background-color: black;
-        color: white;
+      #form-extras sl-button::part(base) {
+        background-color: var(--font-color);
+        color: #ffffff;
         font-size: 14px;
         height: 3em;
         width: 25%;
-        border-radius: 50px;
+        border-radius: var(--button-border-radius);
       }
 
-      sl-button::part(label){
+      #form-extras sl-button::part(label){
         display: flex;
         align-items: center;
       }
@@ -136,6 +132,33 @@ export class AppPackageFormBase extends LitElement {
         border: 1px solid var(--error-color);
       }
 
+      input:disabled {
+        cursor: no-drop;
+      }
+
+      sl-color-picker {
+        --grid-width: 315px;
+        height: 25px;
+      }
+
+      sl-color-picker::part(trigger){
+        border-radius: 0;
+        height: 25px;
+        width: 75px;
+        display: flex;
+      }
+
+      .colorPickerAndValue {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .colorPickerAndValue p {
+        margin: 0;
+        color: var(--secondary-font-color);
+      }
+
 
       @media (min-height: 760px) and (max-height: 1000px) {
         form {
@@ -167,11 +190,46 @@ export class AppPackageFormBase extends LitElement {
       `;
     }
 
+    if(formInput.type === 'color'){
+      return html`
+        ${this.renderFormInputLabel(formInput)}
+        ${this.renderFormColorPicker(formInput)}
+      `;
+    }
+
     // For all others, the label comes first.
     return html`
       ${this.renderFormInputLabel(formInput)}
       ${this.renderFormInputTextbox(formInput)}
     `;
+  }
+
+  private renderFormColorPicker(formInput: FormInput){
+    return html`
+    <div class="colorPickerAndValue">
+      <sl-color-picker
+              id="${formInput.inputId}" 
+              class="form-control" 
+              placeholder="${formInput.placeholder || ''}"
+              value="${(ifDefined(formInput.value) as string)}" 
+              type="color" 
+              ?required="${formInput.required}"
+              name="${ifDefined(formInput.name)}" 
+              minlength="${ifDefined(formInput.minLength)}"
+              maxlength="${ifDefined(formInput.maxLength)}"
+              min=${ifDefined(formInput.minValue)}
+              max="${ifDefined(formInput.maxValue)}" 
+              pattern="${ifDefined(formInput.pattern)}"
+              spellcheck="${ifDefined(formInput.spellcheck)}" 
+              ?checked="${formInput.checked}" 
+              ?readonly="${formInput.readonly}"
+              custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+              ?disabled=${formInput.disabled}
+              @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}" 
+              @sl-invalid=${this.inputInvalid}
+            ></sl-color-picker>
+            <p>${formInput.value}</p>
+  </div>`;
   }
 
   private renderFormInputTextbox(formInput: FormInput): TemplateResult {
@@ -185,6 +243,7 @@ export class AppPackageFormBase extends LitElement {
         max="${ifDefined(formInput.maxValue)}" pattern="${ifDefined(formInput.pattern)}"
         spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+        ?disabled=${formInput.disabled}
         @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
     `;
   }
@@ -213,6 +272,28 @@ export class AppPackageFormBase extends LitElement {
       <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
       </info-circle-tooltip>
     `;
+  }
+
+  private colorChanged(e: UIEvent, formInput: FormInput) {
+    const inputElement = e.target as HTMLInputElement | null;
+    let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
+    
+    let colorValue = inputElement?.nextElementSibling;
+    colorValue!.innerHTML = formattedValue;
+
+    if (inputElement) {
+      // Fire the input handler
+      if (formInput.inputHandler) {
+        formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+      }
+
+      // Run validation if necessary.
+      if (formInput.validationErrorMessage) {
+        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+        inputElement.setCustomValidity(errorMessage);
+        inputElement.title = errorMessage;
+      }
+    }
   }
 
   private inputChanged(e: UIEvent, formInput: FormInput) {
@@ -278,7 +359,7 @@ export interface FormInput {
   name?: string;
   type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
   placeholder?: string;
-  value?: string;
+  value?: string | string[];
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -289,5 +370,6 @@ export interface FormInput {
   readonly?: boolean;
   validationErrorMessage?: string;
   checked?: boolean;
+  disabled?: boolean;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }

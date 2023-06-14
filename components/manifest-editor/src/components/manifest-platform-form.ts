@@ -2,7 +2,7 @@ import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../utils/interfaces';
 import { standardCategories } from '../locales/categories';
-import { validateSingleField, singleFieldValidation, validateSingleRelatedApp, validateSingleProtocol } from '@pwabuilder/manifest-validation';
+import { singleFieldValidation, validateSingleField } from '@pwabuilder/manifest-validation';
 import { errorInTab, insertAfter } from '../utils/helpers';
 
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
@@ -29,10 +29,10 @@ export class ManifestPlatformForm extends LitElement {
   @state() shortcutHTML: TemplateResult[] = [];
   @state() protocolHTML: TemplateResult[] = [];
   @state() relatedAppsHTML: TemplateResult[] = [];
+  @state() errorMap: any = {};
 
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
-  private errorCount: number = 0;
 
   static get styles() {
     return css`
@@ -42,11 +42,12 @@ export class ManifestPlatformForm extends LitElement {
         --sl-input-focus-ring-color: #4f3fb670;
         --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
         --sl-input-border-color-focus: #4F3FB6ac;
+        --sl-input-font-family: Hind, sans-serif;
       }
 
       sl-input::part(base),
-      sl-select::part(control),
-      sl-menu-item::part(base),
+      sl-select::part(form-control),
+      sl-option::part(base),
       sl-button::part(base),
       sl-checkbox::part(base),
       sl-checkbox::part(control),
@@ -56,8 +57,10 @@ export class ManifestPlatformForm extends LitElement {
         --sl-font-size-medium: 16px;
         --sl-input-height-medium: 3em;
         --sl-toggle-size: 16px;
+        --sl-toggle-size-small: 16px;
+        --sl-input-font-size-small: 16px;
       }
-      sl-details::part(base), sl-select::part(control), sl-input::part(base){
+      sl-details::part(base), sl-select::part(combobox), sl-input::part(base){
         background-color: #fbfbfb;
       }
       #form-holder {
@@ -73,9 +76,15 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .form-row p {
+      .form-row p:not(.toolTip) {
         font-size: 14px;
         margin: 0;
+        color: #717171;
+      }
+      sl-input::part(input), 
+      sl-select::part(display-input), 
+      sl-details::part(summary){
+        color: #717171;
       }
       .form-field {
         width: 50%;
@@ -83,10 +92,13 @@ export class ManifestPlatformForm extends LitElement {
         display: flex;
         flex-direction: column;
       }
+      .form-field p {
+        font-size: 14px;
+      }
       .field-header{
         display: flex;
         align-items: center;
-        column-gap: 5px;
+        column-gap: 10px;
       }
       .color_field {
         display: flex;
@@ -98,6 +110,7 @@ export class ManifestPlatformForm extends LitElement {
         column-gap: 10px;
       }
       .toolTip {
+        font-size: 14px;
         visibility: hidden;
         width: 150px;
         background: black;
@@ -130,6 +143,15 @@ export class ManifestPlatformForm extends LitElement {
       }
       sl-menu {
          width: 100%;
+      }
+      sl-option:focus-within::part(base) {
+        color: #ffffff;
+        background-color: #4F3FB6;
+      }
+
+      sl-option::part(base):hover{
+        color: #ffffff;
+        background-color: #4F3FB6;
       }
       #cat-field {
         display: grid;
@@ -187,9 +209,10 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 18px;
         margin: 0;
       }
-      .long-items p {
+      .long-items p:not(.toolTip){
         font-size: 14px;
         margin: 0;
+        color: #717171;
       }
       .long-items .form-field {
         width: 100%;
@@ -223,6 +246,18 @@ export class ManifestPlatformForm extends LitElement {
         font-size: 16px;
       }
 
+      sl-button::part(base):hover {
+        background-color: rgba(79, 63, 182, 0.06);
+        border-color: rgba(79, 63, 182, 0.46);
+        color: rgb(79, 63, 182);
+      }
+
+      sl-checkbox[checked]::part(control) {
+        background-color: #4f3fb6;
+        border-color: #4f3fb6;
+        color: #ffffff;
+      }
+
       @media(max-width: 765px){
         .form-row {
           flex-direction: column;
@@ -240,7 +275,7 @@ export class ManifestPlatformForm extends LitElement {
         }
       }
 
-      @media(max-width: 600px){
+      @media(max-width: 650px){
         #cat-field {
           grid-template-columns: repeat(3, auto);
         }
@@ -248,8 +283,8 @@ export class ManifestPlatformForm extends LitElement {
 
       @media(max-width: 480px){
         sl-input::part(base),
-        sl-select::part(control),
-        sl-menu-item::part(base),
+        sl-select::part(form-control),
+        sl-option::part(base),
         sl-button::part(base),
         sl-checkbox::part(base),
         sl-checkbox::part(control) {
@@ -275,6 +310,16 @@ export class ManifestPlatformForm extends LitElement {
 
         #cat-field {
           grid-template-columns: repeat(2, auto);
+        }
+
+        .field-header a:after {
+          content: "";
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          z-index: -1;
+          width: 40px;
+          height: 40px;
         }
         
       }
@@ -328,47 +373,16 @@ export class ManifestPlatformForm extends LitElement {
         let passed = validation!.valid;
         let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
 
-        let broken_inner: any[] = [];
-        if(field === "related_applications"){
-          this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
-            let part = validateSingleRelatedApp(app);
-            if(part !== "valid"){
-              broken_inner.push({ part: part, index: index })
-            }
-          })
-        } else if(field === "protocol_handlers"){
-          this.manifest[field]!.forEach((app: any, index: number) => {
-            let part = validateSingleProtocol(app);
-            if(part !== "valid"){
-              broken_inner.push({ part: part, index: index })
-            }
-          })
-        }
-
-        if(broken_inner.length > 0){
-          let div = document.createElement('div');
-          div.classList.add(`${field}-error-div`);
-          broken_inner.forEach((error: any) => {
-            let p = document.createElement('p');
-            p.innerText = `There is an issue with ${field} #${error.index + 1}: ${error.part} is invalid`;
-            p.style.color = "#eb5757";
-            div.append(p);
-            this.errorCount++;
-          });
-          input!.classList.add("error");
-          insertAfter(div, input!.parentNode!.lastElementChild);
-        }
-
         if(!passed){
           // Remove old errors
           if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
             let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-            console.log(error_div);
             error_div!.parentElement!.removeChild(error_div!);
           }
 
           // update error list with new errors
           if(validation.errors){
+            this.errorMap[field] = 0;
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
             validation.errors.forEach((error: string) => {
@@ -376,7 +390,7 @@ export class ManifestPlatformForm extends LitElement {
               p.innerText = error;
               p.style.color = "#eb5757";
               div.append(p);
-              this.errorCount++;
+              this.errorMap[field]++;
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
           }
@@ -386,8 +400,9 @@ export class ManifestPlatformForm extends LitElement {
         }
       }
     }
+    
     this.validationPromise = undefined;
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length === 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
@@ -397,6 +412,7 @@ export class ManifestPlatformForm extends LitElement {
   reset() {
     this.initCatGrid();
     this.requestUpdate();
+    fieldsValidated = false;
   }
 
   initCatGrid(){
@@ -456,7 +472,7 @@ export class ManifestPlatformForm extends LitElement {
 
       if(input.classList.contains("error")){
         input.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[fieldName!];
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
         
@@ -469,6 +485,7 @@ export class ManifestPlatformForm extends LitElement {
       
       // update error list
       if(validation.errors){
+        this.errorMap[fieldName!] = 0;
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
         validation.errors.forEach((error: string) => {
@@ -476,7 +493,7 @@ export class ManifestPlatformForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
@@ -485,7 +502,7 @@ export class ManifestPlatformForm extends LitElement {
       input.classList.add("error");
     }
 
-    if(this.errorCount == 0){
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
@@ -502,7 +519,6 @@ export class ManifestPlatformForm extends LitElement {
             <h4 class="shortcut-header">Shortcut #${this.manifest.shortcuts ? this.manifest.shortcuts.length + 1 : 1}</h4>
             <sl-input class="field-input" name="name" placeholder="Shortcut name" /></sl-input>
             <sl-input class="field-input" name="url" placeholder="Shortcut url" /></sl-input>
-            <sl-input class="field-input" name="src" placeholder="Shortcut icon src" /></sl-input>
             <sl-input class="field-input" name="desc" placeholder="Shortcut description" /></sl-input>
             <sl-button type="submit">Add to Manifest</sl-button>
           </form>
@@ -525,7 +541,7 @@ export class ManifestPlatformForm extends LitElement {
           <form class="field-holder" @submit=${(e: any) => this.addRelatedAppToManifest(e)}>
             <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
             <sl-select placeholder="Select a Platform" hoist=${true} placement="bottom">
-              ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
+              ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>` )}
             </sl-select>
             <sl-input class="field-input" name="url" placeholder="App URL" /></sl-input>
             <sl-input class="field-input" name="id" placeholder="App ID" /></sl-input>
@@ -555,32 +571,18 @@ export class ManifestPlatformForm extends LitElement {
     this.updateShortcutsInManifest(inputs, true);
   }
 
-  async updateShortcutsInManifest(inputs: any, push: boolean){
+  async updateShortcutsInManifest(inputs: any, push: boolean, removal: boolean = false){
     if(push){
       let name = inputs.filter((input: any) => input.name === "name")[0].value;
       let url = inputs.filter((input: any) => input.name === "url")[0].value;
-      let src = inputs.filter((input: any) => input.name === "src")[0].value;
       let desc = inputs.filter((input: any) => input.name === "desc")[0].value;
 
       let scObject: ShortcutItem;
 
-      if(src.length == 0){
-        scObject = {
-          name: name,
-          url: url,
-          description: desc
-        }
-      } else {
-        scObject = {
-          name: name,
-          url: url,
-          icons: [
-            {
-              src: src
-            }
-          ],
-          description: desc
-        }
+      scObject = {
+        name: name,
+        url: url,
+        description: desc
       }
       
       if(!this.manifest.shortcuts){
@@ -589,8 +591,7 @@ export class ManifestPlatformForm extends LitElement {
 
       this.manifest.shortcuts?.push(scObject)
     }
-
-    this.validatePlatformList("shortcuts", this.manifest.shortcuts!);
+    this.validatePlatformList("shortcuts", this.manifest.shortcuts!, removal);
   }
 
   addProtocolToManifest(e: any){
@@ -611,7 +612,7 @@ export class ManifestPlatformForm extends LitElement {
     this.updateProtocolsInManifest(inputs, true);
   }
 
-  async updateProtocolsInManifest(inputs: any, push: boolean){
+  async updateProtocolsInManifest(inputs: any, push: boolean, removal: boolean = false){
 
     if(push){
       let protocol: string = inputs.filter((input: any) => input.name === "protocol")[0].value;
@@ -629,7 +630,7 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.protocol_handlers?.push(pObject);
     }
 
-    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!);
+    this.validatePlatformList("protocol_handlers", this.manifest.protocol_handlers!, removal);
   }
 
   addRelatedAppToManifest(e: any){
@@ -652,7 +653,7 @@ export class ManifestPlatformForm extends LitElement {
     
   }
 
-  async updateRelatedAppsInManifest(inputs: any, select: any, push: boolean){
+  async updateRelatedAppsInManifest(inputs: any, select: any, push: boolean, removal: boolean = false){
     
     if(push){
       let platform: string = select.value;
@@ -672,7 +673,7 @@ export class ManifestPlatformForm extends LitElement {
       this.manifest.related_applications?.push(appObject);
     }
     
-    this.validatePlatformList("related_applications", this.manifest.related_applications!);
+    this.validatePlatformList("related_applications", this.manifest.related_applications!, removal);
   }
 
   updateCategories(){
@@ -696,22 +697,7 @@ export class ManifestPlatformForm extends LitElement {
     this.validatePlatformList("categories", categories);
   }
 
-  validatePlatformEntries(field: string){
-    let broken_inner: any[] = [];
-    if(field === "related_applications"){
-      this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
-        let part = validateSingleRelatedApp(app);
-        if(part !== "valid"){
-          broken_inner.push({ part: part, index: index })
-        }
-      })
-    }
-
-    return broken_inner;
-  }
-
-  async validatePlatformList(field: string, updatedValue: any[]){
-
+  async validatePlatformList(field: string, updatedValue: any[], removal: boolean = false){
     if(this.validationPromise){
       await this.validationPromise;
     }
@@ -720,10 +706,7 @@ export class ManifestPlatformForm extends LitElement {
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
 
-
-
-    if(passed){
-
+    if(passed || removal){
       let manifestUpdated = new CustomEvent('manifestUpdated', {
         detail: {
             field: field,
@@ -734,65 +717,33 @@ export class ManifestPlatformForm extends LitElement {
       });
 
       this.dispatchEvent(manifestUpdated);
+    }
 
-      let broken_inner: any[] = [];
-      if(field === "related_applications"){
-        this.manifest[field]!.forEach((app: RelatedApplication, index: number) => {
-          let part = validateSingleRelatedApp(app);
-          if(part !== "valid"){
-            broken_inner.push({ part: part, index: index })
-          }
-        })
-      }
+    if(passed){
 
-      if(broken_inner.length > 0){
-        if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-          let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-          error_div!.parentElement!.removeChild(error_div!);
-        }
-
-        let div = document.createElement('div');
-        div.classList.add(`${field}-error-div`);
-        broken_inner.forEach((error: any) => {
-          let p = document.createElement('p');
-          p.innerText = `There is an issue with ${field} #${error.index + 1}: ${error.part} is invalid`;
-          p.style.color = "#eb5757";
-          div.append(p);
-          this.errorCount++;
-        });
-        input!.classList.add("error");
-        insertAfter(div, input!.parentNode!.lastElementChild);
-      } else if(input!.classList.contains("error")){
+      if(input!.classList.contains("error")){
         input!.classList.toggle("error");
-        this.errorCount--;
+        delete this.errorMap[field];
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
+      this.requestUpdate();
+
+      if(this.errorMap.length === 0){
+        this.dispatchEvent(errorInTab(false, "platform"));
+      } else {
+        this.dispatchEvent(errorInTab(true, "platform"));
+      }
+
     } else {
       if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
         let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
         error_div!.parentElement!.removeChild(error_div!);
       }
-
-      if(field === "related_applications" || "shortcuts" || "protocol_handlers"){
-        let broken_inner = this.validatePlatformEntries(field);
-        if(broken_inner.length > 0){
-          let div = document.createElement('div');
-          div.classList.add(`${field}-error-div`);
-          broken_inner.forEach((error: any) => {
-            let p = document.createElement('p');
-            p.innerText = `There is an issue with ${field} #${error.index + 1}: ${error.part} is invalid`;
-            p.style.color = "#eb5757";
-            div.append(p);
-            this.errorCount++;
-          });
-          input!.classList.add("error");
-          insertAfter(div, input!.parentNode!.lastElementChild);
-        }
-      }
       
       // update error list
       if(validation.errors){
+        this.errorMap[field] = 0;
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
         validation.errors.forEach((error: string) => {
@@ -800,35 +751,40 @@ export class ManifestPlatformForm extends LitElement {
           p.innerText = error;
           p.style.color = "#eb5757";
           div.append(p);
-          this.errorCount++;
+          this.errorMap[field]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
       }
 
       input!.classList.add("error");
+      
     }
-    if(this.errorCount == 0){
+
+    (Object.keys(this.errorMap).length);
+    if(Object.keys(this.errorMap).length == 0){
       this.dispatchEvent(errorInTab(false, "platform"));
     } else {
       this.dispatchEvent(errorInTab(true, "platform"));
     }
+    
+    return passed;
   }
 
 
-  removeData(tag: string){
+  async removeData(tag: string){
     const split_tag = tag.split(" ");
     const field = split_tag[0]
     const index = parseInt(split_tag[1]);
 
     if(field === "shortcuts"){
       this.manifest.shortcuts = this.manifest.shortcuts!.filter((_item: any, i: number) => i != index );
-      this.updateShortcutsInManifest([], false);
+      this.updateShortcutsInManifest([], false, true);
     } else if(field === "protocol"){
       this.manifest.protocol_handlers = this.manifest.protocol_handlers!.filter((_item: any, i: number) => i != index);
-      this.updateProtocolsInManifest([], false);
+      this.updateProtocolsInManifest([], false, true);
     } else {
       this.manifest.related_applications = this.manifest.related_applications!.filter((_item: any, i: number) => i != index);
-      this.updateRelatedAppsInManifest([], [], false);
+      this.updateRelatedAppsInManifest([], [], false, true);
     }
   }
 
@@ -940,8 +896,8 @@ export class ManifestPlatformForm extends LitElement {
             </div>
             <p>Should a user prefer a related app to this one</p>
             <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
-              <sl-menu-item value="true">true</sl-menu-item>
-              <sl-menu-item value="false">false</sl-menu-item>
+              <sl-option value="true">true</sl-option>
+              <sl-option value="false">false</sl-option>
             </sl-select>
           </div>
         </div>
@@ -972,7 +928,7 @@ export class ManifestPlatformForm extends LitElement {
                         <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.removeData("related " + i.toString())}></sl-icon-button>
                       </div>
                       <sl-select placeholder="Select a Platform" placement="bottom" hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}>
-                        ${platformOptions.map((_, i: number) => html`<sl-menu-item value=${platformOptions[i]}>${platformText[i]}</sl-menu-item>` )}
+                        ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>` )}
                       </sl-select>
                       <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>
                       <sl-input class="field-input" placeholder="App ID" value=${app.id || ""} name="id" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>
@@ -1010,7 +966,6 @@ export class ManifestPlatformForm extends LitElement {
                       </div>
                       <sl-input class="field-input" name="name" placeholder="Shortcut name" value=${sc.name || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
                       <sl-input class="field-input" name="url" placeholder="Shortcut url" value=${sc.url || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
-                      <sl-input class="field-input" name="src" placeholder="Shortcut icon src" value=${sc.icons ? sc.icons[0].src : ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
                       <sl-input class="field-input" name="desc" placeholder="Shortcut description" value=${sc.description || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
                     </div>
                   `
@@ -1070,7 +1025,7 @@ export class ManifestPlatformForm extends LitElement {
             <p>The categories your PWA belongs to</p>
               <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
-                    html`<sl-checkbox class="cat-check" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
+                    html`<sl-checkbox class="cat-check" size="small" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
                   )}
                     
               </div>
