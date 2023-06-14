@@ -52,6 +52,14 @@ export class AppToken extends LitElement {
 
   @state() proxyLoadingImage: boolean = false;
 
+  @state() userAccount = {
+    idToken: '',
+    email: '',
+    name: '',
+    loggedIn: false
+  };
+  @state() authModule = new AuthModule();
+
 
   static get styles() {
     return [
@@ -662,7 +670,7 @@ export class AppToken extends LitElement {
   async validateUrl(){
     const encodedUrl = encodeURIComponent(this.siteURL);
 
-    const validateGiveawayUrl = env.validateGiveawayUrl + `?site=${encodedUrl}`;
+    const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
     let headers = getHeaders();
 
     try {
@@ -740,6 +748,13 @@ export class AppToken extends LitElement {
       return html`
         <h1>Oops!</h1>
         <p>You must at least have a manifest for us to run our tests! Go back to PWABuilder to create your manifest now!</p>
+      `
+    }
+
+    if(!this.testsInProgress && this.testsPassed && this.userAccount.loggedIn){
+      return html`
+        <h1>Congratulations ${this.userAccount.name}!</h1>
+        <p>You have qualified for a free account on the Microsoft developer platform. Get your token code below.</p>
       `
     }
 
@@ -1140,9 +1155,8 @@ export class AppToken extends LitElement {
   }
 
   async signInUser() {
-    const authModule = new AuthModule();
     try {
-    const result = await authModule.signIn();
+    const result = await this.authModule.signIn();
     if(result != null && result != undefined && "idToken" in result){
       return result;
     }
@@ -1158,10 +1172,25 @@ export class AppToken extends LitElement {
   async getUserToken() {
     const userResult = await this.signInUser();
     if(userResult != null) {
-      const token = userResult.idToken;
-      console.log(token);
-      //Navigate to congrats
+      console.log(userResult);
+      this.userAccount = userResult;
+      this.userAccount.loggedIn = true;
     }
+  }
+
+  async signOut() {
+    try {
+      await this.authModule.signOut();
+      this.userAccount.loggedIn = false;
+      this.requestUpdate();
+    }
+    catch(e) {
+      console.log(e, "Authentication Error");
+    } 
+  }
+
+  async claimToken() {
+    // TODO: try to claim token
   }
 
   handleEnteredURL(){
@@ -1201,6 +1230,7 @@ export class AppToken extends LitElement {
           <div id="app-info-section">
             ${this.renderAppCard()}
           </div>
+          ${!this.userAccount.loggedIn ? html`
           <div id="action-items-section">
             <div id="qual-div">
               <div id="qual-sum">
@@ -1269,23 +1299,31 @@ export class AppToken extends LitElement {
                 }
               </div>
             </div>
-          </div>
+          </div> ` : html``}
         ` : 
         html``
       }
       
+      ${ !this.userAccount.loggedIn ? html`
       <div id="qual-section">
         <h2>Qualifications</h2>
         <ul>
           ${qual.map((point: string) => html`<li>${point}</li>`)}
         </ul>
         <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
-      </div>
+      </div>` : html``}
       ${this.siteURL ? 
         html`
-          <div id="sign-in-section">
-            ${this.testsPassed ? html`<sl-button class="primary" @click=${() => this.getUserToken()}>Fake sign in button</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
-          </div>
+          ${ !this.userAccount.loggedIn ? 
+            html`
+              <div id="sign-in-section">
+                ${this.testsPassed ? html`<sl-button class="primary" @click=${this.getUserToken}>Sign in with a Microsoft account</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+              </div>
+            ` : html `
+                <label><input type="checkbox" /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                <sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>
+                <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
+            `}
         ` : html``}
       ${!this.siteURL ?
         html`

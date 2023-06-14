@@ -37,7 +37,7 @@ if (import.meta.env.PROD) {
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
-  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api/validateurl';
+  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 } else {
   env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
   env.manifestCreatorUrl =
@@ -58,5 +58,5 @@ if (import.meta.env.PROD) {
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
-  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api/validateurl';
+  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 }
