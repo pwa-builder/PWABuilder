@@ -43,6 +43,7 @@ export class AppToken extends LitElement {
   @state() enhancementsIndicator = "";
 
   @state() errorGettingURL = false;
+  @state() errorGettingToken = false;
   @state() errorMessage: string | undefined;
 
   @state() testResults: any = {};
@@ -751,15 +752,20 @@ export class AppToken extends LitElement {
       `
     }
 
-    if(!this.testsInProgress && this.testsPassed && this.userAccount.loggedIn){
-      return html`
-        <h1>Congratulations ${this.userAccount.name}!</h1>
-        <p>You have qualified for a free account on the Microsoft developer platform. Get your token code below.</p>
-      `
-    }
-
     // if tests complete and validations pass
     if(!this.testsInProgress && this.testsPassed){
+      if (this.userAccount.loggedIn) {
+        if (this.errorGettingToken) {
+          return html`
+          <h1>Oops!</h1>
+          <p>URL already used in another account. Please use another URL and try again.</p>
+        `
+        }
+          return html`
+          <h1>Congratulations ${this.userAccount.name}!</h1>
+          <p>You have qualified for a free account on the Microsoft developer platform. Get your token code below.</p>
+        `
+      }
       return html`
         <h1>Congratulations!</h1>
         <p>You have qualified for a free account on the Microsoft developer platform. Get your token code after signing in below. </p>
@@ -1190,7 +1196,30 @@ export class AppToken extends LitElement {
   }
 
   async claimToken() {
-    // TODO: try to claim token
+    const encodedUrl = encodeURIComponent(this.siteURL);
+
+    const validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser?site=${encodedUrl}`;
+    let headers = getHeaders();
+
+    try {
+      const request = await fetch(validateGiveawayUrl, {
+        method: 'GET',
+        headers: {
+          ...new Headers(headers),
+          'Authorization': `Bearer ${this.userAccount.idToken}`
+        }
+        
+      });
+      const response = await request.json() as {tokenId: string, errorMessage: string, rawError: unknown}
+      if (response.tokenId) {
+          // TODO: Pass to Mara'ah page
+      }
+      else {
+        this.errorGettingToken = true;
+        this.errorMessage = response.errorMessage;
+      }
+    }
+    catch(e){}
   }
 
   handleEnteredURL(){
