@@ -275,6 +275,8 @@ export class AppReport extends LitElement {
           background-color: #ffffff;
           justify-content: space-between;
           box-shadow: 0px 4px 30px 0px #00000014;
+
+          container: card / inline-size;
         }
 
         #app-card-header {
@@ -377,6 +379,15 @@ export class AppReport extends LitElement {
           margin: 0;
           font-weight: bold;
           font-size: calc(var(--subheader-font-size) + 4px);
+
+          text-overflow: ellipsis;
+          overflow: hidden;
+
+        }
+
+        #site-name, #site-url{
+          /* 115 is app icon size, 117 is share button, 4em is padding, 30px is gap */
+          max-width: calc(((100cqi - 115px) - 117px) - 4em - 30px);
         }
 
         #card-info {
@@ -397,7 +408,7 @@ export class AppReport extends LitElement {
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
-          max-width: 200px;
+          /* max-width: 200px; */
           font-weight: bold;
           font-size: 16px;
         }
@@ -1363,6 +1374,12 @@ export class AppReport extends LitElement {
           #site-url {
             margin-bottom: 8px !important;
           }
+
+          #site-name, #site-url{
+          /* 84 is app icon size, 4em is padding, 20px is gap */
+          max-width: calc((100cqi - 84px) - 4em - 20px);
+        }
+
           #app-card-share-cta {
             justify-content: start;
           }
