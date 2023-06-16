@@ -56,7 +56,7 @@ export class AppToken extends LitElement {
   @state() proxyLoadingImage: boolean = false;
 
   @state() userAccount = {
-    idToken: '',
+    accessToken: '',
     email: '',
     name: '',
     loggedIn: false
@@ -634,13 +634,13 @@ export class AppToken extends LitElement {
         method: 'GET',
         headers: {
           ...new Headers(headers),
-          'Authorization': `Bearer ${this.userAccount.idToken}`
+          'Authorization': `Bearer ${this.userAccount.accessToken}`
         }
-        
       });
       const response = await request.json() as {tokenId: string, errorMessage: string, rawError: unknown}
-      if (response.tokenId) {
-          // TODO: Pass to Mara'ah page
+      // better way to do this?
+      if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
+        Router.go(`/congratulations/${response.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
       }
       else {
         this.errorGettingToken = true;

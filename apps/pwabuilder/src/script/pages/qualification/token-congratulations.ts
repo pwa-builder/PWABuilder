@@ -1,10 +1,19 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
 
 import style from './token-congratulations.style';
 
+type Params = {
+  appicon: string;
+  appname: string;
+  appurl: string;
+  token: string;
+  username: string;
+};
+
 @customElement('token-congratulations')
-export class TokenCongratulations extends LitElement {
+export class TokenCongratulations extends LitElement implements BeforeEnterObserver {
 
   static get styles() {
     return [
@@ -12,9 +21,15 @@ export class TokenCongratulations extends LitElement {
     ]
   }
   
-  constructor() {
-    super();
-    
+  // constructor() {
+  //   super();
+  // }
+
+  private paramsData: null | Params = null;
+
+  async onBeforeEnter(location: RouterLocation) {
+    this.paramsData = location.params as Params;
+    console.log(this.paramsData);
   }
 
   copyCode() {
@@ -34,7 +49,7 @@ export class TokenCongratulations extends LitElement {
       <div id="congrats-wrapper">
         <div id="header">
           <h1>
-            <span class="username"> Congratulations Gleb!</span> Use the code below to get a $19 free Windows developer account on the Microsoft Store
+            <span class="username"> Congratulations ${this.paramsData?.username}!</span> Use the code below to get a $19 free Windows developer account on the Microsoft Store
           </h1>
           <h2>
             Microsoft Store is the best place to find apps on Windows. Find your success in the Microsoft Store! 
@@ -44,19 +59,19 @@ export class TokenCongratulations extends LitElement {
           <div id="token-id">
             <div class="site-card">
               <div class="site-icon">
-                <img src="/assets/microsoft_store_icon_white.png" alt="website icon"/>
+                <img src=${this.paramsData?.appicon!} alt="website icon"/>
               </div>
               <div class="site-desc">
-                <div class="title">Soundslice</div>
-                <div class="url">www.soundslice.com/</div>
+                <div class="title">${this.paramsData?.appname}</div>
+                <div class="url">${this.paramsData?.appurl}</div>
               </div>
             </div>
             <div class="token-input-container">
               <div style="display: flex; width: 100%; justify-content: space-evenly">
-                <sl-input id="code" value="fce40c30-b8be-45a9-afb7"></sl-input>
+                <sl-input id="code" value=${this.paramsData?.token!}></sl-input>
                 <sl-tooltip id="tool-tip" content="Copied!" trigger="click">
                   <button class="copy-button" @click=${() => this.copyCode() }>
-                    <img src="/assets/copy_icon_darkgrey.png" alt="Click here to copy your token code" width="30px" height="30px"/>
+                    <img src="/assets/copy_icon_darkgrey.svg" alt="Click here to copy your token code" width="30px" height="30px"/>
                   </button>
                 </sl-tooltip>
               </div>
