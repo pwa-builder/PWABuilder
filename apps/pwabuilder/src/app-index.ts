@@ -133,10 +133,18 @@ export class AppIndex extends LitElement {
             },
           },
           {
+
             path: '/congratulations',
             component: 'token-congratulations',
             action: async () => {
               await import('./script/pages/token-congratulations.js');
+            }
+          },
+          {
+            path: '/giveaway', // token giveaway page
+            component: 'app-token',
+            action: async () => {
+              await import('./script/pages/app-token.js');
             },
           }
         ] as Route[],

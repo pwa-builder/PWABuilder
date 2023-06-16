@@ -37,6 +37,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
+import { Router } from '@vaadin/router';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1681,6 +1682,19 @@ export class AppReport extends LitElement {
       manifest = {};
       this.todoItems.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
+
+    // adding todo for token giveaway item if theres at least a manifest
+    if(!this.createdManifest){
+      this.todoItems.push(
+        {
+          "card": "giveaway", 
+          "field": "giveaway", 
+          "fix": `Your PWA may qualify for a free Microsoft store account.`, 
+          "status": "giveaway", 
+          "displayString": `Your PWA may qualify for a free Microsoft store account`
+        }
+      );
+    }
     
     let amt_missing = await this.handleMissingFields(manifest);
 
@@ -2133,9 +2147,10 @@ export class AppReport extends LitElement {
     const rank: { [key: string]: number } = { 
       "retest": 0,
       "required": 1,
-      "highly recommended": 2,
-      "recommended": 3,
-      "optional": 4
+      "giveaway": 2,
+      "highly recommended": 3,
+      "recommended": 4,
+      "optional": 5
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
@@ -2240,6 +2255,10 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
+  }
+
+  goToGiveawayPage(){
+    Router.go(`/giveaway?site=${this.siteURL}`);
   }
   
   render() {
@@ -2396,7 +2415,8 @@ export class AppReport extends LitElement {
                         .displayString=${todo.displayString}
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
+                        @giveawayEvent=${() => this.goToGiveawayPage()}>
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
