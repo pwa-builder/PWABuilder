@@ -3,16 +3,17 @@ import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../../components/arrow-link'
-import { SlDetails, SlInput } from '@shoelace-style/shoelace';
-import { cleanUrl, isValidURL, resolveUrl } from '../../utils/url';
+import { SlInput } from '@shoelace-style/shoelace';
+import { cleanUrl, isValidURL } from '../../utils/url';
 import { localeStrings } from '../../../locales';
 import { env } from '../../utils/environment'
 import { getHeaders } from '../../utils/platformTrackingHeaders';
-import { Icon, Manifest } from '@pwabuilder/manifest-validation';
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { AuthModule } from '../../services/auth_service';
 
 import style from './app-token.style';
-import { decideHeroSection, qualificationStrings, renderAppCard } from './app-token.template';
+import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
+import { populateAppCard } from './app-token.helper';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -53,7 +54,7 @@ export class AppToken extends LitElement {
   @state() manifestUrl: string = '';
   @state() noManifest: boolean = false;
 
-  @state() proxyLoadingImage: boolean = false;
+  // @state() proxyLoadingImage: boolean = false;
 
   @state() userAccount = {
     accessToken: '',
@@ -92,7 +93,7 @@ export class AppToken extends LitElement {
     this.handleInstallable(this.testResults.installable);
     this.handleRequired(this.testResults.additional);
     this.handleEnhancements(this.testResults.progressive);
-    this.populateAppCard();
+    this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
 
   }
 
@@ -141,159 +142,6 @@ export class AppToken extends LitElement {
     } catch (e) {
       console.error(e);
     }
-  }
-
-  async populateAppCard() {
-    let cleanURL = this.siteURL.replace(/(^\w+:|^)\/\//, '')
-
-    if(this.manifest) {
-
-      let icons = this.manifest.icons;
-
-      let chosenIcon: any;
-
-      if(icons){
-        let maxSize = 0;
-        for(let i = 0; i < icons.length; i++){
-          let icon = icons[i];
-          let size = icon.sizes?.split("x")[0];
-          if(size === '512'){
-            chosenIcon = icon;
-            break;
-          } else{
-            if(parseInt(size!) > maxSize){
-              maxSize = parseInt(size!);
-              chosenIcon = icon;
-            }
-          }
-        }
-      }
-
-      let iconUrl: string;
-      if(chosenIcon){
-        iconUrl = this.iconSrcListParse(chosenIcon);
-      } else {
-        iconUrl = "/assets/icons/icon_512.png"
-      }
-
-      
-      this.proxyLoadingImage = true;
-      await this.testImage(iconUrl).then(
-        function fulfilled(_img) {
-          //console.log('That image is found and loaded', img);
-        },
-
-        function rejected() {
-          //console.log('That image was not found');
-          iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
-        }
-      );
-      this.proxyLoadingImage = false;
-
-      this.appCard = {
-        siteName: this.manifest.short_name
-          ? this.manifest.short_name
-          : (this.manifest.name ? this.manifest.name : 'Untitled App'),
-        siteUrl: cleanURL,
-        iconURL: iconUrl,
-        iconAlt: "Your sites logo",
-        description: this.manifest.description
-          ? this.manifest.description
-          : 'Add an app description to your manifest',
-      };
-    } else {
-        this.appCard = {
-          siteName: "Missing Name",
-          siteUrl: cleanURL,
-          description: "Your manifest description is missing.",
-          iconURL: "/assets/new/icon_placeholder.png",
-          iconAlt: "A placeholder for you sites icon"
-        };
-    }
-  }
-
-  // Gets full icon URL from manifest given a manifest icon object
-  iconSrcListParse(icon: any) {
-    let manifest = this.manifest;
-    let manifestURL = this.manifestUrl;
-    let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
-
-    return iconURL;
-  }
-
-  // Tests if an image will load
-  // If it fails, we use our proxy service to fetch it
-  // If it succeeds, we load it
-  testImage(url: string) {
-
-    // Define the promise
-    const imgPromise = new Promise(function imgPromise(resolve, reject) {
-
-        // Create the image
-        const imgElement = new Image();
-
-        // When image is loaded, resolve the promise
-        imgElement.addEventListener('load', function imgOnLoad() {
-            resolve(this);
-        });
-
-        // When there's an error during load, reject the promise
-        imgElement.addEventListener('error', function imgOnError() {
-            reject();
-        })
-
-        // Assign URL
-        imgElement.src = url;
-
-    });
-
-    return imgPromise;
-  }
-
-  // Makes sure the icon URL is valid
-  handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
-    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
-      return icon.src;
-    }
-
-    let url = resolveUrl(manifestURL, manifest?.startUrl);
-    url = resolveUrl(url?.href, icon.src);
-
-    if (url) {
-      return url.href;
-    }
-
-    return undefined;
-  }
-
-  // Rotates the icon on each details drop down to 0 degrees
-  rotateZero(card: string, e?: Event){
-    //recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
-    e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
-
-    if(icon){
-      icon!.style.transform = "rotate(0deg)";
-    }
-  }
-
-  // Rotates the icon on each details drop down to 90 degrees
-  rotateNinety(card: string, e?: Event){
-    //recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
-    e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
-
-    if(icon){
-      icon!.style.transform = "rotate(90deg)";
-    }
-
-    // only allow one details to be open at a time
-    let details = this.shadowRoot!.querySelectorAll("sl-details");
-    details.forEach((detail: SlDetails) => {
-      if(detail.dataset.card !== card){
-        detail.hide();
-      }
-    })
   }
 
   handleInstallable(installable: any){
@@ -566,8 +414,8 @@ export class AppToken extends LitElement {
                     <sl-details
                       id="installable-details" 
                       class="inner-details"
-                      @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}
+                      @sl-show=${(e: Event) => rotateNinety("installable-details", this.shadowRoot, e)}
+                      @sl-hide=${(e: Event) => rotateZero("installable-details", this.shadowRoot, e)}
                       data-card="installable-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
@@ -583,8 +431,8 @@ export class AppToken extends LitElement {
                     <sl-details 
                       id="required-details" 
                       class="inner-details"
-                      @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}
+                      @sl-show=${(e: Event) => rotateNinety("required-details", this.shadowRoot, e)}
+                      @sl-hide=${(e: Event) => rotateZero("required-details", this.shadowRoot, e)}
                       data-card="required-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
@@ -600,8 +448,8 @@ export class AppToken extends LitElement {
                     <sl-details 
                       id="enhancements-details" 
                       class="inner-details"
-                      @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}
+                      @sl-show=${(e: Event) => rotateNinety("enhancements-details", this.shadowRoot, e)}
+                      @sl-hide=${(e: Event) => rotateZero("enhancements-details", this.shadowRoot, e)}
                       data-card="enhancements-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">

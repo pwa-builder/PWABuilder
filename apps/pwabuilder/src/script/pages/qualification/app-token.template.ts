@@ -1,5 +1,6 @@
 import { html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { SlDetails } from "@shoelace-style/shoelace";
 
 export function decideHeroSection(
   siteURL: string,
@@ -241,6 +242,37 @@ export function renderAppCard(
       </div>
     </div>
   `;
+}
+
+
+// Rotates the icon on each details drop down to 0 degrees
+export function rotateZero(card: string, shadowRoot: Element["shadowRoot"], e?: Event){
+	//recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
+	e?.stopPropagation();
+	let icon: HTMLImageElement = shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
+
+	if(icon){
+		icon!.style.transform = "rotate(0deg)";
+	}
+}
+
+// Rotates the icon on each details drop down to 90 degrees
+export function rotateNinety(card: string, shadowRoot: Element["shadowRoot"], e?: Event){
+	//recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
+	e?.stopPropagation();
+	let icon: HTMLImageElement = shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
+
+	if(icon){
+		icon!.style.transform = "rotate(90deg)";
+	}
+
+	// only allow one details to be open at a time
+	let details = shadowRoot!.querySelectorAll("sl-details");
+	details.forEach((detail: SlDetails) => {
+		if(detail.dataset.card !== card){
+			detail.hide();
+		}
+	})
 }
 
 export const qualificationStrings: string[] = [
