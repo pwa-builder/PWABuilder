@@ -10,6 +10,7 @@ import { localeStrings } from '../../locales';
 import { env } from '../utils/environment'
 import { getHeaders } from '../utils/platformTrackingHeaders';
 import { Icon, Manifest } from '@pwabuilder/manifest-validation';
+import { AuthModule } from '../services/auth_service';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -42,6 +43,7 @@ export class AppToken extends LitElement {
   @state() enhancementsIndicator = "";
 
   @state() errorGettingURL = false;
+  @state() errorGettingToken = false;
   @state() errorMessage: string | undefined;
 
   @state() testResults: any = {};
@@ -50,6 +52,14 @@ export class AppToken extends LitElement {
   @state() noManifest: boolean = false;
 
   @state() proxyLoadingImage: boolean = false;
+
+  @state() userAccount = {
+    idToken: '',
+    email: '',
+    name: '',
+    loggedIn: false
+  };
+  @state() authModule = new AuthModule();
 
 
   static get styles() {
@@ -611,6 +621,51 @@ export class AppToken extends LitElement {
         width: 500px;
       }
 
+      #terms-and-conditions {
+        display: flex;
+        flex-direction: column;
+        width: 75%;
+      }
+
+      #terms-and-conditions label {
+        font-family: Hind;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 12px;
+        color:#292C3A;
+        margin-bottom: 15px;
+      }
+
+      #terms-and-conditions sl-button {
+        width: 218px;
+        height: auto;
+        background: #292C3A;
+        box-shadow: 0px 0.9625px 3.85px rgba(0, 0, 0, 0.25);
+        border-radius: 42.35px;
+        margin-bottom: 10px;
+      }
+
+      #terms-and-conditions p {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 16px;
+        color: #292C3A;
+      }
+
+      #terms-and-conditions a { 
+        color: #4F3FB6;
+        text-decoration: underline;
+      }
+
+      #hero-section-bottom {
+        width: 100%;
+        height: 309px;
+        background-image: url("/assets/microsoft-promo-banner.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+      }
+
       @media(max-width: 1024px){
 
         #app-info {
@@ -661,7 +716,7 @@ export class AppToken extends LitElement {
   async validateUrl(){
     const encodedUrl = encodeURIComponent(this.siteURL);
 
-    const validateGiveawayUrl = env.validateGiveawayUrl + `?site=${encodedUrl}`;
+    const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
     let headers = getHeaders();
 
     try {
@@ -744,6 +799,18 @@ export class AppToken extends LitElement {
 
     // if tests complete and validations pass
     if(!this.testsInProgress && this.testsPassed){
+      if (this.userAccount.loggedIn) {
+        if (this.errorGettingToken) {
+          return html`
+          <h1>Oops!</h1>
+          <p>URL already used in another account. Please use another URL and try again.</p>
+        `
+        }
+          return html`
+          <h1>Congratulations ${this.userAccount.name}!</h1>
+          <p>You have qualified for a free account on the Microsoft developer platform. Get your token code below.</p>
+        `
+      }
       return html`
         <h1>Congratulations!</h1>
         <p>You have qualified for a free account on the Microsoft developer platform. Get your token code after signing in below. </p>
@@ -1138,6 +1205,68 @@ export class AppToken extends LitElement {
     }
   }
 
+  async signInUser() {
+    try {
+    const result = await this.authModule.signIn();
+    if(result != null && result != undefined && "idToken" in result){
+      return result;
+    }
+    else
+      return null;
+    }
+    catch(e) {
+      console.log("Authentication Error");
+    } 
+    return null;
+  }
+
+  async getUserToken() {
+    const userResult = await this.signInUser();
+    if(userResult != null) {
+      console.log(userResult);
+      this.userAccount = userResult;
+      this.userAccount.loggedIn = true;
+    }
+  }
+
+  async signOut() {
+    try {
+      await this.authModule.signOut();
+      this.userAccount.loggedIn = false;
+      this.requestUpdate();
+    }
+    catch(e) {
+      console.log(e, "Authentication Error");
+    } 
+  }
+
+  async claimToken() {
+    const encodedUrl = encodeURIComponent(this.siteURL);
+
+    const validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser?site=${encodedUrl}`;
+    let headers = getHeaders();
+
+    try {
+      const request = await fetch(validateGiveawayUrl, {
+        method: 'GET',
+        headers: {
+          ...new Headers(headers),
+          'Authorization': `Bearer ${this.userAccount.idToken}`
+        }
+        
+      });
+      const response = await request.json() as {tokenId: string, errorMessage: string, rawError: unknown}
+      if (response.tokenId) {
+          // TODO: Pass to Mara'ah page
+      }
+      else {
+        this.errorGettingToken = true;
+        this.errorMessage = response.errorMessage;
+      }
+    }
+    catch(e){}
+  }
+
   handleEnteredURL(){
     let input: SlInput = this.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
     let url: string = input.value;
@@ -1175,6 +1304,7 @@ export class AppToken extends LitElement {
           <div id="app-info-section">
             ${this.renderAppCard()}
           </div>
+          ${!this.userAccount.loggedIn ? html`
           <div id="action-items-section">
             <div id="qual-div">
               <div id="qual-sum">
@@ -1243,23 +1373,33 @@ export class AppToken extends LitElement {
                 }
               </div>
             </div>
-          </div>
+          </div> ` : html``}
         ` : 
         html``
       }
       
+      ${ !this.userAccount.loggedIn ? html`
       <div id="qual-section">
         <h2>Qualifications</h2>
         <ul>
           ${qual.map((point: string) => html`<li>${point}</li>`)}
         </ul>
         <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
-      </div>
+      </div>` : html``}
       ${this.siteURL ? 
         html`
-          <div id="sign-in-section">
-            ${this.testsPassed ? html`sign in button` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
-          </div>
+          ${ !this.userAccount.loggedIn ? 
+            html`
+              <div id="sign-in-section">
+                ${this.testsPassed ? html`<sl-button class="primary" @click=${this.getUserToken}>Sign in with a Microsoft account</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+              </div>
+            ` : html `
+                <div id="terms-and-conditions">
+                  <label><input type="checkbox" /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                  <sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>
+                  <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
+                </div>
+            `}
         ` : html``}
       ${!this.siteURL ?
         html`
@@ -1280,7 +1420,7 @@ export class AppToken extends LitElement {
           </div>
         ` : html``
       }
-      
+     
     </div>
     `
   }
