@@ -1,7 +1,6 @@
 import { Router } from '@vaadin/router';
 import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 
 import '../../components/arrow-link'
 import { SlDetails, SlInput } from '@shoelace-style/shoelace';
@@ -13,6 +12,7 @@ import { Icon, Manifest } from '@pwabuilder/manifest-validation';
 import { AuthModule } from '../../services/auth_service';
 
 import style from './app-token.style';
+import { decideHeroSection, qualificationStrings, renderAppCard } from './app-token.template';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -141,175 +141,6 @@ export class AppToken extends LitElement {
     } catch (e) {
       console.error(e);
     }
-  }
-
-  decideHeroSection(){
-    // no site in query params
-    if(!this.siteURL){
-      return html`
-        <h1>Get a Free Windows Developer Account on the Microsoft Store</h1>
-        <p>Check below to see if your PWA qualifies </p>
-        <div class="input-area">
-          <sl-input placeholder="Enter URL" class="url-input" required></sl-input>
-          <sl-button type="button" class="primary" @click=${() => this.handleEnteredURL()}>Start</sl-button>
-        </div>
-      `
-    }
-      
-    // if site in query params and testing in progress
-    if(this.siteURL && this.testsInProgress){
-      return html`
-        <h1>Validation in progress.. </h1>
-        <p>We are checking to see if this URL qualifies for a free token</p>
-      `
-    }
-
-    // if tests complete but its a dupe url
-    if(!this.testsInProgress && this.dupeURL){
-      return html`
-        <h1>Oops!</h1>
-        <p>Something is wrong. Please use another URL and try again.</p>
-      `
-    }
-
-    // if tests complete and validations pass
-    if(!this.testsInProgress && this.noManifest){
-      return html`
-        <h1>Oops!</h1>
-        <p>You must at least have a manifest for us to run our tests! Go back to PWABuilder to create your manifest now!</p>
-      `
-    }
-
-    // if tests complete and validations pass
-    if(!this.testsInProgress && this.testsPassed){
-      if (this.userAccount.loggedIn) {
-        if (this.errorGettingToken) {
-          return html`
-          <h1>Oops!</h1>
-          <p>URL already used in another account. Please use another URL and try again.</p>
-        `
-        }
-          return html`
-          <h1>Congratulations ${this.userAccount.name}!</h1>
-          <p>You have qualified for a free account on the Microsoft developer platform. Get your token code below.</p>
-        `
-      }
-      return html`
-        <h1>Congratulations!</h1>
-        <p>You have qualified for a free account on the Microsoft developer platform. Get your token code after signing in below. </p>
-      `
-    }
-
-    // if tests complete and validations fail
-    if(!this.testsInProgress && !this.testsPassed){
-      return html`
-        <h1>Almost there!</h1>
-        <p>In order to qualify for a free Microsoft developer account check the technical qualifications below.</p>
-      `
-    }
-
-    return html``
-  }
-
-  renderAppCard(){
-    // no site in query params
-    if(!this.siteURL){
-      return html``
-    }
-      
-    // if site in query params and testing in progress
-    if(this.siteURL && this.testsInProgress){
-      return html`
-        <!-- Show card with skeleton -->
-        <div id="app-info">
-          <div id="logo-and-text">
-            <sl-skeleton class="square" effect="sheen"></sl-skeleton>
-            <div id="words">
-              <sl-skeleton effect="sheen"></sl-skeleton>
-              <sl-skeleton effect="sheen"></sl-skeleton>
-              <sl-skeleton effect="sheen"></sl-skeleton>
-              <sl-skeleton effect="sheen"></sl-skeleton>
-            </div>
-          </div>
-          
-          <div id="rings">
-            <div class="card-holder">
-              <div class="loader-round"></div>
-              <p>Installable</p>
-            </div>
-            <div class="card-holder">
-              <div class="loader-round"></div>
-              <p>Required Fields</p>
-            </div>
-            <div class="card-holder">
-              <div class="loader-round"></div>
-              <p>Enhancements</p>
-            </div>
-          </div>
-        </div>
-      `
-    }
-
-    let banner = html``;
-
-    // if tests complete but its a dupe url
-    if(!this.testsInProgress && this.dupeURL){
-      banner = html`
-        <!-- error banner -->
-        <div class="feedback-holder type-error">
-          <img src="/assets/new/stop.svg" alt="invalid result icon" />
-          <div class="error-info">
-            <p class="error-title">URL already in use</p>
-            <p class="error-desc">We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or try another. </p>
-          </div>
-        </div>
-      `
-    }
-
-    // else: tests are complete
-      // Show card with app info + results
-
-      return html`
-        ${banner} <!-- Error Banner + the results below -->
-        <!-- Show card with results + error banner -->
-        <div id="app-info">
-          <div id="logo-and-text">
-            <div id="img-holder">
-              <img class="square" src="${this.appCard.iconURL}" alt="${this.appCard.iconAlt}"/>
-            </div>
-            <div id="words">
-              <p>${this.appCard.siteName}</p>
-              <p>${this.appCard.siteUrl}</p>
-              <p>${this.appCard.description}</p>
-            </div>
-          </div>
-          <div id="rings">
-            <div class="card-holder">
-              <sl-progress-ring class=${classMap(this.installableClassMap)} value=${this.installableRatio}>
-                ${this.installablePassed ? 
-                  html`<img class="macro" src="assets/new/macro_passed.svg" />` : 
-                  html`<img class="macro" src="assets/new/macro_error.svg" />`}
-              </sl-progress-ring>
-              <p>Installable</p>
-            </div>
-            <div class="card-holder">
-            <sl-progress-ring class=${classMap(this.requiredClassMap)} value=${this.requiredRatio}>
-                ${this.requiredPassed ? 
-                  html`<img class="macro" src="assets/new/macro_passed.svg" />` : 
-                  html`<img class="macro" src="assets/new/macro_error.svg" />`}
-              </sl-progress-ring>
-              <p>Required Fields</p>
-            </div>
-            <div class="card-holder">
-              <sl-progress-ring class=${classMap(this.enhancementsClassMap)} value=${this.enhancementsRatio}>
-                <img class="macro" src=${this.enhancementsIndicator} />
-              </sl-progress-ring>
-              <p>Enhancements</p>
-            </div>
-          </div>
-        </div>
-       
-      `
   }
 
   async populateAppCard() {
@@ -680,12 +511,43 @@ export class AppToken extends LitElement {
     return html`
     <div id="wrapper">
       <div id="hero-section">
-        ${this.decideHeroSection()}
+        ${decideHeroSection(
+          this.siteURL,
+          {
+            testsInProgress: this.testsInProgress,
+            testsPassed: this.testsPassed,
+            noManifest: this.noManifest,
+            dupeURL: this.dupeURL
+          },
+          this.userAccount,
+          this.errorGettingToken,
+          this.handleEnteredURL
+        )}
       </div>
       ${this.siteURL ? 
         html`
           <div id="app-info-section">
-            ${this.renderAppCard()}
+            ${renderAppCard(
+              this.siteURL,
+              {
+                testsInProgress: this.testsInProgress,
+                dupeURL: this.dupeURL,
+                requiredPassed: this.requiredPassed,
+                installablePassed: this.installablePassed,
+              },
+              this.appCard,
+              {
+                installableClassMap: this.installableClassMap,
+                enhancementsClassMap: this.enhancementsClassMap,
+                requiredClassMap: this.requiredClassMap,
+              },
+              {
+                installableRatio: this.installableRatio,
+                enhancementsRatio: this.enhancementsRatio,
+                requiredRatio: this.requiredRatio,
+                enhancementsIndicator: this.enhancementsIndicator,
+              }
+            )}
           </div>
           ${!this.userAccount.loggedIn ? html`
           <div id="action-items-section">
@@ -765,7 +627,7 @@ export class AppToken extends LitElement {
       <div id="qual-section">
         <h2>Qualifications</h2>
         <ul>
-          ${qual.map((point: string) => html`<li>${point}</li>`)}
+          ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
         </ul>
         <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
       </div>` : html``}
@@ -808,15 +670,6 @@ export class AppToken extends LitElement {
     `
   }
 }
-
-const qual: string[] = [
-  "Own a PWA that meets the technical requirements listed above",
-  "You are legally residing in [what countries can we say?]",
-  "Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account",
-  "Not have an existing Microsoft Store on Windows individual developer/publisher account",
-  "Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here",
-  "Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)",
-]
 
 const valid_src = "/assets/new/valid.svg";
 const stop_src = "/assets/new/stop.svg";
