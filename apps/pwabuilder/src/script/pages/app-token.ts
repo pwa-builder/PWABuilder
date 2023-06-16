@@ -621,6 +621,51 @@ export class AppToken extends LitElement {
         width: 500px;
       }
 
+      #terms-and-conditions {
+        display: flex;
+        flex-direction: column;
+        width: 75%;
+      }
+
+      #terms-and-conditions label {
+        font-family: Hind;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 12px;
+        color:#292C3A;
+        margin-bottom: 15px;
+      }
+
+      #terms-and-conditions sl-button {
+        width: 218px;
+        height: auto;
+        background: #292C3A;
+        box-shadow: 0px 0.9625px 3.85px rgba(0, 0, 0, 0.25);
+        border-radius: 42.35px;
+        margin-bottom: 10px;
+      }
+
+      #terms-and-conditions p {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 16px;
+        color: #292C3A;
+      }
+
+      #terms-and-conditions a { 
+        color: #4F3FB6;
+        text-decoration: underline;
+      }
+
+      #hero-section-bottom {
+        width: 100%;
+        height: 309px;
+        background-image: url("/assets/microsoft-promo-banner.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+      }
+
       @media(max-width: 1024px){
 
         #app-info {
@@ -1349,9 +1394,11 @@ export class AppToken extends LitElement {
                 ${this.testsPassed ? html`<sl-button class="primary" @click=${this.getUserToken}>Sign in with a Microsoft account</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
               </div>
             ` : html `
-                <label><input type="checkbox" /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                <sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>
-                <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
+                <div id="terms-and-conditions">
+                  <label><input type="checkbox" /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                  <sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>
+                  <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
+                </div>
             `}
         ` : html``}
       ${!this.siteURL ?
@@ -1373,7 +1420,7 @@ export class AppToken extends LitElement {
           </div>
         ` : html``
       }
-      
+     
     </div>
     `
   }
