@@ -3,17 +3,17 @@ import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../../components/arrow-link'
-import { SlInput } from '@shoelace-style/shoelace';
 import { cleanUrl, isValidURL } from '../../utils/url';
-import { localeStrings } from '../../../locales';
 import { env } from '../../utils/environment'
 import { getHeaders } from '../../utils/platformTrackingHeaders';
 import { Manifest } from '@pwabuilder/manifest-validation';
 import { AuthModule } from '../../services/auth_service';
+import { localeStrings } from '../../../locales';
 
 import style from './app-token.style';
 import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { populateAppCard } from './app-token.helper';
+import { SlInput } from '@shoelace-style/shoelace';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -329,9 +329,14 @@ export class AppToken extends LitElement {
     catch(e){}
   }
 
-  handleEnteredURL(){
-    let input: SlInput = this.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
-    let url: string = input.value;
+  handleEnteredURL(e: SubmitEvent, root: any){
+    e.preventDefault();
+
+    let input: SlInput = root.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
+
+    const data = new FormData(e.target as HTMLFormElement);
+
+    let url = data.get('site') as string;
 
     try {
       url = cleanUrl(url);
@@ -345,12 +350,12 @@ export class AppToken extends LitElement {
 
     if(isValidUrl){
       input.setCustomValidity("");
-      this.siteURL = url;
-      Router.go(`/giveaway?site=${this.siteURL}`)
+      root.siteURL = url;
+      Router.go(`/giveaway?site=${root.siteURL}`)
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
       input.reportValidity();
-      this.requestUpdate();
+      root.requestUpdate();
       return;
     }
   }
@@ -359,6 +364,20 @@ export class AppToken extends LitElement {
     return html`
     <div id="wrapper">
       <div id="hero-section">
+        ${!this.testsInProgress && this.siteURL ? 
+          html`
+            <div class="back-to-giveaway-home">
+              <img src="/assets/new/left-arrow.svg" alt="enter new url" />
+              <p class="diff-url" @click=${() => Router.go("/giveaway")}>
+                Enter different URL
+              </p>
+            </div>
+            <sl-button class="retest-button secondary" @click=${() => Router.go(`/giveaway?site=${this.siteURL}`)}>
+              Retest site
+              <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+            </sl-button>` :
+          html``}
+        <img class="store-logo" src="/assets/new/msft-logo-giveaway.svg" alt="Microsoft Icon" />
         ${decideHeroSection(
           this.siteURL,
           {
@@ -369,7 +388,8 @@ export class AppToken extends LitElement {
           },
           this.userAccount,
           this.errorGettingToken,
-          this.handleEnteredURL
+          this.handleEnteredURL,
+          this
         )}
       </div>
       ${this.siteURL ? 
@@ -484,7 +504,12 @@ export class AppToken extends LitElement {
           ${ !this.userAccount.loggedIn ? 
             html`
               <div id="sign-in-section">
-                ${this.testsPassed ? html`<sl-button class="primary" @click=${this.getUserToken}>Sign in with a Microsoft account</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+                ${this.testsPassed ? 
+                  html`<sl-button class="primary sign-in-button" @click=${this.getUserToken}>
+                  <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
+                    Sign in with a Microsoft account
+                  </sl-button>` : 
+              html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
               </div>
             ` : html `
                 <div id="terms-and-conditions">

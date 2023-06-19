@@ -12,7 +12,8 @@ export function decideHeroSection(
   },
   userAccount: { loggedIn: boolean; name: string },
   errorGettingToken: boolean,
-  handleEnteredURL: () => unknown
+  handleEnteredURL: (e: SubmitEvent, shadowRoot: ShadowRoot) => unknown,
+  root: any
 ) {
   // no site in query params
   if (!siteURL) {
@@ -20,13 +21,14 @@ export function decideHeroSection(
       <h1>Get a Free Windows Developer Account on the Microsoft Store</h1>
       <p>Check below to see if your PWA qualifies</p>
       <div class="input-area">
-        <sl-input placeholder="Enter URL" class="url-input" required></sl-input>
-        <sl-button
-          type="button"
-          class="primary"
-          @click=${() => handleEnteredURL()}
-          >Start</sl-button
-        >
+        <form @submit=${(e: SubmitEvent) => handleEnteredURL(e, root)}>
+          <sl-input placeholder="Enter URL" class="url-input" type="text" name="site" required></sl-input>
+          <sl-button
+            type="submit"
+            class="primary"
+            >Start</sl-button
+          >
+        </form>
       </div>
     `;
   }
