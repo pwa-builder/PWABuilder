@@ -180,7 +180,7 @@ export const recommended_fields = ["display", "background_color", "theme_color",
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "scope", "categories"];
 export const enhanced_fields = ["share_target", "shortcuts", "display_override", "widgets", "edge_side_panel"]
 
-export const enhancement_goals ={
+export const enhancement_goals = {
   "share_target": "Be a share target for other apps",
 	"shortcuts": "Add quick access with shortcuts",
   "display_override": "Make your PWA feel more like an app with window controls overalay",
