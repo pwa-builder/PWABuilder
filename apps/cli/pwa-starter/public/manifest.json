@@ -1,0 +1,83 @@
+{
+  "id": "/",
+  "scope": "/",
+  "name": "PWA Starter",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "starter",
+  "theme_color": "#E1477E",
+  "description": "This is a PWA Starter app",
+  "orientation": "any",
+  "background_color": "#E1477E",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay"],
+  "icons": [
+    {
+      "src": "assets/icons/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/24x24.png",
+      "sizes": "24x24",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/screen.png",
+      "sizes": "1617x1012",
+      "type": "image/png"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "categories": [
+    "social"
+  ],
+  "shortcuts": [
+    {
+      "name": "Open About",
+      "short_name": "About",
+      "description": "Open the about page",
+      "url": "/about",
+      "icons": [{ "src": "assets/icons/192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Starter Widget",
+      "tag": "starterWidget",
+      "ms_ac_template": "widget/ac.json",
+      "data": "widget/data.json",
+      "description": "A simple widget example from pwa-starter.",
+      "screenshots": [
+        {
+          "src": "assets/screenshots/widget-screen.png",
+          "sizes": "500x500",
+          "label": "Widget screenshot"
+        }
+      ],
+      "icons": [
+        {
+          "src": "assets/icons/48x48.png",
+          "sizes": "48x48"
+        }
+      ]
+    }
+  ]
+}
