@@ -1,7 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getManifestContext } from '../../services/app-info';
-import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields, enhanced_fields } from '@pwabuilder/manifest-validation';
+import { Validation, enhanced_fields } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
 } from '../../utils/css/breakpoints';
@@ -17,10 +16,7 @@ import '../../components/test-publish-pane';
 import '../../components/sw-selector';
 import '../../components/share-card';
 
-import { testServiceWorker } from '../../services/tests/service-worker';
-
 import {
-  Icon,
   ManifestContext,
   RawTestResult,
   TestResult
@@ -193,35 +189,6 @@ export class AppReport extends LitElement {
   // Expands the Action items details on load
   firstUpdated() {
     this.rotateNinety("todo", undefined, true);
-  }
-
-  // Tests if an image will load
-  // If it fails, we use our proxy service to fetch it
-  // If it succeeds, we load it
-  testImage(url: string) {
-
-    // Define the promise
-    const imgPromise = new Promise(function imgPromise(resolve, reject) {
-
-        // Create the image
-        const imgElement = new Image();
-
-        // When image is loaded, resolve the promise
-        imgElement.addEventListener('load', function imgOnLoad() {
-            resolve(this);
-        });
-
-        // When there's an error during load, reject the promise
-        imgElement.addEventListener('error', function imgOnError() {
-            reject();
-        })
-
-        // Assign URL
-        imgElement.src = url;
-
-    });
-
-    return imgPromise;
   }
 
   // Looks at the brackground color from the sites manifest
@@ -1275,7 +1242,7 @@ export class AppReport extends LitElement {
       <share-card 
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
-        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
+        .securityData=${`3/3/${this.getRingColor("sec")}/Security`}
         .siteName=${this.appCard.siteName}
       > </share-card>
 
