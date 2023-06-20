@@ -315,7 +315,6 @@ export class AppReport extends LitElement {
         }
 
         /* #app-image-skeleton {
-
           height: 85px;
           width: 85px;
           padding: 10px;
@@ -1888,7 +1887,6 @@ export class AppReport extends LitElement {
 
     // this.manifestTotalScore += amt_missing;
 
-
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
     } else {
@@ -1971,7 +1969,6 @@ export class AppReport extends LitElement {
 
   // Tests the Security and populates the Security card detail dropdown
   async testSecurity(securityAudit: TestResult[]) {
-
     //Call security tests
     let todos: unknown[] = [];
 
