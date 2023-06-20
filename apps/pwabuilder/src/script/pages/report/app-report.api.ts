@@ -1,4 +1,4 @@
-import { env } from '../utils/environment';
+import { env } from '../../utils/environment';
 
 export type ReportAudit = {
 	audits: {

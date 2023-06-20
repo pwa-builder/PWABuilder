@@ -31,7 +31,7 @@ export class TodoItem extends LitElement {
         align-items: center;
         justify-content: space-between;
         font-size: 16px;
-        background-color: #F1F2FA;
+        background-color: #F0F0F0;
         border-radius: var(--card-border-radius);
         padding: .5em;
         margin-bottom: 10px;
@@ -47,6 +47,9 @@ export class TodoItem extends LitElement {
       }
       .iwrapper img {
         height: 16px;
+      }
+      .enhancement {
+        background-color: #F1F2FA;
       }
       .left, .right {
         display: flex;
@@ -105,7 +108,7 @@ export class TodoItem extends LitElement {
   }
 
   // allows for the retest items to be clicked
-  decideClickable(){
+  decideClasses(){
     let decision;
     if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field]){
       decision = true;
@@ -113,7 +116,13 @@ export class TodoItem extends LitElement {
     else {
       decision = false;
     }
-    return {iwrapper: true, clickable: decision}
+
+    let enhancement = false;
+    if(this.status === "enhancement"){
+      enhancement = true;
+    }
+
+    return {iwrapper: true, clickable: decision, enhancement: enhancement}
   }
 
   triggerHoverState(e: CustomEvent){
@@ -127,12 +136,24 @@ export class TodoItem extends LitElement {
     }
   }
 
+  decideIcon(){
+    switch(this.status) {
+      case "required":
+        return html`<img src=${stop_src} alt="stop result icon"/>`;
+      case "retest":
+        return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`;
+      case "enhancement":
+        return html`<img src=${enhancement_src} alt="yield result icon"/>`
+      default:
+        return html`<img src=${yield_src} alt="yield result icon"/>`
+    }
+  }
 
   render() {
     return html`
-      <div class="${classMap(this.decideClickable())}" @click=${() => this.bubbleEvent()}>
+      <div class="${classMap(this.decideClasses())}" @click=${() => this.bubbleEvent()}>
         <div class="left">
-          ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+          ${this.decideIcon()}
           <p>${this.fix}</p>
         </div>
         ${manifest_fields[this.field] ? 
@@ -148,3 +169,4 @@ export class TodoItem extends LitElement {
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const retest_src = "/assets/new/retest-black.svg";
+const enhancement_src = "/assets/new/enhancement.svg";
