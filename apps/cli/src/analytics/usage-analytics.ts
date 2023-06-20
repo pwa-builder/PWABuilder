@@ -10,8 +10,6 @@ import { PWABuilderData } from '../interfaces/pwabuilder-data';
 export async function initAnalytics(): Promise<boolean> {
   var dataCollectionPermission: boolean = false;
   try {
-    await setUpLocalData();
-    dataCollectionPermission = checkForDataPermission();
     if (getFlag("analytics") === true && dataCollectionPermission) {
       setup("#{ANALYTICS_CODE}#")
       .setAutoDependencyCorrelation(false)
@@ -21,13 +19,6 @@ export async function initAnalytics(): Promise<boolean> {
       .setAutoCollectConsole(false)
       .setUseDiskRetryCaching(false)
       .start();
-
-      const userId: string | undefined = await getUserID();
-
-      if(userId) {
-        addUserIDtoTelemetry(userId);
-      }
-      
     } 
     
   }
@@ -74,28 +65,50 @@ export function trackException(err: Error) {
   }
 }
 
-async function getUserID(): Promise<string | undefined> {
+
+
+export async function ableToUseAnalytics(): Promise<boolean> {
   const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
-  var userId: string | undefined = undefined;
+  let canUseAnalytics: boolean = false;
+  if(doesFileExist(pwabuilderDataFilePath)) {
+    canUseAnalytics = checkForDataPermission(pwabuilderDataFilePath);
+  } else {
+    const permissionInput: boolean = await promptForPermission();
+    canUseAnalytics = writePermission(permissionInput, pwabuilderDataFilePath);
+  }
 
-  if(!doesFileExist(pwabuilderDataFilePath)) {
-    await setUpLocalData();
-  } 
-
-  const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
-  userId = userData.user.id;
-
-  return userId;
+  return canUseAnalytics;
+}
+async function promptForPermission(): Promise<boolean> {
+  const permissionPromptString: string = "Are you okay with PWABuilder collecting anonymous data to help improve our services?"
+  return await prompts.confirm({message: permissionPromptString}) as boolean;
 }
 
-function addUserIDtoTelemetry(id: string): void {
-  defaultClient.addTelemetryProcessor((envelope, context) => {
-    envelope["tags"]['ai.user.id'] = id;
-    return true;
-  });
+function checkForDataPermission(pathToDataFile: string): boolean {
+  const userData: PWABuilderData = JSON.parse(fs.readFileSync(pathToDataFile, {encoding: 'utf-8'}));
+  return userData.user.trackingPermission;
 }
 
-async function setUpLocalData(): Promise<void> {
+function writePermission(permission: boolean, pathToDataFile: string): boolean {
+  const pwaBuilderUserData: PWABuilderData = {
+    user: {
+      trackingPermission: permission
+    }
+  }
+  let didWriteSucceed: boolean = true;
+  try {
+    fs.writeFileSync(pathToDataFile, JSON.stringify(pwaBuilderUserData), {encoding: 'utf-8'});
+  } catch {
+    didWriteSucceed = false;
+  }
+  
+
+  return permission && didWriteSucceed;
+}
+
+// Functions for if we do user correlation later on.
+
+/* async function createUserID(): Promise<void> {
   const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
   if(!doesFileExist(pwabuilderDataFilePath)) {
     const dataPermission: boolean = await promptForPermission();
@@ -108,13 +121,13 @@ async function setUpLocalData(): Promise<void> {
     fs.writeFileSync(pwabuilderDataFilePath, JSON.stringify(newUserData), {encoding: 'utf-8'});
   }
 }
-async function promptForPermission(): Promise<boolean> {
-  const permissionPromptString: string = "Are you okay with PWABuilder collecting anonymous data to help improve our services?"
-  return await prompts.confirm({message: permissionPromptString}) as boolean;
-}
+*/
 
-export function checkForDataPermission(): boolean {
-  const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
-  const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
-  return userData.user.id != undefined;
+/*
+function addUserIDtoTelemetry(id: string): void {
+  defaultClient.addTelemetryProcessor((envelope, context) => {
+    envelope["tags"]['ai.user.id'] = id;
+    return true;
+  });
 }
+*/

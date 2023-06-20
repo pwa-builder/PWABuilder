@@ -1,7 +1,7 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { execSyncWrapper, outputError, isDirectoryTemplate } from "../util/util";
 import { startDescriptions, startErrors } from "../strings/startStrings";
-import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
+import { ableToUseAnalytics, initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { StartEventData } from "../analytics/analytics-interfaces";
 
 export const command: string = 'start [viteArgs]';
@@ -16,7 +16,8 @@ export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
     .positional('viteArgs', {type: "string", demandOption: false, description: startDescriptions.viteArgsDescription})
     .usage("$0 start [viteArgs]");
 
-export const handler = (argv: Arguments<StartOptions>): void => {
+export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
+  const useAnalytics: boolean = await ableToUseAnalytics();
   const startTime: number = performance.now();
   const { viteArgs } = argv;
   if(isDirectoryTemplate()) {
@@ -26,7 +27,10 @@ export const handler = (argv: Arguments<StartOptions>): void => {
   }  
   const endTime: number = performance.now();
 
-  trackStartEvent(endTime - startTime, viteArgs ? viteArgs : "");
+  if(useAnalytics) {
+    trackStartEvent(endTime - startTime, viteArgs ? viteArgs : "");
+  }
+ 
 };
 
 function handleStartCommand(viteArgs: string | undefined) {

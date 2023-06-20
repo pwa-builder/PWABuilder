@@ -4,7 +4,7 @@ import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/rep
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
 import { execSyncWrapper } from "../util/util";
-import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
+import { initAnalytics, trackEvent, ableToUseAnalytics } from "../analytics/usage-analytics";
 import { CreateEventData } from "../analytics/analytics-interfaces";
 
 export const command: string = 'create [name]';
@@ -35,6 +35,7 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
     
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
+  const useAnalytics: boolean = await ableToUseAnalytics();
   const startTime: number = performance.now();
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
   const promptSpinner = prompts.spinner();
@@ -56,7 +57,9 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
   promptSpinner.stop(finalOutputString);
   const endTime: number = performance.now();
 
-  trackCreateEvent(resolvedTemplate, endTime - startTime, resolvedName);
+  if(useAnalytics) {
+    trackCreateEvent(resolvedTemplate, endTime - startTime, resolvedName);
+  } 
 };
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
