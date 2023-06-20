@@ -1409,7 +1409,7 @@ export class AppReport extends LitElement {
                 ${this.manifestDataLoading ? 
                   html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>`: 
                   html`
-                    <div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
+                    <div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="ac-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
                     <div class="detail-list">
                       ${this.validationResults.map((result: Validation) => result.category === "enhancement" && ((result.testRequired && result.valid) || !result.testRequired) ?
                       html`

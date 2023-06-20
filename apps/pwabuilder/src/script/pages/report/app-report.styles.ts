@@ -94,6 +94,10 @@ export default css`
           --indicator-color: var(--success-color);
         }
 
+        .acRing {
+          --indicator-color: var(--primary-color);
+        }
+
         .macro_error {
           width: 3em;
           height: auto;
