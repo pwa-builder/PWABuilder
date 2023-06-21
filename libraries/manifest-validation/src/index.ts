@@ -147,7 +147,6 @@ export async function groupedValidation(manifest: Manifest): Promise<TokensValid
         });
         Object.keys(resultsGrouped).forEach(key => { delete resultsGrouped[key][0].category }  );
 
-
         const groupedValidation: TokensValidation = {
             installable: {
                 short_name: resultsGrouped['short_name'][0],

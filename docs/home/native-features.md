@@ -205,7 +205,7 @@ To handle data shared through the Web Share API (`title` and `text` from the exa
 window.addEventListener('DOMContentLoaded', () => {
   const parsedUrl = new URL(window.location);
   const sharedTitle = parsedUrl.searchParams.get('title');
-  const sharedText = = parsedUrl.searchParams.get('text');
+  const sharedText = parsedUrl.searchParams.get('text');
 
   // Do something with the parsed data
 });
