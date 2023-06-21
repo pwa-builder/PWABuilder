@@ -45,7 +45,7 @@ export async function getManifest(
   //TODO: Replace with prod
   const manifestTestUrl = env.api + `/FindWebManifest?site=${encodedUrl}`;
   let headers = getHeaders();
-
+  
   try {
     const response = await fetch(manifestTestUrl, {
       method: 'POST',
@@ -247,12 +247,6 @@ export async function createManifestContextFromEmpty(url: string): Promise<Manif
     siteUrl: createdManifestResult.siteUrl,
     isEdited: false,
   };
-
-  setManifestContext(context);
-
-  await updateManifest({
-    ...createdManifestResult.content,
-  });
 
   return context;
 }

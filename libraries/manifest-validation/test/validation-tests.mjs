@@ -20,7 +20,11 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   });
 
   it('Should reject because of improper JSON', async () => {
-    assert.rejects(maniLib.validateManifest('{'));
+    await maniLib.validateManifest('{').then((data) => {
+      assert.ok(false, "Should have rejected");
+    }).catch((err) => {
+      assert.equal(err, 'Manifest is not valid JSON');
+    });
   });
 
   // should include missing fields
@@ -148,16 +152,24 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   });
 
   it('should reject because of missing required field', async () => {
-    const manifest = test_manifest;
-    delete manifest.short_name;
-    const newMani = manifest;
+    const manifest = { ...test_manifest, short_name: undefined };
 
-    assert.rejects(maniLib.validateRequiredFields(newMani));
+    await maniLib.validateRequiredFields(manifest).then((data) => {
+      const invalid = data.reduce((amount, result) => amount + !result.valid? 1 : 0, 0);
+      assert.equal(invalid, 1, "Should have 1 invalid field");
+    }).catch((err) => {
+      assert.ok(false, err);
+    });
+
   });
 
   // should reject because of improper json
   it('should reject because of improper json', async () => {
-    assert.rejects(maniLib.validateRequiredFields('{'));
+    await maniLib.validateRequiredFields('{').then((data) => {
+      assert.ok(false, "Should have rejected");
+    }).catch((err) => {
+      assert.equal(err, 'Manifest is not valid JSON');
+    });
   });
 
 
