@@ -216,8 +216,8 @@ export function renderAppCard(
             value=${ratios.installableRatio}
           >
             ${tests.installablePassed
-              ? html`<img class="macro" src="assets/new/macro_passed.svg" />`
-              : html`<img class="macro" src="assets/new/macro_error.svg" />`}
+              ? html`<img class="macro" src="assets/new/macro_passed.svg" alt="macro error icon" />`
+              : html`<img class="macro" src="assets/new/macro_error.svg" alt="macro error icon" />`}
           </sl-progress-ring>
           <p>Installable</p>
         </div>
@@ -227,8 +227,8 @@ export function renderAppCard(
             value=${ratios.requiredRatio}
           >
             ${tests.requiredPassed
-              ? html`<img class="macro" src="assets/new/macro_passed.svg" />`
-              : html`<img class="macro" src="assets/new/macro_error.svg" />`}
+              ? html`<img class="macro" src="assets/new/macro_passed.svg" alt="macro error icon" />`
+              : html`<img class="macro" src="assets/new/macro_error.svg" alt="macro error icon" />`}
           </sl-progress-ring>
           <p>Required Fields</p>
         </div>
@@ -237,7 +237,7 @@ export function renderAppCard(
             class=${classMap(classMaps.enhancementsClassMap)}
             value=${ratios.enhancementsRatio}
           >
-            <img class="macro" src=${ratios.enhancementsIndicator} />
+            <img class="macro" src=${ratios.enhancementsIndicator} alt="macro error icon" />
           </sl-progress-ring>
           <p>Enhancements</p>
         </div>
