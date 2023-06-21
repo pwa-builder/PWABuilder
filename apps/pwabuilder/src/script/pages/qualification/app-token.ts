@@ -14,6 +14,7 @@ import style from './app-token.style';
 import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -53,6 +54,8 @@ export class AppToken extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestUrl: string = '';
   @state() noManifest: boolean = false;
+  
+  @state() heroBanners = {covered: false, uncovered: true};
 
   // @state() proxyLoadingImage: boolean = false;
 
@@ -79,16 +82,18 @@ export class AppToken extends LitElement {
       this.siteURL = site;
       this.runGiveawayTests();
     }
+    
+    this.decideBackground();
   }
 
   async runGiveawayTests(){
+    
+    this.decideBackground();
     // run giveaway validation suite.
     this.testsInProgress = true;
 
     // pretending to test for now replace with: call to api for test results
     await this.validateUrl();
-
-
 
     this.testsInProgress = false;
 
@@ -364,10 +369,19 @@ export class AppToken extends LitElement {
     }
   }
 
+  decideBackground(){
+    let covered = true;
+    if(!this.siteURL){
+      covered = false;
+    }
+    this.heroBanners.covered = covered;
+    this.heroBanners.uncovered = !covered;
+  }
+
   render(){
     return html`
     <div id="wrapper">
-      <div id="hero-section">
+      <div id="hero-section" class=${classMap(this.heroBanners)}>
         ${!this.testsInProgress && this.siteURL ? 
           html`
             <div class="back-to-giveaway-home">

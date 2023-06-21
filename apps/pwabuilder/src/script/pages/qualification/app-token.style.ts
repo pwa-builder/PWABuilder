@@ -36,7 +36,6 @@ export default css`
 
 	#hero-section {
 		padding: 50px 100px;
-		background-image: url("/assets/new/giveaway_banner.png");
 		height: 300px;
 		background-repeat: no-repeat;
 		background-size: cover;
@@ -51,6 +50,20 @@ export default css`
 		width: 100%;
 
 		position: relative;
+	}
+
+	#hero-section.uncovered {
+		background-image: url("/assets/new/giveaway_banner_nourl.png");
+	}
+
+	#hero-section.covered {
+		background-image: url("/assets/new/giveaway_banner_url.png");
+	}
+
+	@media(min-width: 1366px){
+		#hero-section.uncovered {
+		background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
+	}
 	}
 
 	#hero-section h1 {
@@ -108,7 +121,7 @@ export default css`
 	#hero-section .store-logo {
 		position: absolute;
 		top: 15px;
-		right: 15px;
+		right: 25px;
 	}
 
 	.input-area {
@@ -516,7 +529,7 @@ sl-details::part(header):focus {
 
 .retest-button {
 	position: absolute;
-	right: 85px;
+	right: 95px;
 	top: 25px;
 }
 
