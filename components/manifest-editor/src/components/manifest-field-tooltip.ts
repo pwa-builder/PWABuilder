@@ -133,9 +133,15 @@ export class ManifestFieldTooltip extends LitElement {
           </button>
           <div class="info-box">
             ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-            <div class="mic-actions">
-              <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
-            </div>
+            ${manifest_fields[this.field].docs_link ? 
+              html`
+                <div class="mic-actions">
+                  <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
+                </div>
+              ` : 
+              html``
+            }
+            
           </div>
         </sl-dropdown>
       </div>

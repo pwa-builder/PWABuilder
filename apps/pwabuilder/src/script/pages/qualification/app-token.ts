@@ -88,6 +88,8 @@ export class AppToken extends LitElement {
     // pretending to test for now replace with: call to api for test results
     await this.validateUrl();
 
+
+
     this.testsInProgress = false;
 
     this.handleInstallable(this.testResults.installable);
@@ -119,6 +121,8 @@ export class AppToken extends LitElement {
 
       const responseData = await response.json();
 
+      console.log(`repsonseData = ${responseData}`)
+
       if(!responseData){
         console.warn(
           'Validating url failed due to no response data',
@@ -126,8 +130,6 @@ export class AppToken extends LitElement {
         );
         throw new Error(`Unable to get JSON from ${validateGiveawayUrl}`);
       }
-
-      console.log(responseData);
 
       if(responseData.error){
         console.error(responseData.error)
@@ -138,6 +140,8 @@ export class AppToken extends LitElement {
       this.manifest = responseData.manifestJson;
       this.manifestUrl = responseData.manifestUrl;
       this.testsPassed = responseData.isEligibleForToken;
+
+      console.log(this.testResults);
 
     } catch (e) {
       console.error(e);
