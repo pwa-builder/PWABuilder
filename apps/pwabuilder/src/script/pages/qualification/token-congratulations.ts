@@ -3,6 +3,7 @@ import { customElement } from 'lit/decorators.js';
 import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
 
 import style from './token-congratulations.style';
+import '../../components/arrow-link'
 
 type Params = {
   appicon: string;
@@ -91,9 +92,9 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
               </li> 
             </ol>
              <!-- Need link to publishing instructions -->
-            <a id="publishing-instructions">
-              <h4>Detailed Publishing instructions</h4> <img src="/assets/new/arrow.svg" alt="" role="presentation"/>
-            </a>
+            <div id="publishing-instructions">
+              <arrow-link .text=${`Detailed Publishing instructions`} .link=${`https://docs.pwabuilder.com/#/builder/windows`}></arrow-link>
+            </div>
           </div>
         </div>
       </div>

@@ -158,18 +158,7 @@ export default css`
     color: #4f3fb6;
   }
   #publishing-instructions {
-    display: inline-flex;
-    text-decoration: underline;
-    color: #4f3fb6;
-    padding: 0px 0px 0px 10px;
-  }
-  #publishing-instructions img {
-    margin-left: 5px;
-  }
-  #publishing-instructions:hover,
-  #publishing-instructions:focus {
-    color: black !important;
-    cursor: pointer;
+    padding: 0px 0px 10px 20px;
   }
   //screen at pixels 479 and 639 seem to not take breakpoint styling -- bug
   ${smallBreakPoint(css`

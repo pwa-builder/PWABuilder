@@ -73,7 +73,7 @@ export default css`
 		line-height: 40px;
 		letter-spacing: 0em;
 		text-align: left;
-		color: #000000;
+		color: #292C3A;
 		margin: 0;
 		max-width: min(525px, 65%);
 	}
@@ -86,7 +86,7 @@ export default css`
 		letter-spacing: 0em;
 		text-align: left;
 		margin: 0;
-		color: #000000;
+		color: #292C3A;
 		width: 50%;
 	}
 
@@ -98,6 +98,8 @@ export default css`
 		position: absolute;
 		left: 100px;
 		top: 15px;
+		border-bottom: 1px solid transparent;
+		width: fit-content;
 	}
 
 	.back-to-giveaway-home img {
@@ -106,14 +108,14 @@ export default css`
 	}
 
 	.diff-url {
-		border-bottom: 1px solid transparent;
 		color: var(--font-color);
 		width: fit-content;
 		font-size: var(--font-size);
 		font-weight: 600;
+		margin: 5px 0;
 	}
 
-	.diff-url:hover {
+	.back-to-giveaway-home:hover {
 		border-color: var(--font-color);
 		cursor: pointer;
 	}
