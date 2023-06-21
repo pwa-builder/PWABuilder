@@ -1828,9 +1828,9 @@ export class AppReport extends LitElement {
           {
             "card": "giveaway", 
             "field": "giveaway", 
-            "fix": `Your PWA may qualify for a free Microsoft store account.`, 
+            "fix": `Your PWA may qualify for a free Microsoft store developer account.`, 
             "status": "giveaway", 
-            "displayString": `Your PWA may qualify for a free Microsoft store account`
+            "displayString": `Your PWA may qualify for a free Microsoft store developer account`
           }
         );
       }
@@ -1904,9 +1904,9 @@ export class AppReport extends LitElement {
         {
           "card": "giveaway", 
           "field": "giveaway", 
-          "fix": `Your PWA may qualify for a free Microsoft store account.`, 
+          "fix": `Your PWA may qualify for a free Microsoft store developer account.`, 
           "status": "giveaway", 
-          "displayString": `Your PWA may qualify for a free Microsoft store account`
+          "displayString": `Your PWA may qualify for a free Microsoft store developer account`
         }
       );
     }
