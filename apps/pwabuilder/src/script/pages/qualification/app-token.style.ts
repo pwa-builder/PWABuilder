@@ -75,7 +75,7 @@ export default css`
 		text-align: left;
 		color: #000000;
 		margin: 0;
-		width: 65%;
+		max-width: min(525px, 65%);
 	}
 
 	#hero-section p:not(.diff-url) {
