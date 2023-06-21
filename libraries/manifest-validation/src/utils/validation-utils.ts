@@ -39,11 +39,14 @@ export function isStandardOrientation(orientation: string): boolean {
   return standardOrientations.includes(orientation);
 }
 
-// is this valid JSON
+// is this valid JSON Object
 export function isValidJSON(json: Manifest): boolean {
   try {
-    JSON.parse(JSON.stringify(json));
-    return true;
+    const parsed = JSON.parse(JSON.stringify(json));
+    if (parsed && (typeof parsed === "object")) {
+      return true;
+    }
+    return false;
   } catch (e) {
     return false;
   }

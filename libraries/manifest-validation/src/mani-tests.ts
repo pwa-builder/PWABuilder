@@ -57,7 +57,7 @@ export const maniTests: Array<Validation> = [
         member: "handle_links",
         defaultValue: "auto",
         docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
-        errorString: "handle_links is recommended and should be either auto, preferred or not-proferred",
+        errorString: "handle_links should be either auto, preferred or not-proferred",
         quickFix: true,
         test: (value: string) => {
             if (value && typeof value === "string") {
@@ -461,7 +461,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
         displayString: "Manifest has shortcuts field",
-        category: "recommended",
+        category: "optional",
         member: "shortcuts",
         defaultValue: [],
         docsLink:
@@ -645,7 +645,7 @@ export const maniTests: Array<Validation> = [
         member: "description",
         displayString: "Manifest has description field",
         infoString: "The description member is a string that represents the description of your PWA.",
-        category: "optional",
+        category: "recommended",
         defaultValue: "",
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
@@ -716,7 +716,7 @@ export const maniTests: Array<Validation> = [
     },
     // {
     //     member: "protocol_handlers",
-    //     displayString: "Protocol handlers field has valid protocol",
+    //     displayString: "Protocol handlers field has protocol",
     //     infoString: "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
     //     category: "optional",
     //     defaultValue: [],
@@ -746,7 +746,7 @@ export const maniTests: Array<Validation> = [
     // },
     {
         member: "file_handlers",
-        displayString: "Manifest has valid file_handlers field",
+        displayString: "Manifest has file_handlers field",
         infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
         category: "optional",
         defaultValue: [],
@@ -802,7 +802,7 @@ export const maniTests: Array<Validation> = [
     // },
     {
         member: "scope_extensions",
-        displayString: "Manifest has valid scope_extensions field",
+        displayString: "Manifest has scope_extensions field",
         infoString: "Allow PWA that control multiple subdomains and top level domains to behave as one contiguous app. E.g. a site may span example.com, example.co.uk and support.example.com",
         category: "optional",
         defaultValue: [],
@@ -827,7 +827,7 @@ export const maniTests: Array<Validation> = [
     },
     {
         member: "widgets",
-        displayString: "Manifest has valid widgets field",
+        displayString: "Manifest has widgets field",
         infoString: "Enable Windows 11 widgets board support",
         category: "optional",
         defaultValue: [],
@@ -888,7 +888,7 @@ export const maniTests: Array<Validation> = [
         quickFix: false,
         test: (value: any) => {
             let valid: boolean = value && typeof value === "object";
-            valid = valid && (typeof value.preferred_width === "number");
+            valid = valid && (typeof value.preferred_width === "number" || !value.hasOwnProperty("preferred_width"));
             return valid;
         }
     }
