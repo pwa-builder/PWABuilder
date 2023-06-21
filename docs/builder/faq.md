@@ -54,6 +54,9 @@ Has to match the app name you used on PWABuilder:
      <img src="/assets/builder/faq/app-name-pwabuilder.png" alt="The app name on PWABuilder" width=500>
 </div>
 
+#### How can I associate
+
+
 ## Android
 
 #### Why is the browser address bar still showing in my PWA?
@@ -61,6 +64,26 @@ Has to match the app name you used on PWABuilder:
 If your address bar is still showing, it probably means there's a problem with your `assetlinks.json` file.
 
 Check out [this article](/builder/asset-links-faq) for info on debugging `assetlinks.json` issues.
+
+
+#### How can I check if my PWA is already installed on Android?
+
+If a user visits your progressive web app from the browser, you can check if your PWA is already installed locally. You only need to make sure your app references itself in your manifest as a related application.
+
+In the `related_application` member array, add:
+
+```json
+{
+  "related_applications": [{
+    "platform": "webapp",
+    "url": "https://yourAppDomain.com/manifest.json",
+  }],
+}
+```
+
+?> **Note** The `platform` field should always be "webapp" and the `url` should be the full path to your web manifest.
+
+Once you have told your PWA about itself via `related_applications`, you can call the built-in `navigator.getRelatedApplications()` to retrieve a list of installed apps, including your PWA itself.
 
 ## iOS
 
