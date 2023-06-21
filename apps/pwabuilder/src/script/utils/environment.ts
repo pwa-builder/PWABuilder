@@ -1,7 +1,6 @@
 export const env = {
   isProduction: false,
   manifestCreatorUrl: '',
-  serviceWorkerUrl: '',
   api: '',
   windowsPackageGeneratorUrl: '',
   androidPackageGeneratorUrl: '',
@@ -11,6 +10,7 @@ export const env = {
   safeUrlFetcher: '',
   webPackageGeneratorFormUrl: '',
   zipCreatorUrl: '',
+  validateGiveawayUrl: ''
 };
 
 //@ts-ignore
@@ -19,8 +19,6 @@ if (import.meta.env.PROD) {
   env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
-  env.serviceWorkerUrl =
-    'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
@@ -36,12 +34,11 @@ if (import.meta.env.PROD) {
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
+  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 } else {
   env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
-  env.serviceWorkerUrl =
-    'https://pwabuilder-serviceworker-finder.centralus.cloudapp.azure.com';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
   env.androidPackageGeneratorUrl =
@@ -56,4 +53,5 @@ if (import.meta.env.PROD) {
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
+  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 }

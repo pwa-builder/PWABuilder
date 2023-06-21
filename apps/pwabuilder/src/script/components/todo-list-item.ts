@@ -12,7 +12,6 @@ import {
 import { manifest_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
-import { Router } from '@vaadin/router';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -24,6 +23,7 @@ export class TodoItem extends LitElement {
 
   @state() clickable: boolean = false;
   @state() giveaway: boolean = false;
+  @state() isOpen: boolean = false;
 
   static get styles() {
     return [
@@ -146,6 +146,7 @@ export class TodoItem extends LitElement {
 
   decideClasses(){
     // token giveaway toggle
+    this.giveaway = false;
     if(this.field === "giveaway"){
       this.giveaway = true;
     }
@@ -160,6 +161,11 @@ export class TodoItem extends LitElement {
   } 
 
   bubbleEvent(){
+    if(manifest_fields[this.field]){
+      let tooltip = (this.shadowRoot!.querySelector('manifest-info-card') as any);
+      tooltip.handleHover(!this.isOpen);
+    }
+
     let event = new CustomEvent('todo-clicked', {
       detail: {
           field: this.field,
@@ -172,21 +178,29 @@ export class TodoItem extends LitElement {
     this.dispatchEvent(event);
   }
 
+  // allows for the retest items to be clicked
+  decideClickable(){
+    let decision;
+    if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field]){
+      decision = true;
+    } // else if(sw_fields[field]){}
+    else {
+      decision = false;
+    }
+    return {iwrapper: true, clickable: decision}
+  }
+
   triggerHoverState(e: CustomEvent){
     let element = this.shadowRoot!.querySelector(".iwrapper");
     if(e.detail.entering){
       element?.classList.add("active");
+      this.isOpen = true;
     } else {
       element?.classList.remove("active");
+      this.isOpen = false;
     }
   }
 
-  formatFix(fix: string){
-    if(fix.split("~").length > 1){
-      return fix.split("~").join(" "+ this.field + " ");
-    }
-    return fix;
-  }
 
   decideIcon(){
     switch(this.status){
@@ -203,26 +217,9 @@ export class TodoItem extends LitElement {
     return html`<img src=${yield_src} alt="yield result icon"/>`
   }
 
-  async signInUser() {
-    const authModule = new AuthModule();
-    try {
-    const result = await authModule.signIn();
-    if(result != null && result != undefined && "idToken" in result){
-      return result;
-    }
-    else
-      return null;
-    }
-    catch(e) {
-      console.log("Authentication Error");
-    } 
-    return null;
-  }
-
-  async goToGiveaway(){
-    const result = await this.signInUser();
-    if(result != null && result != undefined && "idToken" in result)
-      Router.go("/giveaway?site=https://webboard.app") 
+  goToGiveaway(){
+    let event = new CustomEvent('giveawayEvent', {});
+    this.dispatchEvent(event);
   }
 
   render() {
@@ -230,7 +227,7 @@ export class TodoItem extends LitElement {
       <div class="${classMap(this.decideClasses())}" @click=${() => this.bubbleEvent()}>
         <div class="left">
           ${this.decideIcon()}
-          <p>${this.formatFix(this.fix)}</p>
+          <p>${this.fix}</p>
 
           ${this.giveaway ? 
             html`
@@ -248,6 +245,7 @@ export class TodoItem extends LitElement {
             ` :
             html``
           }
+          
         </div>
 
         ${manifest_fields[this.field] ? 

@@ -145,13 +145,21 @@ Now, you will use the CSR we created in the last step to create a certificate:
 
 5. On the final screen, Choose `Download` to save your `.cer` file to your disk.
 
-6. To install this certificate, open the `Keychain Access` app and drag your `.cer` file onto the list of certificates.
+#### 5. Install the Certificate
+
+Now you just need to install the certificate you downloaded:
+
+1. Open the `Keychain Access` app. 
+
+2. Make sure you are in the `login` section on the left navigation bar.
+
+3. Drag your downloaded `.cer` file onto the list of certificates.
 
 <div class="docs-image">
      <img src="/assets/builder/ios/drag-cert.png" alt="">
 </div>
 
-#### 5. Create a Provisioning Profile
+#### 6. Create a Provisioning Profile
 
 Next, you can use the certificate you created to create a Provisioning Profile:
 
@@ -169,7 +177,7 @@ Next, you can use the certificate you created to create a Provisioning Profile:
 
 7. Finally, select `Download` to download your `.mobileprovision` file.
 
-#### 6. Create Your App Reservation
+#### 7. Create Your App Reservation
 
 Once you have a provisioning profile, you can create an app reservation on your developer account.
 
@@ -194,7 +202,7 @@ Once you have a provisioning profile, you can create an app reservation on your 
 
 5. Finally, click `Create` to complete your app reservation.
 
-#### 7. Upload Your App Package
+#### 8. Upload Your App Package
 
 After you create your app reservation, you'll be redirected to the app details page. There, you can add metadata about your app,
 including screenshots, description, and more.
@@ -270,7 +278,7 @@ Lastly, you just need to **create an archive and upload it:**
 4. Follow the prompts to upload your application!
 
 
-#### 8. Submit for Review 
+#### 9. Submit for Review 
 
 The last thing you need to do is submit your app for review:
 

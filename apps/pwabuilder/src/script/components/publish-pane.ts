@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { generatePackage, Platform } from '../services/publish';
+import { Router } from '@vaadin/router';
 
 import {
   // smallBreakPoint,
@@ -159,7 +160,8 @@ export class PublishPane extends LitElement {
         flex-direction: column;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
-        padding: 1em;
+        /* temporary style change for token trial */
+        /* padding: 1em; */
         border-radius: var(--card-border-radius);
       }
       .packaged-tracker {
@@ -183,6 +185,27 @@ export class PublishPane extends LitElement {
         line-height: 12px;
         font-weight: bold;
       }
+      .experimental-tracker {
+        height: max-content;
+        width: 33%;
+        background-color: #F2F3FB;
+        align-self: flex-end;
+        justify-self: flex-end;
+        border-bottom-left-radius: 5px;
+        padding: 7px;
+        padding-left: 9px;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .experimental-tracker p {
+        margin: 0;
+        text-align: center;
+        color: #4F3FB6;
+        font-size: 10px;
+        line-height: 12px;
+        font-weight: bold;
+      }
       .title-block {
         box-sizing: border-box;
         display: flex;
@@ -191,6 +214,8 @@ export class PublishPane extends LitElement {
         justify-content: flex-start;
         width: 100%;
         row-gap: .45em;
+        /* temporary styling for token trial */
+        padding: 1em;
       }
       .title-block h3 {
         margin: 0;
@@ -577,6 +602,39 @@ export class PublishPane extends LitElement {
         }
       }
 
+      #windows-package-token-banner {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+        height: 50px;
+        background-color: #3078D7;
+        border-radius: 0px 0px 10px 10px;
+        padding: 10px;
+        border: none;
+      }
+
+      #token-banner-windows-icon img {
+        width: 31px;
+        height: 27px;
+      }
+
+      #token-banner-text {
+        padding: 0 7px;
+      }
+
+      #token-banner-text p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 16px;
+        color: #ffffff;
+        text-align: left;
+      }
+
+      #token-banner-arrow {
+        align-self: flex-end;
+      }
+
       /* > 1920 */
       ${xxxLargeBreakPoint(css``)}
 
@@ -631,6 +689,7 @@ export class PublishPane extends LitElement {
         }
 
       `)}
+      
     `
     ];
   }
@@ -898,10 +957,10 @@ export class PublishPane extends LitElement {
     return this.platforms.map(
       platform => html`
         <div class="card-wrapper">
-          ${true ? html`` :
+          ${platform.title != "iOS" ? html`` :
             html`
-            <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
-            <p>Packaged Previously</p>
+            <div class="experimental-tracker">
+            <p>Experimental</p>
             </div>`
           }
           <div class="title-block">
@@ -915,6 +974,22 @@ export class PublishPane extends LitElement {
               ${platform.factoids.map((fact: string) => html`<li>${fact}</li>`)}
             </ul>
           </div>
+          ${ platform.title === "Windows" ? html`
+              <button id="windows-package-token-banner" @click=${() => Router.go(`/congratulations`)}>
+                <div id="token-banner-windows-icon">
+                  <img src="/assets/microsoft_store_icon_white.png" alt="Windows">
+                </div>
+                <div id="token-banner-text">
+                  <p>
+                    Check to see if you qualify for a free Microsoft Store account
+                  </p>
+                </div>
+                <div id="token-banner-arrow">
+                  <img src="/assets/white-arrow.png" alt="arrow" /> 
+                </div>
+              </button>
+            ` : html``
+          }
         </div>`
     );
   }
