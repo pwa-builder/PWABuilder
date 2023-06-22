@@ -717,7 +717,7 @@ ${smallBreakPoint(css`
 		height: 482px;
 	}
 	#hero-section p {
-		width: 100%;
+		width: 100% !important;
 	}
 	#app-info-section {
 		width: 90%;
@@ -755,7 +755,7 @@ ${mediumBreakPoint(css`
 		padding: 50px;
 	}
 	#hero-section p {
-		width: 100%;
+		width: 100% !important;
 	}
 	#img-holder {
 		/* width:  */
@@ -777,7 +777,7 @@ ${mediumBreakPoint(css`
 
 ${largeBreakPoint(css`
 	#hero-section p {
-		width: 70%;
+		width: 70% !important;
 	}
 	#hero-section-bottom {
 		height: 199px;
