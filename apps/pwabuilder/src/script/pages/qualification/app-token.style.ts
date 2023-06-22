@@ -50,6 +50,22 @@ export default css`
 		align-items: flex-start;
 		justify-content: center;
 		width: 100%;
+
+		position: relative;
+	}
+
+	#hero-section.uncovered {
+		background-image: url("/assets/new/giveaway_banner_nourl.png");
+	}
+
+	#hero-section.covered {
+		background-image: url("/assets/new/giveaway_banner_url.png");
+	}
+
+	@media(min-width: 1366px){
+		#hero-section.uncovered {
+		background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
+	}
 	}
 
 	#hero-section h1 {
@@ -59,12 +75,12 @@ export default css`
 		line-height: 40px;
 		letter-spacing: 0em;
 		text-align: left;
-		color: #000000;
+		color: #292C3A;
 		margin: 0;
-		width: 65%;
+		max-width: min(525px, 65%);
 	}
 
-	#hero-section p {
+	#hero-section p:not(.diff-url) {
 		font-family: Hind;
 		font-size: var(--subheader-font-size);
 		font-weight: 400;
@@ -72,14 +88,53 @@ export default css`
 		letter-spacing: 0em;
 		text-align: left;
 		margin: 0;
-		color: #000000;
+		color: #292C3A;
 		width: 50%;
 	}
 
+	.back-to-giveaway-home {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 10px;
+		position: absolute;
+		left: 100px;
+		top: 15px;
+		border-bottom: 1px solid transparent;
+		width: fit-content;
+	}
+
+	.back-to-giveaway-home img {
+		height: 12px;
+		width: auto;
+	}
+
+	.diff-url {
+		color: var(--font-color);
+		width: fit-content;
+		font-size: var(--font-size);
+		font-weight: 600;
+		margin: 5px 0;
+	}
+
+	.back-to-giveaway-home:hover {
+		border-color: var(--font-color);
+		cursor: pointer;
+	}
+
+	#hero-section .store-logo {
+		position: absolute;
+		top: 15px;
+		right: 25px;
+	}
+
 	.input-area {
+		margin-top: 20px;
+	}
+
+	.input-area form {
 		display: flex; 
 		gap: 10px;
-		margin-top: 20px;
 	}
 
 	#hero-section sl-input::part(base) {
@@ -121,6 +176,7 @@ export default css`
 		gap: 15px;
 		padding: 25px;
 		margin-top: -95px;
+		z-index: 1;
 	}
 
 	#logo-and-text {
@@ -452,6 +508,11 @@ sl-details::part(header):focus {
 	align-items: flex-start;
 }
 
+.sign-in-button::part(label) {
+	display: flex;
+	gap: 10px;
+}
+
 .primary::part(base) {
 	background-color: var(--font-color);
 	color: white;
@@ -467,6 +528,31 @@ sl-details::part(header):focus {
 }
 
 .primary::part(base):hover {
+	border-color: var(--primary-color);
+}
+
+.retest-button {
+	position: absolute;
+	right: 95px;
+	top: 25px;
+}
+
+.secondary::part(base) {
+	background-color: #ffffff;
+	color: var(--font-color);
+	font-size: 14px;
+	height: 3em;
+	border-radius: 50px;
+}
+
+.secondary::part(label){
+	display: flex;
+	align-items: center;
+	padding: var(--button-padding);
+	gap: 10px;
+}
+
+.prisecondarymary::part(base):hover {
 	border-color: var(--primary-color);
 }
 

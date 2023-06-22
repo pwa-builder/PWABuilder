@@ -1,24 +1,44 @@
 {
   "name": "@pwabuilder/manifest-validation",
-  "version": "0.0.2",
-  "description": "",
+  "version": "0.0.7",
+  "author": "pwa-builder",
+  "license": "ISC",
+  "description": "Manifest validation library by PWABuilder criteria",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pwa-builder/PWABuilder.git",
+    "directory": "libraries/manifest-validation"
+  },
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "./dist"
   ],
   "scripts": {
-    "test": "rimraf ./dist && tsc --p ./tsconfig.test.json && node --test",
+    "test": "rimraf ./dist && tsc --p ./tsconfig.json && node --test",
     "build": "rimraf ./dist && tsc --p ./tsconfig.json",
-    "build:watch": "tsc --watch"
+    "build:watch": "tsc --watch",
+    "prepublishOnly": "tsc"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "typescript": "^4.6.3",
-    "rimraf": "^3.0.2"
+    "@types/node": "^20.2.5",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
+    "ajv": "^8.12.0",
     "node-fetch": "^3.3.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/pwa-builder/PWABuilder/issues"
+  },
+  "homepage": "https://github.com/pwa-builder/PWABuilder/tree/main/libraries/manifest-validation#readme",
+  "keywords": [
+    "PWA",
+    "PWABuilder",
+    "manifest",
+    "webmanifest",
+    "validation"
+  ]
 }

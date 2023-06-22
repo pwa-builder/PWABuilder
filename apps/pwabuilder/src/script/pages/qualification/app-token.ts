@@ -1,18 +1,20 @@
 import { Router } from '@vaadin/router';
 import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 
 import '../../components/arrow-link'
-import { SlDetails, SlInput } from '@shoelace-style/shoelace';
-import { cleanUrl, isValidURL, resolveUrl } from '../../utils/url';
-import { localeStrings } from '../../../locales';
+import { cleanUrl, isValidURL } from '../../utils/url';
 import { env } from '../../utils/environment'
 import { getHeaders } from '../../utils/platformTrackingHeaders';
-import { Icon, Manifest } from '@pwabuilder/manifest-validation';
+import { Manifest } from '@pwabuilder/manifest-validation';
 import { AuthModule } from '../../services/auth_service';
+import { localeStrings } from '../../../locales';
 
 import style from './app-token.style';
+import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
+import { populateAppCard } from './app-token.helper';
+import { SlInput } from '@shoelace-style/shoelace';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -52,8 +54,10 @@ export class AppToken extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestUrl: string = '';
   @state() noManifest: boolean = false;
+  
+  @state() heroBanners = {covered: false, uncovered: true};
 
-  @state() proxyLoadingImage: boolean = false;
+  // @state() proxyLoadingImage: boolean = false;
 
   @state() userAccount = {
     accessToken: '',
@@ -78,9 +82,13 @@ export class AppToken extends LitElement {
       this.siteURL = site;
       this.runGiveawayTests();
     }
+    
+    this.decideBackground();
   }
 
   async runGiveawayTests(){
+    
+    this.decideBackground();
     // run giveaway validation suite.
     this.testsInProgress = true;
 
@@ -92,7 +100,7 @@ export class AppToken extends LitElement {
     this.handleInstallable(this.testResults.installable);
     this.handleRequired(this.testResults.additional);
     this.handleEnhancements(this.testResults.progressive);
-    this.populateAppCard();
+    this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
 
   }
 
@@ -118,6 +126,8 @@ export class AppToken extends LitElement {
 
       const responseData = await response.json();
 
+      console.log(`repsonseData = ${responseData}`)
+
       if(!responseData){
         console.warn(
           'Validating url failed due to no response data',
@@ -125,8 +135,6 @@ export class AppToken extends LitElement {
         );
         throw new Error(`Unable to get JSON from ${validateGiveawayUrl}`);
       }
-
-      console.log(responseData);
 
       if(responseData.error){
         console.error(responseData.error)
@@ -138,331 +146,11 @@ export class AppToken extends LitElement {
       this.manifestUrl = responseData.manifestUrl;
       this.testsPassed = responseData.isEligibleForToken;
 
+      console.log(this.testResults);
+
     } catch (e) {
       console.error(e);
     }
-  }
-
-  decideHeroSection(){
-    // no site in query params
-    if(!this.siteURL){
-      return html`
-        <h1>Get a Free Windows Developer Account on the Microsoft Store</h1>
-        <p>Check below to see if your PWA qualifies </p>
-        <div class="input-area">
-          <sl-input placeholder="Enter URL" class="url-input" required></sl-input>
-          <sl-button type="button" class="primary" @click=${() => this.handleEnteredURL()}>Start</sl-button>
-        </div>
-      `
-    }
-      
-    // if site in query params and testing in progress
-    if(this.siteURL && this.testsInProgress){
-      return html`
-        <h1>Validation in progress.. </h1>
-        <p>We are checking to see if this URL qualifies for a free token</p>
-      `
-    }
-
-    // if tests complete but its a dupe url
-    if(!this.testsInProgress && this.dupeURL){
-      return html`
-        <h1>Oops!</h1>
-        <p>Something is wrong. Please use another URL and try again.</p>
-      `
-    }
-
-    // if tests complete and validations pass
-    if(!this.testsInProgress && this.noManifest){
-      return html`
-        <h1>Oops!</h1>
-        <p>You must at least have a manifest for us to run our tests! Go back to PWABuilder to create your manifest now!</p>
-      `
-    }
-
-    // if tests complete and validations pass
-    if(!this.testsInProgress && this.testsPassed){
-      if (this.userAccount.loggedIn) {
-        if (this.errorGettingToken) {
-          return html`
-          <h1>Oops!</h1>
-          <p>URL already used in another account. Please use another URL and try again.</p>
-        `
-        }
-          return html`
-          <h1>Congratulations ${this.userAccount.name}!</h1>
-          <p>You have qualified for a free account on the Microsoft developer platform. Get your token code below.</p>
-        `
-      }
-      return html`
-        <h1>Congratulations!</h1>
-        <p>You have qualified for a free account on the Microsoft developer platform. Get your token code after signing in below. </p>
-      `
-    }
-
-    // if tests complete and validations fail
-    if(!this.testsInProgress && !this.testsPassed){
-      return html`
-        <h1>Almost there!</h1>
-        <p>In order to qualify for a free Microsoft developer account check the technical qualifications below.</p>
-      `
-    }
-
-    return html``
-  }
-
-  renderAppCard(){
-    // no site in query params
-    if(!this.siteURL){
-      return html``
-    }
-      
-    // if site in query params and testing in progress
-    if(this.siteURL && this.testsInProgress){
-      return html`
-        <!-- Show card with skeleton -->
-        <div id="app-info">
-          <div id="logo-and-text">
-            <sl-skeleton class="square" effect="sheen"></sl-skeleton>
-            <div id="words">
-              <sl-skeleton effect="sheen"></sl-skeleton>
-              <sl-skeleton effect="sheen"></sl-skeleton>
-              <sl-skeleton effect="sheen"></sl-skeleton>
-              <sl-skeleton effect="sheen"></sl-skeleton>
-            </div>
-          </div>
-          
-          <div id="rings">
-            <div class="card-holder">
-              <div class="loader-round"></div>
-              <p>Installable</p>
-            </div>
-            <div class="card-holder">
-              <div class="loader-round"></div>
-              <p>Required Fields</p>
-            </div>
-            <div class="card-holder">
-              <div class="loader-round"></div>
-              <p>Enhancements</p>
-            </div>
-          </div>
-        </div>
-      `
-    }
-
-    let banner = html``;
-
-    // if tests complete but its a dupe url
-    if(!this.testsInProgress && this.dupeURL){
-      banner = html`
-        <!-- error banner -->
-        <div class="feedback-holder type-error">
-          <img src="/assets/new/stop.svg" alt="invalid result icon" />
-          <div class="error-info">
-            <p class="error-title">URL already in use</p>
-            <p class="error-desc">We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or try another. </p>
-          </div>
-        </div>
-      `
-    }
-
-    // else: tests are complete
-      // Show card with app info + results
-
-      return html`
-        ${banner} <!-- Error Banner + the results below -->
-        <!-- Show card with results + error banner -->
-        <div id="app-info">
-          <div id="logo-and-text">
-            <div id="img-holder">
-              <img class="square" src="${this.appCard.iconURL}" alt="${this.appCard.iconAlt}"/>
-            </div>
-            <div id="words">
-              <p>${this.appCard.siteName}</p>
-              <p>${this.appCard.siteUrl}</p>
-              <p>${this.appCard.description}</p>
-            </div>
-          </div>
-          <div id="rings">
-            <div class="card-holder">
-              <sl-progress-ring class=${classMap(this.installableClassMap)} value=${this.installableRatio}>
-                ${this.installablePassed ? 
-                  html`<img class="macro" src="assets/new/macro_passed.svg" />` : 
-                  html`<img class="macro" src="assets/new/macro_error.svg" />`}
-              </sl-progress-ring>
-              <p>Installable</p>
-            </div>
-            <div class="card-holder">
-            <sl-progress-ring class=${classMap(this.requiredClassMap)} value=${this.requiredRatio}>
-                ${this.requiredPassed ? 
-                  html`<img class="macro" src="assets/new/macro_passed.svg" />` : 
-                  html`<img class="macro" src="assets/new/macro_error.svg" />`}
-              </sl-progress-ring>
-              <p>Required Fields</p>
-            </div>
-            <div class="card-holder">
-              <sl-progress-ring class=${classMap(this.enhancementsClassMap)} value=${this.enhancementsRatio}>
-                <img class="macro" src=${this.enhancementsIndicator} />
-              </sl-progress-ring>
-              <p>Enhancements</p>
-            </div>
-          </div>
-        </div>
-       
-      `
-  }
-
-  async populateAppCard() {
-    let cleanURL = this.siteURL.replace(/(^\w+:|^)\/\//, '')
-
-    if(this.manifest) {
-
-      let icons = this.manifest.icons;
-
-      let chosenIcon: any;
-
-      if(icons){
-        let maxSize = 0;
-        for(let i = 0; i < icons.length; i++){
-          let icon = icons[i];
-          let size = icon.sizes?.split("x")[0];
-          if(size === '512'){
-            chosenIcon = icon;
-            break;
-          } else{
-            if(parseInt(size!) > maxSize){
-              maxSize = parseInt(size!);
-              chosenIcon = icon;
-            }
-          }
-        }
-      }
-
-      let iconUrl: string;
-      if(chosenIcon){
-        iconUrl = this.iconSrcListParse(chosenIcon);
-      } else {
-        iconUrl = "/assets/icons/icon_512.png"
-      }
-
-      
-      this.proxyLoadingImage = true;
-      await this.testImage(iconUrl).then(
-        function fulfilled(_img) {
-          //console.log('That image is found and loaded', img);
-        },
-
-        function rejected() {
-          //console.log('That image was not found');
-          iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
-        }
-      );
-      this.proxyLoadingImage = false;
-
-      this.appCard = {
-        siteName: this.manifest.short_name
-          ? this.manifest.short_name
-          : (this.manifest.name ? this.manifest.name : 'Untitled App'),
-        siteUrl: cleanURL,
-        iconURL: iconUrl,
-        iconAlt: "Your sites logo",
-        description: this.manifest.description
-          ? this.manifest.description
-          : 'Add an app description to your manifest',
-      };
-    } else {
-        this.appCard = {
-          siteName: "Missing Name",
-          siteUrl: cleanURL,
-          description: "Your manifest description is missing.",
-          iconURL: "/assets/new/icon_placeholder.png",
-          iconAlt: "A placeholder for you sites icon"
-        };
-    }
-  }
-
-  // Gets full icon URL from manifest given a manifest icon object
-  iconSrcListParse(icon: any) {
-    let manifest = this.manifest;
-    let manifestURL = this.manifestUrl;
-    let iconURL: string = this.handleImageUrl(icon, manifest, manifestURL) || '';
-
-    return iconURL;
-  }
-
-  // Tests if an image will load
-  // If it fails, we use our proxy service to fetch it
-  // If it succeeds, we load it
-  testImage(url: string) {
-
-    // Define the promise
-    const imgPromise = new Promise(function imgPromise(resolve, reject) {
-
-        // Create the image
-        const imgElement = new Image();
-
-        // When image is loaded, resolve the promise
-        imgElement.addEventListener('load', function imgOnLoad() {
-            resolve(this);
-        });
-
-        // When there's an error during load, reject the promise
-        imgElement.addEventListener('error', function imgOnError() {
-            reject();
-        })
-
-        // Assign URL
-        imgElement.src = url;
-
-    });
-
-    return imgPromise;
-  }
-
-  // Makes sure the icon URL is valid
-  handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
-    if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
-      return icon.src;
-    }
-
-    let url = resolveUrl(manifestURL, manifest?.startUrl);
-    url = resolveUrl(url?.href, icon.src);
-
-    if (url) {
-      return url.href;
-    }
-
-    return undefined;
-  }
-
-  // Rotates the icon on each details drop down to 0 degrees
-  rotateZero(card: string, e?: Event){
-    //recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
-    e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
-
-    if(icon){
-      icon!.style.transform = "rotate(0deg)";
-    }
-  }
-
-  // Rotates the icon on each details drop down to 90 degrees
-  rotateNinety(card: string, e?: Event){
-    //recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
-    e?.stopPropagation();
-    let icon: HTMLImageElement = this.shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
-
-    if(icon){
-      icon!.style.transform = "rotate(90deg)";
-    }
-
-    // only allow one details to be open at a time
-    let details = this.shadowRoot!.querySelectorAll("sl-details");
-    details.forEach((detail: SlDetails) => {
-      if(detail.dataset.card !== card){
-        detail.hide();
-      }
-    })
   }
 
   handleInstallable(installable: any){
@@ -650,9 +338,14 @@ export class AppToken extends LitElement {
     catch(e){}
   }
 
-  handleEnteredURL(){
-    let input: SlInput = this.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
-    let url: string = input.value;
+  handleEnteredURL(e: SubmitEvent, root: any){
+    e.preventDefault();
+
+    let input: SlInput = root.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
+
+    const data = new FormData(e.target as HTMLFormElement);
+
+    let url = data.get('site') as string;
 
     try {
       url = cleanUrl(url);
@@ -666,26 +359,81 @@ export class AppToken extends LitElement {
 
     if(isValidUrl){
       input.setCustomValidity("");
-      this.siteURL = url;
-      Router.go(`/giveaway?site=${this.siteURL}`)
+      root.siteURL = url;
+      Router.go(`/giveaway?site=${root.siteURL}`)
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
       input.reportValidity();
-      this.requestUpdate();
+      root.requestUpdate();
       return;
     }
+  }
+
+  decideBackground(){
+    let covered = true;
+    if(!this.siteURL){
+      covered = false;
+    }
+    this.heroBanners.covered = covered;
+    this.heroBanners.uncovered = !covered;
   }
 
   render(){
     return html`
     <div id="wrapper">
-      <div id="hero-section">
-        ${this.decideHeroSection()}
+      <div id="hero-section" class=${classMap(this.heroBanners)}>
+        ${!this.testsInProgress && this.siteURL ? 
+          html`
+            <div class="back-to-giveaway-home" @click=${() => Router.go("/giveaway")}>
+              <img src="/assets/new/left-arrow.svg" alt="enter new url" />
+              <p class="diff-url">
+                Enter different URL
+              </p>
+            </div>
+            <sl-button class="retest-button secondary" @click=${() => Router.go(`/giveaway?site=${this.siteURL}`)}>
+              Retest site
+              <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+            </sl-button>` :
+          html``}
+        <img class="store-logo" src="/assets/new/msft-logo-giveaway.svg" alt="Microsoft Icon" />
+        ${decideHeroSection(
+          this.siteURL,
+          {
+            testsInProgress: this.testsInProgress,
+            testsPassed: this.testsPassed,
+            noManifest: this.noManifest,
+            dupeURL: this.dupeURL
+          },
+          this.userAccount,
+          this.errorGettingToken,
+          this.handleEnteredURL,
+          this
+        )}
       </div>
       ${this.siteURL ? 
         html`
           <div id="app-info-section">
-            ${this.renderAppCard()}
+            ${renderAppCard(
+              this.siteURL,
+              {
+                testsInProgress: this.testsInProgress,
+                dupeURL: this.dupeURL,
+                requiredPassed: this.requiredPassed,
+                installablePassed: this.installablePassed,
+              },
+              this.appCard,
+              {
+                installableClassMap: this.installableClassMap,
+                enhancementsClassMap: this.enhancementsClassMap,
+                requiredClassMap: this.requiredClassMap,
+              },
+              {
+                installableRatio: this.installableRatio,
+                enhancementsRatio: this.enhancementsRatio,
+                requiredRatio: this.requiredRatio,
+                enhancementsIndicator: this.enhancementsIndicator,
+              }
+            )}
           </div>
           ${!this.userAccount.loggedIn ? html`
           <div id="action-items-section">
@@ -704,8 +452,8 @@ export class AppToken extends LitElement {
                     <sl-details
                       id="installable-details" 
                       class="inner-details"
-                      @sl-show=${(e: Event) => this.rotateNinety("installable-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("installable-details", e)}
+                      @sl-show=${(e: Event) => rotateNinety("installable-details", this.shadowRoot, e)}
+                      @sl-hide=${(e: Event) => rotateZero("installable-details", this.shadowRoot, e)}
                       data-card="installable-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
@@ -721,8 +469,8 @@ export class AppToken extends LitElement {
                     <sl-details 
                       id="required-details" 
                       class="inner-details"
-                      @sl-show=${(e: Event) => this.rotateNinety("required-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("required-details", e)}
+                      @sl-show=${(e: Event) => rotateNinety("required-details", this.shadowRoot, e)}
+                      @sl-hide=${(e: Event) => rotateZero("required-details", this.shadowRoot, e)}
                       data-card="required-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
@@ -738,8 +486,8 @@ export class AppToken extends LitElement {
                     <sl-details 
                       id="enhancements-details" 
                       class="inner-details"
-                      @sl-show=${(e: Event) => this.rotateNinety("enhancements-details", e)}
-                      @sl-hide=${(e: Event) => this.rotateZero("enhancements-details", e)}
+                      @sl-show=${(e: Event) => rotateNinety("enhancements-details", this.shadowRoot, e)}
+                      @sl-hide=${(e: Event) => rotateZero("enhancements-details", this.shadowRoot, e)}
                       data-card="enhancements-details">
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
@@ -765,7 +513,7 @@ export class AppToken extends LitElement {
       <div id="qual-section">
         <h2>Qualifications</h2>
         <ul>
-          ${qual.map((point: string) => html`<li>${point}</li>`)}
+          ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
         </ul>
         <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
       </div>` : html``}
@@ -774,7 +522,12 @@ export class AppToken extends LitElement {
           ${ !this.userAccount.loggedIn ? 
             html`
               <div id="sign-in-section">
-                ${this.testsPassed ? html`<sl-button class="primary" @click=${this.getUserToken}>Sign in with a Microsoft account</sl-button>` : html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+                ${this.testsPassed ? 
+                  html`<sl-button class="primary sign-in-button" @click=${this.getUserToken}>
+                  <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
+                    Sign in with a Microsoft account
+                  </sl-button>` : 
+              html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
               </div>
             ` : html `
                 <div id="terms-and-conditions">
@@ -811,15 +564,6 @@ export class AppToken extends LitElement {
     
   }
 }
-
-const qual: string[] = [
-  "Own a PWA that meets the technical requirements listed above",
-  "You are legally residing in [what countries can we say?]",
-  "Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account",
-  "Not have an existing Microsoft Store on Windows individual developer/publisher account",
-  "Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here",
-  "Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)",
-]
 
 const valid_src = "/assets/new/valid.svg";
 const stop_src = "/assets/new/stop.svg";
