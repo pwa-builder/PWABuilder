@@ -1,4 +1,5 @@
 import { css } from 'lit';
+import { largeBreakPoint, mediumBreakPoint, smallBreakPoint } from '../../utils/css/breakpoints';
 
 export default css`
 :host {
@@ -37,7 +38,7 @@ export default css`
 	#hero-section {
 		padding: 50px 100px;
 		background-image: url("/assets/new/giveaway_banner.png");
-		height: 300px;
+		height: 303px;
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
@@ -598,8 +599,9 @@ sl-details::part(header):focus {
 	height: 309px;
 	background-image: url("/assets/microsoft-promo-banner.png");
 	background-repeat: no-repeat;
-	background-size: cover;
+	background-size: 100%;
 	background-position: center;
+	margin-bottom: 0px !important;
 }
 
 @media(max-width: 1024px){
@@ -616,4 +618,83 @@ sl-details::part(header):focus {
 	}
 
 }
+
+@media(max-width: 414px) {
+	#hero-section-bottom {
+		height: 115px !important;
+	}
+}
+
+${smallBreakPoint(css`
+	#hero-section {
+		padding: 50px;
+		height: 482px;
+	}
+	#hero-section p {
+		width: 100%;
+	}
+	#app-info-section {
+		width: 90%;
+	}
+	#img-holder {
+		width: 115px;
+		height: 115px;
+	}
+	#words p {
+		width: 155px !important;
+		white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	}
+	#action-items-section {
+		width: 90%;
+	}
+	#qual-section {
+		width: 90%;
+	}
+	#sign-in-section {
+		width: 90%;
+	}
+	#sign-in-section sl-button {
+		width: 100%;
+	}
+	#hero-section-bottom {
+		height: 138px;
+	}
+`)}
+
+${mediumBreakPoint(css`
+	#hero-section {
+		height: 303px;
+		padding: 50px;
+	}
+	#hero-section p {
+		width: 100%;
+	}
+	#img-holder {
+		/* width:  */
+	}
+	#words {
+		width: 60%;
+	}
+	#words p {
+		height: auto;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	}
+	#hero-section-bottom {
+		height: 145px;
+	}
+`)}
+
+${largeBreakPoint(css`
+	#hero-section p {
+		width: 70%;
+	}
+	#hero-section-bottom {
+		height: 199px;
+	}
+`)}
 `
