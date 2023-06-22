@@ -391,8 +391,8 @@ export class AppToken extends LitElement {
               </p>
             </div>
             <sl-button class="retest-button secondary" @click=${() => Router.go(`/giveaway?site=${this.siteURL}`)}>
-              Retest site
-              <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+                <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+                <p>Retest site</p>
             </sl-button>` :
           html``}
         <img class="store-logo" src="/assets/new/msft-logo-giveaway.svg" alt="Microsoft Icon" />

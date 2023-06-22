@@ -99,9 +99,9 @@ export default css`
 		gap: 10px;
 		position: absolute;
 		left: 100px;
-		top: 15px;
+		top: 35px;
 		border-bottom: 1px solid transparent;
-		width: fit-content;
+		width: 200px;
 	}
 
 	.back-to-giveaway-home img {
@@ -533,8 +533,20 @@ sl-details::part(header):focus {
 
 .retest-button {
 	position: absolute;
+	width: 100px;
+	height: 35px;
 	right: 95px;
-	top: 25px;
+	top: 30px;
+}
+
+.retest-button img {
+	width: 14px;
+	height: 14.7px;
+}
+
+.retest-button p {
+	font-size: 12px !important;
+	font-weight: bold !important;
 }
 
 .secondary::part(base) {
@@ -712,6 +724,24 @@ sl-details::part(header):focus {
 }
 
 ${smallBreakPoint(css`
+	.retest-button {
+		top: 21px;
+	}
+	.secondary::part(label) {
+		gap: 5px;
+	}
+	.back-to-giveaway-home {
+		left: 45.26px;
+    top: 98px;
+	}
+	.back-to-giveaway-home img {
+		width: 25px;
+    height: 13.75px;
+	}
+	.store-logo {
+		width: 45px;
+		height: 45px;
+	}
 	#hero-section {
 		padding: 50px;
 		height: 482px;
@@ -750,6 +780,21 @@ ${smallBreakPoint(css`
 `)}
 
 ${mediumBreakPoint(css`
+.retest-button {
+		top: 21px;
+	}
+	.back-to-giveaway-home {
+		left: 45.26px;
+    top: 30.5px;
+	}
+	.back-to-giveaway-home img {
+		width: 25px;
+    height: 13.75px;
+	}
+	.store-logo {
+		width: 45px;
+		height: 45px;
+	}
 	#hero-section {
 		height: 303px;
 		padding: 50px;
