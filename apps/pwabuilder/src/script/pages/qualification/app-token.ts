@@ -333,6 +333,7 @@ export class AppToken extends LitElement {
       }
       else {
         this.errorGettingToken = true;
+        this.dupeURL = true;
         this.errorMessage = response.errorMessage;
       }
     }
