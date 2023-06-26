@@ -54,9 +54,55 @@ Has to match the app name you used on PWABuilder:
      <img src="/assets/builder/faq/app-name-pwabuilder.png" alt="The app name on PWABuilder" width=500>
 </div>
 
-#### How can I associate
+#### How can I associate my website with my Windows App?
 
+You can use `URIHandlers` to tell your Windows Application about your website.
 
+To do this, you need to add a URI Handler extension to your `package.appxmanifest`:
+
+```xml
+<Applications>
+  <Application Id="<Your App ID>">
+      <Extensions>
+         <uap3:Extension Category="windows.appUriHandler">
+          <uap3:AppUriHandler>
+            <uap3:Host Name="url-of-your-website.com" />
+          </uap3:AppUriHandler>
+        </uap3:Extension>
+      </Extensions>
+  </Application>
+</Applications>
+```
+
+Once you have added the extension, you need to add a file called `windows-web-app-link` to either your server's root or in the `.well-known` directory. In that file, add the following content:
+
+```json
+[{
+  "packageFamilyName": "<Your Package Family Name Here, e.g. MyApp_9jmtgj1pbbz6e>",
+  "paths": [ "*" ]
+}]
+```
+
+#### How do I check if my Windows app is installed from my website?
+
+To do the inverse of the above FAQ question, you need to add the following information to your Web App Manifest's `related_applications` member:
+
+```json
+{
+  "related_applications": [{
+    "platform": "windows",
+    "id": "<Your Package ID Here, e.g. MyApp_9jmtgj1pbbz6e!AppID>",
+  }]
+}
+```
+
+The value for `platform` must be `windows`, and the value for the ID field can be found my appending your App ID to your package Family Name, both found in your `package.appxmanifest` file.
+
+Once you have added the `related_applications` entry, you can get a list of check for installed related applications by calling:
+
+```js
+const installedRelatedApplications = navigator.getInstalledRelatedApps();
+```
 ## Android
 
 #### Why is the browser address bar still showing in my PWA?
