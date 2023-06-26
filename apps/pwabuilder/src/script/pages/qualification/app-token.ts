@@ -403,8 +403,8 @@ export class AppToken extends LitElement {
               </p>
             </div>
             <sl-button class="retest-button secondary" @click=${() => Router.go(`/giveaway?site=${this.siteURL}`)}>
-              Retest site
-              <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+                <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+                <p>Retest site</p>
             </sl-button>` :
           html``}
         <img class="store-logo" src="/assets/new/msft-logo-giveaway.svg" alt="Microsoft Icon" />
@@ -568,7 +568,9 @@ export class AppToken extends LitElement {
           </div>
         ` : html``
       }
-     
+      <!-- <div id="hero-section-bottom">
+
+      </div>    -->
     </div>
 
     <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
@@ -592,6 +594,7 @@ export class AppToken extends LitElement {
       <sl-button class="primary accept-terms" @click=${() => this.handleTermsResponse(true)}>Accept Terms</sl-button>
     </sl-dialog>
     `
+    
   }
 }
 

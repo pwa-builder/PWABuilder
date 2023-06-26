@@ -103,7 +103,6 @@ export default css`
     background: #ffffff;
     border: 1px;
     border-radius: 4px;
-    margin-left: 9px;
     background: #ffffff;
     border: 1px dashed #000000;
     border-radius: 4px;
@@ -121,11 +120,11 @@ export default css`
   }
   #next-steps {
     width: 719px;
-    height: 300px;
+    height: 325px;
     border-radius: 10px;
     background-color: #fff;
     align-self: center;
-    font-size: 13px;
+    font-size: 14px;
   }
   #next-steps h3 {
     font-family: Hind;
@@ -160,7 +159,35 @@ export default css`
   #publishing-instructions {
     padding: 0px 0px 10px 20px;
   }
-  //screen at pixels 479 and 639 seem to not take breakpoint styling -- bug
+
+  @media screen and (max-width: 479px) {
+    .token-input-container {
+      height: 50px;
+    }
+    #code {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .token-input-container sl-input::part(base) {
+      height: 40px;
+    }
+    .copy-button {
+      width: 45px;
+      height: 40px;
+    }
+    .url {
+      width: 100px;
+      font-size: 11px;
+    }
+  }
+
+  @media screen and (min-width: 1199px) {
+    #header h1 {
+      max-width: 900px;
+    }
+  }
+  /* screen at pixels 479 and 639 seem to not take breakpoint styling -- bug */
   ${smallBreakPoint(css`
     #congrats-wrapper {
       padding: 30px;
@@ -197,7 +224,7 @@ export default css`
     }
     #next-steps {
       width: 369px;
-      height: 347px;
+      height: 290px;
       font-size: 9px;
       /* padding: 20px 16px; */
     }
@@ -230,6 +257,7 @@ export default css`
       font-size: 18px;
     }
     .url {
+      width: 125px;
       font-size: 11px;
     }
     .site-icon {
@@ -238,6 +266,7 @@ export default css`
     }
     #next-steps {
       width: 469px;
+      height: 300px;
       font-size: 10px;
     }
   `)}
@@ -261,7 +290,7 @@ ${largeBreakPoint(css`
     }
     #next-steps {
       width: 570px;
-      height: 315px;
+      height: 370px;
       align-self: center;
     }
   `)}
