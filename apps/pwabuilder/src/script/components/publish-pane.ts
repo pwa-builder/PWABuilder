@@ -183,6 +183,27 @@ export class PublishPane extends LitElement {
         line-height: 12px;
         font-weight: bold;
       }
+      .experimental-tracker {
+        height: max-content;
+        width: 33%;
+        background-color: #F2F3FB;
+        align-self: flex-end;
+        justify-self: flex-end;
+        border-bottom-left-radius: 5px;
+        padding: 7px;
+        padding-left: 9px;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .experimental-tracker p {
+        margin: 0;
+        text-align: center;
+        color: #4F3FB6;
+        font-size: 10px;
+        line-height: 12px;
+        font-weight: bold;
+      }
       .title-block {
         box-sizing: border-box;
         display: flex;
@@ -898,10 +919,10 @@ export class PublishPane extends LitElement {
     return this.platforms.map(
       platform => html`
         <div class="card-wrapper">
-          ${true ? html`` :
+          ${platform.title != "iOS" ? html`` :
             html`
-            <div class="packaged-tracker"> <!-- This will eventually be in an "if packaged previously" -->
-            <p>Packaged Previously</p>
+            <div class="experimental-tracker">
+            <p>Experimental</p>
             </div>`
           }
           <div class="title-block">

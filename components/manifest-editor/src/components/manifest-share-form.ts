@@ -396,7 +396,7 @@ export class ManifestShareForm extends LitElement {
 
     if(listedMethod && !validMethods.includes(listedMethod)){
       select.classList.add("error");
-      container!.style.display = "block";
+      container.style.display = "block";
       this.errorCount++;
     } else {
       if(select) select.classList.remove("error");
@@ -414,7 +414,8 @@ export class ManifestShareForm extends LitElement {
 
     // validation for enctype being required if you specify post
     let enc_input = (this.shadowRoot!.querySelector(`[data-field="share_target.enctype"]`) as unknown as SlInput);
-    if(this.postSelected && enc_input.value.length === 0){
+    if(this.postSelected && enc_input && enc_input.value.length === 0){
+      
       // place error border 
       enc_input.classList.add("error")
 

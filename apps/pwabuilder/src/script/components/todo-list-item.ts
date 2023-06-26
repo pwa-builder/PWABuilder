@@ -127,19 +127,13 @@ export class TodoItem extends LitElement {
     }
   }
 
-  formatFix(fix: string){
-    if(fix.split("~").length > 1){
-      return fix.split("~").join(" "+ this.field + " ");
-    }
-    return fix;
-  }
 
   render() {
     return html`
       <div class="${classMap(this.decideClickable())}" @click=${() => this.bubbleEvent()}>
         <div class="left">
           ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-          <p>${this.formatFix(this.fix)}</p>
+          <p>${this.fix}</p>
         </div>
         ${manifest_fields[this.field] ? 
           html`
