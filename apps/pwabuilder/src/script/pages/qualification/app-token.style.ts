@@ -687,6 +687,46 @@ sl-details::part(header):focus {
 	background-position: center;
 }
 
+.dialog::part(body){
+	padding-top: 0;
+	padding-bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+.dialog::part(panel) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 65%;
+	position: relative;
+}
+.dialog::part(overlay){
+	backdrop-filter: blur(10px);
+}
+.dialog::part(close-button__base){
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.dialog h2 {
+	color: var(--primary-color);
+	font-size: var(--subheader-font-size);
+	margin: 0;
+}
+
+.dialog p, .dialog li {
+	margin: 0;
+	font-size: var(--font-size);
+}
+
+.accept-terms {
+	width: fit-content;
+	align-self: flex-end;
+	margin-bottom: 30px;
+}
+
 @media(max-width: 1024px){
 
 	#app-info {

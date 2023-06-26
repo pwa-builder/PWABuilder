@@ -13,7 +13,7 @@ import { localeStrings } from '../../../locales';
 import style from './app-token.style';
 import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { populateAppCard } from './app-token.helper';
-import { SlInput } from '@shoelace-style/shoelace';
+import { SlDialog, SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('app-token')
@@ -57,7 +57,8 @@ export class AppToken extends LitElement {
   
   @state() heroBanners = {covered: false, uncovered: true};
 
-  // @state() proxyLoadingImage: boolean = false;
+  @state() showTerms: boolean = false;
+  @state() acceptedTerms: boolean = false;
 
   @state() userAccount = {
     accessToken: '',
@@ -378,6 +379,17 @@ export class AppToken extends LitElement {
     this.heroBanners.uncovered = !covered;
   }
 
+  showTandC(){
+    this.showTerms = true;
+  }
+
+  handleTermsResponse(accepted: boolean){
+    this.showTerms = false;
+    let checkbox = this.shadowRoot!.querySelector(".confirm-terms") as HTMLInputElement;
+    checkbox.checked = accepted;
+    this.acceptedTerms = accepted;
+  }
+
   render(){
     return html`
     <div id="wrapper">
@@ -531,8 +543,8 @@ export class AppToken extends LitElement {
               </div>
             ` : html `
                 <div id="terms-and-conditions">
-                  <label><input type="checkbox" /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                  <sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>
+                  <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                  <sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
                   <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
             `}
@@ -558,6 +570,27 @@ export class AppToken extends LitElement {
       }
      
     </div>
+
+    <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
+      
+      <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
+      <h2>Offer details, terms, and conditions</h2>
+      <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to the first [number] qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11. To qualify, you must:</p>
+      <ul>
+        <li>Own a PWA that meets the technical requirements listed here</li>
+        <li>You are legally residing in [what countries can we say?]</li>
+        <li>Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account</li>
+        <li>Not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+        <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+        <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
+        <li>Offer open to signups from [date] through [date] midnight Pacific Standard Time, or when the limited supply of [number] tokens run out, whichever comes first. Limit one free account token per developer and PWA.</li>
+      </ul>
+      <p>If you qualify and tokens are available, you will be given a token on this page when you submit the form. You can come back to this page to retrieve your token again at any time by signing in with your Microsoft Account. Free developer account tokens are not valid if transferred, sold, or otherwise used by any Microsoft Account other than the one which signed up here. These tokens are for individual, not corporate, Microsoft Store on Windows developer accounts. </p>
+      <h2>Privacy and Communications</h2>
+      <p>When you sign up, we will securely retain an anonymous account id and your PWA URL to enforce the above requirements. We will not store your name or email and we will not contact you.</p>
+      <p>All data is retained in accordance with the Microsoft Privacy Policy found here: https://go.microsoft.com/fwlink/?LinkId=521839.</p>
+      <sl-button class="primary accept-terms" @click=${() => this.handleTermsResponse(true)}>Accept Terms</sl-button>
+    </sl-dialog>
     `
   }
 }
