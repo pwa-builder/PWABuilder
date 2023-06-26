@@ -80,7 +80,7 @@ export default css`
 		max-width: min(525px, 65%);
 	}
 
-	#hero-section p:not(.diff-url) {
+	#hero-section .hero-message {
 		font-family: Hind;
 		font-size: var(--subheader-font-size);
 		font-weight: 400;
@@ -89,7 +89,12 @@ export default css`
 		text-align: left;
 		margin: 0;
 		color: #292C3A;
-		width: 50%;
+		margin-bottom: 25px;
+		max-width: min(555px, 65%);
+	}
+
+	#hero-section .hero-message.with-input {
+		margin: 0;
 	}
 
 	.back-to-giveaway-home {
@@ -104,6 +109,10 @@ export default css`
 		width: 200px;
 	}
 
+	.back-to-giveaway-home:hover {
+		cursor: pointer;
+	}
+
 	.back-to-giveaway-home img {
 		height: 12px;
 		width: auto;
@@ -115,11 +124,6 @@ export default css`
 		font-size: var(--font-size);
 		font-weight: 600;
 		margin: 5px 0;
-	}
-
-	.back-to-giveaway-home:hover {
-		border-color: var(--font-color);
-		cursor: pointer;
 	}
 
 	#hero-section .store-logo {
@@ -149,6 +153,8 @@ export default css`
 	#hero-section sl-input::part(input) {
 		height: 3em;
 	}
+
+	
 
 	/* #hero-section .error::part(base){
 		border-color: #eb5757;
@@ -700,6 +706,46 @@ sl-details::part(header):focus {
 	background-size: 100%;
 	background-position: center;
 	margin-bottom: 0px !important;
+}
+
+.dialog::part(body){
+	padding-top: 0;
+	padding-bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+.dialog::part(panel) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 65%;
+	position: relative;
+}
+.dialog::part(overlay){
+	backdrop-filter: blur(10px);
+}
+.dialog::part(close-button__base){
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.dialog h2 {
+	color: var(--primary-color);
+	font-size: var(--subheader-font-size);
+	margin: 0;
+}
+
+.dialog p, .dialog li {
+	margin: 0;
+	font-size: var(--font-size);
+}
+
+.accept-terms {
+	width: fit-content;
+	align-self: flex-end;
+	margin-bottom: 30px;
 }
 
 @media(max-width: 1024px){
