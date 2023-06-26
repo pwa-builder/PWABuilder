@@ -31,6 +31,7 @@ import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
 import { pollLastTested, populateAppCard, processManifest, processSecurity, processServiceWorker, runManifestTests } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
+import { recommended_fields } from '@pwabuilder/manifest-validation';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -356,7 +357,7 @@ export class AppReport extends LitElement {
       this.manifestTotalScore = testResults.manifestBreakdown.total;
       this.manifestValidCounter = testResults.manifestBreakdown.valid;
       this.manifestRequiredCounter = testResults.manifestBreakdown.failedRequired;
-      this.manifestRecCounter = testResults.manifestBreakdown.failedRequired;
+      this.manifestRecCounter = testResults.manifestBreakdown.failedRecommended;
       this.manifestEnhValid = testResults.manifestBreakdown.passedEnhancement;
       this.manifestEnhCounter = testResults.manifestBreakdown.failedEnhancement;
 
@@ -740,7 +741,7 @@ export class AppReport extends LitElement {
   // -1 = a wins
   // 1 = b wins
   sortTodos(){
-    const rank: { [key: string]: number } = {
+    let rank: { [key: string]: number } = {
       "retest": 0,
       "required": 1,
       "enhancement": 2,
@@ -748,6 +749,19 @@ export class AppReport extends LitElement {
       "recommended": 4,
       "optional": 5
     };
+
+    // If the manifest is missing more than half of the recommended fields, show those first
+    if((this.manifestRecCounter / recommended_fields.length) > .5){
+      rank = {
+        "retest": 0,
+        "required": 1,
+        "highly recommended": 2,
+        "recommended": 3,
+        "enhancement": 4,
+        "optional": 5
+      };
+    }
+
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
         return -1;
@@ -866,6 +880,15 @@ export class AppReport extends LitElement {
   removeSecurityWarning(){
     this.showSecurityBanner = false;
     this.requestUpdate()
+  }
+
+  decideActionItemsText(){
+    // If the manfiest is missing more than half of hte recommended fields, show Action Items
+    if((this.manifestRecCounter / recommended_fields.length) >= .5){
+      return html`<p>Action Items</p>`
+    } else {
+      return html`<p>Add App Capabilities</p>`
+    }
   }
 
   render() {
@@ -1011,7 +1034,7 @@ export class AppReport extends LitElement {
               >
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
-                  <p>Action Items</p>
+                  ${this.decideActionItemsText()}
                   ${this.todoItems.length > 0 ? this.renderIndicators() : html``}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>

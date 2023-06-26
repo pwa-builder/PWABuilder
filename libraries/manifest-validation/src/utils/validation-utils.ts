@@ -179,6 +179,6 @@ export function checkRelativeUrlBasedOnScope(url: string, scope: string): boolea
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 export const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "geo", "gopher", "im", "ipfs", "ipns", "irc", "ircs", "magnet", "mailto", "matrix", "mms", "news", "nntp", "sip", "sms", "smsto", "ssb", "ssh", "tel", "urn", "webcal", "wtai", "xmpp"];
 export const required_fields = ["icons", "name", "short_name", "start_url"];
-export const recommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots"];
+export const recommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots", "id", "launch_handler", "description"];
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "scope", "categories"];
 export const enhancement_fields = ["shortcuts", "edge_side_panel", "widgets", "display_override", "share_target", "file_handlers", "handle_links"];
