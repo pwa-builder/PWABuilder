@@ -361,7 +361,7 @@ export class AppToken extends LitElement {
     if(isValidUrl){
       input.setCustomValidity("");
       root.siteURL = url;
-      Router.go(`/giveaway?site=${root.siteURL}`)
+      root.runGiveawayTests();
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
       input.reportValidity();

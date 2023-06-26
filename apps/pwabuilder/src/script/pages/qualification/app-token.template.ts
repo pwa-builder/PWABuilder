@@ -19,7 +19,7 @@ export function decideHeroSection(
   if (!siteURL) {
     return html`
       <h1>Get a Free Windows Developer Account on the Microsoft Store</h1>
-      <p>Check below to see if your PWA qualifies</p>
+      <p class="hero-message with-input">Check below to see if your PWA qualifies</p>
       <div class="input-area">
         <form @submit=${(e: SubmitEvent) => handleEnteredURL(e, root)}>
           <sl-input placeholder="Enter URL" class="url-input" type="text" name="site" required></sl-input>
@@ -37,7 +37,7 @@ export function decideHeroSection(
   if (siteURL && tests.testsInProgress) {
     return html`
       <h1>Validation in progress..</h1>
-      <p>We are checking to see if this URL qualifies for a free token</p>
+      <p class="hero-message">We are checking to see if this URL qualifies for a free token</p>
     `;
   }
 
@@ -45,7 +45,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && tests.dupeURL) {
     return html`
       <h1>Oops!</h1>
-      <p>Something is wrong. Please use another URL and try again.</p>
+      <p class="hero-message">Something is wrong. Please use another URL and try again.</p>
     `;
   }
 
@@ -53,7 +53,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && tests.noManifest) {
     return html`
       <h1>Oops!</h1>
-      <p>
+      <p class="hero-message">
         You must at least have a manifest for us to run our tests! Go back to
         PWABuilder to create your manifest now!
       </p>
@@ -66,7 +66,7 @@ export function decideHeroSection(
       if (errorGettingToken) {
         return html`
           <h1>Oops!</h1>
-          <p>
+          <p class="hero-message">
             URL already used in another account. Please use another URL and try
             again.
           </p>
@@ -74,7 +74,7 @@ export function decideHeroSection(
       }
       return html`
         <h1>Congratulations ${userAccount.name}!</h1>
-        <p>
+        <p class="hero-message">
           You have qualified for a free account on the Microsoft developer
           platform. Get your token code below.
         </p>
@@ -82,7 +82,7 @@ export function decideHeroSection(
     }
     return html`
       <h1>Congratulations!</h1>
-      <p>
+      <p class="hero-message">
         You have qualified for a free account on the Microsoft developer
         platform. Get your token code after signing in below.
       </p>
@@ -93,7 +93,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && !tests.testsPassed) {
     return html`
       <h1>Almost there!</h1>
-      <p>
+      <p class="hero-message">
         In order to qualify for a free Microsoft developer account check the
         technical qualifications below.
       </p>

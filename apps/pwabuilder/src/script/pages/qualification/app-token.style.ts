@@ -80,7 +80,7 @@ export default css`
 		max-width: min(525px, 65%);
 	}
 
-	#hero-section p:not(.diff-url) {
+	#hero-section .hero-message {
 		font-family: Hind;
 		font-size: var(--subheader-font-size);
 		font-weight: 400;
@@ -89,7 +89,12 @@ export default css`
 		text-align: left;
 		margin: 0;
 		color: #292C3A;
-		width: 50%;
+		margin-bottom: 25px;
+		max-width: min(555px, 65%);
+	}
+
+	#hero-section .hero-message.with-input {
+		margin: 0;
 	}
 
 	.back-to-giveaway-home {
@@ -104,6 +109,10 @@ export default css`
 		width: 200px;
 	}
 
+	.back-to-giveaway-home:hover {
+		cursor: pointer;
+	}
+
 	.back-to-giveaway-home img {
 		height: 12px;
 		width: auto;
@@ -115,11 +124,6 @@ export default css`
 		font-size: var(--font-size);
 		font-weight: 600;
 		margin: 5px 0;
-	}
-
-	.back-to-giveaway-home:hover {
-		border-color: var(--font-color);
-		cursor: pointer;
 	}
 
 	#hero-section .store-logo {
@@ -149,6 +153,8 @@ export default css`
 	#hero-section sl-input::part(input) {
 		height: 3em;
 	}
+
+	
 
 	/* #hero-section .error::part(base){
 		border-color: #eb5757;
