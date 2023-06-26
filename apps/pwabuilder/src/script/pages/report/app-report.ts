@@ -1,7 +1,7 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { getManifestContext, setManifestContext } from '../../services/app-info';
-import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
+import { setManifestContext } from '../../services/app-info';
+import { Validation } from '@pwabuilder/manifest-validation';
 import {
   BreakpointValues,
 } from '../../utils/css/breakpoints';
@@ -18,14 +18,10 @@ import '../../components/sw-selector';
 import '../../components/share-card';
 
 import {
-  Icon,
   ManifestContext,
   RawTestResult,
   TestResult
 } from '../../utils/interfaces';
-
-// import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../services/manifest';
-import { resolveUrl } from '../../utils/url';
 
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 
@@ -50,7 +46,7 @@ export class AppReport extends LitElement {
     siteName: 'Site Name',
     description: "Your site's description",
     siteUrl: 'Site URL',
-    iconURL: '',
+    iconURL: '/assets/new/icon_placeholder.png',
     iconAlt: 'Your sites logo'
   };
   @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a'};
@@ -72,7 +68,7 @@ export class AppReport extends LitElement {
     `(min-width: ${BreakpointValues.largeUpper}px)`
   );
 
-  @state() isAppCardInfoLoading: boolean = false;
+  @state() isAppCardInfoLoading: boolean = true;
   @state() isDeskTopView = this.mql.matches;
 
   // will be used to control the state of the "Package for store" button.
@@ -249,14 +245,16 @@ export class AppReport extends LitElement {
     this.manifestContext = await processManifest(url, {url: manifestUrl, raw: manifestRaw});
     this.createdManifest = this.manifestContext.isGenerated || false;
     setManifestContext(this.manifestContext);
+    this.isAppCardInfoLoading = true;
+    if(!this.createdManifest){
+      this.appCard = await populateAppCard(this.manifestContext, manifestUrl!);
+    }
     this.isAppCardInfoLoading = false;
-    this.appCard = await populateAppCard(this.manifestContext, manifestUrl!);
   }
 
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
   async runAllTests(url: string) {
     this.runningTests = true;
-    this.isAppCardInfoLoading = true;
 
     let findersResults = {
       manifest: {} as {url?: string, raw?: string, json?: unknown},

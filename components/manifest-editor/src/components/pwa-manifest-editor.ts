@@ -297,7 +297,6 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form></sl-tab-panel>
         <sl-tab-panel name="share"><manifest-share-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)}</manifest-share-form></sl-tab-panel>
         <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest}></manifest-code-form></sl-tab-panel>
-
       </sl-tab-group>
     `;
   }

@@ -53,7 +53,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
         displayString: "Manifest has handle_links field",
-        category: "recommended",
+        category: "enhancement",
         member: "handle_links",
         defaultValue: "auto",
         docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
@@ -748,7 +748,7 @@ export const maniTests: Array<Validation> = [
         member: "file_handlers",
         displayString: "Manifest has file_handlers field",
         infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
-        category: "optional",
+        category: "enhancement",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array",

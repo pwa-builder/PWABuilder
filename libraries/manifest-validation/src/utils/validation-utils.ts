@@ -181,4 +181,4 @@ export const validProtocols: Array<String> = ["bitcoin", "dat", "dweb", "ftp", "
 export const required_fields = ["icons", "name", "short_name", "start_url"];
 export const recommended_fields = ["display", "background_color", "theme_color", "orientation", "screenshots"];
 export const optional_fields = ["iarc_rating_id", "related_applications", "prefer_related_applications", "lang", "dir", "description", "protocol_handlers", "scope", "categories"];
-export const enhancement_fields = ["shortcuts", "edge_side_panel", "widgets", "display_override", "share_target"];
+export const enhancement_fields = ["shortcuts", "edge_side_panel", "widgets", "display_override", "share_target", "file_handlers", "handle_links"];
