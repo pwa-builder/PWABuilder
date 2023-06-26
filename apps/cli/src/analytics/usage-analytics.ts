@@ -65,8 +65,6 @@ export function trackException(err: Error) {
   }
 }
 
-
-
 export async function ableToUseAnalytics(): Promise<boolean> {
   const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
   let canUseAnalytics: boolean = false;
@@ -104,6 +102,13 @@ function writePermission(permission: boolean, pathToDataFile: string): boolean {
   
 
   return permission && didWriteSucceed;
+}
+
+export async function promptAndRewritePermission(): Promise<boolean> {
+  const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
+  const dataTrackingInput: boolean = await promptForPermission();
+  writePermission(dataTrackingInput, pwabuilderDataFilePath);
+  return dataTrackingInput
 }
 
 // Functions for if we do user correlation later on.
