@@ -13,7 +13,7 @@ import { localeStrings } from '../../../locales';
 import style from './app-token.style';
 import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { populateAppCard } from './app-token.helper';
-import { SlDialog, SlInput } from '@shoelace-style/shoelace';
+import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('app-token')
