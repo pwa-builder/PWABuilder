@@ -252,7 +252,7 @@ export async function runManifestTests(manifest: Manifest){
 		}
 	});
 
-	let manifestTotalScore = validationResults.length;
+	let manifestTotalScore = 0;
 	let manifestValidCounter = 0;
 	let manifestRequiredCounter = 0;
 	let manifestRecCounter = 0;
@@ -265,8 +265,14 @@ export async function runManifestTests(manifest: Manifest){
 			if(test.category === "enhancement"){
 				passedEnhancement++;
 			}
+			manifestTotalScore++;
 		} else {
 			let status ="";
+
+			if(test.category !== "enhancement"){
+				manifestTotalScore++;
+			}
+
 			if(test.category === "required" || test.testRequired){
 				status = "required";
 				manifestRequiredCounter++;
