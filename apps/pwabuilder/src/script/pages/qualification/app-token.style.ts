@@ -18,8 +18,6 @@ export default css`
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-
-		width: 100vw;
 		gap: 30px;
 	}
 
