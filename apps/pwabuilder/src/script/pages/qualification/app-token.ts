@@ -67,7 +67,7 @@ export class AppToken extends LitElement {
     loggedIn: false
   };
   @state() authModule = new AuthModule();
-
+  @state() tokenId: string = '';
 
   static get styles() {
     return [
@@ -297,8 +297,10 @@ export class AppToken extends LitElement {
     if(userResult != null) {
       console.log(userResult);
       this.userAccount = userResult;
+      await this.claimToken();
       this.userAccount.loggedIn = true;
     }
+    this.requestUpdate();
   }
 
   async signOut() {
@@ -329,7 +331,7 @@ export class AppToken extends LitElement {
       const response = await request.json() as {tokenId: string, errorMessage: string, rawError: unknown}
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
-        Router.go(`/congratulations/${response.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
+        this.tokenId = response.tokenId
       }
       else {
         this.errorGettingToken = true;
@@ -338,6 +340,10 @@ export class AppToken extends LitElement {
       }
     }
     catch(e){}
+  }
+
+  goToCongratulationsPage(){
+    Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
   }
 
   handleEnteredURL(e: SubmitEvent, root: any){
@@ -542,13 +548,20 @@ export class AppToken extends LitElement {
                   </sl-button>` : 
               html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
               </div>
-            ` : html `
+            ` : 
+              !this.dupeURL ?
+            html `
                 <div id="terms-and-conditions">
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                  <sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
+                  <sl-button class="primary" @click=${this.goToCongratulationsPage} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
                   <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
-            `}
+            ` :
+            html`
+              <sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
+            `
+          
+          }
         ` : html``}
       ${!this.siteURL ?
         html`

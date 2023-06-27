@@ -75,16 +75,14 @@ export function decideHeroSection(
       return html`
         <h1>Congratulations ${userAccount.name}!</h1>
         <p class="hero-message">
-          You have qualified for a free account on the Microsoft developer
-          platform. Get your token code below.
+          This URL has passed our tests! You may qualify for a free developer on the Microsoft Store!
         </p>
       `;
     }
     return html`
       <h1>Congratulations!</h1>
       <p class="hero-message">
-        You have qualified for a free account on the Microsoft developer
-        platform. Get your token code after signing in below.
+        This URL has passed our tests! You may qualify for a free developer on the Microsoft Store!
       </p>
     `;
   }
