@@ -141,7 +141,7 @@ export class AppIndex extends LitElement {
             }
           },
           {
-            path: '/giveaway', // token giveaway page
+            path: '/freeToken', // token giveaway page
             component: 'app-token',
             action: async () => {
               await import('./script/pages/qualification/app-token.js');

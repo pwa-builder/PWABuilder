@@ -397,13 +397,13 @@ export class AppToken extends LitElement {
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         ${!this.testsInProgress && this.siteURL ? 
           html`
-            <div class="back-to-giveaway-home" @click=${() => Router.go("/giveaway")}>
+            <div class="back-to-giveaway-home" @click=${() => Router.go("/freeToken")}>
               <img src="/assets/new/left-arrow.svg" alt="enter new url" />
               <p class="diff-url">
                 Enter different URL
               </p>
             </div>
-            <sl-button class="retest-button secondary" @click=${() => Router.go(`/giveaway?site=${this.siteURL}`)}>
+            <sl-button class="retest-button secondary" @click=${() => Router.go(`/freeToken?site=${this.siteURL}`)}>
                 <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
                 <p>Retest site</p>
             </sl-button>` :

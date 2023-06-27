@@ -2482,7 +2482,7 @@ export class AppReport extends LitElement {
   }
 
   goToGiveawayPage(){
-    Router.go(`/giveaway?site=${this.siteURL}`);
+    Router.go(`/freeToken?site=${this.siteURL}`);
   }
   
   closeTooltipOnScroll() {
