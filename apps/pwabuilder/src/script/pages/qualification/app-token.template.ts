@@ -126,7 +126,8 @@ export function renderAppCard(
 		requiredRatio: number;
 		enhancementsRatio: number;
 		enhancementsIndicator: string;
-	}
+	},
+  userAccount: { loggedIn: boolean; name: string }
 ) {
   // no site in query params
   if (!siteURL) {
@@ -170,19 +171,37 @@ export function renderAppCard(
 
   // if tests complete but its a dupe url
   if (!tests.testsInProgress && tests.dupeURL) {
-    banner = html`
+    if (userAccount.loggedIn) {
+      banner = html`
+      <!-- error banner -->
+      <div class="feedback-holder type-error">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">A token has already been claimed for this PWA</p>
+          <p class="error-desc">
+            We noticed this PWA has already been used to claim a token with another Microsoft account. 
+            Please check the URL you are using or try another account.
+          </p>
+        </div>
+      </div>
+    `;
+    }
+    else {
+      banner = html`
       <!-- error banner -->
       <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the
-            Microsoft store. Please check the URL you are using or try another.
+            We noticed this PWA has already been linked to an account in the Microsoft store. 
+            Please check the URL you are using or try another.
           </p>
         </div>
       </div>
     `;
+    }
+    
   }
 
   // else: tests are complete

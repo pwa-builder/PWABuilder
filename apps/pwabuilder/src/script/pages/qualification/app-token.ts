@@ -127,7 +127,7 @@ export class AppToken extends LitElement {
 
       const responseData = await response.json();
 
-      console.log(`repsonseData = ${responseData}`)
+      //console.log(`repsonseData = ${JSON.stringify(responseData)}`)
 
       if(!responseData){
         console.warn(
@@ -141,11 +141,12 @@ export class AppToken extends LitElement {
         console.error(responseData.error)
         this.noManifest = true;
       }
-
+      
       this.testResults = responseData.testResults;
       this.manifest = responseData.manifestJson;
       this.manifestUrl = responseData.manifestUrl;
       this.testsPassed = responseData.isEligibleForToken;
+      this.dupeURL = responseData.isInDenyList
 
       console.log(this.testResults);
 
@@ -451,7 +452,8 @@ export class AppToken extends LitElement {
                 enhancementsRatio: this.enhancementsRatio,
                 requiredRatio: this.requiredRatio,
                 enhancementsIndicator: this.enhancementsIndicator,
-              }
+              },
+              this.userAccount
             )}
           </div>
           ${!this.userAccount.loggedIn ? html`

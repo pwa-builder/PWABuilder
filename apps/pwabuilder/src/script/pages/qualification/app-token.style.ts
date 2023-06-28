@@ -341,6 +341,13 @@ export default css`
 .feedback-holder p {
 	margin: 0;
 	font-size: 14px;
+	line-height: 14px;
+}
+
+.error-info {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
 }
 
 .error-title {
@@ -349,7 +356,6 @@ export default css`
 
 .error-desc {
 	max-height: 175px;
-	overflow-y: auto;
 	line-height: normal;
 }
 
@@ -713,6 +719,13 @@ sl-details::part(header):focus {
 	flex-direction: column;
 	gap: 15px;
 }
+.dialog::part(header){
+	width: 100%;
+}
+.dialog::part(title){
+	font-weight: 600;
+  font-size: 20px;
+}
 .dialog::part(panel) {
 	display: flex;
 	flex-direction: column;
@@ -744,6 +757,21 @@ sl-details::part(header):focus {
 	width: fit-content;
 	align-self: flex-end;
 	margin-bottom: 30px;
+}
+
+@media(min-width: 1366px){
+	.feedback-holder p {
+		font-size: 16px;
+		line-height: 16px;
+	}
+
+	#terms-and-conditions label {
+		font-size: 16px;
+	}
+
+	#terms-and-conditions p {
+		font-size: 16px;
+	}
 }
 
 @media(max-width: 1024px){
