@@ -5,6 +5,7 @@
 - **Home** 
   - [About](/ "PWABuilder Suite Documentation")
   - [PWA Overview](/home/pwa-intro "Beginner's Guide to PWA")
+  - [Benefits of PWA](/home/benefits-of-pwa "Benefits of Developing Progressive Web Apps")
   - [Service Workers](/home/sw-intro "Introduction to Service Workers")
   - [Adding Native Features](/home/native-features.md "Adding Native Features to Your PWA")
   - [PWA Workshop](/home/pwa-workshop "Progressive Web App Intro Workshop")
