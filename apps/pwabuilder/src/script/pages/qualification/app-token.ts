@@ -573,7 +573,7 @@ export class AppToken extends LitElement {
               
               <div class="grid-item footer-text">
                 <p class="subheader">Ship your PWAs to App Store</p>
-                <p class="body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
+                <p class="body-text">Build and Package progressive web apps for native app stores with PWABuilder.</p>
                 <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
               </div>
               <div class="grid-item footer-text">

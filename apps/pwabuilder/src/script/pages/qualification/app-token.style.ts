@@ -537,6 +537,8 @@ sl-details::part(header):focus {
 	font-size: var(--button-font-size);
 	padding: var(--button-padding);
 	border-radius: 50px;
+	display: flex;
+	align-items: center;
 }
 
 .primary::part(label){
