@@ -2283,8 +2283,22 @@ export class AppReport extends LitElement {
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
-    this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
-    this.requestUpdate();
+    if(!this.hasItemBeenAdded(toAdd)) {
+      this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
+      this.requestUpdate();
+    } 
+  }
+
+  // function to validate whether or not an retest item has already been added to the ToDo list
+  hasItemBeenAdded(toAdd: string): boolean {
+    var isItemPresent = false;
+    for(var toDoItem of this.todoItems) {
+      if(toDoItem.field == toAdd) {
+        isItemPresent = true;
+        break;
+      }
+    } 
+    return isItemPresent;
   }
 
   // Rotates the icon on each details drop down to 0 degrees
