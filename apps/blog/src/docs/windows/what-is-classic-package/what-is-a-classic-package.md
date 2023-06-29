@@ -41,9 +41,11 @@ Be aware that your app version cannot begin with zero.
 
 Additionally, app version must contain 3 sections.
 
-- `0.5.2` - ❌ Invalid, versions cannot start with zero
-- `1.5.2.1` - ❌ Invalid, the 4th section is reserved for Store use
-- `1.5.2` - ✔ Valid
+
+> `0.5.2` - ❌ Invalid, versions cannot start with zero 
+> `1.5.2.1` - ❌ Invalid, the 4th section is reserved for Store use 
+> `1.5.2` - ✔ Valid 
+
 
 ## Submitting your app to the Store
 

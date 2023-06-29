@@ -43,7 +43,7 @@ export async function getManifest(
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
   //TODO: Replace with prod
-  const manifestTestUrl = env.api + `/FetchWebManifest?site=${encodedUrl}`;
+  const manifestTestUrl = env.api + `/FindWebManifest?site=${encodedUrl}`;
   let headers = getHeaders();
   
   try {
@@ -247,12 +247,6 @@ export async function createManifestContextFromEmpty(url: string): Promise<Manif
     siteUrl: createdManifestResult.siteUrl,
     isEdited: false,
   };
-
-  setManifestContext(context);
-
-  await updateManifest({
-    ...createdManifestResult.content,
-  });
 
   return context;
 }
