@@ -569,17 +569,18 @@ export class AppToken extends LitElement {
         html`
           <div id="footer-section">
             <div id="footer-section-grid">
-              <img id="marketing-img" src="/assets/new/pwabuilder-sc.png" alt="pwabuilder home page" />
-              <div class="footer-text">
+              <div class="grid-item sc-img"><img id="marketing-img" src="/assets/new/marketing-img1.png" alt="pwabuilder home page" /></div>
+              
+              <div class="grid-item footer-text">
                 <p class="subheader">Ship your PWAs to App Store</p>
                 <p class="body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
                 <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
               </div>
-              <div class="footer-text">
-                <p class="large-subheader">Find your success in the Microsoft Store</p>
+              <div class="grid-item footer-text">
+                <p class="subheader">Find your success in the Microsoft Store</p>
                 <p class="large-body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
               </div>
-              <img class="wheel-img" src="/assets/new/marketing-img2.svg" alt="Logos of PWAs in the microsoft store" />
+              <div class="grid-item wheel-img"></div>
             </div>
           </div>
         ` : html``
