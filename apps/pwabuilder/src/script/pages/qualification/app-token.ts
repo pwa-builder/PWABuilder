@@ -579,7 +579,7 @@ export class AppToken extends LitElement {
                 <p class="large-subheader">Find your success in the Microsoft Store</p>
                 <p class="large-body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
               </div>
-              <img class="wheel-img" src="/assets/new/marketing-img2.png" alt="Logos of PWAs in the microsoft store" />
+              <img class="wheel-img" src="/assets/new/marketing-img2.svg" alt="Logos of PWAs in the microsoft store" />
             </div>
           </div>
         ` : html``

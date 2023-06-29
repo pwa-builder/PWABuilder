@@ -25,7 +25,7 @@ export default css`
 		box-sizing: border-box;
 	}
 
-	#wrapper > *:not(#hero-section){
+	#wrapper > *:not(#hero-section):not(#footer-section){
 		max-width: 1366px;
 	}
 
@@ -192,22 +192,26 @@ export default css`
 	}
 
 	.square::part(indicator) {
-		width: 100px;
-		height: 100px;
+		width: 120px;
+		height: 120px;
 		border-radius: 10px;
 	}
 
 	img.square {
-		width: 100px;
-		height: 100px;
+		width: 120px;
+		height: 120px;
 		border-radius: 10px;
 		padding: 10px;
 	}
 
 	#img-holder {
-		height: 120px;
+		height: 140px;
+		width: 160px;
 		border-radius: 10px;
 		box-shadow: 0px 4px 30px 0px #00000014;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	#words {
@@ -239,6 +243,10 @@ export default css`
 
 	#words sl-skeleton:nth-child(4)::part(base) {
 		width: 60%;
+	}
+
+	.app-desc {
+		max-width: 700px;
 	}
 
 	#categories > *::part(indicator) {
@@ -585,6 +593,7 @@ sl-details::part(header):focus {
 	padding: 20px;
 	border-radius: 10px;
 	background-color: #ffffff;
+	box-shadow: 0px 4px 30px 0px #00000014;
 }
 
 #qual-section li {
@@ -616,8 +625,8 @@ sl-details::part(header):focus {
 
 #marketing-img {
 	border-radius: 10px;
-	width: 430px;
-	height: auto;
+	width: auto;
+	height: 250px;
 }
 
 .footer-text {
@@ -760,6 +769,10 @@ sl-details::part(header):focus {
 }
 
 @media(min-width: 1366px){
+	#wrapper {
+		background-color: #ffffff;
+	}
+
 	.feedback-holder p {
 		font-size: 16px;
 		line-height: 16px;
@@ -771,6 +784,14 @@ sl-details::part(header):focus {
 
 	#terms-and-conditions p {
 		font-size: 16px;
+	}
+
+	.subheader {
+		font-size: 36px;
+	}
+
+	.body-text {
+		font-size: 20px;
 	}
 }
 
@@ -787,6 +808,56 @@ sl-details::part(header):focus {
 		min-width: 50px;
 	}
 
+	#footer-section-grid {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.wheel-img {
+		position: unset;
+	}
+
+	.footer-text {
+		align-items: center;
+	}
+
+	.footer-text sl-button::part(base) {
+		width: 100%;
+	}
+
+	.large-body-text, .large-subheader, .body-text {
+		text-align: center;
+	}
+
+	#marketing-img {
+		height: 200px;
+	}
+
+	
+	
+}
+@media(max-width: 720px){
+	#hero-section h1, #hero-section .hero-message {
+		max-width: 95%;
+	}
+}
+
+@media(max-width: 620px){
+	.input-area {
+		width: 100%;
+	}
+	.input-area form {
+		flex-direction: column;
+	}
+	#hero-section sl-input::part(base) {
+		width: 100%;
+	}
+	#hero-section .primary::part(base){
+		width: 33%;
+	}
+
+	
 }
 
 @media(max-width: 414px) {

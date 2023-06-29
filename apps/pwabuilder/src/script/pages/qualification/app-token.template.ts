@@ -223,7 +223,7 @@ export function renderAppCard(
         <div id="words">
           <p>${appCard.siteName}</p>
           <p>${appCard.siteUrl}</p>
-          <p>${appCard.description}</p>
+          <p class="app-desc">${appCard.description}</p>
         </div>
       </div>
       <div id="rings">
