@@ -91,8 +91,14 @@ export class pwaupdate extends LitElement implements PWAUpdateComponent {
   }
 
   async firstUpdated() {
-    if (this.swpath) {
+    if (this.swpath) {      
       if ('serviceWorker' in navigator) {
+        let url = window.location.href; // Split the URL by /
+        let parts = url.split('/'); // Check if it has a folder name
+        let hasFolder = parts.length > 4; // If it has a folder name, get the folder name
+        let folder = hasFolder ? parts[3] : ''; // If it has a folder name, add the folder name to the swpath value
+        this.swpath = `/${folder}/pwabuilder-sw.js`;
+
         const reg = await navigator.serviceWorker.register(this.swpath);
 
         let worker = reg.installing;

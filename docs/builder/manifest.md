@@ -238,6 +238,8 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 ]
 ```
 
+!> You can learn more about Shortcuts in the [Adding Native Features](/home/native-features?id=shortcuts) documentation.
+
 ### protocol_handlers: `Array`
 
 `protocol_handlers` is an optional member that specifies an array of protocols that the application can handle. A protocol handler will contain `protocol` and `url` members to specify how each valid protocol is handled.
@@ -321,13 +323,15 @@ If you only want to provide a single icon, your icons array could also look like
 ]
 ```
 
-?> You can use PWABuilder to help you generate icons.
+?> You can use [PWABuilder](https://www.pwabuilder.com/) to help you generate icons.
 
 ## Screenshots
 
 ### screenshots: `Array`
 
 `screenshots` is an optional member that specifies an array of screenshots that can showcase your application in app stores.
+
+Setting screenshots is a great way to provide context about your application before users choose to download it.
 
 ```json
 "screenshots" : [
@@ -340,7 +344,7 @@ If you only want to provide a single icon, your icons array could also look like
 ]
 ```
 
-?> You can use PWABuilder to help you generate screenshots.
+?> You can use [PWABuilder](https://www.pwabuilder.com/) to help you generate screenshots.
 
 ## Share
 
@@ -388,6 +392,8 @@ The `share_target` member is an object which can contain the following members:
     }
   }
 ```
+
+!> You can learn more about using the Web Share API in the [Adding Native Features](/home/native-features?id=web-share-api) documentation.
 
 ## Handlers
 
@@ -472,8 +478,6 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
 "handle_links": "preferred"
 ```
 
-?> In any instance where the app is not already running, `navigate-new` will be used instead.
-
 ### scope_extensions: `Array`
 
 `scope_extensions` is an optional member that specifies a list of origin patterns to associate with. This allows for your app to control multiple subdomains and top-level domains as a single entity.
@@ -499,4 +503,4 @@ In order to allow for your app to intercept links, you must specify `web-app-ori
 }
 ```
 
-?> The combination of `handle_links` and `scope_extensions` is intended to be a replacement for the `url_handlers` field.
+?> The combination of `handle_links` and `scope_extensions` is intended to be a replacement for the `url_handlers` member.
