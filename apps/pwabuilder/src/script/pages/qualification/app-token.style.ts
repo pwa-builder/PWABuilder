@@ -40,15 +40,12 @@ export default css`
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
-
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-
-		align-items: flex-start;
-		justify-content: center;
 		width: 100%;
 
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		
 		position: relative;
 	}
 
@@ -60,10 +57,23 @@ export default css`
 		background-image: url("/assets/new/giveaway_banner_url.png");
 	}
 
+	#hero-section-content {
+		max-width: 1366px;
+
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+
+		align-items: flex-start;
+		justify-content: center;
+		width: 100%;
+
+	}
+
 	@media(min-width: 1366px){
 		#hero-section.uncovered {
-		background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
-	}
+			background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
+		}
 	}
 
 	#hero-section h1 {
@@ -612,17 +622,25 @@ sl-details::part(header):focus {
 	align-items: center;
 	justify-content: center;
 	padding: 40px;
-	position: relative;
 	width: 100%;
 }
 
 #footer-section-grid {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	max-width: 1366px;
+	width: 100%;
 	column-gap: 20px;
 	row-gap: 50px;
+	max-width: 1366px;
+}
+
+.footer-grid-one-row {
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: unset;
+}
+
+.footer-grid-two-row {
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
 }
 
 #marketing-img {
@@ -668,16 +686,33 @@ sl-details::part(header):focus {
 	width: 76%;
 }
 
-.wheel-img {
+.grid-item {
+	display: flex;
+	justify-content: center;
+}
+
+.grid-img {
+	justify-content: flex-end;
+}
+
+.sc-img {
+	justify-content: flex-start;
+}
+
+.wheel-img-1024, .wheel-img-small {
+	display: none;
+}
+
+.grid-img img {
+	max-width: 100%;
+	max-height: 100%;
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	max-width: 100%;
-	max-height: 100%;
-	width: 802px;
-  height: 501px;
-	background-image: url('/assets/new/marketing-img2.png');
+	height: 25vw;
+	width: auto;
 }
+
 
 #terms-and-conditions {
 	display: flex;
@@ -775,9 +810,7 @@ sl-details::part(header):focus {
 
 
 @media(max-width: 1920px){
-	#footer-section-grid {
-		width: 80%;
-	}
+
 }
 
 @media(max-width: 1366px){
@@ -797,13 +830,6 @@ sl-details::part(header):focus {
 	#terms-and-conditions p {
 		font-size: 16px;
 	}
-
-	.wheel-img{
-		width: 569px;
-		height: 356px;
-	}
-
-	
 
 	.body-text {
 		font-size: 20px;
@@ -827,16 +853,12 @@ sl-details::part(header):focus {
 		min-width: 50px;
 	}
 
-	#footer-section-grid {
+	.wheel-img-1920 {
+		display: none;
+	}
+	.wheel-img-1024 {
 		display: flex;
-		flex-direction: column;
-		align-items: center;
 	}
-
-	.wheel-img {
-		position: unset;
-	}
-
 	.footer-text {
 		align-items: center;
 	}
@@ -855,9 +877,37 @@ sl-details::part(header):focus {
 
 }
 
-@media(max-width: 720px){
+@media(max-width: 750px){
 	#hero-section h1, #hero-section .hero-message {
 		max-width: 95%;
+	}
+
+	#footer-section-grid {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.wheel-img-1024 {
+		display: none;
+	}
+	.wheel-img-small {
+		display: flex;
+	}
+
+	.grid-img img {
+		position: unset;
+		height: auto;
+		width: 100%;
+	}
+
+	.wheel-img-small {
+		width: 100%;
+	}
+
+	#footer-section {
+		padding: 0;
+		padding-top: 40px;
 	}
 }
 
@@ -876,6 +926,8 @@ sl-details::part(header):focus {
 	}
 
 	
+
+	
 }
 
 @media(max-width: 420px) {
@@ -885,14 +937,6 @@ sl-details::part(header):focus {
 
 	#hero-section.uncovered, #hero-section.covered {
 		background-image: url('/assets/new/giveaway_banner_mobile.png');
-	}
-
-	.wheel-img {
-		background-image: url('/assets/new/marketing-img2-mobile.png');
-		height: 320px;
-    width: 100%;
-    background-position: center center;
-    background-size: cover;
 	}
 	
 	#footer-section {

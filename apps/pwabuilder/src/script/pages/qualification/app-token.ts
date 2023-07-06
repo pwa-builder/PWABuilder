@@ -368,7 +368,13 @@ export class AppToken extends LitElement {
 
     if(isValidUrl){
       input.setCustomValidity("");
-      root.siteURL = url;
+      
+      const urlParams = new URLSearchParams(window.location.search);
+
+      urlParams.set('site', url);
+
+      window.location.search = urlParams.toString();
+
       root.runGiveawayTests();
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
@@ -402,6 +408,7 @@ export class AppToken extends LitElement {
     return html`
     <div id="wrapper">
       <div id="hero-section" class=${classMap(this.heroBanners)}>
+        <div id="hero-section-content">
         ${!this.testsInProgress && this.siteURL ? 
           html`
             <div class="back-to-giveaway-home" @click=${() => Router.go("/freeToken")}>
@@ -429,6 +436,7 @@ export class AppToken extends LitElement {
           this.handleEnteredURL,
           this
         )}
+        </div>
       </div>
       ${this.siteURL ? 
         html`
@@ -565,26 +573,31 @@ export class AppToken extends LitElement {
           
           }
         ` : html``}
-      ${!this.siteURL ?
-        html`
+      
           <div id="footer-section">
-            <div id="footer-section-grid">
-              <div class="grid-item sc-img"><img id="marketing-img" src="/assets/new/marketing-img1.png" alt="pwabuilder home page" /></div>
-              
-              <div class="grid-item footer-text">
-                <p class="subheader">Ship your PWAs to App Store</p>
-                <p class="body-text">Build and Package progressive web apps for native app stores with PWABuilder.</p>
-                <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
-              </div>
+            <!-- Class Map to show the whole grid vs just the last half of the grid -->
+            <div id="footer-section-grid" class=${classMap({"footer-grid-one-row": this.siteURL.length > 0, "footer-grid-two-row": this.siteURL.length == 0})}>
+            ${!this.siteURL ?
+              html`
+                <div class="grid-item sc-img"><img id="marketing-img" src="/assets/new/marketing-img1.png" alt="pwabuilder home page" /></div>
+                
+                <div class="grid-item footer-text">
+                  <p class="subheader">Ship your PWAs to App Store</p>
+                  <p class="body-text">Build and Package progressive web apps for native app stores with PWABuilder.</p>
+                  <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
+                </div> ` 
+                : null
+              }
               <div class="grid-item footer-text">
                 <p class="subheader">Find your success in the Microsoft Store</p>
                 <p class="large-body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
               </div>
-              <div class="grid-item wheel-img"></div>
+              <div class="grid-item grid-img wheel-img-1920"><img src="/assets/new/marketing-img2.png" alt="different PWAs" /></div>
+              <div class="grid-item grid-img wheel-img-1024"><img src="/assets/new/marketing-img2.png" alt="different PWAs" /></div>
+              <div class="grid-item grid-img wheel-img-small"><img src="/assets/new/marketing-img2-mobile.png" alt="different PWAs" /></div>
             </div>
           </div>
-        ` : html``
-      }
+        
       <!-- <div id="hero-section-bottom">
 
       </div>    -->
