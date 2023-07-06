@@ -417,7 +417,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     location: "platform",
     required: false,
     docs_link:
-      "https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
   },
   widgets: {
     description: [`In Windows 11, PWAs can define widgets, update them, and handle user interactions within them.`],
