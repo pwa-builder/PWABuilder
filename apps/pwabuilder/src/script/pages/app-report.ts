@@ -146,7 +146,7 @@ export class AppReport extends LitElement {
                       "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great job you have a perfect score!",
                       "yellow": "PWABuilder has analyzed your Service Worker, and has identified additonal features you can add, like offline support, to make your app feel more robust.",
                       "blocked": "",
-                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recomeneded by PWABuilder as it enables an array of features that can enhance your PWA. You can genereate a Service Worker below or use our documentation to make your own.",
+                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recomeneded by PWABuilder as it enables an array of features that can enhance your PWA. You can generate a Service Worker below or use our documentation to make your own.",
                   },
      },
       {"messages": {
@@ -2307,8 +2307,22 @@ export class AppReport extends LitElement {
 
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
-    this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
-    this.requestUpdate();
+    if(!this.hasItemBeenAdded(toAdd)) {
+      this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
+      this.requestUpdate();
+    } 
+  }
+
+  // function to validate whether or not an retest item has already been added to the ToDo list
+  hasItemBeenAdded(toAdd: string): boolean {
+    var isItemPresent = false;
+    for(var toDoItem of this.todoItems) {
+      if(toDoItem.field == toAdd) {
+        isItemPresent = true;
+        break;
+      }
+    } 
+    return isItemPresent;
   }
 
   // Rotates the icon on each details drop down to 0 degrees
@@ -2482,7 +2496,7 @@ export class AppReport extends LitElement {
   }
 
   goToGiveawayPage(){
-    Router.go(`/giveaway?site=${this.siteURL}`);
+    Router.go(`/freeToken?site=${this.siteURL}`);
   }
   
   closeTooltipOnScroll() {

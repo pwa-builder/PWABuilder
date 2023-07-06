@@ -24,7 +24,7 @@ export class AuthModule {
   private async signInWithMsal() {
     const msalConfig: Configuration = {
       auth: {
-        clientId: process.env.CLIENT_ID ?? "",
+        clientId: "dec4afb2-2207-46f2-8ac6-ba781e2da39a",
         authority: 'https://login.microsoftonline.com/common/',       
       },
       cache: {

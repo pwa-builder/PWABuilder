@@ -19,7 +19,7 @@ export function decideHeroSection(
   if (!siteURL) {
     return html`
       <h1>Get a Free Windows Developer Account on the Microsoft Store</h1>
-      <p>Check below to see if your PWA qualifies</p>
+      <p class="hero-message with-input">Check below to see if your PWA qualifies</p>
       <div class="input-area">
         <form @submit=${(e: SubmitEvent) => handleEnteredURL(e, root)}>
           <sl-input placeholder="Enter URL" class="url-input" type="text" name="site" required></sl-input>
@@ -37,7 +37,7 @@ export function decideHeroSection(
   if (siteURL && tests.testsInProgress) {
     return html`
       <h1>Validation in progress..</h1>
-      <p>We are checking to see if this URL qualifies for a free token</p>
+      <p class="hero-message">We are checking to see if this URL qualifies for a free token</p>
     `;
   }
 
@@ -45,7 +45,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && tests.dupeURL) {
     return html`
       <h1>Oops!</h1>
-      <p>Something is wrong. Please use another URL and try again.</p>
+      <p class="hero-message">Something is wrong. Please use another URL and try again.</p>
     `;
   }
 
@@ -53,7 +53,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && tests.noManifest) {
     return html`
       <h1>Oops!</h1>
-      <p>
+      <p class="hero-message">
         You must at least have a manifest for us to run our tests! Go back to
         PWABuilder to create your manifest now!
       </p>
@@ -66,7 +66,7 @@ export function decideHeroSection(
       if (errorGettingToken) {
         return html`
           <h1>Oops!</h1>
-          <p>
+          <p class="hero-message">
             URL already used in another account. Please use another URL and try
             again.
           </p>
@@ -74,17 +74,15 @@ export function decideHeroSection(
       }
       return html`
         <h1>Congratulations ${userAccount.name}!</h1>
-        <p>
-          You have qualified for a free account on the Microsoft developer
-          platform. Get your token code below.
+        <p class="hero-message">
+          This URL has passed our tests! You may qualify for a free developer on the Microsoft Store!
         </p>
       `;
     }
     return html`
       <h1>Congratulations!</h1>
-      <p>
-        You have qualified for a free account on the Microsoft developer
-        platform. Get your token code after signing in below.
+      <p class="hero-message">
+        This URL has passed our tests! You may qualify for a free developer on the Microsoft Store!
       </p>
     `;
   }
@@ -93,7 +91,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && !tests.testsPassed) {
     return html`
       <h1>Almost there!</h1>
-      <p>
+      <p class="hero-message">
         In order to qualify for a free Microsoft developer account check the
         technical qualifications below.
       </p>
@@ -128,7 +126,8 @@ export function renderAppCard(
 		requiredRatio: number;
 		enhancementsRatio: number;
 		enhancementsIndicator: string;
-	}
+	},
+  userAccount: { loggedIn: boolean; name: string }
 ) {
   // no site in query params
   if (!siteURL) {
@@ -172,19 +171,37 @@ export function renderAppCard(
 
   // if tests complete but its a dupe url
   if (!tests.testsInProgress && tests.dupeURL) {
-    banner = html`
+    if (userAccount.loggedIn) {
+      banner = html`
+      <!-- error banner -->
+      <div class="feedback-holder type-error">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">A token has already been claimed for this PWA</p>
+          <p class="error-desc">
+            We noticed this PWA has already been used to claim a token with another Microsoft account. 
+            Please check the URL you are using or try another account.
+          </p>
+        </div>
+      </div>
+    `;
+    }
+    else {
+      banner = html`
       <!-- error banner -->
       <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the
-            Microsoft store. Please check the URL you are using or try another.
+            We noticed this PWA has already been linked to an account in the Microsoft store. 
+            Please check the URL you are using or try another.
           </p>
         </div>
       </div>
     `;
+    }
+    
   }
 
   // else: tests are complete
@@ -206,7 +223,7 @@ export function renderAppCard(
         <div id="words">
           <p>${appCard.siteName}</p>
           <p>${appCard.siteUrl}</p>
-          <p>${appCard.description}</p>
+          <p class="app-desc">${appCard.description}</p>
         </div>
       </div>
       <div id="rings">

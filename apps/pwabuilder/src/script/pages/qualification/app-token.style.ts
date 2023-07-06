@@ -1,4 +1,5 @@
 import { css } from 'lit';
+import { largeBreakPoint, mediumBreakPoint, smallBreakPoint } from '../../utils/css/breakpoints';
 
 export default css`
 :host {
@@ -17,8 +18,6 @@ export default css`
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-
-		width: 100vw;
 		gap: 30px;
 	}
 
@@ -26,7 +25,7 @@ export default css`
 		box-sizing: border-box;
 	}
 
-	#wrapper > *:not(#hero-section){
+	#wrapper > *:not(#hero-section):not(#footer-section){
 		max-width: 1366px;
 	}
 
@@ -36,19 +35,17 @@ export default css`
 
 	#hero-section {
 		padding: 50px 100px;
-		height: 300px;
+		background-image: url("/assets/new/giveaway_banner.png");
+		height: 303px;
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
-
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-
-		align-items: flex-start;
-		justify-content: center;
 		width: 100%;
 
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		
 		position: relative;
 	}
 
@@ -60,10 +57,23 @@ export default css`
 		background-image: url("/assets/new/giveaway_banner_url.png");
 	}
 
+	#hero-section-content {
+		max-width: 1366px;
+
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+
+		align-items: flex-start;
+		justify-content: center;
+		width: 100%;
+
+	}
+
 	@media(min-width: 1366px){
 		#hero-section.uncovered {
-		background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
-	}
+			background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
+		}
 	}
 
 	#hero-section h1 {
@@ -78,7 +88,7 @@ export default css`
 		max-width: min(525px, 65%);
 	}
 
-	#hero-section p:not(.diff-url) {
+	#hero-section .hero-message {
 		font-family: Hind;
 		font-size: var(--subheader-font-size);
 		font-weight: 400;
@@ -87,7 +97,12 @@ export default css`
 		text-align: left;
 		margin: 0;
 		color: #292C3A;
-		width: 50%;
+		margin-bottom: 25px;
+		max-width: min(555px, 65%);
+	}
+
+	#hero-section .hero-message.with-input {
+		margin: 0;
 	}
 
 	.back-to-giveaway-home {
@@ -97,9 +112,13 @@ export default css`
 		gap: 10px;
 		position: absolute;
 		left: 100px;
-		top: 15px;
+		top: 35px;
 		border-bottom: 1px solid transparent;
-		width: fit-content;
+		width: 200px;
+	}
+
+	.back-to-giveaway-home:hover {
+		cursor: pointer;
 	}
 
 	.back-to-giveaway-home img {
@@ -113,11 +132,6 @@ export default css`
 		font-size: var(--font-size);
 		font-weight: 600;
 		margin: 5px 0;
-	}
-
-	.back-to-giveaway-home:hover {
-		border-color: var(--font-color);
-		cursor: pointer;
 	}
 
 	#hero-section .store-logo {
@@ -147,6 +161,8 @@ export default css`
 	#hero-section sl-input::part(input) {
 		height: 3em;
 	}
+
+	
 
 	/* #hero-section .error::part(base){
 		border-color: #eb5757;
@@ -186,22 +202,26 @@ export default css`
 	}
 
 	.square::part(indicator) {
-		width: 100px;
-		height: 100px;
+		width: 120px;
+		height: 120px;
 		border-radius: 10px;
 	}
 
 	img.square {
-		width: 100px;
-		height: 100px;
+		width: 120px;
+		height: 120px;
 		border-radius: 10px;
 		padding: 10px;
 	}
 
 	#img-holder {
-		height: 120px;
+		height: 140px;
+		width: 160px;
 		border-radius: 10px;
 		box-shadow: 0px 4px 30px 0px #00000014;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	#words {
@@ -233,6 +253,10 @@ export default css`
 
 	#words sl-skeleton:nth-child(4)::part(base) {
 		width: 60%;
+	}
+
+	.app-desc {
+		max-width: 700px;
 	}
 
 	#categories > *::part(indicator) {
@@ -335,6 +359,13 @@ export default css`
 .feedback-holder p {
 	margin: 0;
 	font-size: 14px;
+	line-height: 14px;
+}
+
+.error-info {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
 }
 
 .error-title {
@@ -343,7 +374,6 @@ export default css`
 
 .error-desc {
 	max-height: 175px;
-	overflow-y: auto;
 	line-height: normal;
 }
 
@@ -514,9 +544,11 @@ sl-details::part(header):focus {
 .primary::part(base) {
 	background-color: var(--font-color);
 	color: white;
-	font-size: 14px;
-	height: 3em;
+	font-size: var(--button-font-size);
+	padding: var(--button-padding);
 	border-radius: 50px;
+	display: flex;
+	align-items: center;
 }
 
 .primary::part(label){
@@ -531,8 +563,20 @@ sl-details::part(header):focus {
 
 .retest-button {
 	position: absolute;
+	width: 100px;
+	height: 35px;
 	right: 95px;
-	top: 25px;
+	top: 30px;
+}
+
+.retest-button img {
+	width: 14px;
+	height: 14.7px;
+}
+
+.retest-button p {
+	font-size: 12px !important;
+	font-weight: bold !important;
 }
 
 .secondary::part(base) {
@@ -561,6 +605,7 @@ sl-details::part(header):focus {
 	padding: 20px;
 	border-radius: 10px;
 	background-color: #ffffff;
+	box-shadow: 0px 4px 30px 0px #00000014;
 }
 
 #qual-section li {
@@ -577,23 +622,33 @@ sl-details::part(header):focus {
 	align-items: center;
 	justify-content: center;
 	padding: 40px;
-	position: relative;
 	width: 100%;
 }
 
 #footer-section-grid {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	width: 80%;
+	width: 100%;
 	column-gap: 20px;
 	row-gap: 50px;
+	max-width: 1366px;
+}
+
+.footer-grid-one-row {
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: unset;
+}
+
+.footer-grid-two-row {
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
 }
 
 #marketing-img {
 	border-radius: 10px;
-	width: 430px;
-	height: auto;
+	max-width: 100%; /* Set the maximum width to 100% of its container */
+  max-height: 100%; /* Set the maximum height to 100% of its container */
+  width: auto; /* Allow the width to adjust proportionally */
+  height: auto; /* Allow the height to adjust proportionally */
 }
 
 .footer-text {
@@ -608,11 +663,13 @@ sl-details::part(header):focus {
 }
 
 .footer-text sl-button::part(base){
-	width: 35%;
+	width: 50%;
+	display: flex;
+  align-items: center;
 }
 
 .subheader {
-	font-size: 24px;
+	font-size: 36px;
 	font-weight: 700;
 	color: var(--font-color);
 }
@@ -620,13 +677,7 @@ sl-details::part(header):focus {
 .body-text {
 	font-size: 16px;
 	color: var(--font-color);
-}
-
-.large-subheader {
-	font-size: 36px;
-	font-weight: 700;
-	color: var(--font-color);
-	line-height: 40px;
+	max-width: 500px;
 }
 
 .large-body-text {
@@ -635,12 +686,33 @@ sl-details::part(header):focus {
 	width: 76%;
 }
 
-.wheel-img {
+.grid-item {
+	display: flex;
+	justify-content: center;
+}
+
+.grid-img {
+	justify-content: flex-end;
+}
+
+.sc-img {
+	justify-content: flex-start;
+}
+
+.wheel-img-1024, .wheel-img-small {
+	display: none;
+}
+
+.grid-img img {
+	max-width: 100%;
+	max-height: 100%;
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	width: 500px;
+	height: 25vw;
+	width: auto;
 }
+
 
 #terms-and-conditions {
 	display: flex;
@@ -683,11 +755,92 @@ sl-details::part(header):focus {
 	height: 309px;
 	background-image: url("/assets/microsoft-promo-banner.png");
 	background-repeat: no-repeat;
-	background-size: cover;
+	background-size: 100%;
 	background-position: center;
+	margin-bottom: 0px !important;
+}
+
+.dialog::part(body){
+	padding-top: 0;
+	padding-bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+.dialog::part(header){
+	width: 100%;
+}
+.dialog::part(title){
+	font-weight: 600;
+  font-size: 20px;
+}
+.dialog::part(panel) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 65%;
+	position: relative;
+}
+.dialog::part(overlay){
+	backdrop-filter: blur(10px);
+}
+.dialog::part(close-button__base){
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.dialog h2 {
+	color: var(--primary-color);
+	font-size: var(--subheader-font-size);
+	margin: 0;
+}
+
+.dialog p, .dialog li {
+	margin: 0;
+	font-size: var(--font-size);
+}
+
+.accept-terms {
+	width: fit-content;
+	align-self: flex-end;
+	margin-bottom: 30px;
+}
+
+
+
+@media(max-width: 1920px){
+
+}
+
+@media(max-width: 1366px){
+	#wrapper {
+		background-color: #ffffff;
+	}
+
+	.feedback-holder p {
+		font-size: 16px;
+		line-height: 16px;
+	}
+
+	#terms-and-conditions label {
+		font-size: 16px;
+	}
+
+	#terms-and-conditions p {
+		font-size: 16px;
+	}
+
+	.body-text {
+		font-size: 20px;
+	}
 }
 
 @media(max-width: 1024px){
+	.subheader {
+		font-size: 24px;
+		text-align: center;
+	}
 
 	#app-info {
 		flex-direction: column;
@@ -700,5 +853,213 @@ sl-details::part(header):focus {
 		min-width: 50px;
 	}
 
+	.wheel-img-1920 {
+		display: none;
+	}
+	.wheel-img-1024 {
+		display: flex;
+	}
+	.footer-text {
+		align-items: center;
+	}
+
+	.footer-text sl-button::part(base) {
+		width: 100%;
+	}
+
+	.large-body-text, .large-subheader, .body-text {
+		text-align: center;
+	}
+
+	#marketing-img {
+		height: 200px;
+	}
+
 }
+
+@media(max-width: 750px){
+	#hero-section h1, #hero-section .hero-message {
+		max-width: 95%;
+	}
+
+	#footer-section-grid {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.wheel-img-1024 {
+		display: none;
+	}
+	.wheel-img-small {
+		display: flex;
+	}
+
+	.grid-img img {
+		position: unset;
+		height: auto;
+		width: 100%;
+	}
+
+	.wheel-img-small {
+		width: 100%;
+	}
+
+	#footer-section {
+		padding: 0;
+		padding-top: 40px;
+	}
+}
+
+@media(max-width: 620px){
+	.input-area {
+		width: 100%;
+	}
+	.input-area form {
+		flex-direction: column;
+	}
+	#hero-section sl-input::part(base) {
+		width: 100%;
+	}
+	#hero-section .primary::part(base){
+		width: 33%;
+	}
+
+	
+
+	
+}
+
+@media(max-width: 420px) {
+	#hero-section-bottom {
+		height: 115px !important;
+	}
+
+	#hero-section.uncovered, #hero-section.covered {
+		background-image: url('/assets/new/giveaway_banner_mobile.png');
+	}
+	
+	#footer-section {
+		padding: 0;
+	}
+
+	#footer-section-grid {
+		width: 100%;
+	}
+	
+
+	.sc-img {
+		padding: 40px 40px 0 40px;
+	}
+
+	.footer-text {
+		padding: 0 40px;
+	}
+}
+
+${smallBreakPoint(css`
+	.retest-button {
+		top: 21px;
+	}
+	.secondary::part(label) {
+		gap: 5px;
+	}
+	.back-to-giveaway-home {
+		left: 45.26px;
+    top: 98px;
+	}
+	.back-to-giveaway-home img {
+		width: 25px;
+    height: 13.75px;
+	}
+	.store-logo {
+		width: 45px;
+		height: 45px;
+	}
+	#hero-section {
+		padding: 50px;
+		height: 482px;
+	}
+	#hero-section p {
+		width: 100% !important;
+	}
+	#app-info-section {
+		width: 90%;
+	}
+	#img-holder {
+		width: 115px;
+		height: 115px;
+	}
+	#words p {
+		width: 155px !important;
+		white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	}
+	#action-items-section {
+		width: 90%;
+	}
+	#qual-section {
+		width: 90%;
+	}
+	#sign-in-section {
+		width: 90%;
+	}
+	#sign-in-section sl-button {
+		width: 100%;
+	}
+	#hero-section-bottom {
+		height: 138px;
+	}
+`)}
+
+${mediumBreakPoint(css`
+.retest-button {
+		top: 21px;
+	}
+	.back-to-giveaway-home {
+		left: 45.26px;
+    top: 30.5px;
+	}
+	.back-to-giveaway-home img {
+		width: 25px;
+    height: 13.75px;
+	}
+	.store-logo {
+		width: 45px;
+		height: 45px;
+	}
+	#hero-section {
+		height: 303px;
+		padding: 50px;
+	}
+	#hero-section p {
+		width: 100% !important;
+	}
+	#img-holder {
+		/* width:  */
+	}
+	#words {
+		width: 60%;
+	}
+	#words p {
+		height: auto;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	}
+	#hero-section-bottom {
+		height: 145px;
+	}
+`)}
+
+${largeBreakPoint(css`
+	#hero-section p {
+		width: 70% !important;
+	}
+	#hero-section-bottom {
+		height: 199px;
+	}
+`)}
 `

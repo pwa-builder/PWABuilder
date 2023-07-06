@@ -158,6 +158,7 @@ export class PublishPane extends LitElement {
         height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
         /* temporary style change for token trial */
@@ -612,15 +613,17 @@ export class PublishPane extends LitElement {
         border-radius: 0px 0px 10px 10px;
         padding: 10px;
         border: none;
+        font-weight: 600;
+        gap: 7px;
+      }
+
+      #windows-package-token-banner:hover {
+        cursor: pointer;
       }
 
       #token-banner-windows-icon img {
         width: 31px;
-        height: 27px;
-      }
-
-      #token-banner-text {
-        padding: 0 7px;
+        height: auto;
       }
 
       #token-banner-text p {
@@ -633,6 +636,26 @@ export class PublishPane extends LitElement {
 
       #token-banner-arrow {
         align-self: flex-end;
+      }
+
+      #windows-package-token-banner:hover #token-banner-arrow {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
       }
 
       /* > 1920 */
@@ -975,7 +998,7 @@ export class PublishPane extends LitElement {
             </ul>
           </div>
           ${ platform.title === "Windows" ? html`
-              <button id="windows-package-token-banner" @click=${() => Router.go(`/congratulations`)}>
+              <button id="windows-package-token-banner" @click=${() => this.goToTokenPage()}>
                 <div id="token-banner-windows-icon">
                   <img src="/assets/microsoft_store_icon_white.png" alt="Windows">
                 </div>
@@ -992,6 +1015,12 @@ export class PublishPane extends LitElement {
           }
         </div>`
     );
+  }
+
+  goToTokenPage(){ 
+    let current = new URL(location.href);
+    let url = current.searchParams.get('site');
+    Router.go(`/freeToken?site=${url}`)
   }
 
   async hideDialog(e: any){

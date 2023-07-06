@@ -57,7 +57,8 @@ export class AppToken extends LitElement {
   
   @state() heroBanners = {covered: false, uncovered: true};
 
-  // @state() proxyLoadingImage: boolean = false;
+  @state() showTerms: boolean = false;
+  @state() acceptedTerms: boolean = false;
 
   @state() userAccount = {
     accessToken: '',
@@ -66,7 +67,7 @@ export class AppToken extends LitElement {
     loggedIn: false
   };
   @state() authModule = new AuthModule();
-
+  @state() tokenId: string = '';
 
   static get styles() {
     return [
@@ -105,14 +106,24 @@ export class AppToken extends LitElement {
   }
 
   async validateUrl(){
+
+    if(sessionStorage.getItem('PWABuilderManifest')){
+      this.manifest = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifest;
+      this.manifestUrl = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifestUrl;
+    }
+
     const encodedUrl = encodeURIComponent(this.siteURL);
 
     const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
-    let headers = getHeaders();
+    
+    let headers = {...getHeaders(), 'content-type': 'application/json' };
+
+    console.log(`the manifest in this context is ${JSON.stringify(this.manifest)}}`)
 
     try {
       const response = await fetch(validateGiveawayUrl, {
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify({manifestJson: Object.keys(this.manifest).length > 0 ? this.manifest : null}),
         headers: new Headers(headers)
       });
       
@@ -126,7 +137,7 @@ export class AppToken extends LitElement {
 
       const responseData = await response.json();
 
-      console.log(`repsonseData = ${responseData}`)
+      //console.log(`repsonseData = ${JSON.stringify(responseData)}`)
 
       if(!responseData){
         console.warn(
@@ -142,11 +153,15 @@ export class AppToken extends LitElement {
       }
 
       this.testResults = responseData.testResults;
-      this.manifest = responseData.manifestJson;
-      this.manifestUrl = responseData.manifestUrl;
-      this.testsPassed = responseData.isEligibleForToken;
 
-      console.log(this.testResults);
+      if(!this.manifest){
+        this.manifest = responseData.manifestJson;
+        this.manifestUrl = responseData.manifestUrl;
+
+      }
+
+      this.testsPassed = responseData.isEligibleForToken;
+      this.dupeURL = responseData.isInDenyList
 
     } catch (e) {
       console.error(e);
@@ -296,8 +311,10 @@ export class AppToken extends LitElement {
     if(userResult != null) {
       console.log(userResult);
       this.userAccount = userResult;
+      await this.claimToken();
       this.userAccount.loggedIn = true;
     }
+    this.requestUpdate();
   }
 
   async signOut() {
@@ -328,14 +345,19 @@ export class AppToken extends LitElement {
       const response = await request.json() as {tokenId: string, errorMessage: string, rawError: unknown}
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
-        Router.go(`/congratulations/${response.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
+        this.tokenId = response.tokenId
       }
       else {
         this.errorGettingToken = true;
+        this.dupeURL = true;
         this.errorMessage = response.errorMessage;
       }
     }
     catch(e){}
+  }
+
+  goToCongratulationsPage(){
+    Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
   }
 
   handleEnteredURL(e: SubmitEvent, root: any){
@@ -359,8 +381,14 @@ export class AppToken extends LitElement {
 
     if(isValidUrl){
       input.setCustomValidity("");
-      root.siteURL = url;
-      Router.go(`/giveaway?site=${root.siteURL}`)
+      
+      const urlParams = new URLSearchParams(window.location.search);
+
+      urlParams.set('site', url);
+
+      window.location.search = urlParams.toString();
+
+      root.runGiveawayTests();
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
       input.reportValidity();
@@ -378,21 +406,33 @@ export class AppToken extends LitElement {
     this.heroBanners.uncovered = !covered;
   }
 
+  showTandC(){
+    this.showTerms = true;
+  }
+
+  handleTermsResponse(accepted: boolean){
+    this.showTerms = false;
+    let checkbox = this.shadowRoot!.querySelector(".confirm-terms") as HTMLInputElement;
+    checkbox.checked = accepted;
+    this.acceptedTerms = accepted;
+  }
+
   render(){
     return html`
     <div id="wrapper">
       <div id="hero-section" class=${classMap(this.heroBanners)}>
+        <div id="hero-section-content">
         ${!this.testsInProgress && this.siteURL ? 
           html`
-            <div class="back-to-giveaway-home" @click=${() => Router.go("/giveaway")}>
+            <div class="back-to-giveaway-home" @click=${() => Router.go("/freeToken")}>
               <img src="/assets/new/left-arrow.svg" alt="enter new url" />
               <p class="diff-url">
                 Enter different URL
               </p>
             </div>
-            <sl-button class="retest-button secondary" @click=${() => Router.go(`/giveaway?site=${this.siteURL}`)}>
-              Retest site
-              <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+            <sl-button class="retest-button secondary" @click=${() => Router.go(`/freeToken?site=${this.siteURL}`)}>
+                <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+                <p>Retest site</p>
             </sl-button>` :
           html``}
         <img class="store-logo" src="/assets/new/msft-logo-giveaway.svg" alt="Microsoft Icon" />
@@ -409,6 +449,7 @@ export class AppToken extends LitElement {
           this.handleEnteredURL,
           this
         )}
+        </div>
       </div>
       ${this.siteURL ? 
         html`
@@ -432,7 +473,8 @@ export class AppToken extends LitElement {
                 enhancementsRatio: this.enhancementsRatio,
                 requiredRatio: this.requiredRatio,
                 enhancementsIndicator: this.enhancementsIndicator,
-              }
+              },
+              this.userAccount
             )}
           </div>
           ${!this.userAccount.loggedIn ? html`
@@ -529,36 +571,73 @@ export class AppToken extends LitElement {
                   </sl-button>` : 
               html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
               </div>
-            ` : html `
+            ` : 
+              !this.dupeURL ?
+            html `
                 <div id="terms-and-conditions">
-                  <label><input type="checkbox" /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                  <sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>
+                  <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                  <sl-button class="primary" @click=${this.goToCongratulationsPage} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
                   <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
-            `}
+            ` :
+            html`
+              <sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
+            `
+          
+          }
         ` : html``}
-      ${!this.siteURL ?
-        html`
+      
           <div id="footer-section">
-            <div id="footer-section-grid">
-              <img id="marketing-img" src="/assets/new/pwabuilder-sc.png" alt="pwabuilder home page" />
-              <div class="footer-text">
-                <p class="subheader">Ship your PWAs to App Store</p>
-                <p class="body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
-                <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
-              </div>
-              <div class="footer-text">
-                <p class="large-subheader">Find your success in the Microsoft Store</p>
+            <!-- Class Map to show the whole grid vs just the last half of the grid -->
+            <div id="footer-section-grid" class=${classMap({"footer-grid-one-row": this.siteURL.length > 0, "footer-grid-two-row": this.siteURL.length == 0})}>
+            ${!this.siteURL ?
+              html`
+                <div class="grid-item sc-img"><img id="marketing-img" src="/assets/new/marketing-img1.png" alt="pwabuilder home page" /></div>
+                
+                <div class="grid-item footer-text">
+                  <p class="subheader">Ship your PWAs to App Store</p>
+                  <p class="body-text">Build and Package progressive web apps for native app stores with PWABuilder.</p>
+                  <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
+                </div> ` 
+                : null
+              }
+              <div class="grid-item footer-text">
+                <p class="subheader">Find your success in the Microsoft Store</p>
                 <p class="large-body-text">Companies of all sizes—from startups to Fortune 500s—have used PWABuilder to package their PWAs.</p>
               </div>
-              <img class="wheel-img" src="/assets/new/marketing-img2.png" alt="Logos of PWAs in the microsoft store" />
+              <div class="grid-item grid-img wheel-img-1920"><img src="/assets/new/marketing-img2.png" alt="different PWAs" /></div>
+              <div class="grid-item grid-img wheel-img-1024"><img src="/assets/new/marketing-img2.png" alt="different PWAs" /></div>
+              <div class="grid-item grid-img wheel-img-small"><img src="/assets/new/marketing-img2-mobile.png" alt="different PWAs" /></div>
             </div>
           </div>
-        ` : html``
-      }
-     
+        
+      <!-- <div id="hero-section-bottom">
+
+      </div>    -->
     </div>
+
+    <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
+      
+      <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
+      <h2>Offer details, terms, and conditions</h2>
+      <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to the first [number] qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11. To qualify, you must:</p>
+      <ul>
+        <li>Own a PWA that meets the technical requirements listed here</li>
+        <li>You are legally residing in [what countries can we say?]</li>
+        <li>Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account</li>
+        <li>Not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+        <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+        <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
+        <li>Offer open to signups from [date] through [date] midnight Pacific Standard Time, or when the limited supply of [number] tokens run out, whichever comes first. Limit one free account token per developer and PWA.</li>
+      </ul>
+      <p>If you qualify and tokens are available, you will be given a token on this page when you submit the form. You can come back to this page to retrieve your token again at any time by signing in with your Microsoft Account. Free developer account tokens are not valid if transferred, sold, or otherwise used by any Microsoft Account other than the one which signed up here. These tokens are for individual, not corporate, Microsoft Store on Windows developer accounts. </p>
+      <h2>Privacy and Communications</h2>
+      <p>When you sign up, we will securely retain an anonymous account id and your PWA URL to enforce the above requirements. We will not store your name or email and we will not contact you.</p>
+      <p>All data is retained in accordance with the Microsoft Privacy Policy found here: https://go.microsoft.com/fwlink/?LinkId=521839.</p>
+      <sl-button class="primary accept-terms" @click=${() => this.handleTermsResponse(true)}>Accept Terms</sl-button>
+    </sl-dialog>
     `
+    
   }
 }
 

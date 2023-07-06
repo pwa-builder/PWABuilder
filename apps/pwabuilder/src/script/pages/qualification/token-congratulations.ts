@@ -38,7 +38,6 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
     let toolTip = this.shadowRoot!.getElementById("tool-tip");
     let code = (codeBox as HTMLInputElement).value;
     navigator.clipboard.writeText(code).then(() => { 
-      console.log("hit");
       setTimeout(()=> {
         toolTip!.removeAttribute("open")
       }, 2000);     

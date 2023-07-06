@@ -35,11 +35,11 @@ export default css`
   }
   #token-id {
     display: grid;
-    grid-auto-rows: 150px;
+    grid-auto-rows: 165px;
     grid-auto-columns: 82px;
     grid-row-gap: 95px;
     width: 719px;
-    height: 647px;
+    height: 691px;
     margin: 20px 0;
     background-image: url(/assets/token_code_bg_image.png);
     background-repeat: no-repeat;
@@ -103,10 +103,10 @@ export default css`
     background: #ffffff;
     border: 1px;
     border-radius: 4px;
-    margin-left: 9px;
     background: #ffffff;
     border: 1px dashed #000000;
     border-radius: 4px;
+
   }
   .copy-button {
     display: flex;
@@ -121,11 +121,11 @@ export default css`
   }
   #next-steps {
     width: 719px;
-    height: 300px;
+    height: 325px;
     border-radius: 10px;
     background-color: #fff;
     align-self: center;
-    font-size: 13px;
+    font-size: 14px;
   }
   #next-steps h3 {
     font-family: Hind;
@@ -160,8 +160,40 @@ export default css`
   #publishing-instructions {
     padding: 0px 0px 10px 20px;
   }
-  //screen at pixels 479 and 639 seem to not take breakpoint styling -- bug
+
+  @media screen and (max-width: 479px) {
+    .token-input-container {
+      height: 50px;
+    }
+    #code {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .token-input-container sl-input::part(base) {
+      height: 40px;
+    }
+    .copy-button {
+      width: 45px;
+      height: 40px;
+    }
+    .url {
+      width: 100px;
+      font-size: 11px;
+    }
+  }
+
+  @media screen and (min-width: 1199px) {
+    #header h1 {
+      max-width: 900px;
+    }
+  }
+  /* screen at pixels 479 and 639 seem to not take breakpoint styling -- bug */
   ${smallBreakPoint(css`
+    #header h1 {
+      font-size: 30px;
+      line-height: 36px;
+    }
     #congrats-wrapper {
       padding: 30px;
     }
@@ -169,16 +201,24 @@ export default css`
       padding: 0;
     }
     #token-id {
-      width: 369px;
-      height: 347px;
+      width: 345px;
+      height: 519px;
+      background-image: url(/assets/congrats-manny-mobile.png);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
       grid-auto-rows: 100px;
-      grid-auto-columns: 35px;
-      row-gap: 20px;
+      grid-auto-columns: 22px;
+      row-gap: 108px;
+      align-self: center;
     }
     .token-input-container {
       width: 300px;
       height: 60px;
       grid-column-start: 2;
+    }
+    .token-input-container sl-input::part(input) {
+      text-align: center;
     }
     .site-card {
       width: 185px;
@@ -196,10 +236,9 @@ export default css`
       height: 50px;
     }
     #next-steps {
-      width: 369px;
-      height: 347px;
-      font-size: 9px;
-      /* padding: 20px 16px; */
+      width: 345px;
+      height: 519px;
+      font-size: 14px;
     }
   `)}
   ${mediumBreakPoint(css`
@@ -230,6 +269,7 @@ export default css`
       font-size: 18px;
     }
     .url {
+      width: 125px;
       font-size: 11px;
     }
     .site-icon {
@@ -238,6 +278,7 @@ export default css`
     }
     #next-steps {
       width: 469px;
+      height: 300px;
       font-size: 10px;
     }
   `)}
@@ -248,6 +289,7 @@ ${largeBreakPoint(css`
     #token-id {
       width: 570px;
       height: 548px;
+      grid-auto-rows: 150px;
       align-self: center;
       grid-auto-columns: 82px;
       row-gap: 45px;
@@ -261,7 +303,7 @@ ${largeBreakPoint(css`
     }
     #next-steps {
       width: 570px;
-      height: 315px;
+      height: 370px;
       align-self: center;
     }
   `)}
