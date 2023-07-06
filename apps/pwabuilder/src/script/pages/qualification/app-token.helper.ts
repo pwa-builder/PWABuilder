@@ -8,6 +8,7 @@ export function handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: stri
     }
 
     let url = resolveUrl(manifestURL, manifest?.startUrl);
+
     url = resolveUrl(url?.href, icon.src);
 
     if (url) {
@@ -86,7 +87,6 @@ export async function populateAppCard(siteURL: string, manifest: Manifest, manif
 			iconUrl = "/assets/icons/icon_512.png"
 		}
 
-		
 		// this.proxyLoadingImage = true;
 		await testImage(iconUrl).then(
 			function fulfilled(_img) {

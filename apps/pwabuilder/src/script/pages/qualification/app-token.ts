@@ -106,14 +106,24 @@ export class AppToken extends LitElement {
   }
 
   async validateUrl(){
+
+    if(sessionStorage.getItem('PWABuilderManifest')){
+      this.manifest = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifest;
+      this.manifestUrl = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifestUrl;
+    }
+
     const encodedUrl = encodeURIComponent(this.siteURL);
 
     const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
-    let headers = getHeaders();
+    
+    let headers = {...getHeaders(), 'content-type': 'application/json' };
+
+    console.log(`the manifest in this context is ${JSON.stringify(this.manifest)}}`)
 
     try {
       const response = await fetch(validateGiveawayUrl, {
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify({manifestJson: Object.keys(this.manifest).length > 0 ? this.manifest : null}),
         headers: new Headers(headers)
       });
       
@@ -141,14 +151,17 @@ export class AppToken extends LitElement {
         console.error(responseData.error)
         this.noManifest = true;
       }
-      
+
       this.testResults = responseData.testResults;
-      this.manifest = responseData.manifestJson;
-      this.manifestUrl = responseData.manifestUrl;
+
+      if(!this.manifest){
+        this.manifest = responseData.manifestJson;
+        this.manifestUrl = responseData.manifestUrl;
+
+      }
+
       this.testsPassed = responseData.isEligibleForToken;
       this.dupeURL = responseData.isInDenyList
-
-      console.log(this.testResults);
 
     } catch (e) {
       console.error(e);
