@@ -1,5 +1,5 @@
 import { Router } from '@vaadin/router';
-import { LitElement, TemplateResult, html } from 'lit';
+import { LitElement, PropertyValueMap, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../../components/arrow-link'
@@ -75,6 +75,22 @@ export class AppToken extends LitElement {
     ]
   }
 
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    console.log("First updated", window.location.host + `/freeToken`)
+    this.authModule = new AuthModule(window.location.host + `/freeToken`);
+    this.checkIfLoggedIn();
+  }
+
+  async checkIfLoggedIn() {
+    const account = await (this.authModule as AuthModule).registerPostLoginListener();
+    console.log("Access token", account)
+    if(account !== null) {
+      console.log("ACCESS TOKEN REACHED")
+      this.userAccount = account;
+      this.userAccount.loggedIn = true;
+      //this.getUserToken();
+    }
+  }
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     const search = new URLSearchParams(location.search);
@@ -83,11 +99,10 @@ export class AppToken extends LitElement {
       this.siteURL = site;
       this.runGiveawayTests();
     }
-    
     this.decideBackground();
   }
 
-  async runGiveawayTests(){
+  async runGiveawayTests(){f
     
     this.decideBackground();
     // run giveaway validation suite.
@@ -293,7 +308,7 @@ export class AppToken extends LitElement {
 
   async signInUser() {
     try {
-    const result = await this.authModule.signIn();
+    const result = await (this.authModule as AuthModule).signIn();
     if(result != null && result != undefined && "idToken" in result){
       return result;
     }
@@ -301,7 +316,7 @@ export class AppToken extends LitElement {
       return null;
     }
     catch(e) {
-      console.log("Authentication Error");
+      console.log("Authentication Error", e);
     } 
     return null;
   }
@@ -319,7 +334,7 @@ export class AppToken extends LitElement {
 
   async signOut() {
     try {
-      await this.authModule.signOut();
+      await (this.authModule as AuthModule).signOut();
       this.userAccount.loggedIn = false;
       this.requestUpdate();
     }

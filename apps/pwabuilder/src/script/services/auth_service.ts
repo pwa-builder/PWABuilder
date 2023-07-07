@@ -1,4 +1,4 @@
-import { PublicClientApplication, SilentRequest, AuthenticationResult, Configuration, AccountInfo, PopupRequest, EndSessionRequest } from "@azure/msal-browser";
+import { PublicClientApplication, SilentRequest, AuthenticationResult, Configuration, AccountInfo, RedirectRequest, EndSessionRequest } from "@azure/msal-browser";
 
 export class AuthModule {
   private readonly scopes: string[] = ['User.Read'];
@@ -7,6 +7,30 @@ export class AuthModule {
   private _publicClientApplication: PublicClientApplication | null = null;
 
 
+  constructor(redirectUri?: string) {
+    const msalConfig: Configuration = {
+      auth: {
+        clientId: "dec4afb2-2207-46f2-8ac6-ba781e2da39a",
+        authority: 'https://login.microsoftonline.com/common/',   
+        redirectUri: redirectUri      
+      },
+      cache: {
+        cacheLocation: 'sessionStorage',
+        storeAuthStateInCookie: true,
+      },
+    };
+    this._publicClientApplication = new PublicClientApplication(msalConfig);
+  }
+
+
+  public async registerPostLoginListener(): Promise<any | null> {
+    const tokenResponse = await this._publicClientApplication?.handleRedirectPromise();
+    console.log("Token response", tokenResponse)
+    if(tokenResponse != null) {
+      return tokenResponse;
+    }
+    return null;
+  }
   async signIn(): Promise<any> {
     return await this.signInWithMsal();
   }
@@ -15,7 +39,7 @@ export class AuthModule {
     const logOutRequest: EndSessionRequest = {
       account: this.getAccount(),
     };
-    const response = await this._publicClientApplication?.logoutPopup(
+    const response = await this._publicClientApplication?.logoutRedirect(
       logOutRequest
     );
     return response;
@@ -56,7 +80,7 @@ export class AuthModule {
     };
   }
 
-  private getAccessTokenSilent(): Promise<AuthenticationResult> {
+  public async getAccessTokenSilent(): Promise<AuthenticationResult> {
     if (!this._publicClientApplication) {
       return Promise.reject('No app context');
     }
@@ -74,16 +98,18 @@ export class AuthModule {
 
     try {
       const response = await this.getAccessTokenSilent();
+      console.log("ACCESS TOKEN SILENT", response);
       return response;
     } catch (e) {
       if (e) {
         try {
-          const loginRequest: PopupRequest = {
+          const loginRequest: RedirectRequest = {
             scopes: this.scopes,
+            state: "amrutha"
           };
-          const response =
-            await this._publicClientApplication.acquireTokenPopup(loginRequest);
-          return response;
+          // const response =
+            await this._publicClientApplication.acquireTokenRedirect(loginRequest);
+          
         } catch (e) {
           console.log("Authentication Error")
           throw e;
