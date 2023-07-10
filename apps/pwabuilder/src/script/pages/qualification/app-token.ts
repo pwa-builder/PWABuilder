@@ -102,7 +102,7 @@ export class AppToken extends LitElement {
     this.decideBackground();
   }
 
-  async runGiveawayTests(){f
+  async runGiveawayTests(){
     
     this.decideBackground();
     // run giveaway validation suite.
