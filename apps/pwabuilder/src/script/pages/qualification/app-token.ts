@@ -621,7 +621,7 @@ export class AppToken extends LitElement {
       </div>    -->
     </div>
 
-    <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
+    <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and Conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
       
       <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
       <h2>Offer details, terms, and conditions</h2>
