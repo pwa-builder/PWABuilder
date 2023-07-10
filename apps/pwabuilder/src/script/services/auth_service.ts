@@ -25,12 +25,12 @@ export class AuthModule {
 
   public async registerPostLoginListener(): Promise<any | null> {
     const tokenResponse = await this._publicClientApplication?.handleRedirectPromise();
-    console.log("Token response", tokenResponse)
     if(tokenResponse != null) {
       return tokenResponse;
     }
     return null;
   }
+
   async signIn(): Promise<any> {
     return await this.signInWithMsal();
   }
@@ -91,6 +91,7 @@ export class AuthModule {
     const silentRequest: SilentRequest = accessTokenRequest;
     return this._publicClientApplication.acquireTokenSilent(silentRequest);
   }
+
   private async getAccessToken(): Promise<AuthenticationResult> {
     if (!this._publicClientApplication) {
       return Promise.reject('No app context');
@@ -98,14 +99,12 @@ export class AuthModule {
 
     try {
       const response = await this.getAccessTokenSilent();
-      console.log("ACCESS TOKEN SILENT", response);
       return response;
     } catch (e) {
       if (e) {
         try {
           const loginRequest: RedirectRequest = {
             scopes: this.scopes,
-            state: "amrutha"
           };
           // const response =
             await this._publicClientApplication.acquireTokenRedirect(loginRequest);

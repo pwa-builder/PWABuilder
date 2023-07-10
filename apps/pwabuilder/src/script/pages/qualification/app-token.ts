@@ -68,6 +68,7 @@ export class AppToken extends LitElement {
   };
   @state() authModule = new AuthModule();
   @state() tokenId: string = '';
+  @state() validateUrlResponseData: any = {};
 
   static get styles() {
     return [
@@ -76,18 +77,20 @@ export class AppToken extends LitElement {
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    console.log("First updated", window.location.host + `/freeToken`)
     this.authModule = new AuthModule(window.location.host + `/freeToken`);
     this.checkIfLoggedIn();
   }
 
   async checkIfLoggedIn() {
     const account = await (this.authModule as AuthModule).registerPostLoginListener();
-    console.log("Access token", account)
     if(account !== null) {
-      console.log("ACCESS TOKEN REACHED")
       this.userAccount = account;
       this.userAccount.loggedIn = true;
+      const storedData = sessionStorage.getItem('validate_url_response');
+      if(storedData !== null) {
+        this.validateUrlResponseData = JSON.parse(storedData);
+      }
+
       //this.getUserToken();
     }
   }
@@ -152,7 +155,6 @@ export class AppToken extends LitElement {
 
       const responseData = await response.json();
 
-      //console.log(`repsonseData = ${JSON.stringify(responseData)}`)
 
       if(!responseData){
         console.warn(
@@ -166,6 +168,8 @@ export class AppToken extends LitElement {
         console.error(responseData.error)
         this.noManifest = true;
       }
+
+      sessionStorage.setItem('validate_url_response', JSON.stringify(responseData));
 
       this.testResults = responseData.testResults;
 
@@ -308,6 +312,7 @@ export class AppToken extends LitElement {
 
   async signInUser() {
     try {
+    
     const result = await (this.authModule as AuthModule).signIn();
     if(result != null && result != undefined && "idToken" in result){
       return result;
@@ -324,7 +329,6 @@ export class AppToken extends LitElement {
   async getUserToken() {
     const userResult = await this.signInUser();
     if(userResult != null) {
-      console.log(userResult);
       this.userAccount = userResult;
       await this.claimToken();
       this.userAccount.loggedIn = true;
