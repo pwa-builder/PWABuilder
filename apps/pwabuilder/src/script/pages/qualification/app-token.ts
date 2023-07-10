@@ -123,7 +123,12 @@ export class AppToken extends LitElement {
     try {
       const response = await fetch(validateGiveawayUrl, {
         method: 'POST',
-        body: JSON.stringify({manifestJson: Object.keys(this.manifest).length > 0 ? this.manifest : null}),
+        body: JSON.stringify(
+          {
+            manifestJson: Object.keys(this.manifest).length > 0 ? this.manifest : null,
+            manifestUrl: this.manifestUrl.length > 0 ? this.manifestUrl : null
+          }
+        ),
         headers: new Headers(headers)
       });
       
