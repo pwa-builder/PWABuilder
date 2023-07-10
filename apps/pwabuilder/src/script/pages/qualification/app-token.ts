@@ -167,20 +167,29 @@ export class AppToken extends LitElement {
         this.noManifest = true;
       }
 
-      this.testResults = responseData.testResults;
-
-      if(!this.manifest){
-        this.manifest = responseData.manifestJson;
-        this.manifestUrl = responseData.manifestUrl;
-
-      }
-
-      this.testsPassed = responseData.isEligibleForToken;
-      this.dupeURL = responseData.isInDenyList
+      this.registerData(responseData);
 
     } catch (e) {
       console.error(e);
     }
+  }
+
+  /* 
+    data can come from api response or
+    in the case of login, from the msal cached state.
+    this function allows us to update that information
+    from either method. 
+  */
+  registerData(data: any){
+    this.testResults = data.testResults;
+
+    if(!this.manifest){
+      this.manifest = data.manifestJson;
+      this.manifestUrl = data.manifestUrl;
+    }
+
+    this.testsPassed = data.isEligibleForToken;
+    this.dupeURL = data.isInDenyList;
   }
 
   handleInstallable(installable: any){
