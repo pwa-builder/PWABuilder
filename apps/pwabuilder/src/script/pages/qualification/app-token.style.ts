@@ -401,6 +401,8 @@ export default css`
 
 #action-items-section {
 	width: 75%;
+	box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 30px 0px;
+	border-radius: 10px;
 }
 
 .details::part(base) {
