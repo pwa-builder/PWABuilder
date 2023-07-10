@@ -82,20 +82,16 @@ export class AppToken extends LitElement {
   }
 
   async checkIfLoggedIn() {
-    console.log("in check if logged in")
     const account = await (this.authModule as AuthModule).registerPostLoginListener();
     if(account !== null) {
-      console.log("account isn't null")
       this.userAccount = account;
       this.userAccount.loggedIn = true;
-      console.log("before setting site url")
       this.siteURL = this.userAccount.state;
-      console.log("after setting site url")
+      
       const storedData = sessionStorage.getItem('validateUrlResponseData');
       if(storedData !== null) {
         this.validateUrlResponseData = JSON.parse(storedData);
         await this.registerData(this.validateUrlResponseData);
-        console.log("registered data from ss")
         return true;
       } else {
         return false;
@@ -107,21 +103,15 @@ export class AppToken extends LitElement {
   }
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    console.log("connected call back")
     
     this.authModule = new AuthModule(window.location.host + `/freeToken`);
-    console.log("checking if logged in")
     let dataRegisted: boolean = await this.checkIfLoggedIn();
-    console.log("checked if logged in")
-
 
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
-      console.log("site detected in query param")
       this.siteURL = site;
       if(!dataRegisted){
-        console.log("no data registered, running tests from api")
         this.runGiveawayTests();
       }
     }
@@ -154,8 +144,6 @@ export class AppToken extends LitElement {
     const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
     
     let headers = {...getHeaders(), 'content-type': 'application/json' };
-
-    console.log(`the manifest in this context is ${JSON.stringify(this.manifest)}}`)
 
     try {
       const response = await fetch(validateGiveawayUrl, {
@@ -205,11 +193,9 @@ export class AppToken extends LitElement {
     from either method. 
   */
   async registerData(data: any){
-    console.log("responsedata = ", data)
     this.testResults = data.testResults;
     
     if(Object.keys(this.manifest).length == 0){
-      console.log("hit")
       this.manifest = data.manifestJson;
       this.manifestUrl = data.manifestUrl;
     }

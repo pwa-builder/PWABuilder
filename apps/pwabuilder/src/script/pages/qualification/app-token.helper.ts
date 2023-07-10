@@ -100,9 +100,6 @@ export async function populateAppCard(siteURL: string, manifest: Manifest, manif
 		);
 		// this.proxyLoadingImage = false;
 
-			console.log(manifest)
-			console.log("manifest.short_name", manifest.short_name)
-
 		return {
 			siteName: manifest.short_name
 				? manifest.short_name
