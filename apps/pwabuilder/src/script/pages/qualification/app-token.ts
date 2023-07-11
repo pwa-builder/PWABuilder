@@ -108,7 +108,6 @@ export class AppToken extends LitElement {
   async validateUrl(){
 
     if(sessionStorage.getItem('PWABuilderManifest') || sessionStorage.getItem('current_url') === this.siteURL){
-      console.log("hit")
       this.manifest = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifest;
       this.manifestUrl = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifestUrl;
     }

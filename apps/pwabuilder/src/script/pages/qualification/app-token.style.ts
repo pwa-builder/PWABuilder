@@ -516,7 +516,6 @@ sl-details::part(header):focus {
 .inner-todo p {
 	margin: 0;
 	font-size: 14px;
-	white-space: nowrap;
 }
 
 .inner-todo img {
@@ -918,6 +917,12 @@ sl-details::part(header):focus {
 		padding: 0;
 		padding-top: 40px;
 	}
+	.todos {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
 }
 
 @media(max-width: 620px){
@@ -937,15 +942,6 @@ sl-details::part(header):focus {
 	#hero-section .primary::part(base){
 		width: 33%;
 	}
-
-	.todos {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	
-
 	
 }
 
