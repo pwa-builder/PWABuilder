@@ -10,7 +10,7 @@ export class AuthModule {
   constructor(redirectUri?: string) {
     const msalConfig: Configuration = {
       auth: {
-        clientId: "dec4afb2-2207-46f2-8ac6-ba781e2da39a",
+        clientId: import.meta.env.VITE_CLIENT_ID as string,
         authority: 'https://login.microsoftonline.com/common/'
       },
       cache: {
@@ -47,7 +47,7 @@ export class AuthModule {
   private async signInWithMsal(state: string) {
     const msalConfig: Configuration = {
       auth: {
-        clientId: "dec4afb2-2207-46f2-8ac6-ba781e2da39a",
+        clientId: import.meta.env.VITE_CLIENT_ID as string,
         authority: 'https://login.microsoftonline.com/common/',       
       },
       cache: {
