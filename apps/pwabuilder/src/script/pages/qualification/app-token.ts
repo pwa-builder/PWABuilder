@@ -107,7 +107,8 @@ export class AppToken extends LitElement {
 
   async validateUrl(){
 
-    if(sessionStorage.getItem('PWABuilderManifest')){
+    if(sessionStorage.getItem('PWABuilderManifest') || sessionStorage.getItem('current_url') === this.siteURL){
+      console.log("hit")
       this.manifest = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifest;
       this.manifestUrl = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifestUrl;
     }
@@ -157,20 +158,25 @@ export class AppToken extends LitElement {
         this.noManifest = true;
       }
 
-      this.testResults = responseData.testResults;
-
-      if(!this.manifest){
-        this.manifest = responseData.manifestJson;
-        this.manifestUrl = responseData.manifestUrl;
-
-      }
-
-      this.testsPassed = responseData.isEligibleForToken;
-      this.dupeURL = responseData.isInDenyList
+      this.registerData(responseData);
 
     } catch (e) {
       console.error(e);
     }
+  }
+
+  registerData(data: any){
+    this.testResults = data.testResults;
+
+    if(Object.keys(this.manifest).length == 0){
+      this.manifest = data.manifestJson;
+      this.manifestUrl = data.manifestUrl;
+      sessionStorage.setItem('PWABuilderManifest', JSON.stringify(this.manifest));
+      sessionStorage.setItem('current_url', this.manifestUrl);
+    }
+
+    this.testsPassed = data.isEligibleForToken;
+    this.dupeURL = data.isInDenyList
   }
 
   handleInstallable(installable: any){
@@ -368,6 +374,8 @@ export class AppToken extends LitElement {
   handleEnteredURL(e: SubmitEvent, root: any){
     e.preventDefault();
 
+    sessionStorage.removeItem('PWABuilderManifest');
+
     let input: SlInput = root.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
 
     const data = new FormData(e.target as HTMLFormElement);
@@ -562,7 +570,7 @@ export class AppToken extends LitElement {
         <ul>
           ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
         </ul>
-        <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
+        <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and Conditions"}></arrow-link>
       </div>` : html``}
       ${this.siteURL ? 
         html`

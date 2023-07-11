@@ -938,6 +938,12 @@ sl-details::part(header):focus {
 		width: 33%;
 	}
 
+	.todos {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
 	
 
 	
