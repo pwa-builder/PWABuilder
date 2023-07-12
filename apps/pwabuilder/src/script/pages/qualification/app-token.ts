@@ -134,7 +134,7 @@ export class AppToken extends LitElement {
 
   async validateUrl(){
 
-    if(sessionStorage.getItem('PWABuilderManifest')){
+    if(sessionStorage.getItem('PWABuilderManifest') || sessionStorage.getItem('current_url') === this.siteURL){
       this.manifest = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifest;
       this.manifestUrl = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifestUrl;
     }
@@ -148,7 +148,12 @@ export class AppToken extends LitElement {
     try {
       const response = await fetch(validateGiveawayUrl, {
         method: 'POST',
-        body: JSON.stringify({manifestJson: Object.keys(this.manifest).length > 0 ? this.manifest : null}),
+        body: JSON.stringify(
+          {
+            manifestJson: Object.keys(this.manifest).length > 0 ? this.manifest : null,
+            manifestUrl: this.manifestUrl.length > 0 ? this.manifestUrl : null
+          }
+        ),
         headers: new Headers(headers)
       });
       
@@ -180,7 +185,7 @@ export class AppToken extends LitElement {
       sessionStorage.setItem("validateUrlResponseData", JSON.stringify(this.validateUrlResponseData));
 
       await this.registerData(responseData);
-
+      
     } catch (e) {
       console.error(e);
     }
@@ -198,6 +203,8 @@ export class AppToken extends LitElement {
     if(Object.keys(this.manifest).length == 0){
       this.manifest = data.manifestJson;
       this.manifestUrl = data.manifestUrl;
+      sessionStorage.setItem('PWABuilderManifest', JSON.stringify(this.manifest));
+      sessionStorage.setItem('current_url', this.manifestUrl);
     }
 
     this.testsPassed = data.isEligibleForToken;
@@ -207,6 +214,7 @@ export class AppToken extends LitElement {
     this.handleRequired(this.testResults.additional);
     this.handleEnhancements(this.testResults.progressive);
     this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
+
   }
 
   handleInstallable(installable: any){
@@ -404,6 +412,8 @@ export class AppToken extends LitElement {
   handleEnteredURL(e: SubmitEvent, root: any){
     e.preventDefault();
 
+    sessionStorage.removeItem('PWABuilderManifest');
+
     let input: SlInput = root.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
 
     const data = new FormData(e.target as HTMLFormElement);
@@ -598,7 +608,7 @@ export class AppToken extends LitElement {
         <ul>
           ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
         </ul>
-        <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and conditions"}></arrow-link>
+        <arrow-link .link=${"https://pwabuilder.com"} .text=${"Full Terms and Conditions"}></arrow-link>
       </div>` : html``}
       ${this.siteURL ? 
         html`
@@ -657,7 +667,7 @@ export class AppToken extends LitElement {
       </div>    -->
     </div>
 
-    <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
+    <sl-dialog class="dialog terms-and-conditions" label=${"Full Terms and Conditions"} .open=${this.showTerms} @sl-request-close=${() => this.handleTermsResponse(false)}>
       
       <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
       <h2>Offer details, terms, and conditions</h2>

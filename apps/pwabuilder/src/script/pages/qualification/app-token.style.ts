@@ -147,6 +147,7 @@ export default css`
 	.input-area form {
 		display: flex; 
 		gap: 10px;
+		align-items: center;
 	}
 
 	#hero-section sl-input::part(base) {
@@ -400,6 +401,8 @@ export default css`
 
 #action-items-section {
 	width: 75%;
+	box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 30px 0px;
+	border-radius: 10px;
 }
 
 .details::part(base) {
@@ -513,7 +516,6 @@ sl-details::part(header):focus {
 .inner-todo p {
 	margin: 0;
 	font-size: 14px;
-	white-space: nowrap;
 }
 
 .inner-todo img {
@@ -549,12 +551,12 @@ sl-details::part(header):focus {
 	border-radius: 50px;
 	display: flex;
 	align-items: center;
+	height: 3em;
 }
 
 .primary::part(label){
 	display: flex;
 	align-items: center;
-	padding: var(--button-padding);
 }
 
 .primary::part(base):hover {
@@ -582,7 +584,8 @@ sl-details::part(header):focus {
 .secondary::part(base) {
 	background-color: #ffffff;
 	color: var(--font-color);
-	font-size: 14px;
+	font-size: var(--button-font-size);
+	padding: var(--button-padding);
 	height: 3em;
 	border-radius: 50px;
 }
@@ -590,7 +593,6 @@ sl-details::part(header):focus {
 .secondary::part(label){
 	display: flex;
 	align-items: center;
-	padding: var(--button-padding);
 	gap: 10px;
 }
 
@@ -623,6 +625,7 @@ sl-details::part(header):focus {
 	justify-content: center;
 	padding: 40px;
 	width: 100%;
+	min-height: 25vw;
 }
 
 #footer-section-grid {
@@ -669,7 +672,7 @@ sl-details::part(header):focus {
 }
 
 .subheader {
-	font-size: 36px;
+	font-size: 24px;
 	font-weight: 700;
 	color: var(--font-color);
 }
@@ -809,8 +812,13 @@ sl-details::part(header):focus {
 
 
 
-@media(max-width: 1920px){
-
+@media(min-width: 1920px){
+	#hero-section h1 {
+		font-size: 40px;
+	}
+	.subheader {
+		font-size: 36px;
+	}
 }
 
 @media(max-width: 1366px){
@@ -909,6 +917,12 @@ sl-details::part(header):focus {
 		padding: 0;
 		padding-top: 40px;
 	}
+	.todos {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
 }
 
 @media(max-width: 620px){
@@ -917,6 +931,10 @@ sl-details::part(header):focus {
 	}
 	.input-area form {
 		flex-direction: column;
+		align-items: flex-start;
+	}
+	sl-input {
+		width: 100%;
 	}
 	#hero-section sl-input::part(base) {
 		width: 100%;
@@ -924,9 +942,6 @@ sl-details::part(header):focus {
 	#hero-section .primary::part(base){
 		width: 33%;
 	}
-
-	
-
 	
 }
 
