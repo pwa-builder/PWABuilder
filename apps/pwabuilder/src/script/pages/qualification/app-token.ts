@@ -1,5 +1,5 @@
 import { Router } from '@vaadin/router';
-import { LitElement, TemplateResult, html } from 'lit';
+import { LitElement, PropertyValueMap, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../../components/arrow-link'
@@ -64,10 +64,12 @@ export class AppToken extends LitElement {
     accessToken: '',
     email: '',
     name: '',
-    loggedIn: false
+    loggedIn: false,
+    state: ''
   };
   @state() authModule = new AuthModule();
   @state() tokenId: string = '';
+  @state() validateUrlResponseData: any = {};
 
   static get styles() {
     return [
@@ -75,15 +77,45 @@ export class AppToken extends LitElement {
     ]
   }
 
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    
+  }
+
+  async checkIfLoggedIn() {
+    const account = await (this.authModule as AuthModule).registerPostLoginListener();
+    if(account !== null) {
+      this.userAccount = account;
+      this.userAccount.loggedIn = true;
+      this.siteURL = this.userAccount.state;
+      
+      const storedData = sessionStorage.getItem('validateUrlResponseData');
+      if(storedData !== null) {
+        this.validateUrlResponseData = JSON.parse(storedData);
+        await this.registerData(this.validateUrlResponseData);
+        return true;
+      } else {
+        return false;
+      }
+
+      //this.getUserToken();
+    }
+    return false;
+  }
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+    
+    this.authModule = new AuthModule(window.location.host + `/freeToken`);
+    let dataRegisted: boolean = await this.checkIfLoggedIn();
+
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
       this.siteURL = site;
-      this.runGiveawayTests();
+      if(!dataRegisted){
+        this.runGiveawayTests();
+      }
     }
-    
+
     this.decideBackground();
   }
 
@@ -97,11 +129,6 @@ export class AppToken extends LitElement {
     await this.validateUrl();
 
     this.testsInProgress = false;
-
-    this.handleInstallable(this.testResults.installable);
-    this.handleRequired(this.testResults.additional);
-    this.handleEnhancements(this.testResults.progressive);
-    this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
 
   }
 
@@ -117,8 +144,6 @@ export class AppToken extends LitElement {
     const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
     
     let headers = {...getHeaders(), 'content-type': 'application/json' };
-
-    console.log(`the manifest in this context is ${JSON.stringify(this.manifest)}}`)
 
     try {
       const response = await fetch(validateGiveawayUrl, {
@@ -142,7 +167,6 @@ export class AppToken extends LitElement {
 
       const responseData = await response.json();
 
-      //console.log(`repsonseData = ${JSON.stringify(responseData)}`)
 
       if(!responseData){
         console.warn(
@@ -157,16 +181,25 @@ export class AppToken extends LitElement {
         this.noManifest = true;
       }
 
-      this.registerData(responseData);
+      this.validateUrlResponseData = responseData;
+      sessionStorage.setItem("validateUrlResponseData", JSON.stringify(this.validateUrlResponseData));
 
+      await this.registerData(responseData);
+      
     } catch (e) {
       console.error(e);
     }
   }
 
-  registerData(data: any){
+  /* 
+    data can come from api response or
+    in the case of login, from the msal cached state.
+    this function allows us to update that information
+    from either method. 
+  */
+  async registerData(data: any){
     this.testResults = data.testResults;
-
+    
     if(Object.keys(this.manifest).length == 0){
       this.manifest = data.manifestJson;
       this.manifestUrl = data.manifestUrl;
@@ -175,7 +208,13 @@ export class AppToken extends LitElement {
     }
 
     this.testsPassed = data.isEligibleForToken;
-    this.dupeURL = data.isInDenyList
+    this.dupeURL = data.isInDenyList;
+
+    this.handleInstallable(this.testResults.installable);
+    this.handleRequired(this.testResults.additional);
+    this.handleEnhancements(this.testResults.progressive);
+    this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
+
   }
 
   handleInstallable(installable: any){
@@ -303,7 +342,8 @@ export class AppToken extends LitElement {
 
   async signInUser() {
     try {
-    const result = await this.authModule.signIn();
+    
+    const result = await (this.authModule as AuthModule).signIn(this.siteURL);
     if(result != null && result != undefined && "idToken" in result){
       return result;
     }
@@ -311,7 +351,7 @@ export class AppToken extends LitElement {
       return null;
     }
     catch(e) {
-      console.log("Authentication Error");
+      console.log("Authentication Error", e);
     } 
     return null;
   }
@@ -319,7 +359,6 @@ export class AppToken extends LitElement {
   async getUserToken() {
     const userResult = await this.signInUser();
     if(userResult != null) {
-      console.log(userResult);
       this.userAccount = userResult;
       await this.claimToken();
       this.userAccount.loggedIn = true;
@@ -329,7 +368,7 @@ export class AppToken extends LitElement {
 
   async signOut() {
     try {
-      await this.authModule.signOut();
+      await (this.authModule as AuthModule).signOut();
       this.userAccount.loggedIn = false;
       this.requestUpdate();
     }
