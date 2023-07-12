@@ -48,7 +48,7 @@ jobs:
         with:
           envkey_VITE_CLIENT_ID: ${{ secrets.MSAL_CLIENT_ID }}
           file_name: .env
-          # directory: apps/pwabuilder
+          directory: apps/pwabuilder
 
       - name: 🛠️ Build
         run: |
