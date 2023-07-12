@@ -362,9 +362,10 @@ export class AppToken extends LitElement {
 
   async getUserToken() {
     const userResult = await this.signInUser();
+    // This one is not working anymore?
     if(userResult != null) {
       this.userAccount = userResult;
-      await this.claimToken();
+      // await this.claimToken();
       this.userAccount.loggedIn = true;
     }
     this.requestUpdate();
@@ -399,10 +400,12 @@ export class AppToken extends LitElement {
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
         this.tokenId = response.tokenId
+        this.goToCongratulationsPage();
       }
       else {
         this.errorGettingToken = true;
         this.dupeURL = true;
+        // @jay error like this is not working: errorMessage: "There are no more free tokens left. Please contact pwabuilder@microsoft.com"
         this.errorMessage = response.errorMessage;
       }
     }
@@ -631,7 +634,7 @@ export class AppToken extends LitElement {
             html `
                 <div id="terms-and-conditions">
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                  <sl-button class="primary" @click=${this.goToCongratulationsPage} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
+                  <sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
                   <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
             ` :
