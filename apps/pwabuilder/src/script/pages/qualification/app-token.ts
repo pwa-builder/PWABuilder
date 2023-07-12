@@ -135,8 +135,9 @@ export class AppToken extends LitElement {
   async validateUrl(){
 
     if(sessionStorage.getItem('PWABuilderManifest') || sessionStorage.getItem('current_url') === this.siteURL){
-      this.manifest = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifest;
-      this.manifestUrl = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!).manifestUrl;
+      let _storedData = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!);
+      this.manifest = _storedData?.manifest;
+      this.manifestUrl = _storedData?.manifestUrl;
     }
 
     const encodedUrl = encodeURIComponent(this.siteURL);
@@ -203,7 +204,10 @@ export class AppToken extends LitElement {
     if(Object.keys(this.manifest).length == 0){
       this.manifest = data.manifestJson;
       this.manifestUrl = data.manifestUrl;
-      sessionStorage.setItem('PWABuilderManifest', JSON.stringify(this.manifest));
+      sessionStorage.setItem('PWABuilderManifest', JSON.stringify({
+        manifest: this.manifest,
+        manifestUrl: this.manifestUrl
+      }));
       sessionStorage.setItem('current_url', this.manifestUrl);
     }
 
