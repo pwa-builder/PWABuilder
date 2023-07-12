@@ -6,12 +6,13 @@ export class AuthModule {
 
   private _publicClientApplication: PublicClientApplication | null = null;
 
-  // redirectUri?: string
-  constructor() {
+
+  constructor(redirectUri?: string) {
     const msalConfig: Configuration = {
       auth: {
         clientId: import.meta.env.VITE_CLIENT_ID as string,
-        authority: 'https://login.microsoftonline.com/common/'
+        authority: 'https://login.microsoftonline.com/common/',
+        redirectUri
       },
       cache: {
         cacheLocation: 'sessionStorage',
