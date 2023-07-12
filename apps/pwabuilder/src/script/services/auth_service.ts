@@ -6,8 +6,8 @@ export class AuthModule {
 
   private _publicClientApplication: PublicClientApplication | null = null;
 
-
-  constructor(redirectUri?: string) {
+  // redirectUri?: string
+  constructor() {
     const msalConfig: Configuration = {
       auth: {
         clientId: import.meta.env.VITE_CLIENT_ID as string,
