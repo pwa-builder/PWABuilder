@@ -84,7 +84,8 @@ export class AppToken extends LitElement {
   async checkIfLoggedIn() {
     const account = await (this.authModule as AuthModule).registerPostLoginListener();
     if(account !== null) {
-      this.userAccount = account;
+      this.userAccount = account.account;
+      this.userAccount.accessToken = account.accessToken;
       this.userAccount.loggedIn = true;
       this.siteURL = this.userAccount.state;
       
