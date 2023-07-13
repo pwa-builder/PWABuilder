@@ -86,6 +86,7 @@ export class AppToken extends LitElement {
     if(account !== null) {
       this.userAccount = account.account;
       this.userAccount.accessToken = account.accessToken;
+      this.userAccount.state = account.state;
       this.userAccount.loggedIn = true;
       this.siteURL = this.userAccount.state;
       
