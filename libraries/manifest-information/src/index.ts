@@ -417,7 +417,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     location: "platform",
     required: false,
     docs_link:
-      "https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
   },
   widgets: {
     description: [`In Windows 11, PWAs can define widgets, update them, and handle user interactions within them.`],

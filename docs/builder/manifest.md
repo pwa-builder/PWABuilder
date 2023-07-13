@@ -265,7 +265,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### edge_side_panel: `Object`
 
-`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases [here.](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md)
+`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases [here.](https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa)
 
 You can also specify the `preferred_width` member as part of your `edge_side_panel` specification.
 

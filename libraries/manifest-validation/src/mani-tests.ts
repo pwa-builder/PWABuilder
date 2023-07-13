@@ -883,7 +883,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
         category: "recommended",
         defaultValue: "",
-        docsLink: "https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
         errorString: "The value entered for edge_side_panel.preferred_width should be a number",
         quickFix: false,
         test: (value: any) => {
