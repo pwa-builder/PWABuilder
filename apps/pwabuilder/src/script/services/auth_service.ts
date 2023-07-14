@@ -12,7 +12,7 @@ export class AuthModule {
       auth: {
         clientId: import.meta.env.VITE_CLIENT_ID as string,
         authority: 'https://login.microsoftonline.com/common/',
-        redirectUri
+        navigateToLoginRequestUrl: true,
       },
       cache: {
         cacheLocation: 'sessionStorage',

@@ -104,9 +104,7 @@ export class AppToken extends LitElement {
     return false;
   }
   async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-    
-    this.authModule = new AuthModule(window.location.host + `/freeToken`);
+    this.authModule = new AuthModule();
     let dataRegisted: boolean = await this.checkIfLoggedIn();
 
     const search = new URLSearchParams(location.search);
@@ -117,8 +115,9 @@ export class AppToken extends LitElement {
         this.runGiveawayTests();
       }
     }
-
     this.decideBackground();
+
+    super.connectedCallback();
   }
 
   async runGiveawayTests(){
