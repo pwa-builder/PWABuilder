@@ -46,17 +46,17 @@ export class AuthModule {
   }
 
   private async signInWithMsal(state: string) {
-    const msalConfig: Configuration = {
-      auth: {
-        clientId: import.meta.env.VITE_CLIENT_ID as string,
-        authority: 'https://login.microsoftonline.com/common/',       
-      },
-      cache: {
-        cacheLocation: 'sessionStorage',
-        storeAuthStateInCookie: false,
-      },
-    };
-    this._publicClientApplication = new PublicClientApplication(msalConfig);
+    // const msalConfig: Configuration = {
+    //   auth: {
+    //     clientId: import.meta.env.VITE_CLIENT_ID as string,
+    //     authority: 'https://login.microsoftonline.com/common/',       
+    //   },
+    //   cache: {
+    //     cacheLocation: 'sessionStorage',
+    //     storeAuthStateInCookie: false,
+    //   },
+    // };
+    // this._publicClientApplication = new PublicClientApplication(msalConfig);
     try {
       //try to get a token
       const loginResponse = await this.getAccessToken(state);
@@ -84,6 +84,10 @@ export class AuthModule {
     if (!this._publicClientApplication) {
       return Promise.reject('No app context');
     }
+    if (!this.getAccount()) {
+      return Promise.reject('No account');
+    }
+    
     const accessTokenRequest: SilentRequest = {
       scopes: this.scopes,
       account: this.getAccount(),

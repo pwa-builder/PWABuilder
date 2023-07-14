@@ -81,12 +81,22 @@ export class AppToken extends LitElement {
     
   }
 
-  async checkIfLoggedIn() {
-    const account = await (this.authModule as AuthModule).registerPostLoginListener();
-    if(account !== null) {
-      this.userAccount = account.account;
+  async checkIfLoggedIn(state: string) {
+    await (this.authModule as AuthModule).registerPostLoginListener();
+    
+    let account = null;
+    try {
+      account = await (this.authModule as AuthModule).getAccessTokenSilent();
+    }
+    catch (e) {
+      return false;
+    }
+    
+    if(account && account.account) {
+      this.userAccount.name = account.account.name || '';
+      this.userAccount.email = account.account.username || '';
       this.userAccount.accessToken = account.accessToken;
-      this.userAccount.state = account.state;
+      this.userAccount.state = state;
       this.userAccount.loggedIn = true;
       this.siteURL = this.userAccount.state;
       
@@ -104,11 +114,13 @@ export class AppToken extends LitElement {
     return false;
   }
   async connectedCallback(): Promise<void> {
-    this.authModule = new AuthModule();
-    let dataRegisted: boolean = await this.checkIfLoggedIn();
-
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
+
+    this.authModule = new AuthModule();
+    let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
+
+    
     if (site) {
       this.siteURL = site;
       if(!dataRegisted){
