@@ -2496,7 +2496,12 @@ export class AppReport extends LitElement {
   }
 
   goToGiveawayPage(){
-    Router.go(`/freeToken?site=${this.siteURL}`);
+    let a: HTMLAnchorElement = document.createElement("a");
+    a.target = "_blank";
+    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
+    a.rel = "noopener";
+
+    a.click();
   }
   
   closeTooltipOnScroll() {

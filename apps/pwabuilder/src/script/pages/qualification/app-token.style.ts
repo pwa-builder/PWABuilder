@@ -567,8 +567,8 @@ sl-details::part(header):focus {
 	position: absolute;
 	width: 100px;
 	height: 35px;
-	right: 95px;
-	top: 30px;
+	right: 170px;
+	top: 25px;
 }
 
 .retest-button img {
@@ -585,9 +585,12 @@ sl-details::part(header):focus {
 	background-color: #ffffff;
 	color: var(--font-color);
 	font-size: var(--button-font-size);
-	padding: var(--button-padding);
+	padding: 12px 20px;
 	height: 3em;
 	border-radius: 50px;
+	display: flex;
+	align-items: center;
+	width: fit-content;
 }
 
 .secondary::part(label){
@@ -596,7 +599,7 @@ sl-details::part(header):focus {
 	gap: 10px;
 }
 
-.prisecondarymary::part(base):hover {
+.primary::part(base):hover {
 	border-color: var(--primary-color);
 }
 
@@ -608,6 +611,20 @@ sl-details::part(header):focus {
 	border-radius: 10px;
 	background-color: #ffffff;
 	box-shadow: 0px 4px 30px 0px #00000014;
+}
+
+.FTC {
+	font-size: var(--arrow-link-font-size);
+	font-weight: bold;
+	margin: 0px 0.5em 0px 0px;
+	line-height: 1em;
+	color: var(--primary-color);
+	width: fit-content;
+  border-bottom: 1px solid #4f3fb6;
+}
+
+.FTC:hover {
+	cursor: pointer;
 }
 
 #qual-section li {
@@ -770,6 +787,11 @@ sl-details::part(header):focus {
 	flex-direction: column;
 	gap: 15px;
 }
+
+.withoutAccept::part(body) {
+	padding-bottom: 25px;
+}
+
 .dialog::part(header){
 	width: 100%;
 }

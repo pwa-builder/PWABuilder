@@ -194,7 +194,7 @@ export function renderAppCard(
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the Microsoft store. 
+            We noticed this PWA has already been linked to an account in the Microsoft Store. 
             Please check the URL you are using or try another.
           </p>
         </div>
@@ -295,10 +295,11 @@ export function rotateNinety(card: string, shadowRoot: Element["shadowRoot"], e?
 }
 
 export const qualificationStrings: string[] = [
-  'Own a PWA that meets the technical requirements listed above',
-  'You are legally residing in [what countries can we say?]',
-  'Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account',
-  'Not have an existing Microsoft Store on Windows individual developer/publisher account',
-  'Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here',
-  'Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)',
+        'own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements',
+        'live in a country or region where the Windows program in Partner Center is offered.',
+        'have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account ',
+        'not have an existing Microsoft Store on Windows individual developer/publisher account',
+        'use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here',
+        'plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)'
+      
 ];

@@ -1020,7 +1020,13 @@ export class PublishPane extends LitElement {
   goToTokenPage(){ 
     let current = new URL(location.href);
     let url = current.searchParams.get('site');
-    Router.go(`/freeToken?site=${url}`)
+
+    let a: HTMLAnchorElement = document.createElement("a");
+    a.target = "_blank";
+    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${url}`;
+    a.rel = "noopener";
+
+    a.click();
   }
 
   async hideDialog(e: any){
