@@ -440,13 +440,15 @@ export class AppToken extends LitElement {
     this.dupeURL = false;
     this.errorGettingToken = false;
     this.siteURL = '';
-    sessionStorage.removeItem('PWABuilderManifest');
+    if(sessionStorage.getItem('PWABuilderManifest')){
+      sessionStorage.removeItem('PWABuilderManifest');
+    }
   }
 
   handleEnteredURL(e: SubmitEvent, root: any){
     e.preventDefault();
 
-    this.resetData()
+    root.resetData()
 
     let input: SlInput = root.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
 
