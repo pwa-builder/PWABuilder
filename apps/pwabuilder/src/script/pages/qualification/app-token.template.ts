@@ -129,7 +129,7 @@ export function renderAppCard(
 		enhancementsRatio: number;
 		enhancementsIndicator: string;
 	},
-  userAccount: { loggedIn: boolean; name: string }
+  //userAccount: { loggedIn: boolean; name: string }
 ) {
   // no site in query params
   if (!siteURL) {
