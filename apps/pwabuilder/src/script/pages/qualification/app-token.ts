@@ -433,10 +433,20 @@ export class AppToken extends LitElement {
     Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
   }
 
+  resetData(){
+    this.testsInProgress = false
+    this.testsPassed = false
+    this.noManifest = false
+    this.dupeURL = false;
+    this.errorGettingToken = false;
+    this.siteURL = '';
+    sessionStorage.removeItem('PWABuilderManifest');
+  }
+
   handleEnteredURL(e: SubmitEvent, root: any){
     e.preventDefault();
 
-    sessionStorage.removeItem('PWABuilderManifest');
+    this.resetData()
 
     let input: SlInput = root.shadowRoot!.querySelector(".url-input") as unknown as SlInput;
 
