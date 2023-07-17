@@ -573,7 +573,7 @@ export class AppToken extends LitElement {
                 requiredRatio: this.requiredRatio,
                 enhancementsIndicator: this.enhancementsIndicator,
               },
-              this.userAccount
+              //this.userAccount
             )}
           </div>
           ${!this.userAccount.loggedIn ? html`
