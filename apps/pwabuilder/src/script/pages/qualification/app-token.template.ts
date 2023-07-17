@@ -8,7 +8,8 @@ export function decideHeroSection(
     testsInProgress: boolean;
     testsPassed: boolean;
     noManifest: boolean;
-    dupeURL: boolean;
+    denyList: boolean;
+    popUrl: boolean;
   },
   userAccount: { loggedIn: boolean; name: string },
   errorGettingToken: boolean,
@@ -41,8 +42,8 @@ export function decideHeroSection(
     `;
   }
 
-  // if tests complete but its a dupe url
-  if (!tests.testsInProgress && tests.dupeURL) {
+  // if tests complete but its a url on the denyList
+  if (!tests.testsInProgress && (tests.denyList || tests.popUrl)) {
     return html`
       <h1>Oops!</h1>
       <p class="hero-message">Something is wrong. Please use another URL and try again.</p>
@@ -107,7 +108,8 @@ export function renderAppCard(
     testsInProgress: boolean;
     installablePassed: boolean;
     requiredPassed: boolean;
-    dupeURL: boolean;
+    denyList: boolean;
+    popUrl: boolean;
   },
   appCard: {
     siteName: string;
@@ -169,9 +171,26 @@ export function renderAppCard(
 
   let banner = html``;
 
-  // if tests complete but its a dupe url
-  if (!tests.testsInProgress && tests.dupeURL) {
-    if (userAccount.loggedIn) {
+
+  // tests complete but its a denyList url
+  if(!tests.testsInProgress && tests.denyList){
+    banner = html`
+      <!-- error banner -->
+      <div class="feedback-holder type-error">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">URL already in use</p>
+          <p class="error-desc">
+            We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or try another.         
+          </p>
+        </div>
+      </div>
+    `;
+  
+    // tests complete but its a popular url
+  } else if (!tests.testsInProgress && tests.popUrl) {
+    // this should never happen, should never be able to log in if denyList
+    /* if (userAccount.loggedIn) {
       banner = html`
       <!-- error banner -->
       <div class="feedback-holder type-error">
@@ -185,21 +204,20 @@ export function renderAppCard(
         </div>
       </div>
     `;
-    }
-    else {
-      banner = html`
-      <!-- error banner -->
-      <div class="feedback-holder type-error">
-        <img src="/assets/new/stop.svg" alt="invalid result icon" />
-        <div class="error-info">
-          <p class="error-title">URL already in use</p>
-          <p class="error-desc">
-            This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions
-          </p>
-        </div>
+    } */
+    banner = html`
+    <!-- error banner -->
+    <div class="feedback-holder type-error">
+      <img src="/assets/new/stop.svg" alt="invalid result icon" />
+      <div class="error-info">
+        <p class="error-title">URL already in use</p>
+        <p class="error-desc">
+          This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions
+        </p>
       </div>
-    `;
-    }
+    </div>
+  `;
+    
     
   }
 

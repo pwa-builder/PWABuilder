@@ -81,7 +81,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
             <h3>Next Steps</h3>
             <ol class="steps-list">
               <li>
-                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener">Partner Center Dashboard</a> and reserve your app on Microsoft store
+                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener">Partner Center Dashboard</a> and reserve your app on Microsoft Store
               </li>
               <li>
                 <strong>Package Your App:</strong> Go back to <a aria-label="Click here to visit PWABuilder homepage" href="/" target="_blank" rel="noopener">PWABuilder</a> and generate package for Windows. You will be prompted to provide some options for your app. Fill these out with the three values you got from reserving your app name.

@@ -21,7 +21,8 @@ export class AppToken extends LitElement {
 
   @state() siteURL: string = "";
   @state() testsInProgress: boolean = false;
-  @state() dupeURL: boolean = false;
+  @state() isDenyList: boolean = false;
+  @state() isPopularUrl: boolean = false;
   @state() testsPassed: boolean = false;
   @state() appCard = {
     siteName: 'Site Name',
@@ -228,7 +229,8 @@ export class AppToken extends LitElement {
     }
 
     this.testsPassed = data.isEligibleForToken;
-    this.dupeURL = data.isInDenyList;
+    this.isDenyList = data.isInDenyList;
+    this.isPopularUrl = data.isPopUrl;
 
     this.handleInstallable(this.testResults.installable);
     this.handleRequired(this.testResults.additional);
@@ -421,7 +423,7 @@ export class AppToken extends LitElement {
       }
       else {
         this.errorGettingToken = true;
-        this.dupeURL = true;
+        this.isDenyList = true;
         // @jay error like this is not working: errorMessage: "There are no more free tokens left. Please contact pwabuilder@microsoft.com"
         this.errorMessage = response.errorMessage;
       }
@@ -437,7 +439,7 @@ export class AppToken extends LitElement {
     this.testsInProgress = false
     this.testsPassed = false
     this.noManifest = false
-    this.dupeURL = false;
+    this.isDenyList = false;
     this.errorGettingToken = false;
     this.siteURL = '';
     if(sessionStorage.getItem('PWABuilderManifest')){
@@ -537,7 +539,8 @@ export class AppToken extends LitElement {
             testsInProgress: this.testsInProgress,
             testsPassed: this.testsPassed,
             noManifest: this.noManifest,
-            dupeURL: this.dupeURL
+            denyList: this.isDenyList,
+            popUrl: this.isPopularUrl
           },
           this.userAccount,
           this.errorGettingToken,
@@ -553,7 +556,8 @@ export class AppToken extends LitElement {
               this.siteURL,
               {
                 testsInProgress: this.testsInProgress,
-                dupeURL: this.dupeURL,
+                denyList: this.isDenyList,
+                popUrl: this.isPopularUrl,
                 requiredPassed: this.requiredPassed,
                 installablePassed: this.installablePassed,
               },
@@ -667,7 +671,7 @@ export class AppToken extends LitElement {
               html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
               </div>
             ` : 
-              !this.dupeURL ?
+              !this.isDenyList ?
             html `
                 <div id="terms-and-conditions">
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
