@@ -3,7 +3,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { generatePackage, Platform } from '../services/publish';
-import { Router } from '@vaadin/router';
 
 import {
   // smallBreakPoint,

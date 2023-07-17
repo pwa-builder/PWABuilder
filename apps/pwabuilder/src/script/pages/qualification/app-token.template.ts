@@ -75,14 +75,14 @@ export function decideHeroSection(
       return html`
         <h1>Congratulations ${userAccount.name}!</h1>
         <p class="hero-message">
-          This URL has passed our tests! You may qualify for a free developer on the Microsoft Store!
+          This URL has passed our tests! You qualify for a free Microsoft Store developer account!
         </p>
       `;
     }
     return html`
       <h1>Congratulations!</h1>
       <p class="hero-message">
-        This URL has passed our tests! You may qualify for a free developer on the Microsoft Store!
+        This URL has passed our tests! You may qualify for a free Microsoft Store developer account!
       </p>
     `;
   }
