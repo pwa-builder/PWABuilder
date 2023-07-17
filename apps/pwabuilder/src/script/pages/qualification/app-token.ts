@@ -664,11 +664,14 @@ export class AppToken extends LitElement {
             html`
               <div id="sign-in-section">
                 ${this.testsPassed ? 
-                  html`<sl-button class="primary sign-in-button" @click=${this.getUserToken}>
+                  html`<sl-button class="primary sign-in-button final-button" @click=${this.getUserToken}>
                   <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
                     Sign in with a Microsoft account to continue
                   </sl-button>` : 
-              html`<sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>`}
+              html`
+                <div class="back-to-pwabuilder-section">
+                  <sl-button class="primary final-button " @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
+                </div>`}
               </div>
             ` : 
               !this.isDenyList ?
@@ -743,7 +746,7 @@ export class AppToken extends LitElement {
       </ul>
       <p>Offer open to signups from August 1st, 2023 through August 31st, 2023 midnight Pacific Standard Time, or when the limited supply of tokens run out, whichever comes first. Limit one free account token per developer and PWA.</p>
       <p>If you qualify and tokens are available, you will be given a token on this page when you submit the form. You can come back to this page to retrieve your token again at any time by signing in with your Microsoft Account. Free developer account tokens are not valid if transferred, sold, or otherwise used by any Microsoft Account other than the one which signed up here. These tokens are for individual, not corporate, Microsoft Store on Windows developer accounts.</p>
-      <h2>Privacy and Communications</h2>
+      <h2>Privacy and communications</h2>
       <p>When you sign up, we will securely retain an anonymous account id and your PWA URL to enforce the above requirements. We will not store your name or email and we will not contact you.</p>
       <p>All data is retained in accordance with the Microsoft Privacy Policy found here: 
         <a href="https://go.microsoft.com/fwlink/?LinkId=521839" rel="noopener" target="_blank">https://go.microsoft.com/fwlink/?LinkId=521839</a>.</p>

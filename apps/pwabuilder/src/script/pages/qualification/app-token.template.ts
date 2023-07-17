@@ -43,7 +43,15 @@ export function decideHeroSection(
   }
 
   // if tests complete but its a url on the denyList
-  if (!tests.testsInProgress && (tests.denyList || tests.popUrl)) {
+  if (!tests.testsInProgress && tests.denyList) {
+    return html`
+      <h1>Oops!</h1>
+      <p class="hero-message">Something is wrong. Please use another URL and try again.</p>
+    `;
+  }
+
+  // if tests complete but its a url on the popular list
+  if (!tests.testsInProgress && tests.popUrl) {
     return html`
       <h1>Oops!</h1>
       <p class="hero-message">Something is wrong. Please use another URL and try again.</p>

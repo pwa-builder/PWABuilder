@@ -360,7 +360,7 @@ export default css`
 .feedback-holder p {
 	margin: 0;
 	font-size: 14px;
-	line-height: 14px;
+	line-height: 16px;
 }
 
 .error-info {
@@ -565,9 +565,9 @@ sl-details::part(header):focus {
 
 .retest-button {
 	position: absolute;
-	width: 100px;
+	width: fit-content;
 	height: 35px;
-	right: 170px;
+	right: 110px;
 	top: 25px;
 }
 
@@ -585,7 +585,7 @@ sl-details::part(header):focus {
 	background-color: #ffffff;
 	color: var(--font-color);
 	font-size: var(--button-font-size);
-	padding: 12px 20px;
+	padding: 12px 10px;
 	height: 3em;
 	border-radius: 50px;
 	display: flex;
@@ -636,12 +636,17 @@ sl-details::part(header):focus {
 	padding-left: 20px;
 }
 
+.final-button {
+	padding-top: 20px;
+  padding-bottom: 60px;
+}
+
 #footer-section {
 	background-color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 40px;
+	padding: 40px 100px;
 	width: 100%;
 	min-height: 25vw;
 }
@@ -693,6 +698,7 @@ sl-details::part(header):focus {
 	font-size: 24px;
 	font-weight: 700;
 	color: var(--font-color);
+	white-space: nowrap;
 }
 
 .body-text {
@@ -849,11 +855,6 @@ sl-details::part(header):focus {
 		background-color: #ffffff;
 	}
 
-	.feedback-holder p {
-		font-size: 16px;
-		line-height: 16px;
-	}
-
 	#terms-and-conditions label {
 		font-size: 16px;
 	}
@@ -885,9 +886,6 @@ sl-details::part(header):focus {
 	}
 	.wheel-img-1024 {
 		display: flex;
-	}
-	.footer-text {
-		align-items: center;
 	}
 
 	.footer-text sl-button::part(base) {
@@ -936,6 +934,11 @@ sl-details::part(header):focus {
 		padding: 0;
 		padding-top: 40px;
 	}
+	
+	.footer-text {
+		align-items: center;
+	}
+
 	.todos {
 		display: flex;
 		flex-direction: column;
@@ -960,6 +963,24 @@ sl-details::part(header):focus {
 	}
 	#hero-section .primary::part(base){
 		width: 33%;
+	}
+
+	#hero-section.uncovered, #hero-section.covered {
+		background-image: url('/assets/new/giveaway_banner_mobile.png');
+		background-position: bottom;
+	}
+
+	#hero-section {
+		padding: 50px;
+		height: 500px;
+	}
+
+	.back-to-giveaway-home {
+		left: 50px;
+	}
+
+	#hero-section-content h1 {
+		font-size: 30px;
 	}
 	
 }
@@ -995,25 +1016,23 @@ ${smallBreakPoint(css`
 	.retest-button {
 		top: 21px;
 	}
+	.back-to-giveaway-home {
+		top: 140px;
+	}
+
 	.secondary::part(label) {
 		gap: 5px;
-	}
-	.back-to-giveaway-home {
-		left: 45.26px;
-    top: 98px;
-	}
-	.back-to-giveaway-home img {
-		width: 25px;
-    height: 13.75px;
 	}
 	.store-logo {
 		width: 45px;
 		height: 45px;
 	}
-	#hero-section {
-		padding: 50px;
-		height: 482px;
+	
+.retest-button {
+		top: 15px;
+		right: 90px;
 	}
+	
 	#hero-section p {
 		width: 100% !important;
 	}
@@ -1048,30 +1067,9 @@ ${smallBreakPoint(css`
 `)}
 
 ${mediumBreakPoint(css`
-.retest-button {
-		top: 21px;
-	}
-	.back-to-giveaway-home {
-		left: 45.26px;
-    top: 30.5px;
-	}
-	.back-to-giveaway-home img {
-		width: 25px;
-    height: 13.75px;
-	}
-	.store-logo {
-		width: 45px;
-		height: 45px;
-	}
-	#hero-section {
-		height: 303px;
-		padding: 50px;
-	}
+	
 	#hero-section p {
 		width: 100% !important;
-	}
-	#img-holder {
-		/* width:  */
 	}
 	#words {
 		width: 60%;
