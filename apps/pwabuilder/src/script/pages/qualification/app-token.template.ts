@@ -194,8 +194,7 @@ export function renderAppCard(
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the Microsoft Store. 
-            Please check the URL you are using or try another.
+            This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions
           </p>
         </div>
       </div>

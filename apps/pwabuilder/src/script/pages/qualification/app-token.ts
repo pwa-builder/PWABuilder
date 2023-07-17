@@ -54,6 +54,7 @@ export class AppToken extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestUrl: string = '';
   @state() noManifest: boolean = false;
+  @state() gotDataFromStorage: boolean = false;
   
   @state() heroBanners = {covered: false, uncovered: true};
 
@@ -148,10 +149,12 @@ export class AppToken extends LitElement {
 
   async validateUrl(){
 
-    if(sessionStorage.getItem('PWABuilderManifest') || sessionStorage.getItem('current_url') === this.siteURL){
+    if(sessionStorage.getItem('PWABuilderManifest') && sessionStorage.getItem('current_url') === this.siteURL){
       let _storedData = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!);
       this.manifest = _storedData?.manifest;
       this.manifestUrl = _storedData?.manifestUrl;
+      this.gotDataFromStorage = true;
+      this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
     }
 
     const encodedUrl = encodeURIComponent(this.siteURL);
@@ -214,7 +217,6 @@ export class AppToken extends LitElement {
   */
   async registerData(data: any){
     this.testResults = data.testResults;
-    
     if(Object.keys(this.manifest).length == 0){
       this.manifest = data.manifestJson;
       this.manifestUrl = data.manifestUrl;
@@ -231,8 +233,9 @@ export class AppToken extends LitElement {
     this.handleInstallable(this.testResults.installable);
     this.handleRequired(this.testResults.additional);
     this.handleEnhancements(this.testResults.progressive);
-    this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
-
+    if(!this.gotDataFromStorage){
+      this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
+    }
   }
 
   handleInstallable(installable: any){
@@ -460,6 +463,8 @@ export class AppToken extends LitElement {
 
       window.location.search = urlParams.toString();
 
+      sessionStorage.setItem("current_url", url);
+
       root.runGiveawayTests();
     } else {
       input.setCustomValidity(localeStrings.input.home.error.invalidURL);
@@ -651,7 +656,17 @@ export class AppToken extends LitElement {
             html `
                 <div id="terms-and-conditions">
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                  <sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
+                  
+                  ${this.acceptedTerms ? 
+                    html`<sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>` :
+                    html`
+                      <sl-tooltip content="You must accept the Terms and Conditions before claiming your token.">
+                        <sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
+                      </sl-tooltip>
+                    `
+                  }
+                  
+                  
                   <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
             ` :
