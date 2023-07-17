@@ -443,6 +443,9 @@ export class AppToken extends LitElement {
     if(sessionStorage.getItem('PWABuilderManifest')){
       sessionStorage.removeItem('PWABuilderManifest');
     }
+    if(sessionStorage.getItem('validateUrlResponseData')){
+      sessionStorage.removeItem('validateUrlResponseData');
+    }
   }
 
   handleEnteredURL(e: SubmitEvent, root: any){
