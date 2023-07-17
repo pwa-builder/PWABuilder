@@ -443,7 +443,7 @@ sl-progress-ring::part(label){
 }
 
 .green {
-	--indicator-color: var(--success-color);
+	--indicator-color: #50ba87;
 }
 
 .macro {
@@ -633,6 +633,7 @@ sl-details::part(header):focus {
 
 #qual-section ul {
 	margin: 20px 0;
+	padding-left: 20px;
 }
 
 #footer-section {
@@ -859,10 +860,6 @@ sl-details::part(header):focus {
 
 	#terms-and-conditions p {
 		font-size: 16px;
-	}
-
-	.body-text {
-		font-size: 20px;
 	}
 }
 
