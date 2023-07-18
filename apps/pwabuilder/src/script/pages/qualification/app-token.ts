@@ -533,12 +533,8 @@ export class AppToken extends LitElement {
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
           <div id="hero-section-actions">
-            ${!this.testsInProgress && this.siteURL ? 
+            ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ? 
               html`
-                <sl-button class="retest-button secondary" @click=${() => Router.go(`/freeToken?site=${this.siteURL}`)}>
-                    <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
-                    <p>Retest site</p>
-                </sl-button>
                 <sl-button class="secondary" @click=${() => Router.go(`/freeToken`)}>
                     Enter different URL
                 </sl-button>
