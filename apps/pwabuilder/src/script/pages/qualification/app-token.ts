@@ -1,5 +1,5 @@
 import { Router } from '@vaadin/router';
-import { LitElement, PropertyValueMap, TemplateResult, html } from 'lit';
+import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../../components/arrow-link'
