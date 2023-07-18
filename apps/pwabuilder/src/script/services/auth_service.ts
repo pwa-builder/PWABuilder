@@ -10,7 +10,7 @@ export class AuthModule {
   constructor() {
     const msalConfig: Configuration = {
       auth: {
-        clientId: import.meta.env.VITE_CLIENT_ID as string,
+        clientId: "//import.meta.env.VITE_CLIENT_ID as string",
         authority: 'https://login.microsoftonline.com/common/',
         navigateToLoginRequestUrl: true,
       },

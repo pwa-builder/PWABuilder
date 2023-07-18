@@ -135,13 +135,17 @@ export class AppToken extends LitElement {
   }
 
   async findManifest(url: string) {
-    await FindWebManifest(url).then( async (result) => {
-      if (result?.content?.json) {
-        this.manifest = result.content.json;
-        this.manifestUrl = result.content.url;
-        //this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
-      }
-    });
+    try {
+      await FindWebManifest(url).then( async (result) => {
+        if (result?.content?.json) {
+          this.manifest = result.content.json;
+          this.manifestUrl = result.content.url;
+          //this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
+        }
+      });
+    } catch(e) {
+      console.error(e);
+    }
   }
 
   async runGiveawayTests(){
