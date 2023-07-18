@@ -70,6 +70,21 @@ export default css`
 
 	}
 
+	#hero-section-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		gap: 20px;
+	}
+
+	.pwabuilder-logo {
+		height: 40px;
+		width: auto;
+	}
+
 	@media(min-width: 1366px){
 		#hero-section.uncovered {
 			background-image: url("/assets/new/giveaway_banner_nourl_1920.png");
@@ -103,41 +118,6 @@ export default css`
 
 	#hero-section .hero-message.with-input {
 		margin: 0;
-	}
-
-	.back-to-giveaway-home {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		gap: 10px;
-		position: absolute;
-		left: 100px;
-		top: 35px;
-		border-bottom: 1px solid transparent;
-		width: 200px;
-	}
-
-	.back-to-giveaway-home:hover {
-		cursor: pointer;
-	}
-
-	.back-to-giveaway-home img {
-		height: 12px;
-		width: auto;
-	}
-
-	.diff-url {
-		color: var(--font-color);
-		width: fit-content;
-		font-size: var(--font-size);
-		font-weight: 600;
-		margin: 5px 0;
-	}
-
-	#hero-section .store-logo {
-		position: absolute;
-		top: 15px;
-		right: 25px;
 	}
 
 	.input-area {
@@ -554,6 +534,11 @@ sl-details::part(header):focus {
 	height: 3em;
 }
 
+.vtc-disabled::part(base) {
+	background-color: #C3C3C3;
+	color: white;
+}
+
 .primary::part(label){
 	display: flex;
 	align-items: center;
@@ -563,34 +548,35 @@ sl-details::part(header):focus {
 	border-color: var(--primary-color);
 }
 
-.retest-button {
-	position: absolute;
-	width: fit-content;
-	height: 35px;
-	right: 110px;
-	top: 25px;
-}
-
 .retest-button img {
 	width: 14px;
-	height: 14.7px;
+	height: auto;
 }
 
-.retest-button p {
-	font-size: 12px !important;
-	font-weight: bold !important;
+.back-to-home {
+	all: unset;
+	border: 1px solid transparent;
+}
+
+.back-to-home:hover {
+	cursor: pointer;
+}
+
+.back-to-home:focus {
+	border: 1px solid black;
 }
 
 .secondary::part(base) {
 	background-color: #ffffff;
 	color: var(--font-color);
-	font-size: var(--button-font-size);
+	font-size: 14px;
 	padding: 12px 10px;
 	height: 3em;
 	border-radius: 50px;
 	display: flex;
 	align-items: center;
 	width: fit-content;
+	font-weight: bold;
 }
 
 .secondary::part(label){
@@ -601,6 +587,10 @@ sl-details::part(header):focus {
 
 .primary::part(base):hover {
 	border-color: var(--primary-color);
+}
+
+.secondary::part(base):focus {
+	border: 1px solid black;
 }
 
 #qual-section {
@@ -751,7 +741,6 @@ sl-details::part(header):focus {
 	font-family: Hind;
 	font-size: 14px;
 	font-weight: 400;
-	line-height: 12px;
 	color:#292C3A;
 	margin-bottom: 15px;
 }
@@ -1013,24 +1002,14 @@ sl-details::part(header):focus {
 }
 
 ${smallBreakPoint(css`
-	.retest-button {
-		top: 21px;
-	}
 	.back-to-giveaway-home {
 		top: 140px;
 	}
 
 	.secondary::part(label) {
 		gap: 5px;
-	}
-	.store-logo {
-		width: 45px;
-		height: 45px;
-	}
-	
-.retest-button {
-		top: 15px;
-		right: 90px;
+		padding: 0;
+		font-size: 12px;
 	}
 	
 	#hero-section p {
@@ -1063,6 +1042,10 @@ ${smallBreakPoint(css`
 	}
 	#hero-section-bottom {
 		height: 138px;
+	}
+	#hero-section-actions {
+		gap: 10px;
+		right: 10px;
 	}
 `)}
 

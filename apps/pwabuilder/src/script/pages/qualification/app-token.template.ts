@@ -46,7 +46,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && tests.denyList) {
     return html`
       <h1>Oops!</h1>
-      <p class="hero-message">Something is wrong. Please use another URL and try again.</p>
+      <p class="hero-message">This PWA is already in the Microsoft Store.</p>
     `;
   }
 
@@ -54,7 +54,7 @@ export function decideHeroSection(
   if (!tests.testsInProgress && tests.popUrl) {
     return html`
       <h1>Oops!</h1>
-      <p class="hero-message">Something is wrong. Please use another URL and try again.</p>
+      <p class="hero-message">This PWA belongs to an organization or company.</p>
     `;
   }
 
@@ -126,6 +126,7 @@ export function renderAppCard(
     iconURL: string;
     iconAlt: string;
   },
+  infoAvailable: boolean,
 	classMaps: {
 		installableClassMap: Record<string, boolean>;
 		requiredClassMap: Record<string, boolean>;
@@ -147,17 +148,39 @@ export function renderAppCard(
   // if site in query params and testing in progress
   if (siteURL && tests.testsInProgress) {
     return html`
-      <!-- Show card with skeleton -->
-      <div id="app-info">
+    <div id="app-info">
+      ${infoAvailable ? 
+      html`
+        <!-- Show card with info -->
         <div id="logo-and-text">
-          <sl-skeleton class="square" effect="sheen"></sl-skeleton>
+          <div id="img-holder">
+            <img
+              class="square"
+              src="${appCard.iconURL}"
+              alt="${appCard.iconAlt}"
+            />
+          </div>
           <div id="words">
-            <sl-skeleton effect="sheen"></sl-skeleton>
-            <sl-skeleton effect="sheen"></sl-skeleton>
-            <sl-skeleton effect="sheen"></sl-skeleton>
-            <sl-skeleton effect="sheen"></sl-skeleton>
+            <p>${appCard.siteName}</p>
+            <p>${appCard.siteUrl}</p>
+            <p class="app-desc">${appCard.description}</p>
           </div>
         </div>
+      ` : 
+      html`
+      <!-- Show card with skeleton -->
+      <div id="logo-and-text">
+        <sl-skeleton class="square" effect="sheen"></sl-skeleton>
+        <div id="words">
+          <sl-skeleton effect="sheen"></sl-skeleton>
+          <sl-skeleton effect="sheen"></sl-skeleton>
+          <sl-skeleton effect="sheen"></sl-skeleton>
+          <sl-skeleton effect="sheen"></sl-skeleton>
+        </div>
+      </div>
+      `
+    }
+      
 
         <div id="rings">
           <div class="card-holder">
@@ -287,7 +310,6 @@ export function renderAppCard(
     </div>
   `;
 }
-
 
 // Rotates the icon on each details drop down to 0 degrees
 export function rotateZero(card: string, shadowRoot: Element["shadowRoot"], e?: Event){

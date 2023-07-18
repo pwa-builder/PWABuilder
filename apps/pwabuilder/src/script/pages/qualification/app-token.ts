@@ -15,6 +15,7 @@ import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, r
 import { populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
+import { FindWebManifest } from '../app-report.api';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -31,6 +32,7 @@ export class AppToken extends LitElement {
     iconURL: '',
     iconAlt: 'Your sites logo'
   };
+  @state() appCardInformationAvailable: boolean = false;
   @state() installablePassed: boolean = true;
   @state() installableRatio = 0;
   @state() installableTodos: TemplateResult[] = [];
@@ -55,7 +57,6 @@ export class AppToken extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestUrl: string = '';
   @state() noManifest: boolean = false;
-  @state() gotDataFromStorage: boolean = false;
   
   @state() heroBanners = {covered: false, uncovered: true};
 
@@ -73,15 +74,12 @@ export class AppToken extends LitElement {
   @state() authModule = new AuthModule();
   @state() tokenId: string = '';
   @state() validateUrlResponseData: any = {};
+  @state() userSignedIn: boolean = false;
 
   static get styles() {
     return [
       style
     ]
-  }
-
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    
   }
 
   async checkIfLoggedIn(state: string) {
@@ -117,6 +115,7 @@ export class AppToken extends LitElement {
     return false;
   }
   async connectedCallback(): Promise<void> {
+    
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
 
@@ -135,6 +134,16 @@ export class AppToken extends LitElement {
     super.connectedCallback();
   }
 
+  async findManifest(url: string) {
+    await FindWebManifest(url).then( async (result) => {
+      if (result?.content?.json) {
+        this.manifest = result.content.json;
+        this.manifestUrl = result.content.url;
+        //this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
+      }
+    });
+  }
+
   async runGiveawayTests(){
     
     this.decideBackground();
@@ -150,11 +159,10 @@ export class AppToken extends LitElement {
 
   async validateUrl(){
 
-    if(sessionStorage.getItem('PWABuilderManifest') && sessionStorage.getItem('current_url') === this.siteURL){
-      let _storedData = JSON.parse(sessionStorage.getItem('PWABuilderManifest')!);
-      this.manifest = _storedData?.manifest;
-      this.manifestUrl = _storedData?.manifestUrl;
-      this.gotDataFromStorage = true;
+    await this.findManifest(this.siteURL);
+
+    if(Object.keys(this.manifest)){
+      this.appCardInformationAvailable = true;
       this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
     }
 
@@ -235,9 +243,7 @@ export class AppToken extends LitElement {
     this.handleInstallable(this.testResults.installable);
     this.handleRequired(this.testResults.additional);
     this.handleEnhancements(this.testResults.progressive);
-    if(!this.gotDataFromStorage){
-      this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
-    }
+    this.appCard = await populateAppCard(this.siteURL, this.manifest, this.manifestUrl);
   }
 
   handleInstallable(installable: any){
@@ -386,6 +392,7 @@ export class AppToken extends LitElement {
       this.userAccount = userResult;
       // await this.claimToken();
       this.userAccount.loggedIn = true;
+      this.userSignedIn = true;
     }
     this.requestUpdate();
   }
@@ -441,6 +448,8 @@ export class AppToken extends LitElement {
     this.noManifest = false
     this.isDenyList = false;
     this.errorGettingToken = false;
+    this.userSignedIn = false;
+    this.appCardInformationAvailable = false;
     this.siteURL = '';
     if(sessionStorage.getItem('PWABuilderManifest')){
       sessionStorage.removeItem('PWABuilderManifest');
@@ -519,20 +528,20 @@ export class AppToken extends LitElement {
     <div id="wrapper">
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
-        ${!this.testsInProgress && this.siteURL ? 
-          html`
-            <div class="back-to-giveaway-home" @click=${() => Router.go("/freeToken")}>
-              <img src="/assets/new/left-arrow.svg" alt="enter new url" />
-              <p class="diff-url">
-                Enter different URL
-              </p>
-            </div>
-            <sl-button class="retest-button secondary" @click=${() => Router.go(`/freeToken?site=${this.siteURL}`)}>
-                <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
-                <p>Retest site</p>
-            </sl-button>` :
-          html``}
-        <img class="store-logo" src="/assets/new/msft-logo-giveaway.svg" alt="Microsoft Icon" />
+          <div id="hero-section-actions">
+            ${!this.testsInProgress && this.siteURL ? 
+              html`
+                <sl-button class="retest-button secondary" @click=${() => Router.go(`/freeToken?site=${this.siteURL}`)}>
+                    <img src="/assets/new/retest-black.svg" alt="retest site" role="presentation" />
+                    <p>Retest site</p>
+                </sl-button>
+                <sl-button class="secondary" @click=${() => Router.go(`/freeToken`)}>
+                    Enter different URL
+                </sl-button>
+                ` :
+              html``}
+            <button type="button" class="back-to-home" @click=${() => Router.go("/")}><img class="pwabuilder-logo" src="/assets/logos/header_logo.png" alt="PWABuilder logo" /></button>
+          </div>
         ${decideHeroSection(
           this.siteURL,
           {
@@ -549,7 +558,7 @@ export class AppToken extends LitElement {
         )}
         </div>
       </div>
-      ${this.siteURL ? 
+      ${this.siteURL  ? 
         html`
           <div id="app-info-section">
             ${renderAppCard(
@@ -562,6 +571,7 @@ export class AppToken extends LitElement {
                 installablePassed: this.installablePassed,
               },
               this.appCard,
+              this.appCardInformationAvailable,
               {
                 installableClassMap: this.installableClassMap,
                 enhancementsClassMap: this.enhancementsClassMap,
@@ -576,7 +586,7 @@ export class AppToken extends LitElement {
               //this.userAccount
             )}
           </div>
-          ${!this.userAccount.loggedIn ? html`
+          ${!this.userSignedIn ? html`
           <div id="action-items-section">
             <div id="qual-div">
               <div id="qual-sum">
@@ -650,7 +660,7 @@ export class AppToken extends LitElement {
         html``
       }
       
-      ${ !this.userAccount.loggedIn ? html`
+      ${ !this.userSignedIn ? html`
       <div id="qual-section">
         <h2>Qualifications</h2>
         <ul>
@@ -660,35 +670,37 @@ export class AppToken extends LitElement {
       </div>` : html``}
       ${this.siteURL ? 
         html`
-          ${ !this.userAccount.loggedIn ? 
+          ${ !this.userSignedIn ? 
             html`
               <div id="sign-in-section">
-                ${this.testsPassed ? 
-                  html`<sl-button class="primary sign-in-button final-button" @click=${this.getUserToken}>
-                  <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
-                    Sign in with a Microsoft account to continue
-                  </sl-button>` : 
-              html`
-                <div class="back-to-pwabuilder-section">
-                  <sl-button class="primary final-button " @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
-                </div>`}
+                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList ? 
+                    this.userAccount.loggedIn ? 
+                    html`<sl-button class="primary" @click=${() => this.userSignedIn = true}>Continue</sl-button></div>` :
+                    html`
+                      <sl-button class="primary sign-in-button final-button" @click=${this.getUserToken}>
+                      <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
+                        Sign in with a Microsoft account to continue
+                      </sl-button>` 
+                  : 
+                  html`
+                    <div class="back-to-pwabuilder-section">
+                      <sl-button class="primary final-button " @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
+                    </div>`}
               </div>
-            ` : 
-              !this.isDenyList ?
+            ` : // this is where the user is signed in
+                // not in denyList or popular
+                // show terms and conditions
+              !this.isDenyList && !this.isPopularUrl ?
             html `
                 <div id="terms-and-conditions">
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
                   
                   ${this.acceptedTerms ? 
-                    html`<sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>` :
-                    html`
-                      <sl-tooltip content="You must accept the Terms and Conditions before claiming your token.">
-                        <sl-button class="primary" @click=${this.claimToken} ?disabled=${!this.acceptedTerms}>View Token Code</sl-button>
-                      </sl-tooltip>
-                    `
+                    html`<sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>` : 
+                    html`<sl-button class="primary vtc-disabled" @click=${this.claimToken} disabled>View Token Code</sl-button>`
                   }
-                  
-                  
+
+
                   <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
             ` :
