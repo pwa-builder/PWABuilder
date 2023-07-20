@@ -243,11 +243,4 @@ export const quickMenuListenerScriptString: string = `
       location.href = href;
     }
   });
-</script>`;
-
-
-
-
-
-
-
+</script>`;```
