@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "start": "docsify serve",
+    "start": "npm run setup && docsify serve",
     "preinstall": "node ../scripts/setupDeps.js && npm run copy-analytics",
     "copy-analytics": "cpx \"..\\libraries\\site-analytics\\dist\\index.js\" \"public\\analytics\"",
     "clean": "rm -rf dist",
