@@ -5,11 +5,12 @@ export interface Article {
   includeOnHomePage: boolean
 }
 
-export interface Menu {
-  subMenus: SubMenu[]
+export interface ParentMenu {
+  childMenus: ChildMenu[]
 }
 
-export interface SubMenu {
+export interface ChildMenu {
   header: string,
+  path: string,
   articles: Article[]
 }
