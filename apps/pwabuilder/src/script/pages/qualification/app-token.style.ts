@@ -61,13 +61,23 @@ export default css`
 		max-width: 1366px;
 
 		display: flex;
+
+		align-items: flex-start;
+		justify-content: flex-start;
+		width: 100%;
+
+	}
+
+	#hero-section-text {
+		display: flex;
 		flex-direction: column;
 		gap: 6px;
 
 		align-items: flex-start;
 		justify-content: center;
-		width: 100%;
 
+		max-width: 800px;
+		width: 100%;
 	}
 
 	#hero-section-actions {
@@ -799,7 +809,6 @@ sl-details::part(header):focus {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 65%;
 	position: relative;
 }
 .dialog::part(overlay){
@@ -934,6 +943,10 @@ sl-details::part(header):focus {
 		align-items: flex-start;
 	}
 
+	#hero-section-content h1 {
+		font-size: 30px;
+	}
+
 }
 
 @media(max-width: 620px){
@@ -968,8 +981,8 @@ sl-details::part(header):focus {
 		left: 50px;
 	}
 
-	#hero-section-content h1 {
-		font-size: 30px;
+	#hero-section-text {
+		margin-bottom: 80px;
 	}
 	
 }

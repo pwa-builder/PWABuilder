@@ -4,6 +4,7 @@ import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
 
 import style from './token-congratulations.style';
 import '../../components/arrow-link'
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 
 type Params = {
   appicon: string;
@@ -42,6 +43,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
         toolTip!.removeAttribute("open")
       }, 2000);     
     });
+    recordPWABuilderProcessStep("copy_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
   }
 
   render() {
