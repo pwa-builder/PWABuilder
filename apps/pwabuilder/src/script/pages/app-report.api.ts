@@ -1,4 +1,5 @@
 import { env } from '../utils/environment';
+import { getHeaders } from '../utils/platformTrackingHeaders';
 
 export type ReportAudit = {
 	audits: {
@@ -71,7 +72,10 @@ export async function Report(
 	const fetchReport = await fetch(
 		`${
 			env.api
-		}/Report?site=${encodeURIComponent(url)}&desktop=true`
+		}/Report?site=${encodeURIComponent(url)}&desktop=true`,
+		{
+			headers: new Headers(getHeaders())
+		}
 	);
 
 	if (!fetchReport?.ok) {
