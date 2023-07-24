@@ -77,6 +77,10 @@ export default css`
   }
   .title {
     font-size: 24px;
+    width: 145px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .url {
     font-size: 14px;
@@ -177,6 +181,9 @@ export default css`
       width: 45px;
       height: 40px;
     }
+    .title {
+      width: 100px;
+    }
     .url {
       width: 100px;
       font-size: 11px;
@@ -232,8 +239,8 @@ export default css`
       font-size: 11px;
     }
     .site-icon {
-      width: 50px;
-      height: 50px;
+      width: 45px;
+      height: 45px;
     }
     #next-steps {
       width: 345px;

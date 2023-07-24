@@ -606,13 +606,13 @@ export class PublishPane extends LitElement {
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
+        align-items: center;
         width: 100%;
         height: 50px;
         background-color: #3078D7;
         border-radius: 0px 0px 10px 10px;
         padding: 10px;
         border: none;
-        font-weight: 600;
         gap: 7px;
       }
 
@@ -631,10 +631,12 @@ export class PublishPane extends LitElement {
         line-height: 16px;
         color: #ffffff;
         text-align: left;
+        font-family: "Hind";
+        font-weight: 550;
       }
 
-      #token-banner-arrow {
-        align-self: flex-end;
+      #token-banner-text img {
+        margin-left: 6px;
       }
 
       #windows-package-token-banner:hover #token-banner-arrow {
@@ -1003,11 +1005,8 @@ export class PublishPane extends LitElement {
                 </div>
                 <div id="token-banner-text">
                   <p>
-                    Check to see if you qualify for a free Microsoft Store account
+                    Check to see if you qualify for a free Microsoft Store account <img src="/assets/white-arrow.png" alt="arrow" /> 
                   </p>
-                </div>
-                <div id="token-banner-arrow">
-                  <img src="/assets/white-arrow.png" alt="arrow" /> 
                 </div>
               </button>
             ` : html``

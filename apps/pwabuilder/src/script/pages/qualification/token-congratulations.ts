@@ -92,7 +92,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
             </ol>
              <!-- Need link to publishing instructions -->
             <div id="publishing-instructions">
-              <arrow-link .text=${`Detailed publishing instructions`} .link=${`https://docs.pwabuilder.com/#/builder/windows`}></arrow-link>
+              <arrow-link .text=${`Detailed Publishing Instructions`} .link=${`https://docs.pwabuilder.com/#/builder/windows`}></arrow-link>
             </div>
           </div>
         </div>
