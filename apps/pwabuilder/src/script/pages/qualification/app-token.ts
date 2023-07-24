@@ -101,7 +101,7 @@ export class AppToken extends LitElement {
       this.userAccount.state = state;
       this.userAccount.loggedIn = true;
       this.siteURL = this.userAccount.state;
-      
+
       const storedData = sessionStorage.getItem('validateUrlResponseData');
       if(storedData !== null) {
         this.validateUrlResponseData = JSON.parse(storedData);
@@ -130,6 +130,11 @@ export class AppToken extends LitElement {
         this.runGiveawayTests();
       }
     }
+
+    if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
+      await this.claimToken();
+    }
+
     this.decideBackground();
 
     super.connectedCallback();
@@ -399,6 +404,7 @@ export class AppToken extends LitElement {
       // await this.claimToken();
       this.userAccount.loggedIn = true;
       this.userSignedIn = true;
+      await this.claimToken();
     }
     this.requestUpdate();
   }
@@ -435,16 +441,18 @@ export class AppToken extends LitElement {
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
         this.tokenId = response.tokenId
-        this.goToCongratulationsPage();
+        //this.goToCongratulationsPage();
       }
       else {
         this.errorGettingToken = true;
-        this.isDenyList = true;
+        //this.isDenyList = true;
         // @jay error like this is not working: errorMessage: "There are no more free tokens left. Please contact pwabuilder@microsoft.com"
         this.errorMessage = response.errorMessage;
       }
     }
     catch(e){}
+
+    this.requestUpdate();
   }
 
   goToCongratulationsPage(){
@@ -624,7 +632,7 @@ export class AppToken extends LitElement {
                 requiredRatio: this.requiredRatio,
                 enhancementsIndicator: this.enhancementsIndicator,
               },
-              //this.userAccount
+              this.errorGettingToken
             )}
           </div>
           ${!this.userSignedIn ? html`
@@ -714,7 +722,7 @@ export class AppToken extends LitElement {
           ${ !this.userSignedIn ? 
             html`
               <div id="sign-in-section">
-                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList ? 
+                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList && !this.errorGettingToken ? 
                     this.userAccount.loggedIn ? 
                     html`<sl-button class="primary" @click=${() => this.updateSignInState()}>Continue</sl-button></div>` :
                     html`
@@ -726,6 +734,7 @@ export class AppToken extends LitElement {
                   html`
                     <div class="back-to-pwabuilder-section">
                       <sl-button class="primary final-button " @click=${() => this.backToReportCardPage()}>Back to PWABuilder</sl-button>
+                      ${this.userAccount.loggedIn ? html`<p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>` : null}
                     </div>`}
               </div>
             ` : // this is where the user is signed in
@@ -737,8 +746,8 @@ export class AppToken extends LitElement {
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC(false)} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
                   
                   ${this.acceptedTerms ? 
-                    html`<sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>` : 
-                    html`<sl-button class="primary vtc-disabled" @click=${this.claimToken} disabled>View Token Code</sl-button>`
+                    html`<sl-button class="primary" @click=${() => this.goToCongratulationsPage()}>View Token Code</sl-button>` : 
+                    html`<sl-button class="primary vtc-disabled" disabled>View Token Code</sl-button>`
                   }
 
 

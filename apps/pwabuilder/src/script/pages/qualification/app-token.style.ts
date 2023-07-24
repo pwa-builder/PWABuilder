@@ -636,10 +636,31 @@ sl-details::part(header):focus {
 	padding-left: 20px;
 }
 
-.final-button {
+.back-to-pwabuilder-section {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
 	padding-top: 20px;
   padding-bottom: 60px;
 }
+
+.back-to-pwabuilder-section p {
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 16px;
+	color: #292C3A;
+}
+
+.back-to-pwabuilder-section a { 
+	color: #4F3FB6;
+	text-decoration: underline;
+}
+
+.back-to-pwabuilder-section a:hover { 
+	cursor: pointer;
+}
+
 
 #footer-section {
 	background-color: #ffffff;
@@ -810,6 +831,7 @@ sl-details::part(header):focus {
 	flex-direction: column;
 	align-items: center;
 	position: relative;
+	width: 65%;
 }
 .dialog::part(overlay){
 	backdrop-filter: blur(10px);
@@ -945,6 +967,9 @@ sl-details::part(header):focus {
 
 	#hero-section-content h1 {
 		font-size: 30px;
+	}
+	.dialog::part(panel) {
+		width: 100%;
 	}
 
 }

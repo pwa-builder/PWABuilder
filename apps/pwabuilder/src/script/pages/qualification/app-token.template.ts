@@ -75,7 +75,7 @@ export function decideHeroSection(
     if (userAccount.loggedIn) {
       if (errorGettingToken) {
         return html`
-          <h1>Oops!</h1>
+          <h1>Oops, ${userAccount.name}!</h1>
           <p class="hero-message">
             URL already used in another account. Please use another URL and try
             again.
@@ -139,6 +139,7 @@ export function renderAppCard(
 		enhancementsRatio: number;
 		enhancementsIndicator: string;
 	},
+  errorGettingToken: boolean
   //userAccount: { loggedIn: boolean; name: string }
 ) {
   // no site in query params
@@ -251,6 +252,19 @@ export function renderAppCard(
   `;
     
     
+  } else if(!tests.testsInProgress && errorGettingToken){
+    banner = html`
+    <!-- error banner -->
+    <div class="feedback-holder type-error">
+      <img src="/assets/new/stop.svg" alt="invalid result icon" />
+      <div class="error-info">
+        <p class="error-title">URL already claimed</p>
+        <p class="error-desc">
+          Another user has claimed a token for this URL. Enter a different URL to claim a token for a different PWA.
+        </p>
+      </div>
+    </div>
+  `;
   }
 
   // else: tests are complete
