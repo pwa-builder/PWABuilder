@@ -1,6 +1,7 @@
 import { html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { SlDetails } from "@shoelace-style/shoelace";
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 
 export function decideHeroSection(
   siteURL: string,
@@ -74,7 +75,7 @@ export function decideHeroSection(
     if (userAccount.loggedIn) {
       if (errorGettingToken) {
         return html`
-          <h1>Oops!</h1>
+          <h1>Oops, ${userAccount.name}!</h1>
           <p class="hero-message">
             URL already used in another account. Please use another URL and try
             again.
@@ -138,6 +139,7 @@ export function renderAppCard(
 		enhancementsRatio: number;
 		enhancementsIndicator: string;
 	},
+  errorGettingToken: boolean
   //userAccount: { loggedIn: boolean; name: string }
 ) {
   // no site in query params
@@ -250,6 +252,19 @@ export function renderAppCard(
   `;
     
     
+  } else if(!tests.testsInProgress && errorGettingToken){
+    banner = html`
+    <!-- error banner -->
+    <div class="feedback-holder type-error">
+      <img src="/assets/new/stop.svg" alt="invalid result icon" />
+      <div class="error-info">
+        <p class="error-title">URL already claimed</p>
+        <p class="error-desc">
+          Another user has claimed a token for this URL. Enter a different URL to claim a token for a different PWA.
+        </p>
+      </div>
+    </div>
+  `;
   }
 
   // else: tests are complete
@@ -313,7 +328,7 @@ export function renderAppCard(
 
 // Rotates the icon on each details drop down to 0 degrees
 export function rotateZero(card: string, shadowRoot: Element["shadowRoot"], e?: Event){
-	//recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
+	recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
 	e?.stopPropagation();
 	let icon: HTMLImageElement = shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
 

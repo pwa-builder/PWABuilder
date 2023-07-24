@@ -16,6 +16,7 @@ import { populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
 import { FindWebManifest } from '../app-report.api';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 
 @customElement('app-token')
 export class AppToken extends LitElement {
@@ -100,7 +101,7 @@ export class AppToken extends LitElement {
       this.userAccount.state = state;
       this.userAccount.loggedIn = true;
       this.siteURL = this.userAccount.state;
-      
+
       const storedData = sessionStorage.getItem('validateUrlResponseData');
       if(storedData !== null) {
         this.validateUrlResponseData = JSON.parse(storedData);
@@ -129,6 +130,11 @@ export class AppToken extends LitElement {
         this.runGiveawayTests();
       }
     }
+
+    if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
+      await this.claimToken();
+    }
+
     this.decideBackground();
 
     super.connectedCallback();
@@ -390,6 +396,7 @@ export class AppToken extends LitElement {
   }
 
   async getUserToken() {
+    recordPWABuilderProcessStep("sign_in_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     const userResult = await this.signInUser();
     // This one is not working anymore?
     if(userResult != null) {
@@ -397,6 +404,7 @@ export class AppToken extends LitElement {
       // await this.claimToken();
       this.userAccount.loggedIn = true;
       this.userSignedIn = true;
+      await this.claimToken();
     }
     this.requestUpdate();
   }
@@ -405,6 +413,7 @@ export class AppToken extends LitElement {
     try {
       await (this.authModule as AuthModule).signOut();
       this.userAccount.loggedIn = false;
+      recordPWABuilderProcessStep("sign_out_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
       this.requestUpdate();
     }
     catch(e) {
@@ -413,6 +422,8 @@ export class AppToken extends LitElement {
   }
 
   async claimToken() {
+    recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+
     const encodedUrl = encodeURIComponent(this.siteURL);
 
     const validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser?site=${encodedUrl}`;
@@ -430,16 +441,18 @@ export class AppToken extends LitElement {
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
         this.tokenId = response.tokenId
-        this.goToCongratulationsPage();
+        //this.goToCongratulationsPage();
       }
       else {
         this.errorGettingToken = true;
-        this.isDenyList = true;
+        //this.isDenyList = true;
         // @jay error like this is not working: errorMessage: "There are no more free tokens left. Please contact pwabuilder@microsoft.com"
         this.errorMessage = response.errorMessage;
       }
     }
     catch(e){}
+
+    this.requestUpdate();
   }
 
   goToCongratulationsPage(){
@@ -465,6 +478,9 @@ export class AppToken extends LitElement {
 
   handleEnteredURL(e: SubmitEvent, root: any){
     e.preventDefault();
+
+    // come back here potentially to collect more info
+    recordPWABuilderProcessStep("url_entered", AnalyticsBehavior.ProcessCheckpoint);
 
     root.resetData()
 
@@ -513,8 +529,14 @@ export class AppToken extends LitElement {
     this.heroBanners.uncovered = !covered;
   }
 
-  showTandC(){
+  showTandC(showAcceptButton: boolean){
     this.showTerms = true;
+    this.showTermsNoAccept = showAcceptButton;
+    if(showAcceptButton){
+      recordPWABuilderProcessStep("full_terms_and_conditions_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    }
+    recordPWABuilderProcessStep("terms_and_conditions_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
+    
   }
 
   handleTermsResponse(accepted: boolean){
@@ -525,6 +547,31 @@ export class AppToken extends LitElement {
       checkbox.checked = accepted;
       this.acceptedTerms = accepted;
     }
+    if(accepted){
+      recordPWABuilderProcessStep("terms_and_conditions_accept_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    } else {
+      recordPWABuilderProcessStep("terms_and_conditions_close_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    }
+  }
+
+  enterDifferentURL(){
+    recordPWABuilderProcessStep("enter_different_url_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    Router.go(`/freeToken`)
+  }
+
+  backToPWABuilderHome(location: string){
+    recordPWABuilderProcessStep(`back_to_pwabuilder_home_${location}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    Router.go("/")
+  }
+
+  backToReportCardPage(){
+    recordPWABuilderProcessStep(`back_to_report_card_page_button_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    Router.go(`/reportcard?site=${this.siteURL}`);
+  }
+
+  updateSignInState(){
+    recordPWABuilderProcessStep(`continue_button_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    this.userSignedIn = true;
   }
 
   render(){
@@ -535,27 +582,29 @@ export class AppToken extends LitElement {
           <div id="hero-section-actions">
             ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ? 
               html`
-                <sl-button class="secondary" @click=${() => Router.go(`/freeToken`)}>
+                <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
                     Enter different URL
                 </sl-button>
                 ` :
               html``}
-            <button type="button" class="back-to-home" @click=${() => Router.go("/")}><img class="pwabuilder-logo" src="/assets/logos/header_logo.png" alt="PWABuilder logo" /></button>
+            <button type="button" class="back-to-home" @click=${() => this.backToPWABuilderHome("logo")}><img class="pwabuilder-logo" src="/assets/logos/header_logo.png" alt="PWABuilder logo" /></button>
           </div>
-        ${decideHeroSection(
-          this.siteURL,
-          {
-            testsInProgress: this.testsInProgress,
-            testsPassed: this.testsPassed,
-            noManifest: this.noManifest,
-            denyList: this.isDenyList,
-            popUrl: this.isPopularUrl
-          },
-          this.userAccount,
-          this.errorGettingToken,
-          this.handleEnteredURL,
-          this
-        )}
+          <div id="hero-section-text">
+            ${decideHeroSection(
+              this.siteURL,
+              {
+                testsInProgress: this.testsInProgress,
+                testsPassed: this.testsPassed,
+                noManifest: this.noManifest,
+                denyList: this.isDenyList,
+                popUrl: this.isPopularUrl
+              },
+              this.userAccount,
+              this.errorGettingToken,
+              this.handleEnteredURL,
+              this
+            )}
+          </div>
         </div>
       </div>
       ${this.siteURL  ? 
@@ -583,7 +632,7 @@ export class AppToken extends LitElement {
                 requiredRatio: this.requiredRatio,
                 enhancementsIndicator: this.enhancementsIndicator,
               },
-              //this.userAccount
+              this.errorGettingToken
             )}
           </div>
           ${!this.userSignedIn ? html`
@@ -666,16 +715,16 @@ export class AppToken extends LitElement {
         <ul>
           ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
         </ul>
-        <p class="FTC" @click=${() => this.showTermsNoAccept = true}>Full Terms and Conditions</p>
+        <p class="FTC" @click=${() => this.showTandC(true)}>Full Terms and Conditions</p>
       </div>` : html``}
       ${this.siteURL ? 
         html`
           ${ !this.userSignedIn ? 
             html`
               <div id="sign-in-section">
-                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList ? 
+                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList && !this.errorGettingToken ? 
                     this.userAccount.loggedIn ? 
-                    html`<sl-button class="primary" @click=${() => this.userSignedIn = true}>Continue</sl-button></div>` :
+                    html`<sl-button class="primary" @click=${() => this.updateSignInState()}>Continue</sl-button></div>` :
                     html`
                       <sl-button class="primary sign-in-button final-button" @click=${this.getUserToken}>
                       <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
@@ -684,7 +733,8 @@ export class AppToken extends LitElement {
                   : 
                   html`
                     <div class="back-to-pwabuilder-section">
-                      <sl-button class="primary final-button " @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
+                      <sl-button class="primary final-button " @click=${() => this.backToReportCardPage()}>Back to PWABuilder</sl-button>
+                      ${this.userAccount.loggedIn ? html`<p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>` : null}
                     </div>`}
               </div>
             ` : // this is where the user is signed in
@@ -693,11 +743,11 @@ export class AppToken extends LitElement {
               !this.isDenyList && !this.isPopularUrl ?
             html `
                 <div id="terms-and-conditions">
-                  <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC()} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                  <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC(false)} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
                   
                   ${this.acceptedTerms ? 
-                    html`<sl-button class="primary" @click=${this.claimToken}>View Token Code</sl-button>` : 
-                    html`<sl-button class="primary vtc-disabled" @click=${this.claimToken} disabled>View Token Code</sl-button>`
+                    html`<sl-button class="primary" @click=${() => this.goToCongratulationsPage()}>View Token Code</sl-button>` : 
+                    html`<sl-button class="primary vtc-disabled" disabled>View Token Code</sl-button>`
                   }
 
 
@@ -705,7 +755,7 @@ export class AppToken extends LitElement {
                 </div>
             ` :
             html`
-              <sl-button class="primary" @click=${() => Router.go(`/reportcard?site=${this.siteURL}`) }>Back to PWABuilder</sl-button>
+              <sl-button class="primary" @click=${() => this.backToReportCardPage()}>Back to PWABuilder</sl-button>
             `
           
           }
@@ -721,7 +771,7 @@ export class AppToken extends LitElement {
                 <div class="grid-item footer-text">
                   <p class="subheader">Ship your PWAs to App Store</p>
                   <p class="body-text">Build and Package progressive web apps for native app stores with PWABuilder.</p>
-                  <sl-button class="primary" @click=${() => Router.go("/")} >PWABuilder</sl-button>
+                  <sl-button class="primary" @click=${() => this.backToPWABuilderHome("button")} >PWABuilder</sl-button>
                 </div> ` 
                 : null
               }

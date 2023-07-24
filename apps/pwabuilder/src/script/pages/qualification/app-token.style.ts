@@ -61,13 +61,23 @@ export default css`
 		max-width: 1366px;
 
 		display: flex;
+
+		align-items: flex-start;
+		justify-content: flex-start;
+		width: 100%;
+
+	}
+
+	#hero-section-text {
+		display: flex;
 		flex-direction: column;
 		gap: 6px;
 
 		align-items: flex-start;
 		justify-content: center;
-		width: 100%;
 
+		max-width: 800px;
+		width: 100%;
 	}
 
 	#hero-section-actions {
@@ -626,10 +636,31 @@ sl-details::part(header):focus {
 	padding-left: 20px;
 }
 
-.final-button {
+.back-to-pwabuilder-section {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
 	padding-top: 20px;
   padding-bottom: 60px;
 }
+
+.back-to-pwabuilder-section p {
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 16px;
+	color: #292C3A;
+}
+
+.back-to-pwabuilder-section a { 
+	color: #4F3FB6;
+	text-decoration: underline;
+}
+
+.back-to-pwabuilder-section a:hover { 
+	cursor: pointer;
+}
+
 
 #footer-section {
 	background-color: #ffffff;
@@ -799,8 +830,8 @@ sl-details::part(header):focus {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 65%;
 	position: relative;
+	width: 65%;
 }
 .dialog::part(overlay){
 	backdrop-filter: blur(10px);
@@ -934,6 +965,13 @@ sl-details::part(header):focus {
 		align-items: flex-start;
 	}
 
+	#hero-section-content h1 {
+		font-size: 30px;
+	}
+	.dialog::part(panel) {
+		width: 100%;
+	}
+
 }
 
 @media(max-width: 620px){
@@ -968,8 +1006,8 @@ sl-details::part(header):focus {
 		left: 50px;
 	}
 
-	#hero-section-content h1 {
-		font-size: 30px;
+	#hero-section-text {
+		margin-bottom: 80px;
 	}
 	
 }
