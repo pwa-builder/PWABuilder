@@ -1078,12 +1078,18 @@ ${smallBreakPoint(css`
 	#sign-in-section sl-button {
 		width: 100%;
 	}
+	.sign-in-button::part(base) {
+		font-size: 13px;
+	}
 	#hero-section-bottom {
 		height: 138px;
 	}
 	#hero-section-actions {
 		gap: 10px;
 		right: 10px;
+	}
+	.subheader { 
+		font-size: 20px !important;
 	}
 `)}
 
@@ -1104,6 +1110,10 @@ ${mediumBreakPoint(css`
 	}
 	#hero-section-bottom {
 		height: 145px;
+	}
+	#sign-in-section {
+		width: 100%;
+		justify-content: center;
 	}
 `)}
 
