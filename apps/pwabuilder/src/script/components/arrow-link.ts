@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
 @customElement('arrow-link')
 export class ArrowLink extends LitElement {
@@ -60,6 +61,10 @@ export class ArrowLink extends LitElement {
     super();
   }
 
+  trackLinkClick(linkDescription: string){
+    recordPWABuilderProcessStep(`${linkDescription}_link_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <a
@@ -68,6 +73,7 @@ export class ArrowLink extends LitElement {
         target="_blank" 
         rel="noopener" 
         aria-label="${this.text}, will open in separate tab"
+        @click=${() => this.trackLinkClick(this.text.toLowerCase().split("").join("_"))}
       >
         <p class="arrow_link">${this.text}</p>
         <img

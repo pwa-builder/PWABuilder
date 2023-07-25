@@ -46,6 +46,10 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
     recordPWABuilderProcessStep("copy_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
   }
 
+  trackLinkClick(linkDescription: string){
+    recordPWABuilderProcessStep(`${linkDescription}_link_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render() {
     return html`
       <div id="congrats-wrapper">
@@ -83,13 +87,20 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
             <h3>Next Steps</h3>
             <ol class="steps-list">
               <li>
-                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener">Partner Center Dashboard</a> and reserve your app on Microsoft Store
+                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on 
+                <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_account_setup")}>Partner Center Dashboard</a> 
+                and reserve your app on Microsoft Store
               </li>
               <li>
-                <strong>Package Your App:</strong> Go back to <a aria-label="Click here to visit PWABuilder homepage" href="/" target="_blank" rel="noopener">PWABuilder</a> and generate package for Windows. You will be prompted to provide some options for your app. Fill these out with the three values you got from reserving your app name.
+                <strong>Package Your App:</strong> 
+                Go back to 
+                <a aria-label="Click here to visit PWABuilder homepage" href="/" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("pwabuilder_homepage")}>PWABuilder</a> 
+                and generate package for Windows. You will be prompted to provide some options for your app. Fill these out with the three values you got from reserving your app name.
               </li>
               <li>
-                <strong>Submitting Your PWA:</strong> Navigate back to <a aria-label="Click here to visit Partner Center Dashboard" href="https://partner.microsoft.com/dashboard" target="_blank" rel="noopener">Partner Center Dashboard</a> and drag and drop both the packages you downloaded from PWABuilder into your submission. It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Microsoft Store.
+                <strong>Submitting Your PWA:</strong> 
+                Navigate back to <a aria-label="Click here to visit Partner Center Dashboard" href="https://partner.microsoft.com/dashboard" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_dashboard")}>Partner Center Dashboard</a> 
+                and drag and drop both the packages you downloaded from PWABuilder into your submission. It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Microsoft Store.
               </li> 
             </ol>
              <!-- Need link to publishing instructions -->

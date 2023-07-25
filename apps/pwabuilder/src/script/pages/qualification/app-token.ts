@@ -218,6 +218,12 @@ export class AppToken extends LitElement {
         this.noManifest = true;
       }
 
+      recordPWABuilderProcessStep('tests_completed', AnalyticsBehavior.ProcessCheckpoint,
+      {
+        url: this.siteURL,
+        passed: this.testResults.testsPassed
+      });
+
       this.validateUrlResponseData = responseData;
       sessionStorage.setItem("validateUrlResponseData", JSON.stringify(this.validateUrlResponseData));
 
@@ -574,6 +580,10 @@ export class AppToken extends LitElement {
     this.userSignedIn = true;
   }
 
+  trackLinkClick(linkDescription: string){
+    recordPWABuilderProcessStep(`${linkDescription}_link_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  }
+
   render(){
     return html`
     <div id="wrapper">
@@ -799,7 +809,12 @@ export class AppToken extends LitElement {
       <ul>
         <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
         <li>live in a country or region where the Windows program in Partner Center is offered. 
-          <a href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets" rel="noopener" target="_blank">See here for the full list of countries</a>
+          <a 
+            href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets" 
+            rel="noopener" 
+            target="_blank"
+            @click=${() => this.trackLinkClick("full_country_list")}
+            >See here for the full list of countries</a>
         </li>
         <li>have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
         <li>not have an existing Microsoft Store on Windows individual developer/publisher account</li>
@@ -811,7 +826,12 @@ export class AppToken extends LitElement {
       <h2>Privacy and communications</h2>
       <p>When you sign up, we will securely retain an anonymous account id and your PWA URL to enforce the above requirements. We will not store your name or email and we will not contact you.</p>
       <p>All data is retained in accordance with the Microsoft Privacy Policy found here: 
-        <a href="https://go.microsoft.com/fwlink/?LinkId=521839" rel="noopener" target="_blank">https://go.microsoft.com/fwlink/?LinkId=521839</a>.</p>
+        <a 
+          href="https://go.microsoft.com/fwlink/?LinkId=521839" 
+          rel="noopener" 
+          target="_blank"
+          @click=${() => this.trackLinkClick("privacy_policy")}
+        >https://go.microsoft.com/fwlink/?LinkId=521839</a>.</p>
       ${!this.showTermsNoAccept ? html`<sl-button class="primary accept-terms" @click=${() => this.handleTermsResponse(true)}>Accept Terms</sl-button>` : null}
     </sl-dialog>
     `

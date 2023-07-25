@@ -110,7 +110,7 @@ export default css`
 		text-align: left;
 		color: #292C3A;
 		margin: 0;
-		max-width: min(525px, 65%);
+		max-width: 575px;
 	}
 
 	#hero-section .hero-message {
