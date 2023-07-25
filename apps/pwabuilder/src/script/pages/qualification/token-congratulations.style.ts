@@ -13,8 +13,9 @@ export default css`
     padding: 80px 101px;
   }
   #header h1 {
-    font-size: 36px;
-    line-height: 40px;
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 600;
     text-align: center;
   }
   #header h2 {
@@ -197,10 +198,6 @@ export default css`
   }
   /* screen at pixels 479 and 639 seem to not take breakpoint styling -- bug */
   ${smallBreakPoint(css`
-    #header h1 {
-      font-size: 30px;
-      line-height: 36px;
-    }
     #congrats-wrapper {
       padding: 30px;
     }
@@ -244,8 +241,8 @@ export default css`
     }
     #next-steps {
       width: 345px;
-      height: 519px;
-      font-size: 14px;
+      height: 593px;
+      font-size: 16px;
     }
   `)}
   ${mediumBreakPoint(css`
@@ -285,8 +282,7 @@ export default css`
     }
     #next-steps {
       width: 469px;
-      height: 300px;
-      font-size: 10px;
+      height: 430px;
     }
   `)}
 ${largeBreakPoint(css`
