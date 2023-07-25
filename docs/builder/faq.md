@@ -103,6 +103,39 @@ Once you have added the `related_applications` entry, you can get a list of chec
 ```js
 const installedRelatedApplications = navigator.getInstalledRelatedApps();
 ```
+
+#### I have a PWABuilder promo code, how do I use it to sign up for a Microsoft Developer Account?
+
+1. Navigate to the [Microsoft Developer Sign Up page.](https://developer.microsoft.com/en-us/microsoft-store/register/)
+
+2. Click `Sign Up`.
+
+3. Login with a personal Microsoft account. If you don't have one yet, head to [account.microsoft.com](https://account.microsoft.com/).
+
+4. Select the desired country/region  under `Account country/region`.
+
+5. Select `Individual` under `Account type`.
+
+<div class="docs-image">
+   <img src="/assets/builder/windows/promo-registration-info.png" alt="The account type and country fields during Microsoft Developer registration.">
+</div>
+
+6. Pick a `Publisher display name` that you will publish your apps under.
+
+7. Fill out the contact info that will be associated with your developer account.
+
+<div class="docs-image">
+   <img src="/assets/builder/windows/promo-registration-info-2.png" alt="The publisher display name and contact info fields during Microsoft Developer registration.">
+</div>
+ 
+ 8. Next, under `Registration - Payment`, you will see a `Promo Code` field. Enter the code supplied by PWABuilder here.
+
+ <div class="docs-image">
+   <img src="/assets/builder/windows/promo-registration-info-2.png" alt="The Promo Code field during Microsoft Developer registration">
+ </div>
+
+ 9. That's all you need to do to take advantage of the PWABuilder promotion, complete the rest of the sign up as guided.
+
 ## Android
 
 #### Why is the browser address bar still showing in my PWA?
@@ -110,7 +143,6 @@ const installedRelatedApplications = navigator.getInstalledRelatedApps();
 If your address bar is still showing, it probably means there's a problem with your `assetlinks.json` file.
 
 Check out [this article](/builder/asset-links-faq) for info on debugging `assetlinks.json` issues.
-
 
 #### How can I check if my PWA is already installed on Android?
 
