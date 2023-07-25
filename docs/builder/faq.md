@@ -136,6 +136,12 @@ const installedRelatedApplications = navigator.getInstalledRelatedApps();
 
  9. That's all you need to do to take advantage of the PWABuilder promotion, complete the rest of the sign up as guided.
 
+#### How much does it cost to have a Microsoft Developer account?
+
+An Individual Microsoft Developer Account costs a one-time fee of **$19.00 USD**. There are no recurring fees or subscriptions associated with having a Developer account.
+
+If a Developer account is being opened on behalf of a company or organization, this one-time fee increases to **$99.00 USD**.
+
 ## Android
 
 #### Why is the browser address bar still showing in my PWA?
