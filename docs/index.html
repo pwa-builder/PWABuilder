@@ -55,7 +55,23 @@
                     hook.doneEach(function() {
                         window.recordPageView(document.location.href, getPageName());
                     });
-                }
+                },
+                /* function(hook) {
+                    var summitBanner = [
+                        '<sl-alert open variant="success" class="pwa-summit-banner">',
+                        '<sl-icon slot="icon" name="globe2"></sl-icon>',
+                        '<div>',
+                        '<strong>Upcoming: PWA Summit on October 5th! &#x1F604; </strong><br />',
+                        '<a href="https://pwasummit.org/">PWA Summit</a> is an online conference dedicated entirely to helping developers succeed with Progressive Web Apps. ',
+                        'Register to attend <a href="https://pwasummit.org/register/">here.</a>',
+                        '</div>',
+                        '</sl-alert>'
+                    ].join('');
+
+                    hook.afterEach(function(html) {
+                        return summitBanner + html;
+                    });
+                } */
             ]
         };
     </script>

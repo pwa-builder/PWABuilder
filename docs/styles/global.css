@@ -80,8 +80,6 @@
     border-color: #491576;
 }
 
-
-
 .home-nav-card::part(base) {
     justify-self: stretch;
     height: 100%;
@@ -105,4 +103,8 @@
 
 sl-button {
     width: 100%;
+}
+
+sl-alert::part(base) {
+    border-top-color: #9C8DAB;
 }

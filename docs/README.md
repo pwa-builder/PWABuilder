@@ -1,3 +1,11 @@
+<sl-alert open variant="success" class="pwa-summit-banner">
+   <sl-icon slot="icon" name="gift"></sl-icon>
+      <strong>Upcoming: PWA Summit on October 5th! &#x1F604; </strong><br />
+      <a href="https://pwasummit.org/">PWA Summit</a> is an online conference dedicated entirely to helping developers succeed with Progressive Web Apps. 
+      Register to attend <a href="https://pwasummit.org/register/">here.</a>
+</sl-alert>
+
+
 ?> **Note** This documentation is a work in progress, keep checking back for new articles and content!
 
 # PWABuilder Suite Documentation
