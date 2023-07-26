@@ -108,3 +108,7 @@ sl-button {
 sl-alert::part(base) {
     border-top-color: #9C8DAB;
 }
+
+sl-alert::part(icon) {
+    color: #491576;
+}
