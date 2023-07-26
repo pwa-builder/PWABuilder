@@ -16,7 +16,7 @@ You can reach as many users as possible while minimizing the amount of work requ
 
 Progressive Web Apps are discoverable and installable from both the web and app stores, such as Google Play and the Microsoft Store. And again, with just one codebase.
 
-By packaging your PWA with PWABuilder and delivering it to as many app stores as possible, your app can find the largest available audience.
+By packaging your PWA with PWABuilder and delivering it to as many app stores as possible, your app can reach the largest available audience.
 
 ### Ease of Updating
 
