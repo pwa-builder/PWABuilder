@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: '16.x'
       - name: Setup Docs
-        run: cd docs/ && npm i && npm run setup
+        run: cd docs/ && npm run setup
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
