@@ -1,4 +1,4 @@
-?> **Note** This documentation is a work in progress, keep checking back for new articles and content!
+
 
 # PWABuilder Suite Documentation
 
