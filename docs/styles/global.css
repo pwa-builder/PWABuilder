@@ -72,15 +72,13 @@
     }
 }
 .home-nav-container sl-button::part(base) {
-    background-color: #9C8DAB;
+    background: linear-gradient(to bottom, #d0c0e5, #bdaccc);
     color: white;
 }
 
 .home-nav-container sl-button::part(base):hover {
     border-color: #491576;
 }
-
-
 
 .home-nav-card::part(base) {
     justify-self: stretch;
@@ -103,6 +101,39 @@
 
 /* Home Nav CSS END */
 
+sl-menu-item::part(base) {
+    color: #491576;
+    margin-left: 2px;
+    margin-right: 2px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+sl-menu-item[checked]::part(base) {
+    background: #e7e2ee;
+    border:#ada6b4 1px solid;
+}
+
+sl-menu::part(base) {
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(to right, #f9f4ff, #e7f6fa);
+}
+
+sl-menu-item::part(base):hover {
+    background: linear-gradient(to bottom, #d0c0e5, #bdaccc);
+    color: white;
+}
+
+sl-menu {
+    padding-bottom: 10px;
+    width: 100%;
+}
+
 sl-button {
     width: 100%;
+}
+
+.logo-img {
+    padding-bottom: 15px;
 }
