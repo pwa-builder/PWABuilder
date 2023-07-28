@@ -42,6 +42,7 @@ export class PublishPane extends LitElement {
   @state() feedbackMessages: TemplateResult[] = [];
 
   @property() preventClosing = false;
+  @property() tokensCampaign = false;
 
   @state() storeMap: any = {
   "Windows":
@@ -713,7 +714,7 @@ export class PublishPane extends LitElement {
         }
 
       `)}
-      
+
     `
     ];
   }
@@ -884,7 +885,7 @@ export class PublishPane extends LitElement {
     }
   }
 
-  // takes the information from the selectedStore and error and forms a card to 
+  // takes the information from the selectedStore and error and forms a card to
   // convey the error message to the user in a user friendly way
   // directs users towards FAQ
   renderErrorMessage(err: any){
@@ -894,7 +895,7 @@ export class PublishPane extends LitElement {
     let message = ""; // text that comes after error code in quick desc
     let quick_desc = ""; // the quick description they get to read (searchable)
 
-    
+
     if(err.message === "Failed to fetch"){
       title = err.message;
       quick_desc = "Our service was unable to package your PWA. Please open an issue on github here: https://github.com/pwa-builder/PWABuilder/issues/new/choose"
@@ -904,7 +905,7 @@ export class PublishPane extends LitElement {
       let errString = err.stack;
       stack_trace += errString.slice(
         errString.indexOf(" at ") + 1
-      ); 
+      );
       title = errString.split(",")[0]; // first line of error message
       quick_desc = errString.slice(
         errString.indexOf("Details:") + 8,
@@ -912,14 +913,14 @@ export class PublishPane extends LitElement {
       ); // the quick description they get to read (searchable)
 
     } else if (this.selectedStore === "Android"){
-      title = response.statusText; 
-      stack_trace += response.stack_trace.split("stack:")[1]; 
+      title = response.statusText;
+      stack_trace += response.stack_trace.split("stack:")[1];
       message = response.stack_trace.split("stack:")[0];
-      quick_desc = `Status code: ${response.status}. ${message}` 
+      quick_desc = `Status code: ${response.status}. ${message}`
     } else {
-      title = response.statusText; 
-      stack_trace += err.stack; 
-      quick_desc = `Status code: ${response.status}. ${response.stack_trace}` 
+      title = response.statusText;
+      stack_trace += err.stack;
+      quick_desc = `Status code: ${response.status}. ${response.stack_trace}`
     }
     let error = html`
       <div class="feedback-holder type-error">
@@ -998,14 +999,14 @@ export class PublishPane extends LitElement {
               ${platform.factoids.map((fact: string) => html`<li>${fact}</li>`)}
             </ul>
           </div>
-          ${ platform.title === "Windows" ? html`
+          ${ platform.title === "Windows" && this.tokensCampaign ? html`
               <button id="windows-package-token-banner" @click=${() => this.goToTokenPage()}>
                 <div id="token-banner-windows-icon">
                   <img src="/assets/microsoft_store_icon_white.png" alt="Windows">
                 </div>
                 <div id="token-banner-text">
                   <p>
-                    Check to see if you qualify for a free Microsoft Store account <img src="/assets/white-arrow.png" alt="arrow" /> 
+                    Check to see if you qualify for a free Microsoft Store account <img src="/assets/white-arrow.png" alt="arrow" />
                   </p>
                 </div>
               </button>
@@ -1015,7 +1016,7 @@ export class PublishPane extends LitElement {
     );
   }
 
-  goToTokenPage(){ 
+  goToTokenPage(){
     let current = new URL(location.href);
     let url = current.searchParams.get('site');
 

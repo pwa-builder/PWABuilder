@@ -1,5 +1,6 @@
 import { Icon, Manifest } from "@pwabuilder/manifest-validation";
 import { resolveUrl } from "../../utils/url";
+import { env } from "../../utils/environment";
 
 // Makes sure the icon URL is valid
 export function handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
@@ -120,4 +121,17 @@ export async function populateAppCard(siteURL: string, manifest: Manifest, manif
 				iconAlt: "A placeholder for you sites icon"
 			};
 	}
+}
+
+export async function GetTokenCampaignStatus(): Promise<boolean> {
+	const fetchStatus = await fetch(
+		`${env.validateGiveawayUrl}/GetTokenCampaignStatus`
+	);
+
+	if (fetchStatus.ok) {
+		const json = await fetchStatus.json();
+		return json.isAvailable || false;
+	}
+
+	return false;
 }

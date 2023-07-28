@@ -36,6 +36,7 @@ import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
+import { GetTokenCampaignStatus } from './qualification/app-token.helper';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -132,6 +133,8 @@ export class AppReport extends LitElement {
 
   @state() todoItems: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
+
+  @state() tokensCampaign: boolean = false;
 
   private possible_messages = [
     {"messages": {
@@ -1554,6 +1557,7 @@ export class AppReport extends LitElement {
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+    this.tokensCampaign = await GetTokenCampaignStatus();
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -1822,13 +1826,13 @@ export class AppReport extends LitElement {
       this.todoItems.push(...findersResults.manifestTodos)
 
       // adding todo for token giveaway item if theres at least a manifest
-      if(!this.createdManifest){
+      if(!this.createdManifest && this.tokensCampaign){
         this.todoItems.push(
           {
-            "card": "giveaway", 
-            "field": "giveaway", 
-            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`, 
-            "status": "giveaway", 
+            "card": "giveaway",
+            "field": "giveaway",
+            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
+            "status": "giveaway",
             "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
           }
         );
@@ -1898,13 +1902,13 @@ export class AppReport extends LitElement {
     }
 
     // adding todo for token giveaway item if theres at least a manifest
-    if(!this.createdManifest){
+    if(!this.createdManifest && this.tokensCampaign){
       this.todoItems.push(
         {
-          "card": "giveaway", 
-          "field": "giveaway", 
-          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`, 
-          "status": "giveaway", 
+          "card": "giveaway",
+          "field": "giveaway",
+          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
+          "status": "giveaway",
           "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
         }
       );
@@ -2309,7 +2313,7 @@ export class AppReport extends LitElement {
     if(!this.hasItemBeenAdded(toAdd)) {
       this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
       this.requestUpdate();
-    } 
+    }
   }
 
   // function to validate whether or not an retest item has already been added to the ToDo list
@@ -2320,7 +2324,7 @@ export class AppReport extends LitElement {
         isItemPresent = true;
         break;
       }
-    } 
+    }
     return isItemPresent;
   }
 
@@ -2502,7 +2506,7 @@ export class AppReport extends LitElement {
 
     a.click();
   }
-  
+
   closeTooltipOnScroll() {
     if(this.openTooltips.length > 0){
       this.openTooltips[0].hide();
@@ -3086,7 +3090,7 @@ export class AppReport extends LitElement {
         .siteName=${this.appCard.siteName}
       > </share-card>
 
-      <publish-pane></publish-pane>
+      <publish-pane .tokensCampaign=${this.tokensCampaign}></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
