@@ -135,3 +135,29 @@ export async function GetTokenCampaignStatus(): Promise<boolean> {
 
 	return false;
 }
+
+export async function CheckUserTokenAvailability(site: string, accessToken: string): Promise<{
+		isTokenAvailable: boolean,
+		errorMessage: string | null,
+		rawError: string | null
+	}> {
+	const fetchStatus = await fetch(
+		`${env.validateGiveawayUrl}/CheckUserTokenAvailability?${new URLSearchParams({ site })}`,
+		{
+			headers: {
+				'Authorization': `Bearer ${accessToken}`
+			}
+		}
+	);
+
+	if (fetchStatus.ok) {
+		const json = await fetchStatus.json();
+		return json;
+	}
+
+	return {
+		isTokenAvailable: false,
+		errorMessage: null,
+		rawError: null
+	};
+}

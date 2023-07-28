@@ -12,7 +12,7 @@ import { localeStrings } from '../../../locales';
 
 import style from './app-token.style';
 import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
-import { populateAppCard } from './app-token.helper';
+import { CheckUserTokenAvailability, populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
 import { FindWebManifest } from '../app-report.api';
@@ -58,7 +58,7 @@ export class AppToken extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestUrl: string = '';
   @state() noManifest: boolean = false;
-  
+
   @state() heroBanners = {covered: false, uncovered: true};
 
   @state() showTerms: boolean = false;
@@ -85,7 +85,7 @@ export class AppToken extends LitElement {
 
   async checkIfLoggedIn(state: string) {
     await (this.authModule as AuthModule).registerPostLoginListener();
-    
+
     let account = null;
     try {
       account = await (this.authModule as AuthModule).getAccessTokenSilent();
@@ -93,7 +93,7 @@ export class AppToken extends LitElement {
     catch (e) {
       return false;
     }
-    
+
     if(account && account.account) {
       this.userAccount.name = account.account.name || '';
       this.userAccount.email = account.account.username || '';
@@ -116,14 +116,14 @@ export class AppToken extends LitElement {
     return false;
   }
   async connectedCallback(): Promise<void> {
-    
+
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
 
     this.authModule = new AuthModule();
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
-    
+
     if (site) {
       this.siteURL = site;
       if(!dataRegisted){
@@ -132,7 +132,7 @@ export class AppToken extends LitElement {
     }
 
     if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
-      await this.claimToken();
+      await this.preClaimToken();
     }
 
     this.decideBackground();
@@ -155,13 +155,17 @@ export class AppToken extends LitElement {
   }
 
   async runGiveawayTests(){
-    
+
     this.decideBackground();
     // run giveaway validation suite.
     this.testsInProgress = true;
 
     // pretending to test for now replace with: call to api for test results
     await this.validateUrl();
+
+    if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
+      await this.preClaimToken();
+    }
 
     this.testsInProgress = false;
 
@@ -179,7 +183,7 @@ export class AppToken extends LitElement {
     const encodedUrl = encodeURIComponent(this.siteURL);
 
     const validateGiveawayUrl = env.validateGiveawayUrl + `/validateurl?site=${encodedUrl}`;
-    
+
     let headers = {...getHeaders(), 'content-type': 'application/json' };
 
     try {
@@ -193,7 +197,7 @@ export class AppToken extends LitElement {
         ),
         headers: new Headers(headers)
       });
-      
+
       if (!response.ok) {
         console.warn('Validation Failed', response.statusText);
 
@@ -228,17 +232,17 @@ export class AppToken extends LitElement {
       sessionStorage.setItem("validateUrlResponseData", JSON.stringify(this.validateUrlResponseData));
 
       await this.registerData(responseData);
-      
+
     } catch (e) {
       console.error(e);
     }
   }
 
-  /* 
+  /*
     data can come from api response or
     in the case of login, from the msal cached state.
     this function allows us to update that information
-    from either method. 
+    from either method.
   */
   async registerData(data: any){
     this.testResults = data.testResults;
@@ -271,13 +275,13 @@ export class AppToken extends LitElement {
       this.installableTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? 
-              html`<img src=${valid_src} alt="passed test icon" />` : 
+            ${test.valid ?
+              html`<img src=${valid_src} alt="passed test icon" />` :
               html`
-                ${test.errorString ? 
+                ${test.errorString ?
                   html`<sl-tooltip content=${test.errorString} placement="right">
                         <img src=${stop_src} alt="failed test icon" />
-                      </sl-tooltip>` : 
+                      </sl-tooltip>` :
                   html`
                     <img src=${stop_src} alt="failed test icon" />
                   `
@@ -298,7 +302,7 @@ export class AppToken extends LitElement {
     } else {
       this.installableClassMap["red"] = true;
     }
-    
+
   }
 
   handleRequired(required: any){
@@ -310,13 +314,13 @@ export class AppToken extends LitElement {
       this.requiredTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? 
-              html`<img src=${valid_src} alt="passed test icon" />` : 
+            ${test.valid ?
+              html`<img src=${valid_src} alt="passed test icon" />` :
               html`
-                ${test.errorString ? 
+                ${test.errorString ?
                   html`<sl-tooltip content=${test.errorString} placement="right">
                         <img src=${stop_src} alt="failed test icon" />
-                      </sl-tooltip>` : 
+                      </sl-tooltip>` :
                   html`
                     <img src=${stop_src} alt="failed test icon" />
                   `
@@ -337,7 +341,7 @@ export class AppToken extends LitElement {
     } else {
       this.requiredClassMap["red"] = true;
     }
-    
+
   }
 
   handleEnhancements(enhancements: any){
@@ -348,13 +352,13 @@ export class AppToken extends LitElement {
       this.enhancementsTodos.push(
         html`
           <div class="inner-todo">
-            ${test.valid ? 
-              html`<img src=${valid_src} alt="passed test icon" />` : 
+            ${test.valid ?
+              html`<img src=${valid_src} alt="passed test icon" />` :
               html`
-                ${test.errorString ? 
+                ${test.errorString ?
                   html`<sl-tooltip content=${test.errorString} placement="right">
                         <img src=${stop_src} alt="failed test icon" />
-                      </sl-tooltip>` : 
+                      </sl-tooltip>` :
                   html`
                     <img src=${stop_src} alt="failed test icon" />
                   `
@@ -386,34 +390,38 @@ export class AppToken extends LitElement {
   }
 
   async signInUser() {
+    recordPWABuilderProcessStep("sign_in_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+
     try {
-    
-    const result = await (this.authModule as AuthModule).signIn(this.siteURL);
-    if(result != null && result != undefined && "idToken" in result){
-      return result;
-    }
+      const result = await (this.authModule as AuthModule).signIn(this.siteURL);
+      if(result != null && result != undefined && "idToken" in result){
+        this.requestUpdate();
+        return result;
+      }
     else
       return null;
     }
     catch(e) {
       console.log("Authentication Error", e);
-    } 
+    }
+
     return null;
   }
 
-  async getUserToken() {
-    recordPWABuilderProcessStep("sign_in_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    const userResult = await this.signInUser();
-    // This one is not working anymore?
-    if(userResult != null) {
-      this.userAccount = userResult;
-      // await this.claimToken();
-      this.userAccount.loggedIn = true;
-      this.userSignedIn = true;
-      await this.claimToken();
-    }
-    this.requestUpdate();
-  }
+  // async getUserToken() {
+  //   recordPWABuilderProcessStep("sign_in_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+  //   // const userResult =
+  //   await this.signInUser();
+  //   // This one is not working anymore?
+  //   // if(userResult != null) {
+  //   //   this.userAccount = userResult;
+  //   //   // await this.claimToken();
+  //   //   this.userAccount.loggedIn = true;
+  //   //   this.userSignedIn = true;
+  //   //   await this.claimToken();
+  //   // }
+  //   this.requestUpdate();
+  // }
 
   async signOut() {
     try {
@@ -424,7 +432,17 @@ export class AppToken extends LitElement {
     }
     catch(e) {
       console.log(e, "Authentication Error");
-    } 
+    }
+  }
+
+  async preClaimToken() {
+    if (this.userAccount.accessToken && this.siteURL) {
+      const availability = await CheckUserTokenAvailability(this.siteURL, this.userAccount.accessToken);
+      if (!availability.isTokenAvailable && availability.errorMessage) {
+        this.errorGettingToken = true;
+        this.errorMessage = availability.errorMessage;
+      }
+    }
   }
 
   async claimToken() {
@@ -447,7 +465,7 @@ export class AppToken extends LitElement {
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
         this.tokenId = response.tokenId
-        //this.goToCongratulationsPage();
+        this.goToCongratulationsPage();
       }
       else {
         this.errorGettingToken = true;
@@ -508,7 +526,7 @@ export class AppToken extends LitElement {
 
     if(isValidUrl){
       input.setCustomValidity("");
-      
+
       const urlParams = new URLSearchParams(window.location.search);
 
       urlParams.set('site', url);
@@ -542,7 +560,7 @@ export class AppToken extends LitElement {
       recordPWABuilderProcessStep("full_terms_and_conditions_clicked", AnalyticsBehavior.ProcessCheckpoint);
     }
     recordPWABuilderProcessStep("terms_and_conditions_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
-    
+
   }
 
   handleTermsResponse(accepted: boolean){
@@ -590,7 +608,7 @@ export class AppToken extends LitElement {
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
           <div id="hero-section-actions">
-            ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ? 
+            ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ?
               html`
                 <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
                     Enter different URL
@@ -617,7 +635,7 @@ export class AppToken extends LitElement {
           </div>
         </div>
       </div>
-      ${this.siteURL  ? 
+      ${this.siteURL  ?
         html`
           <div id="app-info-section">
             ${renderAppCard(
@@ -652,7 +670,7 @@ export class AppToken extends LitElement {
                 <h2>Technical Qualifications</h2>
               </div>
               <div id="categories">
-                ${this.testsInProgress ? 
+                ${this.testsInProgress ?
                   html`
                     <sl-skeleton effect="sheen"></sl-skeleton>
                     <sl-skeleton effect="sheen"></sl-skeleton>
@@ -660,7 +678,7 @@ export class AppToken extends LitElement {
                   ` :
                   html`
                     <sl-details
-                      id="installable-details" 
+                      id="installable-details"
                       class="inner-details"
                       @sl-show=${(e: Event) => rotateNinety("installable-details", this.shadowRoot, e)}
                       @sl-hide=${(e: Event) => rotateZero("installable-details", this.shadowRoot, e)}
@@ -676,8 +694,8 @@ export class AppToken extends LitElement {
                         ${this.installableTodos.length > 0 ? this.installableTodos.map((todo: TemplateResult) => todo) : html``}
                       </div>
                     </sl-details>
-                    <sl-details 
-                      id="required-details" 
+                    <sl-details
+                      id="required-details"
                       class="inner-details"
                       @sl-show=${(e: Event) => rotateNinety("required-details", this.shadowRoot, e)}
                       @sl-hide=${(e: Event) => rotateZero("required-details", this.shadowRoot, e)}
@@ -693,8 +711,8 @@ export class AppToken extends LitElement {
                         ${this.requiredTodos.length > 0 ? this.requiredTodos.map((todo: TemplateResult) => todo) : html``}
                       </div>
                     </sl-details>
-                    <sl-details 
-                      id="enhancements-details" 
+                    <sl-details
+                      id="enhancements-details"
                       class="inner-details"
                       @sl-show=${(e: Event) => rotateNinety("enhancements-details", this.shadowRoot, e)}
                       @sl-hide=${(e: Event) => rotateZero("enhancements-details", this.shadowRoot, e)}
@@ -715,10 +733,10 @@ export class AppToken extends LitElement {
               </div>
             </div>
           </div> ` : html``}
-        ` : 
+        ` :
         html``
       }
-      
+
       ${ !this.userSignedIn ? html`
       <div id="qual-section">
         <h2>Qualifications</h2>
@@ -727,20 +745,20 @@ export class AppToken extends LitElement {
         </ul>
         <p class="FTC" @click=${() => this.showTandC(true)}>Full Terms and Conditions</p>
       </div>` : html``}
-      ${this.siteURL ? 
+      ${this.siteURL ?
         html`
-          ${ !this.userSignedIn ? 
+          ${ !this.userSignedIn ?
             html`
               <div id="sign-in-section">
-                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList && !this.errorGettingToken ? 
-                    this.userAccount.loggedIn ? 
+                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList && !this.errorGettingToken ?
+                    this.userAccount.loggedIn ?
                     html`<sl-button class="primary" @click=${() => this.updateSignInState()}>Continue</sl-button></div>` :
                     html`
-                      <sl-button class="primary sign-in-button final-button" @click=${this.getUserToken}>
+                      <sl-button class="primary sign-in-button final-button" @click=${this.signInUser}>
                       <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
                         Sign in with a Microsoft account to continue
-                      </sl-button>` 
-                  : 
+                      </sl-button>`
+                  :
                   html`
                     <div class="back-to-pwabuilder-section">
                       <sl-button class="primary final-button " @click=${() => this.backToReportCardPage()}>Back to PWABuilder</sl-button>
@@ -754,9 +772,9 @@ export class AppToken extends LitElement {
             html `
                 <div id="terms-and-conditions">
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC(false)} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
-                  
-                  ${this.acceptedTerms ? 
-                    html`<sl-button class="primary" @click=${() => this.goToCongratulationsPage()}>View Token Code</sl-button>` : 
+
+                  ${this.acceptedTerms ?
+                    html`<sl-button class="primary" @click=${() => this.claimToken()}>View Token Code</sl-button>` :
                     html`<sl-button class="primary vtc-disabled" disabled>View Token Code</sl-button>`
                   }
 
@@ -767,22 +785,22 @@ export class AppToken extends LitElement {
             html`
               <sl-button class="primary" @click=${() => this.backToReportCardPage()}>Back to PWABuilder</sl-button>
             `
-          
+
           }
         ` : html``}
-      
+
           <div id="footer-section">
             <!-- Class Map to show the whole grid vs just the last half of the grid -->
             <div id="footer-section-grid" class=${classMap({"footer-grid-one-row": this.siteURL.length > 0, "footer-grid-two-row": this.siteURL.length == 0})}>
             ${!this.siteURL ?
               html`
                 <div class="grid-item sc-img"><img id="marketing-img" src="/assets/new/marketing-img1.png" alt="pwabuilder home page" /></div>
-                
+
                 <div class="grid-item footer-text">
                   <p class="subheader">Ship your PWAs to App Store</p>
                   <p class="body-text">Build and Package progressive web apps for native app stores with PWABuilder.</p>
                   <sl-button class="primary" @click=${() => this.backToPWABuilderHome("button")} >PWABuilder</sl-button>
-                </div> ` 
+                </div> `
                 : null
               }
               <div class="grid-item footer-text">
@@ -794,24 +812,24 @@ export class AppToken extends LitElement {
               <div class="grid-item grid-img wheel-img-small"><img src="/assets/new/marketing-img2-mobile.png" alt="different PWAs" /></div>
             </div>
           </div>
-        
+
       <!-- <div id="hero-section-bottom">
 
       </div>    -->
     </div>
 
     <sl-dialog class=${classMap({dialog: true, withoutAccept: this.showTermsNoAccept})} label=${"Full Terms and Conditions"} .open=${this.showTerms || this.showTermsNoAccept} @sl-request-close=${() => this.handleTermsResponse(false)}>
-      
+
       <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
       <h2>Offer details, terms, and conditions</h2>
       <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11.</p>
       <p>To qualify, you must:</p>
       <ul>
         <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
-        <li>live in a country or region where the Windows program in Partner Center is offered. 
-          <a 
-            href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets" 
-            rel="noopener" 
+        <li>live in a country or region where the Windows program in Partner Center is offered.
+          <a
+            href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets"
+            rel="noopener"
             target="_blank"
             @click=${() => this.trackLinkClick("full_country_list")}
             >See here for the full list of countries</a>
@@ -825,17 +843,17 @@ export class AppToken extends LitElement {
       <p>If you qualify and tokens are available, you will be given a token on this page when you submit the form. You can come back to this page to retrieve your token again at any time by signing in with your Microsoft Account. Free developer account tokens are not valid if transferred, sold, or otherwise used by any Microsoft Account other than the one which signed up here. These tokens are for individual, not corporate, Microsoft Store on Windows developer accounts.</p>
       <h2>Privacy and communications</h2>
       <p>When you sign up, we will securely retain an anonymous account id and your PWA URL to enforce the above requirements. We will not store your name or email and we will not contact you.</p>
-      <p>All data is retained in accordance with the Microsoft Privacy Policy found here: 
-        <a 
-          href="https://go.microsoft.com/fwlink/?LinkId=521839" 
-          rel="noopener" 
+      <p>All data is retained in accordance with the Microsoft Privacy Policy found here:
+        <a
+          href="https://go.microsoft.com/fwlink/?LinkId=521839"
+          rel="noopener"
           target="_blank"
           @click=${() => this.trackLinkClick("privacy_policy")}
         >https://go.microsoft.com/fwlink/?LinkId=521839</a>.</p>
       ${!this.showTermsNoAccept ? html`<sl-button class="primary accept-terms" @click=${() => this.handleTermsResponse(true)}>Accept Terms</sl-button>` : null}
     </sl-dialog>
     `
-    
+
   }
 }
 
