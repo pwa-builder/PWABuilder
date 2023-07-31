@@ -21,6 +21,79 @@ export default css`
 		gap: 30px;
 	}
 
+	#over-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 95vh;
+	}
+
+	#over-main-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+	}
+
+	#over-main-content h1 {
+		font-size: 36px;
+		color: var(--font-color);
+		margin: 0;
+	}
+
+	#over-main-content p {
+		font-size: 16px;
+		color: var(--font-color);
+		margin: 0;
+	}
+
+	#over-main-content a {
+		font-size: 16px;
+		color: var(--primary-color);
+		margin: 0;
+		text-decoration: none;
+		font-weight: 700;
+	}
+
+	#over-main-content a:hover {
+		text-decoration: underline;
+	}
+
+	#icons-section {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+	}
+
+	.twt {
+		width: 65px;
+		height: auto;
+	}
+
+	.disc {
+		width: 55px;
+		height: auto;
+	}
+
+	#icons-section img:hover {
+		cursor: pointer;
+	}
+
+	#over-wrapper p span {
+		font-weight: 700;
+	}
+
+	#over-wrapper > p {
+		font-size: 16px;
+		color: var(--font-color);
+		margin: 0;
+		position: absolute;
+    bottom: 2.5vh;
+	}
+
 	#wrapper > * {
 		box-sizing: border-box;
 	}

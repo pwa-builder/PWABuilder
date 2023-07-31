@@ -12,7 +12,7 @@ import { localeStrings } from '../../../locales';
 
 import style from './app-token.style';
 import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
-import { CheckUserTokenAvailability, populateAppCard } from './app-token.helper';
+import { CheckUserTokenAvailability, GetTokenCampaignStatus, populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
 import { FindWebManifest } from '../app-report.api';
@@ -77,6 +77,8 @@ export class AppToken extends LitElement {
   @state() validateUrlResponseData: any = {};
   @state() userSignedIn: boolean = false;
 
+  @state() tokensCampaignRunning: boolean = true;
+
   static get styles() {
     return [
       style
@@ -116,6 +118,9 @@ export class AppToken extends LitElement {
     return false;
   }
   async connectedCallback(): Promise<void> {
+
+    this.tokensCampaignRunning = await GetTokenCampaignStatus();
+    env.tokensCampaignRunning = this.tokensCampaignRunning;
 
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
@@ -606,6 +611,32 @@ export class AppToken extends LitElement {
   }
 
   render(){
+
+    if(!this.tokensCampaignRunning){
+      return html`
+        <div id="over-wrapper">
+          <div id="over-main-content">
+            <h1>This promotion has currently ended.</h1>
+            <p>Please check our Twitter handle 
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a> 
+              or join our 
+              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">Discord</a> 
+              for more information on the next promotion.
+            </p>
+            <div id="icons-section">
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank"> 
+                <img class="twt" src='/assets/new/twitter.svg' alt="twitter logo" />
+              </a> 
+              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">
+                <img class="disc" src='/assets/new/discord.svg' alt="discord logo">
+              </a>
+            </div>
+          </div>
+          <p>Reach out to  <span>support@pwabuilder.com</span> in order to reclaim lost code</p>
+        </div>
+      `
+    }
+
     return html`
     <div id="wrapper">
       <div id="hero-section" class=${classMap(this.heroBanners)}>

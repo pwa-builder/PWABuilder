@@ -37,6 +37,7 @@ import { SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 import { GetTokenCampaignStatus } from './qualification/app-token.helper';
+import { env } from '../utils/environment';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1558,6 +1559,7 @@ export class AppReport extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     this.tokensCampaign = await GetTokenCampaignStatus();
+    env.tokensCampaignRunning = this.tokensCampaign;
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {

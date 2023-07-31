@@ -1,10 +1,11 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
+import { BeforeEnterObserver, Router, RouterLocation } from '@vaadin/router';
 
 import style from './token-congratulations.style';
 import '../../components/arrow-link'
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
+import { env } from '../../utils/environment';
 
 type Params = {
   appicon: string;
@@ -30,8 +31,15 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
   private paramsData: null | Params = null;
 
   async onBeforeEnter(location: RouterLocation) {
-    this.paramsData = location.params as Params;
-    console.log(this.paramsData);
+
+    if(!env.tokensCampaignRunning){
+      Router.go("/freeToken");
+    } else {
+
+      this.paramsData = location.params as Params;
+      console.log(this.paramsData);
+
+    }
   }
 
   copyCode() {

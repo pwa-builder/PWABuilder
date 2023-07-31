@@ -10,7 +10,8 @@ export const env = {
   safeUrlFetcher: '',
   webPackageGeneratorFormUrl: '',
   zipCreatorUrl: '',
-  validateGiveawayUrl: ''
+  validateGiveawayUrl: '',
+  tokensCampaignRunning: false
 };
 
 //@ts-ignore
