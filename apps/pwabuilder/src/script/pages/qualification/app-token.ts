@@ -445,6 +445,7 @@ export class AppToken extends LitElement {
     }
   }
 
+  @state() claimTokenLoading = false;
   async claimToken() {
     recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
@@ -454,6 +455,7 @@ export class AppToken extends LitElement {
     let headers = getHeaders();
 
     try {
+      this.claimTokenLoading = true;
       const request = await fetch(validateGiveawayUrl, {
         method: 'GET',
         headers: {
@@ -476,6 +478,7 @@ export class AppToken extends LitElement {
     }
     catch(e){}
 
+    this.claimTokenLoading = false;
     this.requestUpdate();
   }
 
@@ -774,7 +777,7 @@ export class AppToken extends LitElement {
                   <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC(false)} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
 
                   ${this.acceptedTerms ?
-                    html`<sl-button class="primary" @click=${() => this.claimToken()}>View Token Code</sl-button>` :
+                    html`<sl-button class="primary" @click=${() => this.claimToken()} .loading="${this.claimTokenLoading}" .disabled="${this.claimTokenLoading}">View Token Code</sl-button>` :
                     html`<sl-button class="primary vtc-disabled" disabled>View Token Code</sl-button>`
                   }
 
