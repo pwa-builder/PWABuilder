@@ -1,4 +1,35 @@
-?> **Note** This documentation is a work in progress, keep checking back for new articles and content!
+<sl-dialog id="token-dialog">
+   <h3>Free Microsoft Dev Account </h3>
+   <br/>
+   <sl-input id="token-url-input" type="url" placeholder="Type Your URL Here"></sl-input>
+   <br/>
+   <sl-button id="get-token-button"> Go! </sl-button>
+</sl-dialog>
+
+<sl-alert open closable class="pwa-summit-banner">
+   <sl-icon slot="icon" name="gift"></sl-icon>
+      <strong>Want a free Microsoft Developer Account? &#x1F604; </strong>
+      <br/>
+      If you are an individual developer building a progressive web app, you might qualify for a free Microsoft Developer account.
+      <br/>
+      <sl-button id="token-learn-more-button" style="width:30%; padding-top: 10px;">Learn more.</sl-button>
+</sl-alert>
+
+<script>
+   const urlBase = "https://polite-glacier-097fe8710-4148.centralus.2.azurestaticapps.net/freeToken?site=";
+   const learnMoreButton = document.querySelector('#token-learn-more-button');
+   const tokenDialog = document.querySelector('#token-dialog');
+   learnMoreButton.addEventListener("click", () => {
+      tokenDialog.show();
+   });
+
+   const getTokenButton = document.querySelector('#get-token-button');
+   const urlInputBox = document.querySelector('#token-url-input');
+
+   getTokenButton.addEventListener("click", () => {
+      window.open(urlBase + urlInputBox.value).focus();
+   });
+</script>
 
 # PWABuilder Suite Documentation
 
