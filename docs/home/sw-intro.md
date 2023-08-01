@@ -88,13 +88,13 @@ We can use this event to have our service worker take control of instances of ou
 
 ```js
 self.addEventListener('activate', event => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(self.clients.claim());
 });
 ```
 
 By default, a newly activated service worker won't claim any clients until they are reloaded.
 
-Using `clients.claim()` in our activation listener tells our service worker to take control of new clients right away.
+Using `self.clients.claim()` in our activation listener tells our service worker to take control of new clients right away.
 
 #### Defining A Fetch Strategy
 Once the service worker is pre-caching assets, we need to provide some functionality for retrieving those assets.
