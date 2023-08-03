@@ -642,19 +642,20 @@ export class AppToken extends LitElement {
     if(!this.tokensCampaignRunning){
       return html`
         <div id="over-wrapper">
-          ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+          <!-- ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
           html`
-            <!-- error banner -->
+
             <div class="feedback-holder type-error over-banner">
               <img src="/assets/new/stop.svg" alt="invalid result icon" />
               <div class="error-info">
+                
                 <p class="error-title">No token associated with this account.</p>
                 <p class="error-desc">
                   The account you used to reclaim a code does not have one associated with it. Try signing in with a different account.
                 </p>
               </div>
             </div>
-          ` : null }
+          ` : null } -->
           <div id="over-main-content">
             <sl-button class="primary" @click=${() => this.reclaimToken()}>Reclaim code</sl-button>
             <h1>This promotion has currently ended.</h1>
@@ -680,9 +681,9 @@ export class AppToken extends LitElement {
 
     return html`
     <div id="wrapper">
-      ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+      <!-- ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
         html`
-          <!-- error banner -->
+          
           <div class="feedback-holder type-error top-banner">
             <img src="/assets/new/stop.svg" alt="invalid result icon" />
             <div class="error-info">
@@ -692,7 +693,7 @@ export class AppToken extends LitElement {
               </p>
             </div>
           </div>
-        ` : null }
+        ` : null } -->
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
           <div id="hero-section-actions">
