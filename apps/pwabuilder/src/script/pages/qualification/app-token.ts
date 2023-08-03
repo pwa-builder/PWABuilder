@@ -128,6 +128,10 @@ export class AppToken extends LitElement {
     this.authModule = new AuthModule();
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
+    if(this.userAccount.loggedIn && !this.siteURL){
+      this.claimToken();
+    }
+
 
     if (site) {
       this.siteURL = site;
@@ -454,9 +458,17 @@ export class AppToken extends LitElement {
   async claimToken() {
     recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-    const encodedUrl = encodeURIComponent(this.siteURL);
+    const fullInfo = this.siteURL.length > 0;
+    let encodedUrl;
+    let validateGiveawayUrl;
+    if(fullInfo){
+      encodedUrl = encodeURIComponent(this.siteURL);
+      validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser?site=${encodedUrl}`;
+    } else {
+      validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser`;
+    }
 
-    const validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser?site=${encodedUrl}`;
+    
     let headers = getHeaders();
 
     try {
@@ -472,7 +484,7 @@ export class AppToken extends LitElement {
       // better way to do this?
       if (response.tokenId) { // :token/:appurl/:appname/:appicon/:user
         this.tokenId = response.tokenId
-        this.goToCongratulationsPage();
+        this.goToCongratulationsPage(fullInfo);
       }
       else {
         this.errorGettingToken = true;
@@ -487,8 +499,13 @@ export class AppToken extends LitElement {
     this.requestUpdate();
   }
 
-  goToCongratulationsPage(){
-    Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
+  goToCongratulationsPage(fullInfo: boolean){
+    if(fullInfo){
+      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
+      return;
+    }
+    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name}`)
+    return;
   }
 
   resetData(){
@@ -591,6 +608,16 @@ export class AppToken extends LitElement {
     Router.go(`/freeToken`)
   }
 
+  reclaimToken(){
+    recordPWABuilderProcessStep("reclaim_token_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    // new function call with sign in key
+    if(!this.userAccount.loggedIn){
+      this.signInUser();
+    } else {
+      this.claimToken();
+    }
+  }
+
   backToPWABuilderHome(location: string){
     recordPWABuilderProcessStep(`back_to_pwabuilder_home_${location}_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     Router.go("/")
@@ -615,7 +642,21 @@ export class AppToken extends LitElement {
     if(!this.tokensCampaignRunning){
       return html`
         <div id="over-wrapper">
+          ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+          html`
+            <!-- error banner -->
+            <div class="feedback-holder type-error over-banner">
+              <img src="/assets/new/stop.svg" alt="invalid result icon" />
+              <div class="error-info">
+                <p class="error-title">No token associated with this account.</p>
+                <p class="error-desc">
+                  The account you used to reclaim a code does not have one associated with it. Try signing in with a different account.
+                </p>
+              </div>
+            </div>
+          ` : null }
           <div id="over-main-content">
+            <sl-button class="primary" @click=${() => this.reclaimToken()}>Reclaim code</sl-button>
             <h1>This promotion has currently ended.</h1>
             <p>Please check our Twitter handle 
               <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a> 
@@ -639,16 +680,36 @@ export class AppToken extends LitElement {
 
     return html`
     <div id="wrapper">
+      ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+        html`
+          <!-- error banner -->
+          <div class="feedback-holder type-error top-banner">
+            <img src="/assets/new/stop.svg" alt="invalid result icon" />
+            <div class="error-info">
+              <p class="error-title">No token associated with this account.</p>
+              <p class="error-desc">
+                The account you used to reclaim a code does not have one associated with it. Try signing in with a different account or claim a code by entering your PWA url below.
+              </p>
+            </div>
+          </div>
+        ` : null }
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
           <div id="hero-section-actions">
+          ${(!this.testsInProgress && !this.siteURL) ?
+              html`
+                <sl-button class="secondary" @click=${() => this.reclaimToken()}>
+                    Reclaim code
+                </sl-button>
+                ` :
+              null}
             ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ?
               html`
                 <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
                     Enter different URL
                 </sl-button>
                 ` :
-              html``}
+              null}
             <button type="button" class="back-to-home" @click=${() => this.backToPWABuilderHome("logo")}><img class="pwabuilder-logo" src="/assets/logos/header_logo.png" alt="PWABuilder logo" /></button>
           </div>
           <div id="hero-section-text">

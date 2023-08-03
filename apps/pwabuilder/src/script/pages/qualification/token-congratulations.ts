@@ -8,9 +8,9 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/anal
 import { env } from '../../utils/environment';
 
 type Params = {
-  appicon: string;
-  appname: string;
-  appurl: string;
+  appicon?: string;
+  appname?: string;
+  appurl?: string;
   token: string;
   username: string;
 };
@@ -71,6 +71,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
         </div>
         <div id="content-holder"> 
           <div id="token-id">
+          ${this.paramsData?.appurl ? html`
             <div class="site-card">
               <div class="site-icon">
                 <img src=${this.paramsData?.appicon!} alt="website icon"/>
@@ -79,7 +80,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
                 <div class="title">${this.paramsData?.appname}</div>
                 <div class="url">${this.paramsData?.appurl}</div>
               </div>
-            </div>
+            </div>` : null}
             <div class="token-input-container">
               <div style="display: flex; width: 100%; justify-content: space-evenly">
                 <sl-input id="code" value=${this.paramsData?.token!}></sl-input>

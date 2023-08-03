@@ -168,6 +168,14 @@ export class AppIndex extends LitElement {
             }
           },
           {
+
+            path: '/congratulations/:token/:username',
+            component: 'token-congratulations',
+            action: async () => {
+              await import('./script/pages/qualification/token-congratulations.js');
+            }
+          },
+          {
             path: '/freeToken', // token giveaway page
             component: 'app-token',
             action: async () => {

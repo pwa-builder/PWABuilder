@@ -98,7 +98,7 @@ export default css`
 		box-sizing: border-box;
 	}
 
-	#wrapper > *:not(#hero-section):not(#footer-section){
+	#wrapper > *:not(#hero-section):not(#footer-section):not(.top-banner){
 		max-width: 1366px;
 	}
 
@@ -420,6 +420,16 @@ export default css`
 	border-left: 4px solid var(--error-color);
 }
 
+.top-banner {
+	margin-top: 10px;
+	margin-bottom: -20px;
+}
+
+.over-banner {
+	margin-bottom: 20px;
+	max-width: 800px;
+}
+
 .feedback-holder p {
 	margin: 0;
 	font-size: 14px;
@@ -639,6 +649,9 @@ sl-details::part(header):focus {
 .back-to-home {
 	all: unset;
 	border: 1px solid transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .back-to-home:hover {
@@ -666,6 +679,8 @@ sl-details::part(header):focus {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	height: 18px;
+  white-space: nowrap;
 }
 
 .primary::part(base):hover {
