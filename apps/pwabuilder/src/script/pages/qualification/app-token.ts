@@ -657,7 +657,7 @@ export class AppToken extends LitElement {
             </div>
           ` : null } -->
           <div id="over-main-content">
-            <sl-button class="primary" @click=${() => this.reclaimToken()}>Reclaim code</sl-button>
+            <!-- <sl-button class="primary" @click=${() => this.reclaimToken()}>Reclaim code</sl-button> -->
             <h1>This promotion has currently ended.</h1>
             <p>Please check our Twitter handle 
               <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a> 
@@ -697,13 +697,13 @@ export class AppToken extends LitElement {
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
           <div id="hero-section-actions">
-          ${(!this.testsInProgress && !this.siteURL) ?
+          <!-- ${(!this.testsInProgress && !this.siteURL) ?
               html`
                 <sl-button class="secondary" @click=${() => this.reclaimToken()}>
                     Reclaim code
                 </sl-button>
                 ` :
-              null}
+              null} -->
             ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ?
               html`
                 <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
