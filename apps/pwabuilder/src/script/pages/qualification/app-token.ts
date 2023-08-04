@@ -72,7 +72,7 @@ export class AppToken extends LitElement {
     loggedIn: false,
     state: ''
   };
-  @state() authModule = new AuthModule();
+  @state() authModule: AuthModule | null = null;
   @state() tokenId: string = '';
   @state() validateUrlResponseData: any = {};
   @state() userSignedIn: boolean = false;
@@ -87,14 +87,14 @@ export class AppToken extends LitElement {
   }
 
   async checkIfLoggedIn(state: string) {
-    await (this.authModule as AuthModule).registerPostLoginListener();
-
-    let account = null;
-    try {
-      account = await (this.authModule as AuthModule).getAccessTokenSilent();
-    }
-    catch (e) {
-      return false;
+    let account = await (this.authModule as AuthModule).registerPostLoginListener();
+    if (!account) {
+      try {
+        account = await (this.authModule as AuthModule).getAccessTokenSilent();
+      }
+      catch (e) {
+        return false;
+      }
     }
 
     if(account && account.account) {
@@ -127,6 +127,12 @@ export class AppToken extends LitElement {
     const search = new URLSearchParams(location.search);
     const site = search.get("site");
 
+    // need to change this dirty hack to a proper singleton / state storage
+    //@ts-ignore
+    !window.authModule? window.authModule = new AuthModule() : null;
+    //@ts-ignore
+    this.authModule = window.authModule;
+
     if(site && site!.length > 0){
       const isValidUrl = isValidURL(site!);
       this.validURL = isValidUrl;
@@ -135,12 +141,11 @@ export class AppToken extends LitElement {
       }
     }
     
-    this.authModule = new AuthModule();
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
-    if(this.userAccount.loggedIn && !this.siteURL){
-      this.claimToken();
-    }
+    // if(this.userAccount.loggedIn && !this.siteURL){
+    //   this.claimToken();
+    // }
 
 
     if (site && this.validURL) {
@@ -155,9 +160,12 @@ export class AppToken extends LitElement {
     }
 
     this.decideBackground();
-
     super.connectedCallback();
   }
+
+  // disconnectedCallback() {
+  //   super.disconnectedCallback();
+  // }
 
   async findManifest(url: string) {
     try {
@@ -468,7 +476,7 @@ export class AppToken extends LitElement {
   async claimToken() {
     recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-    const fullInfo = this.siteURL.length > 0;
+    const fullInfo = this.siteURL.length > 0 && this.tokensCampaignRunning;
     let encodedUrl;
     let validateGiveawayUrl;
     if(fullInfo){
@@ -478,7 +486,7 @@ export class AppToken extends LitElement {
       validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser`;
     }
 
-    
+
     let headers = getHeaders();
 
     try {
@@ -652,33 +660,45 @@ export class AppToken extends LitElement {
     if(!this.tokensCampaignRunning){
       return html`
         <div id="over-wrapper">
-          <!-- ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+          ${this.errorGettingToken && this.userAccount.loggedIn?
           html`
 
             <div class="feedback-holder type-error over-banner">
               <img src="/assets/new/stop.svg" alt="invalid result icon" />
               <div class="error-info">
-                
+
                 <p class="error-title">No token associated with this account.</p>
                 <p class="error-desc">
                   The account you used to reclaim a code does not have one associated with it. Try signing in with a different account.
                 </p>
               </div>
             </div>
-          ` : null } -->
+          ` : null }
           <div id="over-main-content">
-            <!-- <sl-button class="primary" @click=${() => this.reclaimToken()}>Reclaim code</sl-button> -->
+            ${!this.errorGettingToken? html `
+              ${this.userAccount.loggedIn ? html`
+                <sl-button class="primary" @click=${this.reclaimToken}>Reclaim code</sl-button>
+              ` : html`
+                  <sl-button class="primary sign-in-button final-button" @click=${this.reclaimToken}>
+                        <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
+                          Sign in with a Microsoft account to reclaim your code
+                  </sl-button>`
+            }` : null}
+            ${this.userAccount.loggedIn ? html`
+              <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>`
+            : null}
+
             <h1>This promotion has currently ended.</h1>
-            <p>Please check our Twitter handle 
-              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a> 
-              or join our 
-              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">Discord</a> 
+            <p>Please check our Twitter handle
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a>
+              or join our
+              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">Discord</a>
               for more information on the next promotion.
             </p>
             <div id="icons-section">
-              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank"> 
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">
                 <img class="twt" src='/assets/new/twitter.svg' alt="twitter logo" />
-              </a> 
+              </a>
               <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">
                 <img class="disc" src='/assets/new/discord.svg' alt="discord logo">
               </a>
@@ -691,9 +711,9 @@ export class AppToken extends LitElement {
 
     return html`
     <div id="wrapper">
-      <!-- ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+      ${this.errorGettingToken && this.userAccount.loggedIn ?
         html`
-          
+
           <div class="feedback-holder type-error top-banner">
             <img src="/assets/new/stop.svg" alt="invalid result icon" />
             <div class="error-info">
@@ -703,17 +723,17 @@ export class AppToken extends LitElement {
               </p>
             </div>
           </div>
-        ` : null } -->
+        ` : null }
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
           <div id="hero-section-actions">
-          <!-- ${(!this.testsInProgress && !this.siteURL) ?
+          ${(!this.testsInProgress && !this.siteURL) ?
               html`
                 <sl-button class="secondary" @click=${() => this.reclaimToken()}>
                     Reclaim code
                 </sl-button>
                 ` :
-              null} -->
+              null}
             ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ?
               html`
                 <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
