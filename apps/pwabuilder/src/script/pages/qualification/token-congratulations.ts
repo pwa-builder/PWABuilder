@@ -23,7 +23,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
       style
     ]
   }
-  
+
   // constructor() {
   //   super();
   // }
@@ -32,24 +32,24 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
 
   async onBeforeEnter(location: RouterLocation) {
 
-    if(!env.tokensCampaignRunning){
-      Router.go("/freeToken");
-    } else {
+    // if(!env.tokensCampaignRunning){
+    //   Router.go("/freeToken");
+    // } else {
 
       this.paramsData = location.params as Params;
       console.log(this.paramsData);
 
-    }
+    // }
   }
 
   copyCode() {
     let codeBox = this.shadowRoot!.getElementById("code");
     let toolTip = this.shadowRoot!.getElementById("tool-tip");
     let code = (codeBox as HTMLInputElement).value;
-    navigator.clipboard.writeText(code).then(() => { 
+    navigator.clipboard.writeText(code).then(() => {
       setTimeout(()=> {
         toolTip!.removeAttribute("open")
-      }, 2000);     
+      }, 2000);
     });
     recordPWABuilderProcessStep("copy_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
   }
@@ -66,10 +66,10 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
             <span class="username"> Congratulations ${this.paramsData?.username}!</span> Use the code below to get a $19 free Windows developer account on the Microsoft Store
           </h1>
           <h2>
-            Microsoft Store is the best place to find apps on Windows. Find your success in the Microsoft Store! 
+            Microsoft Store is the best place to find apps on Windows. Find your success in the Microsoft Store!
           </h2>
         </div>
-        <div id="content-holder"> 
+        <div id="content-holder">
           <div id="token-id">
           ${this.paramsData?.appurl ? html`
             <div class="site-card">
@@ -96,21 +96,21 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
             <h3>Next Steps</h3>
             <ol class="steps-list">
               <li>
-                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on 
-                <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_account_setup")}>Partner Center Dashboard</a> 
+                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on
+                <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_account_setup")}>Partner Center Dashboard</a>
                 and reserve your app on Microsoft Store
               </li>
               <li>
-                <strong>Package Your App:</strong> 
-                Go back to 
-                <a aria-label="Click here to visit PWABuilder homepage" href="/" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("pwabuilder_homepage")}>PWABuilder</a> 
+                <strong>Package Your App:</strong>
+                Go back to
+                <a aria-label="Click here to visit PWABuilder homepage" href="/" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("pwabuilder_homepage")}>PWABuilder</a>
                 and generate package for Windows. You will be prompted to provide some options for your app. Fill these out with the three values you got from reserving your app name.
               </li>
               <li>
-                <strong>Submitting Your PWA:</strong> 
-                Navigate back to <a aria-label="Click here to visit Partner Center Dashboard" href="https://partner.microsoft.com/dashboard" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_dashboard")}>Partner Center Dashboard</a> 
+                <strong>Submitting Your PWA:</strong>
+                Navigate back to <a aria-label="Click here to visit Partner Center Dashboard" href="https://partner.microsoft.com/dashboard" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_dashboard")}>Partner Center Dashboard</a>
                 and drag and drop both the packages you downloaded from PWABuilder into your submission. It usually takes 24 to 48 hours for your app to be reviewed, after which, it will be available on the Microsoft Store.
-              </li> 
+              </li>
             </ol>
              <!-- Need link to publishing instructions -->
             <div id="publishing-instructions">
