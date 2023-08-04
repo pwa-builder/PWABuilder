@@ -101,9 +101,9 @@ export class AppToken extends LitElement {
       this.userAccount.name = account.account.name || '';
       this.userAccount.email = account.account.username || '';
       this.userAccount.accessToken = account.accessToken;
-      this.userAccount.state = state;
+      this.userAccount.state = account.state || state;
       this.userAccount.loggedIn = true;
-      this.siteURL = this.userAccount.state;
+      this.siteURL = this.userAccount.state != 'reclaim' ? this.userAccount.state : state;
 
       const storedData = sessionStorage.getItem('validateUrlResponseData');
       if(storedData !== null) {
@@ -143,8 +143,8 @@ export class AppToken extends LitElement {
 
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
-    if(this.userAccount.loggedIn && !this.tokensCampaignRunning){
-      this.claimToken();
+    if(this.userAccount.loggedIn && (!this.tokensCampaignRunning || this.userAccount.state === 'reclaim')){
+      this.reclaimToken();
     }
 
 
@@ -416,11 +416,11 @@ export class AppToken extends LitElement {
     }
   }
 
-  async signInUser() {
+  async signInUser(stateOverride?: string) {
     recordPWABuilderProcessStep("sign_in_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     try {
-      const result = await (this.authModule as AuthModule).signIn(this.siteURL);
+      const result = await (this.authModule as AuthModule).signIn(stateOverride || this.siteURL);
       if(result != null && result != undefined && "idToken" in result){
         this.requestUpdate();
         return result;
@@ -473,8 +473,8 @@ export class AppToken extends LitElement {
   }
 
   @state() claimTokenLoading = false;
-  async claimToken() {
-    recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+  async claimToken(isAutoClaim = false) {
+    !isAutoClaim && recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     const fullInfo = this.siteURL.length > 0 && this.tokensCampaignRunning;
     let encodedUrl;
@@ -630,9 +630,9 @@ export class AppToken extends LitElement {
     recordPWABuilderProcessStep("reclaim_token_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     // new function call with sign in key
     if(!this.userAccount.loggedIn){
-      this.signInUser();
+      this.signInUser('reclaim');
     } else {
-      this.claimToken();
+      this.claimToken(true);
     }
   }
 

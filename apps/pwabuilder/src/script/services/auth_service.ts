@@ -49,7 +49,7 @@ export class AuthModule {
     // const msalConfig: Configuration = {
     //   auth: {
     //     clientId: import.meta.env.VITE_CLIENT_ID as string,
-    //     authority: 'https://login.microsoftonline.com/common/',       
+    //     authority: 'https://login.microsoftonline.com/common/',
     //   },
     //   cache: {
     //     cacheLocation: 'sessionStorage',
@@ -87,7 +87,7 @@ export class AuthModule {
     if (!this.getAccount()) {
       return Promise.reject('No account');
     }
-    
+
     const accessTokenRequest: SilentRequest = {
       scopes: this.scopes,
       account: this.getAccount(),
@@ -113,7 +113,8 @@ export class AuthModule {
           };
           // const response =
             await this._publicClientApplication.acquireTokenRedirect(loginRequest);
-          
+            // loginRedirect(loginRequest);
+
         } catch (e) {
           console.log("Authentication Error")
           throw e;
