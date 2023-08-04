@@ -1,11 +1,10 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BeforeEnterObserver, Router, RouterLocation } from '@vaadin/router';
+import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
 
 import style from './token-congratulations.style';
 import '../../components/arrow-link'
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
-import { env } from '../../utils/environment';
 
 type Params = {
   appicon?: string;
