@@ -205,6 +205,15 @@ export default css`
 
 	.input-area {
 		margin-top: 20px;
+		display: flex;
+    flex-direction: column;
+    gap: 10px;
+	}
+
+	.invalid-url {
+		margin: 0;
+    font-size: 14px;
+    color: var(--error-color);
 	}
 
 	.input-area form {
@@ -418,6 +427,26 @@ export default css`
 	align-items: flex-start;
 	background-color: #FAEDF1;
 	border-left: 4px solid var(--error-color);
+}
+
+.error-actions {
+	display: flex;
+	align-items: center;
+	gap: 1em;
+	margin-top: .25em;
+}
+
+.error-actions > * {
+	all: unset;
+	color: var(--font-color);
+	font-weight: bold;
+	font-size: 14px;
+	border-bottom: 1px solid transparent;
+}
+
+.error-actions > *:hover {
+	cursor: pointer;
+	border-bottom: 1px solid var(--font-color);
 }
 
 .top-banner {
@@ -699,6 +728,7 @@ sl-details::part(header):focus {
 	border-radius: 10px;
 	background-color: #ffffff;
 	box-shadow: 0px 4px 30px 0px #00000014;
+	gap: 10px;
 }
 
 .FTC {
@@ -720,8 +750,14 @@ sl-details::part(header):focus {
 }
 
 #qual-section ul {
-	margin: 20px 0;
+	margin: 0;
+	margin-bottom: 20px;
 	padding-left: 20px;
+}
+
+#qual-section p {
+	margin: 0;
+	font-size: 14px;
 }
 
 .back-to-pwabuilder-section {

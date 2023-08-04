@@ -25,6 +25,9 @@ export default css`
     color: #292c3a;
     font-weight: 400;
   }
+  .strike-through {
+    text-decoration: line-through;
+  }
   .username {
     color: #4f3fb6;
   }
@@ -113,6 +116,11 @@ export default css`
     border-radius: 4px;
 
   }
+
+  #code::part(input){
+    height: 50px;
+  }
+  
   .copy-button {
     display: flex;
     justify-content: center;

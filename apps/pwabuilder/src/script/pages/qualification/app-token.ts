@@ -11,7 +11,7 @@ import { AuthModule } from '../../services/auth_service';
 import { localeStrings } from '../../../locales';
 
 import style from './app-token.style';
-import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
+import { decideHeroSection, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { CheckUserTokenAvailability, GetTokenCampaignStatus, populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
@@ -78,6 +78,7 @@ export class AppToken extends LitElement {
   @state() userSignedIn: boolean = false;
 
   @state() tokensCampaignRunning: boolean = true;
+  @state() validURL: boolean = true;
 
   static get styles() {
     return [
@@ -122,9 +123,18 @@ export class AppToken extends LitElement {
     this.tokensCampaignRunning = await GetTokenCampaignStatus();
     env.tokensCampaignRunning = this.tokensCampaignRunning;
 
-    const search = new URLSearchParams(location.search);
-    const site = search.get('site');
 
+    const search = new URLSearchParams(location.search);
+    const site = search.get("site");
+
+    if(site && site!.length > 0){
+      const isValidUrl = isValidURL(site!);
+      this.validURL = isValidUrl;
+      if(!isValidUrl){
+        this.siteURL = "";
+      }
+    }
+    
     this.authModule = new AuthModule();
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
@@ -133,7 +143,7 @@ export class AppToken extends LitElement {
     }
 
 
-    if (site) {
+    if (site && this.validURL) {
       this.siteURL = site;
       if(!dataRegisted){
         this.runGiveawayTests();
@@ -726,6 +736,7 @@ export class AppToken extends LitElement {
               this.userAccount,
               this.errorGettingToken,
               this.handleEnteredURL,
+              this.validURL,
               this
             )}
           </div>
@@ -836,8 +847,21 @@ export class AppToken extends LitElement {
       ${ !this.userSignedIn ? html`
       <div id="qual-section">
         <h2>Qualifications</h2>
+        <p>To qualify, you must:</p>
         <ul>
-          ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
+          <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
+          <li>live in a country or region where the Windows program in Partner Center is offered.
+            <a
+              href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets"
+              rel="noopener"
+              target="_blank"
+              @click=${() => this.trackLinkClick("full_country_list")}
+              >See here for the full list of countries</a>
+          </li>
+          <li>have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
+          <li>not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+          <li>use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+          <li>plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
         <p class="FTC" @click=${() => this.showTandC(true)}>Full Terms and Conditions</p>
       </div>` : html``}

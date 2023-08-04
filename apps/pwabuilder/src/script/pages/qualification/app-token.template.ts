@@ -15,8 +15,16 @@ export function decideHeroSection(
   userAccount: { loggedIn: boolean; name: string },
   errorGettingToken: boolean,
   handleEnteredURL: (e: SubmitEvent, shadowRoot: ShadowRoot) => unknown,
+  validURL: boolean,
   root: any
 ) {
+  let message = html``;
+  if(!validURL){
+    message = html`
+      <p class="invalid-url">The URL you attempted to enter is invalid. Please try again by entering a new URL. </p>
+    `;
+  }
+
   // no site in query params
   if (!siteURL) {
     return html`
@@ -24,13 +32,14 @@ export function decideHeroSection(
       <p class="hero-message with-input">Check below to see if your PWA qualifies</p>
       <div class="input-area">
         <form @submit=${(e: SubmitEvent) => handleEnteredURL(e, root)}>
-          <sl-input placeholder="Enter URL" class="url-input" type="text" name="site" required></sl-input>
+          <sl-input placeholder="Enter URL" class="url-input" type="text" name="site"></sl-input>
           <sl-button
             type="submit"
             class="primary"
             >Start</sl-button
           >
         </form>
+        ${message}
       </div>
     `;
   }
@@ -214,8 +223,11 @@ export function renderAppCard(
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or try another.         
+            We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or try another. If this is unexpected, feel free to open an issue using the link below.        
           </p>
+          <div class="error-actions">
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+          </div>
         </div>
       </div>
     `;
@@ -243,10 +255,13 @@ export function renderAppCard(
     <div class="feedback-holder type-error">
       <img src="/assets/new/stop.svg" alt="invalid result icon" />
       <div class="error-info">
-        <p class="error-title">URL already in use</p>
+        <p class="error-title"> This is a known PWA belonging to an organization or business</p>
         <p class="error-desc">
-          This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions
+          This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions. If this is unexpected, feel free to open an issue using the link below.
         </p>
+        <div class="error-actions">
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+          </div>
       </div>
     </div>
   `;
@@ -260,8 +275,11 @@ export function renderAppCard(
       <div class="error-info">
         <p class="error-title">URL already claimed</p>
         <p class="error-desc">
-          Another user has claimed a token for this URL. Enter a different URL to claim a token for a different PWA.
+          Another user has claimed a token for this URL. Enter a different URL to claim a token for a different PWA. If this is unexpected, feel free to open an issue using the link below.
         </p>
+        <div class="error-actions">
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+          </div>
       </div>
     </div>
   `;

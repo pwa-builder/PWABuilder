@@ -63,7 +63,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
       <div id="congrats-wrapper">
         <div id="header">
           <h1>
-            <span class="username"> Congratulations ${this.paramsData?.username}!</span> Use the code below to get a $19 free Windows developer account on the Microsoft Store
+            <span class="username"> Congratulations ${this.paramsData?.username}!</span> Use the code below to get a <span class="strike-through">$19</span> free Windows developer account on the Microsoft Store
           </h1>
           <h2>
             Microsoft Store is the best place to find apps on Windows. Find your success in the Microsoft Store! 
