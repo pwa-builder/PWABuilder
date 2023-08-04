@@ -140,12 +140,12 @@ export class AppToken extends LitElement {
         this.siteURL = "";
       }
     }
-    
+
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
-    // if(this.userAccount.loggedIn && !this.siteURL){
-    //   this.claimToken();
-    // }
+    if(this.userAccount.loggedIn && !this.tokensCampaignRunning){
+      this.claimToken();
+    }
 
 
     if (site && this.validURL) {
@@ -677,7 +677,7 @@ export class AppToken extends LitElement {
           <div id="over-main-content">
             ${!this.errorGettingToken? html `
               ${this.userAccount.loggedIn ? html`
-                <sl-button class="primary" @click=${this.reclaimToken}>Reclaim code</sl-button>
+                <sl-button class="primary" @click=${this.reclaimToken} .loading="${this.claimTokenLoading}" .disabled="${this.claimTokenLoading}">Reclaim code</sl-button>
               ` : html`
                   <sl-button class="primary sign-in-button final-button" @click=${this.reclaimToken}>
                         <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
