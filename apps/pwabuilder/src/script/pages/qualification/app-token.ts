@@ -79,6 +79,7 @@ export class AppToken extends LitElement {
 
   @state() tokensCampaignRunning: boolean = true;
   @state() validURL: boolean = true;
+  @state() attemptingReclaim: boolean = false;
 
   static get styles() {
     return [
@@ -147,7 +148,6 @@ export class AppToken extends LitElement {
     //   this.claimToken();
     // }
 
-
     if (site && this.validURL) {
       this.siteURL = site;
       if(!dataRegisted){
@@ -186,6 +186,7 @@ export class AppToken extends LitElement {
     this.decideBackground();
     // run giveaway validation suite.
     this.testsInProgress = true;
+    this.attemptingReclaim = false;
 
     // pretending to test for now replace with: call to api for test results
     await this.validateUrl();
@@ -628,6 +629,7 @@ export class AppToken extends LitElement {
 
   reclaimToken(){
     recordPWABuilderProcessStep("reclaim_token_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    this.attemptingReclaim = true;
     // new function call with sign in key
     if(!this.userAccount.loggedIn){
       this.signInUser();
@@ -669,8 +671,11 @@ export class AppToken extends LitElement {
 
                 <p class="error-title">No token associated with this account.</p>
                 <p class="error-desc">
-                  The account you used to reclaim a code does not have one associated with it. Try signing in with a different account.
+                  The account you used to reclaim a code does not have one associated with it. Try signing in with a different account. If this is unexpected, feel free to open an issue using the link below.
                 </p>
+                <div class="error-actions">
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+                </div>
               </div>
             </div>
           ` : null }
@@ -711,16 +716,20 @@ export class AppToken extends LitElement {
 
     return html`
     <div id="wrapper">
-      ${this.errorGettingToken && this.userAccount.loggedIn ?
+      ${this.errorGettingToken && this.userAccount.loggedIn && this.attemptingReclaim ?
         html`
 
           <div class="feedback-holder type-error top-banner">
             <img src="/assets/new/stop.svg" alt="invalid result icon" />
             <div class="error-info">
               <p class="error-title">No token associated with this account.</p>
-              <p class="error-desc">
-                The account you used to reclaim a code does not have one associated with it. Try signing in with a different account or claim a code by entering your PWA url below.
+              <p class="error-desc"> 
+                The account you used to reclaim a code does not have one associated with it. Try signing in with a different account or claim a code by entering your PWA url below. If this is unexpected, feel free to open an issue using the link below.
               </p>
+              <div class="error-actions">
+                <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+                <button type="button" @click=${this.signOut}>Sign out</button>
+              </div>
             </div>
           </div>
         ` : null }
