@@ -1040,20 +1040,20 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
               </div>
           </div>
           <div class="form-row">
-          <div class="form-field">
-            <div class="field-header">
-              <h3 class=${classMap(this.decideFocus("edge_side_panel"))}>Edge Side Panel</h3>
-              <manifest-field-tooltip .field=${"edge_side_panel"}></manifest-field-tooltip>
+            <div class="form-field">
+              <div class="field-header">
+                <h3 class=${classMap(this.decideFocus("edge_side_panel"))}>Edge Side Panel</h3>
+                <manifest-field-tooltip .field=${"edge_side_panel"}></manifest-field-tooltip>
+              </div>
+              <p>Indicates whether your PWA supports the side panel in Microsoft Edge</p>
+              <sl-input 
+                type="number"
+                placeholder="Preferred Width" 
+                value=${this.manifest.edge_side_panel?.preferred_width ?? ""} 
+                data-field="edge_side_panel" 
+                @sl-change=${this.handleInputChange}></sl-input>
             </div>
-            <p>Indicates whether your PWA supports the side panel in Microsoft Edge</p>
-            <sl-input 
-              type="number"
-              placeholder="Preferred Width" 
-              value=${this.manifest.edge_side_panel?.preferred_width ?? ""} 
-              data-field="edge_side_panel" 
-              @sl-change=${this.handleInputChange}></sl-input>
           </div>
-        </div>
         </div>
       </div>
     `;
