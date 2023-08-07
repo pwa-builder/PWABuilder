@@ -383,6 +383,17 @@ export class AndroidForm extends AppPackageFormBase {
 
                 <div class="form-group">
                   ${this.renderFormInput({
+                    label: 'Theme dark color',
+                    tooltip: `The theme color used for the Android status bar in your app when the Android device is in dark mode.`,
+                    inputId: 'theme-dark-color-input',
+                    type: 'color',
+                    value: this.packageOptions.themeColorDark,
+                    inputHandler: (val: string) => this.packageOptions.themeColorDark = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
                     label: 'Background color',
                     tooltip: `The background color to use for your app's splash screen. Typically this is set to your manifest's background_color.`,
                     inputId: 'background-color-input',
