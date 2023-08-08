@@ -11,6 +11,7 @@ import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
+import { AppNameInputPattern } from '../utils/constants';
 
 @customElement('windows-form')
 
@@ -412,7 +413,7 @@ export class WindowsForm extends AppPackageFormBase {
                   maxLength: 256,
                   value: this.packageOptions.name,
                   placeholder: 'My Awesome PWA',
-                  pattern: "[^|$@#><)(!&%*]*$",
+                  pattern: AppNameInputPattern,
                   validationErrorMessage:
                     'App name must not include special characters and be between 1 and 256 characters',
                   inputHandler: (val: string) =>
