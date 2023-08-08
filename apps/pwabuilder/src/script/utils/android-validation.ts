@@ -60,7 +60,7 @@ export interface AndroidPackageOptions  extends PackageOptions {
   splashScreenFadeOutDuration: number;
   startUrl: string;
   themeColor: string;
-  themeColorDark: string;
+  themeColorDark?: string;
   webManifestUrl: string;
   fullScopeUrl: string;
   minSdkVersion?: number;
