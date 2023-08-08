@@ -419,6 +419,18 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     docs_link:
       "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
   },
+  id: {
+    description: [
+      `id is an recommended member that functions as a unique identifier for your Progressive Web App that is separate from members that may change over time (such as name or start_url).`,
+    ],
+    purpose: null,
+    example: null,
+    code: `id: "/?homescreen=1"`,
+    location: "info",
+    required: false,
+    docs_link:
+      "https://docs.pwabuilder.com/#/builder/manifest?id=id-string",
+  },
   widgets: {
     description: [`In Windows 11, PWAs can define widgets, update them, and handle user interactions within them.`],
     purpose:`Various operating systems have widgets dashboards that let users read content and perform tasks.`,

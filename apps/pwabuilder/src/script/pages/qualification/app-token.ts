@@ -11,7 +11,7 @@ import { AuthModule } from '../../services/auth_service';
 import { localeStrings } from '../../../locales';
 
 import style from './app-token.style';
-import { decideHeroSection, qualificationStrings, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
+import { decideHeroSection, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { CheckUserTokenAvailability, GetTokenCampaignStatus, populateAppCard } from './app-token.helper';
 import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
@@ -72,12 +72,14 @@ export class AppToken extends LitElement {
     loggedIn: false,
     state: ''
   };
-  @state() authModule = new AuthModule();
+  @state() authModule: AuthModule | null = null;
   @state() tokenId: string = '';
   @state() validateUrlResponseData: any = {};
   @state() userSignedIn: boolean = false;
 
   @state() tokensCampaignRunning: boolean = true;
+  @state() validURL: boolean = true;
+  @state() attemptingReclaim: boolean = false;
 
   static get styles() {
     return [
@@ -86,23 +88,23 @@ export class AppToken extends LitElement {
   }
 
   async checkIfLoggedIn(state: string) {
-    await (this.authModule as AuthModule).registerPostLoginListener();
-
-    let account = null;
-    try {
-      account = await (this.authModule as AuthModule).getAccessTokenSilent();
-    }
-    catch (e) {
-      return false;
+    let account = await (this.authModule as AuthModule).registerPostLoginListener();
+    if (!account) {
+      try {
+        account = await (this.authModule as AuthModule).getAccessTokenSilent();
+      }
+      catch (e) {
+        return false;
+      }
     }
 
     if(account && account.account) {
       this.userAccount.name = account.account.name || '';
       this.userAccount.email = account.account.username || '';
       this.userAccount.accessToken = account.accessToken;
-      this.userAccount.state = state;
+      this.userAccount.state = account.state || state;
       this.userAccount.loggedIn = true;
-      this.siteURL = this.userAccount.state;
+      this.siteURL = this.userAccount.state != 'reclaim' ? this.userAccount.state : state;
 
       const storedData = sessionStorage.getItem('validateUrlResponseData');
       if(storedData !== null) {
@@ -122,18 +124,31 @@ export class AppToken extends LitElement {
     this.tokensCampaignRunning = await GetTokenCampaignStatus();
     env.tokensCampaignRunning = this.tokensCampaignRunning;
 
+
     const search = new URLSearchParams(location.search);
-    const site = search.get('site');
+    const site = search.get("site");
 
-    this.authModule = new AuthModule();
-    let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
+    // need to change this dirty hack to a proper singleton / state storage
+    //@ts-ignore
+    !window.authModule? window.authModule = new AuthModule() : null;
+    //@ts-ignore
+    this.authModule = window.authModule;
 
-    if(this.userAccount.loggedIn && !this.siteURL){
-      this.claimToken();
+    if(site && site!.length > 0){
+      const isValidUrl = isValidURL(site!);
+      this.validURL = isValidUrl;
+      if(!isValidUrl){
+        this.siteURL = "";
+      }
     }
 
+    let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
-    if (site) {
+    if(this.userAccount.loggedIn && (!this.tokensCampaignRunning || this.userAccount.state === 'reclaim')){
+      this.reclaimToken();
+    }
+
+    if (site && this.validURL) {
       this.siteURL = site;
       if(!dataRegisted){
         this.runGiveawayTests();
@@ -145,9 +160,12 @@ export class AppToken extends LitElement {
     }
 
     this.decideBackground();
-
     super.connectedCallback();
   }
+
+  // disconnectedCallback() {
+  //   super.disconnectedCallback();
+  // }
 
   async findManifest(url: string) {
     try {
@@ -168,6 +186,7 @@ export class AppToken extends LitElement {
     this.decideBackground();
     // run giveaway validation suite.
     this.testsInProgress = true;
+    this.attemptingReclaim = false;
 
     // pretending to test for now replace with: call to api for test results
     await this.validateUrl();
@@ -398,11 +417,11 @@ export class AppToken extends LitElement {
     }
   }
 
-  async signInUser() {
+  async signInUser(stateOverride?: string) {
     recordPWABuilderProcessStep("sign_in_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
     try {
-      const result = await (this.authModule as AuthModule).signIn(this.siteURL);
+      const result = await (this.authModule as AuthModule).signIn(stateOverride || this.siteURL);
       if(result != null && result != undefined && "idToken" in result){
         this.requestUpdate();
         return result;
@@ -455,10 +474,10 @@ export class AppToken extends LitElement {
   }
 
   @state() claimTokenLoading = false;
-  async claimToken() {
-    recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+  async claimToken(isAutoClaim = false) {
+    !isAutoClaim && recordPWABuilderProcessStep("view_token_code_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-    const fullInfo = this.siteURL.length > 0;
+    const fullInfo = this.siteURL.length > 0 && this.tokensCampaignRunning;
     let encodedUrl;
     let validateGiveawayUrl;
     if(fullInfo){
@@ -468,7 +487,7 @@ export class AppToken extends LitElement {
       validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser`;
     }
 
-    
+
     let headers = getHeaders();
 
     try {
@@ -610,11 +629,12 @@ export class AppToken extends LitElement {
 
   reclaimToken(){
     recordPWABuilderProcessStep("reclaim_token_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    this.attemptingReclaim = true;
     // new function call with sign in key
     if(!this.userAccount.loggedIn){
-      this.signInUser();
+      this.signInUser('reclaim');
     } else {
-      this.claimToken();
+      this.claimToken(true);
     }
   }
 
@@ -642,32 +662,48 @@ export class AppToken extends LitElement {
     if(!this.tokensCampaignRunning){
       return html`
         <div id="over-wrapper">
-          ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+          ${this.errorGettingToken && this.userAccount.loggedIn?
           html`
-            <!-- error banner -->
+
             <div class="feedback-holder type-error over-banner">
               <img src="/assets/new/stop.svg" alt="invalid result icon" />
               <div class="error-info">
+
                 <p class="error-title">No token associated with this account.</p>
                 <p class="error-desc">
-                  The account you used to reclaim a code does not have one associated with it. Try signing in with a different account.
+                  The account you used to reclaim a code does not have one associated with it. Try signing in with a different account. If this is unexpected, feel free to open an issue using the link below.
                 </p>
+                <div class="error-actions">
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+                </div>
               </div>
             </div>
           ` : null }
           <div id="over-main-content">
-            <sl-button class="primary" @click=${() => this.reclaimToken()}>Reclaim code</sl-button>
+            ${!this.errorGettingToken? html `
+              ${this.userAccount.loggedIn ? html`
+                <sl-button class="primary" @click=${this.reclaimToken} .loading="${this.claimTokenLoading}" .disabled="${this.claimTokenLoading}">Reclaim code</sl-button>
+              ` : html`
+                  <sl-button class="primary sign-in-button final-button" @click=${this.reclaimToken}>
+                        <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
+                          Sign in with a Microsoft account to reclaim your code
+                  </sl-button>`
+            }` : null}
+            ${this.userAccount.loggedIn ? html`
+              <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>`
+            : null}
+
             <h1>This promotion has currently ended.</h1>
-            <p>Please check our Twitter handle 
-              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a> 
-              or join our 
-              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">Discord</a> 
+            <p>Please check our Twitter handle
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a>
+              or join our
+              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">Discord</a>
               for more information on the next promotion.
             </p>
             <div id="icons-section">
-              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank"> 
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">
                 <img class="twt" src='/assets/new/twitter.svg' alt="twitter logo" />
-              </a> 
+              </a>
               <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">
                 <img class="disc" src='/assets/new/discord.svg' alt="discord logo">
               </a>
@@ -680,16 +716,20 @@ export class AppToken extends LitElement {
 
     return html`
     <div id="wrapper">
-      ${this.errorGettingToken && this.userAccount.loggedIn && !this.siteURL ?
+      ${this.errorGettingToken && this.userAccount.loggedIn && this.attemptingReclaim ?
         html`
-          <!-- error banner -->
+
           <div class="feedback-holder type-error top-banner">
             <img src="/assets/new/stop.svg" alt="invalid result icon" />
             <div class="error-info">
               <p class="error-title">No token associated with this account.</p>
-              <p class="error-desc">
-                The account you used to reclaim a code does not have one associated with it. Try signing in with a different account or claim a code by entering your PWA url below.
+              <p class="error-desc"> 
+                The account you used to reclaim a code does not have one associated with it. Try signing in with a different account or claim a code by entering your PWA url below. If this is unexpected, feel free to open an issue using the link below.
               </p>
+              <div class="error-actions">
+                <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+                <button type="button" @click=${this.signOut}>Sign out</button>
+              </div>
             </div>
           </div>
         ` : null }
@@ -725,6 +765,7 @@ export class AppToken extends LitElement {
               this.userAccount,
               this.errorGettingToken,
               this.handleEnteredURL,
+              this.validURL,
               this
             )}
           </div>
@@ -835,8 +876,21 @@ export class AppToken extends LitElement {
       ${ !this.userSignedIn ? html`
       <div id="qual-section">
         <h2>Qualifications</h2>
+        <p>To qualify, you must:</p>
         <ul>
-          ${qualificationStrings.map((point: string) => html`<li>${point}</li>`)}
+          <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
+          <li>live in a country or region where the Windows program in Partner Center is offered.
+            <a
+              href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets"
+              rel="noopener"
+              target="_blank"
+              @click=${() => this.trackLinkClick("full_country_list")}
+              >See here for the full list of countries</a>
+          </li>
+          <li>have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
+          <li>not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+          <li>use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+          <li>plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
         <p class="FTC" @click=${() => this.showTandC(true)}>Full Terms and Conditions</p>
       </div>` : html``}
