@@ -291,7 +291,7 @@ export function renderAppCard(
         <div class="error-actions">
             <button type="button" @click=${(e: Event) => {
               e.preventDefault();
-              appToken.reclaimToken();
+              appToken.reclaimToken(false);
             }}>Reclaim token</button>
             <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
           </div>
