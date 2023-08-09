@@ -1,6 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
+import { BeforeEnterObserver, Router, RouterLocation } from '@vaadin/router';
 
 import style from './token-congratulations.style';
 import '../../components/arrow-link'
@@ -61,10 +61,15 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
   async signOut() {
     try {
       //@ts-ignore
-      await (window.authModule as AuthModule).signOut();
-      //this.userAccount.loggedIn = false;
-      recordPWABuilderProcessStep("sign_out_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
-      this.requestUpdate();
+      if(window.authModule){
+        //@ts-ignore
+        await (window.authModule as AuthModule).signOut();
+        //this.userAccount.loggedIn = false;
+        recordPWABuilderProcessStep("sign_out_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+        this.requestUpdate();
+      } else {
+        Router.go("/freeToken");
+      }
     }
     catch(e) {
       console.log(e, "Authentication Error");
