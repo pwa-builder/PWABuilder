@@ -25,12 +25,13 @@ export class AppToken extends LitElement {
   @state() testsInProgress: boolean = false;
   @state() isDenyList: boolean = false;
   @state() isPopularUrl: boolean = false;
+  @state() isClaimed: boolean = false;
   @state() testsPassed: boolean = false;
   @state() appCard = {
     siteName: 'Site Name',
     description: "Your site's description",
     siteUrl: 'Site URL',
-    iconURL: '',
+    iconURL: '/assets/new/icon_placeholder.png',
     iconAlt: 'Your sites logo'
   };
   @state() appCardInformationAvailable: boolean = false;
@@ -79,7 +80,7 @@ export class AppToken extends LitElement {
 
   @state() tokensCampaignRunning: boolean = true;
   @state() validURL: boolean = true;
-  @state() attemptingReclaim: boolean = false;
+  @state() attemptingReclaimFromHome: boolean = false;
 
   static get styles() {
     return [
@@ -145,7 +146,7 @@ export class AppToken extends LitElement {
     let dataRegisted: boolean = await this.checkIfLoggedIn(site || '');
 
     if(this.userAccount.loggedIn && (!this.tokensCampaignRunning || this.userAccount.state === 'reclaim')){
-      this.reclaimToken();
+      this.reclaimToken(this.siteURL.length === 0);
     }
 
     if (site && this.validURL) {
@@ -186,7 +187,7 @@ export class AppToken extends LitElement {
     this.decideBackground();
     // run giveaway validation suite.
     this.testsInProgress = true;
-    this.attemptingReclaim = false;
+    this.attemptingReclaimFromHome = false;
 
     // pretending to test for now replace with: call to api for test results
     await this.validateUrl();
@@ -287,6 +288,7 @@ export class AppToken extends LitElement {
     this.testsPassed = data.isEligibleForToken;
     this.isDenyList = data.isInDenyList;
     this.isPopularUrl = data.isPopUrl;
+    this.isClaimed = data.isClaimedUrl;
 
     this.handleInstallable(this.testResults.installable);
     this.handleRequired(this.testResults.additional);
@@ -519,6 +521,7 @@ export class AppToken extends LitElement {
   }
 
   goToCongratulationsPage(fullInfo: boolean){
+    console.log(encodeURIComponent(this.appCard.siteUrl))
     if(fullInfo){
       Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
       return;
@@ -627,12 +630,13 @@ export class AppToken extends LitElement {
     Router.go(`/freeToken`)
   }
 
-  reclaimToken(){
+  reclaimToken(fromHome: boolean){
     recordPWABuilderProcessStep("reclaim_token_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    this.attemptingReclaim = true;
+    this.attemptingReclaimFromHome = fromHome;
     // new function call with sign in key
     if(!this.userAccount.loggedIn){
       this.signInUser('reclaim');
+      //this.siteURL = "";
     } else {
       this.claimToken(true);
     }
@@ -662,29 +666,26 @@ export class AppToken extends LitElement {
     if(!this.tokensCampaignRunning){
       return html`
         <div id="over-wrapper">
-          ${this.errorGettingToken && this.userAccount.loggedIn?
-          html`
-
-            <div class="feedback-holder type-error over-banner">
-              <img src="/assets/new/stop.svg" alt="invalid result icon" />
-              <div class="error-info">
-
-                <p class="error-title">No token associated with this account.</p>
-                <p class="error-desc">
-                  The account you used to reclaim a code does not have one associated with it. Try signing in with a different account. If this is unexpected, feel free to open an issue using the link below.
-                </p>
-                <div class="error-actions">
-                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
-                </div>
-              </div>
-            </div>
-          ` : null }
           <div id="over-main-content">
+
+            ${this.errorGettingToken && this.userAccount.loggedIn?
+            html`
+              <div class="over-banner">
+                <img src="/assets/new/stop.svg" alt="invalid result icon" />
+                <p class="end-error-desc"> 
+                  <span>Invalid Account:</span> 
+                  The account you used to reclaim a code does not one associated with it. Try signing in with a different account or 
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">open an issue</a> 
+                  on our GitHub.
+                </p>
+              </div>
+            ` : null }
+
             ${!this.errorGettingToken? html `
               ${this.userAccount.loggedIn ? html`
-                <sl-button class="primary" @click=${this.reclaimToken} .loading="${this.claimTokenLoading}" .disabled="${this.claimTokenLoading}">Reclaim code</sl-button>
+                <sl-button class="primary" @click=${() => this.reclaimToken(false)} .loading="${this.claimTokenLoading}" .disabled="${this.claimTokenLoading}">Reclaim token</sl-button>
               ` : html`
-                  <sl-button class="primary sign-in-button final-button" @click=${this.reclaimToken}>
+                  <sl-button class="primary sign-in-button final-button" @click=${() => this.reclaimToken(false)}>
                         <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
                           Sign in with a Microsoft account to reclaim your code
                   </sl-button>`
@@ -709,26 +710,26 @@ export class AppToken extends LitElement {
               </a>
             </div>
           </div>
-          <p>Reach out to  <span>support@pwabuilder.com</span> in order to reclaim lost code</p>
         </div>
       `
     }
 
     return html`
     <div id="wrapper">
-      ${this.errorGettingToken && this.userAccount.loggedIn && this.attemptingReclaim ?
+      ${this.errorGettingToken && this.userAccount.loggedIn && this.attemptingReclaimFromHome ?
         html`
-
-          <div class="feedback-holder type-error top-banner">
-            <img src="/assets/new/stop.svg" alt="invalid result icon" />
-            <div class="error-info">
-              <p class="error-title">No token associated with this account.</p>
-              <p class="error-desc"> 
-                The account you used to reclaim a code does not have one associated with it. Try signing in with a different account or claim a code by entering your PWA url below. If this is unexpected, feel free to open an issue using the link below.
-              </p>
-              <div class="error-actions">
-                <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
-                <button type="button" @click=${this.signOut}>Sign out</button>
+          <div class="top-banner-container">
+            <div class="feedback-holder type-error top-banner">
+              <img src="/assets/new/stop.svg" alt="invalid result icon" />
+              <div class="error-info">
+                <p class="error-title">No token associated with this account.</p>
+                <p class="error-desc"> 
+                  The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
+                </p>
+                <div class="error-actions">
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+                  <button type="button" @click=${this.signOut}>Sign out</button>
+                </div>
               </div>
             </div>
           </div>
@@ -738,8 +739,8 @@ export class AppToken extends LitElement {
           <div id="hero-section-actions">
           ${(!this.testsInProgress && !this.siteURL) ?
               html`
-                <sl-button class="secondary" @click=${() => this.reclaimToken()}>
-                    Reclaim code
+                <sl-button class="secondary" @click=${() => this.reclaimToken(true)}>
+                    Reclaim Token
                 </sl-button>
                 ` :
               null}
@@ -760,7 +761,8 @@ export class AppToken extends LitElement {
                 testsPassed: this.testsPassed,
                 noManifest: this.noManifest,
                 denyList: this.isDenyList,
-                popUrl: this.isPopularUrl
+                popUrl: this.isPopularUrl,
+                claimed: this.isClaimed
               },
               this.userAccount,
               this.errorGettingToken,
@@ -796,7 +798,9 @@ export class AppToken extends LitElement {
                 requiredRatio: this.requiredRatio,
                 enhancementsIndicator: this.enhancementsIndicator,
               },
-              this.errorGettingToken
+              this.errorGettingToken,
+              this.isClaimed,
+              this
             )}
           </div>
           ${!this.userSignedIn ? html`
@@ -822,7 +826,7 @@ export class AppToken extends LitElement {
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
-                          <h3>PWA is installable</h3>
+                          <h3>Installable PWA</h3>
                         </div>
                         <img class="dropdown_icon" data-card="installable-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                       </div>
@@ -839,7 +843,7 @@ export class AppToken extends LitElement {
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.requiredPassed ? html`<img class="" src=${valid_src} alt="required tests passed icon"/>` : html`<img class="" src=${stop_src} alt="required tests failed icon"/>`}
-                          <h3>Manifest has required fields</h3>
+                          <h3>Manifest requirements</h3>
                         </div>
                         <img class="dropdown_icon" data-card="required-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                       </div>
@@ -856,7 +860,7 @@ export class AppToken extends LitElement {
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.enhancementsPassed ? html`<img class="" src=${valid_src} alt="enhancements tests passed icon"/>` : html`<img class="" src=${stop_src} alt="enhancements tests failed icon"/>`}
-                          <h3>Includes two or more desktop enhancements</h3>
+                          <h3>Two or more desktop enhancements</h3>
                         </div>
                         <img class="dropdown_icon" data-card="enhancements-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                       </div>
@@ -878,8 +882,8 @@ export class AppToken extends LitElement {
         <h2>Qualifications</h2>
         <p>To qualify, you must:</p>
         <ul>
-          <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
-          <li>live in a country or region where the Windows program in Partner Center is offered.
+          <li>Own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
+          <li>Live in a country or region where the Windows program in Partner Center is offered.
             <a
               href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets"
               rel="noopener"
@@ -887,10 +891,10 @@ export class AppToken extends LitElement {
               @click=${() => this.trackLinkClick("full_country_list")}
               >See here for the full list of countries</a>
           </li>
-          <li>have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
-          <li>not have an existing Microsoft Store on Windows individual developer/publisher account</li>
-          <li>use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
-          <li>plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
+          <li>Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
+          <li>Not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+          <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+          <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
         <p class="FTC" @click=${() => this.showTandC(true)}>Full Terms and Conditions</p>
       </div>` : html``}
@@ -899,7 +903,7 @@ export class AppToken extends LitElement {
           ${ !this.userSignedIn ?
             html`
               <div id="sign-in-section">
-                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList && !this.errorGettingToken ?
+                ${this.testsPassed && !this.isPopularUrl && !this.isDenyList && !this.isClaimed && !this.errorGettingToken ?
                     this.userAccount.loggedIn ?
                     html`<sl-button class="primary" @click=${() => this.updateSignInState()}>Continue</sl-button></div>` :
                     html`
@@ -974,8 +978,8 @@ export class AppToken extends LitElement {
       <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11.</p>
       <p>To qualify, you must:</p>
       <ul>
-        <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
-        <li>live in a country or region where the Windows program in Partner Center is offered.
+        <li>Own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
+        <li>Live in a country or region where the Windows program in Partner Center is offered.
           <a
             href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets"
             rel="noopener"
@@ -983,10 +987,10 @@ export class AppToken extends LitElement {
             @click=${() => this.trackLinkClick("full_country_list")}
             >See here for the full list of countries</a>
         </li>
-        <li>have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
-        <li>not have an existing Microsoft Store on Windows individual developer/publisher account</li>
-        <li>use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
-        <li>plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
+        <li>Have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account </li>
+        <li>Not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+        <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+        <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
       </ul>
       <p>Offer open to signups from August 1st, 2023 through August 31st, 2023 midnight Pacific Standard Time, or when the limited supply of tokens run out, whichever comes first. Limit one free account token per developer and PWA.</p>
       <p>If you qualify and tokens are available, you will be given a token on this page when you submit the form. You can come back to this page to retrieve your token again at any time by signing in with your Microsoft Account. Free developer account tokens are not valid if transferred, sold, or otherwise used by any Microsoft Account other than the one which signed up here. These tokens are for individual, not corporate, Microsoft Store on Windows developer accounts.</p>

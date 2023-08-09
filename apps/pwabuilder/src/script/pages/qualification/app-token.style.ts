@@ -98,7 +98,7 @@ export default css`
 		box-sizing: border-box;
 	}
 
-	#wrapper > *:not(#hero-section):not(#footer-section):not(.top-banner){
+	#wrapper > *:not(#hero-section):not(#footer-section):not(.top-banner-container){
 		max-width: 1366px;
 	}
 
@@ -432,8 +432,7 @@ export default css`
 .error-actions {
 	display: flex;
 	align-items: center;
-	gap: 1em;
-	margin-top: .25em;
+	gap: 20px;
 }
 
 .error-actions > * {
@@ -449,14 +448,32 @@ export default css`
 	border-bottom: 1px solid var(--font-color);
 }
 
-.top-banner {
-	margin-top: 10px;
-	margin-bottom: -20px;
+.top-banner-container {
+	padding: 7px;
+	width: 100%;
+	margin-bottom: -30px;
 }
 
 .over-banner {
-	margin-bottom: 20px;
-	max-width: 800px;
+	padding: 10px 30px;
+	background-color: #FFF3F3;
+	border: 1px solid #F10909;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	gap: 10px;
+	max-width: 720px;
+}
+
+.end-error-desc {
+	font-size: 16px;
+	color: var(--font-color);
+}
+
+.over-banner img {
+	width: 50px;
+	height: auto;
 }
 
 .feedback-holder p {
@@ -468,7 +485,7 @@ export default css`
 .error-info {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 7px;
 }
 
 .error-title {

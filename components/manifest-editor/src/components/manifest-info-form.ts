@@ -561,8 +561,10 @@ export class ManifestInfoForm extends LitElement {
         <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
+            <div class="header-left">
               <h3 class=${classMap(this.decideFocus("id"))}>Id</h3>
               <manifest-field-tooltip .field=${"id"}></manifest-field-tooltip>
+            </div>
             </div>
             <p class="field-desc">Unique identifier for your PWA that is seperate from fields that could change over time (like name or short name)</p>
             <sl-input 

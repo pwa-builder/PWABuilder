@@ -172,6 +172,10 @@ export default css`
   }
   #publishing-instructions {
     padding: 0px 0px 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
   }
 
   @media screen and (max-width: 479px) {

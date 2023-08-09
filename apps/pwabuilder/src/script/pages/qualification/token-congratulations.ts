@@ -58,6 +58,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
   }
 
   render() {
+    console.log(this.paramsData)
     return html`
       <div id="congrats-wrapper">
         <div id="header">

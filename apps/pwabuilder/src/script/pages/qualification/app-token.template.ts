@@ -2,6 +2,7 @@ import { html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { SlDetails } from "@shoelace-style/shoelace";
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
+import { AppToken } from './app-token';
 
 export function decideHeroSection(
   siteURL: string,
@@ -11,6 +12,7 @@ export function decideHeroSection(
     noManifest: boolean;
     denyList: boolean;
     popUrl: boolean;
+    claimed: boolean;
   },
   userAccount: { loggedIn: boolean; name: string },
   errorGettingToken: boolean,
@@ -65,6 +67,13 @@ export function decideHeroSection(
     return html`
       <h1>Oops!</h1>
       <p class="hero-message">This PWA belongs to an organization or company.</p>
+    `;
+  }
+
+  if(!tests.testsInProgress && tests.claimed){
+    return html`
+      <h1>Oops!</h1>
+      <p class="hero-message">This PWA has already been claimed.</p>
     `;
   }
 
@@ -148,7 +157,9 @@ export function renderAppCard(
 		enhancementsRatio: number;
 		enhancementsIndicator: string;
 	},
-  errorGettingToken: boolean
+  errorGettingToken: boolean,
+  isClaimed: boolean,
+  appToken: AppToken
   //userAccount: { loggedIn: boolean; name: string }
 ) {
   // no site in query params
@@ -213,7 +224,6 @@ export function renderAppCard(
 
   let banner = html``;
 
-
   // tests complete but its a denyList url
   if(!tests.testsInProgress && tests.denyList){
     banner = html`
@@ -223,7 +233,7 @@ export function renderAppCard(
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or try another. If this is unexpected, feel free to open an issue using the link below.        
+            We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or open an issue on our GitHub.        
           </p>
           <div class="error-actions">
             <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
@@ -234,22 +244,6 @@ export function renderAppCard(
   
     // tests complete but its a popular url
   } else if (!tests.testsInProgress && tests.popUrl) {
-    // this should never happen, should never be able to log in if denyList
-    /* if (userAccount.loggedIn) {
-      banner = html`
-      <!-- error banner -->
-      <div class="feedback-holder type-error">
-        <img src="/assets/new/stop.svg" alt="invalid result icon" />
-        <div class="error-info">
-          <p class="error-title">A token has already been claimed for this PWA</p>
-          <p class="error-desc">
-            We noticed this PWA has already been used to claim a token with another Microsoft account. 
-            Please check the URL you are using or try another account.
-          </p>
-        </div>
-      </div>
-    `;
-    } */
     banner = html`
     <!-- error banner -->
     <div class="feedback-holder type-error">
@@ -257,7 +251,7 @@ export function renderAppCard(
       <div class="error-info">
         <p class="error-title"> This is a known PWA belonging to an organization or business</p>
         <p class="error-desc">
-          This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions. If this is unexpected, feel free to open an issue using the link below.
+          This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions. 
         </p>
         <div class="error-actions">
             <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
@@ -267,7 +261,24 @@ export function renderAppCard(
   `;
     
     
-  } else if(!tests.testsInProgress && errorGettingToken){
+  } else if (!tests.testsInProgress && errorGettingToken){
+    banner = html`
+      <div class="feedback-holder type-error top-banner">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">No token associated with this account.</p>
+          <p class="error-desc"> 
+            The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
+          </p>
+          <div class="error-actions">
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+            <button type="button" @click=${appToken.signOut}>Sign out</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+  } else if(!tests.testsInProgress && isClaimed){
     banner = html`
     <!-- error banner -->
     <div class="feedback-holder type-error">
@@ -275,9 +286,13 @@ export function renderAppCard(
       <div class="error-info">
         <p class="error-title">URL already claimed</p>
         <p class="error-desc">
-          Another user has claimed a token for this URL. Enter a different URL to claim a token for a different PWA. If this is unexpected, feel free to open an issue using the link below.
+        We noticed this PWA has already been claimed. If this is your PWA and you are trying to reclaim a previous token, please use the link below. Otherwise, check the account you are using or open an issue on our GitHub.
         </p>
         <div class="error-actions">
+            <button type="button" @click=${(e: Event) => {
+              e.preventDefault();
+              appToken.reclaimToken();
+            }}>Reclaim token</button>
             <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
           </div>
       </div>
@@ -287,7 +302,6 @@ export function renderAppCard(
 
   // else: tests are complete
   // Show card with app info + results
-
   return html`
     ${banner}
     <!-- Error Banner + the results below -->
