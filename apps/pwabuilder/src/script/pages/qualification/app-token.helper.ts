@@ -1,6 +1,7 @@
 import { Icon, Manifest } from "@pwabuilder/manifest-validation";
 import { resolveUrl } from "../../utils/url";
 import { env } from "../../utils/environment";
+import { getHeaders } from "../../utils/platformTrackingHeaders";
 
 // Makes sure the icon URL is valid
 export function handleImageUrl(icon: Icon, manifest: Manifest, manifestURL: string) {
@@ -124,8 +125,14 @@ export async function populateAppCard(siteURL: string, manifest: Manifest, manif
 }
 
 export async function GetTokenCampaignStatus(): Promise<boolean> {
+	
+	let headers = getHeaders();
+
 	const fetchStatus = await fetch(
-		`${env.validateGiveawayUrl}/GetTokenCampaignStatus`
+		`${env.validateGiveawayUrl}/GetTokenCampaignStatus`,
+		{
+			headers: new Headers(headers)
+		}
 	);
 
 	if (fetchStatus.ok) {
@@ -141,13 +148,18 @@ export async function CheckUserTokenAvailability(site: string, accessToken: stri
 		errorMessage: string | null,
 		rawError: string | null
 	}> {
+
+	let headers = getHeaders();
+
 	const fetchStatus = await fetch(
 		`${env.validateGiveawayUrl}/CheckUserTokenAvailability?${new URLSearchParams({ site })}`,
 		{
 			headers: {
+				...new Headers(headers),
 				'Authorization': `Bearer ${accessToken}`
 			}
 		}
+
 	);
 
 	if (fetchStatus.ok) {
