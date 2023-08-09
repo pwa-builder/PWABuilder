@@ -5,6 +5,7 @@ import { BeforeEnterObserver, RouterLocation } from '@vaadin/router';
 import style from './token-congratulations.style';
 import '../../components/arrow-link'
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
+import { AuthModule } from '../../services/auth_service';
 
 type Params = {
   appicon?: string;
@@ -56,6 +57,19 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
   trackLinkClick(linkDescription: string){
     recordPWABuilderProcessStep(`${linkDescription}_link_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
+  
+  async signOut() {
+    try {
+      //@ts-ignore
+      await (window.authModule as AuthModule).signOut();
+      //this.userAccount.loggedIn = false;
+      recordPWABuilderProcessStep("sign_out_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
+      this.requestUpdate();
+    }
+    catch(e) {
+      console.log(e, "Authentication Error");
+    }
+  }
 
   render() {
     console.log(this.paramsData)
@@ -92,6 +106,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
               </div>
             </div>
           </div>
+          <p class="sign-out">You are signed in as ${this.paramsData?.username} <a @click=${this.signOut}>Sign out</a></p>
           <div id="next-steps">
             <h3>Next Steps</h3>
             <ol class="steps-list">

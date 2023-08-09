@@ -535,6 +535,7 @@ export class AppToken extends LitElement {
     this.testsPassed = false
     this.noManifest = false
     this.isDenyList = false;
+    this.isClaimed = false;
     this.errorGettingToken = false;
     this.userSignedIn = false;
     this.appCardInformationAvailable = false;
@@ -628,6 +629,7 @@ export class AppToken extends LitElement {
   enterDifferentURL(){
     recordPWABuilderProcessStep("enter_different_url_button_clicked", AnalyticsBehavior.ProcessCheckpoint);
     Router.go(`/freeToken`)
+    this.siteURL = "";
   }
 
   reclaimToken(fromHome: boolean){

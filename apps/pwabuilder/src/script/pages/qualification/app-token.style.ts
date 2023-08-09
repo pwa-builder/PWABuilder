@@ -59,6 +59,7 @@ export default css`
 
 	#over-main-content a:hover {
 		text-decoration: underline;
+		cursor: pointer;
 	}
 
 	#icons-section {

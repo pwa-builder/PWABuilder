@@ -132,6 +132,27 @@ export default css`
     border-radius: 4px;
     margin-left: 5px;
   }
+
+  .sign-out {
+		font-size: 16px;
+		color: var(--font-color);
+		margin: 0;
+    margin-bottom: 20px;
+	}
+
+	.sign-out a {
+		font-size: 16px;
+		color: var(--primary-color);
+		margin: 0;
+		text-decoration: none;
+		font-weight: 700;
+	}
+
+	.sign-out a:hover {
+		text-decoration: underline;
+    cursor: pointer;
+	}
+
   #next-steps {
     width: 719px;
     height: 325px;
