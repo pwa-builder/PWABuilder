@@ -233,7 +233,7 @@ export function renderAppCard(
         <div class="error-info">
           <p class="error-title">URL already in use</p>
           <p class="error-desc">
-            We noticed this PWA has already been linked to an account in the Microsoft store. Please check the URL you are using or open an issue on our GitHub.        
+            We noticed this PWA has already been linked to an account in the Microsoft Store. Please check the URL you are using or open an issue on our GitHub.        
           </p>
           <div class="error-actions">
             <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>

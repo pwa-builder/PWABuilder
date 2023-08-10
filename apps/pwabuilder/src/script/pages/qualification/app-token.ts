@@ -149,6 +149,14 @@ export class AppToken extends LitElement {
       this.reclaimToken(this.siteURL.length === 0);
     }
 
+    if(this.userAccount.loggedIn){
+      try {
+        this.claimToken();
+      } catch (e){
+        console.error(e)
+      }
+    }
+
     if (site && this.validURL) {
       this.siteURL = site;
       if(!dataRegisted){
@@ -156,9 +164,9 @@ export class AppToken extends LitElement {
       }
     }
 
-    if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
+    /* if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
       await this.preClaimToken();
-    }
+    } */
 
     this.decideBackground();
     super.connectedCallback();
@@ -693,7 +701,7 @@ export class AppToken extends LitElement {
                   </sl-button>`
             }` : null}
             ${this.userAccount.loggedIn ? html`
-              <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>`
+              <p class="sign-out-prompt">You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>`
             : null}
 
             <h1>This promotion has currently ended.</h1>
@@ -738,22 +746,25 @@ export class AppToken extends LitElement {
         ` : null }
       <div id="hero-section" class=${classMap(this.heroBanners)}>
         <div id="hero-section-content">
-          <div id="hero-section-actions">
-          ${(!this.testsInProgress && !this.siteURL) ?
-              html`
-                <sl-button class="secondary" @click=${() => this.reclaimToken(true)}>
-                    Reclaim Token
-                </sl-button>
-                ` :
-              null}
-            ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ?
-              html`
-                <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
-                    Enter different URL
-                </sl-button>
-                ` :
-              null}
-            <button type="button" class="back-to-home" @click=${() => this.backToPWABuilderHome("logo")}><img class="pwabuilder-logo" src="/assets/logos/header_logo.png" alt="PWABuilder logo" /></button>
+          <div id="actions-left">
+            ${this.userAccount.loggedIn ? html`<p class="sign-out-prompt">You are signed in as ${this.userAccount.email}</p><a class="sign-out-link" @click=${this.signOut}>Sign out</a>` : null}
+          </div>
+          <div id="actions-right">
+            ${(!this.testsInProgress && !this.siteURL) ?
+                html`
+                  <sl-button class="secondary" @click=${() => this.reclaimToken(true)}>
+                      Reclaim Token
+                  </sl-button>
+                  ` :
+                null}
+              ${(!this.testsInProgress && this.siteURL) && !this.userSignedIn ?
+                html`
+                  <sl-button class="secondary" @click=${() => this.enterDifferentURL()}>
+                      Enter different URL
+                  </sl-button>
+                  ` :
+                null}
+              <button type="button" class="back-to-home" @click=${() => this.backToPWABuilderHome("logo")}><img class="pwabuilder-logo" src="/assets/logos/header_logo.png" alt="PWABuilder logo" /></button>
           </div>
           <div id="hero-section-text">
             ${decideHeroSection(
@@ -917,7 +928,7 @@ export class AppToken extends LitElement {
                   html`
                     <div class="back-to-pwabuilder-section">
                       <sl-button class="primary final-button " @click=${() => this.backToReportCardPage()}>Back to PWABuilder</sl-button>
-                      ${this.userAccount.loggedIn ? html`<p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>` : null}
+                      ${this.userAccount.loggedIn ? html`<p class="sign-out-prompt">You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>` : null}
                     </div>`}
               </div>
             ` : // this is where the user is signed in
@@ -934,7 +945,7 @@ export class AppToken extends LitElement {
                   }
 
 
-                  <p>You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
+                  <p class="sign-out-prompt">You are signed in as ${this.userAccount.email} <a @click=${this.signOut}>Sign out</a></p>
                 </div>
             ` :
             html`

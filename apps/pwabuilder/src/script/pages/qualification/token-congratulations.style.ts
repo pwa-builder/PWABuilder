@@ -49,6 +49,7 @@ export default css`
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
+    position: relative;
   }
   .site-card {
     display: flex;
@@ -96,16 +97,20 @@ export default css`
   .token-input-container {
     display: flex;
     align-items: center;
-    grid-row-start: 2;
-    grid-column-start: 3;
-    width: 402px;
-    height: 68px;
+    width: fit-content;
+    height: fit-content;
+    padding: 10px;
     background: rgba(255, 255, 255, 0.4);
     border: 1px solid #4f3fb6;
     box-shadow: 2px 2px 20px rgba(79, 63, 182, 0.4);
     border-radius: 4px;
+
+    position: absolute;
+    right: 165px;
+    top: 250px;
   }
   .token-input-container sl-input::part(base) {
+    min-width: 300px;
     width: 100%;
     height: 50px;
     background: #ffffff;
@@ -114,11 +119,15 @@ export default css`
     background: #ffffff;
     border: 1px dashed #000000;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
 
   }
 
   #code::part(input){
     height: 50px;
+    font-size: 14px;
+    font-weight: 500;
   }
   
   .copy-button {
@@ -201,7 +210,6 @@ export default css`
 
   @media screen and (max-width: 479px) {
     .token-input-container {
-      height: 50px;
     }
     #code {
       display: flex;
@@ -251,8 +259,13 @@ export default css`
     }
     .token-input-container {
       width: 300px;
-      height: 60px;
-      grid-column-start: 2;
+    }
+    .token-input-container {
+      right: 12px;
+      top: 205px;
+    }
+    .token-input-container sl-input::part(base) {
+      min-width: 250px;
     }
     .token-input-container sl-input::part(input) {
       text-align: center;
@@ -292,11 +305,29 @@ export default css`
       grid-auto-columns: 35px;
       row-gap: 30px;
     }
+
     .token-input-container {
-      width: 392px;
-      height: 68px;
-      grid-column-start: 2;
+      right: 46px;
+      top: 160px;
     }
+
+    sl-input {
+      height: fit-content;
+    }
+
+    .token-input-container sl-input::part(base){
+      height: 35px;
+    }
+    #code::part(input){
+      height: 35px;
+    }
+    .copy-button {
+      height: 35px
+    }
+    .copy-button img {
+      height: 25px
+    }
+    
     .site-card {
       width: 215px;
       height: 72px;
@@ -335,7 +366,8 @@ ${largeBreakPoint(css`
       height: 78px;
     }
     .token-input-container {
-      grid-column-start: 2;
+      right: 90px;
+      top: 195px;
     }
     #next-steps {
       width: 570px;

@@ -43,25 +43,6 @@ export default css`
 		margin: 0;
 	}
 
-	#over-main-content p {
-		font-size: 16px;
-		color: var(--font-color);
-		margin: 0;
-	}
-
-	#over-main-content a {
-		font-size: 16px;
-		color: var(--primary-color);
-		margin: 0;
-		text-decoration: none;
-		font-weight: 700;
-	}
-
-	#over-main-content a:hover {
-		text-decoration: underline;
-		cursor: pointer;
-	}
-
 	#icons-section {
 		display: flex;
 		align-items: center;
@@ -155,14 +136,53 @@ export default css`
 		margin-top: 40px;
 	}
 
-	#hero-section-actions {
+	#actions-left {
+		
 		display: flex;
-		align-items: center;
-		justify-content: flex-end;
 		position: absolute;
 		top: 20px;
-		right: 20px;
+		left: 100px;    
+		gap: 5px;
+    align-items: center;
+		height: 42px;
+	}
+
+	#actions-right {
+		
+		display: flex;
+		position: absolute;
+		top: 20px;
+    right: 20px;
 		gap: 20px;
+	}
+
+	.sign-out-prompt  {
+		font-weight: bold;
+		font-size: 14px;
+		line-height: 16px;
+		color: #292C3A;
+		white-space: nowrap;
+	}
+
+	.sign-out-prompt a { 
+		color: #4F3FB6;
+		text-decoration: underline;
+	}
+
+	.sign-out-prompt a:hover { 
+		cursor: pointer;
+	}
+
+	.sign-out-link { 
+		color: #4F3FB6;
+		text-decoration: underline;
+		font-weight: bold;
+		font-size: 14px;
+		line-height: 16px;
+	}
+
+	.sign-out-link:hover { 
+		cursor: pointer;
 	}
 
 	.pwabuilder-logo {
@@ -694,6 +714,10 @@ sl-details::part(header):focus {
 	height: auto;
 }
 
+.copy-code:hover {
+	cursor: pointer;
+}
+
 .back-to-home {
 	all: unset;
 	border: 1px solid transparent;
@@ -787,23 +811,6 @@ sl-details::part(header):focus {
 	padding-top: 20px;
   padding-bottom: 60px;
 }
-
-.back-to-pwabuilder-section p {
-	font-weight: bold;
-	font-size: 14px;
-	line-height: 16px;
-	color: #292C3A;
-}
-
-.back-to-pwabuilder-section a { 
-	color: #4F3FB6;
-	text-decoration: underline;
-}
-
-.back-to-pwabuilder-section a:hover { 
-	cursor: pointer;
-}
-
 
 #footer-section {
 	background-color: #ffffff;
@@ -926,18 +933,6 @@ sl-details::part(header):focus {
 	box-shadow: 0px 0.9625px 3.85px rgba(0, 0, 0, 0.25);
 	border-radius: 42.35px;
 	margin-bottom: 10px;
-}
-
-#terms-and-conditions p {
-	font-weight: bold;
-	font-size: 14px;
-	line-height: 16px;
-	color: #292C3A;
-}
-
-#terms-and-conditions a { 
-	color: #4F3FB6;
-	text-decoration: underline;
 }
 
 #hero-section-bottom {
@@ -1115,9 +1110,6 @@ sl-details::part(header):focus {
 		width: 100%;
 	}
 
-}
-
-@media(max-width: 620px){
 	.input-area {
 		width: 100%;
 	}
@@ -1141,7 +1133,7 @@ sl-details::part(header):focus {
 	}
 
 	#hero-section {
-		padding: 50px;
+		padding: 40px;
 		height: 500px;
 	}
 
@@ -1150,8 +1142,22 @@ sl-details::part(header):focus {
 	}
 
 	#hero-section-text {
-		margin-bottom: 80px;
+		margin: 80px 0;
 	}
+
+	#actions-left .sign-out-prompt {
+		display: none;
+	}
+
+	#actions-left{
+		left: 40px;
+	}
+	
+
+}
+
+@media(max-width: 620px){
+	
 	
 }
 
@@ -1179,6 +1185,9 @@ sl-details::part(header):focus {
 
 	.footer-text {
 		padding: 0 40px;
+	}
+	#actions-right {
+		gap: 10px;
 	}
 }
 
@@ -1227,10 +1236,6 @@ ${smallBreakPoint(css`
 	#hero-section-bottom {
 		height: 138px;
 	}
-	#hero-section-actions {
-		gap: 10px;
-		right: 10px;
-	}
 	.subheader { 
 		font-size: 20px !important;
 	}
@@ -1261,7 +1266,7 @@ ${mediumBreakPoint(css`
 `)}
 
 ${largeBreakPoint(css`
-	#hero-section p {
+	#hero-section p:not(.sign-out-prompt) {
 		width: 70% !important;
 	}
 	#hero-section-bottom {

@@ -51,7 +51,7 @@ export class AppReport extends LitElement {
     siteName: 'Site Name',
     description: "Your site's description",
     siteUrl: 'Site URL',
-    iconURL: '',
+    iconURL: '/assets/new/icon_placeholder.png',
     iconAlt: 'Your sites logo'
   };
   @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a'};
@@ -2543,7 +2543,7 @@ export class AppReport extends LitElement {
               <div id="app-card-header">
                 <div id="app-card-header-col">
                   <div id="pwa-image-holder">
-                    ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                    ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                   </div>
                   <div id="card-info" class="flex-row">
                     <p id="site-name">${this.appCard.siteName}</p>
