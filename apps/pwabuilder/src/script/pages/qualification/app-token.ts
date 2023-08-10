@@ -100,6 +100,9 @@ export class AppToken extends LitElement {
     }
 
     if(account && account.account) {
+      if (account.state == '[object PointerEvent]')
+        account.state = '';
+
       this.userAccount.name = account.account.name || '';
       this.userAccount.email = account.account.username || '';
       this.userAccount.accessToken = account.accessToken;
@@ -723,7 +726,6 @@ export class AppToken extends LitElement {
         </div>
       `
     }
-
     return html`
     <div id="wrapper">
       ${this.errorGettingToken && this.userAccount.loggedIn && this.attemptingReclaimFromHome ?
