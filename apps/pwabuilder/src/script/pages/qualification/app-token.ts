@@ -752,7 +752,7 @@ export class AppToken extends LitElement {
             ${this.userAccount.loggedIn ? html`<p class="sign-out-prompt">You are signed in as ${this.userAccount.email}</p><a class="sign-out-link" @click=${this.signOut}>Sign out</a>` : null}
           </div>
           <div id="actions-right">
-            ${(!this.testsInProgress && !this.siteURL) ?
+            ${(!this.testsInProgress && !this.siteURL && !this.errorGettingToken) ?
                 html`
                   <sl-button class="secondary" @click=${() => this.reclaimToken(true)}>
                       Reclaim Token

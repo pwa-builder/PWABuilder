@@ -286,7 +286,7 @@ export function renderAppCard(
       <div class="error-info">
         <p class="error-title">URL already claimed</p>
         <p class="error-desc">
-        We noticed this PWA has already been claimed. If this is your PWA and you are trying to reclaim a previous token, please use the link below. Otherwise, check the account you are using or open an issue on our GitHub.
+          We noticed this PWA has already been claimed. Please check the URL you are using or try another.
         </p>
         <div class="error-actions">
             <button type="button" @click=${(e: Event) => {

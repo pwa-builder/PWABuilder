@@ -27,6 +27,8 @@ export default css`
   }
   .strike-through {
     text-decoration: line-through;
+    text-decoration-color: var(--error-color);
+    text-decoration-thickness: 5px;
   }
   .username {
     color: #4f3fb6;
