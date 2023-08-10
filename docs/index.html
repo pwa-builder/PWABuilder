@@ -102,7 +102,7 @@
                                 const urlInputBox = document.querySelector('#token-url-input');
 
                                 getTokenButton.addEventListener("click", () => {
-                                    window.recordPageAction("docs-token-click", "docs-token-click", "docs-token-click", {});
+                                    window.recordPageAction("docs-token-click", "CL", 300, {});
                                     window.open(urlBase + urlInputBox.value).focus();
                                 });
                             <\/script>`;
