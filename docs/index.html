@@ -26,7 +26,9 @@
     <script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"></script>
 
     <script type="module">
-        import { recordPageView } from "./public/analytics/index.js"; window.recordPageView = recordPageView;
+        import { recordPageView, recordPageAction } from "./public/analytics/index.js"; 
+        window.recordPageView = recordPageView;
+        window.recordPageAction = recordPageAction;
     </script>
 
     <script>
@@ -79,7 +81,7 @@
                             </div>
                             </sl-dialog>
 
-                            <sl-alert open closable class="pwa-summit-banner">
+                            <sl-alert open class="pwa-summit-banner">
                             <sl-icon slot="icon" name="gift"></sl-icon>
                                 <strong>Want a free Microsoft Developer Account? &#x1F604; </strong>
                                 <br/>
@@ -100,6 +102,7 @@
                                 const urlInputBox = document.querySelector('#token-url-input');
 
                                 getTokenButton.addEventListener("click", () => {
+                                    window.recordPageAction("docs-token-click", "docs-token-click", "docs-token-click", {});
                                     window.open(urlBase + urlInputBox.value).focus();
                                 });
                             <\/script>`;
