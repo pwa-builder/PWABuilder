@@ -7,7 +7,7 @@ date: 2023-08-08
 updatedDate: 2023-08-08
 trending: true
 featured: true
-# image: posts/free-dev-account/vscode-release-graphic.png
+image: posts/free-dev-account/free-account-pic-3.jpg
 isPost: true
 backUrl: '/'
 author:
@@ -22,6 +22,8 @@ tags:
   - Free
 ---
 
+<img alt="get a free windows developer account" src="/posts/free-dev-account/free-account-pic-1.jpg" />
+
 # Free Developer Accounts for Publishing PWAs to the Microsoft Store on Windows
 
 We are excited to announce a new program to empower PWA developers to bring their ideas and experiences to Windows, for FREE. For a limited time, in partnership with the Microsoft Store, Microsoft Store developer account tokens will be available (approximate value $20 each) to developers that own qualifying PWAs and wish to make those available to Windows users via the Microsoft Store. Just enter your PWA url [here](#) to get started.
@@ -32,15 +34,19 @@ PWAs are first class applications on Windows and can be indistinguishable from a
 
 ## How Does it Work?
 
+<img alt="almost there. PWA scores" src="/posts/free-dev-account/free-account-pic-2.jpg" />
+
 To qualify for a free developer account, your PWA must meet our quality standards. We define the requirements for a high-quality PWA, including: 
 
 - Your PWA is installable from the browser, 
-- Your web manifest has all required fields that describe and define your PWA, and
+- Your web manifest has all requested fields that describe and define your PWA, and
 - You have implemented two or more desktop integrations like shortcuts or Window controls overlay. 
 
 By adhering to these guidelines, you can ensure that your PWA delivers great user experience across different devices and platforms. 
 
 Once your PWA meets the quality criteria, we will provide you with a token to create a free developer account. This token eliminates the (approximately) $19 account registration fee, making it more accessible for developers to publish their apps.
+
+<img alt="congratulations! use the code to get your account" src="/posts/free-dev-account/free-account-pic-3.jpg" />
 
 ## How to Get Started?
 
