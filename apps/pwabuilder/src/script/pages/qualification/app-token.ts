@@ -1008,7 +1008,7 @@ export class AppToken extends LitElement {
         <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
         <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
       </ul>
-      <p>Offer open to signups from August 1st, 2023 through August 31st, 2023 midnight Pacific Standard Time, or when the limited supply of tokens run out, whichever comes first. Limit one free account token per developer and PWA.</p>
+      <p>Offer open to signups from August 15th, 2023 through September 15th, 2023 midnight Pacific Standard Time, or when the limited supply of tokens run out, whichever comes first. Limit one free account token per developer and PWA.</p>
       <p>If you qualify and tokens are available, you will be given a token on this page when you submit the form. You can come back to this page to retrieve your token again at any time by signing in with your Microsoft Account. Free developer account tokens are not valid if transferred, sold, or otherwise used by any Microsoft Account other than the one which signed up here. These tokens are for individual, not corporate, Microsoft Store on Windows developer accounts.</p>
       <h2>Privacy and communications</h2>
       <p>When you sign up, we will securely retain an anonymous account id and your PWA URL to enforce the above requirements. We will not store your name or email and we will not contact you.</p>
