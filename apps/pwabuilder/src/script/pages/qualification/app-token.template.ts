@@ -259,24 +259,6 @@ export function renderAppCard(
       </div>
     </div>
   `;
-    
-    
-  } else if (!tests.testsInProgress && errorGettingToken){
-    banner = html`
-      <div class="feedback-holder type-error top-banner">
-        <img src="/assets/new/stop.svg" alt="invalid result icon" />
-        <div class="error-info">
-          <p class="error-title">No token associated with this account.</p>
-          <p class="error-desc"> 
-            The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
-          </p>
-          <div class="error-actions">
-            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
-            <button type="button" @click=${appToken.signOut}>Sign out</button>
-          </div>
-        </div>
-      </div>
-    `;
 
   } else if(!tests.testsInProgress && isClaimed){
     banner = html`
@@ -297,7 +279,24 @@ export function renderAppCard(
           </div>
       </div>
     </div>
-  `;
+  `;  
+    
+  } else if (!tests.testsInProgress && errorGettingToken){
+    banner = html`
+      <div class="feedback-holder type-error top-banner">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">No token associated with this account.</p>
+          <p class="error-desc"> 
+            The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
+          </p>
+          <div class="error-actions">
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+            <button type="button" @click=${appToken.signOut}>Sign out</button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   // else: tests are complete
