@@ -2,7 +2,7 @@
 layout: post
 title: Free Developer Accounts for Publishing PWAs to the Microsoft Store on Windows
 excerpt: For a limited time and quantity, starting August 15th, the PWABuilder team is offering free developer accounts for publishing apps to the Microsoft Store to developers who have built qualifying PWAs.
-description: Unlock the power of Progressive Web Apps on Windows platform for FREE, with our new empowering program in collaboration with Microsoft Store, offering developer account to eager developers, opening doors to bring their innovative PWAs to the extensive Windows user base
+description: Reach billions of customers on Windows for FREE. For a limited time and quantity, starting August 15th, the PWABuilder team is offering free developer accounts for publishing apps to the Microsoft Store to developers who have built qualifying PWAs
 date: 2023-08-08
 updatedDate: 2023-08-08
 trending: true
