@@ -161,7 +161,7 @@ export class AppIndex extends LitElement {
           },
           {
 
-            path: '/congratulations/:token/:appurl/:appname/:appicon/:username',
+            path: '/congratulations/:token/:appurl/:appname/:appicon/:username/:email',
             component: 'token-congratulations',
             action: async () => {
               await import('./script/pages/qualification/token-congratulations.js');
@@ -169,7 +169,7 @@ export class AppIndex extends LitElement {
           },
           {
 
-            path: '/congratulations/:token/:username',
+            path: '/congratulations/:token/:username/:email',
             component: 'token-congratulations',
             action: async () => {
               await import('./script/pages/qualification/token-congratulations.js');

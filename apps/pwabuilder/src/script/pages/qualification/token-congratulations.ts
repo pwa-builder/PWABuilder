@@ -13,6 +13,7 @@ type Params = {
   appurl?: string;
   token: string;
   username: string;
+  email: string;
 };
 
 @customElement('token-congratulations')
@@ -77,7 +78,6 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
   }
 
   render() {
-    console.log(this.paramsData)
     return html`
       <div id="congrats-wrapper">
         <div id="header">
@@ -111,14 +111,13 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
               </div>
             </div>
           </div>
-          <p class="sign-out">You are signed in as ${this.paramsData?.username} <a @click=${this.signOut}>Sign out</a></p>
+          <p class="sign-out">You are signed in as ${this.paramsData?.email} <a @click=${this.signOut}>Sign out</a></p>
           <div id="next-steps">
             <h3>Next Steps</h3>
             <ol class="steps-list">
               <li>
-                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on
-                <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_account_setup")}>Partner Center Dashboard</a>
-                and reserve your app on Microsoft Store
+                <strong>Create a developer account and reserve your app name:</strong> Use the code above to create a free developer account on Partner Center Dashboard and reserve your app on Microsoft Store.
+                <a aria-label="Click here to learn how to open a developer account" href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("partner_center_account_setup")}>Click here for full instruction on creating a developer account</a>
               </li>
               <li>
                 <strong>Package Your App:</strong>

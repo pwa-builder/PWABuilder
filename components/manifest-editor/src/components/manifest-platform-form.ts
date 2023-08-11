@@ -931,7 +931,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
               <h3 class=${classMap(this.decideFocus("iarc_rating_id"))}>IARC Rating ID</h3>
               <manifest-field-tooltip .field=${"iarc_rating_id"}></manifest-field-tooltip>
             </div>
-            <p>Displays what ages are suitable for your PWA</p>
+            <p>Displays the suitable ages for your PWA</p>
             <sl-input placeholder="PWA IARC Rating ID" value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange}></sl-input>
           </div>
           <div class="form-field">

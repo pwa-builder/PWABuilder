@@ -534,10 +534,10 @@ export class AppToken extends LitElement {
   goToCongratulationsPage(fullInfo: boolean){
     console.log(encodeURIComponent(this.appCard.siteUrl))
     if(fullInfo){
-      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}`)
+      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}/${this.userAccount.email}`)
       return;
     }
-    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name}`)
+    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name}/${this.userAccount.email}`)
     return;
   }
 
@@ -837,7 +837,8 @@ export class AppToken extends LitElement {
                       class="inner-details"
                       @sl-show=${(e: Event) => rotateNinety("installable-details", this.shadowRoot, e)}
                       @sl-hide=${(e: Event) => rotateZero("installable-details", this.shadowRoot, e)}
-                      data-card="installable-details">
+                      data-card="installable-details"
+                      open>
                       <div slot="summary" class="inner-summary">
                         <div class="summary-left">
                           ${this.installablePassed ? html`<img class="" src=${valid_src} alt="installable tests passed icon"/>` : html`<img class="" src=${stop_src} alt="installable tests failed icon"/>`}
