@@ -654,9 +654,10 @@ sl-details::part(header):focus {
 	align-items: center;
 }
 
-.inner-todo p {
+.inner-todo a {
 	margin: 0;
 	font-size: 14px;
+	color: inherit;
 }
 
 .inner-todo img {
