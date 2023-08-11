@@ -260,7 +260,7 @@ export function renderAppCard(
     </div>
   `;
 
-  } else if(!tests.testsInProgress && isClaimed){
+  } else if(!tests.testsInProgress && isClaimed && !errorGettingToken){
     banner = html`
     <!-- error banner -->
     <div class="feedback-holder type-error">

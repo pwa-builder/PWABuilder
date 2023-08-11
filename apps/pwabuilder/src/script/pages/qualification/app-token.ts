@@ -154,7 +154,7 @@ export class AppToken extends LitElement {
 
     if(this.userAccount.loggedIn){
       try {
-        this.claimToken();
+        this.claimToken(true);
       } catch (e){
         console.error(e)
       }
@@ -167,9 +167,9 @@ export class AppToken extends LitElement {
       }
     }
 
-    /* if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
+    if(this.siteURL && this.testsPassed && this.userAccount.loggedIn){
       await this.preClaimToken();
-    } */
+    }
 
     this.decideBackground();
     super.connectedCallback();
@@ -493,7 +493,7 @@ export class AppToken extends LitElement {
     const fullInfo = this.siteURL.length > 0 && this.tokensCampaignRunning;
     let encodedUrl;
     let validateGiveawayUrl;
-    if(fullInfo){
+    if(fullInfo && !isAutoClaim){
       encodedUrl = encodeURIComponent(this.siteURL);
       validateGiveawayUrl = env.validateGiveawayUrl + `/GetTokenForUser?site=${encodedUrl}`;
     } else {
@@ -518,7 +518,7 @@ export class AppToken extends LitElement {
         this.tokenId = response.tokenId
         this.goToCongratulationsPage(fullInfo);
       }
-      else {
+      else if (!isAutoClaim) {
         this.errorGettingToken = true;
         //this.isDenyList = true;
         // @jay error like this is not working: errorMessage: "There are no more free tokens left. Please contact pwabuilder@microsoft.com"
@@ -534,10 +534,10 @@ export class AppToken extends LitElement {
   goToCongratulationsPage(fullInfo: boolean){
     console.log(encodeURIComponent(this.appCard.siteUrl))
     if(fullInfo){
-      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}/${this.userAccount.email}`)
+      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}/${encodeURIComponent(this.userAccount.email)}`)
       return;
     }
-    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name}/${this.userAccount.email}`)
+    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name}/${encodeURIComponent(this.userAccount.email)}`)
     return;
   }
 
@@ -651,7 +651,7 @@ export class AppToken extends LitElement {
       this.signInUser('reclaim');
       //this.siteURL = "";
     } else {
-      this.claimToken(true);
+      this.claimToken();
     }
   }
 
