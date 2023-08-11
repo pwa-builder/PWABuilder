@@ -36,7 +36,7 @@ PWAs are first class applications on Windows and can be indistinguishable from a
 
 <img alt="almost there. PWA scores" src="/posts/free-dev-account/free-account-pic-2.jpg" />
 
-To qualify for a free developer account, your PWA must meet our quality standards. We define the requirements for a high-quality PWA, including: 
+Starting August 15th, and ending September 15th, limited number of developers that own qualifying PWAs will be able to claim a token that will enable them to create a developer account for publishing apps to the Microsoft Store for free. To qualify for a free developer account, your PWA must meet our quality standards. We define the requirements for a high-quality PWA, including: 
 
 - Your PWA is installable from the browser, 
 - Your web manifest has all requested fields that describe and define your PWA, and
