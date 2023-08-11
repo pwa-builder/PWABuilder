@@ -130,6 +130,9 @@ export default css`
     height: 50px;
     font-size: 14px;
     font-weight: 500;
+
+    padding: 0 15px;
+    text-align: center;
   }
   
   .copy-button {
