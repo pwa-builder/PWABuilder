@@ -619,6 +619,7 @@ sl-details::part(header):focus {
 .inner-details::part(content) {
 	padding: 20px;
 	padding-top: 0;
+	padding-bottom: 15px;
 }
 
 .inner-summary {
@@ -627,6 +628,7 @@ sl-details::part(header):focus {
 	justify-content: space-between;
 	width: 100%;
 	padding: 5px 10px;
+	padding-left: 14px;
 }
 
 .inner-summary h3 {
@@ -646,6 +648,7 @@ sl-details::part(header):focus {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: repeat(3, 1fr);
+	gap: 3px;
 }
 
 .inner-todo {
@@ -658,6 +661,11 @@ sl-details::part(header):focus {
 	margin: 0;
 	font-size: 14px;
 	color: inherit;
+	text-decoration: none;
+}
+
+.inner-todo a:hover, .inner-todo a:focus {
+	text-decoration: underline;
 }
 
 .inner-todo img {
