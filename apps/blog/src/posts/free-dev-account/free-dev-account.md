@@ -30,7 +30,7 @@ We are excited to announce a new program to empower PWA developers to bring thei
 
 ## Why Publish your PWA to the Microsoft Store?
 
-PWAs are first class applications on Windows and can be indistinguishable from apps built with native technology. In addition, the Microsoft Store is available to over one billion users on Windows 10 and 11, offering a huge reach and potential audience for your apps on Windows. By packaging and publishing your PWA to the Microsoft Store, you can increase the discoverability of your app and broaden your user base. Additionally, the Microsoft Store provides a trusted platform for users to find and install apps, giving your PWA more credibility and visibility.
+PWAs are first class applications on Windows and can be indistinguishable from apps built with native technology. To give a few examples: [Goodnotes](https://apps.microsoft.com/store/detail/goodnotes-for-windows/9N92MC09DB30), [Adobe Express](https://apps.microsoft.com/store/detail/adobe-express/9P94LH3Q1CP5), [Elk](https://apps.microsoft.com/store/detail/elk/9PNZMMXQHQZ5). In addition, the Microsoft Store is available to over one billion users on Windows 10 and 11, offering a huge reach and potential audience for your apps on Windows. By packaging and publishing your PWA to the Microsoft Store, you can increase the discoverability of your app and broaden your user base. Additionally, the Microsoft Store provides a trusted platform for users to find and install apps, giving your PWA more credibility and visibility.
 
 ## How Does it Work?
 
