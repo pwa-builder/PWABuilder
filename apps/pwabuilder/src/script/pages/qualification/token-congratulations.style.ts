@@ -137,6 +137,7 @@ export default css`
   
   .copy-button {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 50px;
@@ -145,6 +146,22 @@ export default css`
     border: 1px solid #4f3fb6;
     border-radius: 4px;
     margin-left: 5px;
+    gap: 5px;
+    padding: 10px 5px;
+  }
+
+  .copy-code img {
+    width: 25px;
+  }
+
+  .copy-button:hover {
+    cursor: pointer;
+  }
+
+  .copy-button p{
+    margin: 0;
+    font-size: 8px;
+    white-space: nowrap;
   }
 
   .sign-out {

@@ -688,7 +688,7 @@ export class AppToken extends LitElement {
                 <p class="end-error-desc"> 
                   <span>Invalid Account:</span> 
                   The account you used to reclaim a code does not one associated with it. Try signing in with a different account or 
-                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">open an issue</a> 
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("campaign_over_reclaim_error_open_issue")}>open an issue</a> 
                   on our GitHub.
                 </p>
               </div>
@@ -709,16 +709,16 @@ export class AppToken extends LitElement {
 
             <h1>This promotion has currently ended.</h1>
             <p>Please check our Twitter handle
-              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">@PWABuilder</a>
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank" @click=${() => this.trackLinkClick("campaign_over_twitter")}>@PWABuilder</a>
               or join our
-              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">Discord</a>
+              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank" @click=${() => this.trackLinkClick("campaign_over_discord")}>Discord</a>
               for more information on the next promotion.
             </p>
             <div id="icons-section">
-              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank">
+              <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank" @click=${() => this.trackLinkClick("campaign_over_twitter_icon")}>
                 <img class="twt" src='/assets/new/twitter.svg' alt="twitter logo" />
               </a>
-              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank">
+              <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank" @click=${() => this.trackLinkClick("campaign_over_discord_icon")}>
                 <img class="disc" src='/assets/new/discord.svg' alt="discord logo">
               </a>
             </div>
@@ -739,7 +739,7 @@ export class AppToken extends LitElement {
                   The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
                 </p>
                 <div class="error-actions">
-                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("reclaim_error_open_issue")}>Open an Issue</a>
                   <button type="button" @click=${this.signOut}>Sign out</button>
                 </div>
               </div>

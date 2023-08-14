@@ -236,7 +236,7 @@ export function renderAppCard(
             We noticed this PWA has already been linked to an account in the Microsoft Store. Please check the URL you are using or open an issue on our GitHub.        
           </p>
           <div class="error-actions">
-            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => trackLinkClick("denyList_error_open_issue")}>Open an Issue</a>
           </div>
         </div>
       </div>
@@ -254,7 +254,7 @@ export function renderAppCard(
           This is a known PWA belonging to an organization or business. Tokens are only available to individuals. See full terms and conditions. 
         </p>
         <div class="error-actions">
-            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => trackLinkClick("popular_pwa_error_open_issue")}>Open an Issue</a>
           </div>
       </div>
     </div>
@@ -275,7 +275,7 @@ export function renderAppCard(
               e.preventDefault();
               appToken.reclaimToken(false);
             }}>Reclaim token</button>
-            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => trackLinkClick("already_claimed_error_open_issue")}>Open an Issue</a>
           </div>
       </div>
     </div>
@@ -291,7 +291,7 @@ export function renderAppCard(
             The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
           </p>
           <div class="error-actions">
-            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener">Open an Issue</a>
+            <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => trackLinkClick("reclaim_error_open_issue")}>Open an Issue</a>
             <button type="button" @click=${appToken.signOut}>Sign out</button>
           </div>
         </div>
@@ -357,6 +357,10 @@ export function renderAppCard(
   `;
 }
 
+function trackLinkClick(linkDescription: string){
+  recordPWABuilderProcessStep(`${linkDescription}_link_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+}
+
 // Rotates the icon on each details drop down to 0 degrees
 export function rotateZero(card: string, shadowRoot: Element["shadowRoot"], e?: Event){
 	recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
@@ -370,7 +374,7 @@ export function rotateZero(card: string, shadowRoot: Element["shadowRoot"], e?: 
 
 // Rotates the icon on each details drop down to 90 degrees
 export function rotateNinety(card: string, shadowRoot: Element["shadowRoot"], e?: Event){
-	//recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
+	recordPWABuilderProcessStep(card + "_details_closed", AnalyticsBehavior.ProcessCheckpoint);
 	e?.stopPropagation();
 	let icon: HTMLImageElement = shadowRoot!.querySelector('img[data-card="' + card + '"]')!;
 
