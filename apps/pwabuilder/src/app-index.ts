@@ -196,7 +196,7 @@ export class AppIndex extends LitElement {
         <div id="content">
           <div id="router-outlet"></div>
         </div>
-        ${this.pageName === "freeToken" || this.pageName === "congratulations" ? html`` : html`<discord-box></discord-box>`}
+        ${this.pageName === "freeToken" || this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
         <app-footer></app-footer>
       </div>
 
