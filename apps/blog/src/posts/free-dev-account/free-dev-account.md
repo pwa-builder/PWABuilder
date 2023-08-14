@@ -24,8 +24,6 @@ tags:
 
 <img alt="get a free windows developer account" src="/posts/free-dev-account/free-account-pic-1.jpg" />
 
-# Publish your PWA to the Microsoft Store for FREE
-
 We are excited to announce a new program to empower PWA developers to bring their ideas and experiences to Windows, for FREE. For a limited time, in partnership with the Microsoft Store, Microsoft Store developer account tokens will be available (approximately $19 each) to developers that own qualifying PWAs and wish to make those available to Windows users via the Microsoft Store. Just [enter your PWA url here](https://aka.ms/getToken) to get started.
 
 ## Why Publish your PWA to the Microsoft Store?
