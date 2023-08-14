@@ -25,19 +25,33 @@ Before you can get started claiming a token, make sure you have a valid, public 
 
 3. On the report card page, there should be a notification under `Action Items`:
 
+<div class="docs-image">
+   <img src="/assets/builder/store-promotion/token-action-item.png" alt="The token notification on the PWABuilder report card page. ">
+</div>
 
 4. Click `Check Now`.
 
-5. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, update your PWA to match the requirements or try a different URL.
-
+5. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, update your PWA to match the requirements or try a different URL. If you see three green check marks at the top right, your PWA is good to go!
 
 6. Click `Sign in with a Microsoft Account to Continue`.
 
+<div class="docs-image">
+   <img src="/assets/builder/store-promotion/tests-passed.png" alt="The success screen on the PWABuilder token promotion page.">
+</div>
+
 7. Sign in with a personal Microsoft account. You can create for free [here.](https://account.microsoft.com/account)
 
-8. After signing in, you will be presented  with your token.
+8. You will need to accept the promotion terms before you can view your token. 
 
-9. You can now use your token to sign up for an Microsoft Store developer account. See the following section on specific guidance on using your token.
+9. Click `View Token Code`.
+
+<div class="docs-image">
+   <img src="/assets/builder/store-promotion/view-token-code.png" alt="PWABuilder promotion page with terms acceptance and token view button.">
+</div>
+
+10. You can now use your token to sign up for an Microsoft Store developer account. See the following section on specific guidance on using your token.
+
+If something unexpected went wrong during the claim process, go to [Common Errors](/builder/store-promotion/#/?id=common-errors).
 
 ## Using Your Token
 
@@ -53,20 +67,43 @@ Once you have your token, complete the following steps:
 
 5. Select `Individual` under `Account type`.
 
+<div class="docs-image">
+    <img src="/assets/builder/store-promotion/promo-registration-info.png" alt="Microsoft Developer account registration info panel.">
+</div>
+
 6. Pick a `Publisher display name` that you will publish your apps under.
 
 7. Fill out the contact info that will be associated with your developer account.
 
 8. Next, under `Registration - Payment`, you will see a `Promo Code` field. Enter the code supplied by PWABuilder here.
 
+<div class="docs-image">
+    <img src="/assets/builder/store-promotion/promo-registration-payment.png" alt="Microsoft Developer account registration payment panel.">
+</div>
+
 9. That's all you need to do to take advantage of the PWABuilder promotion, complete the rest of the sign up as guided.
 
- ## Next steps
+## Common Errors
 
- Once you have created account, you are now able to publish a packaged PWA to the Microsoft Store:
+There's a few reasons you might not be able to claim a token with a certain URL:
+#### URL already in use.
 
- [Learn how to publish a PWA to the Microsoft Store.](/builder/windows)
+This warning will be displayed if you try to claim a token with a progressive web app that is already found in the Microsoft Store. URLs used to claim tokens must not be associated with an app that is already listed.
 
- If you just need help packaging a PWA for Windows:
+#### This is a known PWA belonging to an organization or business.
 
- [Learn how to package your PWA for Windows.](/builder/windows?id=packaging)
+This warning will be displayed if you try to claim a token with a URL that belongs to well-known business or organization. You must claim a token with a personal project that belongs to you.
+
+#### URL already claimed.
+
+This warning will be displayed if you try to claim a token with a URL that has already been used to claim a token. Each URL can only be used once to claim a token. If you are trying to reclaim a token that you already claimed, click `Reclaim Token` at the bottom of this warning.
+
+## Next steps
+
+Once you have created account, you are now able to publish a packaged PWA to the Microsoft Store:
+
+[Learn how to publish a PWA to the Microsoft Store.](/builder/windows)
+
+If you just need help packaging a PWA for Windows:
+
+[Learn how to package your PWA for Windows.](/builder/windows?id=packaging)
