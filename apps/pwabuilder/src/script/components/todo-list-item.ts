@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+// import { AuthModule } from '../services/auth_service';
 import {
   smallBreakPoint,
   mediumBreakPoint,
@@ -20,6 +21,8 @@ export class TodoItem extends LitElement {
   @property({ type: String }) status: string = "";
   @property({ type: String }) displayString: string = "";
 
+  @state() clickable: boolean = false;
+  @state() giveaway: boolean = false;
   @state() isOpen: boolean = false;
 
   static get styles() {
@@ -62,6 +65,61 @@ export class TodoItem extends LitElement {
         line-height: 16px;
         padding-top: 3px;
       }
+
+      .arrow_link {
+        margin: 0;
+        border-bottom: 1px solid var(--primary-color);
+        white-space: nowrap;
+      }
+
+      .arrow_anchor {
+        font-size: var(--arrow-link-font-size);
+        font-weight: bold;
+        margin: 0px 0.5em 0px 0px;
+        line-height: 1em;
+        color: var(--primary-color);
+        display: flex;
+        column-gap: 10px;
+        width: fit-content;
+      }
+
+      .arrow_anchor:visited {
+        color: var(--primary-color);
+      }
+
+      .arrow_anchor:hover {
+        cursor: pointer;
+      }
+
+      .arrow_anchor:hover img {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
+      }
+
+      .giveaway img { 
+        height: 21px;
+      }
+
+      .arrow {
+        width: 16px;
+      }
+
+
       /* < 480px */
       ${smallBreakPoint(css`
       `)}
@@ -85,6 +143,22 @@ export class TodoItem extends LitElement {
   constructor() {
     super();
   }
+
+  decideClasses(){
+    // token giveaway toggle
+    this.giveaway = false;
+    if(this.field === "giveaway"){
+      this.giveaway = true;
+    }
+
+    if(this.status === "retest" || this.field.startsWith("Open")){
+      this.clickable = true;
+    } else {
+      this.clickable = false;
+    }
+
+    return {iwrapper: true, clickable: this.clickable, giveaway: this.giveaway}
+  } 
 
   bubbleEvent(){
     if(manifest_fields[this.field]){
@@ -128,13 +202,52 @@ export class TodoItem extends LitElement {
   }
 
 
+  decideIcon(){
+    switch(this.status){
+      case "required":
+        return html`<img src=${stop_src} alt="yield result icon"/>`
+    
+      case "retest":
+        return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`
+
+      case "giveaway":
+        return html`<img src=${giveaway_src}  alt="giveaway site icon"/>`
+    }
+
+    return html`<img src=${yield_src} alt="yield result icon"/>`
+  }
+
+  goToGiveaway(){
+    let event = new CustomEvent('giveawayEvent', {});
+    this.dispatchEvent(event);
+  }
+
   render() {
     return html`
-      <div class="${classMap(this.decideClickable())}" @click=${() => this.bubbleEvent()}>
+      <div class="${classMap(this.decideClasses())}" @click=${() => this.bubbleEvent()}>
         <div class="left">
-          ${this.status === "required" ? html`<img src=${stop_src} alt="yield result icon"/>` : this.status === "retest" ? html`<img src=${retest_src} style="color: black" alt="retest site icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
+          ${this.decideIcon()}
           <p>${this.fix}</p>
+
+          ${this.giveaway ? 
+            html`
+              <span
+                class="arrow_anchor"
+                @click=${() => this.goToGiveaway()}
+              >
+                <p class="arrow_link">Check Now</p>
+                <img
+                  class="arrow"
+                  src="/assets/new/arrow.svg"
+                  alt="arrow"
+                />
+              </span>
+            ` :
+            html``
+          }
+          
         </div>
+
         ${manifest_fields[this.field] ? 
           html`
             <manifest-info-card .field=${this.field} @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}></manifest-info-card>
@@ -148,3 +261,4 @@ export class TodoItem extends LitElement {
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const retest_src = "/assets/new/retest-black.svg";
+const giveaway_src = "/assets/new/msft_store_giveaway.svg";
