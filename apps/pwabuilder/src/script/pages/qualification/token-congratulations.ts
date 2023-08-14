@@ -106,7 +106,7 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
                 <sl-tooltip id="tool-tip" content="Copied!" trigger="click">
                   <button class="copy-button" @click=${() => this.copyCode() }>
                     <img src="/assets/copy_icon_darkgrey.svg" alt="Click here to copy your token code"/>
-                    <p>Code code</p>
+                    <p>Copy code</p>
                   </button>
                 </sl-tooltip>
               </div>

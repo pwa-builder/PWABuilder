@@ -245,6 +245,9 @@ export default css`
       width: 45px;
       height: 40px;
     }
+    .copy-button p {
+      display: none;
+    }
     .title {
       width: 100px;
     }
