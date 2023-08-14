@@ -52,6 +52,6 @@ Once your PWA meets the quality criteria, we will provide you with a token to cr
 
 To participate in this limited-time offer, simply enter your PWA URL [here](https://aka.ms/getToken) for evaluation using our qualification flow. Once your PWA qualifies, you will need to sign in with a Microsoft Account to claim your token.
 
-If your PWA qualifies, you will get a token to create a free developer account on the Microsoft Store. Our documentation provides a step-by-step guide on how to create your account and publish your PWA to the Microsoft Store.
+If your PWA qualifies, you will get a token to create a free developer account on the Microsoft Store. [Our documentation](https://docs.pwabuilder.com/#/builder/store-promotion) provides a step-by-step guide on how to create your account and publish your PWA to the Microsoft Store.
 
 Take this opportunity to showcase your PWA to a wider audience and leverage the benefits of the Microsoft Store. [Get started now!](https://aka.ms/getToken).
