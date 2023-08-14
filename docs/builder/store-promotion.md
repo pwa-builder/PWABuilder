@@ -1,12 +1,12 @@
 # Free Microsoft Developer Account Promotion
 
-For a limited time, PWABuilder is offering free Microsoft Store Developer accounts (normally $19) to individual developers who have a progressive web app that meets specific requirements. With a Microsoft Sore Developer account, you can deploy your progressive web app to the Microsoft Store, extending your app's reach to millions of users on Windows.
+For a limited time, PWABuilder is offering free Microsoft Store Developer accounts (approximately $19 in value) to individual developers who have a [Progressive Web App](/home/pwa-intro) that meets specific requirements. With a Microsoft Store Developer account, you can deploy your Progressive Web App to the Microsoft Store, extending your app's reach to users on Windows.
 
 ## Requirements 
 
 To qualify for a free Microsoft Store developer account, you must:
 
-  * own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements
+  * own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements. See our [Beginner's Guide to Progressive Web Apps](/home/pwa-intro) for more info.
   * live in a country or region where the Windows program in Partner Center is offered. See here for the full list of countries
   * have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account
   * not have an existing Microsoft Store on Windows individual developer/publisher account
@@ -17,11 +17,11 @@ To check if your progressive web qualifies and to claim a token, follow the dire
 
 ## Claiming a Token
 
-Before you can get started claiming a token, make sure you have a valid, public URL for your progressive web app.
+Before you can get started claiming a token, make sure you have a valid, public URL for your Progressive Web App.
 
 1. Head to [PWABuilder.com](https://www.pwabuilder.com/).
 
-2. Enter the URL to your progressive web app and hit `Start`.
+2. Enter the URL to your Progressive Web App and hit `Start`.
 
 3. On the report card page, there should be a notification under `Action Items`:
 
@@ -31,7 +31,7 @@ Before you can get started claiming a token, make sure you have a valid, public 
 
 4. Click `Check Now`.
 
-5. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, update your PWA to match the requirements or try a different URL. If you see three green check marks at the top right, your PWA is good to go!
+5. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, you will need to update your PWA to match the requirements. If you see three green check marks at the top right, your PWA is good to go!
 
 6. Click `Sign in with a Microsoft Account to Continue`.
 
@@ -88,7 +88,7 @@ Once you have your token, complete the following steps:
 There's a few reasons you might not be able to claim a token with a certain URL:
 #### URL already in use.
 
-This warning will be displayed if you try to claim a token with a progressive web app that is already found in the Microsoft Store. URLs used to claim tokens must not be associated with an app that is already listed.
+This warning will be displayed if you try to claim a token with a Progressive Web App that is already found in the Microsoft Store. URLs used to claim tokens must not be associated with an app that is already listed.
 
 #### This is a known PWA belonging to an organization or business.
 
