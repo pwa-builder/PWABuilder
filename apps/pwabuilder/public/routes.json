@@ -5,5 +5,9 @@
       "serve": "index.html",
       "statusCode": 200
     }
-  ]
+  ],
+  "navigationFallback": {
+    "rewrite": "index.html",
+    "exclude": ["*.{css,js,mjs,ts,png,gif,ico,jpg,svg,json,woff2,ttf}"]
+  }
 }
