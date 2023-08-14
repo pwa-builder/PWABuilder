@@ -328,7 +328,7 @@ export class AppToken extends LitElement {
                   `
                   }
               `}
-            <p>${test.displayString}</p>
+              <a href="${test.docsLink}" target="_blank">${test.displayString}</a>
           </div>
         `
       )
@@ -367,7 +367,7 @@ export class AppToken extends LitElement {
                   `
                   }
               `}
-            <p>${test.displayString}</p>
+            <a href="${test.docsLink}" target="_blank">${test.displayString}</a>
           </div>
         `
       )
@@ -405,7 +405,7 @@ export class AppToken extends LitElement {
                   `
                   }
               `}
-            <p>${test.displayString}</p>
+            <a href="${test.docsLink}" target="_blank">${test.displayString}</a>
           </div>
         `
       )

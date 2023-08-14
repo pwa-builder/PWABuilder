@@ -9,9 +9,6 @@
     "clean": "rm -rf dist",
     "setup": "npm run clean && tsc && node dist/setup.js"
   },
-  "dependencies": {
-    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics"
-  },
   "devDependencies": {
     "@types/node": "^20.4.2",
     "cpx": "^1.5.0",
