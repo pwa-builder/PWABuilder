@@ -25,21 +25,17 @@ Before you can get started claiming a token, make sure you have a valid, public 
 
 3. On the report card page, there should be a notification under `Action Items`:
 
-!! IMAGE !!
 
 4. Click `Check Now`.
 
 5. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, update your PWA to match the requirements or try a different URL.
 
-!! IMAGE !!
 
 6. Click `Sign in with a Microsoft Account to Continue`.
 
 7. Sign in with a personal Microsoft account. You can create for free [here.](https://account.microsoft.com/account)
 
 8. After signing in, you will be presented  with your token.
-
-!! IMAGE !!
 
 9. You can now use your token to sign up for an Microsoft Store developer account. See the following section on specific guidance on using your token.
 
@@ -57,19 +53,13 @@ Once you have your token, complete the following steps:
 
 5. Select `Individual` under `Account type`.
 
-!! IMAGE !!
-
 6. Pick a `Publisher display name` that you will publish your apps under.
 
 7. Fill out the contact info that will be associated with your developer account.
 
-!! IMAGE !!
+8. Next, under `Registration - Payment`, you will see a `Promo Code` field. Enter the code supplied by PWABuilder here.
 
- 8. Next, under `Registration - Payment`, you will see a `Promo Code` field. Enter the code supplied by PWABuilder here.
-
-!! IMAGE !!
-
- 9. That's all you need to do to take advantage of the PWABuilder promotion, complete the rest of the sign up as guided.
+9. That's all you need to do to take advantage of the PWABuilder promotion, complete the rest of the sign up as guided.
 
  ## Next steps
 

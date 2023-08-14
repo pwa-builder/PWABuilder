@@ -145,6 +145,12 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: false
         },
         {
+          pageTitle: "PWABuilder - Store Token Promotion",
+          menuTitle: "Store Token Promotion",
+          path: "/builder/token-promotion",
+          includeOnHomePage: true
+        },
+        {
           pageTitle: "PWABuilder - FAQ",
           menuTitle: "FAQ",
           path: "/builder/faq",
