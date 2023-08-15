@@ -19,7 +19,7 @@ To check if your progressive web qualifies and to claim a token, follow the dire
 
 Before you can get started claiming a token, make sure you have a valid, public URL for your Progressive Web App.
 
-1. Head to [PWABuilder.com](https://www.pwabuilder.com/).
+1. Head to the [PWABuilder.com Store Promotion Page](https://www.pwabuilder.com/freeToken).
 
 2. Enter the URL to your Progressive Web App and hit `Start`.
 
