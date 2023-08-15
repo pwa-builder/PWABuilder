@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { Router, Route } from '@vaadin/router';
 
 import './shoelace';
@@ -13,6 +13,9 @@ import { recordPageView } from './script/utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
+
+  @state() pageName: string = '';
+
   static get styles() {
     return css`
       #router-outlet > * {
@@ -99,6 +102,30 @@ export class AppIndex extends LitElement {
     });
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('DOMContentLoaded', this.handlePageChange);
+    window.addEventListener('popstate', this.handlePageChange);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('DOMContentLoaded', this.handlePageChange);
+    window.removeEventListener('popstate', this.handlePageChange);
+    super.disconnectedCallback();
+  }
+
+  handlePageChange = () => {
+    
+    var urlObj = new URL(location.href);
+
+    // Get the pathname (page name)
+    var pathname = urlObj.pathname;
+
+    // Remove leading slash if present
+    this.pageName = pathname.replace(/^\//, '');
+
+  }
+
   firstUpdated() {
     // this method is a lifecycle even in lit-element
     // for more info check out the lit-element docs https://lit-element.polymer-project.org/guide/lifecycle
@@ -131,6 +158,29 @@ export class AppIndex extends LitElement {
             action: async () => {
               await import('./script/pages/image-generator.js');
             },
+          },
+          {
+
+            path: '/congratulations/:token/:appurl/:appname/:appicon/:username/:email',
+            component: 'token-congratulations',
+            action: async () => {
+              await import('./script/pages/qualification/token-congratulations.js');
+            }
+          },
+          {
+
+            path: '/congratulations/:token/:username/:email',
+            component: 'token-congratulations',
+            action: async () => {
+              await import('./script/pages/qualification/token-congratulations.js');
+            }
+          },
+          {
+            path: '/freeToken', // token giveaway page
+            component: 'app-token',
+            action: async () => {
+              await import('./script/pages/qualification/app-token.js');
+            }
           }
         ] as Route[],
       },
@@ -146,7 +196,7 @@ export class AppIndex extends LitElement {
         <div id="content">
           <div id="router-outlet"></div>
         </div>
-        <discord-box></discord-box>
+        ${this.pageName === "freeToken" || this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
         <app-footer></app-footer>
       </div>
 

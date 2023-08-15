@@ -7,7 +7,11 @@ export const env = {
   iosPackageGeneratorUrl: '',
   oculusPackageGeneratorUrl: '',
   imageGeneratorUrl: '',
-  safeUrlFetcher: ''
+  safeUrlFetcher: '',
+  webPackageGeneratorFormUrl: '',
+  zipCreatorUrl: '',
+  validateGiveawayUrl: '',
+  tokensCampaignRunning: false
 };
 
 //@ts-ignore
@@ -28,7 +32,10 @@ if (import.meta.env.PROD) {
     'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
     'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
-
+  env.webPackageGeneratorFormUrl =
+    'https://pwabuilder-web-platform.azurewebsites.net/form';
+  env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
+  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 } else {
   env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
   env.manifestCreatorUrl =
@@ -44,4 +51,8 @@ if (import.meta.env.PROD) {
   env.imageGeneratorUrl = 'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
     'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
+  env.webPackageGeneratorFormUrl =
+    'https://pwabuilder-web-platform.azurewebsites.net/form';
+  env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
+  env.validateGiveawayUrl = 'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 }
