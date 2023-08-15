@@ -2501,6 +2501,7 @@ export class AppReport extends LitElement {
   }
 
   goToGiveawayPage(){
+    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
     let a: HTMLAnchorElement = document.createElement("a");
     a.target = "_blank";
     a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
