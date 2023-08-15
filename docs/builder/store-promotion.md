@@ -7,7 +7,7 @@ For a limited time, PWABuilder is offering free Microsoft Store Developer accoun
 To qualify for a free Microsoft Store developer account, you must:
 
   * own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements. See our [Beginner's Guide to Progressive Web Apps](/home/pwa-intro) for more info.
-  * live in a country or region where the Windows program in Partner Center is offered. See here for the full list of countries
+  * live in a country or region where the Windows program in Partner Center is offered. See [here](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets) for the full list of countries
   * have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account
   * not have an existing Microsoft Store on Windows individual developer/publisher account
   * use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here
