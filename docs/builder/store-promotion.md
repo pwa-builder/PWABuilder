@@ -39,7 +39,7 @@ Before you can get started claiming a token, make sure you have a valid, public 
    <img src="/assets/builder/store-promotion/tests-passed.png" alt="The success screen on the PWABuilder token promotion page.">
 </div>
 
-7. Sign in with a personal Microsoft account. You can create for free [here.](https://account.microsoft.com/account)
+7. Sign in with a personal Microsoft account. You can create one for free [here.](https://account.microsoft.com/account)
 
 8. You will need to accept the promotion terms before you can view your token. 
 
