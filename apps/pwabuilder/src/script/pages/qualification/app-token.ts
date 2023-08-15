@@ -316,6 +316,7 @@ export class AppToken extends LitElement {
 
     for (let key in installable) {
       let test = installable[key]
+
       this.installableTodos.push(
         html`
           <div class="inner-todo">
@@ -331,7 +332,7 @@ export class AppToken extends LitElement {
                   `
                   }
               `}
-              <a href="${test.docsLink}" target="_blank">${test.displayString}</a>
+              <a href="${test.docsLink}" target="_blank" @click=${() => this.trackLinkClick(`${key}_inside_details`)}>${test.displayString}</a>
           </div>
         `
       )
@@ -354,7 +355,7 @@ export class AppToken extends LitElement {
     let passedCount = 0;
 
     for (let key in required) {
-      let test = required[key]
+      let test = required[key];
       this.requiredTodos.push(
         html`
           <div class="inner-todo">
@@ -370,7 +371,7 @@ export class AppToken extends LitElement {
                   `
                   }
               `}
-            <a href="${test.docsLink}" target="_blank">${test.displayString}</a>
+            <a href="${test.docsLink}" target="_blank" @click=${() => this.trackLinkClick(`${key}_inside_details`)}>${test.displayString}</a>
           </div>
         `
       )
@@ -408,7 +409,7 @@ export class AppToken extends LitElement {
                   `
                   }
               `}
-            <a href="${test.docsLink}" target="_blank">${test.displayString}</a>
+            <a href="${test.docsLink}" target="_blank" @click=${() => this.trackLinkClick(`${key}_inside_details`)}>${test.displayString}</a>
           </div>
         `
       )
