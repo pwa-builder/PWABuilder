@@ -10,7 +10,7 @@ To qualify for a free Microsoft Store developer account, you must:
   * live in a country or region where the Windows program in Partner Center is offered. See here for the full list of countries
   * have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account
   * not have an existing Microsoft Store on Windows individual developer/publisher account
-  * use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the * * * same Microsoft Account you used to sign in here
+  * use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here
   * plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)
 
 To check if your progressive web qualifies and to claim a token, follow the directions below.
