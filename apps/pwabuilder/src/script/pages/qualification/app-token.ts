@@ -128,7 +128,6 @@ export class AppToken extends LitElement {
     this.tokensCampaignRunning = await GetTokenCampaignStatus();
     env.tokensCampaignRunning = this.tokensCampaignRunning;
 
-
     const search = new URLSearchParams(location.search);
     const site = search.get("site");
 

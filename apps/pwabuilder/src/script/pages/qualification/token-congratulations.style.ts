@@ -186,7 +186,7 @@ export default css`
 
   #next-steps {
     width: 719px;
-    height: 325px;
+    height: fit-content;
     border-radius: 10px;
     background-color: #fff;
     align-self: center;
@@ -231,8 +231,6 @@ export default css`
   }
 
   @media screen and (max-width: 479px) {
-    .token-input-container {
-    }
     #code {
       display: flex;
       flex-direction: column;
@@ -240,6 +238,9 @@ export default css`
     }
     .token-input-container sl-input::part(base) {
       height: 40px;
+    }
+    #code::part(input) {
+      font-size: 12px;
     }
     .copy-button {
       width: 45px;
@@ -255,6 +256,7 @@ export default css`
       width: 100px;
       font-size: 11px;
     }
+    
   }
 
   @media screen and (min-width: 1199px) {
@@ -294,6 +296,7 @@ export default css`
     }
     .token-input-container sl-input::part(input) {
       text-align: center;
+      font-size: 12px;
     }
     .site-card {
       width: 185px;
@@ -312,8 +315,12 @@ export default css`
     }
     #next-steps {
       width: 345px;
-      height: 593px;
       font-size: 16px;
+    }
+    #publishing-instructions {
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
     }
   `)}
   ${mediumBreakPoint(css`
@@ -371,7 +378,6 @@ export default css`
     }
     #next-steps {
       width: 469px;
-      height: 430px;
     }
   `)}
 ${largeBreakPoint(css`
@@ -396,7 +402,6 @@ ${largeBreakPoint(css`
     }
     #next-steps {
       width: 570px;
-      height: 370px;
       align-self: center;
     }
   `)}
