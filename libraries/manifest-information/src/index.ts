@@ -418,6 +418,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     required: false,
     docs_link:
       "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
+
   },
   id: {
     description: [
