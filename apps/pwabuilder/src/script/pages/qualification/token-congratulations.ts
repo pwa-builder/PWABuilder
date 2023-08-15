@@ -43,6 +43,10 @@ export class TokenCongratulations extends LitElement implements BeforeEnterObser
     // }
   }
 
+  firstUpdated(){
+    recordPWABuilderProcessStep('free-token-page-loaded', AnalyticsBehavior.CompleteProcess);
+  }
+
   copyCode() {
     let codeBox = this.shadowRoot!.getElementById("code");
     let toolTip = this.shadowRoot!.getElementById("tool-tip");

@@ -123,6 +123,10 @@ export class AppToken extends LitElement {
     }
     return false;
   }
+
+  firstUpdated(){
+    recordPWABuilderProcessStep('free-token-page-loaded', AnalyticsBehavior.StartProcess);
+  }
   async connectedCallback(): Promise<void> {
 
     this.tokensCampaignRunning = await GetTokenCampaignStatus();
