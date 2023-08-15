@@ -43,6 +43,13 @@ jobs:
         with:
           node-version: '18.x'
 
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_VITE_CLIENT_ID: ${{ secrets.MSAL_CLIENT_ID }}
+          file_name: .env
+          directory: apps/pwabuilder
+
       - name: 🛠️ Build
         run: |
           npm install

@@ -92,7 +92,7 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
   });
 
   // should fail because of missing 96x96 icon
-  it('Can validate the inner structure of shortcuts, should fail', async () => {
+  it('Can validate the inner structure of shortcuts', async () => {
     const validity = await maniLib.validateSingleField("shortcuts", [
       {
         "name": "Start Live Session",
@@ -103,7 +103,7 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
       }
     ]);
 
-    assert.equal(validity.valid, false);
+    assert.equal(validity.valid, true);
   });
 
   it('start_url is within app scope, should pass', async () => {

@@ -36,6 +36,8 @@ import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
+import { GetTokenCampaignStatus } from './qualification/app-token.helper';
+import { env } from '../utils/environment';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -49,7 +51,7 @@ export class AppReport extends LitElement {
     siteName: 'Site Name',
     description: "Your site's description",
     siteUrl: 'Site URL',
-    iconURL: '',
+    iconURL: '/assets/new/icon_placeholder.png',
     iconAlt: 'Your sites logo'
   };
   @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a'};
@@ -132,6 +134,8 @@ export class AppReport extends LitElement {
 
   @state() todoItems: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
+
+  @state() tokensCampaign: boolean = false;
 
   private possible_messages = [
     {"messages": {
@@ -1554,6 +1558,8 @@ export class AppReport extends LitElement {
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+    this.tokensCampaign = await GetTokenCampaignStatus();
+    env.tokensCampaignRunning = this.tokensCampaign;
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -1820,6 +1826,19 @@ export class AppReport extends LitElement {
     this.todoItems = [];
     if (findersResults.manifestTodos.length){
       this.todoItems.push(...findersResults.manifestTodos)
+
+      // adding todo for token giveaway item if theres at least a manifest
+      if(!this.createdManifest && this.tokensCampaign){
+        this.todoItems.push(
+          {
+            "card": "giveaway",
+            "field": "giveaway",
+            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
+            "status": "giveaway",
+            "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
+          }
+        );
+      }
     }
     else {
       this.todoItems.push(...await this.testManifest());
@@ -1883,9 +1902,19 @@ export class AppReport extends LitElement {
       manifest = {};
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
     }
-    // let amt_missing = await this.handleMissingFields(manifest);
 
-    // this.manifestTotalScore += amt_missing;
+    // adding todo for token giveaway item if theres at least a manifest
+    if(!this.createdManifest && this.tokensCampaign){
+      this.todoItems.push(
+        {
+          "card": "giveaway",
+          "field": "giveaway",
+          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
+          "status": "giveaway",
+          "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
+        }
+      );
+    }
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -2286,7 +2315,7 @@ export class AppReport extends LitElement {
     if(!this.hasItemBeenAdded(toAdd)) {
       this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
       this.requestUpdate();
-    } 
+    }
   }
 
   // function to validate whether or not an retest item has already been added to the ToDo list
@@ -2297,7 +2326,7 @@ export class AppReport extends LitElement {
         isItemPresent = true;
         break;
       }
-    } 
+    }
     return isItemPresent;
   }
 
@@ -2362,9 +2391,10 @@ export class AppReport extends LitElement {
     const rank: { [key: string]: number } = {
       "retest": 0,
       "required": 1,
-      "highly recommended": 2,
-      "recommended": 3,
-      "optional": 4
+      "giveaway": 2,
+      "highly recommended": 3,
+      "recommended": 4,
+      "optional": 5
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
@@ -2470,6 +2500,16 @@ export class AppReport extends LitElement {
 
   }
 
+  goToGiveawayPage(){
+    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    let a: HTMLAnchorElement = document.createElement("a");
+    a.target = "_blank";
+    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
+    a.rel = "noopener";
+
+    a.click();
+  }
+
   closeTooltipOnScroll() {
     if(this.openTooltips.length > 0){
       this.openTooltips[0].hide();
@@ -2504,7 +2544,7 @@ export class AppReport extends LitElement {
               <div id="app-card-header">
                 <div id="app-card-header-col">
                   <div id="pwa-image-holder">
-                    ${this.proxyLoadingImage ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
+                    ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                   </div>
                   <div id="card-info" class="flex-row">
                     <p id="site-name">${this.appCard.siteName}</p>
@@ -2637,7 +2677,8 @@ export class AppReport extends LitElement {
                         .displayString=${todo.displayString}
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
+                        @giveawayEvent=${() => this.goToGiveawayPage()}>
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
@@ -3052,7 +3093,7 @@ export class AppReport extends LitElement {
         .siteName=${this.appCard.siteName}
       > </share-card>
 
-      <publish-pane></publish-pane>
+      <publish-pane .tokensCampaign=${this.tokensCampaign}></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
