@@ -23,33 +23,25 @@ Before you can get started claiming a token, make sure you have a valid, public 
 
 2. Enter the URL to your Progressive Web App and hit `Start`.
 
-3. On the report card page, there should be a notification under `Action Items`:
+3. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, you will need to update your PWA to match the requirements. If you see three green check marks at the top right, your PWA is good to go!
 
-<div class="docs-image">
-   <img src="/assets/builder/store-promotion/token-action-item.png" alt="The token notification on the PWABuilder report card page. ">
-</div>
-
-4. Click `Check Now`.
-
-5. Your PWA will be evaluated to see if it qualifies, if passes all tests, you can continue. Otherwise, you will need to update your PWA to match the requirements. If you see three green check marks at the top right, your PWA is good to go!
-
-6. Click `Sign in with a Microsoft Account to Continue`.
+4. Click `Sign in with a Microsoft Account to Continue`.
 
 <div class="docs-image">
    <img src="/assets/builder/store-promotion/tests-passed.png" alt="The success screen on the PWABuilder token promotion page.">
 </div>
 
-7. Sign in with a personal Microsoft account. You can create one for free [here.](https://account.microsoft.com/account)
+5. Sign in with a personal Microsoft account. You can create one for free [here.](https://account.microsoft.com/account)
 
-8. You will need to accept the promotion terms before you can view your token. 
+6. You will need to accept the promotion terms before you can view your token. 
 
-9. Click `View Token Code`.
+7. Click `View Token Code`.
 
 <div class="docs-image">
    <img src="/assets/builder/store-promotion/view-token-code.png" alt="PWABuilder promotion page with terms acceptance and token view button.">
 </div>
 
-10. You can now use your token to sign up for an Microsoft Store developer account. See the following section on specific guidance on using your token.
+8. You can now use your token to sign up for an Microsoft Store developer account. See the following section on specific guidance on using your token.
 
 If something unexpected went wrong during the claim process, go to [Common Errors](/builder/store-promotion/#/?id=common-errors).
 
