@@ -562,6 +562,10 @@ sl-details::part(summary-icon){
 	display: none;
 }
 
+img[data-card="installable-details"] {
+	transform: rotate(90deg);
+}
+
 sl-progress-ring {
 	height: fit-content;
 	--track-width: 4px;
