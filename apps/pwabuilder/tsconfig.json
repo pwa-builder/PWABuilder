@@ -19,7 +19,7 @@
       "isolatedModules": true,
       "resolveJsonModule": true,
       "types": [
-          "node"
+          "node", "vite/client"
       ],
       "sourceMap": true
   },
