@@ -1017,6 +1017,7 @@ export class PublishPane extends LitElement {
   }
 
   goToTokenPage(){
+    recordPWABuilderProcessStep("free_token_check_now_windows_card_clicked", AnalyticsBehavior.ProcessCheckpoint);
     let current = new URL(location.href);
     let url = current.searchParams.get('site');
 
