@@ -69,6 +69,8 @@ body:
           - [ ] Internal update
           
         #### Analytics
+          - [ ] Front end analytics tested and verfied before release
+          - [ ] Back end analytics tested and verfied before release
           - [ ] Adobe Analytics dashboard receiving signals after release date
        
         #### Dependencies
