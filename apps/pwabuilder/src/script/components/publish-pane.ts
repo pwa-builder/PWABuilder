@@ -42,6 +42,7 @@ export class PublishPane extends LitElement {
   @state() feedbackMessages: TemplateResult[] = [];
 
   @property() preventClosing = false;
+  @property() tokensCampaign = false;
 
   @state() storeMap: any = {
   "Windows":
@@ -157,9 +158,11 @@ export class PublishPane extends LitElement {
         height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.05);
         position: relative;
-        padding: 1em;
+        /* temporary style change for token trial */
+        /* padding: 1em; */
         border-radius: var(--card-border-radius);
       }
       .packaged-tracker {
@@ -212,6 +215,8 @@ export class PublishPane extends LitElement {
         justify-content: flex-start;
         width: 100%;
         row-gap: .45em;
+        /* temporary styling for token trial */
+        padding: 1em;
       }
       .title-block h3 {
         margin: 0;
@@ -598,6 +603,63 @@ export class PublishPane extends LitElement {
         }
       }
 
+      #windows-package-token-banner {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        height: 50px;
+        background-color: #3078D7;
+        border-radius: 0px 0px 10px 10px;
+        padding: 10px;
+        border: none;
+        gap: 7px;
+      }
+
+      #windows-package-token-banner:hover {
+        cursor: pointer;
+      }
+
+      #token-banner-windows-icon img {
+        width: 31px;
+        height: auto;
+      }
+
+      #token-banner-text p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 16px;
+        color: #ffffff;
+        text-align: left;
+        font-family: "Hind";
+        font-weight: 550;
+      }
+
+      #token-banner-text img {
+        margin-left: 6px;
+      }
+
+      #windows-package-token-banner:hover #token-banner-arrow {
+        animation: bounce 1s;
+      }
+
+      @keyframes bounce {
+          0%,
+          20%,
+          50%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
+      }
+
       /* > 1920 */
       ${xxxLargeBreakPoint(css``)}
 
@@ -652,6 +714,7 @@ export class PublishPane extends LitElement {
         }
 
       `)}
+
     `
     ];
   }
@@ -822,7 +885,7 @@ export class PublishPane extends LitElement {
     }
   }
 
-  // takes the information from the selectedStore and error and forms a card to 
+  // takes the information from the selectedStore and error and forms a card to
   // convey the error message to the user in a user friendly way
   // directs users towards FAQ
   renderErrorMessage(err: any){
@@ -832,7 +895,7 @@ export class PublishPane extends LitElement {
     let message = ""; // text that comes after error code in quick desc
     let quick_desc = ""; // the quick description they get to read (searchable)
 
-    
+
     if(err.message === "Failed to fetch"){
       title = err.message;
       quick_desc = "Our service was unable to package your PWA. Please open an issue on github here: https://github.com/pwa-builder/PWABuilder/issues/new/choose"
@@ -842,7 +905,7 @@ export class PublishPane extends LitElement {
       let errString = err.stack;
       stack_trace += errString.slice(
         errString.indexOf(" at ") + 1
-      ); 
+      );
       title = errString.split(",")[0]; // first line of error message
       quick_desc = errString.slice(
         errString.indexOf("Details:") + 8,
@@ -850,14 +913,14 @@ export class PublishPane extends LitElement {
       ); // the quick description they get to read (searchable)
 
     } else if (this.selectedStore === "Android"){
-      title = response.statusText; 
-      stack_trace += response.stack_trace.split("stack:")[1]; 
+      title = response.statusText;
+      stack_trace += response.stack_trace.split("stack:")[1];
       message = response.stack_trace.split("stack:")[0];
-      quick_desc = `Status code: ${response.status}. ${message}` 
+      quick_desc = `Status code: ${response.status}. ${message}`
     } else {
-      title = response.statusText; 
-      stack_trace += err.stack; 
-      quick_desc = `Status code: ${response.status}. ${response.stack_trace}` 
+      title = response.statusText;
+      stack_trace += err.stack;
+      quick_desc = `Status code: ${response.status}. ${response.stack_trace}`
     }
     let error = html`
       <div class="feedback-holder type-error">
@@ -936,8 +999,34 @@ export class PublishPane extends LitElement {
               ${platform.factoids.map((fact: string) => html`<li>${fact}</li>`)}
             </ul>
           </div>
+          ${ platform.title === "Windows" && this.tokensCampaign ? html`
+              <button id="windows-package-token-banner" @click=${() => this.goToTokenPage()}>
+                <div id="token-banner-windows-icon">
+                  <img src="/assets/microsoft_store_icon_white.png" alt="Windows">
+                </div>
+                <div id="token-banner-text">
+                  <p>
+                    Check to see if you qualify for a free Microsoft Store account <img src="/assets/white-arrow.png" alt="arrow" />
+                  </p>
+                </div>
+              </button>
+            ` : html``
+          }
         </div>`
     );
+  }
+
+  goToTokenPage(){
+    recordPWABuilderProcessStep("free_token_check_now_windows_card_clicked", AnalyticsBehavior.ProcessCheckpoint);
+    let current = new URL(location.href);
+    let url = current.searchParams.get('site');
+
+    let a: HTMLAnchorElement = document.createElement("a");
+    a.target = "_blank";
+    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${url}`;
+    a.rel = "noopener";
+
+    a.click();
   }
 
   async hideDialog(e: any){

@@ -128,7 +128,7 @@ export async function groupedValidation(manifest: Manifest): Promise<TokensValid
         currentManifest = manifest;
         const testResults = await loopThroughKeys(manifest, false, true);
         const resultsGrouped = testResults.reduce((acc, curr) => {
-            const curTrimmed = { category: curr.category, member: curr.member, valid: curr.valid, displayString: curr.displayString, errorString: curr.errorString, infoString: curr.infoString };
+            const curTrimmed = { category: curr.category, member: curr.member, valid: curr.valid, displayString: curr.displayString, errorString: curr.errorString, infoString: curr.infoString, docsLink: curr.docsLink };
             if (acc[curr.member]) {
                 acc[curr.member].push(curTrimmed);
             } else {
