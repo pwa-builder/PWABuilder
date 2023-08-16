@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Publish your PWA to the Microsoft Store on Windows for FREE
-excerpt: For a limited time and quantity, starting August 15th, the PWABuilder team is offering free developer accounts for publishing apps to the Microsoft Store to developers who have built qualifying PWAs.
+excerpt: For a limited time and quantity, starting August 15th, the PWABuilder team is offering free developer accounts for publishing apps to the Microsoft Store on Windows to developers who have built qualifying PWAs.
 description: Reach billions of customers on Windows for FREE. For a limited time and quantity, starting August 15th, the PWABuilder team is offering free developer accounts for publishing apps to the Microsoft Store to developers who have built qualifying PWAs
 date: 2023-08-15
 updatedDate: 2023-08-15
