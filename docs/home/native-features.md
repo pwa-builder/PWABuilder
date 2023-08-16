@@ -355,6 +355,7 @@ Next, if we included the `path` field with our notification data, we can append 
 ## Background Sync
 
 ?> **Note** The Background Sync APIs are an experimental web feature, and may not be compatible with all browsers. [Check here for a table on compatibility.](https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API#browser_compatibility)
+
 Progressive web apps now have the capability to sync content and update your app in the background, regardless of whether or not your application is currently open. 
 
 There's two types of background synchronization you can implement: **Background Sync** and **Periodic Background Sync**.
