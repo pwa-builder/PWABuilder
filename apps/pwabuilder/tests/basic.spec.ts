@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
     await page.goto(url);
 });
 
-test('ensure application loads', async ({ page }) => {
+test('ensure application loads home page', async ({ page }) => {
     // find the button with the text "Login"
     const loginButton = page.locator('id=start-button');
 
