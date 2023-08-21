@@ -59,7 +59,7 @@ test('ensure scores are correct for demo app', async ({ page }) => {
         const selector = document.querySelector("body > app-index")?.shadowRoot?.querySelector("#router-outlet > app-report")?.shadowRoot?.querySelector("#manifestProgressRing")
         return selector?.textContent;
     });
-    await expect(manifestScore).toContain('23');
+    await expect(manifestScore).toContain('22 / 29');
 
     // test service worker score
     const serviceWorkerScore = await page.evaluate(() => {
