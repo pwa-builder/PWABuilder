@@ -2,11 +2,9 @@ import { test, expect, Page } from '@playwright/test';
 
 const url = 'http://localhost:3000';
 
-let currentPage: Page | null = null;
 
 // before each test
 test.beforeEach(async ({ page }) => {
-    currentPage = page;
     await page.goto(url);
 });
 
