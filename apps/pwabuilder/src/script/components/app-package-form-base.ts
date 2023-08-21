@@ -275,17 +275,22 @@ export class AppPackageFormBase extends LitElement {
   }
 
   private colorChanged(e: UIEvent, formInput: FormInput) {
-    const inputElement = e.target as HTMLInputElement | null;
+    interface HTMLSlColorPicker extends HTMLInputElement,  SlColorPicker {
+      size: any;
+      form: any;
+      addEventListener: any;
+      removeEventListener: any;
+    }
+    const inputElement = e.target as HTMLSlColorPicker;
 
-    if(!inputElement) return;
-
-    let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
-
-    const colorValue = inputElement?.nextElementSibling;
+    if(!inputElement || !inputElement.nextElementSibling) return;
+    
+    const formattedValue = inputElement.getFormattedValue('hex').toLocaleUpperCase();
+    const colorValue = inputElement.nextElementSibling;
     const newValue = document.createElement('p');
     newValue.textContent = formattedValue;
     
-    colorValue!.replaceWith(newValue);
+    colorValue.replaceWith(newValue);
 
     // Fire the input handler
     if (formInput.inputHandler) {
