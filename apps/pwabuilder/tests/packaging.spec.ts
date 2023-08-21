@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test';
 
 let currentPage: Page | undefined;
 
-const url = 'http://localhost:3000';
+const url = 'https://preview.pwabuilder.com/';
 // before each test
 test.beforeEach(async ({ page }) => {
     currentPage = page;
