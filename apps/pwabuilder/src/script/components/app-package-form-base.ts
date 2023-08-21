@@ -276,6 +276,9 @@ export class AppPackageFormBase extends LitElement {
 
   private colorChanged(e: UIEvent, formInput: FormInput) {
     const inputElement = e.target as HTMLInputElement | null;
+
+    if(!inputElement) return;
+
     let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
 
     const colorValue = inputElement?.nextElementSibling;
@@ -284,19 +287,18 @@ export class AppPackageFormBase extends LitElement {
     
     colorValue!.replaceWith(newValue);
 
-    if (inputElement) {
-      // Fire the input handler
-      if (formInput.inputHandler) {
-        formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
-      }
-
-      // Run validation if necessary.
-      if (formInput.validationErrorMessage) {
-        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
-        inputElement.setCustomValidity(errorMessage);
-        inputElement.title = errorMessage;
-      }
+    // Fire the input handler
+    if (formInput.inputHandler) {
+      formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
     }
+
+    // Run validation if necessary.
+    if (formInput.validationErrorMessage) {
+      const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+      inputElement.setCustomValidity(errorMessage);
+      inputElement.title = errorMessage;
+    }
+    
   }
 
   private inputChanged(e: UIEvent, formInput: FormInput) {
