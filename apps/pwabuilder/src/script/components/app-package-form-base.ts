@@ -277,9 +277,12 @@ export class AppPackageFormBase extends LitElement {
   private colorChanged(e: UIEvent, formInput: FormInput) {
     const inputElement = e.target as HTMLInputElement | null;
     let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
+
+    const colorValue = inputElement?.nextElementSibling;
+    const newValue = document.createElement('p');
+    newValue.textContent = formattedValue;
     
-    let colorValue = inputElement?.nextElementSibling;
-    colorValue!.innerHTML = formattedValue;
+    colorValue!.replaceWith(newValue);
 
     if (inputElement) {
       // Fire the input handler
