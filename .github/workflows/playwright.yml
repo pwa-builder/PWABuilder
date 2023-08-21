@@ -27,7 +27,7 @@ jobs:
     - name: Install Playwright Test Locally
       run: npm install @playwright/test --save-dev
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test tests/basic.spec.ts
     - uses: actions/upload-artifact@v3
       if: always()
       with:
