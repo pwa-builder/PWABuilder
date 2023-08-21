@@ -26,7 +26,9 @@
     <script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"></script>
 
     <script type="module">
-        import { recordPageView } from "./public/analytics/index.js"; window.recordPageView = recordPageView;
+        import { recordPageView, recordPageAction } from "./public/analytics/index.js"; 
+        window.recordPageView = recordPageView;
+        window.recordPageAction = recordPageAction;
     </script>
 
     <script>
@@ -54,6 +56,57 @@
                 function(hook) {
                     hook.doneEach(function() {
                         window.recordPageView(document.location.href, getPageName());
+                    });
+                }, 
+                function(hook) {
+                    hook.afterEach(function (html) {
+                        const promotionBannerAndDialog= `<sl-dialog id="token-dialog" >
+                            <h3 slot="label">Free Microsoft Developer Account Promotion</h3>
+                            PWABuilder is giving away free Microsoft Developer accounts (approximately $19 in value) to PWA developers.
+
+                            In order to qualify, you must have a PWA that meets the following requirements: 
+                            <ul>
+                                <li>own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
+                                <li>live in a country or region where the Windows program in Partner Center is offered.</li>
+                                <li>have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account</li>
+                                <li>not have an existing Microsoft Store on Windows individual developer/publisher account</li>
+                                <li>use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
+                                <li>plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
+                            </ul>
+                            <div id="enter-url-div">
+                                <div id="url-input-div">
+                                    <sl-input id="token-url-input" type="url" placeholder="Enter a URL to see if your app qualifies..." filled pill clearable></sl-input>
+                                    <sl-icon-button id="get-token-button" name="arrow-right-square" label="Go" style="font-size: 1.5rem;"></sl-icon-button>
+                                </div>
+                            </div>
+                            </sl-dialog>
+
+                            <sl-alert open class="pwa-summit-banner">
+                            <sl-icon slot="icon" name="gift"></sl-icon>
+                                <strong>Publish your Progressive Web Apps to the Microsoft Store on Windows for Free</strong>
+                                <br/>
+                                If you are an individual developer building a progressive web app, you might qualify for a free Microsoft Developer account (approximately $19 in value).
+                                <br/>
+                                <sl-button id="token-learn-more-button" style="width:30%; padding-top: 10px;">Learn more.</sl-button>
+                            </sl-alert>
+
+                            <script>
+                                const urlBase = "https://www.pwabuilder.com/freeToken?site=";
+                                const learnMoreButton = document.querySelector('#token-learn-more-button');
+                                const tokenDialog = document.querySelector('#token-dialog');
+                                learnMoreButton.addEventListener("click", () => {
+                                    tokenDialog.show();
+                                });
+
+                                const getTokenButton = document.querySelector('#get-token-button');
+                                const urlInputBox = document.querySelector('#token-url-input');
+
+                                getTokenButton.addEventListener("click", () => {
+                                    window.recordPageAction("docs-token-click", "CL", 300, {});
+                                    window.open(urlBase + urlInputBox.value).focus();
+                                });
+                            <\/script>`;
+                        return promotionBannerAndDialog + html;
                     });
                 }
             ]
