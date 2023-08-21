@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const url = 'http://localhost:3000';
+const url = 'https://preview.pwabuilder.com/';
 
 // before each test
 test.beforeEach(async ({ page }) => {
