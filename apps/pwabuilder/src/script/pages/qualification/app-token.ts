@@ -538,10 +538,10 @@ export class AppToken extends LitElement {
   goToCongratulationsPage(fullInfo: boolean){
     console.log(encodeURIComponent(this.appCard.siteUrl))
     if(fullInfo){
-      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name}/${encodeURIComponent(this.userAccount.email)}`)
+      Router.go(`/congratulations/${this.tokenId}/${encodeURIComponent(this.appCard.siteUrl)}/${this.appCard.siteName}/${encodeURIComponent(this.appCard.iconURL)}/${this.userAccount.name || 'Developer'}/${encodeURIComponent(this.userAccount.email)}`)
       return;
     }
-    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name}/${encodeURIComponent(this.userAccount.email)}`)
+    Router.go(`/congratulations/${this.tokenId}/${this.userAccount.name || 'Developer'}/${encodeURIComponent(this.userAccount.email)}`)
     return;
   }
 
