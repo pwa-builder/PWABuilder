@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - "apps/pwabuilder/**"
-    branches: [ tests-final ]
+    branches: [ tests-final, staging, main ]
   pull_request:
     paths:
       - "apps/pwabuilder/**"
-    branches: [ tests-final ]
+    branches: [ tests-final, staging, main ]
 jobs:
   test:
     timeout-minutes: 60
