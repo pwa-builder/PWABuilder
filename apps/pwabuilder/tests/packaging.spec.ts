@@ -1,145 +1,114 @@
-// import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
-// const v8toIstanbul = require('v8-to-istanbul');
+let currentPage: Page | undefined;
 
-// let currentPage: Page | undefined;
-
-// const url = 'http://localhost:3000';
-// // before each test
-// test.beforeEach(async ({ page }) => {
-//     currentPage = page;
-
-//     await page.coverage.startJSCoverage();
-//     await page.goto(url);
-// });
-
-// test.afterEach(async () => {
-//     const coverage = await currentPage?.coverage.stopJSCoverage();
-//     if (coverage) {
-//         for (const entry of coverage) {
-//             const converter = v8toIstanbul('', 0, { source: entry.source });
-//             try {
-//                 await converter.load();
-//                 converter.applyCoverage(entry.functions);
-//                 const coverageData = converter.toIstanbul();
+const url = 'http://localhost:3000';
+// before each test
+test.beforeEach(async ({ page }) => {
+    currentPage = page;
+    await page.goto(url);
+});
 
 
-//                 // write the coverage data to a json file
-//                 const { writeFile, mkdir } = await import("fs/promises");
+// only run this test once
+test('Ensure demo app can be packaged for Windows', async ({ page }) => {
+    test.slow();
 
-//                 // make coverage folder if it doesn't exist
-//                 await mkdir('coverage', { recursive: true })
+    const demoButton = page.locator('id=demo-action');
 
-//                 await writeFile(`coverage/coverage-${entry.url.split('/').pop()}.json`, JSON.stringify(coverageData, null, 2));
+    // click demo button to start new test
+    await demoButton.click();
 
-//             }
-//             catch (err) {
+    // wait for network to be done
+    await page.waitForLoadState('networkidle');
 
-//             }
-//         }
-//     }
-// })
+    // our url should contain /reportcard
+    await expect(page.url()).toContain('/reportcard');
 
+    // wait for tests to end
+    await page.waitForLoadState('networkidle');
 
-// // only run this test once
-// test('Ensure demo app can be packaged for Windows', async ({ page }) => {
-//     test.slow();
+    const packageButton = page.locator('id=pfs');
 
-//     const demoButton = page.locator('id=demo-action');
+    // click package button
+    await packageButton.click();
 
-//     // click demo button to start new test
-//     await demoButton.click();
+    const windowsPackageButton = page.locator('id=windows-package-button');
 
-//     // wait for network to be done
-//     await page.waitForLoadState('networkidle');
+    // click windows package button
+    await windowsPackageButton.click();
 
-//     // our url should contain /reportcard
-//     await expect(page.url()).toContain('/reportcard');
+    // fill out form
+    await page.fill('id=package-id-input', 'com.webboard.pwa');
 
-//     // wait for tests to end
-//     await page.waitForLoadState('networkidle');
+    await page.fill('id=publisher-display-name-input', 'Contoso Inc.');
 
-//     const packageButton = page.locator('id=pfs');
+    await page.fill('id=publisher-id-input', 'CN=asdfasdfasdflkjlkjhlkjh');
 
-//     // click package button
-//     await packageButton.click();
+    const generateButton = page.locator('id=generate-submit');
+    // await generateButton.click();
 
-//     const windowsPackageButton = page.locator('id=windows-package-button');
+    await expect(generateButton).toBeVisible();
 
-//     // click windows package button
-//     await windowsPackageButton.click();
+    // wait on request to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
+    const pageRequest = page.waitForRequest('https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip');
+    await generateButton.click();
+    const request = await pageRequest;
 
-//     // fill out form
-//     await page.fill('id=package-id-input', 'com.webboard.pwa');
+    // wait for response to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
 
-//     await page.fill('id=publisher-display-name-input', 'Contoso Inc.');
+    const response = await request.response();
 
-//     await page.fill('id=publisher-id-input', 'CN=asdfasdfasdflkjlkjhlkjh');
+    if (response) {
+        expect(response.status()).toBe(200);
+    }
+    else {
+        throw new Error('Response was undefined');
+    }
+})
 
-//     const generateButton = page.locator('id=generate-submit');
-//     // await generateButton.click();
+test('Ensure demo app can be packaged for Android', async ({ page }) => {
+    test.slow();
+    test.setTimeout(120000)
 
-//     await expect(generateButton).toBeVisible();
+    const demoButton = page.locator('id=demo-action');
 
-//     // wait on request to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
-//     const pageRequest = page.waitForRequest('https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip');
-//     await generateButton.click();
-//     const request = await pageRequest;
+    // click demo button to start new test
+    await demoButton.click();
 
-//     // wait for response to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
+    // wait for network to be done
+    await page.waitForLoadState('networkidle');
 
-//     const response = await request.response();
+    // our url should contain /reportcard
+    await expect(page.url()).toContain('/reportcard');
 
-//     if (response) {
-//         expect(response.status()).toBe(200);
-//     }
-//     else {
-//         throw new Error('Response was undefined');
-//     }
-// })
+    // wait for tests to end
+    await page.waitForLoadState('networkidle');
 
-// test('Ensure demo app can be packaged for Android', async ({ page }) => {
-//     test.slow();
-//     test.setTimeout(120000)
+    const packageButton = page.locator('id=pfs');
 
-//     const demoButton = page.locator('id=demo-action');
+    // click package button
+    await packageButton.click();
 
-//     // click demo button to start new test
-//     await demoButton.click();
+    const androidPackageButton = page.locator('id=android-package-button');
 
-//     // wait for network to be done
-//     await page.waitForLoadState('networkidle');
+    // click windows package button
+    await androidPackageButton.click();
 
-//     // our url should contain /reportcard
-//     await expect(page.url()).toContain('/reportcard');
+    const generateButton = page.locator('id=generate-submit');
 
-//     // wait for tests to end
-//     await page.waitForLoadState('networkidle');
+    await expect(generateButton).toBeVisible();
 
-//     const packageButton = page.locator('id=pfs');
+    const pageRequest = page.waitForRequest('https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage');
+    await generateButton.click();
+    const request = await pageRequest;
 
-//     // click package button
-//     await packageButton.click();
+    const response = await request.response();
 
-//     const androidPackageButton = page.locator('id=android-package-button');
-
-//     // click windows package button
-//     await androidPackageButton.click();
-
-//     const generateButton = page.locator('id=generate-submit');
-
-//     await expect(generateButton).toBeVisible();
-
-//     const pageRequest = page.waitForRequest('https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage');
-//     await generateButton.click();
-//     const request = await pageRequest;
-
-//     const response = await request.response();
-
-//     if (response) {
-//         expect(response.status()).toBe(200);
-//     }
-//     else {
-//         throw new Error('Response was undefined');
-//     }
-// })
+    if (response) {
+        expect(response.status()).toBe(200);
+    }
+    else {
+        throw new Error('Response was undefined');
+    }
+})
