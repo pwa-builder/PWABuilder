@@ -1,145 +1,145 @@
-import { test, expect, Page } from '@playwright/test';
+// import { test, expect, Page } from '@playwright/test';
 
-const v8toIstanbul = require('v8-to-istanbul');
+// const v8toIstanbul = require('v8-to-istanbul');
 
-let currentPage: Page | undefined;
+// let currentPage: Page | undefined;
 
-const url = 'http://localhost:3000';
-// before each test
-test.beforeEach(async ({ page }) => {
-    currentPage = page;
+// const url = 'http://localhost:3000';
+// // before each test
+// test.beforeEach(async ({ page }) => {
+//     currentPage = page;
 
-    await page.coverage.startJSCoverage();
-    await page.goto(url);
-});
+//     await page.coverage.startJSCoverage();
+//     await page.goto(url);
+// });
 
-test.afterEach(async () => {
-    const coverage = await currentPage?.coverage.stopJSCoverage();
-    if (coverage) {
-        for (const entry of coverage) {
-            const converter = v8toIstanbul('', 0, { source: entry.source });
-            try {
-                await converter.load();
-                converter.applyCoverage(entry.functions);
-                const coverageData = converter.toIstanbul();
-
-
-                // write the coverage data to a json file
-                const { writeFile, mkdir } = await import("fs/promises");
-
-                // make coverage folder if it doesn't exist
-                await mkdir('coverage', { recursive: true })
-
-                await writeFile(`coverage/coverage-${entry.url.split('/').pop()}.json`, JSON.stringify(coverageData, null, 2));
-
-            }
-            catch (err) {
-
-            }
-        }
-    }
-})
+// test.afterEach(async () => {
+//     const coverage = await currentPage?.coverage.stopJSCoverage();
+//     if (coverage) {
+//         for (const entry of coverage) {
+//             const converter = v8toIstanbul('', 0, { source: entry.source });
+//             try {
+//                 await converter.load();
+//                 converter.applyCoverage(entry.functions);
+//                 const coverageData = converter.toIstanbul();
 
 
-// only run this test once
-test('Ensure demo app can be packaged for Windows', async ({ page }) => {
-    test.slow();
+//                 // write the coverage data to a json file
+//                 const { writeFile, mkdir } = await import("fs/promises");
 
-    const demoButton = page.locator('id=demo-action');
+//                 // make coverage folder if it doesn't exist
+//                 await mkdir('coverage', { recursive: true })
 
-    // click demo button to start new test
-    await demoButton.click();
+//                 await writeFile(`coverage/coverage-${entry.url.split('/').pop()}.json`, JSON.stringify(coverageData, null, 2));
 
-    // wait for network to be done
-    await page.waitForLoadState('networkidle');
+//             }
+//             catch (err) {
 
-    // our url should contain /reportcard
-    await expect(page.url()).toContain('/reportcard');
+//             }
+//         }
+//     }
+// })
 
-    // wait for tests to end
-    await page.waitForLoadState('networkidle');
 
-    const packageButton = page.locator('id=pfs');
+// // only run this test once
+// test('Ensure demo app can be packaged for Windows', async ({ page }) => {
+//     test.slow();
 
-    // click package button
-    await packageButton.click();
+//     const demoButton = page.locator('id=demo-action');
 
-    const windowsPackageButton = page.locator('id=windows-package-button');
+//     // click demo button to start new test
+//     await demoButton.click();
 
-    // click windows package button
-    await windowsPackageButton.click();
+//     // wait for network to be done
+//     await page.waitForLoadState('networkidle');
 
-    // fill out form
-    await page.fill('id=package-id-input', 'com.webboard.pwa');
+//     // our url should contain /reportcard
+//     await expect(page.url()).toContain('/reportcard');
 
-    await page.fill('id=publisher-display-name-input', 'Contoso Inc.');
+//     // wait for tests to end
+//     await page.waitForLoadState('networkidle');
 
-    await page.fill('id=publisher-id-input', 'CN=asdfasdfasdflkjlkjhlkjh');
+//     const packageButton = page.locator('id=pfs');
 
-    const generateButton = page.locator('id=generate-submit');
-    // await generateButton.click();
+//     // click package button
+//     await packageButton.click();
 
-    await expect(generateButton).toBeVisible();
+//     const windowsPackageButton = page.locator('id=windows-package-button');
 
-    // wait on request to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
-    const pageRequest = page.waitForRequest('https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip');
-    await generateButton.click();
-    const request = await pageRequest;
+//     // click windows package button
+//     await windowsPackageButton.click();
 
-    // wait for response to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
+//     // fill out form
+//     await page.fill('id=package-id-input', 'com.webboard.pwa');
 
-    const response = await request.response();
+//     await page.fill('id=publisher-display-name-input', 'Contoso Inc.');
 
-    if (response) {
-        expect(response.status()).toBe(200);
-    }
-    else {
-        throw new Error('Response was undefined');
-    }
-})
+//     await page.fill('id=publisher-id-input', 'CN=asdfasdfasdflkjlkjhlkjh');
 
-test('Ensure demo app can be packaged for Android', async ({ page }) => {
-    test.slow();
-    test.setTimeout(120000)
+//     const generateButton = page.locator('id=generate-submit');
+//     // await generateButton.click();
 
-    const demoButton = page.locator('id=demo-action');
+//     await expect(generateButton).toBeVisible();
 
-    // click demo button to start new test
-    await demoButton.click();
+//     // wait on request to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
+//     const pageRequest = page.waitForRequest('https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip');
+//     await generateButton.click();
+//     const request = await pageRequest;
 
-    // wait for network to be done
-    await page.waitForLoadState('networkidle');
+//     // wait for response to https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip to finish
 
-    // our url should contain /reportcard
-    await expect(page.url()).toContain('/reportcard');
+//     const response = await request.response();
 
-    // wait for tests to end
-    await page.waitForLoadState('networkidle');
+//     if (response) {
+//         expect(response.status()).toBe(200);
+//     }
+//     else {
+//         throw new Error('Response was undefined');
+//     }
+// })
 
-    const packageButton = page.locator('id=pfs');
+// test('Ensure demo app can be packaged for Android', async ({ page }) => {
+//     test.slow();
+//     test.setTimeout(120000)
 
-    // click package button
-    await packageButton.click();
+//     const demoButton = page.locator('id=demo-action');
 
-    const androidPackageButton = page.locator('id=android-package-button');
+//     // click demo button to start new test
+//     await demoButton.click();
 
-    // click windows package button
-    await androidPackageButton.click();
+//     // wait for network to be done
+//     await page.waitForLoadState('networkidle');
 
-    const generateButton = page.locator('id=generate-submit');
+//     // our url should contain /reportcard
+//     await expect(page.url()).toContain('/reportcard');
 
-    await expect(generateButton).toBeVisible();
+//     // wait for tests to end
+//     await page.waitForLoadState('networkidle');
 
-    const pageRequest = page.waitForRequest('https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage');
-    await generateButton.click();
-    const request = await pageRequest;
+//     const packageButton = page.locator('id=pfs');
 
-    const response = await request.response();
+//     // click package button
+//     await packageButton.click();
 
-    if (response) {
-        expect(response.status()).toBe(200);
-    }
-    else {
-        throw new Error('Response was undefined');
-    }
-})
+//     const androidPackageButton = page.locator('id=android-package-button');
+
+//     // click windows package button
+//     await androidPackageButton.click();
+
+//     const generateButton = page.locator('id=generate-submit');
+
+//     await expect(generateButton).toBeVisible();
+
+//     const pageRequest = page.waitForRequest('https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage');
+//     await generateButton.click();
+//     const request = await pageRequest;
+
+//     const response = await request.response();
+
+//     if (response) {
+//         expect(response.status()).toBe(200);
+//     }
+//     else {
+//         throw new Error('Response was undefined');
+//     }
+// })

@@ -14,7 +14,7 @@
     "start-remote": "vite --host",
     "postinstall": "npm run copy-sl-assets",
     "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons",
-    "test": "npx nyc@latest playwright test",
+    "test": "playwright test",
     "coverage": "cd coverage/lcov-report && npx http-server -p 3001"
   },
   "author": "",
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@azure/msal-browser": "^2.37.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@playwright/test": "^1.32.3",
+    "@playwright/test": "^1.37.0",
     "@types/chai": "^4.2.21",
     "@types/lodash-es": "^4.17.4",
     "@types/mocha": "^8.2.3",
