@@ -43,7 +43,7 @@ Before you can get started claiming a token, make sure you have a valid, public 
 
 8. You can now use your token to sign up for an Microsoft Store developer account. See the following section on specific guidance on using your token.
 
-If something unexpected went wrong during the claim process, go to [Common Errors](/builder/store-promotion/#/?id=common-errors).
+If something unexpected went wrong during the claim process, go to [Common Errors](/builder/store-promotion?id=common-errors).
 
 ## Using Your Token
 
