@@ -64,6 +64,7 @@ const advancedAndroidSettings: AndroidPackageOptions = {
   splashScreenFadeOutDuration: 300,
   startUrl: "/",
   themeColor: "#FFFFFF",
+  themeColorDark: "#FFFFFF",
   shareTarget: [] as any,
   webManifestUrl: "https://myapp.com/manifest.json",
 };
@@ -454,6 +455,7 @@ export async function buildAndroidOptions(): Promise<
         splashScreenFadeOutDuration: 300,
         startUrl: manifest.start_url || "/",
         themeColor: manifest.theme_color || "#FFFFFF",
+        themeColorDark: manifest.theme_color || "#FFFFFF",
         shareTarget: manifest.share_target || [],
         webManifestUrl: manifestUrl,
       };

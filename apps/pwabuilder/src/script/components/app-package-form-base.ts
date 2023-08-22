@@ -275,25 +275,35 @@ export class AppPackageFormBase extends LitElement {
   }
 
   private colorChanged(e: UIEvent, formInput: FormInput) {
-    const inputElement = e.target as HTMLInputElement | null;
-    let formattedValue = (inputElement as unknown as SlColorPicker)!.getFormattedValue('hex').toLocaleUpperCase();
-    
-    let colorValue = inputElement?.nextElementSibling;
-    colorValue!.innerHTML = formattedValue;
-
-    if (inputElement) {
-      // Fire the input handler
-      if (formInput.inputHandler) {
-        formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
-      }
-
-      // Run validation if necessary.
-      if (formInput.validationErrorMessage) {
-        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
-        inputElement.setCustomValidity(errorMessage);
-        inputElement.title = errorMessage;
-      }
+    interface HTMLSlColorPicker extends HTMLInputElement,  SlColorPicker {
+      size: any;
+      form: any;
+      addEventListener: any;
+      removeEventListener: any;
     }
+    const inputElement = e.target as HTMLSlColorPicker;
+
+    if(!inputElement || !inputElement.nextElementSibling) return;
+    
+    const formattedValue = inputElement.getFormattedValue('hex').toLocaleUpperCase();
+    const colorValue = inputElement.nextElementSibling;
+    const newValue = document.createElement('p');
+    newValue.textContent = formattedValue;
+    
+    colorValue.replaceWith(newValue);
+
+    // Fire the input handler
+    if (formInput.inputHandler) {
+      formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+    }
+
+    // Run validation if necessary.
+    if (formInput.validationErrorMessage) {
+      const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+      inputElement.setCustomValidity(errorMessage);
+      inputElement.title = errorMessage;
+    }
+    
   }
 
   private inputChanged(e: UIEvent, formInput: FormInput) {
