@@ -416,7 +416,10 @@ export class WindowsForm extends AppPackageFormBase {
             <div class="form-group" id="ai-hub">
               <div id="ai-hub-label">
                 <label>Does your app use AI?</label>
-                <info-circle-tooltip text="AI Hub is a new curated section in the Microsoft Store where we will promote the best AI experiences built by the developer community and Microsoft."></info-circle-tooltip>
+                <info-circle-tooltip 
+                  text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
+                  link="https://blogs.windows.com/windowsdeveloper/2023/05/23/welcoming-ai-to-the-microsoft-store-on-windows/"
+                  ></info-circle-tooltip>
               </div>
               <div id="ai-hub-text">
                 <p>We will promote the best AI expereiences built by the developer community on our Microsoft Store's AI Hub.</p>
