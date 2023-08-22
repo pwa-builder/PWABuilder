@@ -13,7 +13,7 @@ export function recordPWABuilderProcessStep(
   processStep: string,
   stepType: analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.StartProcess | analytics.AnalyticsBehavior.ProcessCheckpoint | analytics.AnalyticsBehavior.CancelProcess | analytics.AnalyticsBehavior.CompleteProcess,
   additionalInfo?: {}) {
-    if (env.isProduction) {
+    if (true) {
       const demo_used = JSON.parse(sessionStorage.getItem('demoURL')!);
       let scn = 'pwa-builder-v4';
 
@@ -24,6 +24,10 @@ export function recordPWABuilderProcessStep(
       let pageName = window.location.pathname.slice(1);
       if(pageName.length == 0) {
         pageName = "home";
+      }
+
+      if(pageName === "freeToken"){
+        scn = "free-tokens-flow"
       }
 
       let processLabel = pageName + "." + processStep
