@@ -113,6 +113,7 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     splashScreenFadeOutDuration: 300,
     startUrl: '',
     themeColor: '#ffffff',
+    themeColorDark: '#000000',
     webManifestUrl: '',
     fullScopeUrl: ''
   };
@@ -249,6 +250,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
       new URL(manifestUrlOrRoot)
     ),
     themeColor: manifest.theme_color || '#FFFFFF',
+    themeColorDark: manifest.theme_color || '#000000',
     shareTarget: manifest.share_target,
     webManifestUrl: maniUrl,
     pwaUrl: manifestContext.siteUrl,
