@@ -1,5 +1,3 @@
-?> **Note** This documentation is a work in progress, keep checking back for new articles and content!
-
 # PWABuilder Suite Documentation
 
 Welcome to the new documentation for the PWABuilder tooling suite! 

@@ -123,7 +123,7 @@ If a certain description is not specified, the default one is used.
       iOS: "The display mode changes how much of the browser's UI is shown to the user. It can range from browser (the full browser window is shown) to fullscreen (the app is full-screened)."
     },
     categories: {
-      windows: "The Microsoft store uses the indicated categories as tags in the app's listing.",
+      windows: "The Microsoft Store uses the indicated categories as tags in the app's listing.",
       android: "Google Play includes the categories specified in the manifest in the application's listing page.",
       iOS: "On iOS, your application's categories are set from a predetermined set of options and enhance the discoverability of your app."
     },

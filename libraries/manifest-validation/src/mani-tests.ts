@@ -488,8 +488,9 @@ export const maniTests: Array<Validation> = [
                 return false;
             }
 
+            // Commenting this block out, this shouldn't be an error but instead a warning.
             /* we use every here bc every shortcut needs at 
-                least one icon with size 96x96 no  icons at all */
+                least one icon with size 96x96 no  icons at all
             const has96x96Icon = value.every((shortcut: {icons?: Icon[]}) => {
                 if (!shortcut.icons) return true;
                 // we use some here bc only one icon has to be that size
@@ -500,7 +501,7 @@ export const maniTests: Array<Validation> = [
             if (!has96x96Icon) {
                 this.errorString = "One or more of your shortcuts has icons but does not have one with size 96x96";
                 return false;
-            }
+            } */
 
             return true;
         }
@@ -883,7 +884,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
         category: "recommended",
         defaultValue: "",
-        docsLink: "https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
         errorString: "The value entered for edge_side_panel.preferred_width should be a number",
         quickFix: false,
         test: (value: any) => {
