@@ -624,7 +624,7 @@ export class AppToken extends LitElement {
 
     // if we are showing the accept button we are in the final t and c
     // if not it must be from the qualifications box.
-    let location = showAcceptButton ? "final" : "qualification";
+    let location = showAcceptButton ? "full" : "qualification";
     
     recordPWABuilderProcessStep(`${location}_terms_and_conditions_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     recordPWABuilderProcessStep("terms_and_conditions_modal_opened", AnalyticsBehavior.ProcessCheckpoint);

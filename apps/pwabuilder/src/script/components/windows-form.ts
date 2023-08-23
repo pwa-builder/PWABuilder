@@ -13,6 +13,8 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
 
+import "../components/arrow-link";
+
 @customElement('windows-form')
 
 export class WindowsForm extends AppPackageFormBase {
@@ -161,6 +163,25 @@ export class WindowsForm extends AppPackageFormBase {
         .color-radio::part(control--checked){
           background-color: var(--primary-color);
           border-color: var(--primary-color);
+        }
+
+        #ai-hub-label {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+        }
+
+        #ai-hub-text {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-start;
+        }
+
+        #ai-hub-text p {
+          margin: 0;
+          color: #7f7f7f;
+          font-size: 14px;
         }
        
     `
@@ -392,6 +413,19 @@ export class WindowsForm extends AppPackageFormBase {
                 inputHandler: (val: string) =>
                   (this.packageOptions.publisher.commonName = val),
               })}
+            </div>
+            <div class="form-group" id="ai-hub">
+              <div id="ai-hub-label">
+                <label>Does your app use AI?</label>
+                <info-circle-tooltip 
+                  text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
+                  link="https://blogs.windows.com/windowsdeveloper/2023/05/23/welcoming-ai-to-the-microsoft-store-on-windows/"
+                  ></info-circle-tooltip>
+              </div>
+              <div id="ai-hub-text">
+                <p>We will promote the best AI expereiences built by the developer community on our Microsoft Store's AI Hub.</p>
+                <arrow-link .text=${"Join Us"} .link=${"https://aka.ms/MicrosoftStoreAIHub"}></arrow-link>
+              </div>
             </div>
           </div>
           <!-- "all settings" section of the modal -->

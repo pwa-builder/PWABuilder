@@ -352,6 +352,128 @@ First, we call `notification.close` to remove the notification.
 
 Next, if we included the `path` field with our notification data, we can append that path our origin path and make a call to `clients.openWindow`. This will launch our progressive web app and open it at our desired location.
 
+## Background Sync
+
+?> **Note** The Background Sync APIs are an experimental web feature, and may not be compatible with all browsers. [Check here for a table on compatibility.](https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API#browser_compatibility)
+
+Progressive web apps now have the capability to sync content and update your app in the background, regardless of whether or not your application is currently open. 
+
+There's two types of background synchronization you can implement: **Background Sync** and **Periodic Background Sync**.
+
+### Background Sync Overview
+
+The Background Sync API allows you to register functionality that will occur whenever internet connectivity is next available. In other words, if your app is actively connected to the network, the functionality will occur right away. Otherwise, it will occur whenever your app is next connected to the network.
+
+This is accomplished through the `sync` event, which is fired when your service worker detects that your app is once again connected to the network. Inside a handler for the `sync` event, you can check if any synchronizations were requested since last connectivity, and execute the appropriate functionality if necessary. And, because this is all handled in the service worker, our synchronization will be handled regardless of whether or not our app is open or closed when connectivity is restored.
+
+Let's take a look at how to implement Background Sync to clarify some of the details.
+
+### How To Implement Background Sync
+
+For our example on Background Sync, let's pretend we have a server-side database that we want to synchronize with local data whenever we next have connectivity. 
+
+To do this, we first need to request a background sync by making a call to the `sync.register()` function. This can be done from both your service worker or your main application:
+
+```js
+// Check to make sure Sync is supported.
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
+
+  // Get our service worker registration.
+  const registration = await navigator.serviceWorker.registration;
+
+  try {
+    // This is where we request our sync. 
+    // We give it a "tag" to allow for differing sync behavior.
+    await registration.sync.register('database-sync');
+
+  } catch {
+    console.log("Background Sync failed.")
+  }
+}
+```
+
+In the above snippet, we check to see if Sync functionality is available, and if it is, we register a sync with the tag name `database-sync`. The tag name is important if we want to implement several different sync behaviors for different parts of our application.
+
+Once we have registered a sync, we just need to add a handler for that event in our service worker:
+
+```js
+// Add an event listener for the `sync` event in your service worker.
+self.addEventListener('sync', event => {
+
+  // Check for correct tag on the sync event.
+  if (event.tag === 'database-sync') {
+
+    // Execute the desired behavior with waitUntil().
+    event.waitUntil(
+
+      // This is just a hypothetical function for the behavior we desire.
+      pushLocalDataToDatabase();
+    );
+    }
+});
+```
+
+That's the basics of implementing background sync. Once again, it doesn't matter if your app is open or even closed during the sync process, it will continue in the background thanks to the service worker.
+
+Next up, we'll take a look at periodic background sync.
+
+### Periodic Background Sync Overview
+
+Periodic background sync is similar to regular background sync, except that instead of being executed on request, it occurs at regular intervals.
+For example, you could implement sync functionality that is executed once an hour, once a day, or whatever your use case requires.
+
+Periodic background sync allows you to sync content in your app that needs to be regularly and consistently updated, and is a great way to keep your app fresh for your users.
+
+Let's take a look at how to add periodic background sync to a progressive web app.
+
+### How To Implement Periodic Background Sync
+
+It is usually considered best practice to ask your user for permission to make use of periodic background sync, so you can start by requesting permission from the user:
+
+```js
+// Query the user for permission.
+const periodicSyncPermission = await navigator.permissions.query({
+  name: 'periodic-background-sync',
+});
+```
+
+If permission is granted, you can use the `periodicSync.register()` function to register a periodic background sync:
+
+```js
+// Check if permission was properly granted.
+if (periodicSyncPermission.state == 'granted') {
+
+  // Register a new periodic sync.
+  await registration.periodicSync.register('fetch-new-content', {
+    // Set the sync to happen no more than once a day.
+    minInterval: 24 * 60 * 60 * 1000
+  });
+} 
+```
+
+Just like with the regular background sync, we used a tag (`fetch-new-content`) to separate different sync functionalities.
+
+Once we've registered and tagged our sync, the last thing to do is handle the `periodicsync` event in our servicer worker:
+
+```js
+// Listen for the `periodicsync` event.
+self.addEventListener('periodicsync', event => {
+
+  // Check for correct tag on the periodicSyncPermissionsync event.
+  if (event.tag === 'fetch-new-content') {
+
+    // Execute the desired behavior with waitUntil().
+    event.waitUntil(
+
+      // This is just a hypothetical function for the behavior we desire.
+      fetchNewContent();
+    );
+  }
+});
+```
+
+As you can see, the implementation is almost identical as background sync, the main difference is in how the sync is actually executed.
+
 ## Learn More
 
 More native integrations documentation will be added here over time, but if you want more guidance on how to further integrate and upgrade your progressive web app, check out the [30 Days of PWA series.](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/README)
