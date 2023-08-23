@@ -420,6 +420,10 @@ export class WindowsForm extends AppPackageFormBase {
                 <info-circle-tooltip 
                   text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
                   link="https://blogs.windows.com/windowsdeveloper/2023/05/23/welcoming-ai-to-the-microsoft-store-on-windows/"
+                  @click=${() => {
+                    recordPWABuilderProcessStep("ai_hub_read_more_link_click", AnalyticsBehavior.ProcessCheckpoint)
+                    }
+                  }
                   ></info-circle-tooltip>
               </div>
               <div id="ai-hub-text">
