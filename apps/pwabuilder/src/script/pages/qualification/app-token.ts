@@ -1000,7 +1000,7 @@ export class AppToken extends LitElement {
 
       <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
       <h2>Offer details, terms, and conditions</h2>
-      <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11.</p>
+      <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11.</p>
       <p>To qualify, you must:</p>
       <ul>
         <li>Own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
