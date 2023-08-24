@@ -42,4 +42,4 @@ jobs:
         run: npm install
 
       - name: Run Accessibility Insights CLI
-        run: npx ai-scan --url "https://www.pwabuilder.com"
+        run: npx accessibility-insights-scan --url "https://www.pwabuilder.com"

@@ -522,7 +522,7 @@ export class AppHome extends LitElement {
         <div id="home-block">
           <div id="wrapper">
             <h1 id="home-header" slot="hero-container">
-              TESTING WORLD...
+              TESTING WORLD..
             </h1>
             <section id="content-grid" slot="grid-container">
               <div class="intro-grid-item">
