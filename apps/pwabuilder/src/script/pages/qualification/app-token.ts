@@ -616,12 +616,17 @@ export class AppToken extends LitElement {
     this.heroBanners.uncovered = !covered;
   }
 
+  // if showAcceptButton is true we are coming from the accept t and c button
+  // if its false its just the link in the qualifications section
   showTandC(showAcceptButton: boolean){
     this.showTerms = true;
-    this.showTermsNoAccept = showAcceptButton;
-    if(showAcceptButton){
-      recordPWABuilderProcessStep("full_terms_and_conditions_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    }
+    this.showTermsNoAccept = !showAcceptButton;
+
+    // if we are showing the accept button we are in the final t and c
+    // if not it must be from the qualifications box.
+    let location = showAcceptButton ? "full" : "qualification";
+    
+    recordPWABuilderProcessStep(`${location}_terms_and_conditions_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     recordPWABuilderProcessStep("terms_and_conditions_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
 
   }
@@ -916,7 +921,7 @@ export class AppToken extends LitElement {
           <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
           <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
-        <p class="FTC" @click=${() => this.showTandC(true)}>Full Terms and Conditions</p>
+        <p class="FTC" @click=${() => this.showTandC(false)}>Full Terms and Conditions</p>
       </div>` : html``}
       ${this.siteURL ?
         html`
@@ -944,7 +949,7 @@ export class AppToken extends LitElement {
               !this.isDenyList && !this.isPopularUrl ?
             html `
                 <div id="terms-and-conditions">
-                  <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC(false)} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
+                  <label><input type="checkbox" class="confirm-terms" @click=${() => this.showTandC(true)} /> By clicking this button, you accept the Terms of Service and our Privacy Policy.</label>
 
                   ${this.acceptedTerms ?
                     html`<sl-button class="primary" @click=${() => this.claimToken()} .loading="${this.claimTokenLoading}" .disabled="${this.claimTokenLoading}">View Token Code</sl-button>` :
@@ -995,7 +1000,7 @@ export class AppToken extends LitElement {
 
       <p>Thank you for your interest in the Microsoft Store on Windows Free Developer account offer! We would like to empower PWA developers to bring their ideas and experiences to Windows.</p>
       <h2>Offer details, terms, and conditions</h2>
-      <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11.</p>
+      <p>A limited number of Microsoft Store on Windows developer account tokens (value approximately $20 USD each) are available and will be distributed to qualified developers while supplies last. This token will enable you to create an account through which you can publish your own apps to the Microsoft Store on Windows 10 and Windows 11.</p>
       <p>To qualify, you must:</p>
       <ul>
         <li>Own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements</li>
