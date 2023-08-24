@@ -12,7 +12,6 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
-
 import "../components/arrow-link";
 
 @customElement('windows-form')
