@@ -1,0 +1,44 @@
+name: Accessibility Insights CLI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - staging     
+    paths:
+      - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
+      - "components/code-editor/**"
+      - "components/manifest-editor/**"
+      - "components/manifest-previewer/**"
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - staging
+    paths:
+      - "apps/pwabuilder/**"
+      - "libraries/manifest-validation/**"
+      - "libraries/site-analytics/**"
+      - "components/code-editor/**"
+      - "components/manifest-editor/**"
+      - "components/manifest-previewer/**"
+
+jobs:
+  accessibility_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Accessibility Insights CLI
+        run: npx accessibility-insights-cli --url "https://www.pwabuilder.com"
