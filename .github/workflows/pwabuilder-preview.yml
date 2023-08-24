@@ -54,6 +54,9 @@ jobs:
         run: |
           npm install
           npm run build
+
+      - name: Run Accessibility Insights CLI
+        run: npx accessibility-insights-cli --url "https://www.pwabuilder.com"
           
       - name: 🚀 Deploy
         id: builddeploy
