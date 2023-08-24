@@ -1,4 +1,4 @@
-name: Accessibility Insights CLI
+name: Accessibility Insights CLI Test
 
 on:
   workflow_dispatch:
