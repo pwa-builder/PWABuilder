@@ -427,7 +427,7 @@ export class WindowsForm extends AppPackageFormBase {
                   ></info-circle-tooltip>
               </div>
               <div id="ai-hub-text">
-                <p>We will promote the best AI expereiences built by the developer community on our Microsoft Store's AI Hub.</p>
+                <p>We will promote the best AI experiences built by the developer community on our Microsoft Store's AI Hub.</p>
                 <arrow-link .text=${"Join Us"} .link=${"https://aka.ms/MicrosoftStoreAIHub"}></arrow-link>
               </div>
             </div>
