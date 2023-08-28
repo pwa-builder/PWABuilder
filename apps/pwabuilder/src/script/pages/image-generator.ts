@@ -200,17 +200,17 @@ export class ImageGenerator extends LitElement {
                 <div class="color-section">
                   <h3>${loc.background_color}</h3>
                   <div class="color-radio">
-                    <div>
+                    <div class="radio-div">
                       <input type="radio" id="best-guess-radio" name="colorOption" value="best guess" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "best guess"} />
                       <label for="best-guess-radio">${loc.best_guess}</label>
                     </div>
 
-                    <div>
+                    <div class="radio-div">
                       <input type="radio" id="transparent-radio" name="colorOption" value="transparent" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "transparent"} />
                       <label for="transparent-radio">${loc.transparent}</label>
                     </div>
 
-                    <div>
+                    <div class="radio-div">
                       <input type="radio" id="custom-radio" name="colorOption" value="custom" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "custom"} />
                       <label for="custom-radio">${loc.custom_color}</label>
                     </div>
@@ -245,7 +245,7 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-      <div>
+      <div class="checkbox-div">
         <input 
           type="checkbox"
           name="platform" 
