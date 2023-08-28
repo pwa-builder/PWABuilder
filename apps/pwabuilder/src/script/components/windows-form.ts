@@ -189,7 +189,7 @@ export class WindowsForm extends AppPackageFormBase {
 
         #ai-hub-text p {
           margin: 0;
-          color: #7f7f7f;
+          color: #7a7a7a;
           font-size: 13px;
         }
        
