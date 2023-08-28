@@ -77,10 +77,6 @@ export class ImageGenerator extends LitElement {
           font-size: var(--large-font-size);
         }
 
-        h3 {
-          font-size: var(--medium-font-size);
-        }
-
         p {
           font-size: var(--font-size);
         }
@@ -152,18 +148,18 @@ export class ImageGenerator extends LitElement {
             <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
               <section class="form-left">
                 <div class="image-section">
-                  <h3>${loc.input_image}</h3>
+                  <h2>${loc.input_image}</h2>
                   <p>${loc.input_image_help}</p>
                   <app-file-input @input-change=${this.handleInputChange}></app-file-input>
                 </div>
                 <div class="padding-section">
-                  <h3>${loc.padding}</h3>
+                  <h2>${loc.padding}</h2>
                   <sl-input name="padding" type="number" max="1" min="0" step="0.1" value=${this.padding}
                     @sl-change=${this.handlePaddingChange} required></sl-input>
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
-                  <h3>${loc.background_color}</h3>
+                  <h2>${loc.background_color}</h2>
                   <div class="color-radio">
                     <sl-radio-group orientation="vertical" .value=${this.colorOption}
                       @sl-change=${this.handleBackgroundRadioChange}>
