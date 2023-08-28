@@ -29,12 +29,12 @@ Technically, an empty service worker will be enough for your app to be installab
 
 ?> **Note** You can name your service worker whatever you'd like, but `sw.js` is a commonly used convention.
 
-#### Scope
+### Scope
 You can place a service worker anywhere in your project, but it will only have access to assets that are at or below it's current directory level. This is called your service workers ***scope***.
 
 A service worker that lives at the root of your project will have a scope that encompasses the entirety of your application.
 
-#### Registration
+### Registration
 
 After you've placed your `sw.js` file at its desired scope, you can register your service worker in your application's index.
 
@@ -54,7 +54,7 @@ Let's take a look at a basic service worker that we could add to our PWA.
 
 We'll step through it in pieces, but you can find the full source code [here.](https://github.com/pwa-builder/PWABuilder/tree/main/docs/assets/code-examples/example-sw.js)
 
-#### Pre-caching During the *Install* Event
+### Pre-caching During the *Install* Event
 
 Service workers that are being installed for the first time emit an `install` event.
 
@@ -80,7 +80,7 @@ self.addEventListener('install', event => {
 
 When the `install` event is emitted, this snippet will open a new cache with name `CACHE_NAME` and pre-cache any assets included in the `PRECACHE_ASSETS` list.
 
-#### Claiming Clients During the *Activate* Event
+### Claiming Clients During the *Activate* Event
 
 After the install event, the next step in the service worker lifecycle is *activation*. An `activate` event is emitted immediately after installation is completed.
 
@@ -96,7 +96,7 @@ By default, a newly activated service worker won't claim any clients until they 
 
 Using `self.clients.claim()` in our activation listener tells our service worker to take control of new clients right away.
 
-#### Defining A Fetch Strategy
+### Defining A Fetch Strategy
 Once the service worker is pre-caching assets, we need to provide some functionality for retrieving those assets.
 
 We listen to the `fetch` event to allow us to intercept and handle requests for assets:
