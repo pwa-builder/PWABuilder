@@ -164,10 +164,20 @@ export class WindowsForm extends AppPackageFormBase {
           border-color: var(--primary-color);
         }
 
+        #ai-hub {
+          background-color: #f4f4f4;
+          border-radius: 10px;
+          padding: 5px 13px;
+        }
+
         #ai-hub-label {
           display: flex;
           align-items: center;
           justify-content: flex-start;
+        }
+
+        #ai-hub-label img {
+          margin-right: 10px;
         }
 
         #ai-hub-text {
@@ -180,7 +190,7 @@ export class WindowsForm extends AppPackageFormBase {
         #ai-hub-text p {
           margin: 0;
           color: #7f7f7f;
-          font-size: 14px;
+          font-size: 13px;
         }
        
     `
@@ -415,6 +425,7 @@ export class WindowsForm extends AppPackageFormBase {
             </div>
             <div class="form-group" id="ai-hub">
               <div id="ai-hub-label">
+                <img src="/assets/new/ai-hub.svg" alt="ai hub logo" />
                 <label>Does your app use AI?</label>
                 <info-circle-tooltip 
                   text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
