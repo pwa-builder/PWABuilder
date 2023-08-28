@@ -85,8 +85,10 @@
     height: 100%;
 }
 
-.home-nav-card h3 {
+.home-nav-card h2 {
     text-align: center;
+    font-size: 21px;
+    font-weight: 600;
 }
 .home-nav-card::part(body) {
     display: flex;
