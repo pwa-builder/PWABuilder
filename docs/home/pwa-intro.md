@@ -18,14 +18,14 @@ Progressive web apps are applications *first*, and separate themselves from webs
 ## What Makes A PWA?
 From a technical perspective, a normal web app only needs a few extra pieces to become a progressive web app: a ***web app manifest*** and a ***service worker***. It is also important to note that service workers require ***HTTPS*** to work properly, and progressive web apps must be served from a secure endpoint.
 
-#### Web App Manifests
+### Web App Manifests
 A web app manifest (often shortened to web manifest, or even just *manifest*) is a `.json` file that tells the browser that your web app is a progressive web app, and is capable of being installed to the OS.
 
 The manifest also contains other information about your app, such as the title, theme colors, and description. Your manifest can even enable certain native integrations, such as shortcuts and display modes.
 
 Learn more [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
 
-#### Service Workers
+### Service Workers
 Service workers are a type of [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) that serve as a proxy to the network, intercepting any requests that your PWA may make. 
 They are event-driven and operate in a separate thread from the rest of your application.
 
@@ -42,7 +42,7 @@ A web app that has a manifest and a service worker can be locally installed! *In
 
 Just like a native application, an installed PWA can be launched from the operating system, pinned to desktops and taskbars, and indexed by your device's search software.
 
-#### Installing from the Browser
+### Installing from the Browser
 
 PWAs can be installed directly from both Google Chrome and Microsoft Edge.
 
@@ -56,7 +56,7 @@ Here's what the button and follow-up prompt look like for a PWA in Edge:
 
 Clicking install is all you need to access your PWA from the OS!
 
-#### Installing from App Stores
+### Installing from App Stores
 
 Depending on the platform, PWAs are now able to be installed from various app stores.
 
@@ -91,13 +91,13 @@ This documentation is a PWA itself, and can be installed and used to explore som
 Here are some things to try:
 
 
-#### Install this PWA
+### Install this PWA
 
 Using the guidance from the *Installability* section, install this PWA. The button is located on the far right of the address bar in either Chrome or Edge.
 
 Once the PWA is installed, try launching it from the operating system. It should open in a standalone window without an address bar and with the PWA theme color.
 
-#### Use the app without connection
+### Use the app without connection
 
 Try turning on airplane mode or disconnecting from WiFi.
 
@@ -106,13 +106,13 @@ In this instance, the whole application is static, and should work entirely as e
 
 ?> **Note** Offline mode will only work if the PWA has been loaded once with a connection, which allows the service worker to precache any necessary assets.
 
-#### Shortcuts
+### Shortcuts
 
 Try right-clicking the PWA's icon on your taskbar.
 
 You'll see shortcuts to take you directly to different parts of the documentation. Choose a shortcut to jump to documentation you're interested in!
 
-#### Trigger a notification
+### Trigger a notification
 
 Lastly, let's take a look at an example web capability: push notifications.
 

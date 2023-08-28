@@ -218,7 +218,7 @@ export class PublishPane extends LitElement {
         /* temporary styling for token trial */
         padding: 1em;
       }
-      .title-block h3 {
+      .title-block h2 {
         margin: 0;
         font-size: 24px;
       }
@@ -990,7 +990,7 @@ export class PublishPane extends LitElement {
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
-            <h3>${platform.title}</h3>
+            <h2>${platform.title}</h2>
             <!-- TODO need to fix the platform action blocks text spacing for the left. -->
             <div class="platform-actions-block">
               ${platform.renderDownloadButton()}
