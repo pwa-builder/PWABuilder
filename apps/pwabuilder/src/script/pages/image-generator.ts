@@ -125,6 +125,41 @@ export class ImageGenerator extends LitElement {
         small {
           margin-top: 10px;
         }
+        .color-radio, .platform-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .color-radio >*, .platform-list >* {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        input[type="radio"] {
+          border: 0px;
+          width: 22px;
+          height: 22px;
+          margin: 0;
+          accent-color: var(--primary-color);
+        }
+
+        input[type="radio"]:hover {
+          cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+          border: 0px;
+          width: 22px;
+          height: 22px;
+          margin: 0;
+          accent-color: var(--primary-color);
+        }
+
+        input[type="checkbox"]:hover {
+          cursor: pointer;
+        }
       `,
     ];
   }
@@ -161,18 +196,20 @@ export class ImageGenerator extends LitElement {
                 <div class="color-section">
                   <h2>${loc.background_color}</h2>
                   <div class="color-radio">
-                    <sl-radio-group orientation="vertical" .value=${this.colorOption}
-                      @sl-change=${this.handleBackgroundRadioChange}>
-                      <sl-radio name="colorOption" value="best guess">
-                        ${loc.best_guess}
-                      </sl-radio>
-                      <sl-radio name="colorOption" value="transparent">
-                        ${loc.transparent}
-                      </sl-radio>
-                      <sl-radio name="colorOption" value="custom">
-                        ${loc.custom_color}
-                      </sl-radio>
-                    </sl-radio-group>
+                    <div class="radio-div">
+                      <input type="radio" id="best-guess-radio" name="colorOption" value="best guess" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "best guess"} />
+                      <label for="best-guess-radio">${loc.best_guess}</label>
+                    </div>
+
+                    <div class="radio-div">
+                      <input type="radio" id="transparent-radio" name="colorOption" value="transparent" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "transparent"} />
+                      <label for="transparent-radio">${loc.transparent}</label>
+                    </div>
+
+                    <div class="radio-div">
+                      <input type="radio" id="custom-radio" name="colorOption" value="custom" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "custom"} />
+                      <label for="custom-radio">${loc.custom_color}</label>
+                    </div>
                   </div>
                   ${this.renderColorPicker()}
                 </div>
@@ -204,10 +241,17 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-        <sl-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
-          @sl-change=${this.handleCheckbox} data-index=${i}>
-          ${platform.label}
-        </sl-checkbox>
+      <div class="checkbox-div">
+        <input 
+          type="checkbox"
+          name="platform" 
+          id="${`${platform.value}-checkbox`}"
+          value="${platform.value}" 
+          ?checked=${this.platformSelected[i]}
+          @change=${this.handleCheckbox} 
+          data-index=${i} />
+        <label for="${platform.value}-checkbox">${platform.label}</label>
+      </div>
       `
     );
   }
