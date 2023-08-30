@@ -921,7 +921,7 @@ export class AppToken extends LitElement {
           <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
           <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
-        <p class="FTC" @click=${() => this.showTandC(false)}>Full Terms and Conditions</p>
+        <button class="FTC" @click=${() => this.showTandC(false)}>Full Terms and Conditions</button>
       </div>` : html``}
       ${this.siteURL ?
         html`
