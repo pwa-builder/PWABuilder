@@ -125,6 +125,14 @@
           navigator.serviceWorker.register('sw.js')
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const githubCorner = document.querySelector('.github-corner');
+        if (githubCorner) {
+            githubCorner.setAttribute('title', 'View source on GitHub');
+        }
+        });
+    </script>
     
 
 </body>
