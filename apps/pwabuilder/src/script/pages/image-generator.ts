@@ -176,11 +176,11 @@ export class ImageGenerator extends LitElement {
     return html`
       <div>
         <app-header></app-header>
-        <main id="main" role="presentation" class="main background">
+        <main id="main" class="main background">
           <div id="image-generator-card">
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
-            <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
+            <form id="imageFileInputForm" enctype="multipart/form-data" class="form">
               <section class="form-left">
                 <div class="image-section">
                   <h2>${loc.input_image}</h2>
