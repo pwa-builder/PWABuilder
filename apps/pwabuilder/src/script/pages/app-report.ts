@@ -407,6 +407,10 @@ export class AppReport extends LitElement {
           margin: 0;
         }
 
+        .visually-hidden {
+          font-size: 0;
+        }
+
         #site-url {
           text-overflow: ellipsis;
           overflow: hidden;
@@ -2547,7 +2551,10 @@ export class AppReport extends LitElement {
                     ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                   </div>
                   <div id="card-info" class="flex-row">
-                    <p id="site-name">${this.appCard.siteName}</p>
+                    <h1 id="site-name">
+                      ${this.appCard.siteName}
+                      <span class="visually-hidden" aria-live="polite">Report card page for ${this.appCard.siteName}</span>
+                    </h1>
                     <p id="site-url">${this.appCard.siteUrl}</p>
                     <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
                   </div>
