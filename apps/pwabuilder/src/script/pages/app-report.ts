@@ -825,6 +825,12 @@ export class AppReport extends LitElement {
           height: fit-content;
         }
 
+        #pageStatus {
+          font-size: 0;
+          color: transparent;
+          margin: 0;
+        }
+
         #indicators-holder {
           display: flex;
           gap: .5em;
@@ -2438,6 +2444,11 @@ export class AppReport extends LitElement {
     } else if(!up && this.pageNumber != 1){
       this.pageNumber--;
     }
+
+    const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
+    const totalPages = Math.ceil(this.todoItems.length / this.pageSize) // Calculate total pages
+    pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
+
     this.requestUpdate();
   }
 
@@ -2688,7 +2699,14 @@ export class AppReport extends LitElement {
             ${(this.todoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
+                <button 
+                  class="pagination-buttons" 
+                  name="action-items-previous-page-button" 
+                  aria-label="Previous page button for action items list"
+                  type="button"  
+                  @click=${() => this.switchPage(false)}
+                  ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
+                </button>
                 <div id="dots">
                   ${this.getDots().map((_dot: any, index: number) =>
                     this.pageNumber == index + 1 ?
@@ -2699,8 +2717,16 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon></button>
+                <button 
+                  class="pagination-buttons" 
+                  name="action-items-next-page-button" 
+                  aria-label="Next page button for action items list"
+                  aria-live="polite"
+                  type="button" 
+                  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
+                </button>
               </div>` : html``}
+              <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
             </sl-details>
           </div>
 
