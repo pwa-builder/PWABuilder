@@ -510,13 +510,13 @@ export class AppReport extends LitElement {
           padding: 2em;
         }
 
-        #app-actions button:not(#test-download) { // pfs + disabled
+        #pfs, #pfs-disabled { // pfs + disabled
           white-space: nowrap;
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
           font-size: var(--button-font-size);
           font-weight: var(--font-bold);
-          border: none;
+          border: 1px solid transparent;
           color: #ffffff;
           white-space: nowrap;
         }
@@ -544,6 +544,8 @@ export class AppReport extends LitElement {
 
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
+          border: 1px solid white;
+          outline: 2px solid black;
         }
 
         #share-card {
