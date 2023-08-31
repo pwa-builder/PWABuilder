@@ -65,52 +65,6 @@ export function trackException(err: Error) {
   }
 }
 
-export async function ableToUseAnalytics(): Promise<boolean> {
-  const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
-  let canUseAnalytics: boolean = false;
-  if(doesFileExist(pwabuilderDataFilePath)) {
-    canUseAnalytics = checkForDataPermission(pwabuilderDataFilePath);
-  } else {
-    const permissionInput: boolean = await promptForPermission();
-    canUseAnalytics = writePermission(permissionInput, pwabuilderDataFilePath);
-  }
-
-  return canUseAnalytics;
-}
-async function promptForPermission(): Promise<boolean> {
-  const permissionPromptString: string = "Are you okay with PWABuilder collecting anonymous data to help improve our services?"
-  return await prompts.confirm({message: permissionPromptString}) as boolean;
-}
-
-function checkForDataPermission(pathToDataFile: string): boolean {
-  const userData: PWABuilderData = JSON.parse(fs.readFileSync(pathToDataFile, {encoding: 'utf-8'}));
-  return userData.user.trackingPermission;
-}
-
-function writePermission(permission: boolean, pathToDataFile: string): boolean {
-  const pwaBuilderUserData: PWABuilderData = {
-    user: {
-      trackingPermission: permission
-    }
-  }
-  let didWriteSucceed: boolean = true;
-  try {
-    fs.writeFileSync(pathToDataFile, JSON.stringify(pwaBuilderUserData), {encoding: 'utf-8'});
-  } catch {
-    didWriteSucceed = false;
-  }
-  
-
-  return permission && didWriteSucceed;
-}
-
-export async function promptAndRewritePermission(): Promise<boolean> {
-  const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
-  const dataTrackingInput: boolean = await promptForPermission();
-  writePermission(dataTrackingInput, pwabuilderDataFilePath);
-  return dataTrackingInput
-}
-
 // Functions for if we do user correlation later on.
 
 /* async function createUserID(): Promise<void> {

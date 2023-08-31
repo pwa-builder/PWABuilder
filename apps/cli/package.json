@@ -24,7 +24,7 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
-    "@clack/prompts": "^0.6.3",
+    "@clack/prompts": "^0.7.0",
     "applicationinsights": "^2.5.1",
     "decompress": "^4.2.1",
     "node-fetch": "^2.6.9",

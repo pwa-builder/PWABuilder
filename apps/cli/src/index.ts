@@ -13,7 +13,7 @@ yargs(hideBin(process.argv))
   .strict()
   .epilog(termsString)
   .alias({ h: 'help' })
-  .command('$0', `Displays help command.`, () => {}, (argv) => {
+  .command('$0', `Displays help command.`, () => {}, () => {
     yargs.showHelp();
   })
   .argv;
