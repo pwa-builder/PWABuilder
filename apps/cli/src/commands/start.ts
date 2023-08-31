@@ -1,5 +1,5 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { execSyncWrapper, outputError, isDirectoryTemplate } from "../util/util";
+import { promisifiedExecWrapper, outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
 import { startDescriptions, startErrors } from "../strings/startStrings";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { StartEventData } from "../analytics/analytics-interfaces";
@@ -30,7 +30,7 @@ export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
  
 };
 
-function handleStartCommand(viteArgs: string | undefined) {
+async function handleStartCommand(viteArgs: string | undefined) {
   if(viteArgs) {
     execSyncWrapper('npm run dev-task -- ' + viteArgs, false); 
   } else {

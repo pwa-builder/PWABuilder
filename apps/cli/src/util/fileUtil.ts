@@ -49,15 +49,35 @@ export function doesStringExistInFile(filePath: string, searchString: string): b
 }
 
 export async function fetchZipAndDecompress(url: string): Promise<string> {
-  const zipName = "fetchedZip.zip";
-  const decompressedZipName = "decompressedZip";
-  const streamPipeline = promisify(pipeline);
-  const res = await fetch(url);
+  const zipName: string = await fetchZip(url);
+  return await decompressZip(zipName);
+}
 
-  if(res.body) {
-    await streamPipeline(res.body, fs.createWriteStream(zipName));
+export async function fetchZip(url: string): Promise<string> {
+  const zipName = "fetchedZip.zip";
+  const streamPipeline = promisify(pipeline);
+
+  try {
+    const res = await fetch(url);
+    if(res.body) {
+      await streamPipeline(res.body, fs.createWriteStream(zipName));
+    }  
+  } catch( err ) {
+    throw err;
+  }
+
+  return zipName;
+
+}
+
+export async function decompressZip(zipName: string): Promise<string> {
+  const decompressedZipName = "decompressedZip";
+
+  try {
     await decompress(zipName, decompressedZipName);
-  }  
+  } catch ( err ) {
+    throw err;
+  }
 
   return decompressedZipName;
 }

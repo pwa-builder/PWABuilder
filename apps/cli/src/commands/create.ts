@@ -1,9 +1,9 @@
 import type { Arguments, CommandBuilder} from "yargs";
 import { createDescriptions, createErrors } from "../strings/createStrings";
 import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/replaceLists";
-import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory } from "../util/fileUtil";
+import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, fetchZip, decompressZip } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
-import { execSyncWrapper } from "../util/util";
+import { promisifiedExecWrapper } from "../util/util";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { CreateEventData } from "../analytics/analytics-interfaces";
 
@@ -37,14 +37,15 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
   const startTime: number = performance.now();
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
+
   const promptSpinner = prompts.spinner();
   
-  promptSpinner.start(`Fetching ${resolvedTemplate} PWA Starter template... `);
-  const tempDirectoryName = await fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate][0]);
-  promptSpinner.stop('Done.');
+  promptSpinner.start(`Fetching ${resolvedTemplate} PWA Starter template`);
+  const decompressedZipName: string = await fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate][0]);
+  promptSpinner.stop(`Repository fetched.`);
 
-  promptSpinner.start("Preparing your PWA for development... ");
-  await prepDirectoryForDevelopment(resolvedName, tempDirectoryName, templateToRepoURLMap[resolvedTemplate][1]);
+  promptSpinner.start(`Installing dependencies`);
+  await prepDirectoryForDevelopment(resolvedName, decompressedZipName, templateToRepoURLMap[resolvedTemplate][1]);
 
   const finalOutputString: string = `All set! To preview your PWA in the browser:
   
@@ -53,11 +54,12 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
 
   Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
   
-  promptSpinner.stop(finalOutputString);
+  promptSpinner.stop(`Dependencies installed.`);
+
+  prompts.outro(finalOutputString);
   const endTime: number = performance.now();
 
   trackCreateEvent(resolvedTemplate, endTime - startTime, resolvedName);
-  
 };
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
@@ -142,7 +144,7 @@ async function prepDirectoryForDevelopment(newName: string, decompressedName: st
     setNewName(newName);
   }
 
-  execSyncWrapper('npm i', true, newName);
+  await promisifiedExecWrapper('npm i', true, newName);
 }
 
 async function trackCreateEvent(template: string, timeMS: number, name: string): Promise<void> {

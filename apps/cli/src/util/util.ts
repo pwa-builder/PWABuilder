@@ -1,18 +1,31 @@
 import { doesStringExistInFile, doesFileExist } from "./fileUtil";
 
-const{ execSync } = require('child_process');
-const path = require('path');
+import { promisify } from 'node:util';
+const exec = promisify(require('node:child_process').exec);
+const execSync = require('node:child_process').execSync;
 
+const path = require('path');
 const defaultErrorMessage: string = "Command failed due to unknown error.";
 
-export function execSyncWrapper(command: string, suppressOutput: boolean, directory?: string | undefined) {
+export async function promisifiedExecWrapper(command: string, suppressOutput: boolean, directory?: string | undefined) {
+  try{
+    await exec(command, {
+      stdio: suppressOutput ? 'pipe' : [0, 1, 2],
+      cwd: path.resolve(process.cwd(), directory ? directory : '')
+    });
+  } catch (err) {
+    console.log("Process exited.")
+  }
+}
+
+export async function execSyncWrapper(command: string, suppressOutput: boolean, directory?: string | undefined) {
   try{
     execSync(command, {
       stdio: suppressOutput ? 'pipe' : [0, 1, 2],
       cwd: path.resolve(process.cwd(), directory ? directory : '')
     });
   } catch (err) {
-    throw err;
+    console.log("Process exited.")
   }
 }
 

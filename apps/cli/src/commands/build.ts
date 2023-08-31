@@ -1,5 +1,5 @@
 import type { CommandBuilder } from "yargs";
-import { execSyncWrapper, isDirectoryTemplate, outputError } from "../util/util";
+import { promisifiedExecWrapper, isDirectoryTemplate, outputError, execSyncWrapper } from "../util/util";
 import { buildDescriptions, buildErrors } from "../strings/buildStrings";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { BuildEventData } from "../analytics/analytics-interfaces";
@@ -14,7 +14,7 @@ export const builder: CommandBuilder = (yargs) =>
 export const handler = async (): Promise<void> => {
   const startTime: number = performance.now();
   if(isDirectoryTemplate()) {
-    execSyncWrapper('npm run build', false);
+    await execSyncWrapper('npm run build', false);
   } else {
     outputError(buildErrors.invalidDirectory);
   }
