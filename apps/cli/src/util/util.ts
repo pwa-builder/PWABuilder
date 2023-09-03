@@ -1,6 +1,8 @@
 import { doesStringExistInFile, doesFileExist } from "./fileUtil";
-
 import { promisify } from 'node:util';
+
+export type HandlerSignature = (...args: any[]) => void;
+
 const exec = promisify(require('node:child_process').exec);
 const execSync = require('node:child_process').execSync;
 
@@ -46,4 +48,29 @@ export function isDirectoryTemplate(directory?: string | undefined): boolean {
   const testString: string = "<meta name=\"pwa-starter-template-identity\"";
 
   return doesFileExist(indexPath) && doesStringExistInFile(indexPath, testString);
+}
+
+export async function timeFunction(functionToTime: HandlerSignature): Promise<number> {
+  const startTime: number = performance.now();
+  await functionToTime();
+  const endTime: number = performance.now();
+
+  return Math.round(endTime - startTime);
+}
+
+export function removeProcessEventListeners(eventNames: string[]) {
+  for(let eventName of eventNames) {
+    process.removeAllListeners(eventName);
+  }
+}
+
+export function addProcessEventListeners(eventNames: string[], handler: HandlerSignature ) {
+  for(var eventName of eventNames) {
+    process.on(eventName, handler);
+  }
+}
+
+export function replaceProcessEventListeners(eventNames: string[], handler: HandlerSignature) {
+  removeProcessEventListeners(eventNames);
+  addProcessEventListeners(eventNames, handler);
 }

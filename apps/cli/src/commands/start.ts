@@ -1,5 +1,5 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { promisifiedExecWrapper, outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
+import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
 import { startDescriptions, startErrors } from "../strings/startStrings";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { StartEventData } from "../analytics/analytics-interfaces";
@@ -25,9 +25,7 @@ export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
     outputError(startErrors.invalidDirectory);
   }  
   const endTime: number = performance.now();
-
   trackStartEvent(endTime - startTime, viteArgs ? viteArgs : "");
- 
 };
 
 async function handleStartCommand(viteArgs: string | undefined) {

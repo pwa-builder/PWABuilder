@@ -3,6 +3,7 @@ const decompress = require('decompress');
 import fetch from 'node-fetch';
 import {pipeline} from 'node:stream';
 import {promisify} from 'node:util';
+import { promptsCancel } from './promptUtil';
 
 export function replaceAllInFile(filePath: string, replaceString: string, newString: string) {
   fs.readFile(filePath, 'utf8', (err, data: string) => {
@@ -31,6 +32,12 @@ export function removeDirectory(directoryName: string): void {
   fs.rmSync(directoryName, { recursive: true, force: true });
 }
 
+export function removeAll(filenames: string[]) {
+  for(let filename of filenames) {
+    removeDirectory(filename);
+  }
+}
+
 export function renameDirectory(oldName: string, newName: string): void {
   fs.renameSync(oldName, newName);
 }
@@ -48,13 +55,14 @@ export function doesStringExistInFile(filePath: string, searchString: string): b
   return fileContent.includes(searchString);
 }
 
-export async function fetchZipAndDecompress(url: string): Promise<string> {
+export async function fetchZipAndDecompress(url: string): Promise<void> {
   const zipName: string = await fetchZip(url);
-  return await decompressZip(zipName);
+  await decompressZip(zipName);
 }
 
 export async function fetchZip(url: string): Promise<string> {
   const zipName = "fetchedZip.zip";
+
   const streamPipeline = promisify(pipeline);
 
   try {
@@ -63,21 +71,19 @@ export async function fetchZip(url: string): Promise<string> {
       await streamPipeline(res.body, fs.createWriteStream(zipName));
     }  
   } catch( err ) {
-    throw err;
+    promptsCancel();
   }
 
   return zipName;
 
 }
 
-export async function decompressZip(zipName: string): Promise<string> {
+export async function decompressZip(zipName: string): Promise<void> {
   const decompressedZipName = "decompressedZip";
-
   try {
     await decompress(zipName, decompressedZipName);
+    removeDirectory(zipName);
   } catch ( err ) {
-    throw err;
+    promptsCancel();
   }
-
-  return decompressedZipName;
 }

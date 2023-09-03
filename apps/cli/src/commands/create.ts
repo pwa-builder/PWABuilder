@@ -1,15 +1,13 @@
 import type { Arguments, CommandBuilder} from "yargs";
 import { createDescriptions, createErrors } from "../strings/createStrings";
 import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/replaceLists";
-import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, fetchZip, decompressZip } from "../util/fileUtil";
+import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, fetchZip, decompressZip, removeAll } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
-import { promisifiedExecWrapper } from "../util/util";
+import { promisifiedExecWrapper, timeFunction } from "../util/util";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { CreateEventData } from "../analytics/analytics-interfaces";
+import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
 
-export const command: string = 'create [name]';
-export const desc: string = createDescriptions.commandDescription;
-const defaultName: string = "pwa-starter";
 
 type CreateOptions = {
   name: string | undefined;
@@ -19,6 +17,14 @@ type CreateOptions = {
 type ResolvedCreateOptions = {
   resolvedName: string;
   resolvedTemplate: string;
+}
+
+export const command: string = 'create [name]';
+export const desc: string = createDescriptions.commandDescription;
+
+const defaultName: string = "pwa-starter";
+const artifactNames: (string) => string[] = (name: string) => {
+  return [ 'fetchedZip.zip', 'decompressedZip', name ]
 }
 
 const templateToRepoURLMap = {
@@ -35,38 +41,54 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
     
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
-  const startTime: number = performance.now();
-  const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
-
-  const promptSpinner = prompts.spinner();
-  
-  promptSpinner.start(`Fetching ${resolvedTemplate} PWA Starter template`);
-  const decompressedZipName: string = await fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate][0]);
-  promptSpinner.stop(`Repository fetched.`);
-
-  promptSpinner.start(`Installing dependencies`);
-  await prepDirectoryForDevelopment(resolvedName, decompressedZipName, templateToRepoURLMap[resolvedTemplate][1]);
-
-  const finalOutputString: string = `All set! To preview your PWA in the browser:
-  
-    1. Navigate to your project's directory with: "cd ${resolvedName}"
-    2. Start your PWA with: "pwa start"
-
-  Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
-  
-  promptSpinner.stop(`Dependencies installed.`);
-
-  prompts.outro(finalOutputString);
-  const endTime: number = performance.now();
-
-  trackCreateEvent(resolvedTemplate, endTime - startTime, resolvedName);
+  await handleCreateCommand(argv);
 };
+
+async function handleCreateCommand(argv: Arguments<CreateOptions>) { 
+  const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
+  const duration: number = await timeFunction(() => fetchAndPrepareTemplate(resolvedName, resolvedTemplate));
+  finalOutput(resolvedName);
+  trackCreateEvent(resolvedTemplate, duration, resolvedName);
+}
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
   const {name, template} = argv;
   const resolvedTemplate= await resolveTemplateArgument(template, ('template' in argv));
   const resolvedName = await resolveNameArgument(name);
   return {resolvedName, resolvedTemplate};
+}
+
+async function fetchAndPrepareTemplate(resolvedName: string, resolvedTemplate: string) {
+
+  const spinnerItems: spinnerItem[] = [
+    {
+      startText: `Fetching ${resolvedTemplate} PWA Starter template`,
+      functionToRun: () => fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate][0]),
+      endText: `Template fetched.`,
+      stopMessage: `Template fetch cancelled.`,
+      onCancel: () => {
+        removeAll(artifactNames(resolvedName));
+      }
+    },
+    {
+      startText: `Installing dependencies`,
+      functionToRun: () => prepDirectoryForDevelopment(resolvedName, templateToRepoURLMap[resolvedTemplate][1]),
+      endText: `Dependencies installed.`,
+      stopMessage: `Dependency install cancelled. You can still access the code for your PWA at ${resolvedName}.`
+    }
+  ]
+
+  await runSpinnerGroup(spinnerItems, "PWA create process exited.");
+}
+
+function finalOutput(resolvedName: string) {
+  const finalOutputString: string = `All set! To preview your PWA in the browser:
+  
+    1. Navigate to your project's directory with: "cd ${resolvedName}"
+    2. Start your PWA with: "pwa start"
+
+  Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
+  prompts.outro(finalOutputString);
 }
 
 async function resolveNameArgument(nameArg: string | undefined): Promise<string> {
@@ -135,16 +157,20 @@ function incrementToUnusedFilename(): string {
 function fixDirectoryStructure(newName: string, decompressedName: string, template: string): void {
   renameDirectory(`${decompressedName}/${template}`, `./${newName}`);
   removeDirectory(decompressedName);
-  removeDirectory('fetchedZip.zip');
 }
 
-async function prepDirectoryForDevelopment(newName: string, decompressedName: string, template: string): Promise<void> {
-  fixDirectoryStructure(newName, decompressedName, template);
-  if(newName != defaultName) {
-    setNewName(newName);
-  }
+async function prepDirectoryForDevelopment(newName: string, template: string): Promise<void> {
+  try {
+    fixDirectoryStructure(newName, "decompressedZip", template);
+    if(newName != defaultName) {
+      setNewName(newName);
+    }
 
-  await promisifiedExecWrapper('npm i', true, newName);
+    await promisifiedExecWrapper('npm i', true, newName);
+  } catch (err) {
+    promptsCancel();
+  }
+  
 }
 
 async function trackCreateEvent(template: string, timeMS: number, name: string): Promise<void> {
