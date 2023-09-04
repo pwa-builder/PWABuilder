@@ -11,8 +11,12 @@ export function formatEmphasis(text: string): string {
   return purple.bold(text);
 }
 
-export function formatErrorEmphasis(text: string): string {
+export function formatErrorEmphasisStrong(text: string): string {
   return chalk.bgRed(text);
+}
+
+export function formatErrorEmphasisWeak(text: string): string {
+  return chalk.bold.red(text);
 }
 
 export function formatSuccessEmphasis(text: string): string {

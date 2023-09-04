@@ -10,7 +10,7 @@ export interface spinnerItem {
 }
 
 const SPINNER_EVENT_NAME_LIST: string[] = ['SIGINT', 'SIGTERM', 'exit'];
-const DEFAULT_CANCEL_MESSAGE: string = `Command failed due to error. Run 'pwa' to see usage.`;
+const DEFAULT_CANCEL_MESSAGE: string = `Command failed due to error.`;
 
 export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage: string) {
   const promptSpinner = prompts.spinner();

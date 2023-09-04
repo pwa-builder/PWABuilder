@@ -5,7 +5,7 @@ import { promisifiedExecWrapper, timeFunction } from "../util/util";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { CreateEventData } from "../analytics/analytics-interfaces";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
-import { formatCodeSnippet, formatEmphasis, formatErrorEmphasis, formatSuccessEmphasis } from "../util/textUtil";
+import { formatCodeSnippet, formatEmphasis, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 
 // Types for command arguments
 type CreateOptions = {
@@ -43,11 +43,13 @@ const NAME_PLACEHOLDER_STRING: string = 'example-pwa-name';
 
 const FETCH_TASK_START_STRING: (string) => string = ( template: string ) => { return `Fetching ${template} PWA Starter template` };
 const FETCH_TASK_END_STRING: string = formatSuccessEmphasis('Template fetched.');
-const FETCH_TASK_STOP_STRING: string = 'Template fetch cancelled.';
+const FETCH_TASK_STOP_STRING: string = formatErrorEmphasisWeak('Template fetch cancelled.');
 
 const INSTALL_TASK_START_STRING: string = 'Installing dependencies';
 const INSTALL_TASK_END_STRING: string = formatSuccessEmphasis('Dependencies installed.');
-const INSTALL_TASK_STOP_STRING: (string) => string = ( name: string ) => { return `Dependency install cancelled. You can still access the code for your PWA at ${name}.`}
+const INSTALL_TASK_STOP_STRING: (string) => string = ( name: string ) => { 
+  return `${formatErrorEmphasisWeak('Dependency install cancelled.')} You can still access your PWA in the ${formatCodeSnippet(name)} directory.`
+}
 
 const TASK_GROUP_EXIT_STRING: string = 'PWA create process exited.';
 
@@ -66,8 +68,8 @@ const INVALID_NAME_ERROR_STRING: string = 'Invalid name. A valid project name mu
 const INVALID_TEMPLATE_ERROR_STRING: string = `Invalid template provided. Cancelling create operation.
     
 Valid template names:
-1. ${formatErrorEmphasis("default")} - Original PWA Starter template
-2. ${formatErrorEmphasis("basic")} - Simplified PWA Starter with fewer dependencies`;
+1. ${formatErrorEmphasisStrong("default")} - Original PWA Starter template
+2. ${formatErrorEmphasisStrong("basic")} - Simplified PWA Starter with fewer dependencies`;
 
 // Template to Repo Map
 const TEMPLATE_TO_URL_MAP = {
