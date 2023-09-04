@@ -1,5 +1,5 @@
 import * as prompts from "@clack/prompts";
-import { HandlerSignature, replaceProcessEventListeners } from "./util";
+import { HandlerSignature, removeProcessEventListeners, replaceProcessEventListeners } from "./util";
 
 export interface spinnerItem {
   startText: string,
@@ -29,6 +29,8 @@ export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage
     await spinnerItem.functionToRun();
     promptSpinner.stop(spinnerItem.endText);
   }
+
+  removeProcessEventListeners(SPINNER_EVENT_NAME_LIST);
 
 }
 

@@ -5,6 +5,7 @@ import { promisifiedExecWrapper, timeFunction } from "../util/util";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { CreateEventData } from "../analytics/analytics-interfaces";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
+import { formatCodeSnippet, formatEmphasis, formatErrorEmphasis, formatSuccessEmphasis } from "../util/textUtil";
 
 // Types for command arguments
 type CreateOptions = {
@@ -41,31 +42,32 @@ const NAME_PROMPT_STRING: string = 'Enter a name for your new PWA: ';
 const NAME_PLACEHOLDER_STRING: string = 'example-pwa-name';
 
 const FETCH_TASK_START_STRING: (string) => string = ( template: string ) => { return `Fetching ${template} PWA Starter template` };
-const FETCH_TASK_END_STRING: string = 'Template fetched.';
+const FETCH_TASK_END_STRING: string = formatSuccessEmphasis('Template fetched.');
 const FETCH_TASK_STOP_STRING: string = 'Template fetch cancelled.';
 
 const INSTALL_TASK_START_STRING: string = 'Installing dependencies';
-const INSTALL_TASK_END_STRING: string = 'Dependencies installed.';
+const INSTALL_TASK_END_STRING: string = formatSuccessEmphasis('Dependencies installed.');
 const INSTALL_TASK_STOP_STRING: (string) => string = ( name: string ) => { return `Dependency install cancelled. You can still access the code for your PWA at ${name}.`}
 
 const TASK_GROUP_EXIT_STRING: string = 'PWA create process exited.';
 
 const FINAL_OUTPUT_STRING: (string) => string = (name: string) => {
-  return `All set! To preview your PWA in the browser:
+  return `${formatSuccessEmphasis('All set!')} 
+   To preview your PWA in the browser:
   
-  1. Navigate to your project's directory with: "cd ${name}"
-  2. Start your PWA with: "pwa start"
+   1. Navigate to your project's directory with: ${formatCodeSnippet("cd " + name)}
+   2. Start your PWA with: ${formatCodeSnippet("pwa start")}
 
-  Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`
+   Make sure to visit ${formatEmphasis("docs.pwabuilder.com")} for further guidance on developing with the PWA Starter.`
 };
 
 // Error strings
 const INVALID_NAME_ERROR_STRING: string = 'Invalid name. A valid project name must not already exist and may only contain alphanumeric characters, dashes, and underscores.';
-const INVALID_TEMPLATE_ERROR_STRING: string = `ERROR: Invalid template provided. Cancelling create operation.
+const INVALID_TEMPLATE_ERROR_STRING: string = `Invalid template provided. Cancelling create operation.
     
 Valid template names:
-1. default - Original PWA Starter template
-2. basic - Simplified PWA Starter with fewer dependencies`;
+1. ${formatErrorEmphasis("default")} - Original PWA Starter template
+2. ${formatErrorEmphasis("basic")} - Simplified PWA Starter with fewer dependencies`;
 
 // Template to Repo Map
 const TEMPLATE_TO_URL_MAP = {
@@ -117,7 +119,7 @@ async function fetchAndPrepareTemplate(resolvedName: string, resolvedTemplate: s
   const spinnerItems: spinnerItem[] = [
     {
       startText: FETCH_TASK_START_STRING(resolvedTemplate),
-      functionToRun: () => fetchZipAndDecompress(TEMPLATE_TO_URL_MAP[resolvedTemplate][0]),
+      functionToRun: async () => await fetchTask(resolvedName, resolvedTemplate),
       endText: FETCH_TASK_END_STRING,
       stopMessage: FETCH_TASK_STOP_STRING,
       onCancel: () => {
@@ -126,13 +128,22 @@ async function fetchAndPrepareTemplate(resolvedName: string, resolvedTemplate: s
     },
     {
       startText: INSTALL_TASK_START_STRING,
-      functionToRun: () => prepDirectoryForDevelopment(resolvedName, TEMPLATE_TO_URL_MAP[resolvedTemplate][1]),
+      functionToRun: async () => await installTask(resolvedName),
       endText: INSTALL_TASK_END_STRING,
       stopMessage: INSTALL_TASK_STOP_STRING(resolvedName)
     }
   ]
 
   await runSpinnerGroup(spinnerItems, TASK_GROUP_EXIT_STRING);
+}
+
+async function fetchTask(resolvedName: string, resolvedTemplate: string): Promise<void> {
+  await fetchZipAndDecompress(TEMPLATE_TO_URL_MAP[resolvedTemplate][0]);
+  await fixDirectoryStructure(resolvedName, DECOMPRESSED_NAME_STRING, resolvedTemplate);
+}
+
+async function installTask(resolvedName: string): Promise<void> {
+  await prepDirectoryForDevelopment(resolvedName);
 }
 
 function finalOutput(resolvedName: string) {
@@ -202,13 +213,12 @@ function incrementToUnusedFilename(): string {
 }
 
 function fixDirectoryStructure(newName: string, decompressedName: string, template: string): void {
-  renameDirectory(`${decompressedName}/${template}`, `./${newName}`);
+  renameDirectory(`${decompressedName}/${TEMPLATE_TO_URL_MAP[template][1]}`, `./${newName}`);
   removeDirectory(decompressedName);
 }
 
-async function prepDirectoryForDevelopment(newName: string, template: string): Promise<void> {
+async function prepDirectoryForDevelopment(newName: string): Promise<void> {
   try {
-    fixDirectoryStructure(newName, "decompressedZip", template);
     if(newName != DEFAULT_NAME) {
       setNewName(newName);
     }

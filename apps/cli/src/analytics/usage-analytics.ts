@@ -3,9 +3,7 @@ import { getFlag } from '../flags';
 import * as crypto from 'crypto';
 import * as os from 'os';
 import * as fs from 'fs';
-import * as prompts from "@clack/prompts";
 import { doesFileExist } from '../util/fileUtil';
-import { PWABuilderData } from '../interfaces/pwabuilder-data';
 
 export async function initAnalytics(): Promise<boolean> {
   var dataCollectionPermission: boolean = false;

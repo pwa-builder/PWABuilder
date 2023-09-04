@@ -63,7 +63,7 @@ export function replaceProcessEventListeners(eventNames: string[], handler: Hand
   addProcessEventListeners(eventNames, handler);
 }
 
-function removeProcessEventListeners(eventNames: string[]) {
+export function removeProcessEventListeners(eventNames: string[]) {
   for(let eventName of eventNames) {
     process.removeAllListeners(eventName);
   }
