@@ -58,19 +58,19 @@ export async function timeFunction(functionToTime: HandlerSignature): Promise<nu
   return Math.round(endTime - startTime);
 }
 
-export function removeProcessEventListeners(eventNames: string[]) {
+export function replaceProcessEventListeners(eventNames: string[], handler: HandlerSignature) {
+  removeProcessEventListeners(eventNames);
+  addProcessEventListeners(eventNames, handler);
+}
+
+function removeProcessEventListeners(eventNames: string[]) {
   for(let eventName of eventNames) {
     process.removeAllListeners(eventName);
   }
 }
 
-export function addProcessEventListeners(eventNames: string[], handler: HandlerSignature ) {
+function addProcessEventListeners(eventNames: string[], handler: HandlerSignature ) {
   for(var eventName of eventNames) {
     process.on(eventName, handler);
   }
-}
-
-export function replaceProcessEventListeners(eventNames: string[], handler: HandlerSignature) {
-  removeProcessEventListeners(eventNames);
-  addProcessEventListeners(eventNames, handler);
 }

@@ -1,11 +1,21 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
-import { startDescriptions, startErrors } from "../strings/startStrings";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { StartEventData } from "../analytics/analytics-interfaces";
 
+const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
+const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite build process.';
+
 export const command: string = 'start [viteArgs]';
-export const desc: string = startDescriptions.commandDescription;
+export const desc: string = COMMAND_DESCRIPTION_STRING;
+
+const USAGE_STRING: string = '$0 start [viteArgs]';
+
+const EXEC_START_NO_ARGS_STRING: string = 'npm run dev-server';
+const EXEC_START_ARGS_STRING: (string) => string = (viteArgs: string) => { return 'npm run dev-task -- ' + viteArgs; }
+
+const INVALID_DIRECTORY_ERROR_STRING: string = `Cannot execute start because the current working directory is not a valid PWA Starter template. 
+Make sure you are executing the start command from a PWA Starter template directory.`;
 
 type StartOptions = {
   viteArgs: string | undefined;
@@ -13,8 +23,8 @@ type StartOptions = {
 
 export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
   yargs
-    .positional('viteArgs', {type: "string", demandOption: false, description: startDescriptions.viteArgsDescription})
-    .usage("$0 start [viteArgs]");
+    .positional('viteArgs', {type: "string", demandOption: false, description: VITEARGS_DESCRIPTION_STRING})
+    .usage(USAGE_STRING);
 
 export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
   const startTime: number = performance.now();
@@ -22,7 +32,7 @@ export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
   if(isDirectoryTemplate()) {
     handleStartCommand(viteArgs);
   } else {
-    outputError(startErrors.invalidDirectory);
+    outputError(INVALID_DIRECTORY_ERROR_STRING);
   }  
   const endTime: number = performance.now();
   trackStartEvent(endTime - startTime, viteArgs ? viteArgs : "");
@@ -30,9 +40,9 @@ export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
 
 async function handleStartCommand(viteArgs: string | undefined) {
   if(viteArgs) {
-    execSyncWrapper('npm run dev-task -- ' + viteArgs, false); 
+    execSyncWrapper(EXEC_START_ARGS_STRING(viteArgs), false); 
   } else {
-    execSyncWrapper('npm run dev-server', false);
+    execSyncWrapper(EXEC_START_NO_ARGS_STRING, false);
   }
 }
 

@@ -1,14 +1,12 @@
 import type { Arguments, CommandBuilder} from "yargs";
-import { createDescriptions, createErrors } from "../strings/createStrings";
-import { defaultDevOpsReplaceList, defaultContentReplaceList } from "../util/replaceLists";
-import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, fetchZip, decompressZip, removeAll } from "../util/fileUtil";
 import * as prompts from "@clack/prompts";
+import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
 import { promisifiedExecWrapper, timeFunction } from "../util/util";
 import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
 import { CreateEventData } from "../analytics/analytics-interfaces";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
 
-
+// Types for command arguments
 type CreateOptions = {
   name: string | undefined;
   template: string | undefined;
@@ -19,25 +17,81 @@ type ResolvedCreateOptions = {
   resolvedTemplate: string;
 }
 
-export const command: string = 'create [name]';
-export const desc: string = createDescriptions.commandDescription;
+// Yargs string constants
+const COMMAND_DESCRIPTION_STRING: string = 'Create a new progressive web app from a template.';
+const NAME_DESCRIPTION_STRING: string =  'The name of your new PWA project.';
+const TEMPLATE_DESCRIPTION_STRING: string =  'The template to start your project from.';
 
-const defaultName: string = "pwa-starter";
-const artifactNames: (string) => string[] = (name: string) => {
-  return [ 'fetchedZip.zip', 'decompressedZip', name ]
+export const command: string = 'create [name]';
+export const desc: string = COMMAND_DESCRIPTION_STRING;
+
+// Implementation constants
+const DEFAULT_NAME: string = 'pwa-starter';
+const DEFAULT_TEMPLATE: string = 'default';
+const DEFAULT_TITLE: string = 'PWA Starter';
+
+const ARTIFACT_NAMES: (string) => string[] = (name: string) => {
+  return [ FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING, name ]
 }
 
-const templateToRepoURLMap = {
+// Create process output strings
+const USAGE_STRING: string = '$0 create [name] [-t|--template]';
+
+const NAME_PROMPT_STRING: string = 'Enter a name for your new PWA: ';
+const NAME_PLACEHOLDER_STRING: string = 'example-pwa-name';
+
+const FETCH_TASK_START_STRING: (string) => string = ( template: string ) => { return `Fetching ${template} PWA Starter template` };
+const FETCH_TASK_END_STRING: string = 'Template fetched.';
+const FETCH_TASK_STOP_STRING: string = 'Template fetch cancelled.';
+
+const INSTALL_TASK_START_STRING: string = 'Installing dependencies';
+const INSTALL_TASK_END_STRING: string = 'Dependencies installed.';
+const INSTALL_TASK_STOP_STRING: (string) => string = ( name: string ) => { return `Dependency install cancelled. You can still access the code for your PWA at ${name}.`}
+
+const TASK_GROUP_EXIT_STRING: string = 'PWA create process exited.';
+
+const FINAL_OUTPUT_STRING: (string) => string = (name: string) => {
+  return `All set! To preview your PWA in the browser:
+  
+  1. Navigate to your project's directory with: "cd ${name}"
+  2. Start your PWA with: "pwa start"
+
+  Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`
+};
+
+// Error strings
+const INVALID_NAME_ERROR_STRING: string = 'Invalid name. A valid project name must not already exist and may only contain alphanumeric characters, dashes, and underscores.';
+const INVALID_TEMPLATE_ERROR_STRING: string = `ERROR: Invalid template provided. Cancelling create operation.
+    
+Valid template names:
+1. default - Original PWA Starter template
+2. basic - Simplified PWA Starter with fewer dependencies`;
+
+// Template to Repo Map
+const TEMPLATE_TO_URL_MAP = {
   'default': ["https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip", "pwa-starter-main"],
   'basic': ["https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip", "pwa-starter-basic-main"]
 };
 
+// Replace Lists. These specify which files need to be updated with the user specified project name.
+const DEFAULT_DEVOPS_REPLACE_LIST: string[] = [
+  "swa-cli.config.json",
+  "package-lock.json",
+  "package.json"
+];
+
+const DEFAULT_CONTENT_REPLACE_LIST: string[] = [
+  "index.html",
+  "public/manifest.json",
+  "src/components/header.ts"
+]
+
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
   yargs.options({
-      template: { type: 'string', alias: 't', description: createDescriptions.templateDescription}
+      template: { type: 'string', alias: 't', description: TEMPLATE_DESCRIPTION_STRING}
     })
-    .positional('name', {type: "string", demandOption: false, description: createDescriptions.nameDescription})
-    .usage("$0 create [name] [-t|--template]");
+    .positional('name', {type: "string", demandOption: false, description: NAME_DESCRIPTION_STRING})
+    .usage(USAGE_STRING);
     
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
@@ -62,53 +116,46 @@ async function fetchAndPrepareTemplate(resolvedName: string, resolvedTemplate: s
 
   const spinnerItems: spinnerItem[] = [
     {
-      startText: `Fetching ${resolvedTemplate} PWA Starter template`,
-      functionToRun: () => fetchZipAndDecompress(templateToRepoURLMap[resolvedTemplate][0]),
-      endText: `Template fetched.`,
-      stopMessage: `Template fetch cancelled.`,
+      startText: FETCH_TASK_START_STRING(resolvedTemplate),
+      functionToRun: () => fetchZipAndDecompress(TEMPLATE_TO_URL_MAP[resolvedTemplate][0]),
+      endText: FETCH_TASK_END_STRING,
+      stopMessage: FETCH_TASK_STOP_STRING,
       onCancel: () => {
-        removeAll(artifactNames(resolvedName));
+        removeAll(ARTIFACT_NAMES(resolvedName));
       }
     },
     {
-      startText: `Installing dependencies`,
-      functionToRun: () => prepDirectoryForDevelopment(resolvedName, templateToRepoURLMap[resolvedTemplate][1]),
-      endText: `Dependencies installed.`,
-      stopMessage: `Dependency install cancelled. You can still access the code for your PWA at ${resolvedName}.`
+      startText: INSTALL_TASK_START_STRING,
+      functionToRun: () => prepDirectoryForDevelopment(resolvedName, TEMPLATE_TO_URL_MAP[resolvedTemplate][1]),
+      endText: INSTALL_TASK_END_STRING,
+      stopMessage: INSTALL_TASK_STOP_STRING(resolvedName)
     }
   ]
 
-  await runSpinnerGroup(spinnerItems, "PWA create process exited.");
+  await runSpinnerGroup(spinnerItems, TASK_GROUP_EXIT_STRING);
 }
 
 function finalOutput(resolvedName: string) {
-  const finalOutputString: string = `All set! To preview your PWA in the browser:
-  
-    1. Navigate to your project's directory with: "cd ${resolvedName}"
-    2. Start your PWA with: "pwa start"
-
-  Make sure to visit docs.pwabuilder.com for further guidance on developing with the PWA Starter.`;
-  prompts.outro(finalOutputString);
+  prompts.outro(FINAL_OUTPUT_STRING(resolvedName));
 }
 
 async function resolveNameArgument(nameArg: string | undefined): Promise<string> {
-  let name: string = defaultName;
+  let name: string = DEFAULT_NAME;
 
   if(!nameArg || !validateName(nameArg)) {
     name = await prompts.text({
-      message: "Enter a name for your new PWA: ",
-      placeholder: "example-pwa-name",
+      message: NAME_PROMPT_STRING,
+      placeholder: NAME_PLACEHOLDER_STRING,
       initialValue: incrementToUnusedFilename(),
       validate(value) {
         if(!validateName(value)) {
-          return createErrors.invalidName;
+          return INVALID_NAME_ERROR_STRING;
         }
       },
     }) as string;
 
     if(prompts.isCancel(name)) {
-      prompts.cancel('Operation cancelled.');
-      process.exit(0);
+      promptsCancel();
     }
   } else {
     name = nameArg;
@@ -118,19 +165,19 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
 }
 
 async function resolveTemplateArgument(templateArg: string | undefined, templateProvided: boolean): Promise<string> {
-  let template: string = 'default';
+  let template: string = DEFAULT_TEMPLATE;
 
   if(templateArg && validateTemplate(templateArg)) {
     template = templateArg;
   } else if (templateProvided) {
-    emitInvalidTemplateError();
+    promptsCancel(INVALID_TEMPLATE_ERROR_STRING);
   }
 
   return template;
 
 }
 function validateTemplate(template: string): boolean {
-  return templateToRepoURLMap.hasOwnProperty(template);
+  return TEMPLATE_TO_URL_MAP.hasOwnProperty(template);
 }
 function validateName(name: string): boolean {
   const isValidNameRegex: RegExp = /^[a-zA-Z0-9_-]+$/;
@@ -138,17 +185,17 @@ function validateName(name: string): boolean {
 }
 
 function setNewName(newName: string) {
-  replaceInFileList(defaultDevOpsReplaceList, defaultName, newName, newName);
-  replaceInFileList(defaultContentReplaceList, "PWA Starter", newName, newName);
+  replaceInFileList(DEFAULT_DEVOPS_REPLACE_LIST, DEFAULT_NAME, newName, newName);
+  replaceInFileList(DEFAULT_CONTENT_REPLACE_LIST, DEFAULT_TITLE, newName, newName);
 }
 
 function incrementToUnusedFilename(): string {
-  let directoryName: string = defaultName;
+  let directoryName: string = DEFAULT_NAME;
   var iteration: number = 0;
 
   while(doesFileExist(directoryName)) {
     iteration = iteration + 1;
-    directoryName = `${defaultName}-${iteration}`;
+    directoryName = `${DEFAULT_NAME}-${iteration}`;
   }
 
   return directoryName;
@@ -162,7 +209,7 @@ function fixDirectoryStructure(newName: string, decompressedName: string, templa
 async function prepDirectoryForDevelopment(newName: string, template: string): Promise<void> {
   try {
     fixDirectoryStructure(newName, "decompressedZip", template);
-    if(newName != defaultName) {
+    if(newName != DEFAULT_NAME) {
       setNewName(newName);
     }
 
@@ -184,13 +231,4 @@ async function trackCreateEvent(template: string, timeMS: number, name: string):
 
     trackEvent("create", createEventData);
   }
-}
-
-function emitInvalidTemplateError() {
-  prompts.cancel(`ERROR: Invalid template provided. Cancelling create operation.
-    
-    Valid template names:
-    1. default - Original PWA Starter template
-    2. basic - Simplified PWA Starter with fewer dependencies`);
-    process.exit(0);
 }

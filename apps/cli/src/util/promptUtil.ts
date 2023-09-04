@@ -1,5 +1,5 @@
 import * as prompts from "@clack/prompts";
-import { HandlerSignature, removeProcessEventListeners, replaceProcessEventListeners } from "./util";
+import { HandlerSignature, replaceProcessEventListeners } from "./util";
 
 export interface spinnerItem {
   startText: string,
@@ -10,9 +10,7 @@ export interface spinnerItem {
 }
 
 const SPINNER_EVENT_NAME_LIST: string[] = ['SIGINT', 'SIGTERM', 'exit'];
-
 const DEFAULT_CANCEL_MESSAGE: string = `Command failed due to error. Run 'pwa' to see usage.`;
-
 
 export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage: string) {
   const promptSpinner = prompts.spinner();
