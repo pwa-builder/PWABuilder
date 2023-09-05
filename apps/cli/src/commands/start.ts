@@ -3,7 +3,7 @@ import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util"
 import { initAnalytics, trackEvent, StartEventData } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
-const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite build process.';
+const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite start process.';
 
 export const command: string = 'start [viteArgs]';
 export const desc: string = COMMAND_DESCRIPTION_STRING;

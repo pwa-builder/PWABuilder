@@ -31,7 +31,6 @@ export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage
   }
 
   removeProcessEventListeners(SPINNER_EVENT_NAME_LIST);
-
 }
 
 export function promptsCancel(message?: string): void {
