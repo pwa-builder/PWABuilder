@@ -33,7 +33,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
-import { SlDropdown } from '@shoelace-style/shoelace';
+import { SlDetails, SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 import { GetTokenCampaignStatus } from './qualification/app-token.helper';
@@ -42,6 +42,7 @@ import { env } from '../utils/environment';
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
+const enhancement_src = "/assets/new/enhancement.svg";
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -132,7 +133,9 @@ export class AppReport extends LitElement {
   @state() createdManifest: boolean = false;
   @state() manifestContext: ManifestContext | undefined;
 
-  @state() todoItems: any[] = [];
+  @state() allTodoItems: any[] = [];
+  @state() filteredTodoItems: any[] = [];
+  @state() filterList: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
 
   @state() tokensCampaign: boolean = false;
@@ -1113,6 +1116,60 @@ export class AppReport extends LitElement {
           row-gap: 1em;
           width: 66%;
         }
+
+        .icons-holder {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(2, 1fr);
+          place-content: center;
+          gap: 25px;
+        }
+
+        .icon-and-name {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .circle-icon {
+          height: 60px;
+          width: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          background-color: #F1F3FF;
+          border-radius: 50%;
+          position: relative;
+          border: 2px solid transparent
+        }
+
+        .circle-icon-img {
+          height: 22px;
+          width: auto;
+        }
+
+        .icon-and-name p {
+          color: var(--font-color);
+          font-size: 12px;
+          margin: 0;
+          text-align: center;
+        }
+
+        .circle-icon:hover {
+          cursor: pointer;
+          border: 2px solid #8976FF;
+        }
+
+        .valid-marker {
+          height: 13px;
+          width: 13px;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+        }
+
         .progressRingSkeleton::part(base) {
           height: 100px;
           width: 100px;
@@ -1782,7 +1839,7 @@ export class AppReport extends LitElement {
         findersResults.manifest = result.content;
         await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
         findersResults.manifestTodos = await this.testManifest();
-        this.todoItems.push(...findersResults.manifestTodos);
+        this.allTodoItems.push(...findersResults.manifestTodos);
         this.requestUpdate();
       }
     });
@@ -1791,7 +1848,7 @@ export class AppReport extends LitElement {
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
             findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content));
-            this.todoItems.push(...findersResults.workerTodos);
+            this.allTodoItems.push(...findersResults.workerTodos);
             this.requestUpdate();
           });
           findersResults.serviceWorker = result.content;
@@ -1803,19 +1860,23 @@ export class AppReport extends LitElement {
       this.reportAudit = await Report(url);
     } catch (e) {
       console.error(e);
-      this.todoItems.push(...await this.testSecurity(processSecurity()));
+      this.allTodoItems.push(...await this.testSecurity(processSecurity()));
       if (!findersResults.manifest?.raw) {
         await this.applyManifestContext(url, undefined, undefined);
-        this.todoItems.push(...await this.testManifest());
+        this.allTodoItems.push(...await this.testManifest());
       }
       if (!findersResults.serviceWorker?.raw) {
-        this.todoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}})));
+        this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}})));
       }
+
+      this.filteredTodoItems = this.allTodoItems;
+
       this.runningTests = false;
       this.requestUpdate();
       return;
     }
-
+    
+    this.filteredTodoItems = this.allTodoItems;
     console.log(this.reportAudit);
 
     // Check for previously successfull FindMani
@@ -1831,13 +1892,13 @@ export class AppReport extends LitElement {
     }
 
     // Reapply mani todos from FindMani
-    this.todoItems = [];
+    this.allTodoItems = [];
     if (findersResults.manifestTodos.length){
-      this.todoItems.push(...findersResults.manifestTodos)
+      this.allTodoItems.push(...findersResults.manifestTodos)
 
       // adding todo for token giveaway item if theres at least a manifest
       if(!this.createdManifest && this.tokensCampaign){
-        this.todoItems.push(
+        this.allTodoItems.push(
           {
             "card": "giveaway",
             "field": "giveaway",
@@ -1849,12 +1910,12 @@ export class AppReport extends LitElement {
       }
     }
     else {
-      this.todoItems.push(...await this.testManifest());
+      this.allTodoItems.push(...await this.testManifest());
     }
 
     // TODO: move installability score to different place
-    this.todoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
-    this.todoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
+    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
+    this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
 
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
 
@@ -1898,10 +1959,11 @@ export class AppReport extends LitElement {
             status = "required";
             this.manifestRequiredCounter++;
           } else if(test.category === "recommended"){
-            status = "recommended";
             this.manifestRecCounter++;
-          } else {
-            status = "optional";
+          }
+
+          if(status === "") {
+            status = test.category;
           }
           todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
         }
@@ -1913,7 +1975,7 @@ export class AppReport extends LitElement {
 
     // adding todo for token giveaway item if theres at least a manifest
     if(!this.createdManifest && this.tokensCampaign){
-      this.todoItems.push(
+      this.allTodoItems.push(
         {
           "card": "giveaway",
           "field": "giveaway",
@@ -2120,7 +2182,7 @@ export class AppReport extends LitElement {
 
 
     // reset todo lsit
-    this.todoItems = [];
+    this.allTodoItems = [];
 
     // reset missing lists
     this.requiredMissingFields = [];
@@ -2321,7 +2383,7 @@ export class AppReport extends LitElement {
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
     if(!this.hasItemBeenAdded(toAdd)) {
-      this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
+      this.allTodoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
       this.requestUpdate();
     }
   }
@@ -2329,7 +2391,7 @@ export class AppReport extends LitElement {
   // function to validate whether or not an retest item has already been added to the ToDo list
   hasItemBeenAdded(toAdd: string): boolean {
     var isItemPresent = false;
-    for(var toDoItem of this.todoItems) {
+    for(var toDoItem of this.allTodoItems) {
       if(toDoItem.field == toAdd) {
         isItemPresent = true;
         break;
@@ -2396,15 +2458,28 @@ export class AppReport extends LitElement {
   // -1 = a wins
   // 1 = b wins
   sortTodos(){
-    const rank: { [key: string]: number } = {
+    let rank: { [key: string]: number } = {
       "retest": 0,
       "required": 1,
-      "giveaway": 2,
+      "enhancement": 2,
       "highly recommended": 3,
       "recommended": 4,
       "optional": 5
     };
-    this.todoItems.sort((a, b) => {
+
+    // If the manifest is missing more than half of the recommended fields, show those first
+    if((this.manifestRecCounter / recommended_fields.length) > .5){
+      rank = {
+        "retest": 0,
+        "required": 1,
+        "highly recommended": 2,
+        "recommended": 3,
+        "enhancement": 4,
+        "optional": 5
+      };
+    }
+
+    this.filteredTodoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
         return -1;
       } else if (rank[a.status] > rank[b.status]) {
@@ -2415,7 +2490,7 @@ export class AppReport extends LitElement {
     }
     );
 
-    return this.todoItems;
+    return this.filteredTodoItems;
   }
 
   // Pages the action items
@@ -2439,14 +2514,14 @@ export class AppReport extends LitElement {
 
   // Moves to the next window in the action items list
   switchPage(up: boolean){
-    if(up && this.pageNumber * this.pageSize < this.todoItems.length){
+    if(up && this.pageNumber * this.pageSize < this.allTodoItems.length){
       this.pageNumber++;
     } else if(!up && this.pageNumber != 1){
       this.pageNumber--;
     }
 
     const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
-    const totalPages = Math.ceil(this.todoItems.length / this.pageSize) // Calculate total pages
+    const totalPages = Math.ceil(this.allTodoItems.length / this.pageSize) // Calculate total pages
     pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
 
     this.requestUpdate();
@@ -2456,7 +2531,7 @@ export class AppReport extends LitElement {
   getDots(){
     let dots: any[] = [];
 
-    let totalPages = Math.ceil(this.todoItems.length / this.pageSize);
+    let totalPages = Math.ceil(this.allTodoItems.length / this.pageSize);
 
     for(let i = 0; i < totalPages; i++){
       dots.push("dot");
@@ -2467,11 +2542,14 @@ export class AppReport extends LitElement {
   // Renders the indicators for each action item
   renderIndicators(){
     let yellow = 0;
+    let purple = 0;
     let red = 0;
 
-    this.todoItems.forEach((todo: any) => {
+    this.allTodoItems.forEach((todo: any) => {
       if(todo.status == "required"){
         red++;
+      } else if(todo.status == "enhancement"){
+        purple++;
       } else {
         yellow++;
       }
@@ -2480,12 +2558,41 @@ export class AppReport extends LitElement {
     if(yellow + red != 0){
       return html`
       <div id="indicators-holder">
-        ${red != 0 ? html`<div class="indicator"><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
-        ${yellow != 0 ? html`<div class="indicator"><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
+        ${red != 0 ? html`<div class="indicator" @click=${() => this.filterTodoItems("required")}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
+        ${yellow != 0 ? html`<div class="indicator" @click=${() => this.filterTodoItems("yellow")}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
+        ${purple != 0 ? html`<div class="indicator" @click=${() => this.filterTodoItems("enhancement")}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>` : html``}
       </div>`
     }
     return html``
 
+  }
+
+  // filter todos by severity
+  filterTodoItems(filter: string){
+    let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
+    todoDetail.show();
+    // if its in the list, remove it, else add it
+    // yellow means optional and recommended 
+    if(filter === "yellow"){
+      if(this.filterList.includes("optional")){
+        this.filterList = this.filterList.filter((x: string) => (x !== "optional") && (x !== "recommended"))
+      } else {
+        this.filterList.push("optional")
+        this.filterList.push("recommended")
+      }
+    } else if(this.filterList.includes(filter)){
+      this.filterList = this.filterList.filter((x: string) => x !== filter)
+    } else {
+      this.filterList.push(filter)
+    }
+    // if filter list is empty, show everything
+    if(this.filterList.length === 0 ){
+      this.filteredTodoItems = this.allTodoItems;
+      return;
+    }
+
+
+    this.filteredTodoItems = this.allTodoItems.filter((x: any) => this.filterList.includes(x.status));
   }
 
 //truncate app card discription
@@ -2674,13 +2781,13 @@ export class AppReport extends LitElement {
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
                   <p>Action Items</p>
-                  ${this.todoItems.length > 0 ? this.renderIndicators() : html``}
+                  ${this.allTodoItems.length > 0 ? this.renderIndicators() : html``}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
 
               </div>
               <div class="todo-items-holder">
-                ${this.todoItems.length > 0 ? this.paginate().map((todo: any) =>
+                ${this.filteredTodoItems.length > 0 ? this.paginate().map((todo: any) =>
                     html`
                       <todo-item
                         .status=${todo.status}
@@ -2696,7 +2803,7 @@ export class AppReport extends LitElement {
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
-            ${(this.todoItems.length > this.pageSize) ?
+            ${(this.filteredTodoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
                 <button 
@@ -3022,8 +3129,8 @@ export class AppReport extends LitElement {
               <div id="sec-header" class="flex-col">
                 <div id="sec-top">
                   <div id="sec-text" class="flex-col">
-                    <p class="card-header">Security</p>
-                    ${this.secDataLoading ?
+                    <p class="card-header">App Capabilities</p>
+                    ${this.manifestDataLoading ?
                       html`
                         <div class="flex-col gap">
                           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
@@ -3037,61 +3144,28 @@ export class AppReport extends LitElement {
                       `
                         }
                   </div>
-                  ${this.secDataLoading ?
+                  ${this.manifestDataLoading ?
                     html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring
-                    id="secProgressRing"
-                    class=${classMap(this.decideColor("sec"))}
-                    value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
+                    html`<sl-progress-ring id="secProgressRing" value="${100}">+1</sl-progress-ring>
                     `
                   }
 
                 </div>
-                <div id="sec-actions" class="flex-col">
-                  ${this.secDataLoading ?
-                    html`
-                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                    ` :
-                    html`
-                      <a
-                        class="arrow_anchor"
-                        href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04"
-                        rel="noopener"
-                        target="_blank"
-                        @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-                        <p class="arrow_link">Security Documentation</p>
-                        <img
-                          src="/assets/new/arrow.svg"
-                          alt="arrow"
-                        />
-                      </a>
-                    `
-                  }
+                <div class="icons-holder">
+                ${this.validationResults.map((result: Validation) => result.category === "enhancement" ? 
+                  html`
+                    <div class="icon-and-name">
+                      <div class="circle-icon">
+                        <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + 'icon'}" />
+                        ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                      </div>
+                      <p>${result.member}</p>
+                  </div>
+                  ` 
+                  : null )
+                }
                 </div>
               </div>
-              <sl-details
-                id="sec-details"
-                class="details"
-                ?disabled=${this.runningTests || this.secDataLoading}
-                @sl-show=${(e: Event) => this.rotateNinety("sec-details", e)}
-                @sl-hide=${(e: Event) => this.rotateZero("sec-details", e)}
-                >
-              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sec-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
-                <div class="detail-grid">
-                  <div class="detail-list">
-                    <p class="detail-list-header">Required</p>
-                    ${this.securityResults.map((result: TestResult) => result.category === "required" ?
-                      html`
-                        <div class="test-result" data-field=${result.infoString}>
-                          ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
-                          <p>${result.infoString}</p>
-                        </div>
-                      ` :
-                      html``)}
-                  </div>
-                </div>
-              </sl-details>
             </div>
           </div>
         </div>

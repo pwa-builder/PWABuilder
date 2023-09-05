@@ -151,7 +151,7 @@ export class TodoItem extends LitElement {
       this.giveaway = true;
     }
 
-    if(this.status === "retest" || this.field.startsWith("Open")){
+    if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field]){
       this.clickable = true;
     } else {
       this.clickable = false;
@@ -178,18 +178,6 @@ export class TodoItem extends LitElement {
     this.dispatchEvent(event);
   }
 
-  // allows for the retest items to be clicked
-  decideClickable(){
-    let decision;
-    if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field]){
-      decision = true;
-    } // else if(sw_fields[field]){}
-    else {
-      decision = false;
-    }
-    return {iwrapper: true, clickable: decision}
-  }
-
   triggerHoverState(e: CustomEvent){
     let element = this.shadowRoot!.querySelector(".iwrapper");
     if(e.detail.entering){
@@ -209,6 +197,9 @@ export class TodoItem extends LitElement {
     
       case "retest":
         return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`
+
+      case "enhancement":
+        return html`<img src=${enhancement_src} alt="yield result icon"/>`
 
       case "giveaway":
         return html`<img src=${giveaway_src}  alt="giveaway site icon"/>`
@@ -260,5 +251,6 @@ export class TodoItem extends LitElement {
 
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
+const enhancement_src = "/assets/new/enhancement.svg";
 const retest_src = "/assets/new/retest-black.svg";
 const giveaway_src = "/assets/new/msft_store_giveaway.svg";
