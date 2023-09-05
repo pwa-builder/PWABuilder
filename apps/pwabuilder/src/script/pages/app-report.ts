@@ -17,6 +17,8 @@ import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
 import '../components/share-card';
+import '../components/manifest-info-card'
+import '../components/arrow-link'
 
 import {
   Icon,
@@ -120,6 +122,8 @@ export class AppReport extends LitElement {
   @state() secRecCounter: number = 0;
   @state() secDataLoading: boolean = true;
   @state() secMessage: string = "";
+
+  @state() enhancementTotalScore: number = 0;
 
   @state() requiredMissingFields: any[] = [];
   @state() recMissingFields: any[] = [];
@@ -257,6 +261,10 @@ export class AppReport extends LitElement {
 
         .green {
           --indicator-color: var(--success-color);
+        }
+
+        .counterRing {
+          --indicator-color: #8976FF;
         }
 
         .macro_error {
@@ -1100,7 +1108,6 @@ export class AppReport extends LitElement {
           justify-content: space-between;
           row-gap: .5em;
           padding: 1em;
-          border-bottom: 1px solid #c4c4c4;
           min-height: 318px;
         }
         #sec-top {
@@ -1844,6 +1851,8 @@ export class AppReport extends LitElement {
       }
     });
 
+    this.filteredTodoItems = this.allTodoItems;
+
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
@@ -1855,6 +1864,8 @@ export class AppReport extends LitElement {
         }
       }
     );
+
+    this.filteredTodoItems = this.allTodoItems;
 
     try {
       this.reportAudit = await Report(url);
@@ -1952,6 +1963,9 @@ export class AppReport extends LitElement {
 
       this.validationResults.forEach((test: Validation) => {
         if(test.valid){
+          if(test.category === "enhancement"){
+            this.enhancementTotalScore++;
+          }
           this.manifestValidCounter++;
         } else {
           let status ="";
@@ -1960,8 +1974,7 @@ export class AppReport extends LitElement {
             this.manifestRequiredCounter++;
           } else if(test.category === "recommended"){
             this.manifestRecCounter++;
-          }
-
+          } 
           if(status === "") {
             status = test.category;
           }
@@ -2399,6 +2412,13 @@ export class AppReport extends LitElement {
     }
     return isItemPresent;
   }
+  
+  checkClosed(e: Event){
+    console.log("asjkdklasd", this.filterList);
+    if(this.filterList.length > 0){
+      (this.shadowRoot!.getElementById("todo-detail") as unknown as SlDetails).show();
+    }
+  }
 
   // Rotates the icon on each details drop down to 0 degrees
   rotateZero(card: string, e?: Event){
@@ -2558,9 +2578,9 @@ export class AppReport extends LitElement {
     if(yellow + red != 0){
       return html`
       <div id="indicators-holder">
-        ${red != 0 ? html`<div class="indicator" @click=${() => this.filterTodoItems("required")}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
-        ${yellow != 0 ? html`<div class="indicator" @click=${() => this.filterTodoItems("yellow")}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
-        ${purple != 0 ? html`<div class="indicator" @click=${() => this.filterTodoItems("enhancement")}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>` : html``}
+        ${red != 0 ? html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
+        ${yellow != 0 ? html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
+        ${purple != 0 ? html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>` : html``}
       </div>`
     }
     return html``
@@ -2568,7 +2588,8 @@ export class AppReport extends LitElement {
   }
 
   // filter todos by severity
-  filterTodoItems(filter: string){
+  filterTodoItems(filter: string, e: Event){
+    e.stopPropagation();
     let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
     todoDetail.show();
     // if its in the list, remove it, else add it
@@ -3139,14 +3160,14 @@ export class AppReport extends LitElement {
                       ` :
                       html`
                         <p class="card-desc">
-                          ${this.decideMessage(this.secValidCounter, this.secTotalScore, "sec")}
+                          PWABuilder has analysesd your PWA and has identified some app capabilities that could enhance your PWA
                         </p>
                       `
                         }
                   </div>
                   ${this.manifestDataLoading ?
                     html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring id="secProgressRing" value="${100}">+1</sl-progress-ring>
+                    html`<sl-progress-ring class="counterRing" value="${100}">+${this.enhancementTotalScore}</sl-progress-ring>
                     `
                   }
 
@@ -3154,17 +3175,20 @@ export class AppReport extends LitElement {
                 <div class="icons-holder">
                 ${this.validationResults.map((result: Validation) => result.category === "enhancement" ? 
                   html`
-                    <div class="icon-and-name">
-                      <div class="circle-icon">
-                        <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + 'icon'}" />
-                        ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
-                      </div>
+                    <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                      <manifest-info-card .field=${result.member} .placement="${"right"}">
+                        <div class="circle-icon" slot="trigger">
+                          <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + 'icon'}" />
+                          ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                        </div>
+                      </manifest-info-card>
                       <p>${result.member}</p>
                   </div>
                   ` 
                   : null )
                 }
                 </div>
+                <arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>
               </div>
             </div>
           </div>

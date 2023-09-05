@@ -10,6 +10,7 @@ import { SlDropdown } from '@shoelace-style/shoelace';
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
+  @property({ type: String }) placement: "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "left";
   @state() currentlyHovering: boolean = false;
 
   static get styles() {
@@ -198,13 +199,11 @@ export class ManifestInfoCard extends LitElement {
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
       <sl-dropdown 
         distance="10" 
-        placement="left" 
+        placement="${this.placement}" 
         class="tooltip"
         @sl-show=${() => this.trackTooltipOpened()}
         @sl-hide=${() => this.handleHover(false)}>
-        <button slot="trigger" type="button" class="right" class="nav_link nav_button">
-          <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
-        </button>
+        <slot name="trigger" slot="trigger"></slot>
         <div class="info-box">
           ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
           ${manifest_fields[this.field].image ? 

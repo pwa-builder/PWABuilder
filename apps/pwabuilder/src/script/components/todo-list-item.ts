@@ -119,6 +119,17 @@ export class TodoItem extends LitElement {
         width: 16px;
       }
 
+      .right {
+        background-color: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .right:hover {
+        cursor: pointer;
+      }
 
       /* < 480px */
       ${smallBreakPoint(css`
@@ -241,7 +252,11 @@ export class TodoItem extends LitElement {
 
         ${manifest_fields[this.field] ? 
           html`
-            <manifest-info-card .field=${this.field} @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}></manifest-info-card>
+            <manifest-info-card .field=${this.field} .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
+              <button slot="trigger" type="button" class="right">
+                <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
+              </button>
+            </manifest-info-card>
           ` 
           : html``}
       </div>
