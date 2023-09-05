@@ -1,7 +1,6 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
-import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
-import { StartEventData } from "../analytics/analytics-interfaces";
+import { initAnalytics, trackEvent, StartEventData } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite build process.';

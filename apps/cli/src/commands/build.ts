@@ -1,7 +1,6 @@
 import type { CommandBuilder } from "yargs";
 import { isDirectoryTemplate, outputError, execSyncWrapper } from "../util/util";
-import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
-import { BuildEventData } from "../analytics/analytics-interfaces";
+import { initAnalytics, trackEvent, BuildEventData } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Build the PWA Starter using Vite.';
 

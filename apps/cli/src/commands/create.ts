@@ -2,8 +2,7 @@ import type { Arguments, CommandBuilder} from "yargs";
 import * as prompts from "@clack/prompts";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
 import { promisifiedExecWrapper, timeFunction } from "../util/util";
-import { initAnalytics, trackEvent } from "../analytics/usage-analytics";
-import { CreateEventData } from "../analytics/analytics-interfaces";
+import { initAnalytics, trackEvent, CreateEventData } from "../analytics/usage-analytics";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
 import { formatCodeSnippet, formatEmphasis, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 
@@ -35,7 +34,7 @@ const ARTIFACT_NAMES: (string) => string[] = (name: string) => {
   return [ FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING, name ]
 }
 
-// Create process output strings
+// Output strings
 const USAGE_STRING: string = '$0 create [name] [-t|--template]';
 
 const NAME_PROMPT_STRING: string = 'Enter a name for your new PWA: ';

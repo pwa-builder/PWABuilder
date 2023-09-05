@@ -5,6 +5,32 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
 
+export interface CreateEventData {
+  template: string,
+  name: string,
+  timeMS: number
+}
+
+export interface StartEventData {
+  options: string,
+  timeMS: number
+}
+
+export interface BuildEventData {
+  timeMS: number
+}
+
+export interface ErrorEventData {
+  command: string,
+  errorOutput: string
+}
+
+export interface PWABuilderData {
+  user: {
+    id: string
+  }
+}
+
 export async function initAnalytics(): Promise<boolean> {
   var dataCollectionPermission: boolean = false;
   try {
@@ -17,6 +43,8 @@ export async function initAnalytics(): Promise<boolean> {
       .setAutoCollectConsole(false)
       .setUseDiskRetryCaching(false)
       .start();
+
+      addUserIDtoTelemetry(getUserID());
     } 
     
   }
@@ -63,13 +91,15 @@ export function trackException(err: Error) {
   }
 }
 
-// Functions for if we do user correlation later on.
-
-/* async function createUserID(): Promise<void> {
+function getUserID(): string {
   const pwabuilderDataFilePath: string = os.homedir() + "/.pwabuilder";
-  if(!doesFileExist(pwabuilderDataFilePath)) {
-    const dataPermission: boolean = await promptForPermission();
-    const userId = dataPermission ? crypto.randomUUID() : undefined;
+  var userId: string = "";
+
+  if(doesFileExist(pwabuilderDataFilePath)) {
+    const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
+    userId = userData.user.id;
+  } else {
+    userId = crypto.randomUUID();
     const newUserData: PWABuilderData = {
       user: {
         id: userId
@@ -77,14 +107,13 @@ export function trackException(err: Error) {
     }
     fs.writeFileSync(pwabuilderDataFilePath, JSON.stringify(newUserData), {encoding: 'utf-8'});
   }
-}
-*/
 
-/*
+  return userId;
+}
+
 function addUserIDtoTelemetry(id: string): void {
   defaultClient.addTelemetryProcessor((envelope, context) => {
     envelope["tags"]['ai.user.id'] = id;
     return true;
   });
 }
-*/
