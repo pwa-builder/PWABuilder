@@ -90,7 +90,8 @@ const DEFAULT_CONTENT_REPLACE_LIST: string[] = [
 ]
 
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
-  yargs.options({
+  yargs
+    .options({
       template: { type: 'string', alias: 't', description: TEMPLATE_DESCRIPTION_STRING}
     })
     .positional('name', {type: "string", demandOption: false, description: NAME_DESCRIPTION_STRING})

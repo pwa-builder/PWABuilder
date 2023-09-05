@@ -21,7 +21,9 @@ type BuildOptions = {
 
 export const builder: CommandBuilder = (yargs) =>
   yargs
-    .positional('viteArgs', {type: "string", demandOption: false, description: VITEARGS_DESCRIPTION_STRING})
+    .options({
+      viteArgs: { type: 'string', description: VITEARGS_DESCRIPTION_STRING}
+    })
     .usage(USAGE_STRING);
 
 export const handler = async (argv: Arguments<BuildOptions>): Promise<void> => {

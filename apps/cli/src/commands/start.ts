@@ -5,7 +5,7 @@ import { initAnalytics, trackEvent, StartEventData } from "../analytics/usage-an
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite start process.';
 
-export const command: string = 'start [viteArgs]';
+export const command: string = 'start';
 export const desc: string = COMMAND_DESCRIPTION_STRING;
 
 const USAGE_STRING: string = '$0 start [viteArgs]';
@@ -22,7 +22,9 @@ type StartOptions = {
 
 export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
   yargs
-    .positional('viteArgs', {type: "string", demandOption: false, description: VITEARGS_DESCRIPTION_STRING})
+    .options({
+      viteArgs: { type: 'string', description: VITEARGS_DESCRIPTION_STRING}
+    })
     .usage(USAGE_STRING);
 
 export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
