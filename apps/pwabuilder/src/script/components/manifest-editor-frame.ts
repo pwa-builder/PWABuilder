@@ -13,6 +13,7 @@ import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
+import { FileSystemHandle, FileWithHandle } from 'browser-fs-access';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
@@ -24,6 +25,12 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
+  
+  @state() supportsFileSystem: boolean = false;
+  @state() editingLocally: boolean = false;
+  @state() localManifestHandle: FileSystemHandle | undefined;
+
+  @state() updatedManifest = {};
 
   static get styles() {
     return [
@@ -224,6 +231,22 @@ export class ManifestEditorFrame extends LitElement {
     this.manifest = getManifestContext().manifest;
     this.manifestURL = getManifestContext().manifestUrl;
     this.baseURL = sessionStorage.getItem("current_url")!;
+
+    this.supportsFileSystem = "showOpenFilePicker" in window;
+  }
+
+  async editLocalManifest() {
+    if (this.supportsFileSystem) {
+      // @ts-ignore
+      const fileHandle = await window.showOpenFilePicker();
+      
+      const file = await fileHandle[0].getFile();
+      const manifest = await file.text();
+
+      this.manifest = JSON.parse(manifest);
+      this.editingLocally = true;
+      this.localManifestHandle = fileHandle[0];
+    }
   }
 
   // downloads manifest and tells the site they need to retest to see new manifest changes
@@ -259,13 +282,25 @@ export class ManifestEditorFrame extends LitElement {
     recordPWABuilderProcessStep(`manifest_editor.download_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  handleFieldChange(e: CustomEvent){
+  async handleFieldChange(e: CustomEvent){
     let readyForRetest = new CustomEvent('readyForRetest', {
       bubbles: true,
       composed: true
     });
     this.dispatchEvent(readyForRetest);
     recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
+  }
+
+  async handleManifestIsUpdated(updatedManifest: Manifest) {
+    if (this.localManifestHandle && updatedManifest) {
+
+      this.updatedManifest = updatedManifest;
+      // @ts-ignore
+      console.log("writing to file", this.updatedManifest)
+      const writable = await this.localManifestHandle.createWritable();
+      await writable.write(JSON.stringify(this.updatedManifest));
+      await writable.close();
+    }
   }
 
   handleManifestCopied(){
@@ -293,6 +328,9 @@ export class ManifestEditorFrame extends LitElement {
               <h1>${this.isGenerated ? "Generate manifest" : "Edit your manifest"}</h1>
               <p>Update your app name and description, add or update your icons, enable platform capabilities and more by editing the fields below. Once you are done with your changes, download or copy the generated manifest and/or icons and upload them to your site. Once done, re-test the url to make sure your PWA is ready for stores!</p>
             </div>
+
+            <sl-button @click=${() => this.editLocalManifest()} id="edit-local-button" size="small">Edit local manifest</sl-button>
+
             <pwa-manifest-editor 
               .initialManifest=${this.manifest} 
               .manifestURL=${this.manifestURL} 
@@ -306,6 +344,7 @@ export class ManifestEditorFrame extends LitElement {
               @generateScreenshotsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "screenshots")}
               @uploadIcons=${() => this.handleUploadIcon()}
               @generateIconsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "icons")}
+              @manifestUpdated=${(e: CustomEvent) => this.handleManifestIsUpdated(e.detail.manifest)}
             ></pwa-manifest-editor>
             
           </div>
