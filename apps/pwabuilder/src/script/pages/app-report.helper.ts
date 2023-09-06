@@ -32,19 +32,22 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 
 	const swTestResult = [
 	  {
-		result: serviceWorker?.score || false,
-		infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
-		category: 'highly recommended',
+			result: serviceWorker?.score || false,
+			infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
+			category: 'highly recommended',
+			member: "has_service_worker"
 	  },
 	  {
-		result: swFeatures?.detectedPeriodicBackgroundSync || false,
-		infoString: swFeatures?.detectedPeriodicBackgroundSync ? 'Uses Periodic Sync for a rich offline experience' : 'Does not use Periodic Sync for a rich offline experience',
-		category: 'optional',
+			result: swFeatures?.detectedPeriodicBackgroundSync || false,
+			infoString: swFeatures?.detectedPeriodicBackgroundSync ? 'Uses Periodic Sync for a rich offline experience' : 'Does not use Periodic Sync for a rich offline experience',
+			category: 'optional',
+			member: "background_sync"
 	  },
 	  {
-		result: swFeatures?.detectedBackgroundSync || false,
-		infoString: swFeatures?.detectedBackgroundSync ? 'Uses Background Sync for a rich offline experience' : 'Does not use Background Sync for a rich offline experience',
-		category: 'optional',
+			result: swFeatures?.detectedBackgroundSync || false,
+			infoString: swFeatures?.detectedBackgroundSync ? 'Uses Background Sync for a rich offline experience' : 'Does not use Background Sync for a rich offline experience',
+			category: 'optional',
+			member: "periodic_sync"
 	  },
 	];
 	// TODO: move installability from here

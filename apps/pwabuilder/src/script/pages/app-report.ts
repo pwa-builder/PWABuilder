@@ -46,6 +46,10 @@ const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const enhancement_src = "/assets/new/enhancement.svg";
 
+const yield_white_src = "/assets/new/yield_white.svg";
+const stop_white_src = "/assets/new/stop_white.svg";
+const enhancement_white_src = "/assets/new/enhancement_white.svg";
+
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
@@ -115,13 +119,10 @@ export class AppReport extends LitElement {
   @state() swDataLoading: boolean = true;
   @state() swMessage: string = "";
 
-  @state() securityResults: any[] = [];
-  @state() secTotalScore: number = 0;
-  @state() secValidCounter: number = 0;
-  @state() secRequiredCounter: number = 0;
-  @state() secRecCounter: number = 0;
+  
   @state() secDataLoading: boolean = true;
-  @state() secMessage: string = "";
+  @state() showSecurityBanner: boolean = false;
+  @state() securityIssues: string[] = [];
 
   @state() enhancementTotalScore: number = 0;
 
@@ -559,6 +560,56 @@ export class AppReport extends LitElement {
           outline: 2px solid black;
         }
 
+        .feedback-holder {
+          display: flex;
+          gap: .5em;
+          padding: .5em;
+          border-radius: 3px;
+          width: 100%;
+          word-break: break-word;
+        }
+
+        .type-error {
+          align-items: flex-start;
+          background-color: #FAEDF1;
+          border-left: 4px solid var(--error-color);
+        }
+
+        .feedback-holder p {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        .error-title {
+          font-weight: bold;
+        }
+
+        .error-actions {
+          display: flex;
+          align-items: center;
+          gap: 1em;
+          margin-top: .25em;
+        }
+
+        .error-actions > * {
+          all: unset;
+          color: var(--font-color);
+          font-weight: bold;
+          font-size: 14px;
+          border-bottom: 1px solid transparent;
+        }
+
+        .error-actions > *:hover {
+          cursor: pointer;
+          border-bottom: 1px solid var(--font-color);
+        }
+
+        .error-desc {
+          max-height: 175px;
+          overflow-y: auto;
+          line-height: normal;
+        }
+
         #share-card {
           width: 100%;
           background: #ffffff;
@@ -861,6 +912,14 @@ export class AppReport extends LitElement {
           line-height: 20px;
           margin: 0;
           font-size: 15px;
+        }
+
+        .indicator.selected {
+          background-color: var(--primary-color)
+        }
+
+        .indicator.selected p {
+          color: #ffffff;
         }
 
         /* Manifest Card */
@@ -2081,40 +2140,22 @@ export class AppReport extends LitElement {
 
   // Tests the Security and populates the Security card detail dropdown
   async testSecurity(securityAudit: TestResult[]) {
+
     //Call security tests
     let todos: unknown[] = [];
 
     const securityTests = securityAudit;
-    this.securityResults = securityTests;
 
-    this.secRequiredCounter = 0;
-    this.securityResults.forEach((result: any) => {
-      if(result.result){
-        this.secValidCounter++;
-      } else {
-        let status ="";
-        if(result.category === "required"){
-          status = result.category;
-          this.secRequiredCounter++;
-        } else if(result.category === "recommended"){
-          status = result.category;
-          this.manifestRecCounter++;
-        } else {
-          status = result.category;
-        }
-
-        todos.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
+    securityTests.forEach((result: any) => {
+      if(!result.result){
+        this.showSecurityBanner = true;
+        this.securityIssues.push(result.infoString);
       }
     })
 
-    if(this.secRequiredCounter > 0){
-      this.canPackageList[2] = false;
-    } else {
-      this.canPackageList[2] = true;
-    }
-
-    this.secTotalScore = this.securityResults.length;
-
+    this.canPackageList[2] = !this.showConfirmationModal;
+    
+    
     this.secDataLoading = false;
 
     //save security tests in session storage
@@ -2189,10 +2230,6 @@ export class AppReport extends LitElement {
     this.swValidCounter = 0;
     this.swTotalScore = 0;
     this.swRequiredCounter = 0;
-    this.secValidCounter = 0;
-    this.secTotalScore = 0;
-    this.secRequiredCounter = 0;
-
 
     // reset todo lsit
     this.allTodoItems = [];
@@ -2213,6 +2250,8 @@ export class AppReport extends LitElement {
 
     // hide the detail lists
     let details = this.shadowRoot!.querySelectorAll('sl-details');
+
+    this.showConfirmationModal = false;
 
     details.forEach((detail: any) => {
       if(detail.id != "todo-detail"){
@@ -2304,17 +2343,13 @@ export class AppReport extends LitElement {
       instantRed = this.manifestRequiredCounter > 0;
     } else if(card === "sw"){
       instantRed = this.swRequiredCounter > 0;
-    } else {
-      instantRed = this.secRequiredCounter > 0;
-    }
+    } 
 
     let instantYellow = false;
     if(card === "manifest"){
       instantYellow = this.manifestRecCounter > 0;
     } else if(card === "sw"){
       instantYellow = this.swRecCounter > 0;
-    } else {
-      instantYellow = this.secRecCounter > 0;
     }
 
     if(instantRed){
@@ -2344,10 +2379,7 @@ export class AppReport extends LitElement {
     } else if(card === "sw"){
       index = 1;
       instantRed = this.swRequiredCounter > 0;
-    } else {
-      index = 2;
-      instantRed = this.secRequiredCounter > 0;
-    }
+    } 
 
     let ratio = parseFloat(JSON.stringify(valid)) / total;
 
@@ -2411,13 +2443,6 @@ export class AppReport extends LitElement {
       }
     }
     return isItemPresent;
-  }
-  
-  checkClosed(e: Event){
-    console.log("asjkdklasd", this.filterList);
-    if(this.filterList.length > 0){
-      (this.shadowRoot!.getElementById("todo-detail") as unknown as SlDetails).show();
-    }
   }
 
   // Rotates the icon on each details drop down to 0 degrees
@@ -2534,14 +2559,14 @@ export class AppReport extends LitElement {
 
   // Moves to the next window in the action items list
   switchPage(up: boolean){
-    if(up && this.pageNumber * this.pageSize < this.allTodoItems.length){
+    if(up && this.pageNumber * this.pageSize < this.filteredTodoItems.length){
       this.pageNumber++;
     } else if(!up && this.pageNumber != 1){
       this.pageNumber--;
     }
 
     const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
-    const totalPages = Math.ceil(this.allTodoItems.length / this.pageSize) // Calculate total pages
+    const totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize) // Calculate total pages
     pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
 
     this.requestUpdate();
@@ -2551,7 +2576,7 @@ export class AppReport extends LitElement {
   getDots(){
     let dots: any[] = [];
 
-    let totalPages = Math.ceil(this.allTodoItems.length / this.pageSize);
+    let totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize);
 
     for(let i = 0; i < totalPages; i++){
       dots.push("dot");
@@ -2575,21 +2600,37 @@ export class AppReport extends LitElement {
       }
     })
 
-    if(yellow + red != 0){
+    if(yellow + purple + red != 0){
       return html`
       <div id="indicators-holder">
-        ${red != 0 ? html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
-        ${yellow != 0 ? html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
-        ${purple != 0 ? html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>` : html``}
+        ${red != 0 ? 
+          this.filterList.includes("required") ?
+            html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></div>` :
+            html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>`
+          : null 
+        }
+        ${yellow != 0 ? 
+          this.filterList.includes("recommended") || this.filterList.includes("optional") ?
+            html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></div>` :
+            html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` 
+          : null
+        }
+        ${purple != 0 ? 
+          this.filterList.includes("enhancement") ?
+          html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></div>` :
+          html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>` 
+            : null
+          }
       </div>`
     }
-    return html``
+    return null;
 
   }
 
   // filter todos by severity
   filterTodoItems(filter: string, e: Event){
     e.stopPropagation();
+    this.pageNumber = 1;
     let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
     todoDetail.show();
     // if its in the list, remove it, else add it
@@ -2791,6 +2832,22 @@ export class AppReport extends LitElement {
               </div>
             </div>
           </div>
+
+          ${this.showSecurityBanner ? 
+            html`
+              <div class="feedback-holder type-error">
+                <img src="/assets/new/stop.svg" alt="invalid result icon" />
+                <div class="error-info">
+                  <p class="error-title">You do not have a secure HTTPS server</p>
+                  <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+                  <div class="error-actions">
+                    <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                  </div>
+                </div>
+              </div>
+            ` :
+            null
+          }
 
           <div id="todo">
             <sl-details
@@ -3215,7 +3272,7 @@ export class AppReport extends LitElement {
       <share-card
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
         .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
-        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
+        .securityData=${`${1}/${1}/${this.getRingColor("sec")}/Security`}
         .siteName=${this.appCard.siteName}
       > </share-card>
 
