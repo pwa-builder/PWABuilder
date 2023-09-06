@@ -1199,20 +1199,18 @@ export class AppReport extends LitElement {
         }
 
         .circle-icon {
-          height: 60px;
-          width: 60px;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
-          background-color: #F1F3FF;
           border-radius: 50%;
           position: relative;
           border: 2px solid transparent
         }
 
         .circle-icon-img {
-          height: 22px;
+          height: 60px;
+          width: 60px;
           width: auto;
         }
 
@@ -1986,7 +1984,7 @@ export class AppReport extends LitElement {
     // TODO: move installability score to different place
     this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
     this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
-
+    this.filteredTodoItems = this.allTodoItems;
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
 
     this.runningTests = false;
@@ -2037,7 +2035,13 @@ export class AppReport extends LitElement {
           if(status === "") {
             status = test.category;
           }
-          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+          if(status === "enhancement"){
+            // fetch special display string
+            let specialString = test.errorString;
+            todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": specialString, "status": status});
+          } else {
+            todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+          }
         }
       });
     } else {
@@ -2149,7 +2153,7 @@ export class AppReport extends LitElement {
     securityTests.forEach((result: any) => {
       if(!result.result){
         this.showSecurityBanner = true;
-        this.securityIssues.push(result.infoString);
+        todos.push({"card": "security", "field": result.member, "fix": result.infoString, "status": "required"});
       }
     })
 
@@ -2506,10 +2510,11 @@ export class AppReport extends LitElement {
     let rank: { [key: string]: number } = {
       "retest": 0,
       "required": 1,
-      "enhancement": 2,
-      "highly recommended": 3,
-      "recommended": 4,
-      "optional": 5
+      "giveaway": 2,
+      "enhancement": 3,
+      "highly recommended": 4,
+      "recommended": 5,
+      "optional": 6
     };
 
     // If the manifest is missing more than half of the recommended fields, show those first
@@ -2517,10 +2522,11 @@ export class AppReport extends LitElement {
       rank = {
         "retest": 0,
         "required": 1,
-        "highly recommended": 2,
-        "recommended": 3,
-        "enhancement": 4,
-        "optional": 5
+        "giveaway": 2,
+        "highly recommended": 3,
+        "recommended": 4,
+        "enhancement": 5,
+        "optional": 6
       };
     }
 
@@ -2595,7 +2601,7 @@ export class AppReport extends LitElement {
         red++;
       } else if(todo.status == "enhancement"){
         purple++;
-      } else {
+      } else if(todo.status === "optional" || todo.status === "recommended") {
         yellow++;
       }
     })

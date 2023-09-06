@@ -73,19 +73,22 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 
 	const organizedResults = [
 	  {
-		result: isOnHttps,
-		infoString: isOnHttps ? 'Uses HTTPS' : 'Does not use HTTPS',
-		category: 'required',
+			result: isOnHttps,
+			infoString: isOnHttps ? 'Uses HTTPS' : 'Does not use HTTPS',
+			category: 'required',
+			member: "https"
 	  },
 	  {
-		result: isOnHttps,
-		infoString: isOnHttps ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
-		category: 'required',
+			result: isOnHttps,
+			infoString: isOnHttps ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
+			category: 'required',
+			member: "ssl"
 	  },
 	  {
-		result: noMixedContent,
-		infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page or http redirect on loads',
-		category: 'required',
+			result: noMixedContent,
+			infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page or http redirect on loads',
+			category: 'required',
+			member: "mixed_content"
 	  },
 	];
 
