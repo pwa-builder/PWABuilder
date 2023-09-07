@@ -83,7 +83,7 @@ function constructTopLevelNavEntryString(entry: string[], header: string): strin
   return `
   <sl-menu-item onClick="(function (event) {
     location.href = '${entry[1]}';
-  })();" ${entry[0] == header ? " checked" : ""}>
+  })();" ${entry[0] == header ? " checked" : ""} tabindex="${Number(entry[2])}">
     ${entry[0]}
   </sl-menu-item>`;
 }

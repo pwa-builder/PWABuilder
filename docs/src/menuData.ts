@@ -228,10 +228,10 @@ export const parentMenuData: ParentMenu = {
 }
 
 export const topLevelNavEntries: string[][] = [
-  ["Home", "/#"],
-  ["PWABuilder","/#/builder/quick-start"],
-  ["PWA Starter","/#/starter/quick-start"],
-  ["PWABuilder Studio", "/#/studio/quick-start"]
+  ["Home", "/#", "0"],
+  ["PWABuilder","/#/builder/quick-start", "1"],
+  ["PWA Starter","/#/starter/quick-start", "2"],
+  ["PWABuilder Studio", "/#/studio/quick-start", "3"]
 ];
 
 export const headerHTMLString: string = `<div align=center>
