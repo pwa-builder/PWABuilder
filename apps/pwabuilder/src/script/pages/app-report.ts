@@ -2103,7 +2103,6 @@ export class AppReport extends LitElement {
     this.swValidCounter = 0;
     this.swRequiredCounter = 0;
     this.serviceWorkerResults.forEach((result: any) => {
-      console.log("result", result)
       if(result.result){
         this.swValidCounter++;
       } else {
