@@ -35,7 +35,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
-import { SlDetails, SlDropdown } from '@shoelace-style/shoelace';
+import { SlDetails, SlDropdown, SlTooltip } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 import { GetTokenCampaignStatus } from './qualification/app-token.helper';
@@ -142,6 +142,7 @@ export class AppReport extends LitElement {
   @state() filteredTodoItems: any[] = [];
   @state() filterList: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
+  @state() stopShowingNotificationTooltip: boolean = false;
 
   @state() tokensCampaign: boolean = false;
 
@@ -764,9 +765,10 @@ export class AppReport extends LitElement {
           width: auto;
         }
 
-        .mani-tooltip-content p {
+        .mani-tooltip-p {
           margin: 0;
           padding: .5em;
+          font-size: 14px;
         }
 
         #cl-mani-tooltip-content {
@@ -841,11 +843,8 @@ export class AppReport extends LitElement {
           gap: .5em;
         }
 
-        #todo-summary-left p {
+        #todo-summary-left > p {
           font-size: var(--subheader-font-size);
-        }
-
-        .todo-items-holder {
         }
 
         #pagination-actions {
@@ -906,12 +905,13 @@ export class AppReport extends LitElement {
           background-color: #F1F2FA;
           padding: .25em .5em;
           border-radius: var(--card-border-radius);
+          font-size: 20px;
         }
 
         .indicator p {
           line-height: 20px;
           margin: 0;
-          font-size: 15px;
+          font-size: 20px;
         }
 
         .indicator.selected {
@@ -984,6 +984,7 @@ export class AppReport extends LitElement {
 
         #two-cell-row > * {
           width: 49%;
+          height: 100%;
           background: #ffffff;
           display: flex;
           flex-direction: column;
@@ -995,7 +996,7 @@ export class AppReport extends LitElement {
         /* SW Card */
         #sw-header {
           row-gap: 0.5em;
-          border-bottom: 1px solid #c4c4c4;
+          height: 100%;
           padding: 1em;
           min-height: 318px;
           justify-content: space-between;
@@ -1015,7 +1016,7 @@ export class AppReport extends LitElement {
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
-          align-items: center;
+          align-items: flex-start;
         }
 
         /* Sec Card */
@@ -1047,10 +1048,6 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
-        .details-summary p {
-          font-size: var(--card-body-font-size);
-        }
-
         .dropdown_icon {
           transform: rotate(0deg);
           transition: transform .5s;
@@ -1070,6 +1067,10 @@ export class AppReport extends LitElement {
 
         #test-download p {
           line-height: 1em;
+        }
+
+        arrow-link {
+          margin-top: 10px;
         }
 
         .arrow_link {
@@ -1168,6 +1169,7 @@ export class AppReport extends LitElement {
           row-gap: .5em;
           padding: 1em;
           min-height: 318px;
+          height: 100%;
         }
         #sec-top {
           display: flex;
@@ -1189,6 +1191,11 @@ export class AppReport extends LitElement {
           grid-template-rows: repeat(2, 1fr);
           place-content: center;
           gap: 25px;
+        }
+
+        .icons-holder.sw {
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(1, 1fr);
         }
 
         .icon-and-name {
@@ -1258,6 +1265,9 @@ export class AppReport extends LitElement {
         }
         .desc-skeleton {
           --color: #d0d0d3
+        }
+        .desc-skeleton.half {
+          width: 50%;
         }
         .desc-skeleton::part(base), .summary-skeleton::part(base), .app-info-skeleton::part(base){
           min-height: .8rem;
@@ -1445,6 +1455,7 @@ export class AppReport extends LitElement {
           }
           #two-cell-row > * {
             width: 100%;
+            height: unset;
           }
           #sw-header {
             min-height: unset;
@@ -2092,6 +2103,7 @@ export class AppReport extends LitElement {
     this.swValidCounter = 0;
     this.swRequiredCounter = 0;
     this.serviceWorkerResults.forEach((result: any) => {
+      console.log("result", result)
       if(result.result){
         this.swValidCounter++;
       } else {
@@ -2400,6 +2412,13 @@ export class AppReport extends LitElement {
     }
   }
 
+  formatSWStrings(member: string){
+    const words = member.split('_');
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+    const joined = capitalizedWords.join(" ");
+    return joined;
+  }
+
   // Scrolls and Shakes the respective item from a click of an action item
   async animateItem(e: CustomEvent){
     e.preventDefault;
@@ -2639,6 +2658,8 @@ export class AppReport extends LitElement {
     this.pageNumber = 1;
     let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
     todoDetail.show();
+
+    this.stopShowingNotificationTooltip = true;
     // if its in the list, remove it, else add it
     // yellow means optional and recommended 
     if(filter === "yellow"){
@@ -2865,7 +2886,24 @@ export class AppReport extends LitElement {
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
                   <p>Action Items</p>
-                  ${this.allTodoItems.length > 0 ? this.renderIndicators() : html``}
+                  
+                    ${this.allTodoItems.length > 0 ? 
+                      this.stopShowingNotificationTooltip ? 
+                        // if they interact with the inicators, we no longer need to show the tooltip
+                        this.renderIndicators() :
+                      
+                        // showing tooltip until they click an indicator which will remove the tooltip
+                        html`
+                          <sl-tooltip class="mani-tooltip" id="notifications" open>
+                            <div slot="content" class="mani-tooltip-content">
+                              <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> 
+                              <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
+                            </div> 
+                            ${this.renderIndicators()}
+                          </sl-tooltip>
+                        `
+                      : 
+                      null}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
 
@@ -2916,7 +2954,7 @@ export class AppReport extends LitElement {
                   type="button" 
                   @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
                 </button>
-              </div>` : html``}
+              </div>` : null}
               <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
             </sl-details>
           </div>
@@ -3012,7 +3050,7 @@ export class AppReport extends LitElement {
                     </div>`
                     )}
                   ` :
-                  html``}
+                  null}
 
                   ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
                   html`
@@ -3026,7 +3064,7 @@ export class AppReport extends LitElement {
                       <p>${result.displayString}</p>
                     </div>
                   ` :
-                  html``)}
+                  null)}
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Recommended</p>
@@ -3041,7 +3079,7 @@ export class AppReport extends LitElement {
                     </div>`
                     )}
                   ` :
-                  html``}
+                  null}
                   ${this.validationResults.map((result: Validation) => result.category === "recommended"  && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -3053,7 +3091,7 @@ export class AppReport extends LitElement {
                         `}
                       <p>${result.displayString}</p>
                     </div>
-                  ` : html``)}
+                  ` : null)}
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Optional</p>
@@ -3069,7 +3107,7 @@ export class AppReport extends LitElement {
                         </div>`
                     )}
                   ` :
-                  html``}
+                  null}
 
                   ${this.validationResults.map((result: Validation) => result.category === "optional" && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
@@ -3083,7 +3121,7 @@ export class AppReport extends LitElement {
                         `}
                       <p>${result.displayString}</p>
                     </div>
-                  ` : html``)}
+                  ` : null)}
                 </div>
               </div>`}
             </sl-details>
@@ -3112,13 +3150,28 @@ export class AppReport extends LitElement {
                   ${this.swDataLoading ?
                     html`<div class="loader-round large"></div>` :
                     html`<sl-progress-ring
-                    id="swProgressRing"
-                    class=${classMap(this.decideColor("sw"))}
-                    value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`<div class="${classMap(this.decideColor("sw"))}"> ${this.swValidCounter} / ${this.swTotalScore} </div>`} </sl-progress-ring>
+                      id="swProgressRing"
+                      class="counterRing"
+                      value="${this.swValidCounter > 0 ? 100 : 0}"
+                      >+${this.swValidCounter} 
+                    </sl-progress-ring>
                     `
                   }
                 </div>
+                  <div class="icons-holder sw">
+                    ${this.serviceWorkerResults.map((result: any) => 
+                      html`
+                        <div class="icon-and-name">
+                          <div class="circle-icon" slot="trigger">
+                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                            ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                          </div>
+                        <p>${this.formatSWStrings(result.member)}</p>
+                      </div>
+                      ` 
+                      )
+                    }
+                  </div>
                 <div id="sw-actions" class="flex-col">
                   ${this.swDataLoading ?
                   html`
@@ -3152,62 +3205,7 @@ export class AppReport extends LitElement {
 
                 </div>
               </div>
-              <sl-details
-                id="sw-details"
-                class="details"
-                ?disabled=${this.swDataLoading}
-                @sl-show=${(e: Event) => this.rotateNinety("sw-details", e)}
-                @sl-hide=${(e: Event) => this.rotateZero("sw-details", e)}
-              >
-                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>`
-                : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
-                <div class="detail-grid">
-                <div class="detail-list">
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
-                    html`
-                      <p class="detail-list-header">Required</p>
-                      <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div>
-                  <div class="detail-list">
-                    <p class="detail-list-header">Highly Recommended</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "highly recommended" ?
-                    html`
-                      <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="invalid result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div>
-                  <!-- <div class="detail-list">
-                    <p class="detail-list-header">Recommended</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ?
-                    html`
-                    <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div> -->
-                  <div class="detail-list">
-                    <p class="detail-list-header">Optional</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ?
-                    html`
-                      <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div>
-                </div>`}
-              </sl-details>
+              
             </div>
             <div id="security" class="half-width-cards">
               <div id="sec-header" class="flex-col">
@@ -3230,28 +3228,31 @@ export class AppReport extends LitElement {
                   </div>
                   ${this.manifestDataLoading ?
                     html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring class="counterRing" value="${100}">+${this.enhancementTotalScore}</sl-progress-ring>
+                    html`<sl-progress-ring class="counterRing" value="${this.enhancementTotalScore > 0 ? 100 : 0}">+${this.enhancementTotalScore}</sl-progress-ring>
                     `
                   }
 
                 </div>
                 <div class="icons-holder">
-                ${this.validationResults.map((result: Validation) => result.category === "enhancement" ? 
-                  html`
-                    <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
-                      <manifest-info-card .field=${result.member} .placement="${"right"}">
-                        <div class="circle-icon" slot="trigger">
-                          <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + 'icon'}" />
-                          ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
-                        </div>
-                      </manifest-info-card>
-                      <p>${result.member}</p>
-                  </div>
-                  ` 
-                  : null )
-                }
+                  ${this.validationResults.map((result: Validation) => result.category === "enhancement" ? 
+                    html`
+                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        <manifest-info-card .field=${result.member} .placement="${"right"}">
+                          <div class="circle-icon" slot="trigger">
+                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                            ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                          </div>
+                        </manifest-info-card>
+                        <p>${result.member}</p>
+                    </div>
+                    ` 
+                    : null )
+                  }
                 </div>
-                <arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>
+                ${this.manifestDataLoading ?
+                  html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` : 
+                  html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
+                }
               </div>
             </div>
           </div>
@@ -3284,7 +3285,7 @@ export class AppReport extends LitElement {
 
       <publish-pane .tokensCampaign=${this.tokensCampaign}></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      ${this.manifestDataLoading ? null : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;

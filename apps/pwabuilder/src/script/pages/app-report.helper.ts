@@ -49,6 +49,12 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 			category: 'optional',
 			member: "periodic_sync"
 	  },
+		{
+			result: swFeatures?.detectedPushRegistration || false,
+			infoString: swFeatures?.detectedPushRegistration ? 'Uses Push Notifications' : 'Does not use Push Notifications',
+			category: 'optional',
+			member: "push_notifications"
+	  },
 	];
 	// TODO: move installability from here
 	// if (typeof installable == 'boolean') {
