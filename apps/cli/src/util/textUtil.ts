@@ -12,7 +12,7 @@ export function formatEmphasis(text: string): string {
 }
 
 export function formatErrorEmphasisStrong(text: string): string {
-  return chalk.bgRed(text);
+  return chalk.red.inverse(text);
 }
 
 export function formatErrorEmphasisWeak(text: string): string {
