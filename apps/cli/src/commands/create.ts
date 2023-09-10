@@ -1,15 +1,16 @@
 import type { Arguments, CommandBuilder} from "yargs";
 import * as prompts from "@clack/prompts";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
-import { promisifiedExecWrapper, timeFunction } from "../util/util";
+import { outputMessage, promisifiedExecWrapper, timeFunction } from "../util/util";
 import { initAnalytics, trackEvent, CreateEventData } from "../analytics/usage-analytics";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
-import { formatCodeSnippet, formatEmphasis, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
+import { formatCodeSnippet, formatEmphasis, formatEmphasisStrong, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 
 // Types for command arguments
 type CreateOptions = {
   name: string | undefined;
   template: string | undefined;
+  list: boolean | undefined;
 }
 
 type ResolvedCreateOptions = {
@@ -21,6 +22,7 @@ type ResolvedCreateOptions = {
 const COMMAND_DESCRIPTION_STRING: string = 'Create a new progressive web app from a template.';
 const NAME_DESCRIPTION_STRING: string =  'The name of your new PWA project.';
 const TEMPLATE_DESCRIPTION_STRING: string =  'The template to start your project from.';
+const LIST_DESCRIPTION_STRING: string = 'List template options.'
 
 export const command: string = 'create [name]';
 export const desc: string = COMMAND_DESCRIPTION_STRING;
@@ -39,6 +41,14 @@ const USAGE_STRING: string = '$0 create [name] [-t|--template]';
 
 const NAME_PROMPT_STRING: string = 'Enter a name for your new PWA: ';
 const NAME_PLACEHOLDER_STRING: string = 'example-pwa-name';
+
+const TEMPLATE_LIST_OUTPUT_STRING: string = `Available templates:
+
+1. ${formatEmphasis("default")} - Original PWA Starter template.
+2. ${formatEmphasis("basic")} - Simplified PWA Starter with fewer dependencies
+
+You can specify a template with the ${formatCodeSnippet('-t (--template)')} flag.
+For example: ${formatCodeSnippet('pwa create -t="default"')}`;
 
 const FETCH_TASK_START_STRING: (string) => string = ( template: string ) => { return `Fetching ${template} PWA Starter template` };
 const FETCH_TASK_END_STRING: string = formatSuccessEmphasis('Template fetched.');
@@ -92,7 +102,8 @@ const DEFAULT_CONTENT_REPLACE_LIST: string[] = [
 export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
   yargs
     .options({
-      template: { type: 'string', alias: 't', description: TEMPLATE_DESCRIPTION_STRING}
+      template: { type: 'string', alias: 't', description: TEMPLATE_DESCRIPTION_STRING},
+      list: {type: 'boolean', alias: 'l', description: LIST_DESCRIPTION_STRING}
     })
     .positional('name', {type: "string", demandOption: false, description: NAME_DESCRIPTION_STRING})
     .usage(USAGE_STRING);
@@ -110,7 +121,8 @@ async function handleCreateCommand(argv: Arguments<CreateOptions>) {
 }
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
-  const {name, template} = argv;
+  const {name, template, list} = argv;
+  handleTemplateListFlag(list);
   const resolvedTemplate= await resolveTemplateArgument(template, ('template' in argv));
   const resolvedName = await resolveNameArgument(name);
   return {resolvedName, resolvedTemplate};
@@ -230,6 +242,13 @@ async function prepDirectoryForDevelopment(newName: string): Promise<void> {
     promptsCancel();
   }
   
+}
+
+function handleTemplateListFlag(listFlag: boolean | undefined): void {
+  if(listFlag) {
+    outputMessage(TEMPLATE_LIST_OUTPUT_STRING);
+    process.exit(0);
+  }
 }
 
 async function trackCreateEvent(template: string, timeMS: number, name: string): Promise<void> {

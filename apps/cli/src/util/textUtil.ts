@@ -11,6 +11,10 @@ export function formatEmphasis(text: string): string {
   return purple.bold(text);
 }
 
+export function formatEmphasisStrong(text: string): string {
+  return purple.inverse(text);
+}
+
 export function formatErrorEmphasisStrong(text: string): string {
   return chalk.red.inverse(text);
 }
