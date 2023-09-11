@@ -1,6 +1,6 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
-import { initAnalytics, trackEvent, StartEventData } from "../analytics/usage-analytics";
+import { initAnalytics, trackEvent, StartEventData, trackException } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite start process.';
@@ -27,19 +27,25 @@ export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
     })
     .usage(USAGE_STRING);
 
-export const handler = async (argv: Arguments<StartOptions>): Promise<void> => {
-  const startTime: number = performance.now();
+export const handler = (argv: Arguments<StartOptions>): void => {
+  try {
+    handleStartCommand(argv);
+  } catch (error) {
+    trackException(error as Error);
+  }
+};
+
+function handleStartCommand(argv: Arguments<StartOptions>) {
   const { viteArgs } = argv;
   if(isDirectoryTemplate()) {
-    handleStartCommand(viteArgs);
+    execStartCommand(viteArgs);
   } else {
     outputError(INVALID_DIRECTORY_ERROR_STRING);
   }  
-  const endTime: number = performance.now();
-  trackStartEvent(endTime - startTime, viteArgs ? viteArgs : "");
-};
+  trackStartEvent();
+}
 
-async function handleStartCommand(viteArgs: string | undefined) {
+function execStartCommand(viteArgs: string | undefined) {
   if(viteArgs) {
     execSyncWrapper(EXEC_START_ARGS_STRING(viteArgs), false); 
   } else {
@@ -47,14 +53,9 @@ async function handleStartCommand(viteArgs: string | undefined) {
   }
 }
 
-async function trackStartEvent(timeMS: number, options: string): Promise<void> {
+async function trackStartEvent(): Promise<void> {
   if(await initAnalytics()){
-
-    const startEventData: StartEventData = {
-      timeMS: timeMS,
-      options: options
-    }
-
+    const startEventData: StartEventData = {}
     trackEvent("start", startEventData);
   }
 }

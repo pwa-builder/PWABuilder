@@ -11,18 +11,10 @@ export interface CreateEventData {
   timeMS: number
 }
 
-export interface StartEventData {
-  options: string,
-  timeMS: number
-}
+export interface StartEventData {}
 
 export interface BuildEventData {
   timeMS: number
-}
-
-export interface ErrorEventData {
-  command: string,
-  errorOutput: string
 }
 
 export interface PWABuilderData {

@@ -2,11 +2,11 @@ import type { Arguments, CommandBuilder} from "yargs";
 import * as prompts from "@clack/prompts";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
 import { outputMessage, promisifiedExecWrapper, timeFunction } from "../util/util";
-import { initAnalytics, trackEvent, CreateEventData } from "../analytics/usage-analytics";
+import { initAnalytics, trackEvent, CreateEventData, trackException } from "../analytics/usage-analytics";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
 import { formatCodeSnippet, formatEmphasis, formatEmphasisStrong, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 
-// Types for command arguments
+// START TYPES
 type CreateOptions = {
   name: string | undefined;
   template: string | undefined;
@@ -17,8 +17,9 @@ type ResolvedCreateOptions = {
   resolvedName: string;
   resolvedTemplate: string;
 }
+// END TYPES
 
-// Yargs string constants
+// START YARGS STRINGS
 const COMMAND_DESCRIPTION_STRING: string = 'Create a new progressive web app from a template.';
 const NAME_DESCRIPTION_STRING: string =  'The name of your new PWA project.';
 const TEMPLATE_DESCRIPTION_STRING: string =  'The template to start your project from.';
@@ -26,8 +27,9 @@ const LIST_DESCRIPTION_STRING: string = 'List template options.'
 
 export const command: string = 'create [name]';
 export const desc: string = COMMAND_DESCRIPTION_STRING;
+// START YARGS STRINGS
 
-// Implementation constants
+// START DEFAULTS
 const DEFAULT_NAME: string = 'pwa-starter';
 const DEFAULT_TEMPLATE: string = 'default';
 const DEFAULT_TITLE: string = 'PWA Starter';
@@ -36,7 +38,14 @@ const ARTIFACT_NAMES: (string) => string[] = (name: string) => {
   return [ FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING, name ]
 }
 
-// Output strings
+const TEMPLATE_TO_URL_MAP = {
+  'default': ["https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip", "pwa-starter-main"],
+  'basic': ["https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip", "pwa-starter-basic-main"]
+};
+
+// END DEFAULTS
+
+// START OUTPUT STRINGS
 const USAGE_STRING: string = '$0 create [name] [-t|--template]';
 
 const NAME_PROMPT_STRING: string = 'Enter a name for your new PWA: ';
@@ -72,19 +81,17 @@ const FINAL_OUTPUT_STRING: (string) => string = (name: string) => {
    Make sure to visit ${formatEmphasis("docs.pwabuilder.com")} for further guidance on developing with the PWA Starter.`
 };
 
-// Error strings
+// END OUTPUT STRINGS
+
+// START ERROR STRINGS
 const INVALID_NAME_ERROR_STRING: string = 'Invalid name. A valid project name must not already exist and may only contain alphanumeric characters, dashes, and underscores.';
 const INVALID_TEMPLATE_ERROR_STRING: string = `Invalid template provided. Cancelling create operation.
     
 Valid template names:
 1. ${formatErrorEmphasisStrong("default")} - Original PWA Starter template
 2. ${formatErrorEmphasisStrong("basic")} - Simplified PWA Starter with fewer dependencies`;
+// END ERROR STRINGS
 
-// Template to Repo Map
-const TEMPLATE_TO_URL_MAP = {
-  'default': ["https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip", "pwa-starter-main"],
-  'basic': ["https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip", "pwa-starter-basic-main"]
-};
 
 // Replace Lists. These specify which files need to be updated with the user specified project name.
 const DEFAULT_DEVOPS_REPLACE_LIST: string[] = [
@@ -110,7 +117,12 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
     
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
-  await handleCreateCommand(argv);
+  try {
+    await handleCreateCommand(argv);
+  } catch (error) {
+    trackException(error as Error);
+  }
+  
 };
 
 async function handleCreateCommand(argv: Arguments<CreateOptions>) { 
