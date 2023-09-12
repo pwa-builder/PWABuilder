@@ -33,8 +33,10 @@ npm install -g @pwabuilder/cli
 From there, it’s just one command to create your first app:
 
 ```
-pwa create MyFirstPWA
+pwa create my-first-pwa
 ```
+
+<img src="pwa-create.png.png" alt="PWABuilder CLI create command output after executing."></img>
 
 And then one more command to take a look at your new PWA:
 
@@ -44,7 +46,7 @@ pwa start
 
 Your PWA will then open in the browser window!
 
+<img src="open-pwa.png" alt="PWA Starter open in a new browser window."></img>
 
-[Best way to embed video?]
 
 For more guidance on using the CLI, check out our documentation [here.](https://docs.pwabuilder.com/#/starter/quick-start) For feedback and issues, head over to our [Github repo](https://github.com/pwa-builder/PWABuilder). We’re always open ideas and direct contributions from the community!
