@@ -810,15 +810,14 @@ export class AppReport extends LitElement {
           background-color: transparent;
           border: none;
           padding: 0;
-
           border-radius: 50%;
           outline-offset: 3px;
+          cursor: pointer;
         }
 
         #dots img {
           height: 10px;
           width: auto;
-          cursor: pointer;
         }
 
         #pagination-actions > sl-icon:hover{
