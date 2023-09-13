@@ -805,9 +805,20 @@ export class AppReport extends LitElement {
           gap: .25em;
         }
 
+        #dots button {
+          display: flex;
+          background-color: transparent;
+          border: none;
+          padding: 0;
+
+          border-radius: 50%;
+          outline-offset: 3px;
+        }
+
         #dots img {
           height: 10px;
           width: auto;
+          cursor: pointer;
         }
 
         #pagination-actions > sl-icon:hover{
@@ -2439,6 +2450,16 @@ export class AppReport extends LitElement {
     this.requestUpdate();
   }
 
+  // Sets the window to a specific page in the action items list
+  setPage(page: number) {
+    if (page < 1 || this.pageNumber * this.pageSize > this.todoItems.length) {
+      return;
+    }
+
+    this.pageNumber = page;
+    this.requestUpdate();
+  }
+
   // Returns a list that represents the number of dots need for pagination
   getDots(){
     let dots: any[] = [];
@@ -2688,14 +2709,17 @@ export class AppReport extends LitElement {
               <div id="pagination-actions">
                 <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
                 <div id="dots">
-                  ${this.getDots().map((_dot: any, index: number) =>
-                    this.pageNumber == index + 1 ?
-                      html`
-                        <img src="/assets/new/active_dot.svg" alt="active dot" />
-                      ` :
-                      html`
-                        <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
-                      `)}
+                  ${this.getDots().map((_dot: any, index: number) => {
+                    const isActive = this.pageNumber === index + 1
+                    return html`
+                      <button @click=${() => this.setPage(index + 1)}>
+                        <img 
+                          src="/assets/new/${isActive ? 'active' : 'inactive'}_dot.svg"
+                          alt="${isActive ? 'active' : 'inactive'} dot"
+                        />
+                      </button>
+                    `
+                    })}
                 </div>
                 <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon></button>
               </div>` : html``}
