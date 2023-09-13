@@ -145,12 +145,6 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: false
         },
         {
-          pageTitle: "PWABuilder - Microsoft Store Promotion",
-          menuTitle: "Store Promotion",
-          path: "/builder/store-promotion",
-          includeOnHomePage: true
-        },
-        {
           pageTitle: "PWABuilder - FAQ",
           menuTitle: "FAQ",
           path: "/builder/faq",
