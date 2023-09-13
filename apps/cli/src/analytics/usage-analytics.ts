@@ -23,10 +23,9 @@ export interface PWABuilderData {
   }
 }
 
-export async function initAnalytics(): Promise<boolean> {
-  var dataCollectionPermission: boolean = false;
+export async function initAnalytics(): Promise<void> {
   try {
-    if (getFlag("analytics") === true && dataCollectionPermission) {
+    if (getFlag("analytics") === true) {
       setup("#{ANALYTICS_CODE}#")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)
@@ -44,7 +43,6 @@ export async function initAnalytics(): Promise<boolean> {
     console.error("Error initializing analytics", err);
   }
 
-  return dataCollectionPermission;
 }
 
 export function getAnalyticsClient() {
