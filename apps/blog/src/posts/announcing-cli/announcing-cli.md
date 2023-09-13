@@ -38,7 +38,7 @@ pwa create my-first-pwa
 
 <img src="pwa-create.png.png" alt="PWABuilder CLI create command output after executing."></img>
 
-And then one more command to take a look at your new PWA:
+And then one more command to start running and developing your app, with live-reload for changes!
 
 ```
 pwa start
