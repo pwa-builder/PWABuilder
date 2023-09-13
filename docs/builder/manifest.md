@@ -490,16 +490,15 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
   ]
 ```
 
-In order to allow for your app to intercept links, you must specify `web-app-origin-association.json` that must be located at `https://<associated origin>/.well-known/web-app-origin-association.json`.
+In order to allow for your app to intercept links, you must specify `web-app-origin-association` that must be located at `https://<associated origin>/.well-known/web-app-origin-association`.
 
 ```json
 {
-  "web_apps": {
-     "https://docs.pwabuilder.com/": {
-       "scope": "/",
-       "authorize": ["intercept-links"]
-     }
-  }
+  "web_apps": [
+    {
+      "web_app_identity": "https://docs.pwabuilder.com/"
+    }
+  ]
 }
 ```
 
