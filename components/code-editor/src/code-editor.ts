@@ -16,6 +16,7 @@ export class CodeEditor extends LitElement {
   })
   startText: Lazy<string>;
   @property({ type: String }) copyText = 'Copy Manifest';
+  @property({ type:  String}) editorStateType: string = 'json';
   @property({ type: Boolean }) readOnly = false;
 
   @state()
@@ -91,7 +92,7 @@ export class CodeEditor extends LitElement {
 
   updated(changedProperties: Map<string, any>) {
     if (changedProperties.has('startText')) {
-      this.editorState = getEditorState(this.startText || '', 'json', [], !this.readOnly);
+      this.editorState = getEditorState(this.startText || '', this.editorStateType, [], !this.readOnly);
 
       if (this.editorView) {
         this.editorView.setState(this.editorState);
@@ -148,7 +149,7 @@ export class CodeEditor extends LitElement {
   }
 
   updateEditor = debounce(() => {
-    this.editorState = getEditorState(this.startText || '', 'json', [], !this.readOnly);
+    this.editorState = getEditorState(this.startText || '', this.editorStateType, [], !this.readOnly);
 
     if (this.editorView) {
       this.editorView.setState(this.editorState);

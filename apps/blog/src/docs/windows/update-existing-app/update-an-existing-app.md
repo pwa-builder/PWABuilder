@@ -46,7 +46,7 @@ When browsing for your files, **choose both package files**, `*.msixbundle` and 
 
 > 💁🏾‍♂️ *Heads up*
 > 
-> Once your packages finish uploading, you may see the following warning about full trust: <br><img loading="lazy" src="/docs/windows/update-existing-app/full-trust.png" /><br>
+> Once your packages finish uploading, you may see the following warning about full trust: <br><img loading="lazy" src="/docs/windows/update-existing-app/full-trust.png" alt="Screenshot of expected full trust warning"/><br>
 > This warning can be safely ignored.
 
 

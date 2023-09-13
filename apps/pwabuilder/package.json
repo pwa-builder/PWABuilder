@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
-  "engines": {
-    "node": "14.15.1"
-  },
   "scripts": {
     "preinstall": "node ../../scripts/setupDeps.js",
     "dev": "vite --open",
@@ -17,18 +14,19 @@
     "start-remote": "vite --host",
     "postinstall": "npm run copy-sl-assets",
     "copy-sl-assets": "mkdirp ./public/assets/sl-icons/assets/icons && ncp ./node_modules/@shoelace-style/shoelace/dist/assets/icons ./public/assets/sl-icons/assets/icons",
-    "test": "npx nyc@latest playwright test",
-    "coverage": "cd coverage/lcov-report && npx http-server -p 3001"
+    "test": "playwright test"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@pwabuilder/code-editor": "file:../../components/code-editor",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
+    "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    "@shoelace-style/shoelace": "^2.2.0",
+    "@shoelace-style/shoelace": "^2.4.0",
     "@vaadin/router": "^1.7.4",
+    "accessibility-insights-scan": "^2.3.2",
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
     "cors": "^2.8.5",
@@ -37,8 +35,9 @@
     "lit": "^2.2.1"
   },
   "devDependencies": {
+    "@azure/msal-browser": "^2.37.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@playwright/test": "^1.32.0",
+    "@playwright/test": "^1.37.1",
     "@types/chai": "^4.2.21",
     "@types/lodash-es": "^4.17.4",
     "@types/mocha": "^8.2.3",
@@ -58,7 +57,6 @@
     "eslint-plugin-prettier": "^3.3.1",
     "lit-analyzer": "^1.2.1",
     "mkdirp": "^1.0.4",
-    "mocha": "^9.2.2",
     "msw": "^0.33.0",
     "ncp": "^2.0.0",
     "nyc": "^15.1.0",

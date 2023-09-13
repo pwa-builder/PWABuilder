@@ -8,8 +8,10 @@ import {
   Manifest,
 } from '../utils/interfaces';
 import { resolveUrl } from '../utils/urls';
+import {classMap} from 'lit/directives/class-map.js';
+import "./manifest-field-tooltip";
 
-const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+const baseUrl = 'https://appimagegenerator-prod-dev.azurewebsites.net';
 
 let manifestInitialized = false;
 
@@ -41,6 +43,7 @@ export class ManifestIconsForm extends LitElement {
   }}) manifest: Manifest = {};
 
   @property({type: String}) manifestURL: string = "";
+  @property({type: String}) focusOn: string = "";
 
   // Icon state vars
   @state() uploadSelectedImageFile: Lazy<File>;
@@ -197,6 +200,18 @@ export class ManifestIconsForm extends LitElement {
         color: #ffffff;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
+      .center_text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-size: 16px;
+      }
+
       @media(max-width: 765px){
         sl-checkbox::part(base),
         sl-checkbox::part(control) {
@@ -259,7 +274,7 @@ export class ManifestIconsForm extends LitElement {
 
 
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-    if(manifestInitialized){
+    if(manifestInitialized && this.manifest.icons){
       manifestInitialized = false;
       this.requestValidateAllFields();
       await this.iconSrcListParse();
@@ -299,14 +314,13 @@ export class ManifestIconsForm extends LitElement {
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
 
-        
-
         if(validation.errors){
           validation.errors.forEach((error: string) => {
             let p = document.createElement('p');
             p.innerText = error;
             p.style.color = "#eb5757";
             p.classList.add("error-message");
+            p.setAttribute('aria-live', 'polite');
             insertAfter(p, title!.parentNode!.parentNode);
             this.errorCount++;
           });
@@ -529,30 +543,32 @@ export class ManifestIconsForm extends LitElement {
     hyperlink.click();
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
             <div class="header-left">
-              <h3>App Icons</h3>
-              <a
-                href="https://docs.pwabuilder.com/#/builder/manifest?id=icons-array"
-                target="_blank"
-                rel="noopener"
-              >
-                <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                <p class="toolTip">
-                  Click for more info on the icons option in your manifest.
-                </p>
-              </a>
+              <h3 class=${classMap(this.decideFocus("icons"))}>App Icons</h3>
+              <manifest-field-tooltip .field=${"icons"}></manifest-field-tooltip>
             </div>
 
             <p>(required)</p>
           </div>
           <p>Below are the current Icons in your apps Manifest</p>
           <div class="icon-gallery">
-            ${this.srcList.map((img: any) => html`<div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>`)}
+            ${this.srcList.length > 0 ? 
+              this.srcList.map((img: any) => 
+                html`
+                  <div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>
+                `
+                ) : 
+              html`<div class="center_text"><sl-icon name="card-image"></sl-icon> There are no icons in your manifest</div>`}
           </div>
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>

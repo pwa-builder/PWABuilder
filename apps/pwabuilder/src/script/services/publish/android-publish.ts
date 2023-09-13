@@ -6,6 +6,7 @@ import {
 import { env } from '../../utils/environment';
 import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { ManifestContext } from '../../utils/interfaces';
+import { getHeaders } from '../../utils/platformTrackingHeaders';
 
 export let hasGeneratedAndroidPackage = false;
 
@@ -17,11 +18,13 @@ export async function generateAndroidPackage(androidOptions: AndroidPackageOptio
     );
   }
 
+  let headers = {...getHeaders(), 'content-type': 'application/json' };
+
   const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage`;
   const response = await fetch(generateAppUrl, {
     method: 'POST',
     body: JSON.stringify(androidOptions),
-    headers: new Headers({ 'content-type': 'application/json' }),
+    headers: new Headers(headers),
   });
 
   if (response.status === 200) {
@@ -110,6 +113,7 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     splashScreenFadeOutDuration: 300,
     startUrl: '',
     themeColor: '#ffffff',
+    themeColorDark: '#000000',
     webManifestUrl: '',
     fullScopeUrl: ''
   };
@@ -168,6 +172,32 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
 
   const fullScopeUrl = new URL(manifest.scope || '.', manifestUrlOrRoot).toString();
 
+
+  // Need to remove file endings, like .png, from the share_target config
+  // so that Android can parse it correctly.
+  // https://github.com/pwa-builder/PWABuilder/issues/3846
+
+  const shareTarget = manifest.share_target;
+  if (shareTarget) {
+    const toParseFiles = shareTarget.params?.files;
+
+    let goodFiles: string[] = [];
+
+    if (toParseFiles) {
+      for (const files of toParseFiles) {
+        if (files.accept) {
+          files.accept.forEach((accept) => {
+            if (accept.startsWith(".") === false) {
+              goodFiles.push(accept);
+            }
+          })
+
+          files.accept = goodFiles;
+        }
+      }
+    }
+  }
+
   return {
     appVersion: '1.0.0.0',
     appVersionCode: 1,
@@ -220,6 +250,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
       new URL(manifestUrlOrRoot)
     ),
     themeColor: manifest.theme_color || '#FFFFFF',
+    themeColorDark: manifest.theme_color || '#000000',
     shareTarget: manifest.share_target,
     webManifestUrl: maniUrl,
     pwaUrl: manifestContext.siteUrl,

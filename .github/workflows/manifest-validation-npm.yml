@@ -1,0 +1,69 @@
+name: Manifest Validation Lib Publish to NPM
+
+on:
+  push:
+    paths:
+     -"libraries/manifest-validation/**"
+    branches: 
+     -gleb/manifest-library-npm  
+     -main
+  workflow_dispatch:
+  
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: libraries/manifest-validation
+
+    outputs:
+      latest-version: ${{steps.latest-version.outputs.version}}
+      package-version: ${{steps.package-version.outputs.current-version}}
+      
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get latest version from npm
+        id: latest-version
+        run: echo ::set-output name=version::$(npm show @pwabuilder/manifest-valivation version)
+
+      - name: Get current package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+        
+  publish:
+      runs-on: ubuntu-latest
+      needs: version
+      if: needs.version.outputs.latest-version != needs.version.outputs.package-version
+      defaults:
+        run:
+          working-directory: libraries/manifest-validation
+          
+      steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Build
+        run: |
+          npm install
+      
+      - name: Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}

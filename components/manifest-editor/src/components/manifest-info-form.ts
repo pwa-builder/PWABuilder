@@ -3,6 +3,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { Manifest } from '../utils/interfaces';
 import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { insertAfter, errorInTab } from '../utils/helpers';
+import {classMap} from 'lit/directives/class-map.js';
+
+import "./manifest-field-tooltip";
 
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
@@ -19,6 +22,8 @@ export class ManifestInfoForm extends LitElement {
     }
     return value !== oldValue;
   }}) manifest: Manifest = {};
+
+  @property({type: String}) focusOn: string = "";
 
   @state() bgText: string = '';
   @state() themeText: string = '';
@@ -197,6 +202,10 @@ export class ManifestInfoForm extends LitElement {
         color: #717171;
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
         .form-row:not(.color-row) {
           flex-direction: column;
@@ -253,7 +262,17 @@ export class ManifestInfoForm extends LitElement {
     super();
   }
 
+  firstUpdated(){
+    
+  }
+
   protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+
+    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+    if(this.focusOn && field){
+      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
+    }
+
     if(manifestInitialized){ // _changedProperties.has("manifest") && _changedProperties.get("manifest") && 
       manifestInitialized = false;
       this.initMissingColors();
@@ -309,6 +328,7 @@ export class ManifestInfoForm extends LitElement {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
+                p.setAttribute('aria-live', 'polite');
                 div.append(p);
                 this.errorMap[field]++;
               });
@@ -333,6 +353,7 @@ export class ManifestInfoForm extends LitElement {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
+                p.setAttribute('aria-live', 'polite');
                 div.append(p);
                 this.errorMap[field]++;
               });
@@ -360,6 +381,7 @@ export class ManifestInfoForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
@@ -374,8 +396,6 @@ export class ManifestInfoForm extends LitElement {
       this.dispatchEvent(errorInTab(true, "info"));
     }
   }
-
-  
 
   initMissingColors(){
     if(!this.manifest.theme_color){
@@ -400,7 +420,6 @@ export class ManifestInfoForm extends LitElement {
       });
       this.dispatchEvent(manifestUpdated);
     }
-
   }
 
   async handleInputChange(event: InputEvent){
@@ -458,6 +477,7 @@ export class ManifestInfoForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[fieldName!]++;
         });
@@ -506,6 +526,11 @@ export class ManifestInfoForm extends LitElement {
     }
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
@@ -513,17 +538,8 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Name</h3>
-                <a
-                  href="https://docs.pwabuilder.com/#/builder/manifest?id=name-string"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the name option in your manifest.
-                  </p>
-                </a>
+                <h3 class=${classMap(this.decideFocus("name"))}>Name</h3>
+                <manifest-field-tooltip .field=${"name"}></manifest-field-tooltip>
               </div>
 
               <p class="field-desc">(required)</p>
@@ -534,17 +550,8 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Short Name</h3>
-                <a
-                  href="https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the short name option in your manifest.
-                  </p>
-                </a>
+                <h3 class=${classMap(this.decideFocus("short_name"))}>Short Name</h3>
+                <manifest-field-tooltip .field=${"short_name"}></manifest-field-tooltip>
               </div>
 
               <p class="field-desc">(required)</p>
@@ -553,43 +560,42 @@ export class ManifestInfoForm extends LitElement {
             <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
         </div>
+
+        <div class="form-row long">
+          <div class="form-field">
+            <div class="field-header">
+            <div class="header-left">
+              <h3 class=${classMap(this.decideFocus("id"))}>Id</h3>
+              <manifest-field-tooltip .field=${"id"}></manifest-field-tooltip>
+            </div>
+            </div>
+            <p class="field-desc">Unique identifier for your PWA that is seperate from fields that could change over time (like name or short name)</p>
+            <sl-input 
+              placeholder="id" 
+              value=${this.manifest.id ?? ""} 
+              data-field="id" 
+              @sl-change=${this.handleInputChange}></sl-input>
+          </div>
+        </div>
+        
         <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Description</h3>
-                <a
-                  href="https://docs.pwabuilder.com/#/builder/manifest?id=description-string"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the description option in your manifest.
-                  </p>
-                </a>
+                <h3 class=${classMap(this.decideFocus("description"))}>Description</h3>
+                <manifest-field-tooltip .field=${"description"}></manifest-field-tooltip>
               </div>
             </div>
             <p class="field-desc">Used in app storefronts and install dialogs</p>
             <sl-textarea placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange} resize="none"></sl-textarea>
           </div>
-          
         </div>
         <div class="form-row color-row">
           <div class="form-field color_field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Background Color</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the background color option in your manifest.
-                  </p>
-                </a>
+                <h3 class=${classMap(this.decideFocus("background_color"))}>Background Color</h3>
+                <manifest-field-tooltip .field=${"background_color"}></manifest-field-tooltip>
               </div>
             </div>
             <p class="field-desc">Select a Background color</p>
@@ -603,17 +609,8 @@ export class ManifestInfoForm extends LitElement {
           <div class="form-field color_field">
             <div class="field-header">
               <div class="header-left">
-                <h3>Theme Color</h3>
-                <a
-                  href="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-                  <p class="toolTip">
-                    Click for more info on the theme color option in your manifest.
-                  </p>
-                </a>
+                <h3 class=${classMap(this.decideFocus("theme_color"))}>Theme Color</h3>
+                <manifest-field-tooltip .field=${"theme_color"}></manifest-field-tooltip>
               </div>
             </div>
             <p class="field-desc">Select a Theme color</p>

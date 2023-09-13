@@ -13,6 +13,7 @@ import {
   setURL,
   isManifestEdited,
 } from './app-info';
+import { getHeaders } from '../utils/platformTrackingHeaders';
 
 export const emitter = new EventTarget();
 export let initialManifest: Manifest | undefined;
@@ -42,10 +43,13 @@ export async function getManifest(
 ): Promise<ManifestDetectionResult | null> {
   const encodedUrl = encodeURIComponent(url);
   //TODO: Replace with prod
-  const manifestTestUrl = env.api + `/FetchWebManifest?site=${encodedUrl}`;
+  const manifestTestUrl = env.api + `/FindWebManifest?site=${encodedUrl}`;
+  let headers = getHeaders();
+  
   try {
     const response = await fetch(manifestTestUrl, {
       method: 'POST',
+      headers: new Headers(headers)
     });
     if (!response.ok) {
       console.warn('Fetching manifest failed', response.statusText);
@@ -243,12 +247,6 @@ export async function createManifestContextFromEmpty(url: string): Promise<Manif
     siteUrl: createdManifestResult.siteUrl,
     isEdited: false,
   };
-
-  setManifestContext(context);
-
-  await updateManifest({
-    ...createdManifestResult.content,
-  });
 
   return context;
 }

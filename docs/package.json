@@ -3,15 +3,15 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "start": "docsify serve",
+    "start": "npm run setup && docsify serve",
     "preinstall": "node ../scripts/setupDeps.js && npm run copy-analytics",
-    "copy-analytics": "cpx \"..\\libraries\\site-analytics\\dist\\index.js\" \"public\\analytics\""
-  },
-  "dependencies": {
-    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics"
+    "copy-analytics": "cpx \"..\\libraries\\site-analytics\\dist\\index.js\" \"public\\analytics\"",
+    "clean": "rm -rf dist",
+    "setup": "npm run clean && tsc && node dist/setup.js"
   },
   "devDependencies": {
-    "docsify-cli": "^4.4.4",
-    "cpx": "^1.5.0"
+    "@types/node": "^20.4.2",
+    "cpx": "^1.5.0",
+    "docsify-cli": "^4.4.4"
   }
 }
