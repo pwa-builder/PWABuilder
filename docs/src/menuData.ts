@@ -55,6 +55,12 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: false
         },
         {
+          pageTitle: "PWA Starter - CLI Usage",
+          menuTitle: "CLI Usage",
+          path: "/starter/cli-usage",
+          includeOnHomePage: false
+        },
+        {
           pageTitle: "PWA Starter - Routing and Navigation",
           menuTitle: "Routing",
           path: "/starter/adding-content",
