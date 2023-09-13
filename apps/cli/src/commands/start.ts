@@ -54,8 +54,7 @@ function execStartCommand(viteArgs: string | undefined) {
 }
 
 async function trackStartEvent(): Promise<void> {
-  if(await initAnalytics()){
-    const startEventData: StartEventData = {}
-    trackEvent("start", startEventData);
-  }
+  initAnalytics()
+  const startEventData: StartEventData = {}
+  trackEvent("start", startEventData);
 }

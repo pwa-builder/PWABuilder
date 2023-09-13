@@ -23,8 +23,7 @@ export interface PWABuilderData {
   }
 }
 
-export async function initAnalytics(): Promise<boolean> {
-  var wasInitSuccessful: boolean = false;
+export function initAnalytics(): void {
   try {
     if (getFlag("analytics") === true) {
       setup("#{ANALYTICS_CODE}#")
@@ -37,15 +36,12 @@ export async function initAnalytics(): Promise<boolean> {
       .start();
 
       addUserIDtoTelemetry(getUserID());
-      wasInitSuccessful = true;
     } 
     
   }
   catch (err) {
     console.error("Error initializing analytics", err);
   }
-
-  return wasInitSuccessful;
 }
 
 export function getAnalyticsClient() {

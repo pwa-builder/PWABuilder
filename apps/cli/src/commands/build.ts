@@ -53,10 +53,10 @@ async function execBuildCommand(viteArgs: string | undefined) {
 }
 
 async function trackBuildEvent(timeMS: number): Promise<void> {
-  if(await initAnalytics()) {
-    const buildEventData: BuildEventData = {
-      timeMS: timeMS
-    }
-    trackEvent("build", buildEventData);
-  } 
+  initAnalytics();
+  const buildEventData: BuildEventData = {
+    timeMS: timeMS
+  }
+  trackEvent("build", buildEventData);
+  
 }

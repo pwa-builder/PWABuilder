@@ -264,14 +264,11 @@ function handleTemplateListFlag(listFlag: boolean | undefined): void {
 }
 
 async function trackCreateEvent(template: string, timeMS: number, name: string): Promise<void> {
-    if(await initAnalytics()){
-    
+    initAnalytics();
     const createEventData: CreateEventData = {
       template: template,
       name: name,
       timeMS: timeMS
     }
-
     trackEvent("create", createEventData);
-  }
 }
