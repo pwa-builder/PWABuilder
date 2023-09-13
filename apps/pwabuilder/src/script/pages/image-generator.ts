@@ -7,6 +7,7 @@ import '../components/app-file-input';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 
 import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { env } from '../utils/environment';
 
 interface PlatformInformation {
   label: string;
@@ -25,7 +26,7 @@ const platformsData: Array<PlatformInformation> = [
   { label: loc.android, value: 'android' },
   { label: loc.ios, value: 'ios' }
 ];
-const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
+const baseUrl = env.imageGeneratorUrl;
 
 function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
   if (!value || !unknownValue) {
@@ -76,10 +77,6 @@ export class ImageGenerator extends LitElement {
           font-size: var(--large-font-size);
         }
 
-        h3 {
-          font-size: var(--medium-font-size);
-        }
-
         p {
           font-size: var(--font-size);
         }
@@ -121,12 +118,47 @@ export class ImageGenerator extends LitElement {
           padding: 32px;
         }
 
-        sl-input {
+        input[type="number"] {
           width: 30%;
-          font-size: 16px;
+          font-size: 22px;
         }
         small {
           margin-top: 10px;
+        }
+        .color-radio, .platform-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .color-radio >*, .platform-list >* {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        input[type="radio"] {
+          border: 0px;
+          width: 22px;
+          height: 22px;
+          margin: 0;
+          accent-color: var(--primary-color);
+        }
+
+        input[type="radio"]:hover {
+          cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+          border: 0px;
+          width: 22px;
+          height: 22px;
+          margin: 0;
+          accent-color: var(--primary-color);
+        }
+
+        input[type="checkbox"]:hover {
+          cursor: pointer;
         }
       `,
     ];
@@ -144,38 +176,47 @@ export class ImageGenerator extends LitElement {
     return html`
       <div>
         <app-header></app-header>
-        <main id="main" role="presentation" class="main background">
+        <main id="main" class="main background">
           <div id="image-generator-card">
             <h1>${loc.image_generator}</h1>
             <p>${loc.image_generator_text}</p>
-            <form id="imageFileInputForm" enctype="multipart/form-data" role="form" class="form">
+            <form id="imageFileInputForm" enctype="multipart/form-data" class="form">
               <section class="form-left">
                 <div class="image-section">
-                  <h3>${loc.input_image}</h3>
+                  <h2>${loc.input_image}</h2>
                   <p>${loc.input_image_help}</p>
                   <app-file-input @input-change=${this.handleInputChange}></app-file-input>
                 </div>
                 <div class="padding-section">
-                  <h3>${loc.padding}</h3>
-                  <sl-input name="padding" type="number" max="1" min="0" step="0.1" value=${this.padding}
-                    @sl-change=${this.handlePaddingChange} required></sl-input>
+                  <label for="padding"><h2>${loc.padding}</h2></label>
+                  <input 
+                    id="padding"
+                    name="padding" 
+                    type="number" 
+                    max="1" 
+                    min="0" 
+                    step="0.1" 
+                    value=${this.padding}
+                    @change=${this.handlePaddingChange} required></input>
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
-                  <h3>${loc.background_color}</h3>
+                  <h2>${loc.background_color}</h2>
                   <div class="color-radio">
-                    <sl-radio-group orientation="vertical" .value=${this.colorOption}
-                      @sl-change=${this.handleBackgroundRadioChange}>
-                      <sl-radio name="colorOption" value="best guess">
-                        ${loc.best_guess}
-                      </sl-radio>
-                      <sl-radio name="colorOption" value="transparent">
-                        ${loc.transparent}
-                      </sl-radio>
-                      <sl-radio name="colorOption" value="custom">
-                        ${loc.custom_color}
-                      </sl-radio>
-                    </sl-radio-group>
+                    <div class="radio-div">
+                      <input type="radio" id="best-guess-radio" name="colorOption" value="best guess" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "best guess"} />
+                      <label for="best-guess-radio">${loc.best_guess}</label>
+                    </div>
+
+                    <div class="radio-div">
+                      <input type="radio" id="transparent-radio" name="colorOption" value="transparent" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "transparent"} />
+                      <label for="transparent-radio">${loc.transparent}</label>
+                    </div>
+
+                    <div class="radio-div">
+                      <input type="radio" id="custom-radio" name="colorOption" value="custom" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "custom"} />
+                      <label for="custom-radio">${loc.custom_color}</label>
+                    </div>
                   </div>
                   ${this.renderColorPicker()}
                 </div>
@@ -194,7 +235,7 @@ export class ImageGenerator extends LitElement {
                   ${localeStrings.button.generate}
 
                 </sl-button>
-      
+
                 ${this.renderError()}
               </section>
             </form>
@@ -207,10 +248,17 @@ export class ImageGenerator extends LitElement {
   renderPlatformList() {
     return platformsData.map(
       (platform, i) => html`
-        <sl-checkbox type="checkbox" name="platform" value="${platform.value}" ?checked=${this.platformSelected[i]}
-          @sl-change=${this.handleCheckbox} data-index=${i}>
-          ${platform.label}
-        </sl-checkbox>
+      <div class="checkbox-div">
+        <input 
+          type="checkbox"
+          name="platform" 
+          id="${`${platform.value}-checkbox`}"
+          value="${platform.value}" 
+          ?checked=${this.platformSelected[i]}
+          @change=${this.handleCheckbox} 
+          data-index=${i} />
+        <label for="${platform.value}-checkbox">${platform.label}</label>
+      </div>
       `
     );
   }
@@ -287,11 +335,11 @@ export class ImageGenerator extends LitElement {
       this.generating = true;
 
       const form = new FormData();
-      const colorValue =  
+      const colorValue =
         this.colorOption === 'custom' ? this.color : // custom? Then send in the chosen color
         this.colorOption === 'best guess' ? '' : // best guess? Then send in an empty string, which the API interprets as best guess
           'transparent'; // otherwise, it must be transparent
-      
+
       form.append('fileName', file as Blob);
       form.append('padding', String(this.padding));
       form.append('color', colorValue);

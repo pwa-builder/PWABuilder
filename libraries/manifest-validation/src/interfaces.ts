@@ -13,6 +13,15 @@ export interface Validation {
     valid?: boolean;
 }
 
+export type PartialValidation = {
+    member: string;
+    displayString?: string;
+    errorString?: string;
+    infoString?: string;
+    docsLink?: string;
+    valid: boolean;
+}
+
 export interface Manifest {
     background_color?: string;
     description?: string;
@@ -120,4 +129,33 @@ export interface Manifest {
   export interface singleFieldValidation {
     valid: Boolean;
     errors?: string[];
+  }
+
+  export interface TokensValidation {
+    installable: {
+      short_name: PartialValidation,
+      name: PartialValidation,
+      description: PartialValidation,
+      display: PartialValidation,
+      icons: PartialValidation,
+    }
+    additional: {
+      id: PartialValidation,
+      launch_handler: PartialValidation,
+      orientation: PartialValidation,
+      background_color: PartialValidation,
+      theme_color: PartialValidation,
+      screenshots: PartialValidation,
+      categories: PartialValidation
+    },
+    progressive: {
+      share_target: PartialValidation,
+      protocol_handlers: PartialValidation,
+      file_handlers: PartialValidation,
+      shortcuts: PartialValidation,
+      display_override: PartialValidation,
+      edge_side_panel: PartialValidation,
+      scope_extensions: PartialValidation,
+      widgets: PartialValidation
+    }
   }

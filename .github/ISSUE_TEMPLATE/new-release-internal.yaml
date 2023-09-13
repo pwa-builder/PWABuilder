@@ -28,7 +28,7 @@ body:
   - type: textarea
     attributes:
       label: Checklist
-      description: Add or remove checklist items as appropriate
+      description: "Add or remove checklist items as appropriate"
       value: |
         #### Code
           - [ ] Link to issue tracking board: {link_goes_here}
@@ -68,8 +68,10 @@ body:
           - [ ] Discord updated
           - [ ] Internal update
           
-       #### Analytics
+        #### Analytics
+          - [ ] Front end analytics tested and verfied before release
+          - [ ] Back end analytics tested and verfied before release
           - [ ] Adobe Analytics dashboard receiving signals after release date
        
-       #### Dependencies
+        #### Dependencies
           - [ ] PowerBI dashboard

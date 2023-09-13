@@ -8,6 +8,7 @@ import {
 } from '../../utils/win-validation';
 import { getURL, getManifestUrl } from '../app-info';
 import { fetchOrCreateManifest } from '../manifest';
+import { getHeaders } from '../../utils/platformTrackingHeaders';
 
 export let hasGeneratedWindowsPackage = false;
 
@@ -25,7 +26,9 @@ export async function generateWindowsPackage(
   } 
   // the api expects a comma separated string instead of a list, so we do it this way
   else {
-    windowsOptions.resourceLanguage = (windowsOptions.resourceLanguage as string[])!.join(",");
+    if(typeof(windowsOptions.resourceLanguage) != "string"){
+      windowsOptions.resourceLanguage = (windowsOptions.resourceLanguage as string[])!.join(",");
+    }
   }
 
   const validationErrors = validateWindowsOptions(windowsOptions);
@@ -35,11 +38,14 @@ export async function generateWindowsPackage(
         validationErrors.map(a => a.error).join('\n')
     );
   }
+
+  let headers = {...getHeaders(), 'content-type': 'application/json' };
+
   //console.info('Before fetching windows package');
   const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
     method: 'POST',
     body: JSON.stringify(windowsOptions),
-    headers: new Headers({ 'content-type': 'application/json' }),
+    headers: new Headers(headers),
   });
   //console.info('After fetching windows package', response);
   if (response.status === 200) {

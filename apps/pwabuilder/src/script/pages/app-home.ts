@@ -172,6 +172,7 @@ export class AppHome extends LitElement {
         }
         .raise:focus:not(disabled) {
           transform: scale(1.01);
+          outline: 1px solid #000000;
         }
         #input-form sl-input {
           margin-right: 10px;
@@ -474,6 +475,11 @@ export class AppHome extends LitElement {
       });
 
       if (isValidUrl) {
+        // ensures we get a new unique id everytime we enter a new url
+        // for platform tracking purposes
+        if(sessionStorage.getItem('uid')){
+          sessionStorage.removeItem('uid');
+        }
         Router.go(`/reportcard?site=${this.siteURL}`);
       } else {
         this.errorMessage = localeStrings.input.home.error.invalidURL;

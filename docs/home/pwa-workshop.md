@@ -89,9 +89,9 @@ Let's install the extension and follow these [steps](/studio/quick-start) to cre
 Before you start coding, let's explore the generated solution. The PWABuilder Studio extension was created based on the PWABuilder [pwa-starter](https://aka.ms/learn-pwa/workshop/github.com/pwa-builder/pwa-starter) project. It uses the following tech stack:
 
 - [**lit**](https://lit.dev/): PWABuilder team's framework of choice. This means you will also be using lit as a web component framework to build your PWA.
-- [**@fluent/web-components**](https://aka.ms/learn-pwa/workshop/docs.microsoft.com/fluent-ui/web-components/): The Fluent Web Components are a set of UI components, like [Ionic](https://ionicframework.com/), or the [Material Design Web Components](https://material.io/develop/web). This provides a set of modern UI components that are ready to use and can be easily customized.
+- [**Shoelace Components**](https://shoelace.style/): Shoelace Components is a set of UI web components, like [Ionic](https://ionicframework.com/), or the [Material Design Web Components](https://material.io/develop/web). This provides a set of modern UI components that are ready to use and can be easily customized.
 - [**Vite**](https://vitejs.dev/): Vite handles bundling the code, generating the Service Worker and more! We will dig a little deeper into this later when we talk about the Service Worker and cache strategy.
-- [**Vaadin Router**](https://vaadin.github.io/router/vaadin-router/demo/#vaadin-router-getting-started-demos): For routing, this project uses the Vaadin router.
+- [**The Passle Router**](https://github.com/thepassle/app-tools/tree/master/router#readme): For routing, the Starter uses the `@thepassle/app-tools` router, a lightweight client-side router that works easily with web components.
 - [**TypeScript**](https://aka.ms/learn-pwa/workshop/www.typescriptlang.org/): TypeScript gives you features such as auto complete in your code editor that helps make the development process easier and faster.
 
 Next, let's look at the file structure of the generated solution.
@@ -102,7 +102,8 @@ Next, let's look at the file structure of the generated solution.
 | `index.html` | This is the main HTML file that is served to the browser and the entry point of your source code. |
 | `public/manifest.json` | This is the manifest file that is used to configure your PWA. |
 | `src` | This folder contains all the source code for your app. |
-| `src/app-index.ts` | This file is the main entry point for your app code. The router is configured here, as well as service worker registration. |
+| `src/app-index.ts` | This file is the main entry point for your app code. You can find your service worker registration here as well. |
+| `src/router.ts` | This file contains the configuration for our router. |
 | `src/components` | This folder contains reusable components of your app. |
 | `src/pages` | This folder contains different pages of your app. Each page owns their css styles in the default setup. |
 | `src/styles` | This folder contains css stylesheets. |
@@ -138,208 +139,19 @@ git remote -v
 
 In this step, we will update the source files of the generated solution to add core functionalities such as mood tracking and journaling. 
 
-?> **Note** The goal of this workshop is not to teach web development. You can skip this step if you want to go straight to learning about progressive web app functionalities. The completed journaling app is available on GitHub  at [`solutions/01-journaling-app`](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solutions/01-journaling-app).
+?> **Note** The goal of this workshop is NOT to teach web development. You can skip this step if you want to go straight to learning about progressive web app functionalities. The completed journaling app is available on GitHub  at [`solutions/01-journaling-app`](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solutions/01-journaling-app).
 
 Make sure you have the solution running with this command `npm run dev`. So that as you save your changes, you can see them reflected in the browser. You can always stop the server by pressing the `ctrl + c` key combination.
 
-### Structure of the solution
+### What you will do and next steps
 
-#### `index.html`
-
-First, take a look at the entry point of your app, the `index.html` file. This is the file where you describe the structure for your site. The generated project points to `app-index.ts` in the `src` folder, where routes are set up and all components and pages are imported. It also includes metadata such as your app title and description. Let's make a few changes:
-
-1. Update title field with `<title>Repose</title>`.
-
-2. Update description metadata field with `<meta name="description" content="This is a mental health journaling app" />`
-
-#### `app-home.ts` in `src/script/pages` folder
-
-This is the home page of Repose. How does the browser know to render it from looking at `index.html`? Because `index.html` points to `app-index.ts` by adding it in the `<body>` tag, and `app-index.ts` determines that the default route `/` uses `app-home.ts` page when the app first updates through the `firstUpdated()` lifecycle event in lit.  
-
-So, let's add a hero section - the first thing people see when they visit Repose homepage.
-
-1. In the `render()` function, after `<app-header></app-header>`, add the following:
-
-```html
-  <div class="hero">
-    <hero-decor></hero-decor>
-    <div class="hero__inner">
-      <div class="hero__top-content">
-        <h1>Intelligent Daily Mood Journal</h1>
-        <p>Repose is your personal mood tracking companion that helps you organize and reflect upon your daily thoughts.</p>
-        <fluent-anchor href="/journal" appearance="lightweight">Mood check-in</fluent-anchor>
-      </div>
-      <div class="hero__bottom-content">
-      <img src="assets/media/humans.svg" alt="Humans">
-      </div>
-    </div>
-  </div>
-```
-
-2. In the `static get styles()` function, remove all css styles from the `return` statement. Add the following styles:
-
-```css
-  .hero {
-    height: 90vh;
-    min-height: 600px;
-    max-height: 900px;
-    max-width: 100%;
-    max-width: 100vw;
-    padding: 0 48px;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  .hero__inner {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .hero__top-content {
-    flex: 1 1 0px;
-    color: white;
-    margin: 4rem 5rem 0;
-    text-align: center;
-    max-height: 25vh;
-  }
-
-  .hero__top-content h1 {
-    font-weight: normal;
-    font-size: 48px;
-  }
-
-  .hero__top-content fluent-anchor {
-    margin-top: 1rem;
-  }
-
-  .hero__top-content fluent-anchor::part(control) {
-    border-radius: 15px;
-    color: #107652;
-  }
-
-  .hero__top-content fluent-anchor::part(control):hover {
-    color: #2E765E;
-  }
-
-  .hero__bottom-content {
-    flex: 1 1 0px;
-    height: 50vh;
-  }
-
-  .hero__bottom-content img {
-    width: 100%;
-    height: 100%;
-  }
-
-  @media screen and (max-width: 840px) and (min-width: 625px) {
-    .hero__top-content {
-      margin: 4rem 2rem 0px;
-    }
-  }
-
-  @media screen and (max-width: 625px) and (min-width: 480px) {
-    .hero__top-content {
-      margin: 2rem 2rem 0px;
-    }
-
-    .hero__bottom-content {
-      margin-top: 7rem;
-    }
-  }
-
-  @media screen and (max-width: 480px) {
-    header {
-      margin: 0 2rem;
-    }
-
-    .hero {
-      padding: 0 1rem;
-    }
-
-    .hero__top-content {
-      margin: 1rem 0;
-    }
-
-    .hero__top-content h1 {
-      font-size: 36px;
-    }
-
-    .hero__bottom-content {
-      margin-top: 7rem;
-    }
-  }
-```
-
-### Create a new reusable component
-
-Whenever you need to add a new reusable component to your app, you should add it to `src/script/components` folder. Common reusable components are: header, navigation, and footer. In Repose, we will add a new reusable component called `hero-decor`. This is the hero image that will be displayed as background on both the home page and the journal page.
-
-1. Create a hero decorative component called `hero-decor.ts` in `./src/script/components/` folder that renders as the hero section background. Import this component in `app-index.ts` file with `import './script/components/hero-decor';` on line 8 after the import of header component. And copy the code from [this hero-decor file](./solution/02-repose/src/script/components/hero-decor.ts) to it. You can use your own image or design and add custom css to brand it your way.
-
-### Copy assets, styles, and other files
-
-Again, we are copying these files instead of going into details of the code because we want to keep the workshop focused on the core functionalities of PWA. Feel free to download the completed application from [`solutions/01-journaling-app`](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solutions/01-journaling-app) and skip to the next part of the workshop.
-
-#### Add creatives folder
-
-1. Add the [media folder](./solution/02-repose/public/assets/media/) that contains two creatives to `./public/assets` folder. These are background images for Repose.
-
-#### Update global styles
-
-1. Replace the `global.css` file in `./src/styles/` folder with the styles in [this file](./solution/02-repose/src/styles/global.css).
-2. Remove unwanted styles from generated files, such as in `./src/script/app-index.ts`, remove `padding-left: 16px;` and `padding-right: 16px;` from `main` element.
-
-#### Update header component
-
-Just like the hero decorative component, you will update the header component to fit the need of Repose. And it will be reused across all pages.
-
-1. Replace `header.ts` with the code in [this file](./solution/02-repose/src/script/components/header.ts).
-2. Update `app-home.ts` to include "Go Back" function as part of the `app-header` component. Simply add attribute `enableBack="${true}"` to it. Now `app-header` element should look like this: `<app-header enableBack="${true}"></app-header>`.
-
-### Add or update app pages
-
-You can create new pages for the app and put them in `src/script/pages` folder. These pages can use the reusable components you created in the previous step. In Repose, you will not need an about page. So you can update `app-about.ts` file name to `app-journal.ts` and add journaling functionalities to it.
-
-1. Change the name of file `app-about.ts` to `app-journal.ts`. You will also need to update this in `app.index.ts` file in router setup (`children` property of `router.setRoutes`) as following:
-
-```typescript
-  {
-    path: '/journal',
-    component: 'app-journal',
-    action: async () => {
-      await import('./script/pages/app-journal.js');
-    },
-  },
-```
-
-Now when you click "Mood check-in" button, Repose app will navigate to journal page with no content.
-
-2. Add jounaling functionality to the `app-journal.ts` page with code from [this file](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/01-journaling-app/src/script/pages/app-journal.ts).
-
-3. Add this [interface file](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/01-journaling-app/src/script/interfaces/journalEntry.ts) to the project.
-
-4. Add this [utility file](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/01-journaling-app/src/script/utils/journal.ts) to the project.
-
-5. Add `localforage` to the project devDependencies with this command: `npm i localforage -D`.
-
-6. Now restart your dev server with `npm run dev` and you should see the journal page!
-
-### *Bonus functionalities*
-
-If you would like to add functionality to show existing journals, you can take a look at the completed [`app-home.ts` file](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/01-journaling-app/src/script/pages/app-home.ts) for reference. You can also add a [footer component](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/01-journaling-app/src/script/components/footer.ts) to your app.
-
-### Summary and next steps
-
-Let's do a quick recap of what you did in this step:
-- You updated `index.html` file to include title and metadata for Repose app.
-- You did a complete redesign of the homepage including some custom CSS styles and creatives as background images.
-- You created a reusable component called `hero-decor` that renders as the hero section background. This is used in both `app-index.ts` and `app-journal.ts` pages. You can also use it in other pages as you create them.
-- You updated the existing header component.
-- You created a new page called `app-journal.ts` that includes journaling functionality.
+Let's quickly look at what you need to do in this step:
+- You will update `index.html` file to include title and metadata for Repose app.
+- You will completely redesign the homepage including some custom CSS styles and creatives as background images.
+- You will create reusable components such as `hero-decor` that renders as the hero section background. They are used in multiple pages like `app-index.ts` and `app-journal.ts`. You can also use it in other pages as you create them.
+- You will update the existing `header` component to `menu` component.
+- You will create new pages called `app-journal.ts` and `app-form.ts` that include journaling functionality.
+- You will add assets and utility files as needed.
 
 Something to consider for the next steps if you are building a production ready app: Instead of using `localforage`, which stores journal entries in indexDB of your local browser's storage, you should consider using a more persistent storage solution.
 
@@ -385,68 +197,90 @@ In this step, we will modify the `manifest.json` file in the `public` folder to 
 
 ```json
   {
-    "id": "/",
-    "scope": "/",
-    "lang": "en-us",
-    "name": "Repose intelligent daily mood journal",
-    "display": "standalone",
-    "start_url": "/",
-    "short_name": "Repose",
-    "theme_color": "#B6E2D3",
-    "description": "Repose is a mental health journal app that serves as your personal mood tracking companion and helps you organize and reflect upon your daily thoughts.",
-    "orientation": "any",
-    "background_color": "#FAE8E0",
-    "dir": "ltr",
-    "related_applications": [],
-    "prefer_related_applications": false,
-    "icons": [
-      {
-        "src": "assets/icons/icon_512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      },
-      {
-        "src": "assets/icons/icon_192.png",
-        "sizes": "192x192",
-        "type": "image/png"
-      },
-      {
-        "src": "assets/icons/icon_48.png",
-        "sizes": "48x48",
-        "type": "image/png"
-      },
-      {
-        "src": "assets/icons/icon_24.png",
-        "sizes": "24x24",
-        "type": "image/png"
-      }
-    ],
-    "screenshots": [
-      {
-        "src": "assets/screenshots/screen.png",
-        "sizes": "1617x1012",
-        "type": "image/png"
-      }
-    ],
-    "features": [
-      "Cross Platform",
-      "fast",
-      "simple"
-    ],
-    "categories": [
-      "health",
-      "lifestyle"
-    ],
-    "shortcuts": [
-      {
-        "name": "Open Journal",
-        "short_name": "Journal",
-        "description": "Open the journal page",
-        "url": "/journal",
-        "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
-      }
-    ]
-  }
+  "id": "/",
+  "scope": "/",
+  "lang": "en-us",
+  "name": "Repose intelligent daily mood journal",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "Repose",
+  "theme_color": "#B6E2D3",
+  "description": "Repose is a mental health journal app that serves as your personal mood tracking companion and helps you organize and reflect upon your daily thoughts.",
+  "orientation": "any",
+  "background_color": "#FAE8E0",
+  "dir": "ltr",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay"],
+  "icons": [
+    {
+      "src": "assets/icons/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/24x24.png",
+      "sizes": "24x24",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/screen.png",
+      "sizes": "1617x1012",
+      "type": "image/png"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "categories": [
+    "social"
+  ],
+  "shortcuts": [
+    {
+      "name": "New Journal",
+      "short_name": "Journal",
+      "description": "Write a new journal",
+      "url": "/form",
+      "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Starter Widget",
+      "tag": "starterWidget",
+      "ms_ac_template": "widget/ac.json",
+      "data": "widget/data.json",
+      "description": "A simple widget example from pwa-starter.",
+      "screenshots": [
+        {
+          "src": "assets/screenshots/widget-screen.png",
+          "sizes": "500x500",
+          "label": "Widget screenshot"
+        }
+      ],
+      "icons": [
+        {
+          "src": "assets/icons/48x48.png",
+          "sizes": "48x48"
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ### How does everything work together?
@@ -479,7 +313,7 @@ After saving the manifest file and deploying it to your Azure static web app, yo
 
 ## 5️⃣ Service Workers
 
-In this step, we will take a look at how service worker is registered. Note that you don't need to make any code changes in this step. Make sure you open the [`vite.config.ts` file](./solution/03-repose-PWA/vite.config.ts) as we walk through the configurations.
+In this step, we will take a look at how service worker is registered. Note that you don't need to make any code changes in this step. Make sure you open the [`vite.config.ts` file](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solution/03-repose-PWA/vite.config.ts) as we walk through the configurations.
 
 ### What is a service worker?
 
@@ -499,11 +333,11 @@ Like all Web Workers, the Service Worker must be authored in its own file. The l
 
 2. Installation: The browser triggers `install` as the first event to the Service Worker. It can use this for pre-caching resources (e.g., populate cache with long-lived resources like logos or offline pages).
 
-3. Activation: The browser sends the `activate` event to indicate that the service worker has been installed. This service worker can now do clean up actions (e.g., remove old caches from prior version) and ready itself to handle functional events. If there is an old service worker in play, you can use `clients.claim()` to immediately replace the old service worker with your new one.
+3. Activation: The browser sends the `activate` event to indicate that the service worker has been installed. This service worker can now do clean up actions (e.g., remove old caches from prior version) and ready itself to handle functional events. If there is an old service worker in play, you can use `self.clients.claim()` to immediately replace the old service worker with your new one.
 
 ### How is service worker registered in PWABuilder Studio generated projects?
 
-Good news! With PWABuilder Studio, you don't need to create or register a service worker. The service worker is automatically created and registered for you based on the configuration you provide in the `vite.config.ts` file. PWABuilder Studio utilizes [`vite-plugin-pwa` to setup `workbox`](https://vite-plugin-pwa.netlify.app/workbox/) with [a few lines of code](./solution/03-repose-PWA/vite.config.ts).
+Good news! With PWABuilder Studio, you don't need to create or register a service worker. The service worker is automatically created and registered for you based on the configuration you provide in the `vite.config.ts` file. PWABuilder Studio utilizes [`vite-plugin-pwa` to setup `workbox`](https://vite-plugin-pwa.netlify.app/workbox/) with [a few lines of code](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solution/03-repose-PWA/vite.config.ts).
 
 **Default PWABuilder Studio VitePWA plugin config:**
 
@@ -541,7 +375,7 @@ In this step, we will talk about how to add advanced capabilities such as notifi
 
 You will need to update the [`vite.config.ts` file](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/03-add-notifications/vite.config.ts) to utilize `injectManifest` strategy.
 
-This time, the `vite-plugin-pwa` plugin will first build the custom service worker via `rollup` and then, with previous build result will call to workbox `injectManifest` method. It allows you to create you own [service worker file]https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/03-add-notifications/public/sw.js). So let's create a new `sw.js` file in the project's `./public/` folder. Update both `sw.js` and `vite.config.ts` files to have the same code as shown in solution [03-add-notifications](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solutions/03-add-notifications).
+This time, the `vite-plugin-pwa` plugin will first build the custom service worker via `rollup` and then, with previous build result will call to workbox `injectManifest` method. It allows you to create you own [service worker file](https://github.com/pwa-builder/pwa-journal-workshop/blob/main/solutions/03-add-notifications/public/sw.js). So let's create a new `sw.js` file in the project's `./public/` folder. Update both `sw.js` and `vite.config.ts` files to have the same code as shown in solution [03-add-notifications](https://github.com/pwa-builder/pwa-journal-workshop/tree/main/solutions/03-add-notifications).
 
 ### Display notifications in action center
 

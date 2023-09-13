@@ -9,6 +9,8 @@ import {
 } from '../utils/interfaces';
 import { generateScreenshots } from '../utils/screenshots';
 import { resolveUrl } from '../utils/urls';
+import {classMap} from 'lit/directives/class-map.js';
+import "./manifest-field-tooltip";
 
 let manifestInitialized = false;
 
@@ -24,6 +26,7 @@ export class ManifestScreenshotsForm extends LitElement {
   }}) manifest: Manifest = {};
   @property({type: String}) manifestURL: string = "";
   @property({type: String}) baseURL: string = "";
+  @property({type: String}) focusOn: string = "";
 
   @state() screenshotUrlList: Array<string | undefined> = [undefined];
   @state() screenshotListValid: Array<boolean> = [];
@@ -176,6 +179,10 @@ export class ManifestScreenshotsForm extends LitElement {
         color: rgb(79, 63, 182);
       }
 
+      .focus {
+        color: #4f3fb6;
+      }
+
       @media(max-width: 765px){
 
         sl-input {
@@ -266,11 +273,12 @@ export class ManifestScreenshotsForm extends LitElement {
         if(validation.errors){
           validation.errors.forEach((error: string) => {
             let p = document.createElement('p');
-          p.innerText = error;
-          p.style.color = "#eb5757";
-          p.classList.add("error-message");
-          insertAfter(p, title!.parentNode);
-          this.errorCount++;
+            p.innerText = error;
+            p.style.color = "#eb5757";
+            p.classList.add("error-message");
+            p.setAttribute('aria-live', 'polite');
+            insertAfter(p, title!.parentNode);
+            this.errorCount++;
           });
         }
 
@@ -533,22 +541,18 @@ export class ManifestScreenshotsForm extends LitElement {
     return undefined;
   }
 
+  decideFocus(field: string){
+    let decision = this.focusOn === field;
+    return {focus: decision}
+  }
+
   render() {
     return html`
       <div id="form-holder">
         <div class="form-field">
           <div class="field-header">
-            <h3>Screenshots</h3>
-            <a
-              href="https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"
-              target="_blank"
-              rel="noopener"
-            >
-              <img src="/assets/tooltip.svg" alt="info circle tooltip" />
-              <p class="toolTip">
-                Click for more info on the screenshots option in your manifest.
-              </p>
-            </a>
+            <h3 class=${classMap(this.decideFocus("screenshots"))}>Screenshots</h3>
+            <manifest-field-tooltip .field=${"screenshots"}></manifest-field-tooltip>
           </div>
           <p>Below are the screenshots that are currently in your manifest.</p>
           <div class="sc-gallery">

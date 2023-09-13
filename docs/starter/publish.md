@@ -15,13 +15,13 @@ The Azure Static Web Apps CLI is included in the PWA Starter's Node dependencies
 
 You can check out the Azure SWA CLI website [here.](https://azure.github.io/static-web-apps-cli/)
 
-#### Prerequisites:
+### Prerequisites:
 
 What you'll need before we get started:
   
 * [Free Azure account](https://azure.microsoft.com/en-us/free)
 
-#### Step By Step
+### Step By Step
 
 To deploy the PWA Starter as an Azure static web app:
 
@@ -40,7 +40,7 @@ npm run deploy
 
 5. And thats it, finish following the prompts from the Azure Static Web Apps CLI and your app will be deployed to Azure.
 
-#### Next Steps
+### Next Steps
 
 To learn more about the SWA CLI, check out their documentation [here.](https://azure.github.io/static-web-apps-cli/)
 
@@ -48,13 +48,13 @@ If you want some more general guidance on Azure Static Web Apps, more informatio
 
 ## Github Pages
 
-!> Github Pages support no longer works for Starters cloned before February 22nd, 2023. If you'd like to use Github Pages for future projects, please ensure you are using the latest version of the PWA Starter.
+!> Github Pages support is not currently working on the latest versions of the template. We are taking a look at what happened and will find a fix as soon as possible. Feel free to follow these steps if you would like to give it a try yourself, but it may result in a buggy deploy experience.
 
 Another quick and easy option for deploying your PWA is Github Pages. 
 
 The Starter has a built in Workflow that will build your PWA for GitHub Pages entirely on the cloud, no pushing or pulling to the repo is necessary.
 
-#### Prerequisites
+### Prerequisites
 
 Some things you’ll need before we get started:
 
@@ -62,7 +62,7 @@ Some things you’ll need before we get started:
 
 - Personal version of the PWA Starter hosted on Github
 
-#### Enabling Github Pages
+### Enabling Github Pages
 
 In order to use Github Pages, it has to be enabled for your repository:
 
@@ -76,7 +76,7 @@ In order to use Github Pages, it has to be enabled for your repository:
    <img src="/assets/starter/publishing/enable-pages.png" alt="Image showing how to enable GitHub pages in repository settings.">
 </div>
 
-#### Deploying to GitHub Pages
+### Deploying to GitHub Pages
 
 Once you've enabled Pages, you just need to run the GitHub action that deploys the Starter to your static GitHub site:
 
@@ -98,7 +98,7 @@ Once you've enabled Pages, you just need to run the GitHub action that deploys t
 
 That's it! Your progressive web app is now deployed to GitHub pages.
 
-#### Next Steps
+### Next Steps
 
 You can trigger a new deployment by repeating the steps done in the ***Building for Deployment*** subsection.
 

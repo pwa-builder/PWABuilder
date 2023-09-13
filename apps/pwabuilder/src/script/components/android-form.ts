@@ -8,6 +8,7 @@ import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import { AppNameInputPattern } from '../utils/constants';
 
 @customElement('android-form')
 
@@ -278,7 +279,7 @@ export class AndroidForm extends AppPackageFormBase {
                 minLength: 3,
                 maxLength: 50,
                 spellcheck: false,
-                pattern: "[^|$@#><)(!&%*]*$",
+                pattern: AppNameInputPattern,
                 validationErrorMessage:
                   'App name must not include special characters and be between 3 and 50 characters',
                 inputHandler: (val: string) => this.packageOptions.name = val
@@ -378,6 +379,17 @@ export class AndroidForm extends AppPackageFormBase {
                     type: 'color',
                     value: this.packageOptions.themeColor,
                     inputHandler: (val: string) => this.packageOptions.themeColor = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Theme dark color',
+                    tooltip: `The theme color used for the Android status bar in your app when the Android device is in dark mode.`,
+                    inputId: 'theme-dark-color-input',
+                    type: 'color',
+                    value: this.packageOptions.themeColorDark,
+                    inputHandler: (val: string) => this.packageOptions.themeColorDark = val
                   })}
                 </div>
 
