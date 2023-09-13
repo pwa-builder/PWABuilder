@@ -510,13 +510,13 @@ export class AppReport extends LitElement {
           padding: 2em;
         }
 
-        #app-actions button:not(#test-download) { // pfs + disabled
+        #pfs, #pfs-disabled { // pfs + disabled
           white-space: nowrap;
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
           font-size: var(--button-font-size);
           font-weight: var(--font-bold);
-          border: none;
+          border: 1px solid transparent;
           color: #ffffff;
           white-space: nowrap;
         }
@@ -544,6 +544,8 @@ export class AppReport extends LitElement {
 
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
+          border: 1px solid white;
+          outline: 2px solid black;
         }
 
         #share-card {
@@ -831,6 +833,12 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           height: fit-content;
+        }
+
+        #pageStatus {
+          font-size: 0;
+          color: transparent;
+          margin: 0;
         }
 
         #indicators-holder {
@@ -2446,6 +2454,11 @@ export class AppReport extends LitElement {
     } else if(!up && this.pageNumber != 1){
       this.pageNumber--;
     }
+
+    const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
+    const totalPages = Math.ceil(this.todoItems.length / this.pageSize) // Calculate total pages
+    pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
+
     this.requestUpdate();
   }
 
@@ -2706,7 +2719,14 @@ export class AppReport extends LitElement {
             ${(this.todoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
+                <button 
+                  class="pagination-buttons" 
+                  name="action-items-previous-page-button" 
+                  aria-label="Previous page button for action items list"
+                  type="button"  
+                  @click=${() => this.switchPage(false)}
+                  ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
+                </button>
                 <div id="dots">
                   ${this.getDots().map((_dot: any, index: number) => {
                     const isActive = this.pageNumber === index + 1
@@ -2720,8 +2740,16 @@ export class AppReport extends LitElement {
                     `
                     })}
                 </div>
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon></button>
+                <button 
+                  class="pagination-buttons" 
+                  name="action-items-next-page-button" 
+                  aria-label="Next page button for action items list"
+                  aria-live="polite"
+                  type="button" 
+                  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
+                </button>
               </div>` : html``}
+              <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
             </sl-details>
           </div>
 

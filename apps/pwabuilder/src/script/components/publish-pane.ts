@@ -19,6 +19,7 @@ import './ios-form';
 import './oculus-form';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('publish-pane')
 export class PublishPane extends LitElement {
@@ -41,8 +42,8 @@ export class PublishPane extends LitElement {
   @state() downloadFileName: string | null = null;
   @state() feedbackMessages: TemplateResult[] = [];
 
-  @property() preventClosing = false;
-  @property() tokensCampaign = false;
+  @property({type: Boolean}) preventClosing = false;
+  @property({type: Boolean}) tokensCampaign = false;
 
   @state() storeMap: any = {
   "Windows":
@@ -218,7 +219,7 @@ export class PublishPane extends LitElement {
         /* temporary styling for token trial */
         padding: 1em;
       }
-      .title-block h3 {
+      .title-block h2 {
         margin: 0;
         font-size: 24px;
       }
@@ -368,6 +369,10 @@ export class PublishPane extends LitElement {
       #form-area[data-store="Android"] {
         padding-top: 0;
         flex-direction: column;
+      }
+
+      .noX::part(close-button) {
+        display: none;
       }
 
       .dialog::part(body){
@@ -990,7 +995,7 @@ export class PublishPane extends LitElement {
           }
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
-            <h3>${platform.title}</h3>
+            <h2>${platform.title}</h2>
             <!-- TODO need to fix the platform action blocks text spacing for the left. -->
             <div class="platform-actions-block">
               ${platform.renderDownloadButton()}
@@ -1123,7 +1128,12 @@ export class PublishPane extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} @sl-request-close=${(e:any) => this.handleRequestClose(e)} noHeader>
+      <sl-dialog
+        class=${classMap({noX: this.preventClosing, dialog: true})}
+        @sl-show=${() => document.body.style.height = "100vh"} 
+        @sl-hide=${(e: any) => this.hideDialog(e)} 
+        @sl-request-close=${(e:any) => this.handleRequestClose(e)} 
+        noHeader>
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
           ${this.cardsOrForm ?

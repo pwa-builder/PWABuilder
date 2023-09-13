@@ -6,18 +6,18 @@ The suite has three main tools:
 
 <div class="home-nav-container">
    <sl-card class="home-nav-card">
-         <h3>
+         <h2>
             PWA Starter
-         </h3>
+         </h2>
          <body>
            Build a new progressive app with the development-ready PWA Starter.
          </body>
       <sl-button href="#/starter/quick-start">Go to Starter Docs</sl-button>
    </sl-card>
    <sl-card class="home-nav-card">
-         <h3>
+         <h2>
             PWABuilder
-         </h3>
+         </h2>
          <body>
          Package progressive web apps for native app stores with PWABuilder.
          </body>
@@ -25,9 +25,9 @@ The suite has three main tools:
    </sl-card>
    
    <sl-card class="home-nav-card">
-         <h3>
+         <h2>
             PWABuilder Studio
-         </h3>
+         </h2>
          <body>
             Ease PWA development with the PWABuilder Studio VS Code extension.
          </body>
