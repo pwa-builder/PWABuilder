@@ -6,15 +6,7 @@ import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
 
 export interface CreateEventData {
-  template: string,
-  name: string,
-  timeMS: number
-}
-
-export interface StartEventData {}
-
-export interface BuildEventData {
-  timeMS: number
+  template: string
 }
 
 export interface PWABuilderData {

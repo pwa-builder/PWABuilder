@@ -1,6 +1,6 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { isDirectoryTemplate, outputError, execSyncWrapper, timeFunction } from "../util/util";
-import { initAnalytics, trackEvent, BuildEventData, trackException } from "../analytics/usage-analytics";
+import { isDirectoryTemplate, outputError, execSyncWrapper } from "../util/util";
+import { initAnalytics, trackEvent, trackException } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Build the PWA Starter using Vite.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite build process.';
@@ -28,6 +28,7 @@ export const builder: CommandBuilder = (yargs) =>
 
 export const handler = async (argv: Arguments<BuildOptions>): Promise<void> => {
   try {
+    trackBuildEvent();
     await handleBuildCommand(argv);
   } catch (error) {
     trackException(error as Error);
@@ -36,10 +37,8 @@ export const handler = async (argv: Arguments<BuildOptions>): Promise<void> => {
 
 async function handleBuildCommand(argv: Arguments<BuildOptions>): Promise<void> {
   const { viteArgs } = argv;
-  
   if(isDirectoryTemplate()) {
-    const duration: number = await timeFunction(() => {execBuildCommand(viteArgs)});
-    trackBuildEvent(duration);
+    execBuildCommand(viteArgs); 
   } else {
     outputError(INVALID_DIRECTORY_ERROR_STRING);
   }
@@ -52,11 +51,7 @@ async function execBuildCommand(viteArgs: string | undefined) {
   }
 }
 
-async function trackBuildEvent(timeMS: number): Promise<void> {
+async function trackBuildEvent(): Promise<void> {
   initAnalytics();
-  const buildEventData: BuildEventData = {
-    timeMS: timeMS
-  }
-  trackEvent("build", buildEventData);
-  
+  trackEvent("build", null);
 }
