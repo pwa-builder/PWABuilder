@@ -126,7 +126,6 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
 };
 
 async function handleCreateCommand(argv: Arguments<CreateOptions>) { 
-  console.log = function(){};
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
   trackCreateEvent(resolvedTemplate);
   await fetchAndPrepareTemplate(resolvedName, resolvedTemplate);
@@ -136,6 +135,7 @@ async function handleCreateCommand(argv: Arguments<CreateOptions>) {
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
   const {name, template, list} = argv;
+  handleTemplateListFlag(list);
   const resolvedTemplate= await resolveTemplateArgument(template, ('template' in argv));
   const resolvedName = await resolveNameArgument(name);
   return {resolvedName, resolvedTemplate};
