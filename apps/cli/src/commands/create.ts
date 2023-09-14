@@ -130,7 +130,6 @@ async function handleCreateCommand(argv: Arguments<CreateOptions>) {
   trackCreateEvent(resolvedTemplate);
   await fetchAndPrepareTemplate(resolvedName, resolvedTemplate);
   finalOutput(resolvedName);
-  trackCreateEvent(resolvedTemplate);
 }
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
