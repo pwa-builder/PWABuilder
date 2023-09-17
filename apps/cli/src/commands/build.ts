@@ -1,6 +1,6 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { isDirectoryTemplate, outputError, execSyncWrapper } from "../util/util";
-import { initAnalytics, trackEvent, trackException } from "../analytics/usage-analytics";
+import { trackBuildEventWrapper, trackErrorWrapper } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Build the PWA Starter using Vite.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite build process.';
@@ -28,10 +28,10 @@ export const builder: CommandBuilder = (yargs) =>
 
 export const handler = async (argv: Arguments<BuildOptions>): Promise<void> => {
   try {
-    trackBuildEvent();
+    trackBuildEventWrapper();
     await handleBuildCommand(argv);
   } catch (error) {
-    trackException(error as Error);
+    trackErrorWrapper(error as Error);
   }
 };
 
@@ -49,9 +49,4 @@ async function execBuildCommand(viteArgs: string | undefined) {
   } else {
     execSyncWrapper(EXEC_BUILD_NO_ARGS_STRING, false);
   }
-}
-
-async function trackBuildEvent(): Promise<void> {
-  initAnalytics();
-  trackEvent("build", null);
 }

@@ -4,6 +4,7 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
+import { spawn } from 'child_process';
 
 export interface CreateEventData {
   template: string
@@ -97,4 +98,37 @@ function addUserIDtoTelemetry(id: string): void {
     envelope["tags"]['ai.user.id'] = id;
     return true;
   });
+}
+
+function spawnAnalyticsProcess(event: string, properties?: any) {
+  const child = spawn('node', resolveNodeSpawnArgs(event, properties), {
+    detached: true,
+    stdio: 'ignore'
+  });
+
+  child.on('error', (err: Error) => {
+    trackException(err);
+  })
+  
+  child.unref();
+}
+
+function resolveNodeSpawnArgs(event: string, properties?: any): string [] {
+  return properties ? ['tack-event.js', event] : ['tack-event.js', event, JSON.stringify(properties)];
+}
+
+export function trackErrorWrapper(_error: Error): void {
+  spawnAnalyticsProcess('error', {error: _error});
+}
+
+export function trackCreateEventWrapper(createEventData: CreateEventData): void {
+  spawnAnalyticsProcess('create', createEventData);
+}
+
+export function trackBuildEventWrapper(): void {
+  spawnAnalyticsProcess('build');
+}
+
+export function trackStartEventWrapper(): void {
+  spawnAnalyticsProcess('start');
 }
