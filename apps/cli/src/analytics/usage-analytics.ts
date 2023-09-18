@@ -43,10 +43,9 @@ export function getAnalyticsClient() {
 }
 
 // function to trackEvent
-export function trackEvent(name: string, properties: any) {
+export function trackEvent(name: string, properties?: any) {
   try {
     if (getFlag("analytics") === true) {
-
       defaultClient.trackEvent({ 
         name,  
         properties
@@ -102,21 +101,22 @@ function addUserIDtoTelemetry(id: string): void {
 }
 
 function spawnAnalyticsProcess(event: string, properties?: any) {
+  const logPath: string = path.resolve(__dirname, 'out.log');
+  const out = fs.openSync(logPath, 'a');
+  const err = fs.openSync(logPath, 'a');
   const child = spawn('node', resolveNodeSpawnArgs(event, properties), {
     detached: true,
-    stdio: 'ignore'
+    stdio: ['ignore', out, err]
   });
-
   child.on('error', (err: Error) => {
     trackException(err);
   })
-  
   child.unref();
 }
 
 function resolveNodeSpawnArgs(event: string, properties?: any): string [] {
   const scriptPath: string = path.resolve(__dirname, 'track-events.js')
-  return properties ? [scriptPath, event] : [scriptPath, event, JSON.stringify(properties)];
+  return properties ? [scriptPath, event, JSON.stringify(properties)] : [scriptPath, event];
 }
 
 export function trackErrorWrapper(_error: Error): void {

@@ -20,6 +20,7 @@ function initAnalyticsAndTrack(name: string, properties: any) {
 }
 
 function parseTrackEventParameters(): TrackEventParameters {
+  console.log(process.argv);
   return {
     name: process.argv[2],
     properties: process.argv[3] ? JSON.parse(process.argv[3]) : {}

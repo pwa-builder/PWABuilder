@@ -1,5 +1,5 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { isDirectoryTemplate, outputError, execSyncWrapper } from "../util/util";
+import { isDirectoryTemplate, outputError, spawnWrapper } from "../util/util";
 import { trackBuildEventWrapper, trackErrorWrapper } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Build the PWA Starter using Vite.';
@@ -38,15 +38,15 @@ export const handler = async (argv: Arguments<BuildOptions>): Promise<void> => {
 async function handleBuildCommand(argv: Arguments<BuildOptions>): Promise<void> {
   const { viteArgs } = argv;
   if(isDirectoryTemplate()) {
-    execBuildCommand(viteArgs); 
+    spawnBuildCommand(viteArgs); 
   } else {
     outputError(INVALID_DIRECTORY_ERROR_STRING);
   }
 }
-async function execBuildCommand(viteArgs: string | undefined) {
+async function spawnBuildCommand(viteArgs: string | undefined) {
   if(viteArgs) {
-    execSyncWrapper(EXEC_BUILD_ARGS_STRING(viteArgs), false); 
+    spawnWrapper(EXEC_BUILD_ARGS_STRING(viteArgs)); 
   } else {
-    execSyncWrapper(EXEC_BUILD_NO_ARGS_STRING, false);
+    spawnWrapper(EXEC_BUILD_NO_ARGS_STRING);
   }
 }

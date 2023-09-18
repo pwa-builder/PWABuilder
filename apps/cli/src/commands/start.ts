@@ -1,5 +1,5 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
+import { outputError, isDirectoryTemplate, spawnWrapper } from "../util/util";
 import { trackErrorWrapper, trackStartEventWrapper } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
@@ -39,16 +39,16 @@ export const handler = (argv: Arguments<StartOptions>): void => {
 function handleStartCommand(argv: Arguments<StartOptions>) {
   const { viteArgs } = argv;
   if(isDirectoryTemplate()) {
-    execStartCommand(viteArgs);
+    spawnStartCommand(viteArgs);
   } else {
     outputError(INVALID_DIRECTORY_ERROR_STRING);
   }  
 }
 
-function execStartCommand(viteArgs: string | undefined) {
+function spawnStartCommand(viteArgs: string | undefined) {
   if(viteArgs) {
-    execSyncWrapper(EXEC_START_ARGS_STRING(viteArgs), false); 
+    spawnWrapper(EXEC_START_ARGS_STRING(viteArgs)); 
   } else {
-    execSyncWrapper(EXEC_START_NO_ARGS_STRING, false);
+    spawnWrapper(EXEC_START_NO_ARGS_STRING);
   }
 }
