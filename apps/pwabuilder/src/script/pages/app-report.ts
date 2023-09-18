@@ -35,7 +35,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
-import { SlDetails, SlDropdown, SlTooltip } from '@shoelace-style/shoelace';
+import { SlDetails, SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 import { GetTokenCampaignStatus } from './qualification/app-token.helper';
@@ -119,7 +119,7 @@ export class AppReport extends LitElement {
   @state() swDataLoading: boolean = true;
   @state() swMessage: string = "";
 
-  
+
   @state() secDataLoading: boolean = true;
   @state() showSecurityBanner: boolean = false;
   @state() securityIssues: string[] = [];
@@ -169,6 +169,31 @@ export class AppReport extends LitElement {
                   }
       }
     ];
+
+  private specialManifestTodos: {[id: string]: string} = {
+    "shortcuts": "Add contextual shortcuts to specific parts of your app",
+    "display_override": "Extend your app into the titlebar for a more native look and feel",
+    "share_target": "Be a share target for your users",
+    "file_handlers": "Be a default handler for certain filetypes",
+    "handle_links": "Open links as an app",
+    "protocol_handlers": "Create a custom protocol handler",
+    "edge_side_panel": "Increase reach by partcipating in the Edge Side Panel",
+    "widgets": "Increase reach with Widgets"
+  }
+
+  private specialSWTodos: {[id: string]: string} = {
+    "offline_support": "Allow users to use your app without internet connection",
+    "push_notifications": "Send notifications to you users even if your app is not running",
+    "background_sync": "Ensure user actions and content is always in sync even if network connection is lost",
+    "periodic_sync": "Update your app in the background so it's ready next time the user opens it"
+  }
+
+  private swToolTips: {[id: string]: string} = {
+    "offline_support": "Allow users to use your app without internet connection",
+    "push_notifications": "Send notifications to you users even if your app is not running",
+    "background_sync": "Ensure user actions and content is always in sync even if network connection is lost",
+    "periodic_sync": "Update your app in the background so it's ready next time the user opens it"
+  }
 
   static get styles() {
     return [
@@ -1954,7 +1979,7 @@ export class AppReport extends LitElement {
       this.requestUpdate();
       return;
     }
-    
+
     this.filteredTodoItems = this.allTodoItems;
     console.log(this.reportAudit);
 
@@ -2010,55 +2035,57 @@ export class AppReport extends LitElement {
     let manifest;
     let todos: unknown[] = [];
 
-    if(!this.createdManifest){
-      manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
-      this.validationResults = await validateManifest(manifest, true);
-
-      //  This just makes it so that the valid things are first
-      // and the invalid things show after.
-      this.validationResults.sort((a, b) => {
-        if(a.valid && !b.valid){
-          return 1;
-        } else if(b.valid && !a.valid){
-          return -1;
-        } else {
-          return a.member.localeCompare(b.member);
-        }
-      });
-      this.manifestTotalScore = this.validationResults.length;
-      this.manifestValidCounter = 0;
-      this.manifestRequiredCounter = 0;
-
-      this.validationResults.forEach((test: Validation) => {
-        if(test.valid){
-          if(test.category === "enhancement"){
-            this.enhancementTotalScore++;
-          }
-          this.manifestValidCounter++;
-        } else {
-          let status ="";
-          if(test.category === "required" || test.testRequired){
-            status = "required";
-            this.manifestRequiredCounter++;
-          } else if(test.category === "recommended"){
-            this.manifestRecCounter++;
-          } 
-          if(status === "") {
-            status = test.category;
-          }
-          if(status === "enhancement"){
-            // fetch special display string
-            let specialString = test.errorString;
-            todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": specialString, "status": status});
-          } else {
-            todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
-          }
-        }
-      });
-    } else {
+    if(this.createdManifest){
       manifest = {};
-      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
+      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
+
+    manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    this.validationResults = await validateManifest(manifest, true);
+
+    //  This just makes it so that the valid things are first
+    // and the invalid things show after.
+    this.validationResults.sort((a, b) => {
+      if(a.valid && !b.valid){
+        return 1;
+      } else if(b.valid && !a.valid){
+        return -1;
+      } else {
+        return a.member.localeCompare(b.member);
+      }
+    });
+    this.manifestTotalScore = this.validationResults.length;
+    this.manifestValidCounter = 0;
+    this.manifestRequiredCounter = 0;
+
+    this.validationResults.forEach((test: Validation) => {
+      if(test.valid){
+        if(test.category === "enhancement"){
+          this.enhancementTotalScore++;
+        }
+        this.manifestValidCounter++;
+      } else {
+        let status ="";
+        if(test.category === "required" || test.testRequired){
+          status = "required";
+          this.manifestRequiredCounter++;
+        } else if(test.category === "recommended"){
+          this.manifestRecCounter++;
+        }
+        if(status === "") {
+          status = test.category;
+        }
+        if(status === "enhancement"){
+          // fetch special display string
+          let specialString: string = this.specialManifestTodos[test.member!];
+          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": specialString, "status": status});
+        } else {
+          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+        }
+      }
+    });
+
+
 
     // adding todo for token giveaway item if theres at least a manifest
     if(!this.createdManifest && this.tokensCampaign){
@@ -2129,7 +2156,8 @@ export class AppReport extends LitElement {
         }
 
         if(!missing){
-          todos.push({"card": card, "field": result.infoString, "fix": result.infoString, "status": status});
+          let fix = this.specialSWTodos[result.member];
+          todos.push({"card": card, "field": result.infoString, "fix": fix, "status": status});
         }
       }
     })
@@ -2169,8 +2197,8 @@ export class AppReport extends LitElement {
     })
 
     this.canPackageList[2] = !this.showConfirmationModal;
-    
-    
+
+
     this.secDataLoading = false;
 
     //save security tests in session storage
@@ -2358,7 +2386,7 @@ export class AppReport extends LitElement {
       instantRed = this.manifestRequiredCounter > 0;
     } else if(card === "sw"){
       instantRed = this.swRequiredCounter > 0;
-    } 
+    }
 
     let instantYellow = false;
     if(card === "manifest"){
@@ -2394,7 +2422,7 @@ export class AppReport extends LitElement {
     } else if(card === "sw"){
       index = 1;
       instantRed = this.swRequiredCounter > 0;
-    } 
+    }
 
     let ratio = parseFloat(JSON.stringify(valid)) / total;
 
@@ -2527,24 +2555,26 @@ export class AppReport extends LitElement {
   sortTodos(){
     let rank: { [key: string]: number } = {
       "retest": 0,
-      "required": 1,
-      "giveaway": 2,
-      "enhancement": 3,
-      "highly recommended": 4,
-      "recommended": 5,
-      "optional": 6
+      "missing": 1,
+      "required": 2,
+      "giveaway": 3,
+      "enhancement": 4,
+      "highly recommended": 5,
+      "recommended": 6,
+      "optional": 7
     };
 
     // If the manifest is missing more than half of the recommended fields, show those first
     if((this.manifestRecCounter / recommended_fields.length) > .5){
       rank = {
         "retest": 0,
-        "required": 1,
-        "giveaway": 2,
-        "highly recommended": 3,
-        "recommended": 4,
-        "enhancement": 5,
-        "optional": 6
+        "missing": 1,
+        "required": 2,
+        "giveaway": 3,
+        "highly recommended": 4,
+        "recommended": 5,
+        "enhancement": 6,
+        "optional": 7
       };
     }
 
@@ -2627,22 +2657,22 @@ export class AppReport extends LitElement {
     if(yellow + purple + red != 0){
       return html`
       <div id="indicators-holder">
-        ${red != 0 ? 
+        ${red != 0 ?
           this.filterList.includes("required") ?
             html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></div>` :
             html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>`
-          : null 
-        }
-        ${yellow != 0 ? 
-          this.filterList.includes("recommended") || this.filterList.includes("optional") ?
-            html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></div>` :
-            html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` 
           : null
         }
-        ${purple != 0 ? 
+        ${yellow != 0 ?
+          this.filterList.includes("recommended") || this.filterList.includes("optional") ?
+            html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></div>` :
+            html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>`
+          : null
+        }
+        ${purple != 0 ?
           this.filterList.includes("enhancement") ?
           html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></div>` :
-          html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>` 
+          html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>`
             : null
           }
       </div>`
@@ -2660,7 +2690,7 @@ export class AppReport extends LitElement {
 
     this.stopShowingNotificationTooltip = true;
     // if its in the list, remove it, else add it
-    // yellow means optional and recommended 
+    // yellow means optional and recommended
     if(filter === "yellow"){
       if(this.filterList.includes("optional")){
         this.filterList = this.filterList.filter((x: string) => (x !== "optional") && (x !== "recommended"))
@@ -2859,7 +2889,7 @@ export class AppReport extends LitElement {
             </div>
           </div>
 
-          ${this.showSecurityBanner ? 
+          ${this.showSecurityBanner ?
             html`
               <div class="feedback-holder type-error">
                 <img src="/assets/new/stop.svg" alt="invalid result icon" />
@@ -2885,23 +2915,23 @@ export class AppReport extends LitElement {
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
                   <p>Action Items</p>
-                  
-                    ${this.allTodoItems.length > 0 ? 
-                      this.stopShowingNotificationTooltip ? 
+
+                    ${this.allTodoItems.length > 0 ?
+                      this.stopShowingNotificationTooltip ?
                         // if they interact with the inicators, we no longer need to show the tooltip
                         this.renderIndicators() :
-                      
+
                         // showing tooltip until they click an indicator which will remove the tooltip
                         html`
                           <sl-tooltip class="mani-tooltip" id="notifications" open>
                             <div slot="content" class="mani-tooltip-content">
-                              <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> 
+                              <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
                               <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
-                            </div> 
+                            </div>
                             ${this.renderIndicators()}
                           </sl-tooltip>
                         `
-                      : 
+                      :
                       null}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
@@ -2927,11 +2957,11 @@ export class AppReport extends LitElement {
             ${(this.filteredTodoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
-                <button 
-                  class="pagination-buttons" 
-                  name="action-items-previous-page-button" 
+                <button
+                  class="pagination-buttons"
+                  name="action-items-previous-page-button"
                   aria-label="Previous page button for action items list"
-                  type="button"  
+                  type="button"
                   @click=${() => this.switchPage(false)}
                   ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
                 </button>
@@ -2945,12 +2975,12 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <button 
-                  class="pagination-buttons" 
-                  name="action-items-next-page-button" 
+                <button
+                  class="pagination-buttons"
+                  name="action-items-next-page-button"
                   aria-label="Next page button for action items list"
                   aria-live="polite"
-                  type="button" 
+                  type="button"
                   @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
                 </button>
               </div>` : null}
@@ -3152,13 +3182,13 @@ export class AppReport extends LitElement {
                       id="swProgressRing"
                       class="counterRing"
                       value="${this.swValidCounter > 0 ? 100 : 0}"
-                      >+${this.swValidCounter} 
+                      >+${this.swValidCounter}
                     </sl-progress-ring>
                     `
                   }
                 </div>
                   <div class="icons-holder sw">
-                    ${this.serviceWorkerResults.map((result: any) => 
+                    ${this.serviceWorkerResults.map((result: any) =>
                       html`
                         <div class="icon-and-name">
                           <div class="circle-icon" slot="trigger">
@@ -3167,7 +3197,7 @@ export class AppReport extends LitElement {
                           </div>
                         <p>${this.formatSWStrings(result.member)}</p>
                       </div>
-                      ` 
+                      `
                       )
                     }
                   </div>
@@ -3204,7 +3234,7 @@ export class AppReport extends LitElement {
 
                 </div>
               </div>
-              
+
             </div>
             <div id="security" class="half-width-cards">
               <div id="sec-header" class="flex-col">
@@ -3233,7 +3263,7 @@ export class AppReport extends LitElement {
 
                 </div>
                 <div class="icons-holder">
-                  ${this.validationResults.map((result: Validation) => result.category === "enhancement" ? 
+                  ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
                     html`
                       <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
                         <manifest-info-card .field=${result.member} .placement="${"right"}">
@@ -3244,12 +3274,12 @@ export class AppReport extends LitElement {
                         </manifest-info-card>
                         <p>${result.member}</p>
                     </div>
-                    ` 
+                    `
                     : null )
                   }
                 </div>
                 ${this.manifestDataLoading ?
-                  html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` : 
+                  html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
                   html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
                 }
               </div>

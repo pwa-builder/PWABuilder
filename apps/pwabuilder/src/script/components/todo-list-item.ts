@@ -111,7 +111,7 @@ export class TodoItem extends LitElement {
           }
       }
 
-      .giveaway img { 
+      .giveaway img {
         height: 21px;
       }
 
@@ -169,7 +169,7 @@ export class TodoItem extends LitElement {
     }
 
     return {iwrapper: true, clickable: this.clickable, giveaway: this.giveaway}
-  } 
+  }
 
   bubbleEvent(){
     if(manifest_fields[this.field]){
@@ -204,8 +204,9 @@ export class TodoItem extends LitElement {
   decideIcon(){
     switch(this.status){
       case "required":
+      case "missing":
         return html`<img src=${stop_src} alt="yield result icon"/>`
-    
+
       case "retest":
         return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`
 
@@ -231,7 +232,7 @@ export class TodoItem extends LitElement {
           ${this.decideIcon()}
           <p>${this.fix}</p>
 
-          ${this.giveaway ? 
+          ${this.giveaway ?
             html`
               <span
                 class="arrow_anchor"
@@ -247,17 +248,17 @@ export class TodoItem extends LitElement {
             ` :
             html``
           }
-          
+
         </div>
 
-        ${manifest_fields[this.field] ? 
+        ${manifest_fields[this.field] ?
           html`
             <manifest-info-card .field=${this.field} .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
               <button slot="trigger" type="button" class="right">
                 <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
               </button>
             </manifest-info-card>
-          ` 
+          `
           : html``}
       </div>
     `;
