@@ -128,7 +128,7 @@ export class ManifestFieldTooltip extends LitElement {
     return html`
       <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
         <sl-dropdown distance="10" placement="right" class="tooltip">
-          <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()} >
+          <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()} aria-label="Required field">
             <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
           </button>
           <div class="info-box">
