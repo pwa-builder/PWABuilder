@@ -510,13 +510,13 @@ export class AppReport extends LitElement {
           padding: 2em;
         }
 
-        #app-actions button:not(#test-download) { // pfs + disabled
+        #pfs, #pfs-disabled { // pfs + disabled
           white-space: nowrap;
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
           font-size: var(--button-font-size);
           font-weight: var(--font-bold);
-          border: none;
+          border: 1px solid transparent;
           color: #ffffff;
           white-space: nowrap;
         }
@@ -544,6 +544,8 @@ export class AppReport extends LitElement {
 
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
+          border: 1px solid white;
+          outline: 2px solid black;
         }
 
         #share-card {
@@ -821,6 +823,12 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           height: fit-content;
+        }
+
+        #pageStatus {
+          font-size: 0;
+          color: transparent;
+          margin: 0;
         }
 
         #indicators-holder {
@@ -1826,19 +1834,6 @@ export class AppReport extends LitElement {
     this.todoItems = [];
     if (findersResults.manifestTodos.length){
       this.todoItems.push(...findersResults.manifestTodos)
-
-      // adding todo for token giveaway item if theres at least a manifest
-      if(!this.createdManifest && this.tokensCampaign){
-        this.todoItems.push(
-          {
-            "card": "giveaway",
-            "field": "giveaway",
-            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-            "status": "giveaway",
-            "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-          }
-        );
-      }
     }
     else {
       this.todoItems.push(...await this.testManifest());
@@ -1862,59 +1857,49 @@ export class AppReport extends LitElement {
     let manifest;
     let todos: unknown[] = [];
 
-    if(!this.createdManifest){
-      manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
-      this.validationResults = await validateManifest(manifest, true);
-
-      //  This just makes it so that the valid things are first
-      // and the invalid things show after.
-      this.validationResults.sort((a, b) => {
-        if(a.valid && !b.valid){
-          return 1;
-        } else if(b.valid && !a.valid){
-          return -1;
-        } else {
-          return a.member.localeCompare(b.member);
-        }
-      });
-      this.manifestTotalScore = this.validationResults.length;
-      this.manifestValidCounter = 0;
-      this.manifestRequiredCounter = 0;
-
-      this.validationResults.forEach((test: Validation) => {
-        if(test.valid){
-          this.manifestValidCounter++;
-        } else {
-          let status ="";
-          if(test.category === "required" || test.testRequired){
-            status = "required";
-            this.manifestRequiredCounter++;
-          } else if(test.category === "recommended"){
-            status = "recommended";
-            this.manifestRecCounter++;
-          } else {
-            status = "optional";
-          }
-          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
-        }
-      });
-    } else {
+    if(this.createdManifest) {
       manifest = {};
-      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
+      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
 
-    // adding todo for token giveaway item if theres at least a manifest
-    if(!this.createdManifest && this.tokensCampaign){
-      this.todoItems.push(
-        {
-          "card": "giveaway",
-          "field": "giveaway",
-          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-          "status": "giveaway",
-          "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
+
+    manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    this.validationResults = await validateManifest(manifest, true);
+
+    //  This just makes it so that the valid things are first
+    // and the invalid things show after.
+    this.validationResults.sort((a, b) => {
+      if(a.valid && !b.valid){
+        return 1;
+      } else if(b.valid && !a.valid){
+        return -1;
+      } else {
+        return a.member.localeCompare(b.member);
+      }
+    });
+    this.manifestTotalScore = this.validationResults.length;
+    this.manifestValidCounter = 0;
+    this.manifestRequiredCounter = 0;
+
+    this.validationResults.forEach((test: Validation) => {
+      if(test.valid){
+        this.manifestValidCounter++;
+      } else {
+        let status ="";
+        if(test.category === "required" || test.testRequired){
+          status = "required";
+          this.manifestRequiredCounter++;
+        } else if(test.category === "recommended"){
+          status = "recommended";
+          this.manifestRecCounter++;
+        } else {
+          status = "optional";
         }
-      );
-    }
+        todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+      }
+    });
+
+
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -2390,8 +2375,8 @@ export class AppReport extends LitElement {
   sortTodos(){
     const rank: { [key: string]: number } = {
       "retest": 0,
-      "required": 1,
-      "giveaway": 2,
+      "missing": 1,
+      "required": 2,
       "highly recommended": 3,
       "recommended": 4,
       "optional": 5
@@ -2436,6 +2421,11 @@ export class AppReport extends LitElement {
     } else if(!up && this.pageNumber != 1){
       this.pageNumber--;
     }
+
+    const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
+    const totalPages = Math.ceil(this.todoItems.length / this.pageSize) // Calculate total pages
+    pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
+
     this.requestUpdate();
   }
 
@@ -2498,16 +2488,6 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
-  }
-
-  goToGiveawayPage(){
-    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    let a: HTMLAnchorElement = document.createElement("a");
-    a.target = "_blank";
-    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
-    a.rel = "noopener";
-
-    a.click();
   }
 
   closeTooltipOnScroll() {
@@ -2678,7 +2658,7 @@ export class AppReport extends LitElement {
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
-                        @giveawayEvent=${() => this.goToGiveawayPage()}>
+                      >
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
@@ -2686,7 +2666,14 @@ export class AppReport extends LitElement {
             ${(this.todoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
+                <button
+                  class="pagination-buttons"
+                  name="action-items-previous-page-button"
+                  aria-label="Previous page button for action items list"
+                  type="button"
+                  @click=${() => this.switchPage(false)}
+                  ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
+                </button>
                 <div id="dots">
                   ${this.getDots().map((_dot: any, index: number) =>
                     this.pageNumber == index + 1 ?
@@ -2697,8 +2684,16 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon></button>
+                <button
+                  class="pagination-buttons"
+                  name="action-items-next-page-button"
+                  aria-label="Next page button for action items list"
+                  aria-live="polite"
+                  type="button"
+                  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
+                </button>
               </div>` : html``}
+              <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
             </sl-details>
           </div>
 

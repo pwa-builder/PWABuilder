@@ -328,6 +328,7 @@ export class ManifestInfoForm extends LitElement {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
+                p.setAttribute('aria-live', 'polite');
                 div.append(p);
                 this.errorMap[field]++;
               });
@@ -352,6 +353,7 @@ export class ManifestInfoForm extends LitElement {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
+                p.setAttribute('aria-live', 'polite');
                 div.append(p);
                 this.errorMap[field]++;
               });
@@ -379,6 +381,7 @@ export class ManifestInfoForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
@@ -417,7 +420,6 @@ export class ManifestInfoForm extends LitElement {
       });
       this.dispatchEvent(manifestUpdated);
     }
-
   }
 
   async handleInputChange(event: InputEvent){
@@ -475,6 +477,7 @@ export class ManifestInfoForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[fieldName!]++;
         });

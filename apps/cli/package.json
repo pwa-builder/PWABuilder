@@ -1,0 +1,34 @@
+{
+  "name": "@pwabuilder/cli",
+  "version": "0.0.9",
+  "description": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "pwa": "./dist/index.js"
+  },
+  "scripts": {
+    "prepublishOnly": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run clean && tsc && npm link",
+    "clean": "rm -rf dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "@types/yargs": "^17.0.15",
+    "shx": "^0.3.4",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "applicationinsights": "^2.5.1",
+    "chalk": "4.*",
+    "decompress": "^4.2.1",
+    "node-fetch": "^2.6.9",
+    "yargs": "^17.6.2"
+  }
+}
