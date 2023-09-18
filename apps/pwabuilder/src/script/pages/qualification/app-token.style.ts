@@ -27,6 +27,7 @@ export default css`
 		align-items: center;
 		justify-content: center;
 		height: 95vh;
+		padding: 20px;
 	}
 
 	#over-main-content {
@@ -41,6 +42,17 @@ export default css`
 		font-size: 36px;
 		color: var(--font-color);
 		margin: 0;
+		text-align: center;
+	}
+
+	.over-button-text{
+		margin: 0;
+		text-wrap: wrap;
+		line-height: 16px;
+	}
+
+	.over-socials-prompt {
+		text-align: center;
 	}
 
 	#icons-section {
@@ -100,7 +112,7 @@ export default css`
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		
+
 		position: relative;
 	}
 
@@ -137,18 +149,18 @@ export default css`
 	}
 
 	#actions-left {
-		
+
 		display: flex;
 		position: absolute;
 		top: 20px;
-		left: 100px;    
+		left: 100px;
 		gap: 5px;
     align-items: center;
 		height: 42px;
 	}
 
 	#actions-right {
-		
+
 		display: flex;
 		position: absolute;
 		top: 20px;
@@ -164,16 +176,16 @@ export default css`
 		white-space: nowrap;
 	}
 
-	.sign-out-prompt a { 
+	.sign-out-prompt a {
 		color: #4F3FB6;
 		text-decoration: underline;
 	}
 
-	.sign-out-prompt a:hover { 
+	.sign-out-prompt a:hover {
 		cursor: pointer;
 	}
 
-	.sign-out-link { 
+	.sign-out-link {
 		color: #4F3FB6;
 		text-decoration: underline;
 		font-weight: bold;
@@ -181,7 +193,7 @@ export default css`
 		line-height: 16px;
 	}
 
-	.sign-out-link:hover { 
+	.sign-out-link:hover {
 		cursor: pointer;
 	}
 
@@ -239,7 +251,7 @@ export default css`
 	}
 
 	.input-area form {
-		display: flex; 
+		display: flex;
 		gap: 10px;
 		align-items: center;
 	}
@@ -257,7 +269,7 @@ export default css`
 		height: 3em;
 	}
 
-	
+
 
 	/* #hero-section .error::part(base){
 		border-color: #eb5757;
@@ -1122,7 +1134,7 @@ sl-details::part(header):focus {
 		padding: 0;
 		padding-top: 40px;
 	}
-	
+
 	.footer-text {
 		align-items: center;
 	}
@@ -1182,13 +1194,13 @@ sl-details::part(header):focus {
 	#actions-left{
 		left: 40px;
 	}
-	
+
 
 }
 
 @media(max-width: 620px){
-	
-	
+
+
 }
 
 @media(max-width: 420px) {
@@ -1199,7 +1211,7 @@ sl-details::part(header):focus {
 	#hero-section.uncovered, #hero-section.covered {
 		background-image: url('/assets/new/giveaway_banner_mobile.png');
 	}
-	
+
 	#footer-section {
 		padding: 0;
 	}
@@ -1207,7 +1219,7 @@ sl-details::part(header):focus {
 	#footer-section-grid {
 		width: 100%;
 	}
-	
+
 
 	.sc-img {
 		padding: 40px 40px 0 40px;
@@ -1231,7 +1243,7 @@ ${smallBreakPoint(css`
 		padding: 0;
 		font-size: 12px;
 	}
-	
+
 	#hero-section p {
 		width: 100% !important;
 	}
@@ -1262,17 +1274,18 @@ ${smallBreakPoint(css`
 	}
 	.sign-in-button::part(base) {
 		font-size: 13px;
+		line-height: 16px;
 	}
 	#hero-section-bottom {
 		height: 138px;
 	}
-	.subheader { 
+	.subheader {
 		font-size: 20px !important;
 	}
 `)}
 
 ${mediumBreakPoint(css`
-	
+
 	#hero-section p {
 		width: 100% !important;
 	}
