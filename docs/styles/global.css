@@ -72,12 +72,13 @@
     }
 }
 .home-nav-container sl-button::part(base) {
-    background: linear-gradient(to bottom, #d0c0e5, #bdaccc);
+    background: #4F3FB6 ;
     color: white;
 }
 
 .home-nav-container sl-button::part(base):hover {
-    border-color: #491576;
+    border: 1px solid white;
+    outline: 2px solid black;
 }
 
 .home-nav-card::part(base) {
@@ -85,8 +86,10 @@
     height: 100%;
 }
 
-.home-nav-card h3 {
+.home-nav-card h2 {
     text-align: center;
+    font-size: 21px;
+    font-weight: 600;
 }
 .home-nav-card::part(body) {
     display: flex;
@@ -121,8 +124,10 @@ sl-menu::part(base) {
 }
 
 sl-menu-item::part(base):hover {
-    background: linear-gradient(to bottom, #d0c0e5, #bdaccc);
+    background: #4F3FB6;
     color: white;
+    border: 1px solid white;
+    outline: 2px solid black;
 }
 
 sl-menu {
@@ -139,12 +144,13 @@ sl-button {
 }
 
 sl-alert sl-button::part(base) {
-    background: linear-gradient(to bottom, #d0c0e5, #bdaccc);
+    background: #4F3FB6;
     color: white;
 }
 
 sl-alert sl-button::part(base):hover {
-    border-color: #491576;
+    border: 1px solid white;
+    outline: 2px solid black;
 }
 
 sl-alert::part(base) {

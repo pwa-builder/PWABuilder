@@ -470,6 +470,10 @@ export default css`
 	border-bottom: 1px solid var(--font-color);
 }
 
+.error-actions > *:focus {
+	outline: 1px solid #000000;
+}
+
 .top-banner-container {
 	padding: 7px;
 	width: 100%;
@@ -560,6 +564,10 @@ export default css`
 
 sl-details::part(summary-icon){
 	display: none;
+}
+
+sl-details:focus {
+	outline: 1px solid #000000;
 }
 
 img[data-card="installable-details"] {
@@ -722,6 +730,11 @@ sl-details::part(header):focus {
 	border-color: var(--primary-color);
 }
 
+.primary::part(base):focus {
+	border: 1px solid #ffffff;
+	outline: 2px solid #000000;
+}
+
 .retest-button img {
 	width: 14px;
 	height: auto;
@@ -788,12 +801,16 @@ sl-details::part(header):focus {
 }
 
 .FTC {
+	font-family: var(--font-family),sans-serif;
 	font-size: var(--arrow-link-font-size);
 	font-weight: bold;
 	margin: 0px 0.5em 0px 0px;
+	padding: 0;
 	line-height: 1em;
 	color: var(--primary-color);
 	width: fit-content;
+	background: none;
+	border: none;
   border-bottom: 1px solid #4f3fb6;
 }
 
