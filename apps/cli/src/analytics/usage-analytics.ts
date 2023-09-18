@@ -5,6 +5,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
 import { spawn } from 'child_process';
+const path = require('node:path'); 
 
 export interface CreateEventData {
   template: string
@@ -114,7 +115,8 @@ function spawnAnalyticsProcess(event: string, properties?: any) {
 }
 
 function resolveNodeSpawnArgs(event: string, properties?: any): string [] {
-  return properties ? ['tack-event.js', event] : ['tack-event.js', event, JSON.stringify(properties)];
+  const scriptPath: string = path.resolve(__dirname, 'track-events.js')
+  return properties ? [scriptPath, event] : [scriptPath, event, JSON.stringify(properties)];
 }
 
 export function trackErrorWrapper(_error: Error): void {
