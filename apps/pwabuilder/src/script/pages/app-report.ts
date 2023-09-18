@@ -1834,19 +1834,6 @@ export class AppReport extends LitElement {
     this.todoItems = [];
     if (findersResults.manifestTodos.length){
       this.todoItems.push(...findersResults.manifestTodos)
-
-      // adding todo for token giveaway item if theres at least a manifest
-      if(!this.createdManifest && this.tokensCampaign){
-        this.todoItems.push(
-          {
-            "card": "giveaway",
-            "field": "giveaway",
-            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-            "status": "giveaway",
-            "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-          }
-        );
-      }
     }
     else {
       this.todoItems.push(...await this.testManifest());
@@ -1909,19 +1896,6 @@ export class AppReport extends LitElement {
     } else {
       manifest = {};
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
-    }
-
-    // adding todo for token giveaway item if theres at least a manifest
-    if(!this.createdManifest && this.tokensCampaign){
-      this.todoItems.push(
-        {
-          "card": "giveaway",
-          "field": "giveaway",
-          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-          "status": "giveaway",
-          "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-        }
-      );
     }
 
     if(this.manifestRequiredCounter > 0){
@@ -2399,10 +2373,9 @@ export class AppReport extends LitElement {
     const rank: { [key: string]: number } = {
       "retest": 0,
       "required": 1,
-      "giveaway": 2,
-      "highly recommended": 3,
-      "recommended": 4,
-      "optional": 5
+      "highly recommended": 2,
+      "recommended": 3,
+      "optional": 4
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
@@ -2511,16 +2484,6 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
-  }
-
-  goToGiveawayPage(){
-    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    let a: HTMLAnchorElement = document.createElement("a");
-    a.target = "_blank";
-    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
-    a.rel = "noopener";
-
-    a.click();
   }
 
   closeTooltipOnScroll() {
@@ -2691,7 +2654,7 @@ export class AppReport extends LitElement {
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
-                        @giveawayEvent=${() => this.goToGiveawayPage()}>
+                      >
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
@@ -2699,11 +2662,11 @@ export class AppReport extends LitElement {
             ${(this.todoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
-                <button 
-                  class="pagination-buttons" 
-                  name="action-items-previous-page-button" 
+                <button
+                  class="pagination-buttons"
+                  name="action-items-previous-page-button"
                   aria-label="Previous page button for action items list"
-                  type="button"  
+                  type="button"
                   @click=${() => this.switchPage(false)}
                   ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
                 </button>
@@ -2717,12 +2680,12 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <button 
-                  class="pagination-buttons" 
-                  name="action-items-next-page-button" 
+                <button
+                  class="pagination-buttons"
+                  name="action-items-next-page-button"
                   aria-label="Next page button for action items list"
                   aria-live="polite"
-                  type="button" 
+                  type="button"
                   @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
                 </button>
               </div>` : html``}
