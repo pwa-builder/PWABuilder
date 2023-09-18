@@ -1834,19 +1834,6 @@ export class AppReport extends LitElement {
     this.todoItems = [];
     if (findersResults.manifestTodos.length){
       this.todoItems.push(...findersResults.manifestTodos)
-
-      // adding todo for token giveaway item if theres at least a manifest
-      if(!this.createdManifest && this.tokensCampaign){
-        this.todoItems.push(
-          {
-            "card": "giveaway",
-            "field": "giveaway",
-            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-            "status": "giveaway",
-            "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-          }
-        );
-      }
     }
     else {
       this.todoItems.push(...await this.testManifest());
@@ -1913,19 +1900,6 @@ export class AppReport extends LitElement {
     });
 
 
-
-    // adding todo for token giveaway item if theres at least a manifest
-    if(!this.createdManifest && this.tokensCampaign){
-      this.todoItems.push(
-        {
-          "card": "giveaway",
-          "field": "giveaway",
-          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-          "status": "giveaway",
-          "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-        }
-      );
-    }
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -2403,10 +2377,9 @@ export class AppReport extends LitElement {
       "retest": 0,
       "missing": 1,
       "required": 2,
-      "giveaway": 3,
-      "highly recommended": 4,
-      "recommended": 5,
-      "optional": 6
+      "highly recommended": 3,
+      "recommended": 4,
+      "optional": 5
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
@@ -2515,16 +2488,6 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
-  }
-
-  goToGiveawayPage(){
-    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    let a: HTMLAnchorElement = document.createElement("a");
-    a.target = "_blank";
-    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
-    a.rel = "noopener";
-
-    a.click();
   }
 
   closeTooltipOnScroll() {
@@ -2695,7 +2658,7 @@ export class AppReport extends LitElement {
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
-                        @giveawayEvent=${() => this.goToGiveawayPage()}>
+                      >
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}

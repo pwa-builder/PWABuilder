@@ -22,7 +22,6 @@ export class TodoItem extends LitElement {
   @property({ type: String }) displayString: string = "";
 
   @state() clickable: boolean = false;
-  @state() giveaway: boolean = false;
   @state() isOpen: boolean = false;
 
   static get styles() {
@@ -110,11 +109,6 @@ export class TodoItem extends LitElement {
             transform: translateX(5px);
           }
       }
-
-      .giveaway img {
-        height: 21px;
-      }
-
       .arrow {
         width: 16px;
       }
@@ -145,19 +139,14 @@ export class TodoItem extends LitElement {
   }
 
   decideClasses(){
-    // token giveaway toggle
-    this.giveaway = false;
-    if(this.field === "giveaway"){
-      this.giveaway = true;
-    }
 
     if(this.status === "retest" || this.field.startsWith("Open")){
       this.clickable = true;
     } else {
       this.clickable = false;
     }
-
-    return {iwrapper: true, clickable: this.clickable, giveaway: this.giveaway}
+    
+    return {iwrapper: true, clickable: this.clickable}
   }
 
   bubbleEvent(){
@@ -210,18 +199,11 @@ export class TodoItem extends LitElement {
 
       case "retest":
         return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`
-
-      case "giveaway":
-        return html`<img src=${giveaway_src}  alt="giveaway site icon"/>`
     }
 
     return html`<img src=${yield_src} alt="yield result icon"/>`
   }
 
-  goToGiveaway(){
-    let event = new CustomEvent('giveawayEvent', {});
-    this.dispatchEvent(event);
-  }
 
   render() {
     return html`
@@ -229,24 +211,6 @@ export class TodoItem extends LitElement {
         <div class="left">
           ${this.decideIcon()}
           <p>${this.fix}</p>
-
-          ${this.giveaway ?
-            html`
-              <span
-                class="arrow_anchor"
-                @click=${() => this.goToGiveaway()}
-              >
-                <p class="arrow_link">Check Now</p>
-                <img
-                  class="arrow"
-                  src="/assets/new/arrow.svg"
-                  alt="arrow"
-                />
-              </span>
-            ` :
-            html``
-          }
-
         </div>
 
         ${manifest_fields[this.field] ?
@@ -262,4 +226,3 @@ export class TodoItem extends LitElement {
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const retest_src = "/assets/new/retest-black.svg";
-const giveaway_src = "/assets/new/msft_store_giveaway.svg";
