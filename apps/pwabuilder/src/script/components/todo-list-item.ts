@@ -109,7 +109,6 @@ export class TodoItem extends LitElement {
             transform: translateX(5px);
           }
       }
-
       .arrow {
         width: 16px;
       }
@@ -146,7 +145,7 @@ export class TodoItem extends LitElement {
     } else {
       this.clickable = false;
     }
-
+    
     return {iwrapper: true, clickable: this.clickable}
   }
 
@@ -195,6 +194,7 @@ export class TodoItem extends LitElement {
   decideIcon(){
     switch(this.status){
       case "required":
+      case "missing":
         return html`<img src=${stop_src} alt="yield result icon"/>`
 
       case "retest":

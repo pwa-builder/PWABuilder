@@ -1857,46 +1857,49 @@ export class AppReport extends LitElement {
     let manifest;
     let todos: unknown[] = [];
 
-    if(!this.createdManifest){
-      manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
-      this.validationResults = await validateManifest(manifest, true);
-
-      //  This just makes it so that the valid things are first
-      // and the invalid things show after.
-      this.validationResults.sort((a, b) => {
-        if(a.valid && !b.valid){
-          return 1;
-        } else if(b.valid && !a.valid){
-          return -1;
-        } else {
-          return a.member.localeCompare(b.member);
-        }
-      });
-      this.manifestTotalScore = this.validationResults.length;
-      this.manifestValidCounter = 0;
-      this.manifestRequiredCounter = 0;
-
-      this.validationResults.forEach((test: Validation) => {
-        if(test.valid){
-          this.manifestValidCounter++;
-        } else {
-          let status ="";
-          if(test.category === "required" || test.testRequired){
-            status = "required";
-            this.manifestRequiredCounter++;
-          } else if(test.category === "recommended"){
-            status = "recommended";
-            this.manifestRecCounter++;
-          } else {
-            status = "optional";
-          }
-          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
-        }
-      });
-    } else {
+    if(this.createdManifest) {
       manifest = {};
-      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
+      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
+
+
+    manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    this.validationResults = await validateManifest(manifest, true);
+
+    //  This just makes it so that the valid things are first
+    // and the invalid things show after.
+    this.validationResults.sort((a, b) => {
+      if(a.valid && !b.valid){
+        return 1;
+      } else if(b.valid && !a.valid){
+        return -1;
+      } else {
+        return a.member.localeCompare(b.member);
+      }
+    });
+    this.manifestTotalScore = this.validationResults.length;
+    this.manifestValidCounter = 0;
+    this.manifestRequiredCounter = 0;
+
+    this.validationResults.forEach((test: Validation) => {
+      if(test.valid){
+        this.manifestValidCounter++;
+      } else {
+        let status ="";
+        if(test.category === "required" || test.testRequired){
+          status = "required";
+          this.manifestRequiredCounter++;
+        } else if(test.category === "recommended"){
+          status = "recommended";
+          this.manifestRecCounter++;
+        } else {
+          status = "optional";
+        }
+        todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
+      }
+    });
+
+
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -2372,10 +2375,11 @@ export class AppReport extends LitElement {
   sortTodos(){
     const rank: { [key: string]: number } = {
       "retest": 0,
-      "required": 1,
-      "highly recommended": 2,
-      "recommended": 3,
-      "optional": 4
+      "missing": 1,
+      "required": 2,
+      "highly recommended": 3,
+      "recommended": 4,
+      "optional": 5
     };
     this.todoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
