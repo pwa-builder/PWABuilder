@@ -2,7 +2,7 @@ export interface infoPanel {
   description: String[];
   purpose?: string | null;
   example?: String[] | null;
-  code: string;
+  code?: string;
   required: boolean;
   location?:
     | "info"
@@ -616,3 +616,26 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     required: false,
   },
 };
+
+export const service_worker_fields: {[field: string]: infoPanel} ={
+  has_service_worker: {
+    description: ["Service workers are a specific type of web worker that serve as a proxy between your application and the network. All requests that go to or from your PWA will pass through the service worker first. This allows your service worker to handle requests in situations where the network may be unavailable."],
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/home/sw-intro"
+  },
+  background_sync: {
+    description: ["The Background Sync API allows you to register functionality that will occur whenever internet connectivity is next available. In other words, if your app is actively connected to the network, the functionality will occur right away. Otherwise, it will occur whenever your app is next connected to the network."],
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/home/native-features?id=background-sync-overview"
+  },
+  periodic_sync: {
+    description: ["Periodic background sync is similar to regular background sync, except that instead of being executed on request, it occurs at regular intervals. For example, you could implement sync functionality that is executed once an hour, once a day, or whatever your use case requires."],
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/home/native-features?id=periodic-background-sync-overview"
+  },
+  push_notifications: {
+    description: ["The Notifications API allows for you to send a pop up notification that displays on your users operating system whether your PWA is running or not."],
+    required: false,
+    docs_link: "https://docs.pwabuilder.com/#/home/native-features?id=push-notifications"
+  },
+}

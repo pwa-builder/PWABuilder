@@ -18,6 +18,7 @@ import '../components/test-publish-pane';
 import '../components/sw-selector';
 import '../components/share-card';
 import '../components/manifest-info-card'
+import '../components/sw-info-card'
 import '../components/arrow-link'
 
 import {
@@ -143,6 +144,7 @@ export class AppReport extends LitElement {
   @state() filterList: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
   @state() stopShowingNotificationTooltip: boolean = false;
+  @state() closeOpenTooltips: boolean = true;
 
   @state() tokensCampaign: boolean = false;
 
@@ -172,27 +174,20 @@ export class AppReport extends LitElement {
 
   private specialManifestTodos: {[id: string]: string} = {
     "shortcuts": "Add contextual shortcuts to specific parts of your app",
-    "display_override": "Extend your app into the titlebar for a more native look and feel",
-    "share_target": "Be a share target for your users",
-    "file_handlers": "Be a default handler for certain filetypes",
-    "handle_links": "Open links as an app",
-    "protocol_handlers": "Create a custom protocol handler",
-    "edge_side_panel": "Increase reach by partcipating in the Edge Side Panel",
-    "widgets": "Increase reach with Widgets"
+    "display_override": "Extend your app into the titlebar for a more native look and feel with display_override and window-controls-overlay",
+    "share_target": "Be a share_target for your users",
+    "file_handlers": "Be a default handler for certain filetypes with file_handlers",
+    "handle_links": "Open links as an app with handle_links",
+    "protocol_handlers": "Create a custom protocol_handler",
+    "edge_side_panel": "Increase reach by partcipating in the edge_side_panel",
+    "widgets": "Increase reach with widgets"
   }
 
   private specialSWTodos: {[id: string]: string} = {
     "offline_support": "Allow users to use your app without internet connection",
-    "push_notifications": "Send notifications to you users even if your app is not running",
-    "background_sync": "Ensure user actions and content is always in sync even if network connection is lost",
-    "periodic_sync": "Update your app in the background so it's ready next time the user opens it"
-  }
-
-  private swToolTips: {[id: string]: string} = {
-    "offline_support": "Allow users to use your app without internet connection",
-    "push_notifications": "Send notifications to you users even if your app is not running",
-    "background_sync": "Ensure user actions and content is always in sync even if network connection is lost",
-    "periodic_sync": "Update your app in the background so it's ready next time the user opens it"
+    "push_notifications": "Send notifications to you users even if your app is not running with push notifications",
+    "background_sync": "Ensure user actions and content is always in sync even if network connection is lost with background sync",
+    "periodic_sync": "Update your app in the background so it's ready next time the user opens it with periodic sync"
   }
 
   static get styles() {
@@ -271,6 +266,7 @@ export class AppReport extends LitElement {
           --indicator-width: 8px;
           --size: 100px;
           font-size: var(--subheader-font-size);
+          position: relative;
         }
 
         sl-progress-ring::part(label){
@@ -278,20 +274,68 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        sl-progress-ring::part(base) {
+          border-radius: 50%;
+        }
+
         .red {
           --indicator-color: var(--error-color);
+        }
+
+        .red::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #FFF3F3;
         }
 
         .yellow {
           --indicator-color: var(--warning-color);
         }
 
+        .yellow::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #FFFAED;
+        }
+
         .green {
           --indicator-color: var(--success-color);
         }
 
+        .green::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #E3FFF2;
+        }
+
         .counterRing {
           --indicator-color: #8976FF;
+        }
+
+        .counterRing::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #F1F3FF;
         }
 
         .macro_error {
@@ -1746,6 +1790,7 @@ export class AppReport extends LitElement {
   // Expands the Action items details on load
   firstUpdated() {
     this.rotateNinety("todo", undefined, true);
+
   }
 
   // Polling function that updates the time that the site was last tested
@@ -1943,6 +1988,8 @@ export class AppReport extends LitElement {
         this.requestUpdate();
       }
     });
+
+    setTimeout(() => this.closeOpenTooltips = false, 20000);
 
     this.filteredTodoItems = this.allTodoItems;
 
@@ -2313,6 +2360,7 @@ export class AppReport extends LitElement {
 
   // Opens share card modal and tracks analytics
   async openShareCardModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
 
     await dialog!.show();
@@ -2321,6 +2369,7 @@ export class AppReport extends LitElement {
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal(focusOn = "", tab: string = "info"): Promise<void | undefined> {
+    this.closeOpenTooltips = false;
     this.startingManifestEditorTab = tab;
     this.focusOnME = focusOn;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
@@ -2331,6 +2380,7 @@ export class AppReport extends LitElement {
 
    // Opens SW Selector and tracks analytics
   async openSWSelectorModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("sw-selector")!.shadowRoot!.querySelector(".dialog");
 
     await dialog.show()
@@ -2339,6 +2389,7 @@ export class AppReport extends LitElement {
 
    // Opens publish pane and tracks analytics
   async openPublishModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("publish-pane")!.shadowRoot!.querySelector(".dialog");
 
     await dialog.show()
@@ -2347,6 +2398,7 @@ export class AppReport extends LitElement {
 
    // Opens test publish modal and tracks analytics
   async openTestPublishModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("test-publish-pane")!.shadowRoot!.querySelector(".dialog");
 
     await dialog.show()
@@ -2923,7 +2975,7 @@ export class AppReport extends LitElement {
 
                         // showing tooltip until they click an indicator which will remove the tooltip
                         html`
-                          <sl-tooltip class="mani-tooltip" id="notifications" open>
+                          <sl-tooltip class="mani-tooltip" id="notifications" ?open=${this.closeOpenTooltips}>
                             <div slot="content" class="mani-tooltip-content">
                               <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
                               <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
@@ -3018,7 +3070,7 @@ export class AppReport extends LitElement {
                     html`
                       ${this.createdManifest ?
                       html`
-                          <sl-tooltip class="mani-tooltip" open>
+                          <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
                             <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
                             <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
                           </sl-tooltip>` :
@@ -3050,7 +3102,7 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="${classMap(this.decideColor("manifest"))}">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div>${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
             </div>
@@ -3190,13 +3242,15 @@ export class AppReport extends LitElement {
                   <div class="icons-holder sw">
                     ${this.serviceWorkerResults.map((result: any) =>
                       html`
-                        <div class="icon-and-name">
-                          <div class="circle-icon" slot="trigger">
-                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
-                            ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
-                          </div>
-                        <p>${this.formatSWStrings(result.member)}</p>
-                      </div>
+                        <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                          <sw-info-card .field=${result.member} .placement="${"right"}">
+                            <div class="circle-icon" slot="trigger">
+                              <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                              ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                            </div>
+                          </sw-info-card>
+                          <p>${this.formatSWStrings(result.member)}</p>
+                        </div>
                       `
                       )
                     }
