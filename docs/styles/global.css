@@ -160,32 +160,3 @@ sl-alert::part(base) {
 sl-alert::part(icon) {
     color: #491576;
 }
-
-sl-dialog {
-    font-size: small;
-}
-
-#enter-url-div {
-    margin-top: 25px;
-    text-align: center;
-    padding: 10px;
-    border: solid;
-    border-color: #9C8DAB;
-    border-radius: 25px;
-    border-width: 2px;
-}
-
-#url-input-div {
-    display: flex;
-    margin-top:10px;
-    margin-bottom: 10px;
-}
-
-#url-input-div sl-input {
-    width: 100%;
-
-}
-
-#url-input-div sl-input::part(form-control-input) {
-    border-color: #9C8DAB;
-}
