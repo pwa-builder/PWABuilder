@@ -1,6 +1,6 @@
 import type { Arguments, CommandBuilder } from "yargs";
-import { outputError, isDirectoryTemplate, execSyncWrapper } from "../util/util";
-import { initAnalytics, trackEvent, StartEventData, trackException } from "../analytics/usage-analytics";
+import { outputError, isDirectoryTemplate, spawnWrapper } from "../util/util";
+import { trackErrorWrapper, trackStartEventWrapper } from "../analytics/usage-analytics";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite start process.';
@@ -29,32 +29,26 @@ export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
 
 export const handler = (argv: Arguments<StartOptions>): void => {
   try {
+    trackStartEventWrapper();
     handleStartCommand(argv);
   } catch (error) {
-    trackException(error as Error);
+    trackErrorWrapper(error as Error);
   }
 };
 
 function handleStartCommand(argv: Arguments<StartOptions>) {
   const { viteArgs } = argv;
   if(isDirectoryTemplate()) {
-    execStartCommand(viteArgs);
+    spawnStartCommand(viteArgs);
   } else {
     outputError(INVALID_DIRECTORY_ERROR_STRING);
   }  
-  trackStartEvent();
 }
 
-function execStartCommand(viteArgs: string | undefined) {
+function spawnStartCommand(viteArgs: string | undefined) {
   if(viteArgs) {
-    execSyncWrapper(EXEC_START_ARGS_STRING(viteArgs), false); 
+    spawnWrapper(EXEC_START_ARGS_STRING(viteArgs)); 
   } else {
-    execSyncWrapper(EXEC_START_NO_ARGS_STRING, false);
+    spawnWrapper(EXEC_START_NO_ARGS_STRING);
   }
-}
-
-async function trackStartEvent(): Promise<void> {
-  initAnalytics()
-  const startEventData: StartEventData = {}
-  trackEvent("start", startEventData);
 }

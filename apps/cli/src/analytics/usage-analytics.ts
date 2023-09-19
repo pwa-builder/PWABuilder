@@ -4,17 +4,11 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
+import { spawn } from 'child_process';
+const path = require('node:path'); 
 
 export interface CreateEventData {
-  template: string,
-  name: string,
-  timeMS: number
-}
-
-export interface StartEventData {}
-
-export interface BuildEventData {
-  timeMS: number
+  template: string
 }
 
 export interface PWABuilderData {
@@ -49,10 +43,9 @@ export function getAnalyticsClient() {
 }
 
 // function to trackEvent
-export function trackEvent(name: string, properties: any) {
+export function trackEvent(name: string, properties?: any) {
   try {
     if (getFlag("analytics") === true) {
-
       defaultClient.trackEvent({ 
         name,  
         properties
@@ -105,4 +98,39 @@ function addUserIDtoTelemetry(id: string): void {
     envelope["tags"]['ai.user.id'] = id;
     return true;
   });
+}
+
+function spawnAnalyticsProcess(event: string, properties?: any) {
+  const logPath: string = path.resolve(__dirname, 'out.log');
+  const out = fs.openSync(logPath, 'a');
+  const err = fs.openSync(logPath, 'a');
+  const child = spawn('node', resolveNodeSpawnArgs(event, properties), {
+    detached: true,
+    stdio: ['ignore', out, err]
+  });
+  child.on('error', (err: Error) => {
+    trackException(err);
+  })
+  child.unref();
+}
+
+function resolveNodeSpawnArgs(event: string, properties?: any): string [] {
+  const scriptPath: string = path.resolve(__dirname, 'track-events.js')
+  return properties ? [scriptPath, event, JSON.stringify(properties)] : [scriptPath, event];
+}
+
+export function trackErrorWrapper(_error: Error): void {
+  spawnAnalyticsProcess('error', {error: _error});
+}
+
+export function trackCreateEventWrapper(createEventData: CreateEventData): void {
+  spawnAnalyticsProcess('create', createEventData);
+}
+
+export function trackBuildEventWrapper(): void {
+  spawnAnalyticsProcess('build');
+}
+
+export function trackStartEventWrapper(): void {
+  spawnAnalyticsProcess('start');
 }
