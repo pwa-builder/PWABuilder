@@ -449,7 +449,7 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 
 * `auto`: The user agent makes the decision based on the context.
 * `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
-* `navigate-existing`: If the web app is already open, it is brought into focus and naviagates to the URL made available by `Window.launchQueue`
+* `navigate-existing`: If the web app is already open, it is brought into focus and navigates to the URL made available by `Window.launchQueue`
 * `navigate-new`: A new instance of the web app is opened and it navigates to the URL made available by `Window.launchQueue`
 
 In the second example below, if `navigate-existing` is unavailable it will fallback to the next value in the list.
@@ -460,7 +460,7 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
 }
 
 "launch_handler": {
-    "client_mode": ["navigate-existing, auto"]
+    "client_mode": ["navigate-existing", "auto"]
 }
 ```
 
@@ -490,16 +490,15 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
   ]
 ```
 
-In order to allow for your app to intercept links, you must specify `web-app-origin-association.json` that must be located at `https://<associated origin>/.well-known/web-app-origin-association.json`.
+In order to allow for your app to intercept links, you must specify `web-app-origin-association` that must be located at `https://<associated origin>/.well-known/web-app-origin-association`.
 
 ```json
 {
-  "web_apps": {
-     "https://docs.pwabuilder.com/": {
-       "scope": "/",
-       "authorize": ["intercept-links"]
-     }
-  }
+  "web_apps": [
+    {
+      "web_app_identity": "https://docs.pwabuilder.com/"
+    }
+  ]
 }
 ```
 

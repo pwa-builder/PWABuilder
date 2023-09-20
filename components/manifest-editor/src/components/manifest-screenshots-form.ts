@@ -273,11 +273,12 @@ export class ManifestScreenshotsForm extends LitElement {
         if(validation.errors){
           validation.errors.forEach((error: string) => {
             let p = document.createElement('p');
-          p.innerText = error;
-          p.style.color = "#eb5757";
-          p.classList.add("error-message");
-          insertAfter(p, title!.parentNode);
-          this.errorCount++;
+            p.innerText = error;
+            p.style.color = "#eb5757";
+            p.classList.add("error-message");
+            p.setAttribute('aria-live', 'polite');
+            insertAfter(p, title!.parentNode);
+            this.errorCount++;
           });
         }
 
