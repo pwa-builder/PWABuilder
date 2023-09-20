@@ -37,14 +37,14 @@ Selecting any of the commands from this menu will launch the associated PWABuild
 If you're tired of VS Code shortcuts, PWABuilder Studio also has an interface for interaction with the extension. You can find the interface by selecting the PWABuilder Studio tab in your Code Window:
 
 <div class="docs-image">
-    <img src="/assets/studio/quick-start/studio-tab.png" width=500>
+    <img src="/assets/studio/quick-start/studio-tab.png" alt="PWABuilder Studio tab in code window" width=500>
 </div>
 
 
 After selecting the PWABuilder Studio tab, the leftmost pane of your Code window will now show a pane containing the interface for using the extension. Additionally, you'll also be able to access many of the commands from the extension on the bottommost bar of VS Code:
 
 <div class="docs-image">
-    <img src="/assets/studio/quick-start/studio-tab-selected.png" width=800>
+    <img src="/assets/studio/quick-start/studio-tab-selected.png" alt="The extension on the bottommost bar of VS Code" width=800>
 </div>
 
 You can learn how to use the different functions of the GUI in the various sections of the documentation.
