@@ -13,7 +13,7 @@ One option for deploying your PWA is Azure Static Web Apps, and can be set up in
 
 The Azure Static Web Apps CLI is included in the PWA Starter's Node dependencies, and will be installed when you run `npm install`.
 
-You can check out the Azure SWA CLI website [here.](https://azure.github.io/static-web-apps-cli/)
+You can check out the Azure SWA CLI website <a href="https://azure.github.io/static-web-apps-cli/" aria-label="Click here to lean more">here</a> 
 
 ### Prerequisites:
 
@@ -42,9 +42,9 @@ npm run deploy
 
 ### Next Steps
 
-To learn more about the SWA CLI, check out their documentation [here.](https://azure.github.io/static-web-apps-cli/)
+To learn more about the SWA CLI, check out their documentation <a href="https://azure.github.io/static-web-apps-cli/" aria-label="Click here to lean more">here</a>
 
-If you want some more general guidance on Azure Static Web Apps, more information can be found [here.](https://docs.microsoft.com/en-us/azure/static-web-apps/)
+If you want some more general guidance on Azure Static Web Apps, more information can be found <a href="https://docs.microsoft.com/en-us/azure/static-web-apps/" aria-label="Click here to lean more">here</a>
 
 ## Github Pages
 
