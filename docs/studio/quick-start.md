@@ -21,7 +21,8 @@ Click the `Install` button to add the extension to Visual Studio Code.
     <img src="/assets/studio/quick-start/extension-marketplace.png" alt="Image of the PWABuilder Studio extension in VS Code" width=600/>
 </div>
 
-If you don't have Code and want to try out the extension, you can install it [here.](https://code.visualstudio.com/)
+If you don't have Code and want to try out the extension, you can install it <a href="https://code.visualstudio.com/" aria-label="Click here to follow instructions">here</a> 
+
 
 ## Using Commands
 You can access all of PWABuilder Studios actions by hitting `Ctrl-Shift-P` within Visual Studio Code to open a dialogue to choose a command. Type in PWA to filter for results from the extensions:

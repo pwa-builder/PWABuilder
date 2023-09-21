@@ -6,7 +6,7 @@ If you are looking for more information about building progressive web apps, her
 
 *30 Days of PWA* is a blog series that teaches progressive web app concepts from the very basics to more advanced practices. It's a great place to start if you're looking for a more in depth explanation of PWA concepts.
 
-You can start from the very beginning [here](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/01), or you can jump into a specifically themed week of content:
+You can start from the very beginning <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/01" aria-label="Click here to follow instructions">here</a>, or you can jump into a specifically themed week of content:
 
 * [**Week 1 - Core Concepts**](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/)
 
