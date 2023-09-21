@@ -2,7 +2,7 @@ import type { Arguments, CommandBuilder} from "yargs";
 import * as prompts from "@clack/prompts";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
 import { outputMessage, promisifiedExecWrapper, timeFunction } from "../util/util";
-import { initAnalytics, trackEvent, CreateEventData, trackException } from "../analytics/usage-analytics";
+import { trackCreateEventWrapper, trackErrorWrapper, trackException } from "../analytics/usage-analytics";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
 import { formatCodeSnippet, formatEmphasis, formatEmphasisStrong, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 
@@ -120,16 +120,16 @@ export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => 
   try {
     await handleCreateCommand(argv);
   } catch (error) {
-    trackException(error as Error);
+    trackErrorWrapper(error as Error);
   }
   
 };
 
 async function handleCreateCommand(argv: Arguments<CreateOptions>) { 
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
-  const duration: number = await timeFunction(() => fetchAndPrepareTemplate(resolvedName, resolvedTemplate));
+  trackCreateEventWrapper({template: resolvedTemplate});
+  await fetchAndPrepareTemplate(resolvedName, resolvedTemplate);
   finalOutput(resolvedName);
-  trackCreateEvent(resolvedTemplate, duration, resolvedName);
 }
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
@@ -261,14 +261,4 @@ function handleTemplateListFlag(listFlag: boolean | undefined): void {
     outputMessage(TEMPLATE_LIST_OUTPUT_STRING);
     process.exit(0);
   }
-}
-
-async function trackCreateEvent(template: string, timeMS: number, name: string): Promise<void> {
-    initAnalytics();
-    const createEventData: CreateEventData = {
-      template: template,
-      name: name,
-      timeMS: timeMS
-    }
-    trackEvent("create", createEventData);
 }

@@ -1,3 +1,5 @@
+!> This promotion has ended. If you already have a token, and want to see how to use it, jump to [Using Your Token](/builder/store-promotion#using-your-token).
+
 # Free Microsoft Developer Account Promotion
 
 For a limited time, PWABuilder is offering free Microsoft Store Developer accounts (approximately $19 in value) to individual developers who have a [Progressive Web App](/home/pwa-intro) that meets specific requirements. With a Microsoft Store Developer account, you can deploy your Progressive Web App to the Microsoft Store, extending your app's reach to users on Windows.

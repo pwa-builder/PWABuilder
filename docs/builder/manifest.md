@@ -453,7 +453,7 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 
 * `auto`: The user agent makes the decision based on the context.
 * `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
-* `navigate-existing`: If the web app is already open, it is brought into focus and naviagates to the URL made available by `Window.launchQueue`
+* `navigate-existing`: If the web app is already open, it is brought into focus and navigates to the URL made available by `Window.launchQueue`
 * `navigate-new`: A new instance of the web app is opened and it navigates to the URL made available by `Window.launchQueue`
 
 In the second example below, if `navigate-existing` is unavailable it will fallback to the next value in the list.
@@ -464,7 +464,7 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
 }
 
 "launch_handler": {
-    "client_mode": ["navigate-existing, auto"]
+    "client_mode": ["navigate-existing", "auto"]
 }
 ```
 

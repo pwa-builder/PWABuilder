@@ -1,33 +1,57 @@
+import { spawn } from "node:child_process";
 import { doesStringExistInFile, doesFileExist } from "./fileUtil";
 import { promisify } from 'node:util';
 
 export type HandlerSignature = (...args: any[]) => void;
 
-const exec = promisify(require('node:child_process').exec);
-const execSync = require('node:child_process').execSync;
-
+const promisifiedExec = promisify(require('node:child_process').exec);
 const path = require('path');
+
 const defaultErrorMessage: string = "Command failed due to unknown error.";
+
+type SpawnCommand = {
+  command: string,
+  args: string[]
+};
 
 export async function promisifiedExecWrapper(command: string, suppressOutput: boolean, directory?: string | undefined) {
   try{
-    await exec(command, {
+    await promisifiedExec(command, {
       stdio: suppressOutput ? 'pipe' : [0, 1, 2],
       cwd: path.resolve(process.cwd(), directory ? directory : '')
     });
   } catch (err) {
-    console.log("Process exited.")
+    console.error("Process exited with error.");
   }
 }
 
-export async function execSyncWrapper(command: string, suppressOutput: boolean, directory?: string | undefined) {
-  try{
-    execSync(command, {
-      stdio: suppressOutput ? 'pipe' : [0, 1, 2],
-      cwd: path.resolve(process.cwd(), directory ? directory : '')
+export async function spawnWrapper(spawnString: string, suppressOutput: boolean = false): Promise<void> {
+  try {
+    spawnHandler(spawnString, suppressOutput);
+  } catch ( err ) {
+    console.error("Process exited with error.");
+  }
+}
+
+async function spawnHandler(spawnString: string, suppressOutput: boolean): Promise<void> {
+  const { command, args } = parseSpawnString(spawnString);
+  const spawnedChild = spawn(command, args, {
+    cwd: process.cwd(),
+    shell: true
+  });
+
+  if(!suppressOutput) {
+    spawnedChild.stdout.on('data', (data) => {
+      process.stdout.write(data.toString());
     });
-  } catch (err) {
-    console.log("Process exited.")
+  }
+}
+
+function parseSpawnString(spawnString: string): SpawnCommand {
+  const splitCommand: string[] = spawnString.split(' ');
+  return {
+    command: splitCommand[0],
+    args: splitCommand.slice(1)
   }
 }
 

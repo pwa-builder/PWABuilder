@@ -1004,19 +1004,6 @@ export class PublishPane extends LitElement {
               ${platform.factoids.map((fact: string) => html`<li>${fact}</li>`)}
             </ul>
           </div>
-          ${ platform.title === "Windows" && this.tokensCampaign ? html`
-              <button id="windows-package-token-banner" @click=${() => this.goToTokenPage()}>
-                <div id="token-banner-windows-icon">
-                  <img src="/assets/microsoft_store_icon_white.png" alt="Windows">
-                </div>
-                <div id="token-banner-text">
-                  <p>
-                    Check to see if you qualify for a free Microsoft Store account <img src="/assets/white-arrow.png" alt="arrow" />
-                  </p>
-                </div>
-              </button>
-            ` : html``
-          }
         </div>`
     );
   }
@@ -1130,9 +1117,9 @@ export class PublishPane extends LitElement {
     return html`
       <sl-dialog
         class=${classMap({noX: this.preventClosing, dialog: true})}
-        @sl-show=${() => document.body.style.height = "100vh"} 
-        @sl-hide=${(e: any) => this.hideDialog(e)} 
-        @sl-request-close=${(e:any) => this.handleRequestClose(e)} 
+        @sl-show=${() => document.body.style.height = "100vh"}
+        @sl-hide=${(e: any) => this.hideDialog(e)}
+        @sl-request-close=${(e:any) => this.handleRequestClose(e)}
         noHeader>
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
