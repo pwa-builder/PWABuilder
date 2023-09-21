@@ -460,7 +460,7 @@ Let's use Microsoft Store as an example and see how you can submit your app!
    <img src="assets/home/workshop/7-store-register.png" alt="Register as Windows developer">
 </div>
 
-2. You will now be redirected to a login page. Login with your Microsoft account (@hotmail, @outlook, etc.). If you don't have a Microsoft account, you can create one from [here](https://aka.ms/learn-pwa/workshop/outlook.live.com/owa).
+2. You will now be redirected to a login page. Login with your Microsoft account (@hotmail, @outlook, etc.). If you don't have a Microsoft account, you can create one from <a href="https://aka.ms/learn-pwa/workshop/outlook.live.com/owa" aria-label="Click here to follow instructions">here</a> 
 
 3. Once you are logged in, you should be redirected to Microsoft Partner Center site on Registration - Account Info page. Follow the setup steps to create your account. Select 'Individual' as account type if you plan to submit apps as yourself.
 
