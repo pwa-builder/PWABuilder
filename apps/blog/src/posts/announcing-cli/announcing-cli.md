@@ -36,7 +36,7 @@ From there, it’s just one command to create your first app:
 pwa create my-first-pwa
 ```
 
-<img src="/posts/announcing-cli/pwa-create.png.png" alt="PWABuilder CLI create command output after executing."></img>
+<img src="/posts/announcing-cli/pwa-create.png" alt="PWABuilder CLI create command output after executing."></img>
 
 And then one more command to start running and developing your app, with live-reload for changes!
 
