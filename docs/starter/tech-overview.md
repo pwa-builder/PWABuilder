@@ -17,7 +17,7 @@ If you're new to web components, check out this [resource.](https://developer.mo
 
 All of our pages are components themselves, and are built using Lit. 
 
-Learn more about Lit [here.](https://lit.dev/)
+Learn more about Lit <a href="https://lit.dev/" aria-label="Click here to lean more">here</a>
 
 #### Shoelace
 
@@ -29,7 +29,7 @@ The starter uses [Shoelace](https://shoelace.style/) for its user interface.
 
 For routing, the Starter uses the `@thepassle/app-tools` router, a lightweight client-side router that works easily with web components.
 
-Learn more [here.](https://github.com/thepassle/app-tools/tree/master/router#readme)
+Learn more <a href="https://github.com/thepassle/app-tools/tree/master/router#readme" aria-label="Click here to lean more">here</a>
 
 ### Development Dependencies
 
@@ -38,12 +38,12 @@ The Starter uses Vite as part of its build process.
 
 Vite handles our code bundling and development server, and exposes PWA-specific functionality through the VitePWA plugin.
 
-Learn more [here.](https://vitejs.dev/)
+Learn more <a href="https://vitejs.dev/" aria-label="Click here to lean more">here</a> 
 
 #### Azure Static Web Apps CLI
 The Starter uses the Azure Static Web Apps CLI to enable you to deploy your PWA to Azure, along with local performance testing etc.
 
-Learn more [here.](https://azure.github.io/static-web-apps-cli/)
+Learn more <a href="https://azure.github.io/static-web-apps-cli/" aria-label="Click here to lean more">here</a>
 
 
 ## Project Structure
@@ -79,7 +79,7 @@ To use the [Fluent UI Web Components](https://github.com/microsoft/fluentui/tree
 
 - Install the Components by running `npm install @fluentui/web-components` 
 - Now, instead of importing components from Shoelace, you can change the imports to use the Fluent Web Components.    For example, to use the FluentAnchor component, you would put this import `import { FluentAnchor } from '@fluentui/web-components';` at the top of your component file.
-- For a list of all the Fluent Web Components, check [here](https://docs.microsoft.com/en-us/fluent-ui/web-components/components/overview) in their documentation.
+- For a list of all the Fluent Web Components, check <a href="https://docs.microsoft.com/en-us/fluent-ui/web-components/components/overview" aria-label="Click here to view documentation">here</a>
 
 You will notice that this pattern is going to be very similar for the below libraries.
 
@@ -88,11 +88,11 @@ To use the [Vaadin Web Components](https://github.com/vaadin/web-components) we 
 
 - Vaadin ships each of their components seperately to NPM. Because of this, we need to install each component we want to use. For example, want to use the `vaadin-grid` component? Run `npm install @vaadin/vaadin-grid`.
 - We can then import that component, just as we do with Shoelace components, by adding `import '@vaadin/grid/vaadin-grid.js';` to the top of our file.
-- For the full list of Vaadin Web Components, check [here](https://github.com/vaadin/web-components#core-components).
+- For the full list of Vaadin Web Components, check <a href="https://github.com/vaadin/web-components#core-components" aria-label="Click here to learn more">here</a> 
 
 #### Spectrum Web Components
 To use the [Spectrum Web Components](https://opensource.adobe.com/spectrum-web-components/getting-started/) we need to: 
 
 - As with Vaadin, the Spectrum components need to be installed seperately. For example, want to use the `sp-accordion` component? Run `npm install @spectrum-web-components/accordion`.
 - We can then import that component, just as we do with Shoelace components, by adding `import '@spectrum-web-components/accordion/sp-accordion.js';` to the top of our file.
-- For the full list of Spectrum Web Components, check [here](https://github.com/vaadin/web-components#core-components).
+- For the full list of Spectrum Web Components, check <a href="https://github.com/vaadin/web-components#core-components" aria-label="Click here to learn more">here</a> 

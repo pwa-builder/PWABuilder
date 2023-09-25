@@ -16,7 +16,7 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 
-- A Windows Developer account with Partner Center (which are available for a one-time fee of $19). Create one [here.](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership)
+- A Windows Developer account with Partner Center (which are available for a one-time fee of $19). Create one <a href="https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership" aria-label="Click here to follow instructions">here</a> 
 
 !> If you want in-depth guidance on how to enroll as a Windows Developer, take a look at [this documentation.](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account)
 
