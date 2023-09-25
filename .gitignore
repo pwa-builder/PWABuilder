@@ -6,3 +6,5 @@ build
 coverage
 sl-icons/
 types/
+.env
+docs/**/_sidebar.md

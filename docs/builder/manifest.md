@@ -265,7 +265,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### edge_side_panel: `Object`
 
-`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases [here.](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/SidePanel/explainer.md)
+`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases [here.](https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa)
 
 You can also specify the `preferred_width` member as part of your `edge_side_panel` specification.
 
@@ -449,7 +449,7 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 
 * `auto`: The user agent makes the decision based on the context.
 * `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
-* `navigate-existing`: If the web app is already open, it is brought into focus and naviagates to the URL made available by `Window.launchQueue`
+* `navigate-existing`: If the web app is already open, it is brought into focus and navigates to the URL made available by `Window.launchQueue`
 * `navigate-new`: A new instance of the web app is opened and it navigates to the URL made available by `Window.launchQueue`
 
 In the second example below, if `navigate-existing` is unavailable it will fallback to the next value in the list.
@@ -460,7 +460,7 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
 }
 
 "launch_handler": {
-    "client_mode": ["navigate-existing, auto"]
+    "client_mode": ["navigate-existing", "auto"]
 }
 ```
 
@@ -490,16 +490,15 @@ In the second example below, if `navigate-existing` is unavailable it will fallb
   ]
 ```
 
-In order to allow for your app to intercept links, you must specify `web-app-origin-association.json` that must be located at `https://<associated origin>/.well-known/web-app-origin-association.json`.
+In order to allow for your app to intercept links, you must specify `web-app-origin-association` that must be located at `https://<associated origin>/.well-known/web-app-origin-association`.
 
 ```json
 {
-  "web_apps": {
-     "https://docs.pwabuilder.com/": {
-       "scope": "/",
-       "authorize": ["intercept-links"]
-     }
-  }
+  "web_apps": [
+    {
+      "web_app_identity": "https://docs.pwabuilder.com/"
+    }
+  ]
 }
 ```
 

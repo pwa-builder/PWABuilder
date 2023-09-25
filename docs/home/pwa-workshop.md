@@ -333,7 +333,7 @@ Like all Web Workers, the Service Worker must be authored in its own file. The l
 
 2. Installation: The browser triggers `install` as the first event to the Service Worker. It can use this for pre-caching resources (e.g., populate cache with long-lived resources like logos or offline pages).
 
-3. Activation: The browser sends the `activate` event to indicate that the service worker has been installed. This service worker can now do clean up actions (e.g., remove old caches from prior version) and ready itself to handle functional events. If there is an old service worker in play, you can use `clients.claim()` to immediately replace the old service worker with your new one.
+3. Activation: The browser sends the `activate` event to indicate that the service worker has been installed. This service worker can now do clean up actions (e.g., remove old caches from prior version) and ready itself to handle functional events. If there is an old service worker in play, you can use `self.clients.claim()` to immediately replace the old service worker with your new one.
 
 ### How is service worker registered in PWABuilder Studio generated projects?
 

@@ -328,6 +328,7 @@ export class ManifestInfoForm extends LitElement {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
+                p.setAttribute('aria-live', 'polite');
                 div.append(p);
                 this.errorMap[field]++;
               });
@@ -352,6 +353,7 @@ export class ManifestInfoForm extends LitElement {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
+                p.setAttribute('aria-live', 'polite');
                 div.append(p);
                 this.errorMap[field]++;
               });
@@ -379,6 +381,7 @@ export class ManifestInfoForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
@@ -417,7 +420,6 @@ export class ManifestInfoForm extends LitElement {
       });
       this.dispatchEvent(manifestUpdated);
     }
-
   }
 
   async handleInputChange(event: InputEvent){
@@ -475,6 +477,7 @@ export class ManifestInfoForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[fieldName!]++;
         });
@@ -557,6 +560,24 @@ export class ManifestInfoForm extends LitElement {
             <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
           </div>
         </div>
+
+        <div class="form-row long">
+          <div class="form-field">
+            <div class="field-header">
+            <div class="header-left">
+              <h3 class=${classMap(this.decideFocus("id"))}>Id</h3>
+              <manifest-field-tooltip .field=${"id"}></manifest-field-tooltip>
+            </div>
+            </div>
+            <p class="field-desc">Unique identifier for your PWA that is seperate from fields that could change over time (like name or short name)</p>
+            <sl-input 
+              placeholder="id" 
+              value=${this.manifest.id ?? ""} 
+              data-field="id" 
+              @sl-change=${this.handleInputChange}></sl-input>
+          </div>
+        </div>
+        
         <div class="form-row long">
           <div class="form-field">
             <div class="field-header">
@@ -568,7 +589,6 @@ export class ManifestInfoForm extends LitElement {
             <p class="field-desc">Used in app storefronts and install dialogs</p>
             <sl-textarea placeholder="PWA Description" value=${this.manifest.description! || ""} data-field="description" @sl-change=${this.handleInputChange} resize="none"></sl-textarea>
           </div>
-          
         </div>
         <div class="form-row color-row">
           <div class="form-field color_field">

@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - "apps/pwabuilder/**"
-    branches: [ main, dev ]
+    branches: [ tests-final, staging, main ]
   pull_request:
     paths:
       - "apps/pwabuilder/**"
-    branches: [ main, dev ]
+    branches: [ tests-final, staging, main ]
 jobs:
   test:
     timeout-minutes: 60
@@ -20,10 +20,14 @@ jobs:
         node-version: 16
     - name: Install dependencies
       run: npm ci
+    - name: Install Playwright Test Globally
+      run: npm install -g @playwright/test
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Install Playwright Test Locally
+      run: npm install @playwright/test --save-dev
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test tests/basic.spec.ts tests/packaging.spec.ts tests/report-card.spec.ts
     - uses: actions/upload-artifact@v3
       if: always()
       with:

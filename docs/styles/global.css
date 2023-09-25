@@ -72,23 +72,24 @@
     }
 }
 .home-nav-container sl-button::part(base) {
-    background-color: #9C8DAB;
+    background: #4F3FB6 ;
     color: white;
 }
 
 .home-nav-container sl-button::part(base):hover {
-    border-color: #491576;
+    border: 1px solid white;
+    outline: 2px solid black;
 }
-
-
 
 .home-nav-card::part(base) {
     justify-self: stretch;
     height: 100%;
 }
 
-.home-nav-card h3 {
+.home-nav-card h2 {
     text-align: center;
+    font-size: 21px;
+    font-weight: 600;
 }
 .home-nav-card::part(body) {
     display: flex;
@@ -103,6 +104,59 @@
 
 /* Home Nav CSS END */
 
+sl-menu-item::part(base) {
+    color: #491576;
+    margin-left: 2px;
+    margin-right: 2px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+sl-menu-item[checked]::part(base) {
+    background: #e7e2ee;
+    border:#ada6b4 1px solid;
+}
+
+sl-menu::part(base) {
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(to right, #f9f4ff, #e7f6fa);
+}
+
+sl-menu-item::part(base):hover {
+    background: #4F3FB6;
+    color: white;
+    border: 1px solid white;
+    outline: 2px solid black;
+}
+
+sl-menu {
+    padding-bottom: 10px;
+    width: 100%;
+}
+
 sl-button {
     width: 100%;
+}
+
+.logo-img {
+    padding-bottom: 15px;
+}
+
+sl-alert sl-button::part(base) {
+    background: #4F3FB6;
+    color: white;
+}
+
+sl-alert sl-button::part(base):hover {
+    border: 1px solid white;
+    outline: 2px solid black;
+}
+
+sl-alert::part(base) {
+    border-top-color: #9C8DAB;
+}
+
+sl-alert::part(icon) {
+    color: #491576;
 }

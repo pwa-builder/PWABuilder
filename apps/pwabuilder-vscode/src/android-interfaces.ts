@@ -94,6 +94,7 @@ export interface AndroidPackageOptions {
   splashScreenFadeOutDuration: number;
   startUrl: string;
   themeColor: string;
+  themeColorDark?: string;
   webManifestUrl: string;
 }
 /**

@@ -18,6 +18,7 @@ export type PartialValidation = {
     displayString?: string;
     errorString?: string;
     infoString?: string;
+    docsLink?: string;
     valid: boolean;
 }
 
