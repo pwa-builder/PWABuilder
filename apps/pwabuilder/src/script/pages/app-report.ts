@@ -909,7 +909,7 @@ export class AppReport extends LitElement {
         #todo-summary-left {
           display: flex;
           align-items: center;
-          gap: .5em;
+          gap: 25px;
         }
 
         #todo-summary-left > p {
@@ -973,7 +973,7 @@ export class AppReport extends LitElement {
           align-items: center;
           background-color: #F1F2FA;
           padding: .25em .5em;
-          border-radius: var(--card-border-radius);
+          border-radius: 6px;
           font-size: 20px;
         }
 
@@ -989,6 +989,11 @@ export class AppReport extends LitElement {
 
         .indicator.selected p {
           color: #ffffff;
+        }
+
+        .indicator img {
+          width: 16px;
+          height: auto;
         }
 
         /* Manifest Card */
@@ -1729,6 +1734,9 @@ export class AppReport extends LitElement {
           #manifest-header, #sw-header, #sec-header {
             padding-bottom: 2.5em;
           }
+          #manifest-header {
+            gap: 0;
+          }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
           }
@@ -1749,6 +1757,19 @@ export class AppReport extends LitElement {
 
           #share-card-mani {
             position: unset;
+          }
+
+          .icons-holder {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            place-content: center;
+            gap: 25px;
+          }
+
+          .icons-holder.sw {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
           }
         `)}
       `,
@@ -3243,7 +3264,7 @@ export class AppReport extends LitElement {
                     ${this.serviceWorkerResults.map((result: any) =>
                       html`
                         <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
-                          <sw-info-card .field=${result.member} .placement="${"right"}">
+                          <sw-info-card .field=${result.member}>
                             <div class="circle-icon" slot="trigger">
                               <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
                               ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
@@ -3319,8 +3340,8 @@ export class AppReport extends LitElement {
                 <div class="icons-holder">
                   ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
                     html`
-                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
-                        <manifest-info-card .field=${result.member} .placement="${"right"}">
+                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+                        <manifest-info-card .field=${result.member}>
                           <div class="circle-icon" slot="trigger">
                             <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
                             ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}

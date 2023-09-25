@@ -10,7 +10,6 @@ import { SlDropdown } from '@shoelace-style/shoelace';
 @customElement('sw-info-card')
 export class ServiceWorkerInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
-  @property({ type: String }) placement: "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "left";
   @state() currentlyHovering: boolean = false;
 
   static get styles() {
@@ -179,10 +178,10 @@ export class ServiceWorkerInfoCard extends LitElement {
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
       <sl-dropdown 
         distance="10" 
-        placement="${this.placement}" 
         class="tooltip"
         @sl-show=${() => this.trackTooltipOpened()}
-        @sl-hide=${() => this.handleHover(false)}>
+        @sl-hide=${() => this.handleHover(false)}
+      >
         <slot name="trigger" slot="trigger"></slot>
         <div class="info-box">
           ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
