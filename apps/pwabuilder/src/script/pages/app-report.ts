@@ -912,7 +912,7 @@ export class AppReport extends LitElement {
           gap: 25px;
         }
 
-        #todo-summary-left > p {
+        #todo-summary-left > h2 {
           font-size: var(--subheader-font-size);
         }
 
@@ -1706,6 +1706,9 @@ export class AppReport extends LitElement {
           #mh-text {
             width: 100%;
           }
+          #mh-actions {
+            align-items: flex-start;
+          }
 
           #manifest-detail-grid{
             display: flex;
@@ -2067,19 +2070,6 @@ export class AppReport extends LitElement {
     this.allTodoItems = [];
     if (findersResults.manifestTodos.length){
       this.allTodoItems.push(...findersResults.manifestTodos)
-
-      // adding todo for token giveaway item if theres at least a manifest
-      if(!this.createdManifest && this.tokensCampaign){
-        this.allTodoItems.push(
-          {
-            "card": "giveaway",
-            "field": "giveaway",
-            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-            "status": "giveaway",
-            "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-          }
-        );
-      }
     }
     else {
       this.allTodoItems.push(...await this.testManifest());
@@ -2153,21 +2143,6 @@ export class AppReport extends LitElement {
       }
     });
 
-
-
-    // adding todo for token giveaway item if theres at least a manifest
-    if(!this.createdManifest && this.tokensCampaign){
-      this.allTodoItems.push(
-        {
-          "card": "giveaway",
-          "field": "giveaway",
-          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-          "status": "giveaway",
-          "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-        }
-      );
-    }
-
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
     } else {
@@ -2225,7 +2200,7 @@ export class AppReport extends LitElement {
 
         if(!missing){
           let fix = this.specialSWTodos[result.member];
-          todos.push({"card": card, "field": result.infoString, "fix": fix, "status": status});
+          todos.push({"card": card, "field": result.member, "fix": fix, "status": status});
         }
       }
     })
@@ -2630,11 +2605,10 @@ export class AppReport extends LitElement {
       "retest": 0,
       "missing": 1,
       "required": 2,
-      "giveaway": 3,
-      "enhancement": 4,
-      "highly recommended": 5,
-      "recommended": 6,
-      "optional": 7
+      "enhancement": 3,
+      "highly recommended": 4,
+      "recommended": 5,
+      "optional": 6
     };
 
     // If the manifest is missing more than half of the recommended fields, show those first
@@ -2643,11 +2617,10 @@ export class AppReport extends LitElement {
         "retest": 0,
         "missing": 1,
         "required": 2,
-        "giveaway": 3,
-        "highly recommended": 4,
-        "recommended": 5,
-        "enhancement": 6,
-        "optional": 7
+        "highly recommended": 3,
+        "recommended": 4,
+        "enhancement": 5,
+        "optional": 6
       };
     }
 
@@ -2732,20 +2705,20 @@ export class AppReport extends LitElement {
       <div id="indicators-holder">
         ${red != 0 ?
           this.filterList.includes("required") ?
-            html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></div>` :
-            html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>`
+            html`<div class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></div>` :
+            html`<div class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>`
           : null
         }
         ${yellow != 0 ?
           this.filterList.includes("recommended") || this.filterList.includes("optional") ?
-            html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></div>` :
-            html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>`
+            html`<div class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></div>` :
+            html`<div class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>`
           : null
         }
         ${purple != 0 ?
           this.filterList.includes("enhancement") ?
-          html`<div class="indicator selected" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></div>` :
-          html`<div class="indicator" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>`
+          html`<div class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></div>` :
+          html`<div class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>`
             : null
           }
       </div>`
@@ -2757,6 +2730,10 @@ export class AppReport extends LitElement {
   // filter todos by severity
   filterTodoItems(filter: string, e: Event){
     e.stopPropagation();
+
+    console.log(filter);
+    recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
     this.pageNumber = 1;
     let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
     todoDetail.show();
@@ -2811,16 +2788,6 @@ export class AppReport extends LitElement {
 
   }
 
-  goToGiveawayPage(){
-    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    let a: HTMLAnchorElement = document.createElement("a");
-    a.target = "_blank";
-    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
-    a.rel = "noopener";
-
-    a.click();
-  }
-
   closeTooltipOnScroll() {
     if(this.openTooltips.length > 0){
       this.openTooltips[0].hide();
@@ -2858,7 +2825,7 @@ export class AppReport extends LitElement {
                     ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                   </div>
                   <div id="card-info" class="flex-row">
-                    <p id="site-name">${this.appCard.siteName}</p>
+                    <h1 id="site-name">${this.appCard.siteName}</h1>
                     <p id="site-url">${this.appCard.siteUrl}</p>
                     <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
                   </div>
@@ -2902,7 +2869,6 @@ export class AppReport extends LitElement {
                       <img
                         src=${this.retestPath}
                         alt="retest site"
-                        role="presentation"
                       />
                     </button>
                   </div>`
@@ -2987,7 +2953,7 @@ export class AppReport extends LitElement {
               >
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
-                  <p>Action Items</p>
+                  <h2>Action Items</h2>
 
                     ${this.allTodoItems.length > 0 ?
                       this.stopShowingNotificationTooltip ?
@@ -3022,7 +2988,7 @@ export class AppReport extends LitElement {
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
-                        @giveawayEvent=${() => this.goToGiveawayPage()}>
+                      >
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
@@ -3065,7 +3031,7 @@ export class AppReport extends LitElement {
             <div id="manifest-header">
               <div id="mh-content">
                 <div id="mh-text" class="flex-col">
-                  <p class="card-header">Manifest</p>
+                  <h2 class="card-header">Manifest</h2>
                   ${this.manifestDataLoading ?
                     html`
                       <div class="flex-col gap">
@@ -3234,7 +3200,7 @@ export class AppReport extends LitElement {
               <div id="sw-header" class="flex-col">
                 <div id="swh-top">
                   <div id="swh-text" class="flex-col">
-                    <p class="card-header">Service Worker</p>
+                    <h2 class="card-header">Service Worker</h2>
                     ${this.swDataLoading ?
                       html`
                         <div class="flex-col gap">
@@ -3263,9 +3229,9 @@ export class AppReport extends LitElement {
                   <div class="icons-holder sw">
                     ${this.serviceWorkerResults.map((result: any) =>
                       html`
-                        <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
                           <sw-info-card .field=${result.member}>
-                            <div class="circle-icon" slot="trigger">
+                            <div class="circle-icon" tabindex="0" slot="trigger">
                               <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
                               ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
                             </div>
@@ -3315,7 +3281,7 @@ export class AppReport extends LitElement {
               <div id="sec-header" class="flex-col">
                 <div id="sec-top">
                   <div id="sec-text" class="flex-col">
-                    <p class="card-header">App Capabilities</p>
+                    <h2 class="card-header">App Capabilities</h2>
                     ${this.manifestDataLoading ?
                       html`
                         <div class="flex-col gap">
@@ -3342,7 +3308,7 @@ export class AppReport extends LitElement {
                     html`
                       <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
                         <manifest-info-card .field=${result.member}>
-                          <div class="circle-icon" slot="trigger">
+                          <div class="circle-icon" tabindex="0" slot="trigger">
                             <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
                             ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
                           </div>

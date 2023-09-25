@@ -57,7 +57,7 @@ export const maniTests: Array<Validation> = [
         member: "handle_links",
         defaultValue: "auto",
         docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
-        errorString: "handle_links should be either auto, preferred or not-proferred",
+        errorString: "handle_links should be either auto, preferred or not-preferred",
         quickFix: true,
         test: (value: string) => {
             if (value && typeof value === "string") {

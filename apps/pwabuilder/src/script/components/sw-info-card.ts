@@ -10,6 +10,7 @@ import { SlDropdown } from '@shoelace-style/shoelace';
 @customElement('sw-info-card')
 export class ServiceWorkerInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
+  @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
   @state() currentlyHovering: boolean = false;
 
   static get styles() {
@@ -131,18 +132,18 @@ export class ServiceWorkerInfoCard extends LitElement {
 
   trackLearnMoreAnalytics(){
     // general counter
-    recordPWABuilderProcessStep(`action_item_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`sw_bubble_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     //specific field counter
-    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`sw_bubble_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   trackTooltipOpened(){
     // general counter
-    recordPWABuilderProcessStep(`action_item_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`sw_bubble_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
 
     //specific field counter
-    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`sw_bubble_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   // opens tooltip 
@@ -176,21 +177,44 @@ export class ServiceWorkerInfoCard extends LitElement {
   render() {
     return html`
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
-      <sl-dropdown 
-        distance="10" 
-        class="tooltip"
-        @sl-show=${() => this.trackTooltipOpened()}
-        @sl-hide=${() => this.handleHover(false)}
-      >
-        <slot name="trigger" slot="trigger"></slot>
-        <div class="info-box">
-          ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-          
-          <div class="mic-actions">
-            <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
+      ${this.placement !== "" ?
+        html`
+        <sl-dropdown 
+          distance="10" 
+          class="tooltip"
+          placement=${this.placement}
+          @sl-show=${() => this.trackTooltipOpened()}
+          @sl-hide=${() => this.handleHover(false)}
+        >
+          <slot name="trigger" slot="trigger"></slot>
+          <div class="info-box">
+            ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
+            
+            <div class="mic-actions">
+              <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
+            </div>
           </div>
-        </div>
-      </sl-dropdown>
+        </sl-dropdown>
+        ` :
+        html`
+          <sl-dropdown 
+            distance="10" 
+            class="tooltip"
+            @sl-show=${() => this.trackTooltipOpened()}
+            @sl-hide=${() => this.handleHover(false)}
+          >
+            <slot name="trigger" slot="trigger"></slot>
+            <div class="info-box">
+              ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
+              
+              <div class="mic-actions">
+                <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
+              </div>
+            </div>
+          </sl-dropdown>
+        `
+      }  
+    
     </div>
     `;
   }

@@ -132,10 +132,10 @@ export class ManifestInfoCard extends LitElement {
 
   openME(){
     // general counter
-    recordPWABuilderProcessStep(`action_item_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     // specific counter
-    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
     let tab: string = manifest_fields[this.field].location!;
@@ -152,18 +152,18 @@ export class ManifestInfoCard extends LitElement {
 
   trackLearnMoreAnalytics(){
     // general counter
-    recordPWABuilderProcessStep(`action_item_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     //specific field counter
-    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   trackTooltipOpened(){
     // general counter
-    recordPWABuilderProcessStep(`action_item_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
 
     //specific field counter
-    recordPWABuilderProcessStep(`action_item_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   // opens tooltip 

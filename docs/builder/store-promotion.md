@@ -1,3 +1,5 @@
+!> This promotion has ended. If you already have a token, and want to see how to use it, jump to [Using Your Token](/builder/store-promotion#using-your-token).
+
 # Free Microsoft Developer Account Promotion
 
 For a limited time, PWABuilder is offering free Microsoft Store Developer accounts (approximately $19 in value) to individual developers who have a [Progressive Web App](/home/pwa-intro) that meets specific requirements. With a Microsoft Store Developer account, you can deploy your Progressive Web App to the Microsoft Store, extending your app's reach to users on Windows.
@@ -7,7 +9,8 @@ For a limited time, PWABuilder is offering free Microsoft Store Developer accoun
 To qualify for a free Microsoft Store developer account, you must:
 
   * own a PWA that is installable, contains all required manifest fields, and implements at least two desktop enhancements. See our [Beginner's Guide to Progressive Web Apps](/home/pwa-intro) for more info.
-  * live in a country or region where the Windows program in Partner Center is offered. See [here](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets) for the full list of countries
+  * live in a country or region where the Windows program in Partner Center is offered. See 
+  <a href="https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/account-types-locations-and-fees#developer-account-and-app-submission-markets" aria-label="Click here for the full list of countries">here</a>
   * have a valid Microsoft Account to use to sign up for the Microsoft Store on Windows developer account
   * not have an existing Microsoft Store on Windows individual developer/publisher account
   * use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here
@@ -31,7 +34,7 @@ Before you can get started claiming a token, make sure you have a valid, public 
    <img src="/assets/builder/store-promotion/tests-passed.png" alt="The success screen on the PWABuilder token promotion page.">
 </div>
 
-5. Sign in with a personal Microsoft account. You can create one for free [here.](https://account.microsoft.com/account)
+5. Sign in with a personal Microsoft account. You can create one for free  <a href="https://account.microsoft.com/account" aria-label="Click here to follow instructions">here</a>
 
 6. You will need to accept the promotion terms before you can view your token. 
 
