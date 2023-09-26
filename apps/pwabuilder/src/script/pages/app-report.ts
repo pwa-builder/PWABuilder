@@ -39,8 +39,6 @@ import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDetails, SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
-import { GetTokenCampaignStatus } from './qualification/app-token.helper';
-import { env } from '../utils/environment';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -145,8 +143,6 @@ export class AppReport extends LitElement {
   @state() openTooltips: SlDropdown[] = [];
   @state() stopShowingNotificationTooltip: boolean = false;
   @state() closeOpenTooltips: boolean = true;
-
-  @state() tokensCampaign: boolean = false;
 
   private possible_messages = [
     {"messages": {
@@ -1791,8 +1787,6 @@ export class AppReport extends LitElement {
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this.tokensCampaign = await GetTokenCampaignStatus();
-    env.tokensCampaignRunning = this.tokensCampaign;
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -3353,7 +3347,7 @@ export class AppReport extends LitElement {
         .siteName=${this.appCard.siteName}
       > </share-card>
 
-      <publish-pane .tokensCampaign=${this.tokensCampaign}></publish-pane>
+      <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.manifestDataLoading ? null : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
