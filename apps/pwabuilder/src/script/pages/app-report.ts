@@ -1069,7 +1069,6 @@ export class AppReport extends LitElement {
           height: 100%;
           padding: 1em;
           min-height: 318px;
-          justify-content: space-between;
         }
 
         #swh-top {
@@ -1087,6 +1086,7 @@ export class AppReport extends LitElement {
           row-gap: 1em;
           width: fit-content;
           align-items: flex-start;
+          margin-top: auto;
         }
 
         /* Sec Card */
@@ -1235,7 +1235,6 @@ export class AppReport extends LitElement {
         }
 
         #sec-header {
-          justify-content: space-between;
           row-gap: .5em;
           padding: 1em;
           min-height: 318px;
@@ -1253,6 +1252,7 @@ export class AppReport extends LitElement {
         #sec-actions {
           row-gap: 1em;
           width: 66%;
+          margin-top: auto;
         }
 
         .icons-holder {
