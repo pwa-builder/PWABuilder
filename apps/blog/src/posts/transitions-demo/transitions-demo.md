@@ -127,9 +127,6 @@ This time, we set the name of the transition (which must be unique), execute the
 @keyframes slide-from-left { 
   from { transform: translateX(-30px); } 
 } 
-```
-
-```css
 ::view-transition-old(forward) { 
   animation: 200ms cubic-bezier(0.4, 0, 1, 1) both fade-out, 
     600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left; 
