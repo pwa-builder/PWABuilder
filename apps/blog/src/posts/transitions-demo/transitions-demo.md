@@ -47,7 +47,9 @@ The last bit of context I want to add is that for accessibility, we can use the 
 
 ## The Top Level Transition 
 
-Throughout my exploration of these transitions, I was tinkering with a sample app to try these transitions for myself. I ran pwa create page-transitions using the PWABuilder CLI to create my own fork of the PWABuilder pwa-starter called “page-transitions” and after the initial set up and about 5 minutes I had an app up an running. The first thing I wanted to see was the “top level” transition. I knew I wanted each page of the app to demo a different transition type (remember why we’d use top level transition). I created a nav bar with 3 different transition types and a home page. Initially, these pages were just colored: rainbow, red, green, and blue. But later, I would fill them out with the content necessary to show off the respective transition. The top-level transition uses a cross fade to switch between pages and we know from before, that startViewTransition does this by default.  
+The first transition we'll take a look at is the top-level transition, which is often used when a page switch occurs from a navigation menu. This transition will use a cross-fade, which is the default behavior for `startViewTransition`.
+
+Our `handlePageChange` function looks like this:
 
 ```js
 handlePageChange(page){ 
