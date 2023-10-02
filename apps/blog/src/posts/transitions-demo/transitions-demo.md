@@ -63,7 +63,9 @@ handlePageChange(page){
 } 
 ```
 
-Above is the code that ran on each click of a button in my navigation bar.  If the browser is compatible with the View Transitions API, we start the view transition and then run page switch through the router. If the API is unavailable, we just route normally. Without any additional code, this alone completes the top-level transition. You can add additional CSS to alter the transition using the ::view-transition-old() and ::view-transition-new() pseudo-selectors.  
+The above code runs whenever a navigation item is clicked in the sample app.  If the browser is compatible with the View Transitions API, we start the view transition and then run the page change through the router. If the API is unavailable, we just route normally. Without any additional code, this alone completes the top-level transition. 
+
+You can add additional CSS to alter the transition using the `::view-transition-old()` and `::view-transition-new()` pseudo-selectors:
 
 ```css
 ::view-transition-old(root), 
