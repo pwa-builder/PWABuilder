@@ -1049,7 +1049,8 @@ export class PublishPane extends LitElement {
         class=${classMap({noX: this.preventClosing, dialog: true})}
         @sl-hide=${(e: any) => this.hideDialog(e)}
         @sl-request-close=${(e:any) => this.handleRequestClose(e)}
-        noHeader>
+        noHeader 
+      >
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
           ${this.cardsOrForm ?
