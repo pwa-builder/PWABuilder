@@ -108,7 +108,7 @@ And on the backwards page, the following CSS is necessary:
 
 This time, we set the name of the transition (which must be unique), execute the transition, wait for it to finish, and then remove the transition name when the transition is complete. The CSS on the backwards page is telling the API that the host of the backwards page is the “element” that we are transitioning on, which in the context of my sample app, refers to the whole backwards page. To achieve the sliding effect, the following CSS is required:  
 
-```js
+```css
 @keyframes fade-in { 
   from { opacity: 0; } 
 } 
