@@ -33,7 +33,7 @@ Each type of transition has an optimal situation where it is best to use them, s
 2. How related are the pages that you are transitioning between? 
 3. Do any of the page elements need to persist when the page transitions? 
 
-Among other questions, these are three questions you can ask yourself to begin to understand which type of transitions you need to use. In my research, I focused on three different transitions that I have seen “in the wild” often and then a fourth that I have implemented myself:
+The answers to these questions can help you decide what type of transition to use and when. Three common types of transition that can fit different scenarios are:
 
 1. **Top level:** Usually, a crossfade between pages with unrelated content. Seen often with navigation bars or menus. 
 2. **Container transform:** This is to be used to transition hero elements of a container from one page to another. This might look like a preview image expanding to take up more space on the hero section of the next page or title text from a store card element transitioning to the heading of a product description page. 
