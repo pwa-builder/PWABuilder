@@ -39,7 +39,9 @@ The answers to these questions can help you decide what type of transition to us
 2. **Container transform:** This is to be used to transition hero elements of a container from one page to another. This might look like a preview image expanding to take up more space on the hero section of the next page or title text from a store card element transitioning to the heading of a product description page. 
 3. **Forward and Backward:** This transition describes the movement from one page to another forward and backward. You see this transition a lot on settings pages where you are clicking deeper into a hierarchy. This is the classic slide in/slide out page transition. 
 
-As I mentioned before, there were methods to do page transitions before this API was released but now, we will be mixing in the more traditional CSS animation work from before with the new APIs to create a smooth experience for our users. Our main goals are to distract users from loading/page refreshes, give life to our PWA through the movement from the transitions and also make our PWA feel closer to that of a native application. The last bit of context I want to add is that for accessibility, we can use the prefers-reduced-motion CSS query to toggle the movement from these transitions on and off. It is important to take the time to implement this toggle to keep the web accessible for all. 
+Our main goals with transitions are to distract users from loading/page refreshes, to give life to our PWA through the movement from the transitions, and to make our PWA feel closer to that of a native application. 
+
+The last bit of context I want to add is that for accessibility, we can use the prefers-reduced-motion CSS query to toggle the movement from these transitions on and off. It is important to take the time to implement this toggle to keep the web accessible for all. 
 
 ## The Top Level Transition 
 
