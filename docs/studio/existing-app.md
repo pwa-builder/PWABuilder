@@ -24,7 +24,7 @@ To add a manifest using the interface:
 
 6. Your manifest is automatically linked to your index.html
 
-7. Fill out your manifest to match your application. You can learn more about the Manifest fields [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
+7. Fill out your manifest to match your application. You can learn more about the Manifest fields <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" aria-label="Click here to learn more">here</a> 
 
 
 Next up: adding a service worker! 
