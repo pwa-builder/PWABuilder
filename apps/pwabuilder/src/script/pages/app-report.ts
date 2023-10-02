@@ -622,8 +622,9 @@ export class AppReport extends LitElement {
 
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
-          border: 1px solid white;
-          outline: 2px solid black;
+          border: 1px solid #ffffff;
+          outline: 2px solid #000000;
+          background-color: rgba(0, 0, 0, 0.75);
         }
 
         .feedback-holder {

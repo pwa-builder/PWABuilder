@@ -253,17 +253,20 @@ export class PublishPane extends LitElement {
         all: unset;
         width: 75%;
         background-color: var(--font-color);
-        color: white;
+        color: #ffffff;
+        border: 1px solid transparent;
         font-size: 14px;
         border-radius: 50px;
         padding: .75em 1em;
-        border: none;
         text-align: center;
         font-weight: bold;
       }
-      .package-button:hover {
-        cursor: pointer;
+      .package-button:focus, .package-button:hover {
+        box-shadow: var(--button-box-shadow);
+        border: 1px solid #ffffff;
+        outline: 2px solid #000000;
         background-color: rgba(0, 0, 0, 0.75);
+        cursor: pointer;
       }
       #apk-tabs {
         display: flex;
@@ -1042,8 +1045,8 @@ export class PublishPane extends LitElement {
   render() {
     return html`
       <sl-dialog
+        label="Dialog"
         class=${classMap({noX: this.preventClosing, dialog: true})}
-        @sl-show=${() => document.body.style.height = "100vh"}
         @sl-hide=${(e: any) => this.hideDialog(e)}
         @sl-request-close=${(e:any) => this.handleRequestClose(e)}
         noHeader>
