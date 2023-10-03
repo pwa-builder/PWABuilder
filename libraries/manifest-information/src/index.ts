@@ -161,7 +161,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     required: false,
     docs_link:
       "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
-    image: "assets/manifest_examples/display_override_example_image.jpg",
+    image: "assets/manifest_examples/display_override_example_image.png",
   },
   iarc_rating_id: {
     description: [

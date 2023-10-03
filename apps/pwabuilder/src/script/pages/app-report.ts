@@ -223,6 +223,10 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
+        sl-details::part(header){
+          padding: 5px 20px;
+        }
+
         sl-details::part(summary-icon){
           display: none;
         }
@@ -260,7 +264,7 @@ export class AppReport extends LitElement {
           height: fit-content;
           --track-width: 4px;
           --indicator-width: 8px;
-          --size: 100px;
+          --size: 85px;
           font-size: var(--subheader-font-size);
           position: relative;
         }
@@ -268,6 +272,7 @@ export class AppReport extends LitElement {
         sl-progress-ring::part(label){
           color: var(--primary-color);
           font-weight: bold;
+          font-size: 18px;
         }
 
         sl-progress-ring::part(base) {
@@ -1141,7 +1146,7 @@ export class AppReport extends LitElement {
         }
 
         arrow-link {
-          margin-top: 10px;
+          margin-top: 20px;
         }
 
         .arrow_link {
@@ -1226,7 +1231,7 @@ export class AppReport extends LitElement {
         }
         .details::part(header) {
           height: 40px;
-          padding: 1em .75em;
+          padding: 5px 20px;
         }
 
         .detail-grid {

@@ -34,7 +34,7 @@ export class TodoItem extends LitElement {
         align-items: center;
         justify-content: space-between;
         font-size: 16px;
-        background-color: #F1F2FA;
+        background-color: #f1f1f1;
         border-radius: var(--card-border-radius);
         padding: .5em;
         margin-bottom: 10px;
