@@ -154,9 +154,9 @@ export class AppReport extends LitElement {
     },
     {"messages": {
                       "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great job you have a perfect score!",
-                      "yellow": "PWABuilder has analyzed your Service Worker, and has identified additional features you can add, like offline support, to make your app feel more robust.",
+                      "yellow": "PWABuilder has analyzed your Service Worker, and has identified additional features you can add to make your app feel more robust.",
                       "blocked": "",
-                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recomeneded by PWABuilder as it enables an array of features that can enhance your PWA. You can generate a Service Worker below or use our documentation to make your own.",
+                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recommended by PWABuilder as it enables an array of features that can enhance your PWA. You can generate a Service Worker below or use our documentation to make your own.",
                   },
      },
       {"messages": {
@@ -866,7 +866,7 @@ export class AppReport extends LitElement {
         }
 
         #actions-footer {
-          background-color: #f2f3fb;
+          background-color: #ffffff;
           width: 100%;
           column-gap: 0.75em;
           border-bottom-left-radius: 10px;
@@ -908,6 +908,11 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        #todo-detail::part(content){
+          padding-top: 0;
+          padding-bottom: 1em;
+        }
+
         #todo-summary-left {
           display: flex;
           align-items: center;
@@ -923,7 +928,7 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           width: 100%;
-          justify-self: center;
+          margin-top: 10px;
           gap: .25em;
         }
 
@@ -1147,6 +1152,7 @@ export class AppReport extends LitElement {
 
         arrow-link {
           margin-top: 20px;
+          margin-bottom: 10px;
         }
 
         .arrow_link {
