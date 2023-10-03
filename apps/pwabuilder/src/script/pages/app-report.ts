@@ -973,7 +973,7 @@ export class AppReport extends LitElement {
           display: flex;
           gap: .5em;
           align-items: center;
-          background-color: #F1F2FA;
+          background-color: #f1f1f1;
           padding: .25em .5em;
           border-radius: 6px;
           font-size: 20px;
