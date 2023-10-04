@@ -1022,8 +1022,8 @@ export class AppReport extends LitElement {
         }
 
         #manifest-header {
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 10fr 2fr 1fr;
           gap: 1em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
@@ -1037,13 +1037,15 @@ export class AppReport extends LitElement {
         }
 
         #mh-text {
-          width: 50%;
           row-gap: 0.5em;
+          width: 100%;
         }
 
         #mh-right {
           display: flex;
           column-gap: 2.5em;
+          grid-area: 1/3;
+          height: fit-content;
         }
 
         #mh-actions {
@@ -1204,6 +1206,9 @@ export class AppReport extends LitElement {
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
           white-space: nowrap;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         #report-wrapper .alternate:hover {
           box-shadow: var(--button-box-shadow)
@@ -1370,6 +1375,7 @@ export class AppReport extends LitElement {
         }
         .gap {
           gap: .5em;
+          
         }
         sl-tooltip::part(base){
           --sl-tooltip-font-size: 14px;
@@ -1555,6 +1561,22 @@ export class AppReport extends LitElement {
           #sec-header {
             min-height: unset;
           }
+          #manifest-header {
+            grid-template-columns: 4fr 4fr 1fr;
+            grid-template-rows: min-content 1fr;
+          }
+          #mh-content {
+            grid-area: 1 / 1 / 2 / 3;
+          }
+          #mh-actions {
+            align-items: unset;
+          }
+          #sw-actions {
+            width: 42%
+          }
+          #sw-actions button {
+            width: 100%;
+          }
         }
 
         /* @media(max-width: 700px){
@@ -1624,16 +1646,26 @@ export class AppReport extends LitElement {
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
           }
+          
+          #sw-actions {
+            width: 100%;
+          }
+          #sw-actions button {
+            margin-top: 20px;
+            width: 100%;
+          }
+
+          #mh-actions {
+            grid-area: 2/1/3/4;
+          }
+          #mh-actions button {
+            width: 100%;
+          }
         }
 
         ${mediumBreakPoint(css`
           #mh-content {
             flex-direction: column;
-          }
-
-          #mh-actions, #sw-actions {
-            align-items: flex-start;
-            width: 50%;
           }
 
           #mh-text {
@@ -1757,6 +1789,7 @@ export class AppReport extends LitElement {
           }
           #manifest-header {
             gap: 0;
+            row-gap: 20px;
           }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
@@ -3060,41 +3093,6 @@ export class AppReport extends LitElement {
                     </p>
                   `}
                 </div>
-
-                <div id="mh-actions" class="flex-col">
-                  ${this.manifestDataLoading ?
-                    html`
-                      <div class="flex-col gap">
-                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                      </div>
-                    ` :
-                    html`
-                      ${this.createdManifest ?
-                      html`
-                          <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
-                            <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
-                          </sl-tooltip>` :
-                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
-                      }
-
-                      <a
-                        class="arrow_anchor"
-                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
-                        rel="noopener"
-                        target="_blank"
-                        @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-                      >
-                        <p class="arrow_link">Manifest Documentation</p>
-                        <img
-                          src="/assets/new/arrow.svg"
-                          alt="arrow"
-                        />
-                      </a>
-                  `}
-
-                </div>
               </div>
 
               <div id="mh-right">
@@ -3107,6 +3105,40 @@ export class AppReport extends LitElement {
                           >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div>${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
+              <div id="mh-actions" class="flex-col">
+                ${this.manifestDataLoading ?
+                  html`
+                    <div class="flex-col gap">
+                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                    </div>
+                  ` :
+                  html`
+                    ${this.createdManifest ?
+                    html`
+                        <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
+                          <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
+                          <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+                        </sl-tooltip>` :
+                    html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
+                    }
+
+                    <a
+                      class="arrow_anchor"
+                      href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
+                      rel="noopener"
+                      target="_blank"
+                      @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+                    >
+                      <p class="arrow_link">Manifest Documentation</p>
+                      <img
+                        src="/assets/new/arrow.svg"
+                        alt="arrow"
+                      />
+                    </a>
+                `}
+
+                </div>
             </div>
             <sl-details
               id="mani-details"
