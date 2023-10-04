@@ -196,6 +196,14 @@ export class AppReport extends LitElement {
           font-family: inherit;
         }
 
+        :host {
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-input-font-family: Hind, sans-serif;
+        }
+
         app-header::part(header) {
           position: sticky;
           top: 0;
@@ -976,18 +984,20 @@ export class AppReport extends LitElement {
 
         .indicator {
           display: flex;
-          gap: .5em;
+          gap: 10px;
           align-items: center;
           background-color: #f1f1f1;
-          padding: .25em .5em;
+          padding: 5px 10px;
           border-radius: 6px;
-          font-size: 20px;
+          border: none;
         }
 
         .indicator p {
           line-height: 20px;
           margin: 0;
           font-size: 20px;
+          color: var(--primary-color);
+          font-weight: bold;
         }
 
         .indicator.selected {
@@ -2711,20 +2721,20 @@ export class AppReport extends LitElement {
       <div id="indicators-holder">
         ${red != 0 ?
           this.filterList.includes("required") ?
-            html`<div class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></div>` :
-            html`<div class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>`
+            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></button>` :
+            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></button>`
           : null
         }
         ${yellow != 0 ?
           this.filterList.includes("recommended") || this.filterList.includes("optional") ?
-            html`<div class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></div>` :
-            html`<div class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>`
+            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></button>` :
+            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
           : null
         }
         ${purple != 0 ?
           this.filterList.includes("enhancement") ?
-          html`<div class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></div>` :
-          html`<div class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></div>`
+          html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></button>` :
+          html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
             : null
           }
       </div>`
@@ -2737,12 +2747,11 @@ export class AppReport extends LitElement {
   filterTodoItems(filter: string, e: Event){
     e.stopPropagation();
 
-    console.log(filter);
     recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     this.pageNumber = 1;
-    let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
-    todoDetail.show();
+    /* let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
+    todoDetail.show(); */
 
     this.stopShowingNotificationTooltip = true;
     // if its in the list, remove it, else add it
@@ -3313,7 +3322,7 @@ export class AppReport extends LitElement {
                   ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
                     html`
                       <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-                        <manifest-info-card .field=${result.member}>
+                        <manifest-info-card .field=${result.member} .placement=${"bottom"}>
                           <div class="circle-icon" tabindex="0" slot="trigger">
                             <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
                             ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}

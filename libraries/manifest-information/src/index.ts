@@ -230,7 +230,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
 ]`,
     location: "platform",
     docs_link:
-      "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
+      "https://docs.pwabuilder.com/#/home/native-features?id=shortcuts",
     required: false,
     image: "assets/manifest_examples/shortcuts_example_image.jpg",
   },
@@ -330,7 +330,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     location: "share",
     required: false,
     docs_link:
-      "https://docs.pwabuilder.com/#/builder/manifest?id=share_target-object",
+      "https://docs.pwabuilder.com/#/home/native-features?id=web-share-api",
     image: "assets/manifest_examples/share_target_example_image.jpg",
   },
   file_handlers: {
