@@ -168,7 +168,27 @@ export const maniTests: Array<Validation> = [
             if (isArray) {
                 const anyIcon = value.find(icon => icon.purpose === "any");
 
-                return anyIcon ? true : false;
+                if (!anyIcon) {
+                    // if we dont have an icon with purpose === any
+                    // we need to double check if they have used maskable.
+                    // If they have used maskable, they should have an icon with purpose === any
+                    const maskable = value.find(icon => icon.purpose === "maskable");
+
+                    if (maskable) {
+                        // returning false as they need an icon with purpose === any
+                        return false;
+                    }
+                    else {
+                        // no maskable icon so this test is fine
+                        return true;
+                    }
+                }
+                else {
+                    // its fine because the user does not have
+                    // a maskable icon and it is not required
+                    // to have an icon with purpose any in this case
+                    return true;
+                }
             }
             else {
                 return false;
