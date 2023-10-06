@@ -143,7 +143,7 @@ This time, we set the name of the transition (which must be unique), execute the
 } 
 ```
 
-Notice this time inside of the ::view-transition-old/new selectors, we are target specific transition names which allows us to give different behaviors to different transitions. Forwards slides out to the left and then in from the right, backwards does the opposite.  
+Notice this time inside of the `::view-transition-old/new` selectors, we are target specific transition names which allows us to give different behaviors to different transitions. Forwards slides out to the left and then in from the right, backwards does the opposite.  
 
 ## Container Transform 
 
