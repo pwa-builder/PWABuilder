@@ -21,7 +21,7 @@ tags:
 
 Good native applications take advantage of subtle transitions from page to page that give life to the application and achieving this just became easier for web applications. 
 
-Previously, a combination of Typescript and CSS was required to replicate transitions like that of a native app, but thanks to the “CSS View Transitions” API that just became a lot easier. It’s as simple as calling .startViewTransition() and you’ve already implemented a cross fade transition from one page to another. 
+Previously, a combination of Typescript and CSS was required to replicate transitions like that of a native app. But thanks to the “CSS View Transitions” API, it just became a lot easier. It’s as simple as calling `.startViewTransition()` and you’ve already implemented a cross fade transition from one page to another. 
 
 Choosing when and where to use these transitions in your PWA is arguably more important than using them in the first place. Implementing a consistent and accessible set of transitions across your PWA can give your app that native feel but using transitions out of place can ruin the feel of your app all together. 
 
