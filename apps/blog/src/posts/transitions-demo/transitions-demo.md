@@ -25,7 +25,7 @@ Previously, a combination of Typescript and CSS was required to replicate transi
 
 Choosing when and where to use these transitions in your PWA is arguably more important than using them in the first place. Implementing a consistent and accessible set of transitions across your PWA can give your app that native feel but using transitions out of place can ruin the feel of your app all together. 
 
-This blog will cover some transition tricks that to help upgrade your Progressive Web App and give it a more native feel.
+This blog will cover some transition tricks that will help upgrade your Progressive Web App and give it a more native feel.
 
 ## Types of Transition
 
