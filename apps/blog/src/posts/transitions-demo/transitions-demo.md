@@ -29,7 +29,7 @@ This blog will cover some transition tricks that will help upgrade your Progress
 
 ## Types of Transition
 
-Each type of transition has an optimal situation where it is best to use them, so before deciding which transition to use, it might be best to understand what you are trying to achieve by using the transition in the first place.  
+Each type of transition has an optimal situation where it is best to use them. So, before deciding which transition to use, it might be best to understand what you are trying to achieve by using the transition in the first place.  
 
 1. Are you having to load data during this transition? 
 2. How related are the pages that you are transitioning between? 
