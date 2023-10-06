@@ -149,7 +149,7 @@ Notice this time inside of the `::view-transition-old/new` selectors, we are tar
 
 Thus far, we have focused on transitioning between pages with unrelated content. What if there were elements on one page that we wanted to persist to the next? That is where the Container Transform transition type should be used. This transition type has a lot of moving pieces, so it is important to remember to keep the transition clean. We do not need any extra bouncing movements as the transition completes, we want to move our elements along one axis and make sure the elements do not overlap or cause other elements to shift. You can see examples of what NOT to do for this transition type on the Material Designs demonstration.  
 
-In my sample app, my “persistent element” was an album art and when clicked, I wanted it to come front and center on a new page with the respective track list. Like using startViewTransition page to page, using it for an element automatically does a default sliding animation from its old location to its new location. The Typescript is very close to that of the forward and backward transition: 
+In my sample app, my “persistent element” was an album art and when clicked, I wanted it to come front and center on a new page with the respective track list. Like using `startViewTransition` page to page, using it for an element automatically does a default sliding animation from its old location to its new location. The Typescript is very close to that of the forward and backward transition: 
 
 ```js
 async handleAlbumClick(name: string, index: number){ 
