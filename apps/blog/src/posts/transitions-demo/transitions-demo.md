@@ -1,22 +1,23 @@
 ---
 layout: post
 title: Mimic Native Transitions In Your Progressive Web App
-excerpt: 
-description: 
+excerpt: Learn how to add different types of page transitions to your Progressive Web App!
+description: Learn how to implement fade, forward/backward, container transform transitions in your Progressive Web App. Transitions can improve the UX quality of your Progressive Web App and add a native feel to any application.
 date: 2023-10-04
 updatedDate: 2023-10-04
 trending: true
 featured: true
-image: 
+image: posts/transitions-demo/demo-homepage.png
 isPost: true
 backUrl: '/'
 author:
   name: Jaylyn Barbee
-  twitter: 
+  twitter: https://twitter.com/jaylynsatwork
   title: PWABuilder Engineer
 tags:
   - PWA
   - PWA Starter
+  - App Capabilities
 ---
 
 Good native applications take advantage of subtle transitions from page to page that give life to the application and achieving this just became easier for web applications. 
@@ -26,6 +27,11 @@ Previously, a combination of Typescript and CSS was required to replicate transi
 Choosing when and where to use these transitions in a PWA is arguably more important than using them in the first place. Implementing a consistent and accessible set of transitions across a PWA can give your app that native feel but using transitions out of place can ruin the feel of the app all together. 
 
 This blog will cover some transition tricks that will help upgrade Progressive Web Apps and give it them more of a native feel.
+
+## Technical Context
+This blog post uses the [PWA Starter](https://docs.pwabuilder.com/#/starter/quick-start) to implement view transitions. 
+
+The PWA Starter is PWABuilder's opinionated Progressive Web App template that lets you jump into building a PWA with little technical overhead.
 
 ## Types of Transition
 
@@ -109,41 +115,44 @@ And on the backwards page, the following CSS is necessary:
 This time, the name of the transition (which again, must be unique) is set as `forward`, the transition executes, and the transition name is removed when the process is completed. The CSS on the backwards page is telling the API that the host of the backwards page is the “element” that is being transitioned, which in the context of the sample app, refers to the whole backwards page. To achieve the sliding effect, the following CSS is required:  
 
 ```css
-@keyframes fade-in { 
-  from { opacity: 0; } 
-} 
-@keyframes fade-out { 
-  to { opacity: 0; } 
-} 
-@keyframes slide-from-right { 
-  from { transform: translateX(30px); } 
-}  
-@keyframes slide-to-left { 
-  to { transform: translateX(-30px); } 
-} 
-@keyframes slide-to-right { 
-  to { transform: translateX(30px); } 
-} 
-@keyframes slide-from-left { 
-  from { transform: translateX(-30px); } 
-} 
-::view-transition-old(forward) { 
-  animation: 200ms cubic-bezier(0.4, 0, 1, 1) both fade-out, 
-    600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left; 
-} 
-::view-transition-new(forward) { 
-  animation: 400ms cubic-bezier(0, 0, 0.2, 1) 200ms both fade-in, 
-    600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right; 
-}  
-::view-transition-old(backward) { 
-  animation-name: fade-out, slide-to-right; 
+@keyframes slide-from-right {
+  from { transform: translateX(100%); }
 }
-::view-transition-new(backward) { 
-  animation-name: fade-in, slide-from-left; 
-} 
+
+@keyframes slide-to-left {
+  to { transform: translateX(-100%); }
+}
+
+::view-transition-old(forward) {
+  animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+
+::view-transition-new(forward) {
+  animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+}
 ```
 
-Notice this time inside of the `::view-transition-old/new` selectors, specific transition names are targeted which allows for different behaviors for the different transitions. Forwards slides out to the left and then in from the right, backwards does the opposite.  
+Notice this time inside of the `::view-transition-old/new` selectors, specific transition names are targeted which allows for different behaviors for the different transitions. 
+
+To do the same effect but backwards, you would use the following CSS:
+
+```css
+@keyframes slide-to-right {
+  to { transform: translateX(100%); }
+}
+
+@keyframes slide-from-left {
+  from { transform: translateX(-100%); }
+}
+
+::view-transition-old(backward) {
+  animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-right;
+}
+
+::view-transition-new(backward) {
+  animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-left;
+}
+```
 
 ## Container Transform 
 
@@ -168,6 +177,6 @@ async handleAlbumClick(name: string, index: number){
 
 And to link the album cover on the old page to the album on the new page, give the `view-transition-name` of “container-transform” to the album art on the new page. 
 
-The track list on the album art detials page did not persist from the previous page so it has nothing to do with page transitions. To give it movement still, using normal CSS animations the tracklist will reveal itself as the album art is sliding into place. A reminder that using the View Transitions API in tandem with the CSS animations that we are used to is completely acceptable.  
+The track list on the album art details page did not persist from the previous page so it has nothing to do with page transitions. To give it movement still, using normal CSS animations the tracklist will reveal itself as the album art is sliding into place. A reminder that using the View Transitions API in tandem with the CSS animations that we are used to is completely acceptable.  
 
 This is only the beginning of the power of page transitions and with this technology only being a few months old, there is only more to come. If you want to do some reading about the feature I would recommend [the Chrome Developer article](https://developer.chrome.com/docs/web-platform/view-transitions/) which breaks down the API completely with code examples via a demo app. For more information about the different types of transitions and when to use them, check out [the Material Design article](https://m3.material.io/styles/motion/transitions/applying-transitions#50f9fc3f-c7e2-4099-b614-7c36b1c5285d). It is exciting to see this API be used more widespread and who knows, maybe [PWABuilder.com](https://www.pwabuilder.com) will be the next site to see some of this stuff in use!  
