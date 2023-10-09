@@ -15,6 +15,7 @@ author:
   twitter: https://twitter.com/jaylynsatwork
   title: PWABuilder Engineer
 tags:
+  - post
   - PWA
   - PWA Starter
   - App Capabilities

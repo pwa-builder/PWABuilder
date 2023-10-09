@@ -3,11 +3,11 @@ layout: post
 title: Use the PWABuilder CLI to Create a New Progressive Web App
 excerpt: Announcing PWABuilder's new CLI. Create, develop, and test from an easy-to-use PWA template.
 description: Announcing PWABuilder's new CLI. Create, develop, and test from an easy-to-use PWA template.
-date: 2023-04-19
-updatedDate: 2023-04-19
+date: 2023-09-19
+updatedDate: 2023-09-19
 trending: true
 featured: true
-image: 
+image: posts/announcing-cli/pwa-create.png
 isPost: true
 backUrl: '/'
 author:
@@ -15,6 +15,7 @@ author:
   twitter: https://twitter.com/devteutsch
   title: PWABuilder Engineer
 tags:
+  - post
   - CLI
   - PWA Starter
   - PWA
