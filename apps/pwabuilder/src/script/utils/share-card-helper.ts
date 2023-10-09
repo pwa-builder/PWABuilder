@@ -1,5 +1,5 @@
-const colorMap = new Map([["green", "#3ba372"], ["yellow", "#ebc157"], ["red", "#eb5757"]]);
-const accentMap = new Map([["green", "#E3FFF2"], ["yellow", "#FFFAED"], ["red", "#FFF3F3"]]);
+const colorMap = new Map([["green", "#3ba372"], ["yellow", "#ebc157"], ["red", "#eb5757"], ["purple", "#8976FF"]]);
+const accentMap = new Map([["green", "#E3FFF2"], ["yellow", "#FFFAED"], ["red", "#FFF3F3"], ["purple", "#F1F3FF"]]);
 
 
 export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrData: String, securityData: String, siteName: String) {
@@ -11,15 +11,15 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
 
   // sw Data
   const swData = swrData.split('/');
-  const swPercent = `${parseFloat(swData[0])} / ${parseFloat(swData[1])}`
-  const swColor = swData[2];
-  const swHeader = swData[3];
+  const swTotal = `${parseFloat(swData[0])}`
+  const swColor = swData[1];
+  const swHeader = swData[2];
 
   // sec Data
-  const secData = securityData.split('/');
-  const secPercent = `${parseFloat(secData[0])} / ${parseFloat(secData[1])}`
-  const secColor = secData[2];
-  const secHeader = secData[3];
+  const enhData = securityData.split('/');
+  const enhTotal = `${parseFloat(enhData[0])}`
+  const enhColor = enhData[1];
+  const enhHeader = enhData[2];
 
   //let canvas = (this!.shadowRoot!.getElementById("myCanvas") as HTMLCanvasElement);
   let ctx = canvas!.getContext("2d");
@@ -37,7 +37,7 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
   await new Promise(resolve => background.onload = resolve);
   // Now that the image is loaded, draw it on the canvas
   ctx!.drawImage(background, 0, 0);
-  
+
   // offset to start top middle rather than
   // middle right like a unit circle
   const start = -0.5 * Math.PI;
@@ -80,7 +80,7 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
     let radiansMani = (360 * percentMani) * (Math.PI / 180);
     let endMani = (start) + radiansMani;
     drawRingPart(ctx!, 12, colorMap.get(maniColor)!, 200, ringYpos, 57.44, start, endMani, false, "transparent");
-    
+
     // text
     writeText(ctx!, 200, maniPercent, maniHeader);
   }
@@ -90,8 +90,8 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
   drawRingPart(ctx!, 6, trackColor, 412.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
 
   // indicator
-  let percentSW = eval(swPercent);
- 
+  let percentSW = eval(swTotal);
+
   if(percentSW === 0){
     await drawExclamation(ctx!, 357.5);
 
@@ -102,17 +102,17 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
     let radiansSW = (360 * percentSW) * (Math.PI / 180);
     let endSW = (start) + radiansSW;
     drawRingPart(ctx!, 12, colorMap.get(swColor)!, 412.5, ringYpos, 57.44, start, endSW, false, "transparent");
-    
+
     // text
-    writeText(ctx!, 412.5, swPercent, swHeader);
+    writeText(ctx!, 412.5, `+${swTotal}`, swHeader);
   }
-  
+
   // --- sec ring ---
   // track
-  drawRingPart(ctx!, 6, trackColor, 624.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(secColor)!);
+  drawRingPart(ctx!, 6, trackColor, 624.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(enhColor)!);
 
   // indicator
-  let percentSec = eval(secPercent);
+  let percentSec = eval(enhTotal);
 
   if(percentSec === 0) {
     // draw exclamation
@@ -120,14 +120,14 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
 
     ctx!.font = "24px Hind, sans-serif";
     ctx!.fillStyle = "#292c3a";
-    ctx!.fillText(secHeader, 624.5, 340);
+    ctx!.fillText(enhHeader, 624.5, 340);
   } else {
     let radiansSec = (360 * percentSec) * (Math.PI / 180);
     let endSec = (start) + radiansSec;
-    drawRingPart(ctx!, 12, colorMap.get(secColor)!, 624.5, ringYpos, 57.44, start, endSec, false, "transparent");
+    drawRingPart(ctx!, 12, colorMap.get(enhColor)!, 624.5, ringYpos, 57.44, start, endSec, false, "transparent");
 
     // text
-    writeText(ctx!, 624.5, secPercent, secHeader);
+    writeText(ctx!, 624.5, `+${enhTotal}`, enhHeader);
   }
 }
 
