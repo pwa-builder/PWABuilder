@@ -21,6 +21,8 @@ tags:
   - App Capabilities
 ---
 
+<img src="/posts/transitions-demo/demo-homepage.png" alt="Navigation bar for transitions demo"></img>
+
 Good native applications take advantage of subtle transitions from page to page that give life to the application and achieving this just became easier for web applications. 
 
 Previously, a combination of Typescript and CSS was required to replicate transitions like that of a native app. But thanks to the “CSS View Transitions” API, it just became a lot easier. It’s as simple as calling `.startViewTransition()` and you’ve already implemented a cross fade transition from one page to another. 
