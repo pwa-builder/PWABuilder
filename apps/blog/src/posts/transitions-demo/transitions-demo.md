@@ -61,6 +61,7 @@ The top-level transition is often used when a page switch occurs from a navigati
 Our `handlePageChange` function looks like this:
 
 ```js
+
 handlePageChange(page){ 
   if ("startViewTransition" in document) { 
     return (document as any).startViewTransition(() => { 
@@ -70,6 +71,7 @@ handlePageChange(page){
     Router.go(page); 
   } 
 } 
+
 ```
 
 The above code runs whenever a navigation item is clicked in the sample app.  If the browser is compatible with the View Transitions API, the view transition will start and then we will route to our next page. If the API is unavailable, we just route normally. Without any additional code, this alone completes the top-level transition. 
@@ -77,19 +79,26 @@ The above code runs whenever a navigation item is clicked in the sample app.  If
 In order to alter the transition, the pseudo-selectors `::view-transition-old()` and `::view-transition-new()` can be used as follows:
 
 ```css
+
 ::view-transition-old(root), 
 ::view-transition-new(root) { 
   animation-duration: .25s; 
 } 
+
 ```
 
-This ensures the animation completes in a fourth of a second. Other traditional animation CSS, like transform or animation delay, can be used here to achieve all kinds of effects. In the snippet above, notice the “root” being selected, this is the animation name. If you are using one animation, root is the default target and will suffice. However, if there are multiple animations in use, it will be neccessary to isolate each animation by giving them unique names. We will explore this more in the next section.
+This ensures the animation completes in a fourth of a second. Other traditional animation CSS, like transform or animation delay, can be used here to achieve all kinds of effects. In the snippet above, notice the “root” being selected, this is the animation name. If you are using one animation, root is the default target and will suffice. However, if there are multiple animations in use, it will be necessary to isolate each animation by giving them unique names. We will explore this more in the next section.
+
+The result:
+
+<img src="/posts/transitions-demo/crossfade.gif" alt="Gif demonstrating the crossfade transition"></img>
 
 ## Forward and Backward 
 
 Another common page transition is the forward and backward transition. With this transition, the goal is to slide from one page toward the direction of next, whether that be forward or backward. For the sample app, under the “Forward and Backward” tab, there are two pages, one with a forward button and one with a back button. On click of the forward button, the following code was run:  
 
 ```js
+
 async handleForward(){ 
   let host = this.shadowRoot!.host; 
   if ("startViewTransition" in document) { 
@@ -105,11 +114,13 @@ async handleForward(){
     Router.go(`/backward-page`); 
   } 
 } 
+
 ```
 
 And on the backwards page, the following CSS is necessary:  
 
 ```css
+
 :host { 
   view-transition-name: forward; 
 } 
@@ -118,6 +129,7 @@ And on the backwards page, the following CSS is necessary:
 This time, the name of the transition (which again, must be unique) is set as `forward`, the transition executes, and the transition name is removed when the process is completed. The CSS on the backwards page is telling the API that the host of the backwards page is the “element” that is being transitioned, which in the context of the sample app, refers to the whole backwards page. To achieve the sliding effect, the following CSS is required:  
 
 ```css
+
 @keyframes slide-from-right {
   from { transform: translateX(100%); }
 }
@@ -133,6 +145,7 @@ This time, the name of the transition (which again, must be unique) is set as `f
 ::view-transition-new(forward) {
   animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
 }
+
 ```
 
 Notice this time inside of the `::view-transition-old/new` selectors, specific transition names are targeted which allows for different behaviors for the different transitions. 
@@ -140,6 +153,7 @@ Notice this time inside of the `::view-transition-old/new` selectors, specific t
 To do the same effect but backwards, you would use the following CSS:
 
 ```css
+
 @keyframes slide-to-right {
   to { transform: translateX(100%); }
 }
@@ -155,7 +169,12 @@ To do the same effect but backwards, you would use the following CSS:
 ::view-transition-new(backward) {
   animation: 600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-left;
 }
+
 ```
+
+The result:
+
+<img src="/posts/transitions-demo/FwdBack.gif" alt="Gif demonstrating the forward-backward transition"></img>
 
 ## Container Transform 
 
@@ -164,6 +183,7 @@ The previous transitions have been focused on transitioning between pages with u
 In the sample app, my “persistent element” is album art and when clicked, it will come front and center on a new page with the respective track list. Like using `startViewTransition` page to page, using it for an element automatically does a default sliding animation from its old location to its new location. The Typescript is very close to that of the forward and backward transition: 
 
 ```js
+
 async handleAlbumClick(name: string, index: number){ 
   let album: HTMLElement = this.shadowRoot!.querySelector(`[data-name="${name}"]`)! 
   if ("startViewTransition" in document) { 
@@ -175,11 +195,17 @@ async handleAlbumClick(name: string, index: number){
     await transition.finished; 
     // @ts-ignore 
     album!.style.viewTransitionName = ''; 
-  }
+}
 ```
 
 And to link the album cover on the old page to the album on the new page, give the `view-transition-name` of “container-transform” to the album art on the new page. 
 
-The track list on the album art details page did not persist from the previous page so it has nothing to do with page transitions. To give it movement still, using normal CSS animations the tracklist will reveal itself as the album art is sliding into place. A reminder that using the View Transitions API in tandem with the CSS animations that we are used to is completely acceptable.  
+The track list on the album art details page did not persist from the previous page so it has nothing to do with page transitions. To give it movement still, using normal CSS animations the tracklist will reveal itself as the album art is sliding into place. A reminder that using the View Transitions API in tandem with the CSS animations that we are used to is completely acceptable. 
+
+The result: 
+
+<img src="/posts/transitions-demo/container-transform.gif" alt="Gif demonstrating the container transform transition"></img>
+
+## Conclusion
 
 This is only the beginning of the power of page transitions and with this technology only being a few months old, there is only more to come. If you want to do some reading about the feature I would recommend [the Chrome Developer article](https://developer.chrome.com/docs/web-platform/view-transitions/) which breaks down the API completely with code examples via a demo app. For more information about the different types of transitions and when to use them, check out [the Material Design article](https://m3.material.io/styles/motion/transitions/applying-transitions#50f9fc3f-c7e2-4099-b614-7c36b1c5285d). It is exciting to see this API be used more widespread and who knows, maybe [PWABuilder.com](https://www.pwabuilder.com) will be the next site to see some of this stuff in use!  
