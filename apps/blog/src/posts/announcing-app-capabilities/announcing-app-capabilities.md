@@ -3,8 +3,8 @@ layout: post
 title: Announcing the App Capabilities card
 excerpt: Introducing the new App Capabilities section of the PWABuilder Report Card page
 description: Introducing the new App Capabilities section of the PWABuilder Report Card page
-date: 2023-10-09
-updatedDate: 2023-10-09
+date: 2023-10-16
+updatedDate: 2023-10-16
 trending: true
 featured: true
 image: posts/announcing-app-capabilities/ac-cards.png
