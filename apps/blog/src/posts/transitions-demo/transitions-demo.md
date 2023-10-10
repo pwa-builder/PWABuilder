@@ -3,8 +3,8 @@ layout: post
 title: Mimic Native Transitions In Your Progressive Web App
 excerpt: Learn how to add different types of page transitions to your Progressive Web App!
 description: Learn how to implement fade, forward/backward, container transform transitions in your Progressive Web App. Transitions can improve the UX quality of your Progressive Web App and add a native feel to any application.
-date: 2023-10-04
-updatedDate: 2023-10-04
+date: 2023-10-10
+updatedDate: 2023-10-10
 trending: true
 featured: true
 image: posts/transitions-demo/demo-homepage.png
