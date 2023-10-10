@@ -7,7 +7,7 @@ date: 2023-04-19
 updatedDate: 2023-04-19
 trending: true
 featured: true
-image: posts/announcing-cli/pwa-create.png
+image: 
 isPost: true
 backUrl: '/'
 author:
