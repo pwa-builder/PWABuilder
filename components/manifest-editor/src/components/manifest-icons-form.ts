@@ -320,6 +320,7 @@ export class ManifestIconsForm extends LitElement {
             p.innerText = error;
             p.style.color = "#eb5757";
             p.classList.add("error-message");
+            p.setAttribute('aria-live', 'polite');
             insertAfter(p, title!.parentNode!.parentNode);
             this.errorCount++;
           });

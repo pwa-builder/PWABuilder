@@ -55,6 +55,12 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: false
         },
         {
+          pageTitle: "PWA Starter - CLI Usage",
+          menuTitle: "CLI Usage",
+          path: "/starter/cli-usage",
+          includeOnHomePage: false
+        },
+        {
           pageTitle: "PWA Starter - Routing and Navigation",
           menuTitle: "Routing",
           path: "/starter/adding-content",
@@ -143,12 +149,6 @@ export const parentMenuData: ParentMenu = {
           menuTitle: "Asset Links Help",
           path: "/builder/asset-links-faq",
           includeOnHomePage: false
-        },
-        {
-          pageTitle: "PWABuilder - Microsoft Store Promotion",
-          menuTitle: "Store Promotion",
-          path: "/builder/store-promotion",
-          includeOnHomePage: true
         },
         {
           pageTitle: "PWABuilder - FAQ",

@@ -90,7 +90,7 @@ We'll go through each step in more detail, but the overall process is as follows
 #### 1. Sign In To Your Apple Developer Account
 To submit your app the iOS App Store, sign-in to your Apple Developer Account.
 
-If you don’t have an Apple Developer account, enroll [here.](https://developer.apple.com/programs/enroll) Enrollment costs $99 USD/year, though non-profits can have this fee waived.
+If you don’t have an Apple Developer account, enroll <a href="https://developer.apple.com/programs/enroll" aria-label="Click here to enroll">here</a> Enrollment costs $99 USD/year, though non-profits can have this fee waived.
 
 #### 2. Create a Bundle ID
 

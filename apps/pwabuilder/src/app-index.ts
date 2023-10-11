@@ -124,6 +124,39 @@ export class AppIndex extends LitElement {
     // Remove leading slash if present
     this.pageName = pathname.replace(/^\//, '');
 
+    const pages: string[] = [
+      "reportcard",
+      "freetoken",
+      "congratulations",
+      "portals",
+      "imagegenerator"
+    ]
+
+    // safety in case we type a string above without lowercase for comparison
+    const lowercasePages: string[] = pages.map(page => page.toLowerCase());
+
+    // Detect the current page and set the title
+    const path = this.pageName.toLocaleLowerCase();
+    if (path.toLowerCase().includes(lowercasePages[0])) {
+      this.setPageTitle('Report Card');
+    } else if (path.toLowerCase().includes(lowercasePages[1])) {
+      this.setPageTitle('Free Token');
+    } else if (path.toLowerCase().includes(lowercasePages[2])) {
+      this.setPageTitle('Congratulations');
+    } else if (path.toLowerCase().includes(lowercasePages[3])) {
+      this.setPageTitle('Portals');
+    } else if (path.toLowerCase().includes(lowercasePages[4])) {
+      this.setPageTitle('Image Generator');
+    } else {
+      this.setPageTitle('Home'); // Default title
+    }
+
+  }
+
+   // Function to set the page title dynamically
+   setPageTitle(title: string) {
+    document!.getElementById('pageTitle')!.textContent = title;
+    document.title = `${title} / PWABuilder`; // Update the browser tab title
   }
 
   firstUpdated() {
@@ -181,7 +214,11 @@ export class AppIndex extends LitElement {
             action: async () => {
               await import('./script/pages/qualification/app-token.js');
             }
-          }
+          },
+          {
+            path: '(.*)', // Match any other route not defined above
+            redirect: '/', // Redirect to the home page or another valid route
+          },
         ] as Route[],
       },
     ]);

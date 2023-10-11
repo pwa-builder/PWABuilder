@@ -416,6 +416,7 @@ export class ManifestPlatformForm extends LitElement {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
+              p.setAttribute('aria-live', 'polite');
               div.append(p);
               this.errorMap[field]++;
             });
@@ -546,6 +547,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[fieldName!]++;
         });
@@ -806,6 +808,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[field]++;
         });

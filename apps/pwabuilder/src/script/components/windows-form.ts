@@ -98,6 +98,10 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
+        arrow-link {
+          margin: 10px 0;
+        }
+
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;

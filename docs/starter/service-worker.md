@@ -31,7 +31,7 @@ VitePWA and Workbox will inject our pre-caching information alongside our custom
 In this instance, Workbox is injecting this manifest in the last line, where we see the `self.__WB_MANIFEST` placeholder.
 
 It is important to note that your Service Worker file-name should always be `sw.js` so our registration
-code (shown below) can find it. If you change the name of your Service Worker file, be sure to also change the filepath [here](https://github.com/pwa-builder/pwa-starter/blob/main/index.html#L38).
+code (shown below) can find it. If you change the name of your Service Worker file, be sure to also change the filepath <a href="https://github.com/pwa-builder/pwa-starter/blob/main/index.html#L38" aria-label="Click here to follow instructions">here</a> 
 
 ```html
 <script>

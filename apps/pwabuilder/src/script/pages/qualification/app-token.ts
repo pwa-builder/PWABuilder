@@ -625,7 +625,7 @@ export class AppToken extends LitElement {
     // if we are showing the accept button we are in the final t and c
     // if not it must be from the qualifications box.
     let location = showAcceptButton ? "full" : "qualification";
-    
+
     recordPWABuilderProcessStep(`${location}_terms_and_conditions_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     recordPWABuilderProcessStep("terms_and_conditions_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
 
@@ -694,10 +694,10 @@ export class AppToken extends LitElement {
             html`
               <div class="over-banner">
                 <img src="/assets/new/stop.svg" alt="invalid result icon" />
-                <p class="end-error-desc"> 
-                  <span>Invalid Account:</span> 
-                  The account you used to reclaim a code does not one associated with it. Try signing in with a different account or 
-                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("campaign_over_reclaim_error_open_issue")}>open an issue</a> 
+                <p class="end-error-desc">
+                  <span>Invalid Account:</span>
+                  The account you used to reclaim a code does not one associated with it. Try signing in with a different account or
+                  <a href="https://github.com/pwa-builder/PWABuilder/issues/new/choose" target="_blank" rel="noopener" @click=${() => this.trackLinkClick("campaign_over_reclaim_error_open_issue")}>open an issue</a>
                   on our GitHub.
                 </p>
               </div>
@@ -709,7 +709,7 @@ export class AppToken extends LitElement {
               ` : html`
                   <sl-button class="primary sign-in-button final-button" @click=${() => this.reclaimToken(false)}>
                         <img class="sign-in-logo" src="assets/new/colorful-logo.svg" alt="Color Windows Logo" />
-                          Sign in with a Microsoft account to reclaim your code
+                          <p class="over-button-text">Sign in with a Microsoft account to reclaim your code</p>
                   </sl-button>`
             }` : null}
             ${this.userAccount.loggedIn ? html`
@@ -717,7 +717,7 @@ export class AppToken extends LitElement {
             : null}
 
             <h1>This promotion has currently ended.</h1>
-            <p>Please check our Twitter handle
+            <p class="over-socials-prompt">Please check our Twitter handle
               <a href="https://twitter.com/pwabuilder" rel="noopener" target="_blank" @click=${() => this.trackLinkClick("campaign_over_twitter")}>@PWABuilder</a>
               or join our
               <a href="https://aka.ms/pwabuilderdiscord" rel="noopener" target="_blank" @click=${() => this.trackLinkClick("campaign_over_discord")}>Discord</a>
@@ -744,7 +744,7 @@ export class AppToken extends LitElement {
               <img src="/assets/new/stop.svg" alt="invalid result icon" />
               <div class="error-info">
                 <p class="error-title">No token associated with this account.</p>
-                <p class="error-desc"> 
+                <p class="error-desc">
                   The account you used to reclaim a token does not have one associated with it. Try signing in with a different account or open an issue on our GitHub.
                 </p>
                 <div class="error-actions">
@@ -921,7 +921,7 @@ export class AppToken extends LitElement {
           <li>Use the Store Token to create a Microsoft Store on Windows developer account within 30 calendar days of Microsoft sending you the token, using the same Microsoft Account you used to sign in here</li>
           <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
-        <p class="FTC" @click=${() => this.showTandC(false)}>Full Terms and Conditions</p>
+        <button class="FTC" @click=${() => this.showTandC(false)}>Full Terms and Conditions</button>
       </div>` : html``}
       ${this.siteURL ?
         html`

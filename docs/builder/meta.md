@@ -1,22 +1,23 @@
 # Packaging PWAs for Meta Quest
 
-PWABuilder’s support for Meta Quest utilizes the [CLI tool published by Meta](https://developer.oculus.com/documentation/web/pwa-packaging/) to generate an apk package that can be installed on a Meta Quest.
+PWABuilder’s support for Meta Quest utilizes the <a href="https://developer.oculus.com/documentation/web/pwa-packaging/" aria-label="click here to view CLI tool">CLI tool published by Meta</a> to generate an apk package that can be installed on a Meta Quest.
 
 ## Prerequisites
 
 We strongly recommend reading Meta's documentation on PWAs:
-- [Overview of PWA support on Meta Quest](https://developer.oculus.com/pwa/)
+- <a href="https://developer.oculus.com/pwa" aria-label="click here to read PWA support on Meta Quest">Overview of PWA support on Meta Quest</a>
+
 
 You will need: 
 * A valid PWA with a web manifest, published to the web and secured through HTTPS
 * A Meta Quest for sideloading and testing
-* An Oculus Developer Account and Device Setup (follow instructions [here](https://developer.oculus.com/documentation/native/android/mobile-device-setup/))
+* An Oculus Developer Account and Device Setup <a href="https://developer.oculus.com/documentation/native/android/mobile-device-setup/" aria-label="Click this link to follow instructions">here</a>
 
 ## Packaging
 
 The first step is to generate your .apk package with PWABuilder.
 
-1. Navigate to [pwabuilder.com](https://pwabuilder.com).
+1. Navigate to <a href="https://pwabuilder.com" aria-label="Click this link to visit pwabuilder.com">pwabuilder.com</a>.
    
 2. Enter the URL of your PWA on the homepage.
 
@@ -67,10 +68,10 @@ In order to test your PWA, you'll need:
   
 - Verify your Quest software is up-to-date. Turn on your Quest device and open `Settings` -> `System` -> `Software Update`.  Your software version should be 31 or greater.
   
-- Make sure your device is setup and your developer account is enabled according to the documentation [here](https://developer.oculus.com/documentation/native/android/mobile-device-setup/).
+- Make sure your device is setup and your developer account is enabled according to the documentation <a href="https://developer.oculus.com/documentation/native/android/mobile-device-setup/" aria-label="Click this link to follow instructions">here</a>.
 
 
-Once you have checked off all the prerequisites, follow the instructions [here](https://developer.oculus.com/documentation/web/pwa-packaging/#sideload-your-pwa-to-test) to sideload and test your app on your Meta Quest!
+Once you have checked off all the prerequisites, follow the instructions <a href="https://developer.oculus.com/documentation/web/pwa-packaging/#sideload-your-pwa-to-test)" aria-label="Click this link to follow instructions">here</a> to sideload and test your app on your Meta Quest!
 
 ## Next Steps
 
@@ -78,8 +79,8 @@ Progressive web apps are cross-platform and can be used anywhere!
 
 After you've successfully packaged your app for Meta Quest, you can package and publish for other platforms:
 
-- [How to Package for the App Store](/builder/app-store)
+- <a href="/builder/app-store" aria-label="Click this link to learn how">How to Package for the App Store</a>
 
-- [How to Package for Microsoft Store](/builder/windows)
+- <a href="/builder/windows" aria-label="Click this link to learn how">How to Package for Microsoft Store</a>
 
-- [How to Package for the Google Play Store](/builder/android)
+- <a href="/builder/android" aria-label="Click this link to learn how">How to Package for the Google Play Store</a>

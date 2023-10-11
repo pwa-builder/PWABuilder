@@ -17,7 +17,7 @@ To provide your progressive web app's URL:
 If you select `No` and don't have a URL, you will see this popup:
 
 <div class="docs-image">
-<img src="/assets/studio/package/static-web-notification.png">
+<img src="/assets/studio/package/static-web-notification.png" alt="URL needed alert">
 </div>
 
 You can follow this link to get more info about Azure Static Web Apps.
@@ -37,7 +37,7 @@ To validate your PWA:
 The checklist should look like this:
 
 <div class="docs-image">
-    <img src="/assets/studio/package/checklist.png" width=350>
+    <img src="/assets/studio/package/checklist.png" alt="Example checklist" width=350>
 </div>
 
 In the example above, you can see that our app has the necessary features of a PWA, but hasn't yet be published to the web. As a result, the store-ready check fails overall.

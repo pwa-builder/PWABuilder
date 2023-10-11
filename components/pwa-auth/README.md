@@ -1,3 +1,6 @@
+# ⛔️[DEPRECATED]
+This is no longer supported, please consider using something else.
+
 Please use our [main repository for any issues/bugs/features suggestion](https://github.com/pwa-builder/PWABuilder/issues/new/choose).
 
 # pwa-auth
