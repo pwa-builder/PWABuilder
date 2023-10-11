@@ -174,7 +174,7 @@ In addition to the four display values above, `display_override` can also take t
 ]
 ```
 
-!> You can learn more about how to implement `window-controls-overlay` in the [Adding Native Features](/home/native-features?id=window-controls-overlay) documentation.
+!> You can learn more about how to implement `window-controls-overlay` in the [Adding App Capabilities](/home/native-features?id=window-controls-overlay) documentation.
 
 ## Platform
 
