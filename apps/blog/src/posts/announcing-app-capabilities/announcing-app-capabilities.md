@@ -27,7 +27,8 @@ To increase discoverability and education surrounding the features that develope
 <img src="/posts/announcing-app-capabilities/ac-cards.png" alt="PWABuilder CLI create command output after executing."></img>
 
 
-On hover, each of the bubbles will show a tooltip that has a brief description of the field, links to read more, and a link to edit the field directly in the Manifest Editor if PWABuilder currently supports the field. For the fields that are not supported, they will be getting added in the months to come. 
+On hover, each of the bubbles will show a tooltip that has a brief description of the field, links to read more, and a link to edit the field directly in the Manifest Editor if PWABuilder currently supports the field. For the fields that are not supported, stay tuned for further updates in the months to come. 
+
 <img src="/posts/announcing-app-capabilities/ac-tooltip.png" alt="PWABuilder CLI create command output after executing."></img>
 
 This update also changed the way users can interact with their Action Items. The indicator pills that live above the list are now clickable and filter the list to match the selected filter. Red filters required fields that block packaging, yellow indicates recommended or optional fields, and the new purple lightning bolt tells the user how many app capabilities they have left to potentially add to their PWA. 
