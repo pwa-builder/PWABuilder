@@ -37,4 +37,4 @@ This update also changed the way users can interact with their Action Items. The
 
 
 
-Visit [pwabuilder.com](https://www.pwabuilder.com) to check out the new App Capabilities card now!
+Visit [pwabuilder.com](https://www.pwabuilder.com) and enter a URL to check out the new App Capabilities card now!
