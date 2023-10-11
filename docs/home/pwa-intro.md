@@ -21,7 +21,7 @@ From a technical perspective, a normal web app only needs a few extra pieces to 
 ### Web App Manifests
 A web app manifest (often shortened to web manifest, or even just *manifest*) is a `.json` file that tells the browser that your web app is a progressive web app, and is capable of being installed to the OS.
 
-The manifest also contains other information about your app, such as the title, theme colors, and description. Your manifest can even enable certain native integrations, such as shortcuts and display modes.
+The manifest also contains other information about your app, such as the title, theme colors, and description. Your manifest can even enable certain app capabilities, such as shortcuts and display modes.
 
 Learn more [here.](https://developer.mozilla.org/en-US/docs/Web/Manifest)
 
