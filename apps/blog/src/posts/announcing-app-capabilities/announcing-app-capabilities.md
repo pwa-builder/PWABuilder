@@ -32,6 +32,7 @@ On hover, each of the bubbles will show a tooltip that has a brief description o
 <img src="/posts/announcing-app-capabilities/ac-tooltip.png" alt="PWABuilder CLI create command output after executing."></img>
 
 This update also changed the way users can interact with their Action Items. The indicator pills that live above the list are now clickable and filter the list to match the selected filter. Red filters required fields that block packaging, yellow indicates recommended or optional fields, and the new purple lightning bolt tells the user how many app capabilities they have left to potentially add to their PWA. 
+
 <img src="/posts/announcing-app-capabilities/ac-items.png" alt="PWABuilder CLI create command output after executing."></img>
 
 
