@@ -238,7 +238,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 ]
 ```
 
-!> You can learn more about Shortcuts in the [Adding App Capabilities](/home/-features?id=shortcuts) documentation.
+!> You can learn more about Shortcuts in the [Adding Native Features](/home/native-features?id=shortcuts) documentation.
 
 ### protocol_handlers: `Array`
 
@@ -393,7 +393,7 @@ The `share_target` member is an object which can contain the following members:
   }
 ```
 
-!> You can learn more about using the Web Share API in the [Adding App Capabilities](/home/native-features?id=web-share-api) documentation.
+!> You can learn more about using the Web Share API in the [Adding Native Features](/home/native-features?id=web-share-api) documentation.
 
 ## Handlers
 
