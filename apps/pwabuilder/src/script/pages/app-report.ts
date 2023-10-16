@@ -1375,7 +1375,6 @@ export class AppReport extends LitElement {
         }
         .gap {
           gap: .5em;
-
         }
         sl-tooltip::part(base){
           --sl-tooltip-font-size: 14px;
@@ -1646,7 +1645,7 @@ export class AppReport extends LitElement {
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
           }
-
+          
           #sw-actions {
             width: 100%;
           }
