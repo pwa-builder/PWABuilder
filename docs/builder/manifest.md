@@ -69,7 +69,8 @@ Just like `short_name`, this data should usually align with any store listings.
 "background_color": "green"
 ```
 
-!> PWABuilder expects a HEX color value for this member. You can convert an RGB color value to HEX [here.](https://www.rgbtohex.net/)
+!> PWABuilder expects a HEX color value for this member. You can convert an RGB color value to HEX
+<a href="https://www.rgbtohex.net/" aria-label="Click here to convert color value">here</a> 
 
 ### theme_color: `string`
 
@@ -79,7 +80,8 @@ Just like `short_name`, this data should usually align with any store listings.
 "theme_color": "purple"
 ```
 
-!> PWABuilder expects a HEX color value for this member. You can convert an RGB color value to HEX [here.](https://www.rgbtohex.net/)
+!> PWABuilder expects a HEX color value for this member. You can convert an RGB color value to HEX 
+<a href="https://www.rgbtohex.net/" aria-label="Click here to convert color value">here</a> 
 
 ## Settings
 
@@ -116,7 +118,8 @@ It has three values to choose from:
 ```
 
 ### lang: `string`
-`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each language, and a list can be found [here.](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry)
+`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each language, and a list can be found <a href="https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry" aria-label="Click here to view list">here</a> 
+
 
 ```json
 "lang": "en"
@@ -161,7 +164,7 @@ It has three values to choose from:
 
 `display_override` is similar to the `display` member, but allows you to select a fallback order for different display modes.
 
-In addition to the four display values above, `display_override` can also take the value `window-controls-overlay`. `window-controls-overlay` is a desktop-only display mode and adds a native-style overlay to the top of your application.
+In addition to the four display values above, `display_override` can also take the value `window-controls-overlay`. `window-controls-overlay` is a desktop-only display mode and adds a native-style overlay to the top of your application. 
 
 ```json
 "display_override": [
@@ -171,6 +174,8 @@ In addition to the four display values above, `display_override` can also take t
 ]
 ```
 
+!> You can learn more about how to implement `window-controls-overlay` in the [Adding App Capabilities](/home/native-features?id=window-controls-overlay) documentation.
+
 ## Platform
 
 ### iarc_rating_id: `string`
@@ -178,7 +183,8 @@ In addition to the four display values above, `display_override` can also take t
 `iarc_rating_id` is an optional member that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.
 
 
-You can read more about IARC [here.](https://www.globalratings.com/how-iarc-works.aspx)
+You can read more about IARC <a href="https://www.globalratings.com/how-iarc-works.aspx" aria-label="Click here to read more">here</a> 
+
 
 ```json
 "iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e9"
@@ -238,7 +244,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 ]
 ```
 
-!> You can learn more about Shortcuts in the [Adding Native Features](/home/native-features?id=shortcuts) documentation.
+!> You can learn more about Shortcuts in the [Adding App Capabilities](/home/-features?id=shortcuts) documentation.
 
 ### protocol_handlers: `Array`
 
@@ -257,7 +263,8 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### categories: `Array`
 
-`categories` is an optional member that specifies an array of categories that the application belongs to. Though this array isn't limited to specific values, you can find a list of known categories [here.](https://github.com/w3c/manifest/wiki/Categories)
+`categories` is an optional member that specifies an array of categories that the application belongs to. Though this array isn't limited to specific values, you can find a list of known categories 
+<a href="https://github.com/w3c/manifest/wiki/Categories" aria-label="Click here to read more">here</a> 
 
 ```json
 "categories": ["games", "finance", "navigation"]
@@ -265,8 +272,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### edge_side_panel: `Object`
 
-`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases [here.](https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa)
-
+`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases <a href="https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa" aria-label="Click here to learn more">here</a>
 You can also specify the `preferred_width` member as part of your `edge_side_panel` specification.
 
 ```json
@@ -393,7 +399,7 @@ The `share_target` member is an object which can contain the following members:
   }
 ```
 
-!> You can learn more about using the Web Share API in the [Adding Native Features](/home/native-features?id=web-share-api) documentation.
+!> You can learn more about using the Web Share API in the [Adding App Capabilities](/home/native-features?id=web-share-api) documentation.
 
 ## Handlers
 

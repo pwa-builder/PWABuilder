@@ -32,19 +32,28 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 
 	const swTestResult = [
 	  {
-		result: serviceWorker?.score || false,
-		infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
-		category: 'highly recommended',
+			result: serviceWorker?.score || false,
+			infoString: serviceWorker?.score ? 'Has a Service Worker' : 'Does not have a Service Worker',
+			category: 'highly recommended',
+			member: "has_service_worker"
 	  },
 	  {
-		result: swFeatures?.detectedPeriodicBackgroundSync || false,
-		infoString: swFeatures?.detectedPeriodicBackgroundSync ? 'Uses Periodic Sync for a rich offline experience' : 'Does not use Periodic Sync for a rich offline experience',
-		category: 'optional',
+			result: swFeatures?.detectedPeriodicBackgroundSync || false,
+			infoString: swFeatures?.detectedPeriodicBackgroundSync ? 'Uses Periodic Sync for a rich offline experience' : 'Does not use Periodic Sync for a rich offline experience',
+			category: 'optional',
+			member: "background_sync"
 	  },
 	  {
-		result: swFeatures?.detectedBackgroundSync || false,
-		infoString: swFeatures?.detectedBackgroundSync ? 'Uses Background Sync for a rich offline experience' : 'Does not use Background Sync for a rich offline experience',
-		category: 'optional',
+			result: swFeatures?.detectedBackgroundSync || false,
+			infoString: swFeatures?.detectedBackgroundSync ? 'Uses Background Sync for a rich offline experience' : 'Does not use Background Sync for a rich offline experience',
+			category: 'optional',
+			member: "periodic_sync"
+	  },
+		{
+			result: swFeatures?.detectedPushRegistration || false,
+			infoString: swFeatures?.detectedPushRegistration ? 'Uses Push Notifications' : 'Does not use Push Notifications',
+			category: 'optional',
+			member: "push_notifications"
 	  },
 	];
 	// TODO: move installability from here
@@ -70,19 +79,22 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 
 	const organizedResults = [
 	  {
-		result: isOnHttps,
-		infoString: isOnHttps ? 'Uses HTTPS' : 'Does not use HTTPS',
-		category: 'required',
+			result: isOnHttps,
+			infoString: isOnHttps ? 'Uses HTTPS' : 'Does not use HTTPS',
+			category: 'required',
+			member: "https"
 	  },
 	  {
-		result: isOnHttps,
-		infoString: isOnHttps ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
-		category: 'required',
+			result: isOnHttps,
+			infoString: isOnHttps ? 'Has a valid SSL certificate' : 'Does not have a valid SSL certificate',
+			category: 'required',
+			member: "ssl"
 	  },
 	  {
-		result: noMixedContent,
-		infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page or http redirect on loads',
-		category: 'required',
+			result: noMixedContent,
+			infoString: noMixedContent ? 'No mixed content on page' : 'Uses mixed content on page or http redirect on loads',
+			category: 'required',
+			member: "mixed_content"
 	  },
 	];
 

@@ -161,6 +161,10 @@ export class ManifestEditorFrame extends LitElement {
         z-index: 1000;
       }
 
+      .dialog::part(close-button__base):focus-visible{
+        outline: 1px solid black;
+      }
+
       @media(max-width: 600px){  
         
         #frame-footer {

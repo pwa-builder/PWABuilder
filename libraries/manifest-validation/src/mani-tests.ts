@@ -53,7 +53,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
         displayString: "Manifest has handle_links field",
-        category: "recommended",
+        category: "enhancement",
         member: "handle_links",
         defaultValue: "auto",
         docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
@@ -76,7 +76,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "share_target enables your app to get shared content from other apps",
         displayString: "Manifest has share_target field",
-        category: "optional",
+        category: "enhancement",
         member: "share_target",
         defaultValue: JSON.stringify({
             "action": "/share-target/",
@@ -168,7 +168,27 @@ export const maniTests: Array<Validation> = [
             if (isArray) {
                 const anyIcon = value.find(icon => icon.purpose === "any");
 
-                return anyIcon ? true : false;
+                if (!anyIcon) {
+                    // if we dont have an icon with purpose === any
+                    // we need to double check if they have used maskable.
+                    // If they have used maskable, they should have an icon with purpose === any
+                    const maskable = value.find(icon => icon.purpose === "maskable");
+
+                    if (maskable) {
+                        // returning false as they need an icon with purpose === any
+                        return false;
+                    }
+                    else {
+                        // no maskable icon so this test is fine
+                        return true;
+                    }
+                }
+                else {
+                    // its fine because the user does not have
+                    // a maskable icon and it is not required
+                    // to have an icon with purpose any in this case
+                    return true;
+                }
             }
             else {
                 return false;
@@ -461,7 +481,7 @@ export const maniTests: Array<Validation> = [
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
         displayString: "Manifest has shortcuts field",
-        category: "optional",
+        category: "enhancement",
         member: "shortcuts",
         defaultValue: [],
         docsLink:
@@ -686,7 +706,7 @@ export const maniTests: Array<Validation> = [
         member: "protocol_handlers",
         displayString: "Manifest has protocol_handlers field",
         infoString: "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
-        category: "optional",
+        category: "enhancement",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
@@ -749,7 +769,7 @@ export const maniTests: Array<Validation> = [
         member: "file_handlers",
         displayString: "Manifest has file_handlers field",
         infoString: "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
-        category: "optional",
+        category: "enhancement",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array",
@@ -765,7 +785,7 @@ export const maniTests: Array<Validation> = [
         member: "display_override",
         displayString: "Manifest has display_override field",
         infoString: "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
-        category: "recommended",
+        category: "enhancement",
         defaultValue: [],
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
@@ -830,7 +850,7 @@ export const maniTests: Array<Validation> = [
         member: "widgets",
         displayString: "Manifest has widgets field",
         infoString: "Enable Windows 11 widgets board support",
-        category: "optional",
+        category: "enhancement",
         defaultValue: [],
         docsLink:
             "https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets",
@@ -882,7 +902,7 @@ export const maniTests: Array<Validation> = [
         member: "edge_side_panel",
         displayString: "Manifest has edge_side_panel field",
         infoString: "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
-        category: "recommended",
+        category: "enhancement",
         defaultValue: "",
         docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
         errorString: "The value entered for edge_side_panel.preferred_width should be a number",
