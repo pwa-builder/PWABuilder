@@ -209,6 +209,7 @@ export class AppHome extends LitElement {
           color: white;
           font-size: 14px;
           height: 3em;
+          min-height: unset;
           border-radius: 50px;
         }
 

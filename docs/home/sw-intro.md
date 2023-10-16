@@ -52,7 +52,7 @@ Add this snippet to the body of your application's `index.html`:
 
 Let's take a look at a basic service worker that we could add to our PWA.
 
-We'll step through it in pieces, but you can find the full source code [here.](https://github.com/pwa-builder/PWABuilder/tree/main/docs/assets/code-examples/example-sw.js)
+We'll step through it in pieces, but you can find the full source code <a href="https://github.com/pwa-builder/PWABuilder/tree/main/docs/assets/code-examples/example-sw.js" aria-label="Click here to learn more">here</a>
 
 ### Pre-caching During the *Install* Event
 
@@ -133,7 +133,9 @@ For testing purposes, service workers will function without HTTPS when served fr
 
 If you are unfamiliar with creating certificates to secure an endpoint, you can use an app hosting service that comes with HTTPS enabled by default. 
 
-One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI [here.](/starter/publish?id=azure-static-web-apps)
+One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI 
+<a href="/starter/publish?id=azure-static-web-apps" aria-label="Click here to follow instructions">here</a>
+
 
 
 ## Next Steps

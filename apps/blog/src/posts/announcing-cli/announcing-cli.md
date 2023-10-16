@@ -49,5 +49,4 @@ Your PWA will then open in the browser window!
 
 <img src="/posts/announcing-cli/open-pwa.png" alt="PWA Starter open in a new browser window."></img>
 
-
 For more guidance on using the CLI, check out our documentation [here.](https://docs.pwabuilder.com/#/starter/quick-start) For feedback and issues, head over to our [Github repo](https://github.com/pwa-builder/PWABuilder). We’re always open ideas and direct contributions from the community!
