@@ -8,6 +8,9 @@
     <meta name="description" content="Documentation for building great progressive web apps with the PWABuilder tooling suite.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta property="og:image" content="/assets/icons/share-logo.png">
+    
+    <!-- Google Site Verification for Google Search Console dashboard -->
+    <meta name="google-site-verification" content="HPBaodfLBvVIFzKwWeIWMwaIwH_ArRkSG1xjWhpqhhg" />
 
     <link rel="icon" href="/assets/icons/icon_24.png" type="image/png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
@@ -57,6 +60,21 @@
                 function(hook) {
                     hook.doneEach(function() {
                         window.recordPageView(document.location.href, getPageName());
+                    });
+                },
+                function(hook) {
+                    var summitBanner = [
+                        '<sl-alert open>',
+                        '<sl-icon slot="icon" name="bookmark-heart"></sl-icon>',
+                        '<div>',
+                        '<strong> New PWABuilder Blog Post on Adding Transitions to your PWA! </strong><br />',
+                        'Our latest post, <a href="https://blog.pwabuilder.com/posts/mimic-native-transitions-in-your-progressive-web-app/"><b>How To Mimic Native Transitions in Your Progressive Web App</b></a>, covers how to add view transitions to your app. Go check it out!',
+                        '</div>',
+                        '</sl-alert>'
+                    ].join('');
+
+                    hook.afterEach(function(html) {
+                        return summitBanner + html;
                     });
                 }
             ]
