@@ -50,7 +50,7 @@ Additionally, PWAs also give the user freedom of choice - to be able to install 
 
 In the past, one of the main advantages native app development technology has had over web apps is the ability to integrate with the native platform easily and quickly with built-in APIs. However, with the advent of modern web technology, many integrations that were previously inaccessible from the web are now implemented in most modern Web Browsers (especially those built on Chromium, like Edge or Chrome itself).
 
-Native features that can be implemented from the web include, but are not limited to:
+App Capabilities that can be implemented from the web include, but are not limited to:
 
 - Push notifications
 - Background sync
@@ -78,7 +78,7 @@ Some articles you can check out:
 
 * [Introduction to Service Workers](/home/sw-intro) - A surface level overview of one of the most important pieces to a PWA: the service worker.
 
-* [Integrating Native Features](/home/native-features/) - A guide to some of the native integrations you can add to your Progressive Web App.
+* [Adding App Capabilities](/home/native-features/) - A guide to some of the native integrations you can add to your Progressive Web App.
 
 
 ### Want to Build Your First PWA?
