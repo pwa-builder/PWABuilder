@@ -1375,7 +1375,6 @@ export class AppReport extends LitElement {
         }
         .gap {
           gap: .5em;
-          
         }
         sl-tooltip::part(base){
           --sl-tooltip-font-size: 14px;
@@ -2146,7 +2145,7 @@ export class AppReport extends LitElement {
       manifest = {};
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
-      
+
     manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
     this.validationResults = await validateManifest(manifest, true);
 
@@ -2538,7 +2537,7 @@ export class AppReport extends LitElement {
 
   formatSWStrings(member: string){
     const words = member.split('_');
-    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+    const capitalizedWords = words.map(word => word.toLowerCase());
     const joined = capitalizedWords.join(" ");
     return joined;
   }
