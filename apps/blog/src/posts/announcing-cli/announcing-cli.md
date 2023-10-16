@@ -3,11 +3,11 @@ layout: post
 title: Use the PWABuilder CLI to Create a New Progressive Web App
 excerpt: Announcing PWABuilder's new CLI. Create, develop, and test from an easy-to-use PWA template.
 description: Announcing PWABuilder's new CLI. Create, develop, and test from an easy-to-use PWA template.
-date: 2023-04-19
-updatedDate: 2023-04-19
+date: 2023-09-19
+updatedDate: 2023-09-19
 trending: true
 featured: true
-image: 
+image: posts/announcing-cli/pwa-create.png
 isPost: true
 backUrl: '/'
 author:
@@ -15,6 +15,7 @@ author:
   twitter: https://twitter.com/devteutsch
   title: PWABuilder Engineer
 tags:
+  - post
   - CLI
   - PWA Starter
   - PWA
@@ -36,7 +37,7 @@ From there, it’s just one command to create your first app:
 pwa create my-first-pwa
 ```
 
-<img src="pwa-create.png.png" alt="PWABuilder CLI create command output after executing."></img>
+<img src="/posts/announcing-cli/pwa-create.png" alt="PWABuilder CLI create command output after executing."></img>
 
 And then one more command to start running and developing your app, with live-reload for changes!
 
@@ -46,7 +47,6 @@ pwa start
 
 Your PWA will then open in the browser window!
 
-<img src="open-pwa.png" alt="PWA Starter open in a new browser window."></img>
-
+<img src="/posts/announcing-cli/open-pwa.png" alt="PWA Starter open in a new browser window."></img>
 
 For more guidance on using the CLI, check out our documentation [here.](https://docs.pwabuilder.com/#/starter/quick-start) For feedback and issues, head over to our [Github repo](https://github.com/pwa-builder/PWABuilder). We’re always open ideas and direct contributions from the community!

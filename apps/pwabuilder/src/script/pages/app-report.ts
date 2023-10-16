@@ -2146,7 +2146,7 @@ export class AppReport extends LitElement {
       manifest = {};
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
-
+      
     manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
     this.validationResults = await validateManifest(manifest, true);
 

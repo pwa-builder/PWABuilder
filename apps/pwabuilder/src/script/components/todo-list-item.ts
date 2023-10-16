@@ -201,7 +201,6 @@ export class TodoItem extends LitElement {
       case "required":
       case "missing":
         return html`<img src=${stop_src} alt="yield result icon"/>`
-      
       case "enhancement":
         return html`<img src=${enhancement_src} alt="app capability result icon"/>`
 

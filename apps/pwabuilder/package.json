@@ -24,7 +24,7 @@
     "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    "@shoelace-style/shoelace": "^2.9.0",
+    "@shoelace-style/shoelace": "^2.7.0",
     "@vaadin/router": "^1.7.4",
     "accessibility-insights-scan": "^2.3.2",
     "browser-fs-access": "^0.23.0",

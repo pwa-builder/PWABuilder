@@ -35,6 +35,10 @@ export class SWSelector extends LitElement {
       sl-tab::part(base):hover {
         color: #4F3FB6;
       }
+      sl-tab::part(base):focus-visible{
+        color: #4F3FB6;
+        outline: 1px solid black;
+      }
       sl-tab-panel::part(base){
         overflow-y: auto;
         overflow-x: hidden;
@@ -76,6 +80,9 @@ export class SWSelector extends LitElement {
         top: 5px;
         right: 5px;
         z-index: 1000;
+      }
+      .dialog::part(close-button__base):focus-visible{
+        outline: 1px solid black;
       }
 
       #frame-footer {
@@ -234,7 +241,7 @@ export class SWSelector extends LitElement {
         <sl-tab-group id="sw-tabs" @sl-tab-show=${(e: any) => this.setSelectedSW(e)}>
           ${service_workers.map((_sw: any, index: number) => 
             html`
-            <sl-tab slot="nav" panel=${index}>${this.swNameList[index]}</sl-tab>`)}
+            <sl-tab tabindex="0" slot="nav" panel=${index}>${this.swNameList[index]}</sl-tab>`)}
           ${service_workers.map((sw: any, index: number) => 
             html`
             <sl-tab-panel name=${index}><sw-panel .sw=${sw} ></sw-panel></sl-tab-panel>`)}
