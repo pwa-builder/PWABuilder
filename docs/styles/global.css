@@ -143,6 +143,16 @@ sl-button {
     padding-bottom: 15px;
 }
 
+sl-alert sl-button::part(base) {
+    background: #4F3FB6;
+    color: white;
+}
+
+sl-alert sl-button::part(base):hover {
+    border: 1px solid white;
+    outline: 2px solid black;
+}
+
 sl-alert::part(base) {
     border-top-color: #9C8DAB;
 }

@@ -66,6 +66,7 @@ export class PWAManifestEditor extends LitElement {
 
   static get styles() {
     return css`
+      
       sl-tab::part(base) {
         --sl-font-size-small: 14px;
         --sl-spacing-medium: .75rem;
@@ -81,6 +82,10 @@ export class PWAManifestEditor extends LitElement {
       }
       sl-tab::part(base):hover {
         color: #4F3FB6;
+      }
+      sl-tab::part(base):focus-visible{
+        color: #4F3FB6;
+        outline: 1px solid black;
       }
       sl-tab[active]::part(base) {
         color: #4F3FB6;

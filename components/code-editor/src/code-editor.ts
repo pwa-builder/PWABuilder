@@ -144,7 +144,7 @@ export class CodeEditor extends LitElement {
         </slot>
       </div>
 
-      <div id=${this.editorId} class="editor-container ${this.className}" ></div>
+      <div tabindex="0" id=${this.editorId} class="editor-container ${this.className}" ></div>
     `;
   }
 
