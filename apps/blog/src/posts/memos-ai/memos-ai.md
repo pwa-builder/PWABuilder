@@ -22,7 +22,7 @@ tags:
 
 ![Short live demo](/posts/memos-ai/record-new-note.png)
 
-Hello! I recently released an app I've been working on, [Memos AI](https://www.recordergo.app), and I wanted to talk a bit about how I built this app. Before we dive in, let’s touch on exactly what Memos AI is. Memos AI is a voice memos app that uses artificial intelligence to automatically take notes for you during lectures, meetings etc. Memos AI will:
+Hello! I recently released an app I've been working on, [Memos AI](https://www.recordergo.app), and I wanted to talk a bit about how I built this app. Before we dive in, let’s touch on exactly what Memos AI is. Memos AI is a voice memos app that uses artificial intelligence to automatically take notes for you during lectures, meetings, and more. Memos AI will:
 
 * Transcribe speech
 * Summarize that transcription
@@ -52,7 +52,7 @@ This code sets up a `Speech Recognizer`, that I can then use to run live client-
 
 ![Code for starting live transcription](/posts/memos-ai/start.png)
 
-This works perfectly in my web components based app as its just standard JavaScript that would work in any framework.
+This works perfectly in my web components based app as it's just standard JavaScript that would work in any framework.
 
 #### Client-Side
 As mentioned above, I found existing solutions for running AI inference client-side in a web app, including the [transformers.js](https://github.com/xenova/transformers.js/) which enables the ability to run AI models from HuggingFace client-side in your browser!
@@ -65,7 +65,7 @@ As I mentioned, this code is running in a [web worker](https://developer.mozilla
 
 And that is how I implemented AI in Memos AI! 
 
-For the rest of the app, I used our [PWA Starter](https://aka.ms/pwa-starter), with the [Fluent Web Components](https://learn.microsoft.com/en-us/fluent-ui/web-components/) for the UI. For animations between pages, I am using the built-in [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) which enables native, built-in animated page transitions. 
+For the rest of the app, I used our [PWA Starter](https://aka.ms/pwa-starter), with [Fluent Web Components](https://learn.microsoft.com/en-us/fluent-ui/web-components/) for the UI. For animations between pages, I am using the built-in [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) which enables native, built-in animated page transitions. 
 
 If you want to learn more about view transitions check out our latest post on the view transitions API [here](https://blog.pwabuilder.com/posts/mimic-native-transitions-in-your-progressive-web-app/) for more detail.
 
