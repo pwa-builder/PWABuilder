@@ -27,57 +27,42 @@ Hello! I recently released an app I've been working on, Memos AI, and I wanted t
 * Take notes based on that transcript
 * and more!
 
-With that out of the way, what are we going to cover exactly? Let's touch on: 
+Now, let's dive into how I did AI on the web!
 
-* Why I went with a Progressive Web App 
-* My tech stack, and why 
-* AI on the Web 
-* Publishing 
-* Let's dive in! 
 
-## Why a PWA (Progressive Web Application) 
+First, a quick demo:
 
-PWAs are web apps that are installable on a user's device and can be used like any other native app. They offer several benefits over traditional web apps, including: 
-
-* Faster loading times: PWAs are cached on the user's device, which means that they load much faster than traditional web apps. 
-* Better offline support: PWAs can work offline, which is important for users who don't have a reliable internet connection. 
-* More engaging user experience: PWAs can be installed on the user's home screen and can be used like any other native app. This makes them more engaging and easier to use. 
-* Available in App Stores: PWAs can be published to the Microsoft Store, the Google Play Store and other stores, unlike traditional web apps. 
-* PWAs also offer benefits over a native app. For example: 
-* Cross-Platform out of the box: PWAs offer one of the only true "build once, run everywhere" experiences. You can take your single codebase and deploy it to the web AND the app stores with no code changes. 
-arm64 support: PWAs run natively on both arm and x86/64 devices, with no extra effort needed from the developer 
-* Wide Reach: Progressive Web Apps allow you to reach users wherever they already are, whether that is in their web browser, or in an app store. 
-
-## Tech Stack 
-
-Ahh the age-old tech stack discussion. First, as you always should with a tech stack discussion, lets discuss what my user goals are for Memos AI: 
-
-* TRULY cross-platform: Not only should Memos AI work on any OS, it should also work on ANY device, no matter how powerful that device is, or what its network connection is like 
-* Fast, on any device and any network connection 
-* Simple: I am a fan of simplicity over almost everything, in most cases atleast. Simplicity, from my experience, leads to fast apps that work better for users. 
- 
-With this in mind, I decided on the following stack: 
-
-* The PWABuilder PWA Starter for the app itself. 
-* An Azure Web App for Containers for my backend. My server is a simple Express based Node.js server running in a Docker container. 
-* For transcriptions: The Azure Speech SDK for live transcriptions, and the OpenAI Whisper model, through the OpenAI API, for final transcriptions. 
+![Short live demo](live-speech.gif)
 
 ## AI on the Web 
 
-On my journey of building this app, I evaluated the exiting AI solutions that are available for web apps. I was happily surprised to see multiple open-source options for running AI inference client-side, which when combined with things like the OpenAI API for more compute heavy issues, can come together to provide high-quality AI experiences in a PWA. 
+On my journey of building this app, I evaluated the exiting AI solutions that are available for web apps. I was happily surprised to see multiple open-source options for running AI inference client-side! This, when combined with things like the OpenAI API or Azure for more compute heavy issues, can come together to provide high-quality AI experiences in a PWA. 
+
+For Memos AI, the main AI feature is speech-to-text. I wanted to go with a "cloud by default" approach for the best performance across all devices, but with the option for a user to run the AI features client side, on their own device. This ensures that users on mobile devices or less powerful devices overall are not left out of the experience.
+
+
+### Live Speech-To-Text
+
+#### In the Cloud
+For the live speech-to-text transcript, I am using the [Azure Speech SDK](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-sdk) which supports JavaScript both in the browser and in Node. The Azure Speech SDK supports [live client-side speech-to-text](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-recognize-speech?pivots=programming-language-javascript#recognize-speech-from-a-microphone), in the browser, using the users mic on their device. This made it incredibly easy to implement in my app with just some JavaScript:
+
+![code for setting up a Speech Recognizer](setup.png)
+
+This code sets up a `Speech Recognizer`, that I can then use to run live client-side speech-to-text by calling the `startContinuousRecognitionAsync` method. 
+![code for starting live transcription](start.png)
+
+This works perfectly in my web components based app as its just standard JavaScript that would work in any framework.
+
+#### Client-Side
+As mentioned above, I found existing solutions for running AI inference client-side in a web app, including the [transformers.js](https://github.com/xenova/transformers.js/) which enables the ability to run AI models from HuggingFace client-side in your browser!
+
+While it is possible, I did not set this up to do live speech-to-text, but instead to run on a recorded blob from the note, which I generated with the [MediaRecorder API](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder). I then pass this blob to a Web Worker (so as not to block the UI while it is transcribing), which then does local speech-to-text using the following code:
+
+![Alt text](local.png)
  
-For example, to do summarization client-side, and cut down on my OpenAI API costs, I am using https://github.com/xenova/transformers.js/ which enables you to run AI models from HuggingFace client-side in your browser with just a tiny bit of JavaScript! 
+As I mentioned, this code is running in a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), which is a built-in way to run code on a different thread than the main UI thread. This ensures that our UI stays responsive while doing heavy work in a worker thread.
 
-[image will go here showing the code]
- 
-## Publishing 
 
-For publishing, I wanted to take full advantage of the fact that my app is cross-platform. I deployed to the web first, using Azure Static Web Apps. Static Web Apps, especially when used with Github Actions, makes it incredibly easy to deploy a web app. You get HTTPS out of the box, and other features such as: 
+And that is how I implemented AI in Memos AI! For the rest of the app, I used our [PWA Starter](https://aka.ms/pwa-starter), with the [Fluent Web Components](https://learn.microsoft.com/en-us/fluent-ui/web-components/) for the UI. For animations between pages, I am using the built-in [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) which enables native, built-in animated page transitions. I am not going to dive into detail on this today, but check out our latest post on the view transitions API [here](https://blog.pwabuilder.com/posts/mimic-native-transitions-in-your-progressive-web-app/) for more detail.
 
-* Azure Functions support 
-* Easy Database connection 
-* Pre-Configured authentication 
-* Available CDN 
-
-I then decided that my first store I would publish to is the Microsoft Store. Using PWABuilder, it was as easy as grabbing the URL that Azure Static Web Apps created for my app, going to https://www.pwabuilder.com/, and clicking a few buttons. PWABuilder then gave me an MSIX that you can submit to the Microsoft Store, just like a UWP app. And just like that, my app, still with only a single codebase, is in the Microsoft Store. 
-And that’s it! To get started building a new app like I did here, go to https://www.pwabuilder.com/ and click "Start a new PWA". 
+ Thanks!
