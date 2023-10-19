@@ -104,7 +104,7 @@ export class ServiceWorkerInfoCard extends LitElement {
       }
 
       .mic-actions button:hover {
-        cursor: pointer; 
+        cursor: pointer;
       }
 
       /* < 480px */
@@ -127,31 +127,22 @@ export class ServiceWorkerInfoCard extends LitElement {
   }
 
   firstUpdated(){
-   
+
   }
 
   trackLearnMoreAnalytics(){
     // general counter
-    recordPWABuilderProcessStep(`sw_bubble_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`service_worker.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     //specific field counter
-    recordPWABuilderProcessStep(`sw_bubble_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`service_worker.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  trackTooltipOpened(){
-    // general counter
-    recordPWABuilderProcessStep(`sw_bubble_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
-
-    //specific field counter
-    recordPWABuilderProcessStep(`sw_bubble_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-  // opens tooltip 
+  // opens tooltip
   handleHover(entering: boolean){
-    this.trackTooltipOpened();
     this.currentlyHovering = entering;
     let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
-    let myEvent = new CustomEvent('trigger-hover', 
+    let myEvent = new CustomEvent('trigger-hover',
       {
         detail: {
           tooltip: tooltip,
@@ -179,17 +170,16 @@ export class ServiceWorkerInfoCard extends LitElement {
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
       ${this.placement !== "" ?
         html`
-        <sl-dropdown 
-          distance="10" 
+        <sl-dropdown
+          distance="10"
           class="tooltip"
           placement=${this.placement}
-          @sl-show=${() => this.trackTooltipOpened()}
           @sl-hide=${() => this.handleHover(false)}
         >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
             ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-            
+
             <div class="mic-actions">
               <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
             </div>
@@ -197,8 +187,8 @@ export class ServiceWorkerInfoCard extends LitElement {
         </sl-dropdown>
         ` :
         html`
-          <sl-dropdown 
-            distance="10" 
+          <sl-dropdown
+            distance="10"
             class="tooltip"
             @sl-show=${() => this.trackTooltipOpened()}
             @sl-hide=${() => this.handleHover(false)}
@@ -206,15 +196,15 @@ export class ServiceWorkerInfoCard extends LitElement {
             <slot name="trigger" slot="trigger"></slot>
             <div class="info-box">
               ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-              
+
               <div class="mic-actions">
                 <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
               </div>
             </div>
           </sl-dropdown>
         `
-      }  
-    
+      }
+
     </div>
     `;
   }
