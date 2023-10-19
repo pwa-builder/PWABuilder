@@ -11,7 +11,7 @@ export class ShareCard extends LitElement {
   @property() preventClosing = false;
   @property() manifestData = "";
   @property() swData = "";
-  @property() securityData = "";
+  @property() enhancementsData = "";
   @property() siteName = "";
 
   @state() dataURL = "";
@@ -91,7 +91,7 @@ export class ShareCard extends LitElement {
         height: 322px;
         margin: 20px 0;
       }
-      
+
       #share-actions {
         display: flex;
         flex-direction: row;
@@ -160,14 +160,14 @@ export class ShareCard extends LitElement {
         .standard-button {
           margin-bottom: 8px;
         }
-        
+
       `)}
     `
   }
-  
+
   async setup(){
     this.canvas = (this.shareCanvas.value as HTMLCanvasElement);
-    await draw(this.canvas, this.manifestData, this.swData, this.securityData, this.siteName);
+    await draw(this.canvas, this.manifestData, this.swData, this.enhancementsData, this.siteName);
     this.dataURL = this.canvas.toDataURL('image/png', 1.0);
     this.file = this.dataURLtoFile(this.dataURL, `${this.siteName}_pwabuilder_score.png`);
 
@@ -186,16 +186,16 @@ export class ShareCard extends LitElement {
     } else if (shareOption === "share"){
       recordPWABuilderProcessStep(`sharepwascorecard.share_clicked`, AnalyticsBehavior.ProcessCheckpoint);
       this.shareFile(this.file, `${this.siteName} PWABuilder report card score`, "Check out my report card scores from #PWABuilder #BuildPackageShip")
-    } else {  
+    } else {
       return;
     }
-    
+
   }
 
   downloadImage(filename: string) {
     let link = document.createElement('a');
     link.href = "data:image/png;base64" + this.dataURL;
-    link.download = filename; 
+    link.download = filename;
     link.click();
     URL.revokeObjectURL(link.href);
 
@@ -272,10 +272,10 @@ export class ShareCard extends LitElement {
               </div>
               ${this.canShare ? html`
                 <div>
-                  <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Click here to share PWA score image"/></button>  
+                  <button type="button" id="share-button" class="standard-button secondary" @click=${() => this.htmlToImage('share')}><img class="actions-icons" src="/assets/share_icon.svg" alt="Click here to share PWA score image"/></button>
                   <span class="standard-button-label">Share</span>
                 </div>
-              ` : ''}                  
+              ` : ''}
             </div>
           </div>
         </div>

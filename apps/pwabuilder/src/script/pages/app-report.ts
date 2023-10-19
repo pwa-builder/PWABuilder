@@ -17,6 +17,9 @@ import '../components/publish-pane';
 import '../components/test-publish-pane';
 import '../components/sw-selector';
 import '../components/share-card';
+import '../components/manifest-info-card'
+import '../components/sw-info-card'
+import '../components/arrow-link'
 
 import {
   Icon,
@@ -36,12 +39,15 @@ import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
-import { GetTokenCampaignStatus } from './qualification/app-token.helper';
-import { env } from '../utils/environment';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
+const enhancement_src = "/assets/new/enhancement.svg";
+
+const yield_white_src = "/assets/new/yield_white.svg";
+const stop_white_src = "/assets/new/stop_white.svg";
+const enhancement_white_src = "/assets/new/enhancement_white.svg";
 
 @customElement('app-report')
 export class AppReport extends LitElement {
@@ -112,13 +118,12 @@ export class AppReport extends LitElement {
   @state() swDataLoading: boolean = true;
   @state() swMessage: string = "";
 
-  @state() securityResults: any[] = [];
-  @state() secTotalScore: number = 0;
-  @state() secValidCounter: number = 0;
-  @state() secRequiredCounter: number = 0;
-  @state() secRecCounter: number = 0;
+
   @state() secDataLoading: boolean = true;
-  @state() secMessage: string = "";
+  @state() showSecurityBanner: boolean = false;
+  @state() securityIssues: string[] = [];
+
+  @state() enhancementTotalScore: number = 0;
 
   @state() requiredMissingFields: any[] = [];
   @state() recMissingFields: any[] = [];
@@ -132,10 +137,12 @@ export class AppReport extends LitElement {
   @state() createdManifest: boolean = false;
   @state() manifestContext: ManifestContext | undefined;
 
-  @state() todoItems: any[] = [];
+  @state() allTodoItems: any[] = [];
+  @state() filteredTodoItems: any[] = [];
+  @state() filterList: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
-
-  @state() tokensCampaign: boolean = false;
+  @state() stopShowingNotificationTooltip: boolean = false;
+  @state() closeOpenTooltips: boolean = true;
 
   private possible_messages = [
     {"messages": {
@@ -147,9 +154,9 @@ export class AppReport extends LitElement {
     },
     {"messages": {
                       "green": "PWABuilder has analyzed your Service Worker and your Service Worker is ready for packaging! Great job you have a perfect score!",
-                      "yellow": "PWABuilder has analyzed your Service Worker, and has identified additional features you can add, like offline support, to make your app feel more robust.",
+                      "yellow": "PWABuilder has analyzed your Service Worker, and has identified additional features you can add to make your app feel more robust.",
                       "blocked": "",
-                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recomeneded by PWABuilder as it enables an array of features that can enhance your PWA. You can generate a Service Worker below or use our documentation to make your own.",
+                      "none": "PWABuilder has analyzed your site and did not find a Service Worker. Having a Service Worker is highly recommended by PWABuilder as it enables an array of features that can enhance your PWA. You can generate a Service Worker below or use our documentation to make your own.",
                   },
      },
       {"messages": {
@@ -161,6 +168,24 @@ export class AppReport extends LitElement {
       }
     ];
 
+  private specialManifestTodos: {[id: string]: string} = {
+    "shortcuts": "Add contextual shortcuts to specific parts of your app",
+    "display_override": "Extend your app into the titlebar for a more native look and feel with display_override and window-controls-overlay",
+    "share_target": "Be a share_target for your users",
+    "file_handlers": "Be a default handler for certain filetypes with file_handlers",
+    "handle_links": "Open links as an app with handle_links",
+    "protocol_handlers": "Create a custom protocol_handler",
+    "edge_side_panel": "Increase reach by partcipating in the edge_side_panel",
+    "widgets": "Increase reach with widgets"
+  }
+
+  private specialSWTodos: {[id: string]: string} = {
+    "offline_support": "Allow users to use your app without internet connection",
+    "push_notifications": "Send notifications to you users even if your app is not running with push notifications",
+    "background_sync": "Ensure user actions and content is always in sync even if network connection is lost with background sync",
+    "periodic_sync": "Update your app in the background so it's ready next time the user opens it with periodic sync"
+  }
+
   static get styles() {
     return [
       css`
@@ -169,6 +194,14 @@ export class AppReport extends LitElement {
         * {
           box-sizing: border-box;
           font-family: inherit;
+        }
+
+        :host {
+          --sl-focus-ring-width: 3px;
+          --sl-input-focus-ring-color: #4f3fb670;
+          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
+          --sl-input-border-color-focus: #4F3FB6ac;
+          --sl-input-font-family: Hind, sans-serif;
         }
 
         app-header::part(header) {
@@ -196,6 +229,10 @@ export class AppReport extends LitElement {
 
         sl-details {
           width: 100%;
+        }
+
+        sl-details::part(header){
+          padding: 5px 20px;
         }
 
         sl-details::part(summary-icon){
@@ -235,25 +272,79 @@ export class AppReport extends LitElement {
           height: fit-content;
           --track-width: 4px;
           --indicator-width: 8px;
-          --size: 100px;
+          --size: 85px;
           font-size: var(--subheader-font-size);
+          position: relative;
         }
 
         sl-progress-ring::part(label){
           color: var(--primary-color);
           font-weight: bold;
+          font-size: 18px;
+        }
+
+        sl-progress-ring::part(base) {
+          border-radius: 50%;
         }
 
         .red {
           --indicator-color: var(--error-color);
         }
 
+        .red::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #FFF3F3;
+        }
+
         .yellow {
           --indicator-color: var(--warning-color);
         }
 
+        .yellow::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #FFFAED;
+        }
+
         .green {
           --indicator-color: var(--success-color);
+        }
+
+        .green::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #E3FFF2;
+        }
+
+        .counterRing {
+          --indicator-color: #8976FF;
+        }
+
+        .counterRing::before {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          top: calc(var(--indicator-width) / 2);
+          left: calc(var(--indicator-width) / 2);
+          width: calc(var(--size) - var(--indicator-width));
+          height: calc(var(--size) - var(--indicator-width));
+          background-color: #F1F3FF;
         }
 
         .macro_error {
@@ -514,13 +605,13 @@ export class AppReport extends LitElement {
           padding: 2em;
         }
 
-        #app-actions button:not(#test-download) { // pfs + disabled
+        #pfs, #pfs-disabled { // pfs + disabled
           white-space: nowrap;
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
           font-size: var(--button-font-size);
           font-weight: var(--font-bold);
-          border: none;
+          border: 1px solid transparent;
           color: #ffffff;
           white-space: nowrap;
         }
@@ -548,6 +639,59 @@ export class AppReport extends LitElement {
 
         #pfs:focus, #pfs:hover {
           box-shadow: var(--button-box-shadow);
+          border: 1px solid #ffffff;
+          outline: 2px solid #000000;
+          background-color: rgba(0, 0, 0, 0.75);
+        }
+
+        .feedback-holder {
+          display: flex;
+          gap: .5em;
+          padding: .5em;
+          border-radius: 3px;
+          width: 100%;
+          word-break: break-word;
+        }
+
+        .type-error {
+          align-items: flex-start;
+          background-color: #FAEDF1;
+          border-left: 4px solid var(--error-color);
+        }
+
+        .feedback-holder p {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        .error-title {
+          font-weight: bold;
+        }
+
+        .error-actions {
+          display: flex;
+          align-items: center;
+          gap: 1em;
+          margin-top: .25em;
+        }
+
+        .error-actions > * {
+          all: unset;
+          color: var(--font-color);
+          font-weight: bold;
+          font-size: 14px;
+          border-bottom: 1px solid transparent;
+        }
+
+        .error-actions > *:hover {
+          cursor: pointer;
+          border-bottom: 1px solid var(--font-color);
+        }
+
+        .error-desc {
+          max-height: 175px;
+          overflow-y: auto;
+          line-height: normal;
         }
 
         #share-card {
@@ -704,9 +848,10 @@ export class AppReport extends LitElement {
           width: auto;
         }
 
-        .mani-tooltip-content p {
+        .mani-tooltip-p {
           margin: 0;
           padding: .5em;
+          font-size: 14px;
         }
 
         #cl-mani-tooltip-content {
@@ -733,7 +878,7 @@ export class AppReport extends LitElement {
         }
 
         #actions-footer {
-          background-color: #f2f3fb;
+          background-color: #ffffff;
           width: 100%;
           column-gap: 0.75em;
           border-bottom-left-radius: 10px;
@@ -775,17 +920,19 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        #todo-detail::part(content){
+          padding-top: 0;
+          padding-bottom: 1em;
+        }
+
         #todo-summary-left {
           display: flex;
           align-items: center;
-          gap: .5em;
+          gap: 25px;
         }
 
-        #todo-summary-left p {
+        #todo-summary-left > h2 {
           font-size: var(--subheader-font-size);
-        }
-
-        .todo-items-holder {
         }
 
         #pagination-actions {
@@ -793,7 +940,7 @@ export class AppReport extends LitElement {
           align-items: center;
           justify-content: center;
           width: 100%;
-          justify-self: center;
+          margin-top: 10px;
           gap: .25em;
         }
 
@@ -827,6 +974,12 @@ export class AppReport extends LitElement {
           height: fit-content;
         }
 
+        #pageStatus {
+          font-size: 0;
+          color: transparent;
+          margin: 0;
+        }
+
         #indicators-holder {
           display: flex;
           gap: .5em;
@@ -835,17 +988,33 @@ export class AppReport extends LitElement {
 
         .indicator {
           display: flex;
-          gap: .5em;
+          gap: 10px;
           align-items: center;
-          background-color: #F1F2FA;
-          padding: .25em .5em;
-          border-radius: var(--card-border-radius);
+          background-color: #f1f1f1;
+          padding: 5px 10px;
+          border-radius: 6px;
+          border: none;
         }
 
         .indicator p {
           line-height: 20px;
           margin: 0;
-          font-size: 15px;
+          font-size: 20px;
+          color: var(--primary-color);
+          font-weight: bold;
+        }
+
+        .indicator.selected {
+          background-color: var(--primary-color)
+        }
+
+        .indicator.selected p {
+          color: #ffffff;
+        }
+
+        .indicator img {
+          width: 16px;
+          height: auto;
         }
 
         /* Manifest Card */
@@ -857,8 +1026,8 @@ export class AppReport extends LitElement {
         }
 
         #manifest-header {
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 10fr 2fr 1fr;
           gap: 1em;
           border-bottom: 1px solid #c4c4c4;
           padding: 1em;
@@ -872,13 +1041,15 @@ export class AppReport extends LitElement {
         }
 
         #mh-text {
-          width: 50%;
           row-gap: 0.5em;
+          width: 100%;
         }
 
         #mh-right {
           display: flex;
           column-gap: 2.5em;
+          grid-area: 1/3;
+          height: fit-content;
         }
 
         #mh-actions {
@@ -910,6 +1081,7 @@ export class AppReport extends LitElement {
 
         #two-cell-row > * {
           width: 49%;
+          height: 100%;
           background: #ffffff;
           display: flex;
           flex-direction: column;
@@ -921,10 +1093,9 @@ export class AppReport extends LitElement {
         /* SW Card */
         #sw-header {
           row-gap: 0.5em;
-          border-bottom: 1px solid #c4c4c4;
+          height: 100%;
           padding: 1em;
           min-height: 318px;
-          justify-content: space-between;
         }
 
         #swh-top {
@@ -941,7 +1112,8 @@ export class AppReport extends LitElement {
         #sw-actions {
           row-gap: 1em;
           width: fit-content;
-          align-items: center;
+          align-items: flex-start;
+          margin-top: auto;
         }
 
         /* Sec Card */
@@ -973,10 +1145,6 @@ export class AppReport extends LitElement {
           width: 100%;
         }
 
-        .details-summary p {
-          font-size: var(--card-body-font-size);
-        }
-
         .dropdown_icon {
           transform: rotate(0deg);
           transition: transform .5s;
@@ -996,6 +1164,11 @@ export class AppReport extends LitElement {
 
         #test-download p {
           line-height: 1em;
+        }
+
+        arrow-link {
+          margin-top: 20px;
+          margin-bottom: 10px;
         }
 
         .arrow_link {
@@ -1037,6 +1210,9 @@ export class AppReport extends LitElement {
           padding: var(--button-padding);
           border-radius: var(--button-border-radius);
           white-space: nowrap;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         #report-wrapper .alternate:hover {
           box-shadow: var(--button-box-shadow)
@@ -1080,7 +1256,7 @@ export class AppReport extends LitElement {
         }
         .details::part(header) {
           height: 40px;
-          padding: 1em .75em;
+          padding: 5px 20px;
         }
 
         .detail-grid {
@@ -1090,11 +1266,10 @@ export class AppReport extends LitElement {
         }
 
         #sec-header {
-          justify-content: space-between;
           row-gap: .5em;
           padding: 1em;
-          border-bottom: 1px solid #c4c4c4;
           min-height: 318px;
+          height: 100%;
         }
         #sec-top {
           display: flex;
@@ -1108,7 +1283,65 @@ export class AppReport extends LitElement {
         #sec-actions {
           row-gap: 1em;
           width: 66%;
+          margin-top: auto;
         }
+
+        .icons-holder {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(2, 1fr);
+          place-content: center;
+          gap: 25px;
+        }
+
+        .icons-holder.sw {
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(1, 1fr);
+        }
+
+        .icon-and-name {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .circle-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border-radius: 50%;
+          position: relative;
+          border: 2px solid transparent
+        }
+
+        .circle-icon-img {
+          height: 60px;
+          width: 60px;
+          width: auto;
+        }
+
+        .icon-and-name p {
+          color: var(--font-color);
+          font-size: 12px;
+          margin: 0;
+          text-align: center;
+        }
+
+        .circle-icon:hover {
+          cursor: pointer;
+          border: 2px solid #8976FF;
+        }
+
+        .valid-marker {
+          height: 13px;
+          width: 13px;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+        }
+
         .progressRingSkeleton::part(base) {
           height: 100px;
           width: 100px;
@@ -1133,6 +1366,9 @@ export class AppReport extends LitElement {
         }
         .desc-skeleton {
           --color: #d0d0d3
+        }
+        .desc-skeleton.half {
+          width: 50%;
         }
         .desc-skeleton::part(base), .summary-skeleton::part(base), .app-info-skeleton::part(base){
           min-height: .8rem;
@@ -1320,12 +1556,29 @@ export class AppReport extends LitElement {
           }
           #two-cell-row > * {
             width: 100%;
+            height: unset;
           }
           #sw-header {
             min-height: unset;
           }
           #sec-header {
             min-height: unset;
+          }
+          #manifest-header {
+            grid-template-columns: 4fr 4fr 1fr;
+            grid-template-rows: min-content 1fr;
+          }
+          #mh-content {
+            grid-area: 1 / 1 / 2 / 3;
+          }
+          #mh-actions {
+            align-items: unset;
+          }
+          #sw-actions {
+            width: 42%
+          }
+          #sw-actions button {
+            width: 100%;
           }
         }
 
@@ -1396,16 +1649,26 @@ export class AppReport extends LitElement {
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
           }
+          
+          #sw-actions {
+            width: 100%;
+          }
+          #sw-actions button {
+            margin-top: 20px;
+            width: 100%;
+          }
+
+          #mh-actions {
+            grid-area: 2/1/3/4;
+          }
+          #mh-actions button {
+            width: 100%;
+          }
         }
 
         ${mediumBreakPoint(css`
           #mh-content {
             flex-direction: column;
-          }
-
-          #mh-actions, #sw-actions {
-            align-items: flex-start;
-            width: 50%;
           }
 
           #mh-text {
@@ -1496,6 +1759,9 @@ export class AppReport extends LitElement {
           #mh-text {
             width: 100%;
           }
+          #mh-actions {
+            align-items: flex-start;
+          }
 
           #manifest-detail-grid{
             display: flex;
@@ -1524,6 +1790,10 @@ export class AppReport extends LitElement {
           #manifest-header, #sw-header, #sec-header {
             padding-bottom: 2.5em;
           }
+          #manifest-header {
+            gap: 0;
+            row-gap: 20px;
+          }
           #mh-actions, #sw-actions, #sec-header {
             row-gap: 1.5em;
           }
@@ -1545,6 +1815,19 @@ export class AppReport extends LitElement {
           #share-card-mani {
             position: unset;
           }
+
+          .icons-holder {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            place-content: center;
+            gap: 25px;
+          }
+
+          .icons-holder.sw {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+          }
         `)}
       `,
     ];
@@ -1562,8 +1845,6 @@ export class AppReport extends LitElement {
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this.tokensCampaign = await GetTokenCampaignStatus();
-    env.tokensCampaignRunning = this.tokensCampaign;
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -1585,6 +1866,7 @@ export class AppReport extends LitElement {
   // Expands the Action items details on load
   firstUpdated() {
     this.rotateNinety("todo", undefined, true);
+
   }
 
   // Polling function that updates the time that the site was last tested
@@ -1778,16 +2060,20 @@ export class AppReport extends LitElement {
         findersResults.manifest = result.content;
         await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
         findersResults.manifestTodos = await this.testManifest();
-        this.todoItems.push(...findersResults.manifestTodos);
+        this.allTodoItems.push(...findersResults.manifestTodos);
         this.requestUpdate();
       }
     });
+
+    setTimeout(() => this.closeOpenTooltips = false, 20000);
+
+    this.filteredTodoItems = this.allTodoItems;
 
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
             findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content));
-            this.todoItems.push(...findersResults.workerTodos);
+            this.allTodoItems.push(...findersResults.workerTodos);
             this.requestUpdate();
           });
           findersResults.serviceWorker = result.content;
@@ -1795,23 +2081,29 @@ export class AppReport extends LitElement {
       }
     );
 
+    this.filteredTodoItems = this.allTodoItems;
+
     try {
       this.reportAudit = await Report(url);
     } catch (e) {
       console.error(e);
-      this.todoItems.push(...await this.testSecurity(processSecurity()));
+      this.allTodoItems.push(...await this.testSecurity(processSecurity()));
       if (!findersResults.manifest?.raw) {
         await this.applyManifestContext(url, undefined, undefined);
-        this.todoItems.push(...await this.testManifest());
+        this.allTodoItems.push(...await this.testManifest());
       }
       if (!findersResults.serviceWorker?.raw) {
-        this.todoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}})));
+        this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}})));
       }
+
+      this.filteredTodoItems = this.allTodoItems;
+
       this.runningTests = false;
       this.requestUpdate();
       return;
     }
 
+    this.filteredTodoItems = this.allTodoItems;
     console.log(this.reportAudit);
 
     // Check for previously successfull FindMani
@@ -1827,31 +2119,18 @@ export class AppReport extends LitElement {
     }
 
     // Reapply mani todos from FindMani
-    this.todoItems = [];
+    this.allTodoItems = [];
     if (findersResults.manifestTodos.length){
-      this.todoItems.push(...findersResults.manifestTodos)
-
-      // adding todo for token giveaway item if theres at least a manifest
-      if(!this.createdManifest && this.tokensCampaign){
-        this.todoItems.push(
-          {
-            "card": "giveaway",
-            "field": "giveaway",
-            "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-            "status": "giveaway",
-            "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-          }
-        );
-      }
+      this.allTodoItems.push(...findersResults.manifestTodos)
     }
     else {
-      this.todoItems.push(...await this.testManifest());
+      this.allTodoItems.push(...await this.testManifest());
     }
 
     // TODO: move installability score to different place
-    this.todoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
-    this.todoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
-
+    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
+    this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
+    this.filteredTodoItems = this.allTodoItems;
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
 
     this.runningTests = false;
@@ -1866,59 +2145,55 @@ export class AppReport extends LitElement {
     let manifest;
     let todos: unknown[] = [];
 
-    if(!this.createdManifest){
-      manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
-      this.validationResults = await validateManifest(manifest, true);
+    if(this.createdManifest){
+      manifest = {};
+      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
+    }
 
-      //  This just makes it so that the valid things are first
-      // and the invalid things show after.
-      this.validationResults.sort((a, b) => {
-        if(a.valid && !b.valid){
-          return 1;
-        } else if(b.valid && !a.valid){
-          return -1;
-        } else {
-          return a.member.localeCompare(b.member);
+    manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    this.validationResults = await validateManifest(manifest, true);
+
+    //  This just makes it so that the valid things are first
+    // and the invalid things show after.
+    this.validationResults.sort((a, b) => {
+      if(a.valid && !b.valid){
+        return 1;
+      } else if(b.valid && !a.valid){
+        return -1;
+      } else {
+        return a.member.localeCompare(b.member);
+      }
+    });
+    this.manifestTotalScore = this.validationResults.length;
+    this.manifestValidCounter = 0;
+    this.manifestRequiredCounter = 0;
+
+    this.validationResults.forEach((test: Validation) => {
+      if(test.valid){
+        if(test.category === "enhancement"){
+          this.enhancementTotalScore++;
         }
-      });
-      this.manifestTotalScore = this.validationResults.length;
-      this.manifestValidCounter = 0;
-      this.manifestRequiredCounter = 0;
-
-      this.validationResults.forEach((test: Validation) => {
-        if(test.valid){
-          this.manifestValidCounter++;
+        this.manifestValidCounter++;
+      } else {
+        let status ="";
+        if(test.category === "required" || test.testRequired){
+          status = "required";
+          this.manifestRequiredCounter++;
+        } else if(test.category === "recommended"){
+          this.manifestRecCounter++;
+        }
+        if(status === "") {
+          status = test.category;
+        }
+        if(status === "enhancement"){
+          // fetch special display string
+          let specialString: string = this.specialManifestTodos[test.member!];
+          todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": specialString, "status": status});
         } else {
-          let status ="";
-          if(test.category === "required" || test.testRequired){
-            status = "required";
-            this.manifestRequiredCounter++;
-          } else if(test.category === "recommended"){
-            status = "recommended";
-            this.manifestRecCounter++;
-          } else {
-            status = "optional";
-          }
           todos.push({"card": "mani-details", "field": test.member, "displayString": test.displayString ?? "", "fix": test.errorString, "status": status});
         }
-      });
-    } else {
-      manifest = {};
-      todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "required"});
-    }
-
-    // adding todo for token giveaway item if theres at least a manifest
-    if(!this.createdManifest && this.tokensCampaign){
-      this.todoItems.push(
-        {
-          "card": "giveaway",
-          "field": "giveaway",
-          "fix": `Your PWA may qualify for a free Microsoft Store developer account.`,
-          "status": "giveaway",
-          "displayString": `Your PWA may qualify for a free Microsoft Store developer account`
-        }
-      );
-    }
+      }
+    });
 
     if(this.manifestRequiredCounter > 0){
       this.canPackageList[0] = false;
@@ -1976,7 +2251,8 @@ export class AppReport extends LitElement {
         }
 
         if(!missing){
-          todos.push({"card": card, "field": result.infoString, "fix": result.infoString, "status": status});
+          let fix = this.specialSWTodos[result.member];
+          todos.push({"card": card, "field": result.member, "fix": fix, "status": status});
         }
       }
     })
@@ -2002,39 +2278,21 @@ export class AppReport extends LitElement {
 
   // Tests the Security and populates the Security card detail dropdown
   async testSecurity(securityAudit: TestResult[]) {
+
     //Call security tests
     let todos: unknown[] = [];
 
     const securityTests = securityAudit;
-    this.securityResults = securityTests;
 
-    this.secRequiredCounter = 0;
-    this.securityResults.forEach((result: any) => {
-      if(result.result){
-        this.secValidCounter++;
-      } else {
-        let status ="";
-        if(result.category === "required"){
-          status = result.category;
-          this.secRequiredCounter++;
-        } else if(result.category === "recommended"){
-          status = result.category;
-          this.manifestRecCounter++;
-        } else {
-          status = result.category;
-        }
-
-        todos.push({"card": "sec-details", "field": result.infoString, "fix": result.infoString, "status": status});
+    securityTests.forEach((result: any) => {
+      if(!result.result){
+        this.showSecurityBanner = true;
+        todos.push({"card": "security", "field": result.member, "fix": result.infoString, "status": "required"});
       }
     })
 
-    if(this.secRequiredCounter > 0){
-      this.canPackageList[2] = false;
-    } else {
-      this.canPackageList[2] = true;
-    }
+    this.canPackageList[2] = !this.showConfirmationModal;
 
-    this.secTotalScore = this.securityResults.length;
 
     this.secDataLoading = false;
 
@@ -2110,13 +2368,9 @@ export class AppReport extends LitElement {
     this.swValidCounter = 0;
     this.swTotalScore = 0;
     this.swRequiredCounter = 0;
-    this.secValidCounter = 0;
-    this.secTotalScore = 0;
-    this.secRequiredCounter = 0;
-
 
     // reset todo lsit
-    this.todoItems = [];
+    this.allTodoItems = [];
 
     // reset missing lists
     this.requiredMissingFields = [];
@@ -2135,6 +2389,8 @@ export class AppReport extends LitElement {
     // hide the detail lists
     let details = this.shadowRoot!.querySelectorAll('sl-details');
 
+    this.showConfirmationModal = false;
+
     details.forEach((detail: any) => {
       if(detail.id != "todo-detail"){
         detail.hide();
@@ -2152,6 +2408,7 @@ export class AppReport extends LitElement {
 
   // Opens share card modal and tracks analytics
   async openShareCardModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
 
     await dialog!.show();
@@ -2160,6 +2417,7 @@ export class AppReport extends LitElement {
 
   // Opens manifest editor and tracks analytics
   async openManifestEditorModal(focusOn = "", tab: string = "info"): Promise<void | undefined> {
+    this.closeOpenTooltips = false;
     this.startingManifestEditorTab = tab;
     this.focusOnME = focusOn;
     let dialog: any = this.shadowRoot!.querySelector("manifest-editor-frame")!.shadowRoot!.querySelector(".dialog");
@@ -2170,6 +2428,7 @@ export class AppReport extends LitElement {
 
    // Opens SW Selector and tracks analytics
   async openSWSelectorModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("sw-selector")!.shadowRoot!.querySelector(".dialog");
 
     await dialog.show()
@@ -2178,6 +2437,7 @@ export class AppReport extends LitElement {
 
    // Opens publish pane and tracks analytics
   async openPublishModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("publish-pane")!.shadowRoot!.querySelector(".dialog");
 
     await dialog.show()
@@ -2186,6 +2446,7 @@ export class AppReport extends LitElement {
 
    // Opens test publish modal and tracks analytics
   async openTestPublishModal() {
+    this.closeOpenTooltips = false;
     let dialog: any = this.shadowRoot!.querySelector("test-publish-pane")!.shadowRoot!.querySelector(".dialog");
 
     await dialog.show()
@@ -2225,8 +2486,6 @@ export class AppReport extends LitElement {
       instantRed = this.manifestRequiredCounter > 0;
     } else if(card === "sw"){
       instantRed = this.swRequiredCounter > 0;
-    } else {
-      instantRed = this.secRequiredCounter > 0;
     }
 
     let instantYellow = false;
@@ -2234,8 +2493,6 @@ export class AppReport extends LitElement {
       instantYellow = this.manifestRecCounter > 0;
     } else if(card === "sw"){
       instantYellow = this.swRecCounter > 0;
-    } else {
-      instantYellow = this.secRecCounter > 0;
     }
 
     if(instantRed){
@@ -2265,9 +2522,6 @@ export class AppReport extends LitElement {
     } else if(card === "sw"){
       index = 1;
       instantRed = this.swRequiredCounter > 0;
-    } else {
-      index = 2;
-      instantRed = this.secRequiredCounter > 0;
     }
 
     let ratio = parseFloat(JSON.stringify(valid)) / total;
@@ -2283,6 +2537,13 @@ export class AppReport extends LitElement {
     } else {
       return messages["green"];
     }
+  }
+
+  formatSWStrings(member: string){
+    const words = member.split('_');
+    const capitalizedWords = words.map(word => word.toLowerCase());
+    const joined = capitalizedWords.join(" ");
+    return joined;
   }
 
   // Scrolls and Shakes the respective item from a click of an action item
@@ -2317,7 +2578,7 @@ export class AppReport extends LitElement {
   // Function to add a special to do to the action items list that tells the user to retest their site.
   addRetestTodo(toAdd: string){
     if(!this.hasItemBeenAdded(toAdd)) {
-      this.todoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
+      this.allTodoItems.push({"card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd});
       this.requestUpdate();
     }
   }
@@ -2325,7 +2586,7 @@ export class AppReport extends LitElement {
   // function to validate whether or not an retest item has already been added to the ToDo list
   hasItemBeenAdded(toAdd: string): boolean {
     var isItemPresent = false;
-    for(var toDoItem of this.todoItems) {
+    for(var toDoItem of this.allTodoItems) {
       if(toDoItem.field == toAdd) {
         isItemPresent = true;
         break;
@@ -2392,15 +2653,30 @@ export class AppReport extends LitElement {
   // -1 = a wins
   // 1 = b wins
   sortTodos(){
-    const rank: { [key: string]: number } = {
+    let rank: { [key: string]: number } = {
       "retest": 0,
-      "required": 1,
-      "giveaway": 2,
-      "highly recommended": 3,
-      "recommended": 4,
-      "optional": 5
+      "missing": 1,
+      "required": 2,
+      "enhancement": 3,
+      "highly recommended": 4,
+      "recommended": 5,
+      "optional": 6
     };
-    this.todoItems.sort((a, b) => {
+
+    // If the manifest is missing more than half of the recommended fields, show those first
+    if((this.manifestRecCounter / recommended_fields.length) > .5){
+      rank = {
+        "retest": 0,
+        "missing": 1,
+        "required": 2,
+        "highly recommended": 3,
+        "recommended": 4,
+        "enhancement": 5,
+        "optional": 6
+      };
+    }
+
+    this.filteredTodoItems.sort((a, b) => {
       if (rank[a.status] < rank[b.status]) {
         return -1;
       } else if (rank[a.status] > rank[b.status]) {
@@ -2411,7 +2687,7 @@ export class AppReport extends LitElement {
     }
     );
 
-    return this.todoItems;
+    return this.filteredTodoItems;
   }
 
   // Pages the action items
@@ -2435,11 +2711,16 @@ export class AppReport extends LitElement {
 
   // Moves to the next window in the action items list
   switchPage(up: boolean){
-    if(up && this.pageNumber * this.pageSize < this.todoItems.length){
+    if(up && this.pageNumber * this.pageSize < this.filteredTodoItems.length){
       this.pageNumber++;
     } else if(!up && this.pageNumber != 1){
       this.pageNumber--;
     }
+
+    const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
+    const totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize) // Calculate total pages
+    pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
+
     this.requestUpdate();
   }
 
@@ -2447,7 +2728,7 @@ export class AppReport extends LitElement {
   getDots(){
     let dots: any[] = [];
 
-    let totalPages = Math.ceil(this.todoItems.length / this.pageSize);
+    let totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize);
 
     for(let i = 0; i < totalPages; i++){
       dots.push("dot");
@@ -2458,25 +2739,79 @@ export class AppReport extends LitElement {
   // Renders the indicators for each action item
   renderIndicators(){
     let yellow = 0;
+    let purple = 0;
     let red = 0;
 
-    this.todoItems.forEach((todo: any) => {
+    this.allTodoItems.forEach((todo: any) => {
       if(todo.status == "required"){
         red++;
-      } else {
+      } else if(todo.status == "enhancement"){
+        purple++;
+      } else if(todo.status === "optional" || todo.status === "recommended") {
         yellow++;
       }
     })
 
-    if(yellow + red != 0){
+    if(yellow + purple + red != 0){
       return html`
       <div id="indicators-holder">
-        ${red != 0 ? html`<div class="indicator"><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></div>` : html``}
-        ${yellow != 0 ? html`<div class="indicator"><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></div>` : html``}
+        ${red != 0 ?
+          this.filterList.includes("required") ?
+            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></button>` :
+            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></button>`
+          : null
+        }
+        ${yellow != 0 ?
+          this.filterList.includes("recommended") || this.filterList.includes("optional") ?
+            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></button>` :
+            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
+          : null
+        }
+        ${purple != 0 ?
+          this.filterList.includes("enhancement") ?
+          html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></button>` :
+          html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
+            : null
+          }
       </div>`
     }
-    return html``
+    return null;
 
+  }
+
+  // filter todos by severity
+  filterTodoItems(filter: string, e: Event){
+    e.stopPropagation();
+
+    recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+    this.pageNumber = 1;
+    /* let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
+    todoDetail.show(); */
+
+    this.stopShowingNotificationTooltip = true;
+    // if its in the list, remove it, else add it
+    // yellow means optional and recommended
+    if(filter === "yellow"){
+      if(this.filterList.includes("optional")){
+        this.filterList = this.filterList.filter((x: string) => (x !== "optional") && (x !== "recommended"))
+      } else {
+        this.filterList.push("optional")
+        this.filterList.push("recommended")
+      }
+    } else if(this.filterList.includes(filter)){
+      this.filterList = this.filterList.filter((x: string) => x !== filter)
+    } else {
+      this.filterList.push(filter)
+    }
+    // if filter list is empty, show everything
+    if(this.filterList.length === 0 ){
+      this.filteredTodoItems = this.allTodoItems;
+      return;
+    }
+
+
+    this.filteredTodoItems = this.allTodoItems.filter((x: any) => this.filterList.includes(x.status));
   }
 
 //truncate app card discription
@@ -2502,16 +2837,6 @@ export class AppReport extends LitElement {
       this.openTooltips = [];
     }
 
-  }
-
-  goToGiveawayPage(){
-    recordPWABuilderProcessStep("free_token_check_now_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    let a: HTMLAnchorElement = document.createElement("a");
-    a.target = "_blank";
-    a.href = `${window.location.protocol}//${window.location.host}/freeToken?site=${this.siteURL}`;
-    a.rel = "noopener";
-
-    a.click();
   }
 
   closeTooltipOnScroll() {
@@ -2598,7 +2923,6 @@ export class AppReport extends LitElement {
                       <img
                         src=${this.retestPath}
                         alt="retest site"
-                        role="presentation"
                       />
                     </button>
                   </div>`
@@ -2658,6 +2982,22 @@ export class AppReport extends LitElement {
             </div>
           </div>
 
+          ${this.showSecurityBanner ?
+            html`
+              <div class="feedback-holder type-error">
+                <img src="/assets/new/stop.svg" alt="invalid result icon" />
+                <div class="error-info">
+                  <p class="error-title">You do not have a secure HTTPS server</p>
+                  <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+                  <div class="error-actions">
+                    <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                  </div>
+                </div>
+              </div>
+            ` :
+            null
+          }
+
           <div id="todo">
             <sl-details
               id="todo-detail"
@@ -2667,14 +3007,31 @@ export class AppReport extends LitElement {
               >
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
-                  <p>Action Items</p>
-                  ${this.todoItems.length > 0 ? this.renderIndicators() : html``}
+                  <h2>Action Items</h2>
+
+                    ${this.allTodoItems.length > 0 ?
+                      this.stopShowingNotificationTooltip ?
+                        // if they interact with the inicators, we no longer need to show the tooltip
+                        this.renderIndicators() :
+
+                        // showing tooltip until they click an indicator which will remove the tooltip
+                        html`
+                          <sl-tooltip class="mani-tooltip" id="notifications" ?open=${this.closeOpenTooltips}>
+                            <div slot="content" class="mani-tooltip-content">
+                              <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
+                              <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
+                            </div>
+                            ${this.renderIndicators()}
+                          </sl-tooltip>
+                        `
+                      :
+                      null}
                 </div>
                   <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
 
               </div>
               <div class="todo-items-holder">
-                ${this.todoItems.length > 0 ? this.paginate().map((todo: any) =>
+                ${this.filteredTodoItems.length > 0 ? this.paginate().map((todo: any) =>
                     html`
                       <todo-item
                         .status=${todo.status}
@@ -2685,15 +3042,22 @@ export class AppReport extends LitElement {
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
                         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
-                        @giveawayEvent=${() => this.goToGiveawayPage()}>
+                      >
 
                       </todo-item>`
                   ) : html`<span class="loader"></span>`}
               </div>
-            ${(this.todoItems.length > this.pageSize) ?
+            ${(this.filteredTodoItems.length > this.pageSize) ?
               html`
               <div id="pagination-actions">
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(false)}><sl-icon class="pageToggles" name="chevron-left"></sl-icon></button>
+                <button
+                  class="pagination-buttons"
+                  name="action-items-previous-page-button"
+                  aria-label="Previous page button for action items list"
+                  type="button"
+                  @click=${() => this.switchPage(false)}
+                  ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
+                </button>
                 <div id="dots">
                   ${this.getDots().map((_dot: any, index: number) =>
                     this.pageNumber == index + 1 ?
@@ -2704,8 +3068,16 @@ export class AppReport extends LitElement {
                         <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
                       `)}
                 </div>
-                <button class="pagination-buttons" type="button"  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon></button>
-              </div>` : html``}
+                <button
+                  class="pagination-buttons"
+                  name="action-items-next-page-button"
+                  aria-label="Next page button for action items list"
+                  aria-live="polite"
+                  type="button"
+                  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
+                </button>
+              </div>` : null}
+              <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
             </sl-details>
           </div>
 
@@ -2713,7 +3085,7 @@ export class AppReport extends LitElement {
             <div id="manifest-header">
               <div id="mh-content">
                 <div id="mh-text" class="flex-col">
-                  <p class="card-header">Manifest</p>
+                  <h2 class="card-header">Manifest</h2>
                   ${this.manifestDataLoading ?
                     html`
                       <div class="flex-col gap">
@@ -2727,41 +3099,6 @@ export class AppReport extends LitElement {
                     </p>
                   `}
                 </div>
-
-                <div id="mh-actions" class="flex-col">
-                  ${this.manifestDataLoading ?
-                    html`
-                      <div class="flex-col gap">
-                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                      </div>
-                    ` :
-                    html`
-                      ${this.createdManifest ?
-                      html`
-                          <sl-tooltip class="mani-tooltip" open>
-                            <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                            <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
-                          </sl-tooltip>` :
-                      html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
-                      }
-
-                      <a
-                        class="arrow_anchor"
-                        href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
-                        rel="noopener"
-                        target="_blank"
-                        @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-                      >
-                        <p class="arrow_link">Manifest Documentation</p>
-                        <img
-                          src="/assets/new/arrow.svg"
-                          alt="arrow"
-                        />
-                      </a>
-                  `}
-
-                </div>
               </div>
 
               <div id="mh-right">
@@ -2771,9 +3108,43 @@ export class AppReport extends LitElement {
                             id="manifestProgressRing"
                             class=${classMap(this.decideColor("manifest"))}
                             value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div class="${classMap(this.decideColor("manifest"))}">${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
+                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div>${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
                 }
               </div>
+              <div id="mh-actions" class="flex-col">
+                ${this.manifestDataLoading ?
+                  html`
+                    <div class="flex-col gap">
+                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+                    </div>
+                  ` :
+                  html`
+                    ${this.createdManifest ?
+                    html`
+                        <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
+                          <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
+                          <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+                        </sl-tooltip>` :
+                    html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
+                    }
+
+                    <a
+                      class="arrow_anchor"
+                      href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
+                      rel="noopener"
+                      target="_blank"
+                      @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
+                    >
+                      <p class="arrow_link">Manifest Documentation</p>
+                      <img
+                        src="/assets/new/arrow.svg"
+                        alt="arrow"
+                      />
+                    </a>
+                `}
+
+                </div>
             </div>
             <sl-details
               id="mani-details"
@@ -2800,7 +3171,7 @@ export class AppReport extends LitElement {
                     </div>`
                     )}
                   ` :
-                  html``}
+                  null}
 
                   ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
                   html`
@@ -2814,7 +3185,7 @@ export class AppReport extends LitElement {
                       <p>${result.displayString}</p>
                     </div>
                   ` :
-                  html``)}
+                  null)}
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Recommended</p>
@@ -2829,7 +3200,7 @@ export class AppReport extends LitElement {
                     </div>`
                     )}
                   ` :
-                  html``}
+                  null}
                   ${this.validationResults.map((result: Validation) => result.category === "recommended"  && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
                     <div class="test-result" data-field=${result.member}>
@@ -2841,7 +3212,7 @@ export class AppReport extends LitElement {
                         `}
                       <p>${result.displayString}</p>
                     </div>
-                  ` : html``)}
+                  ` : null)}
                 </div>
                 <div class="detail-list">
                   <p class="detail-list-header">Optional</p>
@@ -2857,7 +3228,7 @@ export class AppReport extends LitElement {
                         </div>`
                     )}
                   ` :
-                  html``}
+                  null}
 
                   ${this.validationResults.map((result: Validation) => result.category === "optional" && ((result.testRequired && result.valid) || !result.testRequired) ?
                   html`
@@ -2871,7 +3242,7 @@ export class AppReport extends LitElement {
                         `}
                       <p>${result.displayString}</p>
                     </div>
-                  ` : html``)}
+                  ` : null)}
                 </div>
               </div>`}
             </sl-details>
@@ -2882,7 +3253,7 @@ export class AppReport extends LitElement {
               <div id="sw-header" class="flex-col">
                 <div id="swh-top">
                   <div id="swh-text" class="flex-col">
-                    <p class="card-header">Service Worker</p>
+                    <h2 class="card-header">Service Worker</h2>
                     ${this.swDataLoading ?
                       html`
                         <div class="flex-col gap">
@@ -2900,13 +3271,30 @@ export class AppReport extends LitElement {
                   ${this.swDataLoading ?
                     html`<div class="loader-round large"></div>` :
                     html`<sl-progress-ring
-                    id="swProgressRing"
-                    class=${classMap(this.decideColor("sw"))}
-                    value="${(parseFloat(JSON.stringify(this.swValidCounter)) / this.swTotalScore) * 100}"
-                    >${this.swValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing service worker requirements" />` : html`<div class="${classMap(this.decideColor("sw"))}"> ${this.swValidCounter} / ${this.swTotalScore} </div>`} </sl-progress-ring>
+                      id="swProgressRing"
+                      class="counterRing"
+                      value="${this.swValidCounter > 0 ? 100 : 0}"
+                      >+${this.swValidCounter}
+                    </sl-progress-ring>
                     `
                   }
                 </div>
+                  <div class="icons-holder sw">
+                    ${this.serviceWorkerResults.map((result: any) =>
+                      html`
+                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                          <sw-info-card .field=${result.member}>
+                            <div class="circle-icon" tabindex="0" slot="trigger">
+                              <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                              ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                            </div>
+                          </sw-info-card>
+                          <p>${this.formatSWStrings(result.member)}</p>
+                        </div>
+                      `
+                      )
+                    }
+                  </div>
                 <div id="sw-actions" class="flex-col">
                   ${this.swDataLoading ?
                   html`
@@ -2940,69 +3328,14 @@ export class AppReport extends LitElement {
 
                 </div>
               </div>
-              <sl-details
-                id="sw-details"
-                class="details"
-                ?disabled=${this.swDataLoading}
-                @sl-show=${(e: Event) => this.rotateNinety("sw-details", e)}
-                @sl-hide=${(e: Event) => this.rotateZero("sw-details", e)}
-              >
-                ${this.swDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>`
-                : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sw-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
-                <div class="detail-grid">
-                <div class="detail-list">
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "required" ?
-                    html`
-                      <p class="detail-list-header">Required</p>
-                      <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div>
-                  <div class="detail-list">
-                    <p class="detail-list-header">Highly Recommended</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "highly recommended" ?
-                    html`
-                      <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="invalid result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div>
-                  <!-- <div class="detail-list">
-                    <p class="detail-list-header">Recommended</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "recommended" ?
-                    html`
-                    <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div> -->
-                  <div class="detail-list">
-                    <p class="detail-list-header">Optional</p>
-                    ${this.serviceWorkerResults.map((result: TestResult) => result.category === "optional" ?
-                    html`
-                      <div class="test-result" data-field=${result.infoString}>
-                        ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${yield_src} alt="yield result icon"/>`}
-                        <p>${result.infoString}</p>
-                      </div>
-                    ` :
-                    html``)}
-                  </div>
-                </div>`}
-              </sl-details>
+
             </div>
             <div id="security" class="half-width-cards">
               <div id="sec-header" class="flex-col">
                 <div id="sec-top">
                   <div id="sec-text" class="flex-col">
-                    <p class="card-header">Security</p>
-                    ${this.secDataLoading ?
+                    <h2 class="card-header">App Capabilities</h2>
+                    ${this.manifestDataLoading ?
                       html`
                         <div class="flex-col gap">
                           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
@@ -3011,66 +3344,39 @@ export class AppReport extends LitElement {
                       ` :
                       html`
                         <p class="card-desc">
-                          ${this.decideMessage(this.secValidCounter, this.secTotalScore, "sec")}
+                          PWABuilder has analysesd your PWA and has identified some app capabilities that could enhance your PWA
                         </p>
                       `
                         }
                   </div>
-                  ${this.secDataLoading ?
+                  ${this.manifestDataLoading ?
                     html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring
-                    id="secProgressRing"
-                    class=${classMap(this.decideColor("sec"))}
-                    value="${(parseFloat(JSON.stringify(this.secValidCounter)) / this.secTotalScore) * 100}"
-                    >${this.secValidCounter == 0 ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing requirements"/>` : html`<div class="${classMap(this.decideColor("sec"))}"> ${this.secValidCounter} / ${this.secTotalScore}</div>`}</sl-progress-ring>
+                    html`<sl-progress-ring class="counterRing" value="${this.enhancementTotalScore > 0 ? 100 : 0}">+${this.enhancementTotalScore}</sl-progress-ring>
                     `
                   }
 
                 </div>
-                <div id="sec-actions" class="flex-col">
-                  ${this.secDataLoading ?
+                <div class="icons-holder">
+                  ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
                     html`
-                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                    ` :
-                    html`
-                      <a
-                        class="arrow_anchor"
-                        href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04"
-                        rel="noopener"
-                        target="_blank"
-                        @click=${() => recordPWABuilderProcessStep("security_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-                        <p class="arrow_link">Security Documentation</p>
-                        <img
-                          src="/assets/new/arrow.svg"
-                          alt="arrow"
-                        />
-                      </a>
+                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+                        <manifest-info-card .field=${result.member} .placement=${"bottom"}>
+                          <div class="circle-icon" tabindex="0" slot="trigger">
+                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                            ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+                          </div>
+                        </manifest-info-card>
+                        <p>${result.member}</p>
+                    </div>
                     `
+                    : null )
                   }
                 </div>
+                ${this.manifestDataLoading ?
+                  html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
+                  html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
+                }
               </div>
-              <sl-details
-                id="sec-details"
-                class="details"
-                ?disabled=${this.runningTests || this.secDataLoading}
-                @sl-show=${(e: Event) => this.rotateNinety("sec-details", e)}
-                @sl-hide=${(e: Event) => this.rotateZero("sec-details", e)}
-                >
-              ${this.secDataLoading ? html`<div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` : html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="sec-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>`}
-                <div class="detail-grid">
-                  <div class="detail-list">
-                    <p class="detail-list-header">Required</p>
-                    ${this.securityResults.map((result: TestResult) => result.category === "required" ?
-                      html`
-                        <div class="test-result" data-field=${result.infoString}>
-                          ${result.result ? html`<img src=${valid_src} alt="passing result icon"/>` : html`<img src=${stop_src} alt="invalid result icon"/>`}
-                          <p>${result.infoString}</p>
-                        </div>
-                      ` :
-                      html``)}
-                  </div>
-                </div>
-              </sl-details>
             </div>
           </div>
         </div>
@@ -3095,14 +3401,14 @@ export class AppReport extends LitElement {
 
       <share-card
         .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
-        .swData=${`${this.swValidCounter}/${this.swTotalScore}/${this.getRingColor("sw")}/Service Worker`}
-        .securityData=${`${this.secValidCounter}/${this.secTotalScore}/${this.getRingColor("sec")}/Security`}
+        .swData=${`${this.swValidCounter}/purple/Service Worker`}
+        .enhancementsData=${`${this.enhancementTotalScore}/purple/App Capabilities`}
         .siteName=${this.appCard.siteName}
       > </share-card>
 
-      <publish-pane .tokensCampaign=${this.tokensCampaign}></publish-pane>
+      <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? html`` : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      ${this.manifestDataLoading ? null : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
     `;

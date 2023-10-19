@@ -364,6 +364,7 @@ export class ManifestSettingsForm extends LitElement {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
+              p.setAttribute('aria-live', 'polite');
               div.append(p);
               this.errorMap[field]++;
             });
@@ -470,6 +471,7 @@ export class ManifestSettingsForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[fieldName!]++;
         });
@@ -567,6 +569,7 @@ export class ManifestSettingsForm extends LitElement {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
+          p.setAttribute('aria-live', 'polite');
           div.append(p);
           this.errorMap[field]++;
         });

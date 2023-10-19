@@ -25,8 +25,8 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: true
         },
         {
-          pageTitle: "Adding Native Features to Your PWA",
-          menuTitle: "Adding Native Features",
+          pageTitle: "Adding App Capabilities to Your PWA",
+          menuTitle: "Adding App Capabilities",
           path: "/home/native-features.md",
           includeOnHomePage: true
         },
@@ -52,6 +52,12 @@ export const parentMenuData: ParentMenu = {
           pageTitle: "PWA Starter - Quick Start",
           menuTitle: "Quick Start",
           path: "/starter/quick-start",
+          includeOnHomePage: false
+        },
+        {
+          pageTitle: "PWA Starter - CLI Usage",
+          menuTitle: "CLI Usage",
+          path: "/starter/cli-usage",
           includeOnHomePage: false
         },
         {
@@ -143,12 +149,6 @@ export const parentMenuData: ParentMenu = {
           menuTitle: "Asset Links Help",
           path: "/builder/asset-links-faq",
           includeOnHomePage: false
-        },
-        {
-          pageTitle: "PWABuilder - Microsoft Store Promotion",
-          menuTitle: "Store Promotion",
-          path: "/builder/store-promotion",
-          includeOnHomePage: true
         },
         {
           pageTitle: "PWABuilder - FAQ",

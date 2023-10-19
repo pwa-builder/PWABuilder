@@ -15,7 +15,7 @@ As far as progressive web apps are concerned, this allows for a user experience 
 
 In the case of the PWA Starter, each page is it's own custom web component, and they are mapped to URLs using [@thepassle/app-tools](https://github.com/thepassle/app-tools/tree/master/router#usage).
 
-#### Setting Routes
+### Setting Routes
 
 All of the routing logic for the PWA Starter can be found in `src/app-index.ts`, which is our root index component that we include in our normal `index.html` file.
 
@@ -23,27 +23,29 @@ Let's take a look at the router config contained in `src/router.ts`, where we de
 
 ```typescript
 export const router = new Router({
-    routes: [
-      {
-        path: '/',
-        title: 'home',
-        render: () => html`<app-home></app-home>`
-      },
-      {
-        path: '/about',
-        title: 'about',
-        plugins: [
-          lazy(() => import('./pages/app-about/app-about.js')),
-        ],
-        render: () => html`<app-about></app-about>`
-      }
-    ]
+  routes: [
+    {
+      path: resolveRouterPath(),
+      title: 'Home',
+      render: () => html`<app-home></app-home>`
+    },
+    {
+      path: resolveRouterPath('about'),
+      title: 'About',
+      plugins: [
+        lazy(() => import('./pages/app-about/app-about.js')),
+      ],
+      render: () => html`<app-about></app-about>`
+    }
+  ]
 });
 ```
 
 In this snippet, we have a `app-home` component that lives at `/`, and a `app-about` component that lives at `/about`. 
 
-The bare minimum you need to declare a route is a `path`, a `component`, and a `render` function but the starter also makes use of several other properties:
+We provide a function called `resolveRouterPath` that allows our paths to be automatically adjusted for any root URL we build our app with. We call `resolveRouterPath('about')` if we want an About page at `<base-url>/about`.
+
+The bare minimum properties you need to declare a route is a `path`, a `component`, and a `render` function but the starter also makes use of several other properties:
 
 | Property |Usage |
 | :------|------ |
@@ -59,7 +61,7 @@ Next, we'll take a look at adding a new page to the starter:
 
 To add a new page to your PWA, you will need to create a new component, and then add that component to your router code.
 
-#### Creating the Page Component
+### Creating the Page Component
 
 1. Navigate to the `src/pages/` directory.
 
@@ -69,7 +71,7 @@ To add a new page to your PWA, you will need to create a new component, and then
 
 ```typescript
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 @customElement('new-page')
 export class AppSettings extends LitElement {
@@ -89,7 +91,7 @@ export class AppSettings extends LitElement {
 
 If you're new to Lit or web components in general, check out the [Lit tutorial](https://lit.dev/tutorials/intro-to-lit/) to learn more.
 
-#### Adding the Route
+### Adding the Route
 
 Next we just need to add the route in our router config defined in `src/router.ts`.
 
@@ -97,7 +99,7 @@ We can add to our existing list of paths in our router config:
 
 ```typescript
 {
-  path: '/new-page',
+  path: resolveRouterPath('new-page'),
   title: 'new page',
   plugins: [
     lazy(() => import('./pages/new-page.js')),
@@ -110,29 +112,29 @@ And our overall config will now look like this:
 
 ```typescript
 export const router = new Router({
-    routes: [
-      {
-        path: '/',
-        title: 'home',
-        render: () => html`<app-home></app-home>`
-      },
-      {
-        path: '/about',
-        title: 'about',
-        plugins: [
-          lazy(() => import('./pages/app-about/app-about.js')),
-        ],
-        render: () => html`<app-about></app-about>`
-      },
-      {
-        path: '/new-page',
-        title: 'new page',
-        plugins: [
-          lazy(() => import('./pages/new-page.js')),
-        ],
-        render: () => html`<new-page></new-page>`
-      }
-    ]
+  routes: [
+    {
+      path: resolveRouterPath(),
+      title: 'Home',
+      render: () => html`<app-home></app-home>`
+    },
+    {
+      path: resolveRouterPath('about'),
+      title: 'About',
+      plugins: [
+        lazy(() => import('./pages/app-about/app-about.js')),
+      ],
+      render: () => html`<app-about></app-about>`
+    },
+    {
+      path: resolveRouterPath('new-page'),
+      title: 'new page',
+      plugins: [
+        lazy(() => import('./pages/new-page.js')),
+      ],
+      render: () => html`<new-page></new-page>`
+    }
+  ]
 });
 ```
 

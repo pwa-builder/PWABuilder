@@ -172,6 +172,7 @@ export class AppHome extends LitElement {
         }
         .raise:focus:not(disabled) {
           transform: scale(1.01);
+          outline: 1px solid #000000;
         }
         #input-form sl-input {
           margin-right: 10px;
@@ -208,6 +209,7 @@ export class AppHome extends LitElement {
           color: white;
           font-size: 14px;
           height: 3em;
+          min-height: unset;
           border-radius: 50px;
         }
 
