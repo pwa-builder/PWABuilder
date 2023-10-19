@@ -190,7 +190,6 @@ export class ServiceWorkerInfoCard extends LitElement {
           <sl-dropdown
             distance="10"
             class="tooltip"
-            @sl-show=${() => this.trackTooltipOpened()}
             @sl-hide=${() => this.handleHover(false)}
           >
             <slot name="trigger" slot="trigger"></slot>
