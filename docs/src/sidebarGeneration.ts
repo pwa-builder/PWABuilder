@@ -64,7 +64,7 @@ function constructMenuItemLineString(article: Article): string {
 }
 
 function constructHeaderLineString(childMenu: ChildMenu): string {
-  return `\n\n\- **${childMenu.header}**`;
+  return `\n\n- <h2>${childMenu.header}</h2> \n`;
 }
 
 function constructTopLevelNavString(activeHeader: string): string {
