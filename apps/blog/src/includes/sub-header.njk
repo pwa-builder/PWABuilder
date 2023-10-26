@@ -1,25 +1,49 @@
-<section class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat min-h-64 mb-8">
+<section class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat">
   <div class="container mx-auto px-8">
-    <div class="w-full flex justify-left items-center pt-2">
+    <div class="w-full flex justify-left items-center">
         {% if isPost or isDocumentation %}
-          {% if isPost %}
-            <a class="inline-flex items-center subheaderA" href="{{ backUrl }}" aria-label="Link back to Blog Home">
+          {% if isDocumentation %}
+            <a class="inline-flex items-center subheaderA my-2" href="{{ backUrl }}" aria-label="Link back to Documentation Home">
             <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
-          {% else %}
-            <a class="inline-flex items-center subheaderA" href="{{ backUrl }}" aria-label="Link back to Documentation Home">
-              <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
           {% endif %}
         {% endif %}
     </div>
     {{ page.data }}
     
       {% if '/post' in page.url %}
-        <div class="flex flex-col justify-center items-center">
-          <h1 class="mb-2">
+        <div class="flex flex-col justify-center items-center mb-8">
+          <h1 class="mt-8">
             {{ title }}</h1>
           {% if excerpt %}
-            <p class="max-w-lg">{{ excerpt }}</p>
+            <div class="my-2 max-w-2xl">{{ excerpt }}</div>
           {% endif %}
+          <div class="w-full flex justify-between items-center xl:px-24 pt-8">
+            <div>
+              {% if date %}
+                {% if updatedDate and(date | string) !== (updatedDate | string) %}
+                  <div class="text-sm">
+                    Last updated on<span datetime="{{ date }}">{{ updatedDate | dateDisplay }}</span>
+                    <span datetime="{{ date }}">{{ date | dateDisplay }}</span>
+                  </div>
+                {% else %}
+                  <div class="text-sm">
+                    <span datetime="{{ date }}">{{ date | dateDisplay }}</span>
+                  </div>
+                {% endif %}
+              {% endif %}
+              {% if author %}
+                <div class="mt-2">
+                  <span class="mr-2"><a class="post-author" href="{{author.twitter}}" target="_blank">{{author.name}}</a></span> | <span class="ml-2">{{author.title}}</span>
+                </div>
+              {% endif %}
+            </div>
+            <button class="share text-xs px-6 py-1 shadow rounded-full ml-auto flex justify-between content-center">
+              <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.91643 1.35944H5.61061C5.93274 1.35944 6.19389 1.62059 6.19389 1.94273C6.19389 2.23803 5.97442 2.48207 5.68978 2.52069L5.61061 2.52602H2.91643C1.99028 2.52602 1.23218 3.24553 1.17061 4.15607L1.16657 4.27587V11.6641C1.16657 12.5903 1.88608 13.3484 2.79662 13.41L2.91643 13.414H10.3053C11.2315 13.414 11.9896 12.6945 12.0511 11.784L12.0551 11.6641V11.2771C12.0551 10.9549 12.3163 10.6938 12.6384 10.6938C12.9337 10.6938 13.1778 10.9132 13.2164 11.1979L13.2217 11.2771V11.6641C13.2217 13.2229 11.9989 14.496 10.4602 14.5765L10.3053 14.5806H2.91643C1.35769 14.5806 0.0845611 13.3578 0.00404423 11.8191L0 11.6641V4.27587C0 2.71713 1.22285 1.444 2.76154 1.36349L2.91643 1.35944H5.61061H2.91643ZM8.94685 3.31918V1.16501C8.94685 0.679743 9.49654 0.418369 9.87 0.690452L9.93385 0.744068L14.5959 5.21593C14.8135 5.42463 14.8334 5.75984 14.6554 5.99157L14.596 6.05774L9.93392 10.5311C9.5838 10.8671 9.01459 10.6513 8.95237 10.1934L8.94685 10.1102V7.99068L8.6797 8.01409C6.81342 8.20875 5.02464 9.04938 3.30214 10.55C2.89842 10.9017 2.27381 10.5691 2.34021 10.0379C2.85723 5.90075 5.02073 3.62049 8.714 3.33445L8.94685 3.31918V1.16501V3.31918ZM10.1134 2.53273V3.88702C10.1134 4.20915 9.85226 4.4703 9.53013 4.4703C6.51773 4.4703 4.65071 5.77385 3.84403 8.4811L3.78255 8.69777L4.05645 8.51361C5.79578 7.37675 7.62294 6.80342 9.53013 6.80342C9.82543 6.80342 10.0695 7.02289 10.1081 7.30761L10.1134 7.3867V8.74218L13.3496 5.63694L10.1134 2.53273Z" fill="#4F3FB6"/>
+              </svg>
+              <span class="mx-2">Share</span>
+            </button>
+          </div>
         </div>
       {% elif '/tags' in page.url %}
         <div class="flex flex-col justify-center items-center">
@@ -50,11 +74,11 @@
 
 <style>
   .sub-header {
-    background-image: url("/sub-header-background.png");
+    background: linear-gradient(93.94deg, #FFF8FE 11.81%, rgba(233, 244, 255, 0.515625) 55.82%, #F0FFF8 102.66%);
   }
 
-  .min-h-64 {
-    min-height: 1em;
+  a.post-author{
+    text-decoration: none;
   }
 
   a.activeTab::after {    
@@ -80,6 +104,15 @@
 
   .subheaderUl li {
     list-style: none;
+  }
+
+  button.share {
+    border: 1px solid rgba(79, 63, 182, 1);
+    color: rgba(79, 63, 182, 1);
+  }
+
+  button.share svg {
+    display: inline;
   }
 
   @media (max-width: 800px) {

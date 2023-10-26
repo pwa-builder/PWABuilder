@@ -97,7 +97,8 @@ li > a {
 }
 
 a {
-  color:#342a6a;
+  color:rgba(79, 63, 182, 1);
+  ;
   text-decoration: underline;
 }
 
