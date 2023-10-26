@@ -1,7 +1,4 @@
-<section
-  class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat min-h-64 mb-8"
-  
->
+<section class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat min-h-64 mb-8">
   <div class="container mx-auto px-8">
     <div class="w-full flex justify-left items-center pt-2">
         {% if isPost or isDocumentation %}
@@ -45,14 +42,6 @@
               PWA Builder Demos</h1>
           <p class="max-w-lg">
             Learn from the great work of others
-          </p>
-        </div>
-      {% else  %}
-        <div>
-          <h1 class="mb-2">
-            {{ site.name }}</h1>
-          <p class="max-w-lg">
-            {{ site.excerpt }}
           </p>
         </div>
       {% endif %}

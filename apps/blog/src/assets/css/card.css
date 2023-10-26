@@ -1,10 +1,23 @@
 .featured-posts .featured-post:first-child {
-  grid-column: span 2 / span 2;
+  grid-column: span 3 / span 3;
+}
+
+a.featured-posts {
+  text-decoration: none;
 }
 
 .doc-link {
   color: #342a6a;
   text-decoration: underline;
+}
+
+.post-link {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
 .doc-link p {
