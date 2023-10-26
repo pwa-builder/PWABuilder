@@ -175,7 +175,7 @@ export class AppReport extends LitElement {
     "file_handlers": "Be a default handler for certain filetypes with file_handlers",
     "handle_links": "Open links as an app with handle_links",
     "protocol_handlers": "Create a custom protocol_handler",
-    "edge_side_panel": "Increase reach by partcipating in the edge_side_panel",
+    "edge_side_panel": "Increase reach by participating in the edge_side_panel",
     "widgets": "Increase reach with widgets"
   }
 
