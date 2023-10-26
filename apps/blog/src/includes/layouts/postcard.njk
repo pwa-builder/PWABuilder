@@ -67,19 +67,21 @@
 {% macro card(post) %}
   
     <div class="w-full h-full featured-post relative shadow rounded p-2">
-      <span
-          class="text-primary-font top-0 left-0 p-2"
+      <div
+          class="text-primary-font text-sm p-1"
           datetime="{{ post.data.date }}"
         >
         {{ post.data.date | dateDisplay }}
-      </span>
-      <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
-      <div class="p-3 flex flex-col">
-        <h3 class="mt-1 mb-4">
-          {{ post.data.title }}
-        </h3>
-        <p class="opacity-75 mb-2">{{ post.data.excerpt }}</p>
-        <a class="post-link" href="{{ post.url | url }}"></a>
+      </div>
+      <div class="postcard-main">
+        <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
+        <div class="postcard-text p-3 flex flex-col">
+          <h3 class="my-1">
+            {{ post.data.title }}
+          </h3>
+          <div class="text-sm mt-1">{{ post.data.excerpt }}</div>
+          <a class="post-link" href="{{ post.url | url }}"></a>
+        </div>
       </div>
     </div>
 

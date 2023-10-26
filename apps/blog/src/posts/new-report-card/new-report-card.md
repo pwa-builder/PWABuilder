@@ -7,7 +7,7 @@ date: 2022-10-06
 updatedDate: 2022-10-06
 trending: true
 featured: true
-image: posts/new-report-card/new-report-card.png
+image: posts/new-report-card/hero.png
 isPost: true
 backUrl: '/'
 author:

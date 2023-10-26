@@ -1,5 +1,17 @@
+.featured-post {
+  border: 1px #F2F2F2 solid;
+}
+
 .featured-posts .featured-post:first-child {
   grid-column: span 3 / span 3;
+}
+
+.featured-posts .featured-post:first-child .postcard-main {
+  display: flex;
+}
+
+.featured-posts .featured-post:first-child .postcard-main .postcard-text {
+  margin: 0 1em;
 }
 
 a.featured-posts {

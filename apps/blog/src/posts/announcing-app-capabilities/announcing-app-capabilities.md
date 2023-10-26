@@ -7,7 +7,7 @@ date: 2023-10-16
 updatedDate: 2023-10-16
 trending: true
 featured: true
-image: posts/announcing-app-capabilities/ac-cards.png
+image: posts/announcing-app-capabilities/hero.png
 isPost: true
 backUrl: '/'
 author:
