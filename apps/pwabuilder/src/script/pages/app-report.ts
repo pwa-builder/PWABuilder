@@ -87,7 +87,6 @@ export class AppReport extends LitElement {
   @state() canPackageList: boolean[] = [false, false, false];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
-  @state() retestPath: string = "/assets/new/retest-black.svg";
 
   @state() swSelectorOpen: boolean = false;
 
@@ -143,6 +142,8 @@ export class AppReport extends LitElement {
   @state() openTooltips: SlDropdown[] = [];
   @state() stopShowingNotificationTooltip: boolean = false;
   @state() closeOpenTooltips: boolean = true;
+
+  @state() darkMode: boolean = false;
 
   private possible_messages = [
     {"messages": {
@@ -1841,6 +1842,12 @@ export class AppReport extends LitElement {
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+
+
+    // understand the users color preference
+    const result = window.matchMedia('(prefers-color-scheme: dark)');
+    this.darkMode = result.matches; // TRUE if user prefers dark mode
+
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -2914,7 +2921,7 @@ export class AppReport extends LitElement {
                       <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
 
                       <img
-                        src=${this.retestPath}
+                        src=${`/assets/new/retest-icon${this.darkMode ? "_light" : ""}.svg`}
                         alt="retest site"
                       />
                     </button>
@@ -2957,18 +2964,21 @@ export class AppReport extends LitElement {
                 <p>Available stores:</p>
                 <img
                   title="Windows"
-                  src="/assets/windows_icon.svg"
+                  src=${`/assets/windows_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="Windows"
                 />
-                <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+                <img 
+                  title="iOS" 
+                  src=${`/assets/apple_icon${this.darkMode ? "_light" : ""}.svg`}
+                  alt="iOS" />
                 <img
                   title="Android"
-                  src="/assets/android_icon_full.svg"
+                  src=${`/assets/android_icon_full${this.darkMode ? "_light" : ""}.svg`}
                   alt="Android"
                 />
                 <img
                   title="Meta Quest"
-                  src="/assets/meta_icon.svg"
+                  src=${`/assets/meta_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="Meta Quest"
                 />
               </div>
