@@ -157,7 +157,7 @@ export class TodoItem extends LitElement {
     } else {
       this.clickable = false;
     }
-    
+
     return {iwrapper: true, clickable: this.clickable}
   }
 
@@ -185,6 +185,7 @@ export class TodoItem extends LitElement {
   }
 
   triggerHoverState(e: CustomEvent){
+
     let element = this.shadowRoot!.querySelector(".iwrapper");
     if(e.detail.entering){
       element?.classList.add("active");
