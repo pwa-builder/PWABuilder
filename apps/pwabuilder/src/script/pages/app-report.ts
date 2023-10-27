@@ -176,7 +176,7 @@ export class AppReport extends LitElement {
     "file_handlers": "Be a default handler for certain filetypes with file_handlers",
     "handle_links": "Open links as an app with handle_links",
     "protocol_handlers": "Create a custom protocol_handler",
-    "edge_side_panel": "Increase reach by partcipating in the edge_side_panel",
+    "edge_side_panel": "Increase reach by participating in the edge_side_panel",
     "widgets": "Increase reach with widgets"
   }
 
@@ -497,6 +497,10 @@ export class AppReport extends LitElement {
 
         #card-info p {
           margin: 0;
+        }
+
+        .visually-hidden {
+          font-size: 0;
         }
 
         #site-url {
@@ -2887,7 +2891,10 @@ export class AppReport extends LitElement {
                     ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                   </div>
                   <div id="card-info" class="flex-row">
-                    <h1 id="site-name">${this.appCard.siteName}</h1>
+                    <h1 id="site-name">
+                      ${this.appCard.siteName}
+                      <span class="visually-hidden" aria-live="polite">Report card page for ${this.appCard.siteName}</span>
+                    </h1>
                     <p id="site-url">${this.appCard.siteUrl}</p>
                     <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
                   </div>
