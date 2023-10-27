@@ -1649,7 +1649,7 @@ export class AppReport extends LitElement {
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
           }
-          
+
           #sw-actions {
             width: 100%;
           }
@@ -2823,7 +2823,15 @@ export class AppReport extends LitElement {
     }
   }
 
-  handleShowingTooltip(e: CustomEvent){
+  handleShowingTooltip(e: CustomEvent, origin: string, field: string){
+    // general counter
+    recordPWABuilderProcessStep(`${origin}.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+
+    field = field.split(" ").join("_");
+
+    //specific field counter
+    recordPWABuilderProcessStep(`${origin}.${field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+
     if(e.detail.entering){
       if(this.openTooltips.length > 0){
         this.openTooltips[0].hide();
@@ -3041,7 +3049,7 @@ export class AppReport extends LitElement {
                         .displayString=${todo.displayString}
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field)}
                       >
 
                       </todo-item>`
@@ -3282,7 +3290,7 @@ export class AppReport extends LitElement {
                   <div class="icons-holder sw">
                     ${this.serviceWorkerResults.map((result: any) =>
                       html`
-                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", result.member)}>
                           <sw-info-card .field=${result.member}>
                             <div class="circle-icon" tabindex="0" slot="trigger">
                               <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
@@ -3359,7 +3367,7 @@ export class AppReport extends LitElement {
                 <div class="icons-holder">
                   ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
                     html`
-                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", result.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
                         <manifest-info-card .field=${result.member} .placement=${"bottom"}>
                           <div class="circle-icon" tabindex="0" slot="trigger">
                             <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
