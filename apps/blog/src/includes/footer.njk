@@ -3,19 +3,19 @@
     <div class="">
       <h2 class="text-white my-4">Keep reading</h2>
       <div class="w-full lg:grid lg:grid-cols-3 gap-3">
-        <div class="bg-white rounded">
+        <div class="bg-white rounded mb-2">
           {%- set next1Post = collections['postsWithoutDrafts'] | getPreviousCollectionItem(page) %}
           {%- if next1Post %}
             {{ cardLayouts.card(next1Post)}}
           {% endif %}
         </div>
-        <div class="bg-white rounded">
+        <div class="bg-white rounded mb-2">
           {%- set next2Post = collections['postsWithoutDrafts'] | getPreviousCollectionItem(next1Post) %}
           {%- if next2Post %}
             {{ cardLayouts.card(next2Post)}}
           {% endif %}
         </div>
-        <div class="bg-white rounded">
+        <div class="bg-white rounded mb-2">
           {%- set next3Post = collections['postsWithoutDrafts'] | getPreviousCollectionItem(next2Post) %}
           {%- if next3Post %}
             {{ cardLayouts.card(next3Post)}}

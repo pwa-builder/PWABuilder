@@ -1,5 +1,5 @@
 <section class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat">
-  <div class="container mx-auto px-8">
+  <div class="container mx-auto px-8 xl:px-12">
     <div class="w-full flex justify-left items-center">
         {% if isPost or isDocumentation %}
           {% if isDocumentation %}
@@ -12,12 +12,12 @@
     
       {% if '/post' in page.url %}
         <div class="flex flex-col justify-center items-center mb-8">
-          <h1 class="mt-8 xl:px-24 text-center">
+          <h1 class="mt-8 text-center">
             {{ title }}</h1>
           {% if excerpt %}
             <div class="my-2 max-w-2xl text-center">{{ excerpt }}</div>
           {% endif %}
-          <div class="w-full flex justify-between items-center xl:px-24 pt-8">
+          <div class="w-full flex justify-between items-center">
             <div>
               {% if date %}
                 {% if updatedDate and(date | string) !== (updatedDate | string) %}
