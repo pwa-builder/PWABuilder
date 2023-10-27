@@ -81,7 +81,7 @@ To enable window controls overlay, set the value of `display_override` in your w
 
 ```json
 {
-    “display_override”: [“window-controls-overlay”],
+    "display_override": ["window-controls-overlay"],
     "display": "standalone"
 }
 ```
