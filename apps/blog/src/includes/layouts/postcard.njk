@@ -8,81 +8,22 @@
   </div>
 {% endmacro %}
 
-{% macro recommended(posts) %}
-  <div class="recommended-posts grid auto-cols-fr gap-3 my-8">
-    {% for post in posts %}
-      {% if not post.data.draft and post.data.featured %}
-        {{card(post)}}
-      {% endif %}
-    {% endfor %}
-  </div>
-{% endmacro %}
-
-{% macro trending(posts) %}
-  <div class="grid gap-3 my-8">
-    {% for post in posts %}
-      {% if not post.data.draft and post.data.trending %}
-        
-        <div class="mb-4">
-          <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
-          </span>
-          <h3 class="mt-1 mb-4">
-            {{ post.data.title }}
-          </h3>
-          <p class="mb-4 opacity-75">{{ post.data.description }}</p>
-          <a href="{{ post.url | url }}">
-            <p class="">Continue reading {{ post.data.title }}</p>
-          </a>
-        </div>
-        
-      {% endif %}
-    {% endfor %}
-
-  </div>
-{% endmacro %}
-
-{% macro tag(posts) %}
-  <div class="grid gap-3 my-8">
-    {% for post in posts %}
-      {% if not post.data.draft %}
-        
-        <div class="mb-4">
-          <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
-          </span>
-          <h3 class="mt-1 mb-4">
-            {{ post.data.title }}
-          </h3>
-          <p class="mb-4 opacity-75">{{ post.data.description }}</p>
-          <a class="doc-link" href="{{ post.url | url }}">
-            <p class="">Continue reading {{ post.data.title }}</p>
-          </a>
-        </div>
-       
-      {% endif %}
-    {% endfor %}
-
-  </div>
-{% endmacro %}
-
 {% macro card(post) %}
-  
     <div class="w-full h-full featured-post relative shadow rounded p-2">
-      <div
-          class="text-primary-font text-sm p-1"
-          datetime="{{ post.data.date }}"
-        >
-        {{ post.data.date | dateDisplay }}
-      </div>
-      <div class="postcard-main">
-        <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
-        <div class="postcard-text p-3 flex flex-col">
-          <h3 class="my-1">
-            {{ post.data.title }}
-          </h3>
-          <div class="text-sm mt-1">{{ post.data.excerpt }}</div>
-          <a class="post-link" href="{{ post.url | url }}"></a>
+      <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
+      <div class="postcard-text p-3 flex flex-col">
+        <h3 class="my-1">
+          {{ post.data.title }}
+        </h3>
+        <div class="text-sm mt-1 mb-8">{{ post.data.excerpt }}</div>
+        <div
+            class="text-primary-font text-sm postcard-timestamp"
+            datetime="{{ post.data.date }}"
+          >
+          {{ post.data.date | dateDisplay }}
         </div>
       </div>
+      <a class="post-link" href="{{ post.url | url }}"></a>
     </div>
 
 {% endmacro %}

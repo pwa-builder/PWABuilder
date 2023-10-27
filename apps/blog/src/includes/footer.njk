@@ -1,20 +1,39 @@
-<footer class="w-full items-center justify-between mb-8" role="contentinfo">
-  {% include "categories.njk" %}
-  <div class="contentInfo flex px-8">
-    <div class="mr-12">
-      <p class="mb-3 text-xs">
-        &copy; PWA Builder was founded by Microsoft as a community guided, open
-              source project to help move PWA adoption forward.
-      </p>
-      <ul class="flex subheaderUlFoot">
-        <li class="mr-2">
-          <a class="text-xs subheaderFootU underline" href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank">Our Privacy Statement</a>
-        </li>
-        <li>
-          <a class="text-xs subheaderFootU underline" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" target="_blank">Terms of use</a>
-        </li>
-      </ul>
+<footer class="w-full xl:px-48 px-8" role="contentinfo">
+  {% if '/post' in page.url %}
+    <div class="">
+      <h2 class="text-white my-4">Keep reading</h2>
+      <div class="w-full lg:grid lg:grid-cols-3 gap-3">
+        <div class="bg-white rounded">
+          {%- set next1Post = collections['postsWithoutDrafts'] | getPreviousCollectionItem(page) %}
+          {%- if next1Post %}
+            {{ cardLayouts.card(next1Post)}}
+          {% endif %}
+        </div>
+        <div class="bg-white rounded">
+          {%- set next2Post = collections['postsWithoutDrafts'] | getPreviousCollectionItem(next1Post) %}
+          {%- if next2Post %}
+            {{ cardLayouts.card(next2Post)}}
+          {% endif %}
+        </div>
+        <div class="bg-white rounded">
+          {%- set next3Post = collections['postsWithoutDrafts'] | getPreviousCollectionItem(next2Post) %}
+          {%- if next3Post %}
+            {{ cardLayouts.card(next3Post)}}
+          {% endif %}
+        </div>
+      </div>
     </div>
+  {% endif %}
+
+  <div class="flex justify-between">
+    <ul class="flex subheaderUlFoot text-white">
+      <li class="mr-2">
+        <a class="text-xs subheaderFootU underline" href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank">Privacy Statement</a>
+      </li>
+      <li>
+        <a class="text-xs subheaderFootU underline" href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md" target="_blank">Terms of use</a>
+      </li>
+    </ul>
     <ul class="flex justify-center items-center subheaderUlFoot">
         <li class="mx-2 my-1">
         <a href="https://github.com/pwa-builder/PWABuilder" class="subheaderFoot" target="_blank">
@@ -36,13 +55,16 @@
 </footer>
 
 <style>
+  footer {
+    background: #292c3a;
+  }
   .subheaderFoot {
      text-decoration: none;
-     color: rgb(41, 44, 58);
+     color: #fff;
   }
 
   .subheaderFootU {
-     color: rgb(41, 44, 58);
+     color: #fff;
   }
 
   .subheaderUlFoot {

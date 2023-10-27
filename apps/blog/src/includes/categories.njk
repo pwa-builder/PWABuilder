@@ -1,31 +1,64 @@
-<section class="bg-secondary text-white my-4 py-4">
-  <div class="container mx-auto px-8">
-    <h2 class="text-center lg:text-left mb-4">Categories</h2>
-
-    <ul class="grid grid-cols-2 lg:grid-cols-5 gap-1 justify-items-center lg:justify-items-start subheaderUlCat">
-      {% for tag in collections.tagList | filterTagList %}
-        <li class="px-2 py-4">
-          {% set tagUrl %}/tags/{{ tag | slug }}/{% endset %}
-          <a href="{{ tagUrl | url }}" class="capitalize subheaderCat">{{ tag }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
+<section class="relative">
+  <button class="left font-bold" id="slideLeft" type="button"><</button>
+  <button class="right font-bold" id="slideRight" type="button">></button>
+  {% if collections.tagList.length %}
+  <ul id="container" class="flex overflow-x-hidden overflow-y-auto mx-6 p-0">
+    {% for tag in collections.tagList | filterTagList %}
+    <li class="flex-grow-0 flex-shrink-0">
+      <div class="px-2 py-1 mx-1 tag-pill">
+        {% set tagUrl %}/tags/{{ tag | slug }}/{% endset %}
+        <a href="{{ tagUrl | url }}" class="capitalize relative text-sm">{{ tag }}</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
 
 </section>
 
 <style>
-  .subheaderCat {
-     text-decoration: none;
-     color: rgb(229, 231, 235);
+  ul {
+    scroll-behavior: smooth;
   }
 
-  .subheaderUlCat {
-    padding: 0;
+  button {
+    color: #4F3FB6;
+    position: absolute;
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 100%
+  }
+
+  button.left {
+    left: 0;
+  }
+
+  button.right {
+    right: 0;
+  }
+
+  li {
     list-style: none;
   }
 
-  .subheaderUlCat li {
-    list-style: none;
+  .tag-pill {
+    background-color: #F1F2FA;
+    border-radius: 12px;
+  }
+
+  .tag-pill a {
+    text-decoration: none;
   }
 </style>
+
+<script>
+  const buttonRight = document.getElementById('slideRight');
+  const buttonLeft = document.getElementById('slideLeft');
+
+  buttonRight.onclick = function () {
+    document.getElementById('container').scrollLeft += 300;
+  };
+  buttonLeft.onclick = function () {
+    document.getElementById('container').scrollLeft -= 300;
+  };
+</script>

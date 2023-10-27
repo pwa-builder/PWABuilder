@@ -1,55 +1,18 @@
 ---
 permalink: "{% if path %}{{ path | slug }}{% else %}{{'/posts/'}}{{ title | slug }}{% endif %}/index.html"
 ---
+{% import "layouts/postcard.njk" as cardLayouts %}
 
 {% extends 'layouts/basepost.njk' %}
 {% block body %}
   <div class="flex flex-col justify-center items-start">
-    <div class="mb-8">
+    <div class="mb-4">
       {{ content | safe }}
     </div>
 
-    <div class="flex items-center mb-8">
-      {% if tags %}
-        <div>
-          {% for tag in tags %}
-            {%- if tag !== "post" -%}
-              <a
-      class="tag {{ tag | replace('.', '') }} mr-2 font-light"
-      href="{{ site.baseUrl }}tags/{{ tag | slug }}"
-      >{{ tag }}</a
-    >
-            {%- endif -%}
-          {% endfor %}
-        </div>
-      {% endif %}
-      <button class="share bg-primary capitalize px-5 py-1 shadow rounded-full font-bold">Share</button>
+    <div class="mb-8">
+      <span class="text-[#808080] mr-4 text-sm">Share this article on your social media!</span>
+      {% include 'share-button.njk' %}
     </div>
-    <hr class="opacity-10">
-    <div class="w-full flex items-center justify-between">
-      <div>
-        {%- set nextPost = collections['postsWithoutDrafts'] |
-  getNextCollectionItem(page) %}
-        {%- if nextPost %}
-          <p class="uppercase text-xs mt-6">Next</p>
-          <p class="font-bold mb-2">
-            <a href="{{ nextPost.url | url }}">{{ nextPost.data.title }}</a>
-          </p>
-        {% endif %}
-      </div>
-      <div>
-        {%- set previousPost = collections['postsWithoutDrafts'] |
-  getPreviousCollectionItem(page) %}
-        {%- if previousPost %}
-          <p class="uppercase text-xs mt-6">Previous</p>
-          <p class="font-bold">
-            <a href="{{ previousPost.url | url }}">{{ previousPost.data.title }}</a>
-          </p>
-        {% endif %}
-      </div>
-    </div>
-
-    <a class="bg-secondary text-secondary-font rounded-full px-8 py-2 mx-auto" href="{{ site.baseUrl }}">Back to Blog Home</a>
   </div>
-
 {% endblock %}
