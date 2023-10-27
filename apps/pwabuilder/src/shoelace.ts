@@ -26,6 +26,7 @@ import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group';
 import '@shoelace-style/shoelace/dist/components/radio/radio';
 import '@shoelace-style/shoelace/dist/components/tag/tag.js';
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
 // setting basepath so icons can be resolved
 // see package.json where icons are copied to public folder during npm i

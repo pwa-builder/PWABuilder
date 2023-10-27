@@ -41,6 +41,8 @@ export async function findWorker(): Promise<any | undefined> {
             } else {
                 const worker = await vscode.workspace.findFiles("**/sw.js");
 
+                // to-do: Figure out cleaner way to do the below
+
                 if (worker.length > 0) {
                     existingWorker = worker[0];
                 } else {
@@ -56,6 +58,15 @@ export async function findWorker(): Promise<any | undefined> {
                         );
                         if (workerTryThree.length > 0) {
                             existingWorker = workerTryThree[0];
+                        }
+                        else {
+                            // angular sw detection
+                            const workerTryFour = await vscode.workspace.findFiles(
+                                "**/ngsw-worker.js"
+                            );
+                            if (workerTryFour.length > 0) {
+                                existingWorker = workerTryFour[0];
+                            }
                         }
                     }
                 }

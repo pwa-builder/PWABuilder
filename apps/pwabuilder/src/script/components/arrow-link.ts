@@ -23,6 +23,7 @@ export class ArrowLink extends LitElement {
       }
 
       .arrow_anchor p {
+        margin: 0;
         border-bottom: 1px solid #4f3fb6;
       }
 

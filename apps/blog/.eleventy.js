@@ -32,6 +32,7 @@ module.exports = (config) => {
   config.addPassthroughCopy({ public: "./" })
   config.addPassthroughCopy("src/**/*.jpg")
   config.addPassthroughCopy("src/**/*.png")
+  config.addPassthroughCopy("src/**/*.gif")
 
   config.setBrowserSyncConfig({
     files: ["dist/**/*"],

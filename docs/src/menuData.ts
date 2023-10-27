@@ -25,8 +25,8 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: true
         },
         {
-          pageTitle: "Adding Native Features to Your PWA",
-          menuTitle: "Adding Native Features",
+          pageTitle: "Adding App Capabilities to Your PWA",
+          menuTitle: "Adding App Capabilities",
           path: "/home/native-features.md",
           includeOnHomePage: true
         },

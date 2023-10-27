@@ -98,6 +98,10 @@ export class WindowsForm extends AppPackageFormBase {
           color: rgba(0,0,0,.5);
         }
 
+        arrow-link {
+          margin: 10px 0;
+        }
+
         :host{
           --sl-focus-ring-width: 3px;
           --sl-input-focus-ring-color: #4f3fb670;
@@ -380,23 +384,6 @@ export class WindowsForm extends AppPackageFormBase {
             </div>
             <div class="form-group">
               ${this.renderFormInput({
-                label: 'Publisher display name',
-                tooltip: `The display name of your app's publisher. Gets this value from Windows Partner Center.`,
-                tooltipLink:
-                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
-                inputId: 'publisher-display-name-input',
-                required: true,
-                minLength: 3,
-                spellcheck: false,
-                validationErrorMessage:
-                  'Publisher display name must be at least 3 characters. Get this value from Windows Partner Center.',
-                placeholder: 'Contoso Inc',
-                inputHandler: (val: string) =>
-                  (this.packageOptions.publisher.displayName = val),
-              })}
-            </div>
-            <div class="form-group">
-              ${this.renderFormInput({
                 label: 'Publisher ID',
                 tooltip: `The ID of your app's publisher. Get this value from Windows Partner Center.`,
                 tooltipLink:
@@ -411,6 +398,23 @@ export class WindowsForm extends AppPackageFormBase {
                 minLength: 4,
                 inputHandler: (val: string) =>
                   (this.packageOptions.publisher.commonName = val),
+              })}
+            </div>
+            <div class="form-group">
+              ${this.renderFormInput({
+                label: 'Publisher display name',
+                tooltip: `The display name of your app's publisher. Gets this value from Windows Partner Center.`,
+                tooltipLink:
+                  'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
+                inputId: 'publisher-display-name-input',
+                required: true,
+                minLength: 3,
+                spellcheck: false,
+                validationErrorMessage:
+                  'Publisher display name must be at least 3 characters. Get this value from Windows Partner Center.',
+                placeholder: 'Contoso Inc',
+                inputHandler: (val: string) =>
+                  (this.packageOptions.publisher.displayName = val),
               })}
             </div>
             <div class="form-group" id="ai-hub">

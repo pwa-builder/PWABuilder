@@ -206,6 +206,9 @@ export default css`
   #next-steps h4 {
     color: #4f3fb6;
   }
+  arrow-link {
+    margin: 10px 0;
+  }
   .steps-list {
     padding: 0px 25px 0px 30px;
     margin-bottom: 0;

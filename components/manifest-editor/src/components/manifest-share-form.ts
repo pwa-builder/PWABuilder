@@ -187,6 +187,10 @@ export class ManifestShareForm extends LitElement {
         color: rgb(79, 63, 182);
       }
 
+      sl-button::part(base):focus {
+        outline: 1px solid black;
+      }
+
       .focus {
         color: #4f3fb6;
       }

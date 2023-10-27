@@ -214,7 +214,11 @@ export class AppIndex extends LitElement {
             action: async () => {
               await import('./script/pages/qualification/app-token.js');
             }
-          }
+          },
+          {
+            path: '(.*)', // Match any other route not defined above
+            redirect: '/', // Redirect to the home page or another valid route
+          },
         ] as Route[],
       },
     ]);

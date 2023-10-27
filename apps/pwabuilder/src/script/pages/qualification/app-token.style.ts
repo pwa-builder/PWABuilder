@@ -430,9 +430,10 @@ export default css`
 	font-size: 14px;
 }
 
-#words p:nth-child(1) {
+#words h1 {
 	font-size: 24px;
 	font-weight: 700;
+	margin: 0;
 }
 #words p:nth-child(2) {
 	width: 55%;

@@ -164,7 +164,7 @@ It has three values to choose from:
 
 `display_override` is similar to the `display` member, but allows you to select a fallback order for different display modes.
 
-In addition to the four display values above, `display_override` can also take the value `window-controls-overlay`. `window-controls-overlay` is a desktop-only display mode and adds a native-style overlay to the top of your application.
+In addition to the four display values above, `display_override` can also take the value `window-controls-overlay`. `window-controls-overlay` is a desktop-only display mode and adds a native-style overlay to the top of your application. 
 
 ```json
 "display_override": [
@@ -173,6 +173,8 @@ In addition to the four display values above, `display_override` can also take t
   "browser"
 ]
 ```
+
+!> You can learn more about how to implement `window-controls-overlay` in the [Adding App Capabilities](/home/native-features?id=window-controls-overlay) documentation.
 
 ## Platform
 
@@ -242,7 +244,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 ]
 ```
 
-!> You can learn more about Shortcuts in the [Adding Native Features](/home/native-features?id=shortcuts) documentation.
+!> You can learn more about Shortcuts in the [Adding App Capabilities](/home/-features?id=shortcuts) documentation.
 
 ### protocol_handlers: `Array`
 
@@ -397,7 +399,7 @@ The `share_target` member is an object which can contain the following members:
   }
 ```
 
-!> You can learn more about using the Web Share API in the [Adding Native Features](/home/native-features?id=web-share-api) documentation.
+!> You can learn more about using the Web Share API in the [Adding App Capabilities](/home/native-features?id=web-share-api) documentation.
 
 ## Handlers
 

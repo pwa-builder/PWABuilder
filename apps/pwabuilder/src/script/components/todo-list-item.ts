@@ -9,9 +9,10 @@ import {
   xLargeBreakPoint,
   xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
-import { manifest_fields } from '@pwabuilder/manifest-information';
+import { manifest_fields, service_worker_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
+import './sw-info-card'
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -24,6 +25,8 @@ export class TodoItem extends LitElement {
   @state() clickable: boolean = false;
   @state() isOpen: boolean = false;
 
+  @state() darkMode: boolean = false;
+
   static get styles() {
     return [
       css`
@@ -33,7 +36,7 @@ export class TodoItem extends LitElement {
         align-items: center;
         justify-content: space-between;
         font-size: 16px;
-        background-color: #F1F2FA;
+        background-color: #f1f1f1;
         border-radius: var(--card-border-radius);
         padding: .5em;
         margin-bottom: 10px;
@@ -113,6 +116,17 @@ export class TodoItem extends LitElement {
         width: 16px;
       }
 
+      .right {
+        background-color: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .right:hover {
+        cursor: pointer;
+      }
 
       /* < 480px */
       ${smallBreakPoint(css`
@@ -138,20 +152,33 @@ export class TodoItem extends LitElement {
     super();
   }
 
+  connectedCallback(){
+    super.connectedCallback();
+
+    // understand the users color preference
+    const result = window.matchMedia('(prefers-color-scheme: dark)');
+    this.darkMode = result.matches; // TRUE if user prefers dark mode
+  }
+
   decideClasses(){
 
-    if(this.status === "retest" || this.field.startsWith("Open")){
+    if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field] || service_worker_fields[this.field]){
       this.clickable = true;
     } else {
       this.clickable = false;
     }
-    
+
     return {iwrapper: true, clickable: this.clickable}
   }
 
   bubbleEvent(){
     if(manifest_fields[this.field]){
       let tooltip = (this.shadowRoot!.querySelector('manifest-info-card') as any);
+      tooltip.handleHover(!this.isOpen);
+    }
+
+    if(service_worker_fields[this.field]){
+      let tooltip = (this.shadowRoot!.querySelector('sw-info-card') as any);
       tooltip.handleHover(!this.isOpen);
     }
 
@@ -167,19 +194,8 @@ export class TodoItem extends LitElement {
     this.dispatchEvent(event);
   }
 
-  // allows for the retest items to be clicked
-  decideClickable(){
-    let decision;
-    if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field]){
-      decision = true;
-    } // else if(sw_fields[field]){}
-    else {
-      decision = false;
-    }
-    return {iwrapper: true, clickable: decision}
-  }
-
   triggerHoverState(e: CustomEvent){
+
     let element = this.shadowRoot!.querySelector(".iwrapper");
     if(e.detail.entering){
       element?.classList.add("active");
@@ -196,9 +212,11 @@ export class TodoItem extends LitElement {
       case "required":
       case "missing":
         return html`<img src=${stop_src} alt="yield result icon"/>`
+      case "enhancement":
+        return html`<img src=${enhancement_src} alt="app capability result icon"/>`
 
       case "retest":
-        return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`
+        return html`<img src=${this.darkMode ? retest_src_light : retest_src} style="color: black" alt="retest site icon"/>`
     }
 
     return html`<img src=${yield_src} alt="yield result icon"/>`
@@ -215,9 +233,23 @@ export class TodoItem extends LitElement {
 
         ${manifest_fields[this.field] ?
           html`
-            <manifest-info-card .field=${this.field} @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}></manifest-info-card>
+            <manifest-info-card .field=${this.field} .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
+              <button slot="trigger" type="button" class="right">
+                <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
+              </button>
+            </manifest-info-card>
           `
-          : html``}
+          : null}
+
+        ${service_worker_fields[this.field] ?
+          html`
+            <sw-info-card .field=${this.field} .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
+              <button slot="trigger" type="button" class="right">
+                <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
+              </button>
+            </sw-info-card>
+          `
+          : null}
       </div>
     `;
   }
@@ -225,4 +257,6 @@ export class TodoItem extends LitElement {
 
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
-const retest_src = "/assets/new/retest-black.svg";
+const enhancement_src = "/assets/new/enhancement.svg";
+const retest_src = "/assets/new/retest-icon.svg";
+const retest_src_light = "/assets/new/retest-icon_light.svg";
