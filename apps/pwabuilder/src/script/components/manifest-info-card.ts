@@ -104,7 +104,7 @@ export class ManifestInfoCard extends LitElement {
       }
 
       .mic-actions button:hover {
-        cursor: pointer; 
+        cursor: pointer;
       }
 
       /* < 480px */
@@ -127,15 +127,14 @@ export class ManifestInfoCard extends LitElement {
   }
 
   firstUpdated(){
-   
+
   }
 
   openME(){
     // general counter
-    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
+    recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     // specific counter
-    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
     let tab: string = manifest_fields[this.field].location!;
@@ -152,26 +151,17 @@ export class ManifestInfoCard extends LitElement {
 
   trackLearnMoreAnalytics(){
     // general counter
-    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
+    recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     //specific field counter
-    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
-  trackTooltipOpened(){
-    // general counter
-    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
 
-    //specific field counter
-    recordPWABuilderProcessStep(`app_caps_bubble_tooltip.${this.field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-  // opens tooltip 
+  // opens tooltip
   handleHover(entering: boolean){
-    this.trackTooltipOpened();
     this.currentlyHovering = entering;
     let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
-    let myEvent = new CustomEvent('trigger-hover', 
+    let myEvent = new CustomEvent('trigger-hover',
       {
         detail: {
           tooltip: tooltip,
@@ -185,7 +175,6 @@ export class ManifestInfoCard extends LitElement {
     } else {
       this.dispatchEvent(myEvent);
     }
-
   }
 
   closeTooltip(e: CustomEvent){
@@ -197,19 +186,18 @@ export class ManifestInfoCard extends LitElement {
   render() {
     return html`
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
-      ${this.placement !== "" ? 
+      ${this.placement !== "" ?
         html`
-          <sl-dropdown 
-            distance="10" 
-            placement="${this.placement}" 
+          <sl-dropdown
+            distance="10"
+            placement="${this.placement}"
             class="tooltip"
-            @sl-show=${() => this.trackTooltipOpened()}
             @sl-hide=${() => this.handleHover(false)}
           >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
             ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-            ${manifest_fields[this.field].image ? 
+            ${manifest_fields[this.field].image ?
 
               html`
                 <div class="image-section">
@@ -217,7 +205,7 @@ export class ManifestInfoCard extends LitElement {
                 </div>
               ` :
               html``
-              
+
             }
             <div class="mic-actions">
               <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
@@ -225,18 +213,17 @@ export class ManifestInfoCard extends LitElement {
             </div>
           </div>
         </sl-dropdown>
-        ` : 
+        ` :
         html`
-          <sl-dropdown 
-            distance="10" 
+          <sl-dropdown
+            distance="10"
             class="tooltip"
-            @sl-show=${() => this.trackTooltipOpened()}
             @sl-hide=${() => this.handleHover(false)}
           >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
             ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-            ${manifest_fields[this.field].image ? 
+            ${manifest_fields[this.field].image ?
 
               html`
                 <div class="image-section">
@@ -244,7 +231,7 @@ export class ManifestInfoCard extends LitElement {
                 </div>
               ` :
               html``
-              
+
             }
             <div class="mic-actions">
               <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
@@ -253,8 +240,8 @@ export class ManifestInfoCard extends LitElement {
           </div>
         </sl-dropdown>
         `}
-    
-          
+
+
     </div>
     `;
   }

@@ -59,7 +59,7 @@ With this new functionality, you can customize your PWA for Android:
 - **Package ID:** The Android identifier unique to your app
 - **App name:** The full name of your app. We prepopulate this with the [app name](https://w3c.github.io/manifest/#name-member) from your PWA’s app manifest.
 - **Launcher name**: The name of your app in the Android launcher. This is typically the same as app name, or a shortened version of it. We prepopulate this with [short_name](https://w3c.github.io/manifest/#short_name-member) from your PWA’s app manifest.
-- **App version**: This is the version string displayed to end users, e.g. “1.0.0.0”
+- **App version**: This is the version string displayed to end users, e.g. "1.0.0.0"
 - **App version code**: This is an integer used as a private, internal version of your app.
 - **Host, Start URL, Manifest URL**: The URLs used to launch your PWA in the Android app. We prepopulate these for you from your app manifest.
 - **Status bar color, Nav bar color**: The color of the Android status bar and navigation bar in your PWA. You can also hide these bars by setting Display to

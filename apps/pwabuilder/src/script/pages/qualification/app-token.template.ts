@@ -183,7 +183,7 @@ export function renderAppCard(
             />
           </div>
           <div id="words">
-            <p>${appCard.siteName}</p>
+            <h1>${appCard.siteName}</h1>
             <p>${appCard.siteUrl}</p>
             <p class="app-desc">${appCard.description}</p>
           </div>
@@ -315,7 +315,7 @@ export function renderAppCard(
           />
         </div>
         <div id="words">
-          <p>${appCard.siteName}</p>
+          <h1>${appCard.siteName}</h1>
           <p>${appCard.siteUrl}</p>
           <p class="app-desc">${appCard.description}</p>
         </div>

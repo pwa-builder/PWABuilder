@@ -87,7 +87,6 @@ export class AppReport extends LitElement {
   @state() canPackageList: boolean[] = [false, false, false];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
-  @state() retestPath: string = "/assets/new/retest-black.svg";
 
   @state() swSelectorOpen: boolean = false;
 
@@ -144,6 +143,8 @@ export class AppReport extends LitElement {
   @state() stopShowingNotificationTooltip: boolean = false;
   @state() closeOpenTooltips: boolean = true;
 
+  @state() darkMode: boolean = false;
+
   private possible_messages = [
     {"messages": {
                   "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
@@ -175,7 +176,7 @@ export class AppReport extends LitElement {
     "file_handlers": "Be a default handler for certain filetypes with file_handlers",
     "handle_links": "Open links as an app with handle_links",
     "protocol_handlers": "Create a custom protocol_handler",
-    "edge_side_panel": "Increase reach by partcipating in the edge_side_panel",
+    "edge_side_panel": "Increase reach by participating in the edge_side_panel",
     "widgets": "Increase reach with widgets"
   }
 
@@ -496,6 +497,10 @@ export class AppReport extends LitElement {
 
         #card-info p {
           margin: 0;
+        }
+
+        .visually-hidden {
+          font-size: 0;
         }
 
         #site-url {
@@ -1645,7 +1650,7 @@ export class AppReport extends LitElement {
           #app-card-desc, .skeleton-desc {
             grid-column: 1 / 3;
           }
-          
+
           #sw-actions {
             width: 100%;
           }
@@ -1841,6 +1846,12 @@ export class AppReport extends LitElement {
   // Responsible for setting running the initial tests
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+
+
+    // understand the users color preference
+    const result = window.matchMedia('(prefers-color-scheme: dark)');
+    this.darkMode = result.matches; // TRUE if user prefers dark mode
+
     const search = new URLSearchParams(location.search);
     const site = search.get('site');
     if (site) {
@@ -2819,7 +2830,15 @@ export class AppReport extends LitElement {
     }
   }
 
-  handleShowingTooltip(e: CustomEvent){
+  handleShowingTooltip(e: CustomEvent, origin: string, field: string){
+    // general counter
+    recordPWABuilderProcessStep(`${origin}.tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+
+    field = field.split(" ").join("_");
+
+    //specific field counter
+    recordPWABuilderProcessStep(`${origin}.${field}_tooltip_opened`, AnalyticsBehavior.ProcessCheckpoint);
+
     if(e.detail.entering){
       if(this.openTooltips.length > 0){
         this.openTooltips[0].hide();
@@ -2872,7 +2891,10 @@ export class AppReport extends LitElement {
                     ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
                   </div>
                   <div id="card-info" class="flex-row">
-                    <h1 id="site-name">${this.appCard.siteName}</h1>
+                    <h1 id="site-name">
+                      ${this.appCard.siteName}
+                      <span class="visually-hidden" aria-live="polite">Report card page for ${this.appCard.siteName}</span>
+                    </h1>
                     <p id="site-url">${this.appCard.siteUrl}</p>
                     <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
                   </div>
@@ -2914,7 +2936,7 @@ export class AppReport extends LitElement {
                       <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
 
                       <img
-                        src=${this.retestPath}
+                        src=${`/assets/new/retest-icon${this.darkMode ? "_light" : ""}.svg`}
                         alt="retest site"
                       />
                     </button>
@@ -2957,18 +2979,21 @@ export class AppReport extends LitElement {
                 <p>Available stores:</p>
                 <img
                   title="Windows"
-                  src="/assets/windows_icon.svg"
+                  src=${`/assets/windows_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="Windows"
                 />
-                <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
+                <img 
+                  title="iOS" 
+                  src=${`/assets/apple_icon${this.darkMode ? "_light" : ""}.svg`}
+                  alt="iOS" />
                 <img
                   title="Android"
-                  src="/assets/android_icon_full.svg"
+                  src=${`/assets/android_icon_full${this.darkMode ? "_light" : ""}.svg`}
                   alt="Android"
                 />
                 <img
                   title="Meta Quest"
-                  src="/assets/meta_icon.svg"
+                  src=${`/assets/meta_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="Meta Quest"
                 />
               </div>
@@ -3034,7 +3059,7 @@ export class AppReport extends LitElement {
                         .displayString=${todo.displayString}
                         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
                         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
+                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field)}
                       >
 
                       </todo-item>`
@@ -3275,7 +3300,7 @@ export class AppReport extends LitElement {
                   <div class="icons-holder sw">
                     ${this.serviceWorkerResults.map((result: any) =>
                       html`
-                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}>
+                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", result.member)}>
                           <sw-info-card .field=${result.member}>
                             <div class="circle-icon" tabindex="0" slot="trigger">
                               <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
@@ -3352,7 +3377,7 @@ export class AppReport extends LitElement {
                 <div class="icons-holder">
                   ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
                     html`
-                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", result.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
                         <manifest-info-card .field=${result.member} .placement=${"bottom"}>
                           <div class="circle-icon" tabindex="0" slot="trigger">
                             <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
