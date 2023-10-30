@@ -12,6 +12,7 @@ export class ManifestInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
   @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
   @state() currentlyHovering: boolean = false;
+  @state() currentlyOpen: boolean = false;
 
   static get styles() {
     return [
@@ -159,6 +160,7 @@ export class ManifestInfoCard extends LitElement {
 
   // opens tooltip
   handleHover(entering: boolean){
+    console.log("debug: jhererere")
     this.currentlyHovering = entering;
     let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
     let myEvent = new CustomEvent('trigger-hover',
@@ -177,6 +179,14 @@ export class ManifestInfoCard extends LitElement {
     }
   }
 
+  handleClick(){
+    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown);
+    if(!tooltip.open){
+      tooltip.show();
+    }
+    this.currentlyOpen = tooltip.open;
+  }
+
   closeTooltip(e: CustomEvent){
     if(!this.currentlyHovering){
       this.dispatchEvent(e);
@@ -185,14 +195,14 @@ export class ManifestInfoCard extends LitElement {
 
   render() {
     return html`
-    <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
+    <div class="mic-wrapper" @click=${() => this.handleClick()}>
       ${this.placement !== "" ?
         html`
           <sl-dropdown
             distance="10"
             placement="${this.placement}"
             class="tooltip"
-            @sl-hide=${() => this.handleHover(false)}
+            .stayOpenOnSelect=${true}
           >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
@@ -208,8 +218,10 @@ export class ManifestInfoCard extends LitElement {
 
             }
             <div class="mic-actions">
-              <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
-              ${manifest_fields[this.field].location ? html`<button type="button" @click=${() => this.openME()}>Edit in Manifest</button>` : html``}
+              <sl-menu>
+                <sl-menu-item><a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a></sl-menu-item>
+                ${manifest_fields[this.field].location ? html`<sl-menu-item><button type="button" @click=${() => this.openME()}>Edit in Manifest</button></sl-menu-item>` : html``}
+              </sl-menu>
             </div>
           </div>
         </sl-dropdown>
@@ -218,7 +230,7 @@ export class ManifestInfoCard extends LitElement {
           <sl-dropdown
             distance="10"
             class="tooltip"
-            @sl-hide=${() => this.handleHover(false)}
+            .stayOpenOnSelect=${true}
           >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
@@ -234,8 +246,10 @@ export class ManifestInfoCard extends LitElement {
 
             }
             <div class="mic-actions">
-              <a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
-              ${manifest_fields[this.field].location ? html`<button type="button" @click=${() => this.openME()}>Edit in Manifest</button>` : html``}
+              <sl-menu>
+                <sl-menu-item><a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a></sl-menu-item>
+                ${manifest_fields[this.field].location ? html`<sl-menu-item><button type="button" @click=${() => this.openME()}>Edit in Manifest</button></sl-menu-item>` : html``}
+              </sl-menu>
             </div>
           </div>
         </sl-dropdown>
