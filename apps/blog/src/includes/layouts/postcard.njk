@@ -1,5 +1,15 @@
 {% macro featured(posts) %}
-  <div class="featured-posts lg:grid lg:grid-cols-3 gap-3 my-8">
+  <div class="featured-posts lg:grid lg:grid-cols-3 gap-5 my-8">
+    {% for post in posts %}
+      {% if not post.data.draft and post.data.featured %}
+        {{card(post)}}
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro tag(posts) %}
+  <div class="tag-posts lg:grid lg:grid-cols-3 gap-5 my-8">
     {% for post in posts %}
       {% if not post.data.draft and post.data.featured %}
         {{card(post)}}
@@ -12,7 +22,7 @@
     <div class="w-full h-full featured-post relative shadow rounded p-2">
       <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
       <div class="postcard-text p-3 flex flex-col">
-        <h3 class="my-1">
+        <h3 class="my-1 leading-6">
           {{ post.data.title }}
         </h3>
         <div class="text-sm mt-1 mb-8">{{ post.data.excerpt }}</div>

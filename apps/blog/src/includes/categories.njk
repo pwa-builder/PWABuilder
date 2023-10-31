@@ -1,6 +1,10 @@
 <section class="relative">
-  <button class="left font-bold" id="slideLeft" type="button"><</button>
-  <button class="right font-bold" id="slideRight" type="button">></button>
+  <button class="left font-bold flex items-center" id="slideLeft" type="button">
+    <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+  </button>
+  <button class="right font-bold flex items-center" id="slideRight" type="button">
+    <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+  </button>
   {% if collections.tagList.length %}
   <ul id="container" class="flex overflow-x-hidden overflow-y-auto mx-6 p-0">
     {% for tag in collections.tagList | filterTagList %}
