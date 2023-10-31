@@ -29,7 +29,7 @@ Previously, a combination of Typescript and CSS was required to replicate transi
 
 Choosing when and where to use these transitions in a PWA is arguably more important than using them in the first place. Implementing a consistent and accessible set of transitions across a PWA can give your app that native feel but using transitions out of place can ruin the feel of the app all together. 
 
-This blog will cover some transition tricks that will help upgrade Progressive Web Apps and give it them more of a native feel.
+This blog will cover some transition tricks that will help upgrade [Progressive Web Apps](https://docs.pwabuilder.com/#/home/pwa-intro) and give it them more of a native feel.
 
 ## Technical Context
 This blog post uses the [PWA Starter](https://docs.pwabuilder.com/#/starter/quick-start) to implement view transitions. 
@@ -74,7 +74,7 @@ handlePageChange(page){
 
 ```
 
-The above code runs whenever a navigation item is clicked in the sample app.  If the browser is compatible with the View Transitions API, the view transition will start and then we will route to our next page. If the API is unavailable, we just route normally. Without any additional code, this alone completes the top-level transition. 
+The above code runs whenever a navigation item is clicked in the sample app.  If the browser is compatible with the [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API), the view transition will start and then we will route to our next page. If the API is unavailable, we just route normally. Without any additional code, this alone completes the top-level transition. 
 
 In order to alter the transition, the pseudo-selectors `::view-transition-old()` and `::view-transition-new()` can be used as follows:
 
@@ -87,7 +87,7 @@ In order to alter the transition, the pseudo-selectors `::view-transition-old()`
 
 ```
 
-This ensures the animation completes in a fourth of a second. Other traditional animation CSS, like transform or animation delay, can be used here to achieve all kinds of effects. In the snippet above, notice the “root” being selected, this is the animation name. If you are using one animation, root is the default target and will suffice. However, if there are multiple animations in use, it will be necessary to isolate each animation by giving them unique names. We will explore this more in the next section.
+This ensures the animation completes in a fourth of a second. Other [traditional animation CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/animation), like transform or animation delay, can be used here to achieve all kinds of effects. In the snippet above, notice the “root” being selected, this is the animation name. If you are using one animation, root is the default target and will suffice. However, if there are multiple animations in use, it will be necessary to isolate each animation by giving them unique names. We will explore this more in the next section.
 
 The result:
 
@@ -200,7 +200,7 @@ async handleAlbumClick(name: string, index: number){
 
 And to link the album cover on the old page to the album on the new page, give the `view-transition-name` of “container-transform” to the album art on the new page. 
 
-The track list on the album art details page did not persist from the previous page so it has nothing to do with page transitions. To give it movement still, using normal CSS animations the tracklist will reveal itself as the album art is sliding into place. A reminder that using the View Transitions API in tandem with the CSS animations that we are used to is completely acceptable. 
+The track list on the album art details page did not persist from the previous page so it has nothing to do with page transitions. To give it movement still, using [normal CSS animations](https://developer.mozilla.org/en-US/docs/Web/CSS/animation) the tracklist will reveal itself as the album art is sliding into place. A reminder that using the [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) in tandem with the CSS animations that we are used to is completely acceptable. 
 
 The result: 
 
