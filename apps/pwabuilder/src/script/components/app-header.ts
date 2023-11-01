@@ -90,41 +90,6 @@ export class AppHeader extends LitElement {
         color: black;
       }
 
-      .social-box {
-        display: flex;
-        background-color: white;
-        gap: 2em;
-        color: #777777;
-        font-size: 16px;
-        padding: 1em;
-        position: relative;
-        border-radius: 5px;
-      }
-
-      .arrow {
-        height: 15px;
-        width: 15px;
-        transform: rotate(45deg);
-        background-color: white;
-        position: absolute;
-        top: -5px;
-        right: 45px;
-      }
-
-      .col {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .col-header {
-        text-decoration: none;
-        margin: 0;
-        white-space: nowrap;
-        font-weight: bold;
-        color: #777777;
-      }
-
       .link {
         text-decoration: none;
       }
@@ -133,12 +98,51 @@ export class AppHeader extends LitElement {
         color: #777777;
       }
 
-      .link:hover {
-        cursor: pointer;
-        text-decoration: underline;
+      sl-menu {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        gap: 5px;
+        color: #777777;
+        font-size: 16px;
+        padding: 15px;
+        border-radius: 5px;
       }
 
-      
+      sl-menu-item::part(checked-icon), sl-menu-item::part(submenu-icon) {
+        display: none;
+      }
+
+      sl-menu-item::part(base){
+        color: var(--font-color);
+        text-decoration: none;
+        border-bottom: none;
+        font-size: 16px;
+        margin: 0;
+        padding: 5px;
+      }
+
+      sl-menu-item::part(base):hover + sl-menu-item::part(label) {
+        background-color: unset;
+        color: var(--primary-color);
+      }
+
+      sl-dropdown {
+        position: relative;
+        
+      }
+      sl-dropdown::part(base){
+        box-shadow: 0px 16px 24px 0px #00000026;
+      }
+
+      .col-header {
+        text-decoration: none;
+        margin: 0;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #777777;
+        padding: 0 5px;
+      }
 
       @media (prefers-color-scheme: light) {
         header {
@@ -244,23 +248,22 @@ export class AppHeader extends LitElement {
           >
             <span>Docs</span>
           </a>
-          <sl-dropdown distance="10">
+          <sl-dropdown distance="5">
             <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
-            <div class="social-box">
-              <div class="arrow" role="presentation"></div>
-              <div class="col">
-                <a 
-                class="col-header"
+            
+            
+            <sl-menu>
+                <p class="col-header">Check out our Blogs</p>
+                <sl-menu-item><a 
+                class="link"
                 href="https://blog.pwabuilder.com"
                 target="__blank"
                 aria-label="PWABuilder Blog, will open in separate tab"
                 rel="noopener"
                 @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                >Blogs</a>
-              </div>
-              <div class="col">
+                >PWABuilder Blogs</a></sl-menu-item>
                 <p class="col-header">Follow us on</p>
-                <a 
+                <sl-menu-item><a 
                   class="link" 
                   href="https://github.com/pwa-builder/PWABuilder"
                   target="__blank"
@@ -269,8 +272,8 @@ export class AppHeader extends LitElement {
                   @click=${() => recordPWABuilderProcessStep(`header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                   >
                   Github
-                </a>
-                <a 
+                </a></sl-menu-item>
+                <sl-menu-item><a 
                   class="link" 
                   href="https://twitter.com/pwabuilder"
                   target="__blank"
@@ -279,8 +282,8 @@ export class AppHeader extends LitElement {
                   @click=${() => recordPWABuilderProcessStep(`header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                   >
                   Twitter
-                </a>
-                <a 
+                </a></sl-menu-item>
+                <sl-menu-item><a 
                   class="link" 
                   href="https://aka.ms/pwabuilderdiscord"
                   target="__blank"
@@ -289,9 +292,8 @@ export class AppHeader extends LitElement {
                   @click=${() => recordPWABuilderProcessStep(`header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
                   >
                   Discord
-                </a>
-              </div>
-            </div>
+                </a></sl-menu-item>
+            </sl-menu>
           </sl-dropdown>
         </nav>
       </header>
