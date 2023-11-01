@@ -91,6 +91,8 @@ export class AppHeader extends LitElement {
       }
 
       .link {
+        display: block;
+        width: 100%;
         text-decoration: none;
       }
 
@@ -122,9 +124,21 @@ export class AppHeader extends LitElement {
         padding: 5px;
       }
 
-      sl-menu-item::part(base):hover + sl-menu-item::part(label) {
+      sl-menu-item::part(base):hover sl-menu-item::part(label) {
         background-color: unset;
         color: var(--primary-color);
+      }
+
+      sl-menu-item:focus-visible::part(base) {
+        background-color: var(--primary-color);
+      }
+
+      sl-menu-item:hover::part(base) {
+        background-color: var(--primary-color);
+      }
+
+      sl-menu-item:focus-visible .link, sl-menu-item:hover .link {
+        color: #ffffff;
       }
 
       sl-dropdown {

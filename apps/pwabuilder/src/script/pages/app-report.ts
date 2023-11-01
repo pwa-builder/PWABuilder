@@ -2851,9 +2851,6 @@ export class AppReport extends LitElement {
       e.detail.tooltip.hide();
       this.openTooltips = [];
     }
-
-    console.log("debug: here, app-report 2855")
-
   }
 
   closeTooltipOnScroll() {

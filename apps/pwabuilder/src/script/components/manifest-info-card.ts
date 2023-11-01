@@ -216,9 +216,9 @@ export class ManifestInfoCard extends LitElement {
         composed: true
       });
     if(!entering){
-      setTimeout(() => { this.closeTooltip(myEvent) }, 600)
+      setTimeout(() => { this.closeTooltip(myEvent) }, 500)
     } else {
-      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 250)
+      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 1000)
     }
   }
 
@@ -232,6 +232,7 @@ export class ManifestInfoCard extends LitElement {
 
   closeTooltip(e: CustomEvent){
     if(!this.currentlyHovering){
+      console.log("hit")
       clearTimeout(this.hoverTimer);
       this.dispatchEvent(e);
     }
