@@ -81,6 +81,8 @@ export class ManifestInfoCard extends LitElement {
 
       .learn-more {
         line-height: 17px;
+        display: block;
+        width: 100%;
       }
 
       .learn-more:visited, .learn-more:active, .learn-more:link {
@@ -256,7 +258,7 @@ export class ManifestInfoCard extends LitElement {
 
               html`
                 <div class="image-section">
-                    <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
+                  <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
                 </div>
               ` :
               null
@@ -265,7 +267,7 @@ export class ManifestInfoCard extends LitElement {
             
           </div>
           <sl-menu>
-            <sl-menu-item @click=${() => this.trackLearnMoreAnalytics()}>Learn More</sl-menu-item>
+            <sl-menu-item><a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a></sl-menu-item>         
             ${manifest_fields[this.field].location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
           </sl-menu>
         </sl-dropdown>
@@ -283,7 +285,7 @@ export class ManifestInfoCard extends LitElement {
 
               html`
                 <div class="image-section">
-                    <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
+                  <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
                 </div>
               ` :
               null
