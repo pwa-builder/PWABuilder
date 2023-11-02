@@ -4,6 +4,7 @@ import { getHeaders } from '../utils/platformTrackingHeaders';
 export type ReportAudit = {
 	audits: {
 		isOnHttps: { score: boolean },
+		noMixedContent: { score: boolean },
 		installableManifest: {
 		  score: boolean,
 		  details: { url?: string }
@@ -19,7 +20,8 @@ export type ReportAudit = {
 				detectedSignsOfLogic: boolean,
 				raw?: string[] }
 			}
-		  },
+		},
+		offlineSupport: { score: boolean },
 		appleTouchIcon: { score: boolean },
 		maskableIcon: { score: boolean },
 		splashScreen: { score: boolean },

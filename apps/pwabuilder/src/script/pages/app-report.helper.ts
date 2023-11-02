@@ -25,7 +25,7 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker']/*,installable?: boolean*/): Array<TestResult> {
+export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], offline?: ReportAudit['audits']['offlineSupport']/*,installable?: boolean*/): Array<TestResult> {
 	console.info('Testing Service Worker');
 
 	const swFeatures = serviceWorker?.details?.features || null;
@@ -54,6 +54,12 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 			infoString: swFeatures?.detectedPushRegistration ? 'Uses Push Notifications' : 'Does not use Push Notifications',
 			category: 'optional',
 			member: "push_notifications"
+	  },
+		{
+			result: offline?.score || false,
+			infoString: offline?.score ? 'Has offline support' : 'Does not have offline support',
+			category: 'optional',
+			member: "offline_support"
 	  },
 	];
 	// TODO: move installability from here

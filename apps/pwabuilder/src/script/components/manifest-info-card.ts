@@ -234,7 +234,6 @@ export class ManifestInfoCard extends LitElement {
 
   closeTooltip(e: CustomEvent){
     if(!this.currentlyHovering){
-      console.log("hit")
       clearTimeout(this.hoverTimer);
       this.dispatchEvent(e);
     }

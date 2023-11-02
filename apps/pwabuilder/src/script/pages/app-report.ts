@@ -1117,6 +1117,11 @@ export class AppReport extends LitElement {
           margin-top: auto;
         }
 
+        #sw-header arrow-link {
+          margin: 0;
+          margin-top: auto;
+        }
+
         /* Sec Card */
 
         /* Classes used widely */
@@ -1284,6 +1289,10 @@ export class AppReport extends LitElement {
         #sec-actions {
           row-gap: 1em;
           width: 66%;
+          margin-top: auto;
+        }
+        #sec-header arrow-link {
+          margin: 0;
           margin-top: auto;
         }
 
@@ -2079,6 +2088,7 @@ export class AppReport extends LitElement {
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
+            console.log("content:", result.content);
             findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content));
             this.allTodoItems.push(...findersResults.workerTodos);
             this.requestUpdate();
@@ -2135,7 +2145,7 @@ export class AppReport extends LitElement {
     }
 
     // TODO: move installability score to different place
-    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
+    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit!.audits!.offlineSupport))),
     this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
     this.filteredTodoItems = this.allTodoItems;
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
