@@ -641,6 +641,6 @@ export const service_worker_fields: {[field: string]: infoPanel} ={
   offline_support: {
     description: ["Offline support is whether or not your app has a solution for offline scenarios. This can include serving a 404 page or caching previous content."],
     required: false,
-    docs_link: "https://docs.pwabuilder.com/#/home/native-features?id=push-notifications"
+    docs_link: "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Tutorials/js13kGames/Offline_Service_workers"
   },
 }

@@ -81,7 +81,7 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	// TODO: Adjust this to use the new security audits
 	// Installable can't be not on https, probably mixed content due redirects.
 	const isOnHttps = audits?.isOnHttps?.score || audits?.installableManifest?.score || false;
-	const noMixedContent = audits?.isOnHttps?.score || false;
+	const noMixedContent = audits?.noMixedContent?.score || false;
 
 	const organizedResults = [
 	  {
