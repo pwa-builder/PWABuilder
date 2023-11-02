@@ -2317,10 +2317,9 @@ export class AppReport extends LitElement {
         }
         todos.push({"card": "security", "field": result.member, "fix": result.infoString, "status": "required"});
       }
-    })
+    });
 
-    this.canPackageList[2] = !this.showConfirmationModal;
-
+    this.canPackageList[2] = !this.showSecurityErrorBanner;
 
     this.secDataLoading = false;
 
