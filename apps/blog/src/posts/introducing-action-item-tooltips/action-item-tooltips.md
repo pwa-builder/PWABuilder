@@ -7,7 +7,7 @@ date: 2023-04-27
 updatedDate: 2023-04-27
 trending: true
 featured: true
-image: posts/introducing-action-item-tooltips/tooltips-cover-photo.png
+image: posts/introducing-action-item-tooltips/hero.png
 isPost: true
 backUrl: '/'
 author:

@@ -7,7 +7,7 @@ date: 2023-08-16
 updatedDate: 2023-08-16
 trending: true
 featured: true
-image: posts/free-dev-account/free-account-pic-3.jpg
+image: posts/free-dev-account/hero.png
 isPost: true
 backUrl: '/'
 author:

@@ -1,15 +1,12 @@
-<section
-  class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat min-h-64 mb-8"
-  
->
-  <div class="container mx-auto px-8">
-    <div class="w-full flex justify-left items-center pt-2">
+<section class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat">
+  <div class="container mx-auto px-8 xl:px-12">
+    <div class="w-full flex justify-left items-center">
         {% if isPost or isDocumentation %}
           {% if isPost %}
-            <a class="inline-flex items-center subheaderA" href="{{ backUrl }}" aria-label="Link back to Blog Home">
-            <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
+            <a class="inline-flex items-center subheaderA my-4" href="{{ backUrl }}" aria-label="Link back to Blog Home">
+            <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Blog home</a>
           {% else %}
-            <a class="inline-flex items-center subheaderA" href="{{ backUrl }}" aria-label="Link back to Documentation Home">
+            <a class="inline-flex items-center subheaderA my-4" href="{{ backUrl }}" aria-label="Link back to Documentation Home">
               <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
           {% endif %}
         {% endif %}
@@ -17,17 +14,38 @@
     {{ page.data }}
     
       {% if '/post' in page.url %}
-        <div class="flex flex-col justify-center items-center">
-          <h1 class="mb-2">
+        <div class="flex flex-col justify-center items-center mb-8">
+          <h1 class="mt-8 text-center">
             {{ title }}</h1>
           {% if excerpt %}
-            <p class="max-w-lg">{{ excerpt }}</p>
+            <div class="my-2 max-w-2xl text-center">{{ excerpt }}</div>
           {% endif %}
+          <div class="w-full flex justify-between items-center mt-2">
+            <div>
+              {% if date %}
+                {% if updatedDate and(date | string) !== (updatedDate | string) %}
+                  <div class="text-sm">
+                    Last updated on<span datetime="{{ date }}">{{ updatedDate | dateDisplay }}</span>
+                    <span datetime="{{ date }}">{{ date | dateDisplay }}</span>
+                  </div>
+                {% else %}
+                  <div class="text-sm">
+                    <span datetime="{{ date }}">{{ date | dateDisplay }}</span>
+                  </div>
+                {% endif %}
+              {% endif %}
+              {% if author %}
+                <div class="mt-2">
+                  <span class="mr-2"><a class="post-author" href="{{author.twitter}}" target="_blank">{{author.name}}</a></span> | <span class="ml-2">{{author.title}}</span>
+                </div>
+              {% endif %}
+            </div>
+            {% include 'share-button.njk' %}
+          </div>
         </div>
       {% elif '/tags' in page.url %}
         <div class="flex flex-col justify-center items-center">
-          <h1 class="mb-2">
-            {{ title }}</h1>
+          <h1 class="mb-2">{{ title }}</h1>
           {% if excerpt %}
             <p class="max-w-lg">{{ excerpt }}</p>
           {% endif %}
@@ -47,25 +65,17 @@
             Learn from the great work of others
           </p>
         </div>
-      {% else  %}
-        <div>
-          <h1 class="mb-2">
-            {{ site.name }}</h1>
-          <p class="max-w-lg">
-            {{ site.excerpt }}
-          </p>
-        </div>
       {% endif %}
   </div>
 </section>
 
 <style>
   .sub-header {
-    background-image: url("/sub-header-background.png");
+    background: linear-gradient(93.94deg, #FFF8FE 11.81%, #E9F4FF 55.82%, #F4F1FF 102.66%);
   }
 
-  .min-h-64 {
-    min-height: 1em;
+  a.post-author{
+    text-decoration: none;
   }
 
   a.activeTab::after {    

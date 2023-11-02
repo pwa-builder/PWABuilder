@@ -7,7 +7,7 @@ date: 2022-11-03
 updatedDate: 2022-11-03
 trending: true
 featured: true
-image: posts/introducing-manifest-editor/manifest-editor.png
+image: posts/introducing-manifest-editor/hero.png
 isPost: true
 backUrl: '/'
 author:

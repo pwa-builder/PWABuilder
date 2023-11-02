@@ -7,7 +7,7 @@ date: 2023-10-10
 updatedDate: 2023-10-10
 trending: true
 featured: true
-image: posts/transitions-demo/demo-homepage.png
+image: posts/transitions-demo/hero.png
 isPost: true
 backUrl: '/'
 author:

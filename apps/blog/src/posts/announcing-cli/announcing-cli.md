@@ -7,7 +7,7 @@ date: 2023-09-19
 updatedDate: 2023-09-19
 trending: true
 featured: true
-image: posts/announcing-cli/pwa-create.png
+image: posts/announcing-cli/hero.png
 isPost: true
 backUrl: '/'
 author:
