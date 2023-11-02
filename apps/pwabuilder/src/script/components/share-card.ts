@@ -15,7 +15,7 @@ export class ShareCard extends LitElement {
   @property() siteName = "";
 
   @state() dataURL = "";
-  @state() actionButtons: TemplateResult = html``;
+  @state() actionButtons: TemplateResult = null;
   @state() canShare: boolean = true;
 
   shareCanvas: Ref<HTMLCanvasElement> = createRef();

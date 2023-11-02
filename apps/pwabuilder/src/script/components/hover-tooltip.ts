@@ -244,7 +244,7 @@ export class HoverTooltip extends LitElement {
 
   renderLink(): TemplateResult {
     if (!this.link) {
-      return html``;
+      return null;
     }
 
     return html`

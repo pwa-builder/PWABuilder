@@ -271,7 +271,7 @@ export class AppHeader extends LitElement {
                 <sl-menu-item><a 
                 class="link"
                 href="https://blog.pwabuilder.com"
-                target="__blank"
+                target="_blank"
                 aria-label="PWABuilder Blog, will open in separate tab"
                 rel="noopener"
                 @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
@@ -280,7 +280,7 @@ export class AppHeader extends LitElement {
                 <sl-menu-item><a 
                   class="link" 
                   href="https://github.com/pwa-builder/PWABuilder"
-                  target="__blank"
+                  target="_blank"
                   aria-label="PWABuilder Github repo, will open in separate tab"
                   rel="noopener"
                   @click=${() => recordPWABuilderProcessStep(`header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
@@ -290,7 +290,7 @@ export class AppHeader extends LitElement {
                 <sl-menu-item><a 
                   class="link" 
                   href="https://twitter.com/pwabuilder"
-                  target="__blank"
+                  target="_blank"
                   aria-label="PWABuilder Twitter, will open in separate tab"
                   rel="noopener"
                   @click=${() => recordPWABuilderProcessStep(`header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
@@ -300,7 +300,7 @@ export class AppHeader extends LitElement {
                 <sl-menu-item><a 
                   class="link" 
                   href="https://aka.ms/pwabuilderdiscord"
-                  target="__blank"
+                  target="_blank"
                   aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
                   rel="noopener"
                   @click=${() => recordPWABuilderProcessStep(`header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}

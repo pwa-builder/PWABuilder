@@ -280,7 +280,7 @@ export class ImageGenerator extends LitElement {
       return html`<p style="font-size: 16px; color: red;">${this.error}</p>`;
     }
 
-    return html``;
+    return null;
   }
 
   handleInputChange(event: CustomEvent<FileInputDetails>) {
