@@ -22,7 +22,7 @@
     <div class="w-full h-full featured-post relative shadow rounded p-2">
       <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
       <div class="postcard-text p-3 flex flex-col">
-        <h3 class="my-1 leading-6">
+        <h3 id="post-title" class="my-1 leading-6">
           {{ post.data.title }}
         </h3>
         <div class="text-sm mt-1 mb-8">{{ post.data.excerpt }}</div>
@@ -33,7 +33,7 @@
           {{ post.data.date | dateDisplay }}
         </div>
       </div>
-      <a class="post-link" href="{{ post.url | url }}"></a>
+      <a class="post-link" href="{{ post.url | url }}" aria-labelledby="post-title"></a>
     </div>
 
 {% endmacro %}
