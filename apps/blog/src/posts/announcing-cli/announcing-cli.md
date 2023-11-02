@@ -23,6 +23,7 @@ tags:
 ---
 
 PWABuilder is launching a brand new CLI that can create a new templated [Progressive Web App](https://docs.pwabuilder.com/#/home/pwa-intro) for you and have you developing in just seconds. 
+
 The CLI makes use of our existing [PWA Starter template](https://docs.pwabuilder.com/#/home/pwa-intro) to give you a lightweight groundwork to start building your first progressive web app on. We wanted to make sure that developers can dive in with development as quickly and as smoothly as possible.
 
 You’ll need [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to get started, and you can install the CLI globally with this command:
