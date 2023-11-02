@@ -162,7 +162,7 @@ export async function generateManifest(skipPrompts?: boolean) {
       await editor.insertSnippet(maniSnippet);
 
       if (!skipPrompts) {
-        await handleAddingManiToIndex();
+        await handleAddingManiToIndex(uri.fsPath);
 
         resolve();
       }
@@ -302,7 +302,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
   return manifest;
 }
 
-async function handleAddingManiToIndex(): Promise<void> {
+async function handleAddingManiToIndex(manifestPath: string): Promise<void> {
   let indexFile: undefined | vscode.Uri;
     const indexFileData = await vscode.workspace.findFiles(
         "**/index.html",
@@ -333,7 +333,7 @@ async function handleAddingManiToIndex(): Promise<void> {
 
     const manifest = getManifest();
 
-    const goodPath = vscode.workspace.asRelativePath(manifest.fsPath);
+    const goodPath = vscode.workspace.asRelativePath(manifest ? manifest.fsPath : manifestPath);
     console.log('goodPath', goodPath);
 
     let linkString = `<link rel="manifest" href="${goodPath}" />`;
