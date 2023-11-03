@@ -61,9 +61,11 @@ There are a few extra fields you can add to spruce up your shortcut. Another exa
 
 In this example, we've added a few extra fields to our shortcut. `short_name` provides an alternate name to display for your shortcut if there is limited display space, while `icons` allows you to specify a custom icon to display for your shortcut in the context menu. For shortcuts, the array you provide must include an icon that is 96x96.
 
+Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/Web/Manifest/shortcuts)
+
 ## Window Controls Overlay
 
-!> Window Controls Overlay will only work with certain browsers, such as Edge and Chrome.
+!> Window Controls Overlay will only work with certain browsers, such as [Edge](https://www.microsoft.com/edge) and [Chrome](https://www.google.com/chrome).
 
 Enabling the window controls overlay feature allows you to customize the space next to the window controls (minimize, close, etc.) with CSS and Javascript. This can give you more control over how your app is presented in a native context after it is installed.
 
@@ -113,9 +115,11 @@ Some example CSS to see how these could be used:
 
 Take note of the `-webkit-app-region` and `app-region` values being set to `drag`. This allows our title bar drag behavior to work properly when window controls overlay is enabled.
 
+Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/Web/API/Window_Controls_Overlay_API)
+
 ## Web Share API 
 
-The Web Share API allows your app to use the operating system's native share dialog to share content (files, links) to and from your progressive web app.
+The [Web Share API](https://developer.mozilla.org/docs/Web/API/Web_Share_API) allows your app to use the operating system's native share dialog to share content (files, links) to and from your progressive web app.
 
 On Windows, the dialog for sharing from your progressive web app looks like this:
 
@@ -247,9 +251,11 @@ self.addEventListener('fetch', (event) => {
 
 Once you have redirected to your share target, you can handle the data just like you would with `GET`.
 
+Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/Web/API/Web_Share_API)
+
 ## Badging
 
-If your progressive web app is installed to the OS, the Badging API allows you to display a notification badge on your PWA's taskbar icon. You can use this functionality to inform the user when new content is available or requires their attention. This can help to keep the engagement up for your progressive web app - bringing users back to view new content.
+If your progressive web app is installed to the OS, the [Badging API](https://developer.mozilla.org/docs/Web/API/Badging_API) allows you to display a notification badge on your PWA's taskbar icon. You can use this functionality to inform the user when new content is available or requires their attention. This can help to keep the engagement up for your progressive web app - bringing users back to view new content.
 
 Here's what a badge for a progressive web app will look like on Windows:
 
@@ -285,9 +291,11 @@ The Badging API can be used from within your progressive web app, or it's servic
 
 Badging is often used in conjunction with the Notifications API to inform users when new content is available. The next section will take you through how make use of notifications for your progressive web app.
 
+Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/Web/API/Badging_API)
+
 ## Push Notifications
 
-If you want a more direct way to notify users of content in your progressive web app, you can make use of the Notifications API. If the user gives permission for your app to send notifications, your app will be able to send a pop up notification that displays on the operating system regardless of whether or not your app is currently running.
+If you want a more direct way to notify users of content in your progressive web app, you can make use of the [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/notification). If the user gives permission for your app to send notifications, your app will be able to send a pop up notification that displays on the operating system regardless of whether or not your app is currently running.
 
 A notification displayed on Windows would look something like this:
 
@@ -353,9 +361,11 @@ First, we call `notification.close` to remove the notification.
 
 Next, if we included the `path` field with our notification data, we can append that path our origin path and make a call to `clients.openWindow`. This will launch our progressive web app and open it at our desired location.
 
+Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/Web/API/notification)
+
 ## Background Sync
 
-?> **Note** The Background Sync APIs are an experimental web feature, and may not be compatible with all browsers. [Check here for a table on compatibility.](https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API#browser_compatibility)
+?> **Note** The Background Sync APIs are an experimental web feature, and may not be compatible with all browsers. [Check here for a table on compatibility.](https://developer.mozilla.org/docs/Web/API/Background_Synchronization_API#browser_compatibility)
 
 Progressive web apps now have the capability to sync content and update your app in the background, regardless of whether or not your application is currently open. 
 
@@ -363,7 +373,7 @@ There's two types of background synchronization you can implement: **Background 
 
 ### Background Sync Overview
 
-The Background Sync API allows you to register functionality that will occur whenever internet connectivity is next available. In other words, if your app is actively connected to the network, the functionality will occur right away. Otherwise, it will occur whenever your app is next connected to the network.
+The [Background Sync API](https://developer.mozilla.org/docs/Web/API/Background_Synchronization_API) allows you to register functionality that will occur whenever internet connectivity is next available. In other words, if your app is actively connected to the network, the functionality will occur right away. Otherwise, it will occur whenever your app is next connected to the network.
 
 This is accomplished through the `sync` event, which is fired when your service worker detects that your app is once again connected to the network. Inside a handler for the `sync` event, you can check if any synchronizations were requested since last connectivity, and execute the appropriate functionality if necessary. And, because this is all handled in the service worker, our synchronization will be handled regardless of whether or not our app is open or closed when connectivity is restored.
 
@@ -474,6 +484,8 @@ self.addEventListener('periodicsync', event => {
 ```
 
 As you can see, the implementation is almost identical as background sync, the main difference is in how the sync is actually executed.
+
+Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/Web/API/Background_Synchronization_API)
 
 ## Learn More
 

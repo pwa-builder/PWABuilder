@@ -1,6 +1,6 @@
 # PWABuilder Suite Documentation
 
-Welcome to the new documentation for the PWABuilder tooling suite! 
+Welcome to the new documentation for the [PWABuilder](https://www.pwabuilder.com/) tooling suite! 
 
 The suite has three main tools:
 
@@ -51,7 +51,7 @@ To learn more about the starter's tech stack and how to develop on it, take a lo
 
 ## PWABuilder Studio
 
-PWABuilder Studio is an extension for Visual Studio Code that provides tooling for working with and creating progressive web apps.
+[PWABuilder Studio](https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio) is an extension for Visual Studio Code that provides tooling for working with and creating progressive web apps.
 
 You can use PWABuilder Studio to:
 

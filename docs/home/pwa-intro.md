@@ -16,7 +16,7 @@ A good progressive web app can:
 Progressive web apps are applications *first*, and separate themselves from websites and web apps through a combination of technology and design paradigms.
 
 ## What Makes A PWA?
-From a technical perspective, a normal web app only needs a few extra pieces to become a progressive web app: a ***web app manifest*** and a ***service worker***. It is also important to note that service workers require ***HTTPS*** to work properly, and progressive web apps must be served from a secure endpoint.
+From a technical perspective, a normal web app only needs a few extra pieces to become a progressive web app: a [***web app manifest***](https://developer.mozilla.org/docs/Web/Manifest) and a [***service worker***](/home/sw-intro). It is also important to note that service workers require ***HTTPS*** to work properly, and progressive web apps must be served from a secure endpoint.
 
 ### Web App Manifests
 A web app manifest (often shortened to web manifest, or even just *manifest*) is a `.json` file that tells the browser that your web app is a progressive web app, and is capable of being installed to the OS.
@@ -44,7 +44,7 @@ Just like a native application, an installed PWA can be launched from the operat
 
 ### Installing from the Browser
 
-PWAs can be installed directly from both Google Chrome and Microsoft Edge.
+PWAs can be installed directly from both [Google Chrome](https://www.google.com/chrome) and [Microsoft Edge](https://www.microsoft.com/edge).
 
 Both browsers have an install button at the right end of the address bar that will appear if the current page is a PWA. 
 
@@ -86,10 +86,9 @@ In general, a good rule of thumb is that a progressive web app should feel more 
 
 This documentation is a PWA itself, and can be installed and used to explore some basic PWA features.
 
-!> Make sure you are using Edge or Chrome before trying to install the PWA.
+!> Make sure you are using [Edge](https://www.microsoft.com/edge) or [Chrome](https://www.google.com/chrome) before trying to install the PWA.
 
 Here are some things to try:
-
 
 ### Install this PWA
 
@@ -104,7 +103,7 @@ Try turning on airplane mode or disconnecting from WiFi.
 Navigating around the PWA should still work, and all the static content should still load.
 In this instance, the whole application is static, and should work entirely as expected.
 
-?> **Note** Offline mode will only work if the PWA has been loaded once with a connection, which allows the service worker to precache any necessary assets.
+?> **Note** Offline mode will only work if the PWA has been loaded once with a connection, which allows the [service worker](/home/sw-intro) to precache any necessary assets.
 
 ### Shortcuts
 
@@ -143,7 +142,7 @@ After permission is granted, trigger a notification:
 
 ## Next Steps
 
-If you're ready to dive in with building your first PWA, the PWA Starter is a great place to get started.
+If you're ready to dive in with building your first PWA, the [PWA Starter](https://github.com/pwa-builder/pwa-starter) is a great place to get started.
 
 The PWA Starter is a template that comes with a service worker and manifest built in, and allows you to jump right in with your first PWA. 
 

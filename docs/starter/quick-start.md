@@ -1,6 +1,6 @@
 # PWA Starter Quick Start
 
-You can start with the PWA Starter by using the PWABuilder CLI, which allows you to create a fresh, templated progressive web app (PWA) project in just few seconds.
+You can start with the PWA Starter by using the [PWABuilder CLI](https://www.npmjs.com/package/@pwabuilder/cli), which allows you to create a fresh, templated progressive web app (PWA) project in just few seconds.
 
 ## Prerequisites
 
