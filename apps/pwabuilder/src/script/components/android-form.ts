@@ -771,7 +771,7 @@ export class AndroidForm extends AppPackageFormBase {
     }
 
     // Otherwise, nothing to render.
-    return null;
+    return html``;
   }
 
   renderNewSigningKeyFields(): TemplateResult {
