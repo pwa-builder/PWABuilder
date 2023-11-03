@@ -259,7 +259,7 @@ export class AppPackageFormBase extends LitElement {
 
   protected renderTooltip(formInput: FormInput): TemplateResult {
     if (!formInput.tooltip) {
-      return null;
+      return html``;
     }
 
     // Ensure we have an ID for this element. If not, add one.

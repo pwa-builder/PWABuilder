@@ -370,7 +370,7 @@ export class OculusForm extends AppPackageFormBase {
   renderSigningKeyFields(): TemplateResult {
     // If we're not signing with an existing key, there's nothing to render.
     if (this.packageOptions.signingMode !== SigningMode.Existing) {
-      return null;
+      return html``;
     }
 
     return this.renderExistingSigningKeyFields();
