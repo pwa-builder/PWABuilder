@@ -8,7 +8,7 @@ Please note that a "Chrome is in use" banner is expected the first time your app
 
 ## Validate Location
 
-!> If you don't already have an `assetlinks.json` file, head back to [publish step](/builder/android?id=publish) in the Google Play documentation.
+!> If you don't already have an `assetlinks.json` file, head back to the [publish step](/builder/android?id=publish) in the Google Play documentation.
 
 If you have an `assetlinks.json` file, you need to make sure it is placed in the `.well-known` directory at the **root of your domain**, not the root of your progressive web app.
 
