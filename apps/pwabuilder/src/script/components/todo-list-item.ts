@@ -25,6 +25,8 @@ export class TodoItem extends LitElement {
   @state() clickable: boolean = false;
   @state() isOpen: boolean = false;
 
+  @state() darkMode: boolean = false;
+
   static get styles() {
     return [
       css`
@@ -150,6 +152,14 @@ export class TodoItem extends LitElement {
     super();
   }
 
+  connectedCallback(){
+    super.connectedCallback();
+
+    // understand the users color preference
+    const result = window.matchMedia('(prefers-color-scheme: dark)');
+    this.darkMode = result.matches; // TRUE if user prefers dark mode
+  }
+
   decideClasses(){
 
     if(this.status === "retest" || this.field.startsWith("Open") || manifest_fields[this.field] || service_worker_fields[this.field]){
@@ -157,7 +167,7 @@ export class TodoItem extends LitElement {
     } else {
       this.clickable = false;
     }
-    
+
     return {iwrapper: true, clickable: this.clickable}
   }
 
@@ -185,6 +195,7 @@ export class TodoItem extends LitElement {
   }
 
   triggerHoverState(e: CustomEvent){
+
     let element = this.shadowRoot!.querySelector(".iwrapper");
     if(e.detail.entering){
       element?.classList.add("active");
@@ -201,12 +212,11 @@ export class TodoItem extends LitElement {
       case "required":
       case "missing":
         return html`<img src=${stop_src} alt="yield result icon"/>`
-      
       case "enhancement":
         return html`<img src=${enhancement_src} alt="app capability result icon"/>`
 
       case "retest":
-        return html`<img src=${retest_src} style="color: black" alt="retest site icon"/>`
+        return html`<img src=${this.darkMode ? retest_src_light : retest_src} style="color: black" alt="retest site icon"/>`
     }
 
     return html`<img src=${yield_src} alt="yield result icon"/>`
@@ -248,4 +258,5 @@ export class TodoItem extends LitElement {
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const enhancement_src = "/assets/new/enhancement.svg";
-const retest_src = "/assets/new/retest-black.svg";
+const retest_src = "/assets/new/retest-icon.svg";
+const retest_src_light = "/assets/new/retest-icon_light.svg";

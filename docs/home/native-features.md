@@ -1,8 +1,8 @@
 ?> **Note:** Stay tuned for new feature instructions as we update and expand this page.
 
-# Integrating Native Features
+# Adding App Capabilities
 
-One of the best ways to upgrade your progressive web app is to take advantage of web capabilities to integrate with the user's operating system. Modern web technology has enabled a whole host of ways to make your PWA behave more like a native application and interact seamlessly with the OS.
+One of the best ways to upgrade your progressive web app is to take advantage of web capabilities to integrate with the user's operating system. Modern web technology has enabled a whole host of ways to make your PWA behave more like a  application and interact seamlessly with the OS.
 
 This article will showcase how to enable various native functionality for your progressive web app.
 
@@ -81,7 +81,7 @@ To enable window controls overlay, set the value of `display_override` in your w
 
 ```json
 {
-    “display_override”: [“window-controls-overlay”],
+    "display_override": ["window-controls-overlay"],
     "display": "standalone"
 }
 ```
