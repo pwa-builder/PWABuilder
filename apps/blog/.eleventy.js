@@ -42,7 +42,7 @@ module.exports = (config) => {
   config.setDataDeepMerge(true)
 
   config.addCollection("postsWithoutDrafts", (collection) =>
-    [...collection.getFilteredByGlob("src/posts/*.md")].filter(
+    [...collection.getFilteredByGlob("src/posts/**/*.md")].filter(
       (post) => !post.data.draft
     )
   )
@@ -52,12 +52,6 @@ module.exports = (config) => {
       (docs) => !docs.data.draft
     )
   )
-
-  config.addCollection("demosWithoutDrafts", (collection) =>
-  [...collection.getFilteredByGlob("src/demos/*.md")].filter(
-    (demos) => !demos.data.draft
-  )
-)
 
   return {
     pathPrefix: siteSettings.baseUrl,

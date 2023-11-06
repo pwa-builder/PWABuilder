@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+h4 {
+  color: #4F3FB6;
+}
+
 p, blockquote {
   margin: revert;
 }
@@ -97,7 +101,8 @@ li > a {
 }
 
 a {
-  color:#342a6a;
+  color:rgba(79, 63, 182, 1);
+  ;
   text-decoration: underline;
 }
 

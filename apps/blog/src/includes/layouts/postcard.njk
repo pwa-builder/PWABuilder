@@ -1,88 +1,39 @@
 {% macro featured(posts) %}
-  <div class="featured-posts lg:grid lg:grid-cols-3 gap-3 my-8">
+  <div class="featured-posts lg:grid lg:grid-cols-3 gap-5 my-8">
     {% for post in posts %}
       {% if not post.data.draft and post.data.featured %}
         {{card(post)}}
       {% endif %}
     {% endfor %}
-  </div>
-{% endmacro %}
-
-{% macro recommended(posts) %}
-  <div class="recommended-posts grid auto-cols-fr gap-3 my-8">
-    {% for post in posts %}
-      {% if not post.data.draft and post.data.featured %}
-        {{card(post)}}
-      {% endif %}
-    {% endfor %}
-  </div>
-{% endmacro %}
-
-{% macro trending(posts) %}
-  <div class="grid gap-3 my-8">
-    {% for post in posts %}
-      {% if not post.data.draft and post.data.trending %}
-        
-        <div class="mb-4">
-          <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
-          </span>
-          <h3 class="mt-1 mb-4">
-            {{ post.data.title }}
-          </h3>
-          <p class="mb-4 opacity-75">{{ post.data.description }}</p>
-          <a href="{{ post.url | url }}">
-            <p class="">Continue reading {{ post.data.title }}</p>
-          </a>
-        </div>
-        
-      {% endif %}
-    {% endfor %}
-
   </div>
 {% endmacro %}
 
 {% macro tag(posts) %}
-  <div class="grid gap-3 my-8">
+  <div class="tag-posts lg:grid lg:grid-cols-3 gap-5 my-8">
     {% for post in posts %}
-      {% if not post.data.draft %}
-        
-        <div class="mb-4">
-          <span class="text-xs" datetime="{{ post.data.date }}">{{ post.data.date | dateDisplay }}
-          </span>
-          <h3 class="mt-1 mb-4">
-            {{ post.data.title }}
-          </h3>
-          <p class="mb-4 opacity-75">{{ post.data.description }}</p>
-          <a class="doc-link" href="{{ post.url | url }}">
-            <p class="">Continue reading {{ post.data.title }}</p>
-          </a>
-        </div>
-       
+      {% if not post.data.draft and post.data.featured %}
+        {{card(post)}}
       {% endif %}
     {% endfor %}
-
   </div>
 {% endmacro %}
 
 {% macro card(post) %}
-  
     <div class="w-full h-full featured-post relative shadow rounded p-2">
-      <span
-          class="text-primary-font top-0 left-0 p-2"
-          datetime="{{ post.data.date }}"
-        >
-        {{ post.data.date | dateDisplay }}
-      </span>
       <img loading="lazy" class="rounded-t-sm w-full object-fill object-center limited-max" src="/{{ post.data.image }}" alt=""/>
-      <div class="p-3 flex flex-col">
-        <h3 class="mt-1 mb-4">
+      <div class="postcard-text p-3 flex flex-col">
+        <h3 id="post-title" class="my-1 leading-6">
           {{ post.data.title }}
         </h3>
-        <p class="opacity-75 mb-8">{{ post.data.excerpt }}</p>
-        <a class="doc-link" href="{{ post.url | url }}">
-          <span class="p-1 text-xs">Keep reading...</span>
-        </a>
+        <div class="text-sm mt-1 mb-8">{{ post.data.excerpt }}</div>
+        <div
+            class="text-primary-font text-sm postcard-timestamp"
+            datetime="{{ post.data.date }}"
+          >
+          {{ post.data.date | dateDisplay }}
+        </div>
       </div>
+      <a class="post-link" href="{{ post.url | url }}" aria-labelledby="post-title"></a>
     </div>
 
 {% endmacro %}

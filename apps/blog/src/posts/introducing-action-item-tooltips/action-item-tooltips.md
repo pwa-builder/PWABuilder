@@ -7,7 +7,7 @@ date: 2023-04-27
 updatedDate: 2023-04-27
 trending: true
 featured: true
-image: posts/introducing-action-item-tooltips/tooltips-cover-photo.png
+image: posts/introducing-action-item-tooltips/hero.png
 isPost: true
 backUrl: '/'
 author:
@@ -20,7 +20,7 @@ tags:
   - PWABuilder
 ---
 
-With the revamp of the report card page, PWABuilder saw the introduction of the action items list that gave users actionable tasks to that could help fix or improve their PWA. Previously, clicking on these tasks would trigger an animation, scrolling down to it's corresponding card where the user could then take actions by opening the respective modal and figuring out the rest on their own. To make this process more clear and efficient, starting with the manifest items, we added tooltips activated by hovering the (i) or clicking the action item as a whole. 
+With the revamp of the report card page, [PWABuilder](https://www.pwabuilder.com/) saw the introduction of the action items list that gave users actionable tasks to that could help fix or improve their [Progressive Web App](https://docs.pwabuilder.com/#/home/pwa-intro). Previously, clicking on these tasks would trigger an animation, scrolling down to it's corresponding card where the user could then take actions by opening the respective modal and figuring out the rest on their own. To make this process more clear and efficient, starting with the manifest items, we added tooltips activated by hovering the (i) or clicking the action item as a whole. 
 
 <img src="/posts/introducing-action-item-tooltips/tooltips-cover-photo.png" alt="image showing tooltips in use for the display override field">
 
@@ -36,6 +36,6 @@ These actions save our users time and effort, as they no longer have to search f
 
 <img src="/posts/introducing-action-item-tooltips/before-and-after-manifest-editor-tt.png" alt="before and after tooltips in the manifest editor">
 
-Moving forward, we plan to add more information for the service worker and security action items and all future manifest fields that are added to the site will have these tooltips as well. The manifest editor has also been updated to include these new tooltips. Previously, clicking on the (i) would lead users straight out to the PWABuilder documentation suite, but now the tooltips include the same brief description and a "Learn more" link if additional information is required.
+Moving forward, we plan to add more information for the [service worker](https://docs.pwabuilder.com/#/home/sw-intro) and security action items and all future manifest fields that are added to the site will have these tooltips as well. The manifest editor has also been updated to include these new tooltips. Previously, clicking on the (i) would lead users straight out to the PWABuilder documentation suite, but now the tooltips include the same brief description and a "Learn more" link if additional information is required.
 
 The Action items tooltips feature is now live on [PWABuilder](https://www.pwabuilder.com/), give it a try!
