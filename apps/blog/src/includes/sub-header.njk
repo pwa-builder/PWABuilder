@@ -1,8 +1,15 @@
 <section class="sub-header light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat">
   <div class="container mx-auto px-8 xl:px-12">
     <div class="w-full flex justify-left items-center">
-      <a class="inline-flex items-center subheaderA my-4" href="{{ backUrl }}" aria-label="Link back to Blog Home">
-      <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Blog home</a>
+        {% if isPost or isDocumentation %}
+          {% if isPost %}
+            <a class="inline-flex items-center subheaderA my-4" href="{{ backUrl }}" aria-label="Link back to Blog Home">
+            <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Blog home</a>
+          {% else %}
+            <a class="inline-flex items-center subheaderA my-4" href="{{ backUrl }}" aria-label="Link back to Documentation Home">
+              <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Back</a>
+          {% endif %}
+        {% endif %}
     </div>
     {{ page.data }}
     
@@ -37,7 +44,7 @@
           </div>
         </div>
       {% elif '/tags' in page.url %}
-        <div class="flex flex-col justify-center items-center mb-8">
+        <div class="flex flex-col justify-center items-center">
           <h1 class="mb-2">{{ title }}</h1>
           {% if excerpt %}
             <p class="max-w-lg">{{ excerpt }}</p>
