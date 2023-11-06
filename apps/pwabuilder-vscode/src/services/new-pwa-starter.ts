@@ -6,7 +6,6 @@ const decompress = require('decompress');
 import fetch from 'node-fetch';
 import {pipeline} from 'node:stream';
 import {promisify} from 'node:util';
-import path = require("node:path");
 
 const shell = require("shelljs");
 const FETCHED_ZIP_NAME_STRING: string = 'fetchedZip.zip';
