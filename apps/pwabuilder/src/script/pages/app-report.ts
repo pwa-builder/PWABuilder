@@ -2395,6 +2395,7 @@ export class AppReport extends LitElement {
     this.swValidCounter = 0;
     this.swTotalScore = 0;
     this.swRequiredCounter = 0;
+    this.enhancementTotalScore = 0;
 
     // reset todo lsit
     this.allTodoItems = [];
@@ -2403,6 +2404,10 @@ export class AppReport extends LitElement {
     this.requiredMissingFields = [];
     this.recMissingFields = [];
     this.optMissingFields = [];
+
+    // reset results
+    this.validationResults = [];
+    this.serviceWorkerResults = [];
 
     // activate loaders
     this.manifestDataLoading = true;
