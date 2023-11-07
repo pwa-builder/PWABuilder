@@ -101,13 +101,13 @@ window.addEventListener('iap-products-result', (event: CustomEvent) => {
 The output until now is promising. We've managed to make a prototype that starts and manages In-App purchase processes within Store PWAs on Apple devices. However, we've only just started.
 
 For you to follow along:
-- MacOS with a fresh Xcode is required for this project (sadly)
-- Use [this repository](https://github.com/khmyznikov/ios-pwa-wrap/tree/iap) with "iap" branch as your base. It’s pre-configured as a demo of IAP.
-- Follow [readme instructions](https://github.com/khmyznikov/ios-pwa-wrap/tree/iap#readme) about the CocoaPods installation, but skip the firebase setup section
-- Also check [this instruction](https://docs.pwabuilder.com/#/builder/app-store?id=building-your-app) about the building and publishing xcode project.
-- Check the [documentation](https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode/) about StoreKit testing, and update [StoreKit test file](https://github.com/khmyznikov/ios-pwa-wrap/blob/iap/pwaShellStore.storekit) for your needs
-- Native logic is in [IAP.swift file](https://github.com/khmyznikov/ios-pwa-wrap/blob/iap/pwa-shell/IAP.swift)
-- The source code for web demo component of [you can find here](https://github.com/khmyznikov/ios-pwa-shell/blob/main/src/components/in-app-purchase.ts)
-- Feel free to create [issue here](https://github.com/khmyznikov/ios-pwa-wrap/issues) or reach us in [Discord](https://aka.ms/pwabuilderdiscord) for any questions 
+1. MacOS with a fresh Xcode is required for this project (sadly)
+2. Use [this repository](https://github.com/khmyznikov/ios-pwa-wrap/tree/iap) with "iap" branch as your base. It’s pre-configured as a demo of IAP.
+3. Follow [readme instructions](https://github.com/khmyznikov/ios-pwa-wrap/tree/iap#readme) about the CocoaPods installation, but skip the firebase setup section
+4. Also check [this instruction](https://docs.pwabuilder.com/#/builder/app-store?id=building-your-app) about the building and publishing xcode project.
+5. Check the [documentation](https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode/) about StoreKit testing, and update [StoreKit test file](https://github.com/khmyznikov/ios-pwa-wrap/blob/iap/pwaShellStore.storekit) for your needs
+6. Native logic is in [IAP.swift file](https://github.com/khmyznikov/ios-pwa-wrap/blob/iap/pwa-shell/IAP.swift)
+7. The source code for web demo component of [you can find here](https://github.com/khmyznikov/ios-pwa-shell/blob/main/src/components/in-app-purchase.ts)
+8. Feel free to create [issue here](https://github.com/khmyznikov/ios-pwa-wrap/issues) or reach us in [Discord](https://aka.ms/pwabuilderdiscord) for any questions 
 
 Your feedback is greatly valued. With this feature's success, it will bring us substantial leap forward, not only enhancing the Store PWA experience but also advancing the PWA community as a whole.
