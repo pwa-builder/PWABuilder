@@ -672,6 +672,10 @@ export class AppReport extends LitElement {
           font-size: 14px;
         }
 
+        .feedback-holder img {
+          margin-top: 3px;
+        }
+
         .error-title {
           font-weight: bold;
         }
