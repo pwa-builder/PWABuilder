@@ -36,7 +36,7 @@ tags:
 
 For those new to PWABuilder, let me give a quick primer. The PWABuilder service can package Progressive Web Apps for various platforms, including the Apple App Store. It achieves this by automatically generating a Swift project-wrapper, allowing PWA developers to target the App Store without having to touch native iOS code. However, this approach has certain limitations. Notably, it does not natively support the integration of In-App Purchases.
 
-This gap in functionality necessitates additional coding and configurations, which can be quite a challenge especially for those of you who, like me, are PWA developers with limited Swift experience. But with challenges come opportunities, and this is where it gets interesting. 
+This gap in functionality comes with extra coding and configurations, which can be quite a challenge especially for those of you who, like me, are PWA developers with limited Swift experience. But with challenges come opportunities, and this is where it gets interesting. Let's see how we can enable in-app purchases in our PWA.
 
 ![Iterating the code for new IAP module via ChatGPT Playground](/posts/ios-iap-experiment/pic-3-min.jpg)
 
