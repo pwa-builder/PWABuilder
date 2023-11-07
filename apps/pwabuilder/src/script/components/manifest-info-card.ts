@@ -218,9 +218,9 @@ export class ManifestInfoCard extends LitElement {
         composed: true
       });
     if(!entering){
-      setTimeout(() => { this.closeTooltip(myEvent) }, 500)
+      setTimeout(() => { this.closeTooltip(myEvent) }, 250)
     } else {
-      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 1000)
+      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
     }
   }
 

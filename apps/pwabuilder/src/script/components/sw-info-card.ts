@@ -12,6 +12,7 @@ export class ServiceWorkerInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
   @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
   @state() currentlyHovering: boolean = false;
+  @state() hoverTimer: any;
 
   static get styles() {
     return [
@@ -166,15 +167,15 @@ export class ServiceWorkerInfoCard extends LitElement {
         composed: true
       });
     if(!entering){
-      setTimeout(() => { this.closeTooltip(myEvent) }, 500)
+      setTimeout(() => { this.closeTooltip(myEvent) }, 250)
     } else {
-      this.dispatchEvent(myEvent);
+      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
     }
-
   }
 
   closeTooltip(e: CustomEvent){
     if(!this.currentlyHovering){
+      clearTimeout(this.hoverTimer);
       this.dispatchEvent(e);
     }
   }
