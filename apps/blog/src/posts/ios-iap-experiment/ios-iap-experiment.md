@@ -34,7 +34,7 @@ tags:
 
 ![Lack of Web APIs in Store PWA (WKWebView)](/posts/ios-iap-experiment/pic-2-min.jpg)
 
-For those new to this context, let me give a quick primer. PWABuilder allows developers to package PWA for various platforms, including Apple Store. It achieves this by automatically generating a Swift project-wrapper, significantly simplifying the process. However, this approach has certain limitations. Notably, it does not natively support the integration of In-App Purchases.
+For those new to PWABuilder, let me give a quick primer. The PWABuilder service can package Progressive Web Apps for various platforms, including the Apple App Store. It achieves this by automatically generating a Swift project-wrapper, allowing PWA developers to target the App Store without having to touch native iOS code. However, this approach has certain limitations. Notably, it does not natively support the integration of In-App Purchases.
 
 This gap in functionality necessitates additional coding and configurations, which can be quite a challenge especially for those of you who, like me, are PWA developers with limited Swift experience. But with challenges come opportunities, and this is where it gets interesting. 
 
