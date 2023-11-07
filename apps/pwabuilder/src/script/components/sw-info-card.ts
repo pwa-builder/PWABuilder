@@ -180,6 +180,14 @@ export class ServiceWorkerInfoCard extends LitElement {
     }
   }
 
+  // hacky work around for clicking links with keyboard that are nested in menu items
+  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+  handleClickingLink(linkTag: string){
+    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
+    anchor.click();
+    this.trackLearnMoreAnalytics();
+  }
+
   render() {
     return html`
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
@@ -196,7 +204,7 @@ export class ServiceWorkerInfoCard extends LitElement {
             ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
           </div>
           <sl-menu>
-            <sl-menu-item><a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a></sl-menu-item>
+            <sl-menu-item @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
           </sl-menu>
         </sl-dropdown>
         ` :
@@ -211,7 +219,7 @@ export class ServiceWorkerInfoCard extends LitElement {
             ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
           </div>
           <sl-menu>
-            <sl-menu-item><a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a></sl-menu-item>
+            <sl-menu-item @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
           </sl-menu>
         </sl-dropdown>
         `

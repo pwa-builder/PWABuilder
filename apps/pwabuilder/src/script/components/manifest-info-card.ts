@@ -195,12 +195,6 @@ export class ManifestInfoCard extends LitElement {
     recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     //specific field counter
     recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
-    let a: HTMLAnchorElement = document.createElement('a');
-    a.setAttribute("rel", "noopener noreferrer");
-    a.setAttribute("target", "blank");
-    a.setAttribute("href", manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com");
-    a.click();
   }
 
 
@@ -239,6 +233,14 @@ export class ManifestInfoCard extends LitElement {
     }
   }
 
+  // hacky work around for clicking links with keyboard that are nested in menu items
+  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+  handleClickingLink(linkTag: string){
+    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
+    anchor.click();
+    this.trackLearnMoreAnalytics();
+  }
+
   render() {
     return html`
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
@@ -266,7 +268,7 @@ export class ManifestInfoCard extends LitElement {
             
           </div>
           <sl-menu>
-            <sl-menu-item><a class="learn-more" href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a></sl-menu-item>         
+            <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
             ${manifest_fields[this.field].location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
           </sl-menu>
         </sl-dropdown>
@@ -292,7 +294,7 @@ export class ManifestInfoCard extends LitElement {
             }
             >
             <sl-menu>
-              <sl-menu-item @click=${() => this.trackLearnMoreAnalytics()}>Learn More</sl-menu-item>
+            <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
               ${manifest_fields[this.field].location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
           </sl-menu>
           </div>

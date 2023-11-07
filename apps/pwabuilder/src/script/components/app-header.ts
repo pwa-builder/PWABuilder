@@ -242,6 +242,14 @@ export class AppHeader extends LitElement {
     }
   }
 
+  // hacky work around for clicking links with keyboard that are nested in menu items
+  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+  handleClickingLink(linkTag: string, analyticsString: string){
+    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('[data-tag="' + linkTag + '"]')!;
+    anchor.click();
+    recordPWABuilderProcessStep(analyticsString, AnalyticsBehavior.ProcessCheckpoint)
+  }
+
   render() {
     return html`
       <header part="header">
@@ -255,7 +263,7 @@ export class AppHeader extends LitElement {
             class="nav_link"
             appearance="hypertext"
             href="https://docs.pwabuilder.com"
-            target="__blank"
+            target="_blank"
             aria-label="PWABuilder Docs, will open in separate tab"
             rel="noopener"
             @click=${() => recordPWABuilderProcessStep(`header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
@@ -265,48 +273,57 @@ export class AppHeader extends LitElement {
           <sl-dropdown distance="5">
             <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
             
-            
             <sl-menu>
-                <p class="col-header">Check out our Blogs</p>
-                <sl-menu-item><a 
-                class="link"
-                href="https://blog.pwabuilder.com"
-                target="_blank"
-                aria-label="PWABuilder Blog, will open in separate tab"
-                rel="noopener"
-                @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                >PWABuilder Blogs</a></sl-menu-item>
+                <p class="col-header">Check out our Blog</p>
+                <sl-menu-item @click=${() => this.handleClickingLink("blog_link", "header.blog_clicked")}>
+                  <a 
+                    class="link"
+                    href="https://blog.pwabuilder.com"
+                    target="_blank"
+                    aria-label="PWABuilder Blog, will open in separate tab"
+                    rel="noopener"
+                    data-tag="blog_link"
+                  >
+                    PWABuilder Blogs
+                  </a>
+                </sl-menu-item>
                 <p class="col-header">Follow us on</p>
-                <sl-menu-item><a 
-                  class="link" 
-                  href="https://github.com/pwa-builder/PWABuilder"
-                  target="_blank"
-                  aria-label="PWABuilder Github repo, will open in separate tab"
-                  rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                <sl-menu-item @click=${() => this.handleClickingLink("github_link", "header.github_clicked")}>
+                  <a 
+                    class="link" 
+                    href="https://github.com/pwa-builder/PWABuilder"
+                    target="_blank"
+                    aria-label="PWABuilder Github repo, will open in separate tab"
+                    rel="noopener"
+                    data-tag="github_link"
                   >
-                  Github
-                </a></sl-menu-item>
-                <sl-menu-item><a 
-                  class="link" 
-                  href="https://twitter.com/pwabuilder"
-                  target="_blank"
-                  aria-label="PWABuilder Twitter, will open in separate tab"
-                  rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                    Github
+                  </a>
+                </sl-menu-item>
+                <sl-menu-item @click=${() => this.handleClickingLink("twitter_link", "header.twitter_clicked")}>
+                  <a 
+                    class="link" 
+                    href="https://twitter.com/pwabuilder"
+                    target="_blank"
+                    aria-label="PWABuilder Twitter, will open in separate tab"
+                    rel="noopener"
+                    data-tag="twitter_link"
                   >
-                  Twitter
-                </a></sl-menu-item>
-                <sl-menu-item><a 
-                  class="link" 
-                  href="https://aka.ms/pwabuilderdiscord"
-                  target="_blank"
-                  aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
-                  rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                    Twitter
+                  </a>
+                </sl-menu-item>
+                <sl-menu-item @click=${() => this.handleClickingLink("discord_link", "header.discord_clicked")}>
+                  <a 
+                    class="link" 
+                    href="https://aka.ms/pwabuilderdiscord"
+                    target="_blank"
+                    aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
+                    rel="noopener"
+                    data-tag="discord_link"
                   >
-                  Discord
-                </a></sl-menu-item>
+                    Discord
+                  </a>
+                </sl-menu-item>
             </sl-menu>
           </sl-dropdown>
         </nav>
