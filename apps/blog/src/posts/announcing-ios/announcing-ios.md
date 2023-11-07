@@ -7,7 +7,7 @@ date: 2021-10-28
 updatedDate: 2021-10-28
 trending: true
 featured: true
-image: posts/announcing-ios/ios-announcement.png
+image: posts/announcing-ios/hero.png
 isPost: true
 backUrl: '/'
 author:

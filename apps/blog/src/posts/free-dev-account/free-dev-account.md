@@ -7,7 +7,7 @@ date: 2023-08-16
 updatedDate: 2023-08-16
 trending: true
 featured: true
-image: posts/free-dev-account/free-account-pic-3.jpg
+image: posts/free-dev-account/hero.png
 isPost: true
 backUrl: '/'
 author:
@@ -24,7 +24,7 @@ tags:
 
 <img alt="get a free windows developer account" src="/posts/free-dev-account/free-account-pic-1.jpg" />
 
-We are excited to announce a new program to empower PWA developers to bring their ideas and experiences to Windows, for FREE. For a limited time, in partnership with the Microsoft Store, Microsoft Store developer account tokens will be available (approximately $19 each) to developers that own qualifying PWAs and wish to make those available to Windows users via Microsoft Store. Just [enter your PWA url here](https://aka.ms/getToken) to get started.
+We are excited to announce a new program to empower [Progressive Web App](https://docs.pwabuilder.com/#/home/pwa-intro) developers to bring their ideas and experiences to Windows, for FREE. For a limited time, in partnership with the Microsoft Store, Microsoft Store developer account tokens will be available (approximately $19 each) to developers that own qualifying PWAs and wish to make those available to Windows users via Microsoft Store. Just [enter your PWA url here](https://aka.ms/getToken) to get started.
 
 ## Why Publish your PWA to the Microsoft Store?
 

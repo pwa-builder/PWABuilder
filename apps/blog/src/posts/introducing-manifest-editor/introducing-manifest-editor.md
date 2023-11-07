@@ -7,7 +7,7 @@ date: 2022-11-03
 updatedDate: 2022-11-03
 trending: true
 featured: true
-image: posts/introducing-manifest-editor/manifest-editor.png
+image: posts/introducing-manifest-editor/hero.png
 isPost: true
 backUrl: '/'
 author:
@@ -20,7 +20,7 @@ tags:
   - pwabuilder.com
 ---
 
-With our site redesign that was released in early October, some of you may have noticed the new manifest editor component! We wanted a guided experience that would make this daunting process much easier for our users. Being that it is a component, we will be able to reuse it across PWABuilder toolings when the time is right. We will continue to improve this experience, add more information about each field, and provide step by step instructions on how to implement them. The best part is, all of this will happen without having to leave pwabuilder.com!
+With our site redesign that was released in early October, some of you may have noticed the new manifest editor component! We wanted a guided experience that would make this daunting process much easier for our users. Being that it is a component, we will be able to reuse it across [PWABuilder](https://www.pwabuilder.com/) toolings when the time is right. We will continue to improve this experience, add more information about each field, and provide step by step instructions on how to implement them. The best part is, all of this will happen without having to leave [pwabuilder.com](https://www.pwabuilder.com/)!
 
 ## How does it work
 After entering a URL on the [home page of PWABuilder](https://www.pwabuilder.com), you will see the new report card page. Wait until all the test are done running. You can then click on the button in the "Manifest" section that says "Edit Your Manifest". If your site does not have a manifest yet, do not worry! PWABuilder will automatically generate a manifest for you using the information collected from your site. You will be able to edit and download this manifest right away. 
@@ -36,7 +36,7 @@ If there are problems with any of your manifest members, you will see a red excl
 
 <img src="/posts/introducing-manifest-editor/error.png" alt="The Manifest editor open on the Info tab with an error. The error is fixed and verified on the code tab." />
 
-If you want to learn more about the manifest members, simply click the info icon next to the name to explore documentation. If you would like to receive a guided manifest editing experience, use the links at the bottom of the manifest editor modal to try out PWABuilder Studio VSCode Extension.
+If you want to learn more about the manifest members, simply click the info icon next to the name to explore documentation. If you would like to receive a guided manifest editing experience, use the links at the bottom of the manifest editor modal to try out [PWABuilder Studio VSCode Extension](https://docs.pwabuilder.com/#/studio/quick-start).
 
 Once you are happy with the state of your manifest you can click the "Download Manifest" button at the bottom. This will automatically download the manifest from the "Code" tab with the name `manifest.json`. You will still need to upload this to your code base and make sure it is linked properly in your `index.html`.
 

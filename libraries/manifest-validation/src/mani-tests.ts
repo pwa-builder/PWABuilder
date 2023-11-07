@@ -4,7 +4,7 @@ import { isAtLeast, isStandardOrientation, isValidLanguageCode, validProtocols, 
 import { widgetsSchema, fileHandlersSchema } from "./utils/values-schema.js";
 import ajvModule from "ajv";
 const Ajv = ajvModule.default;
-const ajv = new Ajv({allErrors: true});
+const ajv = new Ajv({ allErrors: true });
 
 const widgetsValidator = ajv.compile(widgetsSchema);
 const fileHandlersValidator = ajv.compile(fileHandlersSchema);
@@ -132,9 +132,11 @@ export const maniTests: Array<Validation> = [
                 this.errorString = "Seperate Icons are needed for both maskable and any";
                 return false;
             }
-            const icon512 = value.find(icon => isAtLeast(icon.sizes, 512, 512) && (icon.type === 'image/png' || icon.src.endsWith(".png")));
+
+            // check for 512 icon that is either PNG or SVG
+            const icon512 = value.find(icon => isAtLeast(icon.sizes, 512, 512) && ((icon.type === 'image/png' || icon.type === 'image/svg') || (icon.src.endsWith(".png") || icon.src.endsWith(".svg"))));
             if (!icon512) {
-                this.errorString = "Need at least one PNG icon 512x512 or larger";
+                this.errorString = "Need at least one PNG or SVG icon 512x512 or larger";
                 return false;
             }
             return true;
@@ -329,7 +331,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
         errorString: "start_url is required and must be a string with a length > 0",
         quickFix: true,
-        test: function(value: string) {
+        test: function (value: string) {
             const exist = value && typeof value === "string" && value.length > 0;
             if (!exist) {
                 this.errorString = "start_url is required and must be a string with a length > 0";
@@ -416,7 +418,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
         errorString: "theme_color should be a valid hex color",
         quickFix: true,
-        test: function(value: string) {
+        test: function (value: string) {
             if (typeof value === "undefined") {
                 this.testRequired = false;
                 return false;
@@ -488,14 +490,14 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
         errorString: "",
         quickFix: true,
-        test: function(value: any) {
+        test: function (value: any) {
             const exist = value && Array.isArray(value) && value.length > 0 ? true : false;
             if (!exist) {
                 this.errorString = "shortcuts must be an array with a length > 0";
                 return false;
             }
-            
-            const supportedFormats = value.every((shortcut: {icons?: Icon[]}) => {
+
+            const supportedFormats = value.every((shortcut: { icons?: Icon[] }) => {
                 // If there are no icons, then it cannot contain webp.
                 if (!shortcut.icons) return true;
                 // this returns TRUE if every icon in the shortcut does not have webp or svg.
@@ -606,7 +608,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
         quickFix: false, // @ Justin Willis, I added this but left it false because idk how to do quick fixes lol.
-        test: function(value: any) {
+        test: function (value: any) {
             if (typeof value === "undefined") {
                 this.testRequired = false;
                 return false;
@@ -626,7 +628,7 @@ export const maniTests: Array<Validation> = [
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
         quickFix: true,
-        test: function(value: any[]) {
+        test: function (value: any[]) {
             if (typeof value === "undefined") {
                 this.testRequired = false;
                 return false;
@@ -712,7 +714,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
         quickFix: true,
         errorString: "",
-        test: function(value: any[]) {
+        test: function (value: any[]) {
             const exist = value && Array.isArray(value);
             if (!exist) {
                 this.errorString = "protocol_handlers should be a non-empty array";
@@ -791,7 +793,7 @@ export const maniTests: Array<Validation> = [
             "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
         quickFix: true,
         errorString: "",
-        test: function(value: any[]) {
+        test: function (value: any[]) {
             const exist = value && Array.isArray(value);
             if (!exist) {
                 this.errorString = "display_override must be a non-empty array";
@@ -883,7 +885,7 @@ export const maniTests: Array<Validation> = [
         docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array",
         errorString: "",
         quickFix: false,
-        test: function(value: any) {
+        test: function (value: any) {
             const exist = value && typeof value === "object";
             if (!exist) {
                 this.errorString = "launch_handler should be object";
@@ -894,7 +896,7 @@ export const maniTests: Array<Validation> = [
                 this.errorString = "launch_handler should have client_mode";
                 return false;
             }
-            
+
             return true;
         }
     },

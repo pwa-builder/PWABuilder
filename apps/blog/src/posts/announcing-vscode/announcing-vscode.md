@@ -7,7 +7,7 @@ date: 2022-02-01
 updatedDate: 2022-02-01
 trending: true
 featured: true
-image: posts/announcing-vscode/vscode-release-graphic.png
+image: posts/announcing-vscode/hero.png
 isPost: true
 backUrl: '/'
 author:

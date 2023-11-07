@@ -6,7 +6,7 @@ description: A crucial part of building a PWA is creating its manifest.json file
 date: 2021-08-17
 trending: false
 featured: true
-image: posts/manifest-previewer/name-windows.png
+image: posts/manifest-previewer/hero.png
 isPost: true
 backUrl: '/'
 author:
