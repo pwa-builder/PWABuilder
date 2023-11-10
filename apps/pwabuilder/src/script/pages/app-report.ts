@@ -2195,6 +2195,8 @@ export class AppReport extends LitElement {
     this.manifestTotalScore = this.validationResults.length;
     this.manifestValidCounter = 0;
     this.manifestRequiredCounter = 0;
+    this.enhancementTotalScore = 0;
+    this.manifestRecCounter = 0;
 
     this.validationResults.forEach((test: Validation) => {
       if(test.valid){
