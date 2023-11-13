@@ -22,9 +22,7 @@ tags:
 
 Every day, [PWABuilder](https://pwabuilder.com/) analyzes thousands of PWAs. We use this data to learn from you, the developers, about all the current trends in PWAs based on the kind of PWAs you create. In this article, we present some data and insights gathered from a 3-month snapshot of our analytics (Aug 2023 – Oct 2023). 
 During this period, we recorded a total of 10,640 unique URLs that went through the flow of PWABuilder. That’s a PWA data mine right there! 
-Manifests and service workers are the heart and soul of a PWA. They distinguish your PWA from being just another website. Manifests define how your PWA looks and behaves when installed on a device. Service workers are essentially JavaScript workers that run in the background and are used for features like notifications, offline support, background sync, and many more. They can also be used just to fetch data from APIs for the website or pretty much hold any logic that needs to run on the site.
-
-Learn more about [manifests](https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests) and [service workers](https://docs.pwabuilder.com/#/home/sw-intro) from our documentation. 
+Manifests and service workers are the heart and soul of a PWA. They distinguish your PWA from being just another website. A [manifest](https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests) defines how your PWA looks and behaves when installed on a device. [Service workers](https://docs.pwabuilder.com/#/home/sw-intro) are essentially JavaScript workers that run in the background and are used for features like notifications, offline support, background sync, and many more. They can also be used just to fetch data from APIs for the website or pretty much hold any logic that needs to run on the site.
 
 ## Service Worker Analysis
 
@@ -38,7 +36,7 @@ What does this tell us? Well, for one thing, it shows that there is a lot of int
 
 Manifests are a hard requirement for a PWA, unlike service workers. They hold a lot of crucial information that is needed for the PWA to behave more app-like such as icons, file handlers, link handlers and so much more. 
 
- ![A bar graph that shows the number of PWAs with and without service workers](/posts/data-insights-on-PWAs/SW.png)
+ ![A pie chart that shows the number of PWAs with and without service workers](/posts/data-insights-on-PWAs/SW.png)
 
  We took 6 of the app capabilities into account to try and analyze how often they are being used in PWAs these days. A quick description of these:
 
