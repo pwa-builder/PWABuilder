@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data insights on PWAs
+title: PWA Insights - A Look at PWABuilder Data
 excerpt: A quick read on some insights derived from our  analytics on PWABuilder.com
 description: This blog presents a snapshot of data from Aug - Oct 2023 of all the PWAs that have been through the flow of PWABuilder.com and what we can learn from them.
 date: 2023-11-02
