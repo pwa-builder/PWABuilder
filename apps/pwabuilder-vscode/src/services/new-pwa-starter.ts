@@ -1,6 +1,14 @@
 import * as vscode from "vscode";
 import { trackEvent } from "./usage-analytics";
+
+var fs = require('fs');
+const decompress = require('decompress');
+import fetch from 'node-fetch';
+import {pipeline} from 'node:stream';
+import {promisify} from 'node:util';
+
 const shell = require("shelljs");
+const FETCHED_ZIP_NAME_STRING: string = 'fetchedZip.zip';
 
 const repositoryInputPrompt: string =
   "Enter the name you would like to use for your PWA's repository.";
@@ -8,20 +16,15 @@ const directoryInputPrompt: string = "Where would you like your PWA to live?";
 const repositoryInputPlaceholder: string = "Enter your repository name here.";
 const noNameSelectedWarning: string =
   "No repository name provided. New PWA Starter process cancelled.";
-const noGitWarning: string =
-  "This command requires git. Install git at https://git-scm.com/";
 const noNpmWarning: string =
   "This command requires npm. Install npm at https://www.npmjs.com/";
 const starterRepositoryURI: string =
-  "https://github.com/pwa-builder/pwa-starter.git";
+"https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip";
 
 let repositoryName: string | undefined = undefined;
 let repositoryParentURI: vscode.Uri | undefined = undefined;
 
 const terminal = vscode.window.createTerminal();
-const gitFileWatcher = vscode.workspace.createFileSystemWatcher(
-  `**/${repositoryName}/.git/**`
-);
 
 export async function setUpLocalPwaStarterRepository(): Promise<void> {
   trackEvent("generate", { "type": "starter"});
@@ -31,11 +34,9 @@ export async function setUpLocalPwaStarterRepository(): Promise<void> {
 
     if (repositoryName && repositoryParentURI) {
       try {
-        initStarterRepository();
+        await initStarterRepository();
         offerDocumentation();
         openRepositoryWithCode();
-        setupLocalRepository();
-
         resolve();
       } catch (err) {
         reject(err);
@@ -45,7 +46,6 @@ export async function setUpLocalPwaStarterRepository(): Promise<void> {
 }
 
 async function offerDocumentation() {
-  // offer documentation
   const documentationLink = "https://aka.ms/starter-docs";
   const documentationLinkButton = "Open Documentation";
   const documentationLinkResponse = await vscode.window.showInformationMessage(
@@ -61,7 +61,7 @@ async function offerDocumentation() {
 async function getRepositoryInfoFromInput(): Promise<void> {
   await getRepositoryNameFromInputBox()
     .then(getRepositoryDirectoryFromDialog)
-    .catch(inputCanelledWarning);
+    .catch(inputCancelledWarning);
 }
 
 async function getRepositoryNameFromInputBox(): Promise<void> {
@@ -94,41 +94,19 @@ async function getRepositoryDirectoryFromDialog(): Promise<void> {
   });
 }
 
-function initStarterRepository(): void {
+async function initStarterRepository(): Promise<void> {
   terminal.show();
-  changeDirectory(repositoryParentURI?.path.slice(1));
-  if (tryCloneFromGithub()) {
+  const repoPath: string = await fetchFromGithub();
+  if (fs.existsSync(repoPath)) {
+    changeDirectory(`${repositoryParentURI?.path.slice(1)}/${repositoryName}`);
     tryNpmInstall();
   }
 }
 
 function openRepositoryWithCode(): void {
-  let workspaceChangeDisposable: vscode.Disposable =
-    vscode.workspace.onDidChangeWorkspaceFolders(removeGitFolderListener);
-
-  gitFileWatcher.onDidDelete(() => {
-    workspaceChangeDisposable.dispose();
-    gitFileWatcher.dispose();
-  });
-
   terminal.sendText(`code ${repositoryName}`);
 }
 
-function removeGitFolderListener(): any {
-  if (vscode.workspace.workspaceFolders) {
-    let i = 0;
-    while (i < vscode.workspace.workspaceFolders.length) {
-      if (vscode.workspace.workspaceFolders[i].name == repositoryName) break;
-      i++;
-    }
-    vscode.workspace.fs.delete(
-      vscode.Uri.file(
-        `${vscode.workspace.workspaceFolders[i].uri.fsPath}/.git`
-      ),
-      { recursive: true }
-    );
-  }
-}
 
 function tryNpmInstall(): boolean {
   let didNpmInstall: boolean = true;
@@ -142,9 +120,8 @@ function tryNpmInstall(): boolean {
 }
 
 function npmInstall(): void {
-  changeDirectory(repositoryName);
   terminal.sendText("npm install");
-  changeDirectory("..");
+  changeDirectory('..');
 }
 
 function changeDirectory(pathToDirectory: string | undefined): void {
@@ -161,49 +138,28 @@ export function isNpmInstalled(): boolean {
   return isNpmInstalled;
 }
 
-function tryCloneFromGithub(): boolean {
-  let wasCloned: boolean = true;
-  if (isGitInstalled()) {
-    cloneFromGithub();
-  } else {
-    noGitInstalledWarning();
-    wasCloned = false;
+async function fetchFromGithub(): Promise<string> {
+  const streamPipeline = promisify(pipeline);
+
+  const fetchedZipPath: string = `${repositoryParentURI?.fsPath}\\fetchedTemplate.zip`;
+  const decompressedZipPath: string = `${repositoryParentURI?.fsPath}\\decompressedTemplate`;
+  const decompressedRepoPath: string = `${decompressedZipPath}\\pwa-starter-main`;
+  const finalLocationPath: string = `${repositoryParentURI?.fsPath}\\${repositoryName}`;
+
+  const res = await fetch(starterRepositoryURI);
+  if(res.body) {
+    await streamPipeline(res.body, fs.createWriteStream(fetchedZipPath));
+    await decompress(fetchedZipPath, decompressedZipPath);
+    fs.renameSync(decompressedRepoPath, finalLocationPath);
+    fs.rmSync(fetchedZipPath, { recursive: true, force: true });
+    fs.rmSync(decompressedZipPath, { recursive: true, force: true });
   }
 
-  return wasCloned;
+  return finalLocationPath
 }
 
-function cloneFromGithub(): void {
-  terminal.sendText(cloneCommand());
-}
-
-function setupLocalRepository(): void {
-  changeDirectory(repositoryName);
-  terminal.sendText("git init .");
-  terminal.sendText("git add .");
-  terminal.sendText('git commit -m "First PWA Starter commit."');
-}
-
-function isGitInstalled(): boolean {
-  let isGitInstalled: boolean = true;
-
-  if (!shell.which("git")) {
-    isGitInstalled = false;
-  }
-
-  return isGitInstalled;
-}
-
-function cloneCommand(): string {
-  return `git clone ${starterRepositoryURI} ${repositoryName}`;
-}
-
-function inputCanelledWarning(): void {
+function inputCancelledWarning(): void {
   vscode.window.showWarningMessage(noNameSelectedWarning);
-}
-
-function noGitInstalledWarning(): void {
-  vscode.window.showWarningMessage(noGitWarning);
 }
 
 export function noNpmInstalledWarning(): void {
