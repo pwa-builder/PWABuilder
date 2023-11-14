@@ -1016,8 +1016,16 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        .indicator:focus {
+          outline: 2px solid var(--primary-color);
+        }
+
         .indicator.selected {
           background-color: var(--primary-color)
+        }
+
+        .indicator.selected:focus {
+          outline: 2px solid #000000;
         }
 
         .indicator.selected p {
