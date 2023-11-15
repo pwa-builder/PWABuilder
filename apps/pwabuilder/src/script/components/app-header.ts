@@ -90,31 +90,63 @@ export class AppHeader extends LitElement {
         color: black;
       }
 
-      .social-box {
+      .link {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+      }
+
+      .link:visited, .link:active, .link:link {
+        color: #777777;
+      }
+
+      sl-menu {
         display: flex;
+        flex-direction: column;
         background-color: white;
-        gap: 2em;
+        gap: 5px;
         color: #777777;
         font-size: 16px;
-        padding: 1em;
-        position: relative;
+        padding: 15px;
         border-radius: 5px;
       }
 
-      .arrow {
-        height: 15px;
-        width: 15px;
-        transform: rotate(45deg);
-        background-color: white;
-        position: absolute;
-        top: -5px;
-        right: 45px;
+      sl-menu-item::part(checked-icon), sl-menu-item::part(submenu-icon) {
+        display: none;
       }
 
-      .col {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
+      sl-menu-item::part(base){
+        color: var(--font-color);
+        text-decoration: none;
+        border-bottom: none;
+        font-size: 16px;
+        margin: 0;
+        padding: 5px;
+      }
+
+      sl-menu-item::part(base):hover sl-menu-item::part(label) {
+        background-color: unset;
+        color: var(--primary-color);
+      }
+
+      sl-menu-item:focus-visible::part(base) {
+        background-color: var(--primary-color);
+      }
+
+      sl-menu-item:hover::part(base) {
+        background-color: var(--primary-color);
+      }
+
+      sl-menu-item:focus-visible .link, sl-menu-item:hover .link {
+        color: #ffffff;
+      }
+
+      sl-dropdown {
+        position: relative;
+        
+      }
+      sl-dropdown::part(base){
+        box-shadow: 0px 16px 24px 0px #00000026;
       }
 
       .col-header {
@@ -123,22 +155,8 @@ export class AppHeader extends LitElement {
         white-space: nowrap;
         font-weight: bold;
         color: #777777;
+        padding: 0 5px;
       }
-
-      .link {
-        text-decoration: none;
-      }
-
-      .link:visited, .link:active, .link:link {
-        color: #777777;
-      }
-
-      .link:hover {
-        cursor: pointer;
-        text-decoration: underline;
-      }
-
-      
 
       @media (prefers-color-scheme: light) {
         header {
@@ -224,6 +242,14 @@ export class AppHeader extends LitElement {
     }
   }
 
+  // hacky work around for clicking links with keyboard that are nested in menu items
+  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+  handleClickingLink(linkTag: string, analyticsString: string){
+    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('[data-tag="' + linkTag + '"]')!;
+    anchor.click();
+    recordPWABuilderProcessStep(analyticsString, AnalyticsBehavior.ProcessCheckpoint)
+  }
+
   render() {
     return html`
       <header part="header">
@@ -237,61 +263,68 @@ export class AppHeader extends LitElement {
             class="nav_link"
             appearance="hypertext"
             href="https://docs.pwabuilder.com"
-            target="__blank"
+            target="_blank"
             aria-label="PWABuilder Docs, will open in separate tab"
             rel="noopener"
             @click=${() => recordPWABuilderProcessStep(`header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
             <span>Docs</span>
           </a>
-          <sl-dropdown distance="10">
+          <sl-dropdown distance="5">
             <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
-            <div class="social-box">
-              <div class="arrow" role="presentation"></div>
-              <div class="col">
-                <a 
-                class="col-header"
-                href="https://blog.pwabuilder.com"
-                target="__blank"
-                aria-label="PWABuilder Blog, will open in separate tab"
-                rel="noopener"
-                @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-                >Blogs</a>
-              </div>
-              <div class="col">
+            
+            <sl-menu>
+                <p class="col-header">Check out our Blog</p>
+                <sl-menu-item @click=${() => this.handleClickingLink("blog_link", "header.blog_clicked")}>
+                  <a 
+                    class="link"
+                    href="https://blog.pwabuilder.com"
+                    target="_blank"
+                    aria-label="PWABuilder Blog, will open in separate tab"
+                    rel="noopener"
+                    data-tag="blog_link"
+                  >
+                    PWABuilder Blogs
+                  </a>
+                </sl-menu-item>
                 <p class="col-header">Follow us on</p>
-                <a 
-                  class="link" 
-                  href="https://github.com/pwa-builder/PWABuilder"
-                  target="__blank"
-                  aria-label="PWABuilder Github repo, will open in separate tab"
-                  rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                <sl-menu-item @click=${() => this.handleClickingLink("github_link", "header.github_clicked")}>
+                  <a 
+                    class="link" 
+                    href="https://github.com/pwa-builder/PWABuilder"
+                    target="_blank"
+                    aria-label="PWABuilder Github repo, will open in separate tab"
+                    rel="noopener"
+                    data-tag="github_link"
                   >
-                  Github
-                </a>
-                <a 
-                  class="link" 
-                  href="https://twitter.com/pwabuilder"
-                  target="__blank"
-                  aria-label="PWABuilder Twitter, will open in separate tab"
-                  rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                    Github
+                  </a>
+                </sl-menu-item>
+                <sl-menu-item @click=${() => this.handleClickingLink("twitter_link", "header.twitter_clicked")}>
+                  <a 
+                    class="link" 
+                    href="https://twitter.com/pwabuilder"
+                    target="_blank"
+                    aria-label="PWABuilder Twitter, will open in separate tab"
+                    rel="noopener"
+                    data-tag="twitter_link"
                   >
-                  Twitter
-                </a>
-                <a 
-                  class="link" 
-                  href="https://aka.ms/pwabuilderdiscord"
-                  target="__blank"
-                  aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
-                  rel="noopener"
-                  @click=${() => recordPWABuilderProcessStep(`header.discord_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+                    Twitter
+                  </a>
+                </sl-menu-item>
+                <sl-menu-item @click=${() => this.handleClickingLink("discord_link", "header.discord_clicked")}>
+                  <a 
+                    class="link" 
+                    href="https://aka.ms/pwabuilderdiscord"
+                    target="_blank"
+                    aria-label="Invitation link to PWABuilder Discord server, will open in separate tab"
+                    rel="noopener"
+                    data-tag="discord_link"
                   >
-                  Discord
-                </a>
-              </div>
-            </div>
+                    Discord
+                  </a>
+                </sl-menu-item>
+            </sl-menu>
           </sl-dropdown>
         </nav>
       </header>

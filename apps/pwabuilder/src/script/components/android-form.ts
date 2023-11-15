@@ -601,7 +601,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.enableNotifications = checked
                     })}
                   </div>
-                </div>` : html``}
+                </div>` : null}
 
                 ${this.isGooglePlayApk ?
                 html`
@@ -620,7 +620,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.features.locationDelegation!.enabled = checked
                     })}
                   </div>
-                </div>` : html``}
+                </div>` : null}
 
                 ${this.isGooglePlayApk ?
                 html`
@@ -640,7 +640,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.features.playBilling!.enabled = checked
                     })}
                   </div>
-                </div>` : html``}
+                </div>` : null}
 
                 <div class="form-group">
                   <label>
@@ -675,7 +675,7 @@ export class AndroidForm extends AppPackageFormBase {
                       inputHandler: (_, checked) => this.packageOptions.isChromeOSOnly = checked
                     })}
                   </div>
-                </div>` : html``}
+                </div>` : null}
 
                 <div class="form-group">
                   <label>
@@ -750,7 +750,7 @@ export class AndroidForm extends AppPackageFormBase {
                 </div>
 
                 ${this.renderSigningKeyFields()}` :
-                html``}
+                null}
 
               </div>
           </sl-details>

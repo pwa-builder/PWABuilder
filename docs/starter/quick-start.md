@@ -56,13 +56,12 @@ Your progressive web app will then open in a new browser window.
 
 ## Next Steps
 
-To learn how to use the CLI in depth, go <a href="/starter/cli-usage" aria-label="Click here to lean more">here</a>
+- [Learn how to use the CLI in depth](/starter/cli-usage)
  
-To learn more about adding content to your PWA, go <a href="/starter/adding-content" aria-label="Click here to lean more">here</a> 
+- [Learn how to add content to your PWA](/starter/adding-content)
 
-To learn more about the service worker in the starter, go <a href="/starter/service-worker" aria-label="Click here to lean more">here</a>
+- [Learn more about the service worker in the PWA Starter](/starter/service-worker)
 
-To learn how to deploy your PWA to the web, go <a href="/starter/publish" aria-label="Click here to lean more">here</a> 
+- [Learn how to deploy your PWA to the web](/starter/publish)
 
-To learn about the technical structure of the starter, go <a href="/starter/tech-overview" aria-label="Click here to lean more">here</a> 
-
+- [Learn more about the technical structure of the starter](/starter/tech-overview)
