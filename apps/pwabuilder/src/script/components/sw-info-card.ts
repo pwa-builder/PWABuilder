@@ -12,6 +12,7 @@ export class ServiceWorkerInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
   @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
   @state() currentlyHovering: boolean = false;
+  @state() hoverTimer: any;
 
   static get styles() {
     return [
@@ -29,6 +30,8 @@ export class ServiceWorkerInfoCard extends LitElement {
         color: #ffffff;
         padding: 10px;
         border-radius: var(--card-border-radius);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -68,43 +71,55 @@ export class ServiceWorkerInfoCard extends LitElement {
         height: auto;
       }
 
-      .mic-actions {
+      .learn-more {
+        line-height: 17px;
+        display: block;
+        width: 100%;
+      }
+
+      .learn-more:visited, .learn-more:active, .learn-more:link {
+        color: #ffffff;
+      }
+
+      sl-menu {
+        background-color: var(--font-color);
+        border: none;
+        padding: 10px;
+        padding-top: 0;
         display: flex;
         align-items: center;
         justify-content: flex-start;
         width: 100%;
         gap: 15px;
-        margin: 5px 0;
+        margin: 0;
+        border-radius: 0;
+        border-bottom-left-radius: var(--card-border-radius);
+        border-bottom-right-radius: var(--card-border-radius);
       }
 
-      .mic-actions > * {
+      sl-menu-item {
+        border: 1px solid transparent;
+      }
+
+      sl-menu-item::part(checked-icon), sl-menu-item::part(submenu-icon) {
+        display: none;
+      }
+
+      sl-menu-item::part(base){
         color: #ffffff;
         font-size: var(--card-body-font-size);
         font-weight: bold;
         font-family: var(--font-family);
-      }
-
-      .mic-actions a {
-        line-height: 17px;
-      }
-
-      .mic-actions a:visited, .mic-actions a:active, .mic-actions a:link {
-        color: #ffffff;
-      }
-
-      .mic-actions button {
-        background-color: transparent;
-        border: none;
-        color: #ffffff;
         padding: 0;
         text-decoration: underline;
-        height: 16px;
-        display: flex;
-        align-items: center;
       }
 
-      .mic-actions button:hover {
-        cursor: pointer;
+      sl-menu-item:hover, sl-menu-item::part(base) {
+        background-color: unset;
+      }
+
+      sl-menu-item:focus {
+        border: 1px solid #ffffff;
       }
 
       /* < 480px */
@@ -152,17 +167,25 @@ export class ServiceWorkerInfoCard extends LitElement {
         composed: true
       });
     if(!entering){
-      setTimeout(() => { this.closeTooltip(myEvent) }, 500)
+      setTimeout(() => { this.closeTooltip(myEvent) }, 250)
     } else {
-      this.dispatchEvent(myEvent);
+      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
     }
-
   }
 
   closeTooltip(e: CustomEvent){
     if(!this.currentlyHovering){
+      clearTimeout(this.hoverTimer);
       this.dispatchEvent(e);
     }
+  }
+
+  // hacky work around for clicking links with keyboard that are nested in menu items
+  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+  handleClickingLink(linkTag: string){
+    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
+    anchor.click();
+    this.trackLearnMoreAnalytics();
   }
 
   render() {
@@ -179,11 +202,10 @@ export class ServiceWorkerInfoCard extends LitElement {
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
             ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-
-            <div class="mic-actions">
-              <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
-            </div>
           </div>
+          <sl-menu>
+            <sl-menu-item @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+          </sl-menu>
         </sl-dropdown>
         ` :
         html`
@@ -192,15 +214,14 @@ export class ServiceWorkerInfoCard extends LitElement {
             class="tooltip"
             @sl-hide=${() => this.handleHover(false)}
           >
-            <slot name="trigger" slot="trigger"></slot>
-            <div class="info-box">
-              ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
-
-              <div class="mic-actions">
-                <a class="learn-more" href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer" @click=${() => this.trackLearnMoreAnalytics()}>Learn More</a>
-              </div>
-            </div>
-          </sl-dropdown>
+          <slot name="trigger" slot="trigger"></slot>
+          <div class="info-box">
+            ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
+          </div>
+          <sl-menu>
+            <sl-menu-item @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
         `
       }
 

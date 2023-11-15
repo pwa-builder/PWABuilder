@@ -929,7 +929,7 @@ export class PublishPane extends LitElement {
     return this.platforms.map(
       platform => html`
         <div class="card-wrapper">
-          ${platform.title != "iOS" ? html`` :
+          ${platform.title != "iOS" ? null :
             html`
             <div class="experimental-tracker">
             <p>Experimental</p>
@@ -1077,7 +1077,7 @@ export class PublishPane extends LitElement {
               </div>
               <div id="form-area" data-store=${this.selectedStore}>
                 ${this.renderForm()}
-                <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : html``}</div>
+                <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : null}</div>
               </div>
               ${this.renderFormFooter()}
             `
