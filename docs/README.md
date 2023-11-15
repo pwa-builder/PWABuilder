@@ -1,6 +1,6 @@
 # PWABuilder Suite Documentation
 
-Welcome to the new documentation for the [PWABuilder](https://www.pwabuilder.com/) tooling suite! 
+Welcome to the documentation for the [PWABuilder](https://www.pwabuilder.com/) tooling suite! 
 
 The suite has three main tools:
 
