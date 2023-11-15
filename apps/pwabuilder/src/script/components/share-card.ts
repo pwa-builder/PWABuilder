@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, css, html } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { smallBreakPoint } from '../utils/css/breakpoints';
 import { draw } from '../utils/share-card-helper';
@@ -15,7 +15,6 @@ export class ShareCard extends LitElement {
   @property() siteName = "";
 
   @state() dataURL = "";
-  @state() actionButtons: TemplateResult = html``;
   @state() canShare: boolean = true;
 
   shareCanvas: Ref<HTMLCanvasElement> = createRef();

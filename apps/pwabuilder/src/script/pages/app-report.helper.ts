@@ -25,7 +25,7 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker']/*,installable?: boolean*/): Array<TestResult> {
+export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], offline?: ReportAudit['audits']['offlineSupport']/*,installable?: boolean*/): Array<TestResult> {
 	console.info('Testing Service Worker');
 
 	const swFeatures = serviceWorker?.details?.features || null;
@@ -55,6 +55,12 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 			category: 'optional',
 			member: "push_notifications"
 	  },
+		{
+			result: offline?.score || false,
+			infoString: offline?.score ? 'Has offline support' : 'Does not have offline support',
+			category: 'optional',
+			member: "offline_support"
+	  },
 	];
 	// TODO: move installability from here
 	// if (typeof installable == 'boolean') {
@@ -75,7 +81,7 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	// TODO: Adjust this to use the new security audits
 	// Installable can't be not on https, probably mixed content due redirects.
 	const isOnHttps = audits?.isOnHttps?.score || audits?.installableManifest?.score || false;
-	const noMixedContent = audits?.isOnHttps?.score || false;
+	const noMixedContent = audits?.noMixedContent?.score || false;
 
 	const organizedResults = [
 	  {
