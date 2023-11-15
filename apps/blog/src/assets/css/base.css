@@ -77,9 +77,10 @@ blockquote {
   padding-left: 1rem;
 }
 
-.figcaption_hack {
+.figcaption_hack, figcaption {
   color: rgba(117, 117, 117, 1);
   font-size: 0.6rem;
+  line-height: 2.5;
   font-weight: var(--font-bold);
   text-align: center;
   margin-right: auto;

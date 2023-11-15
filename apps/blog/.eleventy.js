@@ -2,6 +2,8 @@ const siteSettings = require("./src/globals/site.json")
 
 module.exports = (config) => {
   const markdownIt = require("markdown-it")
+  const implicitFigures = require('markdown-it-implicit-figures')
+
   config.setLibrary(
     "md",
     markdownIt({
@@ -9,8 +11,12 @@ module.exports = (config) => {
       breaks: true,
       linkify: true,
       typographer: true,
+    }).use(implicitFigures, {
+      lazyLoading: true,
+      figcaption: true
     })
   )
+
   config.addPlugin(require("@11ty/eleventy-plugin-syntaxhighlight"))
   config.addPlugin(require("@11ty/eleventy-plugin-rss"))
 
@@ -33,6 +39,7 @@ module.exports = (config) => {
   config.addPassthroughCopy("src/**/*.jpg")
   config.addPassthroughCopy("src/**/*.png")
   config.addPassthroughCopy("src/**/*.gif")
+  config.addPassthroughCopy("src/**/*.webm")
 
   config.setBrowserSyncConfig({
     files: ["dist/**/*"],
