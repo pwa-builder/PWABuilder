@@ -20,7 +20,7 @@ tags:
 ---
 
 
-Every day, [PWABuilder](https://pwabuilder.com/) analyzes thousands of PWAs. We use this data to learn from you, the developers, about all the current trends in PWAs based on the kind of PWAs you create. In this article, we present some data and insights gathered from a 3-month snapshot of our analytics (Aug 2023 – Oct 2023). 
+Every day, [PWABuilder](https://pwabuilder.com/) analyzes thousands of PWAs. This gives us unique visibility about current trends in PWAs based on how developers use PWAs features. In this article, we present insights gathered from a 3-month snapshot of analyzed PWAs on PWABuilder.com (Aug 2023 – Oct 2023).  
 During this period, we recorded a total of 11,064 unique URLs that went through the flow of PWABuilder. That’s a lot of Progressive Web Apps! 
 Manifests and service workers are the heart and soul of a PWA. They distinguish your PWA from being just another website. A manifest defines how your PWA looks and behaves when installed on a device. Service workers are essentially JavaScript workers that run in the background and are used for features like notifications, offline support, background sync, and many more. They can also be used just to fetch data from APIs for the website or pretty much hold any logic that needs to run on the site.
 
