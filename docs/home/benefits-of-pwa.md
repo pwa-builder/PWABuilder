@@ -58,14 +58,13 @@ App Capabilities that can be implemented from the web include, but are not limit
 - Custom file and URL handling
 - Integration with hardware devices, like touch screens, microphones, and other sensors
 
-You can learn about how to add native features to your PWA <a href="/home/native-features/" aria-label="Click here to learn more">here</a>
+You can learn about how to add native features to your PWA in our [Adding App Capabilities](/home/native-features/) article.
 
 ### Reliable Offline Experience
 
 Another huge edge that native apps used to have on web apps was offline reliability. Classically, web apps would be rendered nonfunctional without access to the internet. Now, with the development of modern web caching and service worker capabilities, progressive web apps can keep a functional and interactive UI even without connectivity.
 
-You can learn more about service workers, the force behind PWA offline functionality, <a href="/home/sw-intro/" aria-label="Click here to learn more">here</a>
-
+You can learn more about service workers, the force behind PWA offline functionality, in our [Introduction To Service Workers](/home/sw-intro/ "Introduction to Service Workers") article.
 
 ## Next Steps
  
