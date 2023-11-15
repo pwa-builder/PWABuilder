@@ -63,6 +63,6 @@ While service workers are optional in a PWA, the web manifest is not. They hold 
  
 ## Parting thoughts
 
-From the data, it seems like overall, developers are showing interest in adding app capabilities to improve the native-like experience of their PWA. As a developer, it's also important to understand and use these capabilities consciously only where it makes sense and avoid feature overload. Apps like [music player PWA](https://xamuzik.com/) are great examples of how to use app capabilities. This app has used many of the capabilities, not only the ones listed above but others as well (handle_links, edge_side_panel, display_override). It's always great to find PWAs built by developers in the community that exemplify what a great app-like experience can be!
+From the data, it seems like overall, developers are showing interest in adding app capabilities to improve the native-like experience of their PWA. As a developer, it's also important to understand and use these capabilities consciously only where it makes sense and avoid feature overload. Apps like this [music player PWA](https://xamuzik.com/) are great examples of how to use app capabilities. This app has used many of the capabilities, not only the ones listed above but others as well (handle_links, edge_side_panel, display_override). It's always great to find PWAs built by developers in the community that exemplify what a great app-like experience can be!
 
 If you'd like to know more about the data or are curious about any insights that are not presented here, feel free to let us know! 
