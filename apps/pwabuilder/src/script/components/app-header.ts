@@ -107,8 +107,10 @@ export class AppHeader extends LitElement {
         gap: 5px;
         color: #777777;
         font-size: 16px;
-        padding: 15px;
         border-radius: 5px;
+        height: fit-content;
+        width: 136px;
+        padding: 16px 22px;
       }
 
       sl-menu-item::part(checked-icon), sl-menu-item::part(submenu-icon) {
@@ -116,12 +118,12 @@ export class AppHeader extends LitElement {
       }
 
       sl-menu-item::part(base){
-        color: var(--font-color);
+        color: #777777;
         text-decoration: none;
         border-bottom: none;
-        font-size: 16px;
+        font-size: 14px;
         margin: 0;
-        padding: 5px;
+        padding: 0;
       }
 
       sl-menu-item::part(base):hover sl-menu-item::part(label) {
@@ -130,15 +132,21 @@ export class AppHeader extends LitElement {
       }
 
       sl-menu-item:focus-visible::part(base) {
-        background-color: var(--primary-color);
+        color: var(--primary-color);
+        background-color: transparent;
+        
       }
 
       sl-menu-item:hover::part(base) {
-        background-color: var(--primary-color);
+        color: var(--primary-color);
+        background-color: transparent;
+        font-weight: 700;
       }
 
       sl-menu-item:focus-visible .link, sl-menu-item:hover .link {
-        color: #ffffff;
+        color: var(--primary-color);
+        background-color: transparent;
+        font-weight: 700;
       }
 
       sl-dropdown {
@@ -155,7 +163,8 @@ export class AppHeader extends LitElement {
         white-space: nowrap;
         font-weight: bold;
         color: #777777;
-        padding: 0 5px;
+        padding: 0;
+        font-size: 14px;
       }
 
       @media (prefers-color-scheme: light) {
@@ -262,6 +271,17 @@ export class AppHeader extends LitElement {
           <a
             class="nav_link"
             appearance="hypertext"
+            href="https://blog.pwabuilder.com"
+            target="_blank"
+            aria-label="PWABuilder Blog, will open in separate tab"
+            rel="noopener"
+            @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+          >
+            <span>Blog</span>
+          </a>
+          <a
+            class="nav_link"
+            appearance="hypertext"
             href="https://docs.pwabuilder.com"
             target="_blank"
             aria-label="PWABuilder Docs, will open in separate tab"
@@ -270,23 +290,10 @@ export class AppHeader extends LitElement {
           >
             <span>Docs</span>
           </a>
-          <sl-dropdown distance="5">
+          <sl-dropdown distance="5" ?open=${true}>
             <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
             
             <sl-menu>
-                <p class="col-header">Check out our Blog</p>
-                <sl-menu-item @click=${() => this.handleClickingLink("blog_link", "header.blog_clicked")}>
-                  <a 
-                    class="link"
-                    href="https://blog.pwabuilder.com"
-                    target="_blank"
-                    aria-label="PWABuilder Blog, will open in separate tab"
-                    rel="noopener"
-                    data-tag="blog_link"
-                  >
-                    PWABuilder Blogs
-                  </a>
-                </sl-menu-item>
                 <p class="col-header">Follow us on</p>
                 <sl-menu-item @click=${() => this.handleClickingLink("github_link", "header.github_clicked")}>
                   <a 
