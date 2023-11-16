@@ -32,17 +32,19 @@ The last year has seen browser capabilities continue to expand to support more f
 
 Window Controls Overlay is a newer feature that allows your Progressive Web App to look more like a native application by allowing usage of the space normally reserved for the browser's window controls. This feature is available in both Edge and Chrome.
 
-Learn more about [Window Controls Overlay](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/window-controls-overlay).
+Learn more about [Window Controls Overlay](https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/window-controls-overlay).
 
 ### Windows 11 Widgets 
 
 Progressive Web Apps running on Edge can now define widgets for the Widgets Board on Windows 11. This is another great way for your app to integrate more fully on a native operating system.
 
-Learn more about [creating Widgets for Windows 11](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/widgets).
+Learn more about [creating Widgets for Windows 11](https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets).
 
 ### Edge Side Panel
 
 Progressive Web Apps running on Edge can now make use of the Edge Side Panel, which allows your app to run side-by-side with other content. This is great for productivity apps and apps that may be used in conjunction with other content.
+
+Learn more [about the Edge Side Panel](https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar).
 
 ## PWA By The Numbers
 
