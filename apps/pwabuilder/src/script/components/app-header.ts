@@ -290,7 +290,7 @@ export class AppHeader extends LitElement {
           >
             <span>Docs</span>
           </a>
-          <sl-dropdown distance="5" ?open=${true}>
+          <sl-dropdown distance="5">
             <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
             
             <sl-menu>
