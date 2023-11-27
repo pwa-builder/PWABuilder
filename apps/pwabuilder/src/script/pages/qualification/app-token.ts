@@ -856,7 +856,7 @@ export class AppToken extends LitElement {
                         <img class="dropdown_icon" data-card="installable-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                       </div>
                       <div class="todos">
-                        ${this.installableTodos.length > 0 ? this.installableTodos.map((todo: TemplateResult) => todo) : html``}
+                        ${this.installableTodos.length > 0 ? this.installableTodos.map((todo: TemplateResult) => todo) : null}
                       </div>
                     </sl-details>
                     <sl-details
@@ -873,7 +873,7 @@ export class AppToken extends LitElement {
                         <img class="dropdown_icon" data-card="required-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                       </div>
                       <div class="todos">
-                        ${this.requiredTodos.length > 0 ? this.requiredTodos.map((todo: TemplateResult) => todo) : html``}
+                        ${this.requiredTodos.length > 0 ? this.requiredTodos.map((todo: TemplateResult) => todo) : null}
                       </div>
                     </sl-details>
                     <sl-details
@@ -890,16 +890,16 @@ export class AppToken extends LitElement {
                         <img class="dropdown_icon" data-card="enhancements-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
                       </div>
                       <div class="todos">
-                        ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : html``}
+                        ${this.enhancementsTodos.length > 0 ? this.enhancementsTodos.map((todo: TemplateResult) => todo) : null}
                       </div>
                     </sl-details>
                     `
                 }
               </div>
             </div>
-          </div> ` : html``}
+          </div> ` : null}
         ` :
-        html``
+        null
       }
 
       ${ !this.userSignedIn ? html`
@@ -922,7 +922,7 @@ export class AppToken extends LitElement {
           <li>Plan to publish an app in the store this calendar year (prior to 12/31/2023 midnight Pacific Standard Time)</li>
         </ul>
         <button class="FTC" @click=${() => this.showTandC(false)}>Full Terms and Conditions</button>
-      </div>` : html``}
+      </div>` : null}
       ${this.siteURL ?
         html`
           ${ !this.userSignedIn ?
@@ -965,7 +965,7 @@ export class AppToken extends LitElement {
             `
 
           }
-        ` : html``}
+        ` : null}
 
           <div id="footer-section">
             <!-- Class Map to show the whole grid vs just the last half of the grid -->
