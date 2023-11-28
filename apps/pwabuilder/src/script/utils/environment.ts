@@ -21,7 +21,7 @@ if (import.meta.env.PROD) {
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.windowsPackageGeneratorUrl =
-    'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
+    'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'https://pwabuilder-cloudapk.azurewebsites.net';
   env.iosPackageGeneratorUrl =
@@ -41,7 +41,7 @@ if (import.meta.env.PROD) {
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.windowsPackageGeneratorUrl =
-    'https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip';
+    'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'https://pwabuilder-cloudapk.azurewebsites.net';
   env.iosPackageGeneratorUrl =
