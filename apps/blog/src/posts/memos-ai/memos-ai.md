@@ -7,7 +7,7 @@ date: 2023-10-18
 updatedDate: 2023-10-18
 trending: true
 featured: true
-image: posts/memos-ai/record-new-note.png
+image: posts/memos-ai/hero.png
 isPost: true
 backUrl: '/'
 author:

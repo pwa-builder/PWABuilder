@@ -335,7 +335,7 @@ export class WindowsForm extends AppPackageFormBase {
           </sl-radio-group>
           ${this.customSelected ? html`
             ${this.renderFormInput(formInput)}
-          ` : html``}
+          ` : null}
         </div>
       </div>
     `;

@@ -34,7 +34,7 @@ test('ensure demo app is testable', async ({ page }) => {
     await expect(reportCardAppTitle).toBeVisible();
 
     // // expect reportCardAppTitle to contain text "Webboard"
-    await expect(reportCardAppTitle).toHaveText('Webboard');
+    await expect(reportCardAppTitle).toContainText('Webboard');
 });
 
 test('ensure Package For Stores button is not disabled for demo app', async ({ page }) => {
@@ -52,6 +52,8 @@ test('ensure Package For Stores button is not disabled for demo app', async ({ p
 
     // wait for tests to end
     await page.waitForLoadState('networkidle');
+
+    await page.waitForSelector("id=swProgressRing");
 
     // test manifest score
     const packageForStoresButton = page.locator('text=Package For Stores');

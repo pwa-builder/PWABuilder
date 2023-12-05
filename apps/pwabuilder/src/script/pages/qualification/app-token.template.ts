@@ -20,7 +20,7 @@ export function decideHeroSection(
   validURL: boolean,
   root: any
 ) {
-  let message = html``;
+  let message = null;
   if(!validURL){
     message = html`
       <p class="invalid-url">The URL you attempted to enter is invalid. Please try again by entering a new URL. </p>
@@ -126,7 +126,7 @@ export function decideHeroSection(
     `;
   }
 
-  return html``;
+  return null;
 }
 
 export function renderAppCard(
@@ -164,7 +164,7 @@ export function renderAppCard(
 ) {
   // no site in query params
   if (!siteURL) {
-    return html``;
+    return null;
   }
 
   // if site in query params and testing in progress
@@ -222,7 +222,7 @@ export function renderAppCard(
     `;
   }
 
-  let banner = html``;
+  let banner = null;
 
   // tests complete but its a denyList url
   if(!tests.testsInProgress && tests.denyList){

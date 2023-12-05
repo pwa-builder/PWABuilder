@@ -2,6 +2,8 @@ const siteSettings = require("./src/globals/site.json")
 
 module.exports = (config) => {
   const markdownIt = require("markdown-it")
+  const implicitFigures = require('markdown-it-implicit-figures')
+
   config.setLibrary(
     "md",
     markdownIt({
@@ -9,8 +11,12 @@ module.exports = (config) => {
       breaks: true,
       linkify: true,
       typographer: true,
+    }).use(implicitFigures, {
+      lazyLoading: true,
+      figcaption: true
     })
   )
+
   config.addPlugin(require("@11ty/eleventy-plugin-syntaxhighlight"))
   config.addPlugin(require("@11ty/eleventy-plugin-rss"))
 
@@ -33,6 +39,7 @@ module.exports = (config) => {
   config.addPassthroughCopy("src/**/*.jpg")
   config.addPassthroughCopy("src/**/*.png")
   config.addPassthroughCopy("src/**/*.gif")
+  config.addPassthroughCopy("src/**/*.webm")
 
   config.setBrowserSyncConfig({
     files: ["dist/**/*"],
@@ -42,7 +49,7 @@ module.exports = (config) => {
   config.setDataDeepMerge(true)
 
   config.addCollection("postsWithoutDrafts", (collection) =>
-    [...collection.getFilteredByGlob("src/posts/*.md")].filter(
+    [...collection.getFilteredByGlob("src/posts/**/*.md")].filter(
       (post) => !post.data.draft
     )
   )
@@ -52,12 +59,6 @@ module.exports = (config) => {
       (docs) => !docs.data.draft
     )
   )
-
-  config.addCollection("demosWithoutDrafts", (collection) =>
-  [...collection.getFilteredByGlob("src/demos/*.md")].filter(
-    (demos) => !demos.data.draft
-  )
-)
 
   return {
     pathPrefix: siteSettings.baseUrl,

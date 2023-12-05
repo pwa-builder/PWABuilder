@@ -119,7 +119,8 @@ export class AppReport extends LitElement {
 
 
   @state() secDataLoading: boolean = true;
-  @state() showSecurityBanner: boolean = false;
+  @state() showSecurityErrorBanner: boolean = false;
+  @state() showSecurityWarningBanner: boolean = false;
   @state() securityIssues: string[] = [];
 
   @state() enhancementTotalScore: number = 0;
@@ -660,9 +661,19 @@ export class AppReport extends LitElement {
           border-left: 4px solid var(--error-color);
         }
 
+        .type-warning {
+          align-items: flex-start;
+          background-color: var(--warning-accent-color);
+          border-left: 4px solid var(--warning-color);
+        }
+
         .feedback-holder p {
           margin: 0;
           font-size: 14px;
+        }
+
+        .feedback-holder img {
+          margin-top: 3px;
         }
 
         .error-title {
@@ -1005,8 +1016,16 @@ export class AppReport extends LitElement {
           font-weight: bold;
         }
 
+        .indicator:focus {
+          outline: 2px solid var(--primary-color);
+        }
+
         .indicator.selected {
           background-color: var(--primary-color)
+        }
+
+        .indicator.selected:focus {
+          outline: 2px solid #000000;
         }
 
         .indicator.selected p {
@@ -1114,6 +1133,11 @@ export class AppReport extends LitElement {
           row-gap: 1em;
           width: fit-content;
           align-items: flex-start;
+          margin-top: auto;
+        }
+
+        #sw-header arrow-link {
+          margin: 0;
           margin-top: auto;
         }
 
@@ -1284,6 +1308,10 @@ export class AppReport extends LitElement {
         #sec-actions {
           row-gap: 1em;
           width: 66%;
+          margin-top: auto;
+        }
+        #sec-header arrow-link {
+          margin: 0;
           margin-top: auto;
         }
 
@@ -2079,6 +2107,7 @@ export class AppReport extends LitElement {
     FindServiceWorker(url).then( async (result) => {
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
+            console.log("content:", result.content);
             findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content));
             this.allTodoItems.push(...findersResults.workerTodos);
             this.requestUpdate();
@@ -2135,7 +2164,7 @@ export class AppReport extends LitElement {
     }
 
     // TODO: move installability score to different place
-    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker))),
+    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit!.audits!.offlineSupport))),
     this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
     this.filteredTodoItems = this.allTodoItems;
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
@@ -2174,6 +2203,8 @@ export class AppReport extends LitElement {
     this.manifestTotalScore = this.validationResults.length;
     this.manifestValidCounter = 0;
     this.manifestRequiredCounter = 0;
+    this.enhancementTotalScore = 0;
+    this.manifestRecCounter = 0;
 
     this.validationResults.forEach((test: Validation) => {
       if(test.valid){
@@ -2293,13 +2324,16 @@ export class AppReport extends LitElement {
 
     securityTests.forEach((result: any) => {
       if(!result.result){
-        this.showSecurityBanner = true;
+        if(result.member === "https"){
+          this.showSecurityErrorBanner = true;
+        } else if(result.member === "mixed_content") {
+          this.showSecurityWarningBanner = true;
+        }
         todos.push({"card": "security", "field": result.member, "fix": result.infoString, "status": "required"});
       }
-    })
+    });
 
-    this.canPackageList[2] = !this.showConfirmationModal;
-
+    this.canPackageList[2] = !this.showSecurityErrorBanner;
 
     this.secDataLoading = false;
 
@@ -2375,6 +2409,7 @@ export class AppReport extends LitElement {
     this.swValidCounter = 0;
     this.swTotalScore = 0;
     this.swRequiredCounter = 0;
+    this.enhancementTotalScore = 0;
 
     // reset todo lsit
     this.allTodoItems = [];
@@ -2383,6 +2418,10 @@ export class AppReport extends LitElement {
     this.requiredMissingFields = [];
     this.recMissingFields = [];
     this.optMissingFields = [];
+
+    // reset results
+    this.validationResults = [];
+    this.serviceWorkerResults = [];
 
     // activate loaders
     this.manifestDataLoading = true;
@@ -2851,7 +2890,6 @@ export class AppReport extends LitElement {
       e.detail.tooltip.hide();
       this.openTooltips = [];
     }
-
   }
 
   closeTooltipOnScroll() {
@@ -3000,7 +3038,7 @@ export class AppReport extends LitElement {
             </div>
           </div>
 
-          ${this.showSecurityBanner ?
+          ${this.showSecurityErrorBanner ?
             html`
               <div class="feedback-holder type-error">
                 <img src="/assets/new/stop.svg" alt="invalid result icon" />
@@ -3009,6 +3047,22 @@ export class AppReport extends LitElement {
                   <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
                   <div class="error-actions">
                     <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                  </div>
+                </div>
+              </div>
+            ` :
+            null
+          }
+
+          ${this.showSecurityWarningBanner && !this.showSecurityErrorBanner ?
+            html`
+              <div class="feedback-holder type-warning">
+                <img src="/assets/new/yield.svg" alt="warning result icon" />
+                <div class="error-info">
+                  <p class="error-title">Mixed content is loading on your PWA</p>
+                  <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified that you are delivering mixed resources when your PWA is loading. Check out the documentation linked below to learn more.</p>
+                  <div class="error-actions">
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content" target="_blank" rel="noopener">Mixed Content Documentation</a>
                   </div>
                 </div>
               </div>
@@ -3362,7 +3416,7 @@ export class AppReport extends LitElement {
                       ` :
                       html`
                         <p class="card-desc">
-                          PWABuilder has analysesd your PWA and has identified some app capabilities that could enhance your PWA
+                          PWABuilder has analyzed your PWA and has identified some app capabilities that could enhance your PWA
                         </p>
                       `
                         }

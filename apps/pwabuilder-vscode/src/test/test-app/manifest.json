@@ -38,7 +38,7 @@
   "related_applications": [
     {
       "platform": "windows",
-      "url": " The URL to your app in that app store"
+      "url": "The URL to your app in that app store"
     }
   ],
   "prefer_related_applications": "false",

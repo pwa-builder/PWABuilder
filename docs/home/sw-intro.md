@@ -134,7 +134,7 @@ For testing purposes, service workers will function without HTTPS when served fr
 If you are unfamiliar with creating certificates to secure an endpoint, you can use an app hosting service that comes with HTTPS enabled by default. 
 
 One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI 
-<a href="/starter/publish?id=azure-static-web-apps" aria-label="Click here to follow instructions">here</a>
+in the [Azure Static Web Apps](/starter/publish?id=azure-static-web-apps) section of the PWA Starter documentation.
 
 ## Next Steps
 

@@ -6,13 +6,15 @@ This document shows how fix this issue so the browser address bar won't show up.
 
 Please note that a "Chrome is in use" banner is expected the first time your app is run. That is not evidence of a broken asset links. You'll know if your asset links are incorrect when the browser address bar shows up in your Android app. 
 
-## Validate Asset Links
+## Validate Location
 
-If you're not sure what asset links are or if you don't have an `assetlinks.json` file, go back and read our [Next Steps page](/Next-steps.md).
+!> If you don't already have an `assetlinks.json` file, head back to the [publish step](/builder/android?id=publish) in the Google Play documentation.
 
-Once you have an `assetlinks.json` file deployed to your server, make sure it's accessible via a web browser at `https://<YOUR-PWA-URL>/.well-known/assetlinks.json`. (Replace `<YOUR-PWA-URL>`) 
+If you have an `assetlinks.json` file, you need to make sure it is placed in the `.well-known` directory at the **root of your domain**, not the root of your progressive web app.
 
-It's important that this file be in the `/.well-known` subdirectory as shown above. Chrome on Android will look at this URL for your asset links file, and will show the browser address bar if it's not found.
+For example, if your PWA lives at `https://<domain>/<progressive-web-app>/`, then your `assetlinks.json` file should be served at `https://<domain>/.well-known/assetlinks.json/`. 
+
+Do **not** serve your asset links file from `https://<domain>/<progressive-web-app>/.well-known/assetlinks.json/`.
 
 ## Adding Fingerprint
 

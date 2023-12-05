@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+h4 {
+  color: #4F3FB6;
+}
+
 p, blockquote {
   margin: revert;
 }
@@ -73,9 +77,10 @@ blockquote {
   padding-left: 1rem;
 }
 
-.figcaption_hack {
+.figcaption_hack, figcaption {
   color: rgba(117, 117, 117, 1);
   font-size: 0.6rem;
+  line-height: 2.5;
   font-weight: var(--font-bold);
   text-align: center;
   margin-right: auto;
@@ -97,7 +102,8 @@ li > a {
 }
 
 a {
-  color:#342a6a;
+  color:rgba(79, 63, 182, 1);
+  ;
   text-decoration: underline;
 }
 
