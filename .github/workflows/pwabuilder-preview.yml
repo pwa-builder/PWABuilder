@@ -46,6 +46,7 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
+          envkey_NODE_ENV: "development"
           envkey_VITE_CLIENT_ID: ${{ secrets.MSAL_CLIENT_ID }}
           file_name: .env
           directory: apps/pwabuilder
