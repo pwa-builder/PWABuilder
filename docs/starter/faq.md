@@ -15,5 +15,7 @@ PWAs bring the best of the native and web worlds together. Through web capabilit
 
 They are cross-platform by nature and discoverable through both the browser and through app stores. You can count on your PWA to be useable everywhere and to reach as wide an audience as possible through a single codebase.
 
+Take a look at our full article on the [Benefits of Progressive Web Apps](/home/benefits-of-pwa)
+
 #### I'm brand new to PWAs and not ready to develop yet, where should I start?
 Check out this [article series](https://microsoft.github.io/win-student-devs/#/) for learning all about progressive web apps. It will take you from learning the very basics, all the way to some best practices for development.
