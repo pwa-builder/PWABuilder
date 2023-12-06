@@ -25,6 +25,7 @@ export class WindowsForm extends AppPackageFormBase {
   @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
   @state() activeLanguages: string[] = [];
   @state() activeLanguageCodes: string[] = [];
+  @state() userBackgroundColor: string = "";
 
   static get styles() {
     return [
@@ -202,7 +203,7 @@ export class WindowsForm extends AppPackageFormBase {
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
     }
-
+    
     this.packageOptions = createWindowsPackageOptionsFromManifest(
       manifestContext!.manifest
     );
@@ -210,7 +211,12 @@ export class WindowsForm extends AppPackageFormBase {
     this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
 
     this.customSelected = this.packageOptions.images?.backgroundColor != 'transparent';
-    this.initialBgColor = this.currentSelectedColor = (this.packageOptions.images?.backgroundColor as string);
+    this.currentSelectedColor = this.packageOptions.images?.backgroundColor!;
+    if(manifestContext?.manifest.background_color){
+      this.initialBgColor = manifestContext!.manifest.background_color;
+    } else {
+      this.initialBgColor = "#000000;"
+    }
   }
 
   toggleSettings(settingsToggleValue: 'basic' | 'advanced') {
@@ -327,7 +333,7 @@ export class WindowsForm extends AppPackageFormBase {
           <p class="sub-multi">Select your Windows icons background color</p>
           <sl-radio-group 
             id="icon-bg-radio-group" 
-            .value=${this.packageOptions!.images!.backgroundColor === 'transparent' ? 'transparent' : 'custom'}
+            .value=${'transparent'}
             @sl-change=${() => this.toggleIconBgRadios()}
           >
             <sl-radio class="color-radio" size="small" value="transparent">Transparent</sl-radio>
@@ -344,13 +350,17 @@ export class WindowsForm extends AppPackageFormBase {
   toggleIconBgRadios(){
     let input = (this.shadowRoot?.getElementById("icon-bg-radio-group") as any);
     let selected = input.value;
-    this.customSelected = selected !== 'transparent';
-    if(!this.customSelected){
+
+    // update values
+    if(this.customSelected){
       this.packageOptions.images!.backgroundColor = 'transparent';
     } else {
       this.packageOptions.images!.backgroundColor = this.initialBgColor;
       this.currentSelectedColor = this.initialBgColor;
     }
+
+    // switch flag which will trigger update
+    this.customSelected = selected !== 'transparent';
   }
 
   render() {
@@ -524,7 +534,7 @@ export class WindowsForm extends AppPackageFormBase {
                     'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
                   inputId: 'icon-bg-color-input',
                   type: 'color',
-                  value: this.packageOptions.images!.backgroundColor || 'transparent',
+                  value: this.packageOptions.images?.backgroundColor!,
                   placeholder: 'transparent',
                   inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
                 })}

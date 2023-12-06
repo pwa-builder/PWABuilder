@@ -537,7 +537,7 @@ export class TestPublishPane extends LitElement {
           <div id="pp-frame-content">
             <div id="pp-frame-header">
               <h1>Download Test Package</h1>
-              <p>If you want to see what your app would look like in its current state, use the test package buttons below!</p>
+              <p>If you want to see what your app would look like in its current state, use the test package button below!</p>
             </div>
             <div id="store-cards">
               ${this.renderContentCards()}

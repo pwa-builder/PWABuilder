@@ -140,7 +140,7 @@ export function createWindowsPackageOptionsFromManifest(
     manifest: manifest,
     images: {
       baseImage: icon?.src || '',
-      backgroundColor: manifest.background_color || 'transparent',
+      backgroundColor: 'transparent',
       padding: 0.0,
     },
     resourceLanguage: languages,
