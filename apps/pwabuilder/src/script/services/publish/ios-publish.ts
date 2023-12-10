@@ -18,7 +18,8 @@ export async function generateIOSPackage(
 
   let headers = {...getHeaders(), 'content-type': 'application/json' };
 
-  const createPackageUrl = `${env.iosPackageGeneratorUrl}`;
+  const referrer = sessionStorage.getItem('ref');
+  const createPackageUrl = `${env.iosPackageGeneratorUrl}${referrer ? '?ref=' + encodeURIComponent(referrer) : ''}`;
   const createPackageResponse = await fetch(createPackageUrl, {
     method: 'POST',
     body: JSON.stringify(options),
@@ -26,7 +27,7 @@ export async function generateIOSPackage(
   });
 
   if (!createPackageResponse.ok) {
-    
+
     const responseText = await createPackageResponse.text();
 
     let err = new Error(

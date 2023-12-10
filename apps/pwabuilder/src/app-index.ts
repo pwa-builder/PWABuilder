@@ -9,7 +9,7 @@ import './script/components/app-header';
 import './script/components/app-button';
 //import './script/components/cookie-banner';
 import './script/components/discord-box';
-import { recordPageView } from './script/utils/analytics';
+import { recordPageView, storeQueryParam } from './script/utils/analytics';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
@@ -92,8 +92,11 @@ export class AppIndex extends LitElement {
   constructor() {
     super();
 
+    storeQueryParam('ref');
+
     window.addEventListener('vaadin-router-location-changed', ev => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
 
       recordPageView(
         ev.detail.location.pathname, // path
@@ -115,7 +118,7 @@ export class AppIndex extends LitElement {
   }
 
   handlePageChange = () => {
-    
+
     var urlObj = new URL(location.href);
 
     // Get the pathname (page name)
