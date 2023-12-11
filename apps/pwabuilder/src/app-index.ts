@@ -126,33 +126,19 @@ export class AppIndex extends LitElement {
     // Remove leading slash if present
     this.pageName = pathname.replace(/^\//, '');
 
-    const pages: string[] = [
-      "reportcard",
-      "freetoken",
-      "congratulations",
-      "portals",
-      "imagegenerator"
-    ]
-
-    // safety in case we type a string above without lowercase for comparison
-    const lowercasePages: string[] = pages.map(page => page.toLowerCase());
-
-    // Detect the current page and set the title
-    const path = this.pageName.toLocaleLowerCase();
-    if (path.toLowerCase().includes(lowercasePages[0])) {
-      this.setPageTitle('Report Card');
-    } else if (path.toLowerCase().includes(lowercasePages[1])) {
-      this.setPageTitle('Free Token');
-    } else if (path.toLowerCase().includes(lowercasePages[2])) {
-      this.setPageTitle('Congratulations');
-    } else if (path.toLowerCase().includes(lowercasePages[3])) {
-      this.setPageTitle('Portals');
-    } else if (path.toLowerCase().includes(lowercasePages[4])) {
-      this.setPageTitle('Image Generator');
-    } else {
-      this.setPageTitle('Home'); // Default title
+    type PageMap = {
+      [key: string]: string
     }
 
+    const pages: PageMap = {
+      'reportcard': 'Report Card',
+      'freetoken': 'Free Token',
+      'congratulations': 'Congratulations',
+      'portals': 'Portals',
+      'imagegenerator': 'Image Generator'
+    }
+
+    this.setPageTitle(pages[this.pageName.toLocaleLowerCase()] || 'Home');
   }
 
    // Function to set the page title dynamically
