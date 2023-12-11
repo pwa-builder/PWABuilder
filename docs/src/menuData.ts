@@ -19,6 +19,12 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: true
         },
         {
+          pageTitle: "Benefits of Progressive Web Apps",
+          menuTitle: "Why Build A PWA?",
+          path: "/home/benefits-of-pwa",
+          includeOnHomePage: true
+        },
+        {
           pageTitle: "Introduction to Service Workers",
           menuTitle: "Service Workers",
           path: "/home/sw-intro",

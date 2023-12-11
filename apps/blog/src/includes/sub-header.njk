@@ -25,8 +25,7 @@
               {% if date %}
                 {% if updatedDate and(date | string) !== (updatedDate | string) %}
                   <div class="text-sm">
-                    Last updated on<span datetime="{{ date }}">{{ updatedDate | dateDisplay }}</span>
-                    <span datetime="{{ date }}">{{ date | dateDisplay }}</span>
+                    Last updated on <span datetime="{{ date }}">{{ updatedDate | dateDisplay }}</span>
                   </div>
                 {% else %}
                   <div class="text-sm">
@@ -44,8 +43,10 @@
           </div>
         </div>
       {% elif '/tags' in page.url %}
+        <a class="inline-flex items-center subheaderA mt-4 mb-2" href="{{ site.baseUrl }}" aria-label="Link back to Blog Home">
+          <ion-icon class="mr-1" name="chevron-back-outline" aria-hidden="true"></ion-icon>Blog home</a>
         <div class="flex flex-col justify-center items-center">
-          <h1 class="mb-2">{{ title }}</h1>
+          <h1 class="mb-8">{{ title }}</h1>
           {% if excerpt %}
             <p class="max-w-lg">{{ excerpt }}</p>
           {% endif %}

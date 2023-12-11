@@ -7,7 +7,6 @@ import {
   Manifest,
   Icon,
 } from '../utils/interfaces';
-import { generateScreenshots } from '../utils/screenshots';
 import { resolveUrl } from '../utils/urls';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
@@ -233,7 +232,6 @@ export class ManifestScreenshotsForm extends LitElement {
       manifestInitialized = false;
       this.requestValidateAllFields();
       await this.screenshotSrcListParse();
-      await this.newScreenshotSrcListParse();
       if(this.manifest.screenshots && this.initialScreenshotLength == -1){
         this.initialScreenshotLength = this.manifest.screenshots.length;
       } else {
@@ -299,139 +297,6 @@ export class ManifestScreenshotsForm extends LitElement {
     }
   }
 
-
-  renderScreenshotInputUrlList() {
-    const renderFn = (_url: string | undefined, index: number) => {
-
-      return html`<sl-input
-          placeholder="https://www.example.com/screenshot"
-          value="${this.baseURL || ''}"
-          @input=${this.handleScreenshotButtonEnabled}
-          @sl-change=${this.handleScreenshotUrlChange}
-          data-index=${index}
-        ></sl-input>`
-    };
-
-    return this.screenshotUrlList.map(renderFn);
-  }
-
-  handleScreenshotUrlChange(event: CustomEvent) {
-    const input = <HTMLInputElement>event.target;
-    const index = Number(input.dataset['index']);
-
-    this.screenshotUrlList[index] = input.value;
-    this.screenshotListValid = this.validateScreenshotUrlsList(
-      this.screenshotUrlList
-    );
-    this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
-    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
-  }
-
-  addNewScreenshot() {
-    this.screenshotUrlList = [...(this.screenshotUrlList || []), undefined];
-    this.addScreenshotUrlDisabled = !this.disableAddUrlButton();
-    this.generateScreenshotButtonDisabled = !this.hasScreenshotsToGenerate();
-  }
-
-  disableAddUrlButton() {
-    return (
-      this.screenshotUrlList?.length < 8 && this.hasScreenshotsToGenerate()
-    );
-  }
-
-  handleScreenshotButtonEnabled() {
-    if (this.generateScreenshotButtonDisabled === true) {
-      this.generateScreenshotButtonDisabled = false;
-    }
-  }
-
-  hasScreenshotsToGenerate() {
-    return (
-      this.screenshotUrlList.length &&
-      !this.screenshotListValid.includes(false) &&
-      !this.screenshotUrlList.includes(undefined)
-    );
-  }
-
-  validateScreenshotUrlsList(urls: Array<string | undefined>) {
-    const results: Array<boolean> = [];
-    const websiteRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w\-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
-
-    const length = urls.length;
-    for (let i = 0; i < length; i++) {
-      const urlToHandle = urls[i];
-      results[i] = urlToHandle ? websiteRegex.test(urlToHandle) : false;
-    }
-
-    return results;
-  }
-
-  async generateScreenshots() {
-
-    let generateScreenshotsAttempted = new CustomEvent('generateScreenshotsAttempted', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(generateScreenshotsAttempted);
-    
-
-    if(this.validationPromise){
-      await this.validationPromise;
-    }
-
-    try {
-      this.awaitRequest = true;
-
-      if (this.screenshotUrlList && this.screenshotUrlList.length) {
-        // to-do: take another type look at this
-        // @ts-ignore
-        const screenshots = await generateScreenshots(this.screenshotUrlList);
-        if (screenshots) {
-          this.screenshotsList = screenshots;
-          let manifestUpdated = new CustomEvent('manifestUpdated', {
-            detail: {
-                field: "screenshots",
-                change: screenshots
-            },
-            bubbles: true,
-            composed: true
-          });
-          this.dispatchEvent(manifestUpdated);
-
-          let screenshotsUpdated = new CustomEvent('screenshotsUpdated', {
-            detail: {
-                screenshots: screenshots
-            },
-            bubbles: true,
-            composed: true
-          });
-          this.dispatchEvent(screenshotsUpdated);
-
-          let title = this.shadowRoot!.querySelector('h3');
-          if(title!.classList.contains("error")){
-            title!.classList.toggle("error");
-            this.errorCount--;
-            let errorMessage = this.shadowRoot!.querySelector(".error-message");
-            errorMessage?.parentNode?.removeChild(errorMessage);
-          }
-          // In the future if we wanna show some message it can be tied to this bool
-          this.showSuccessMessage = true;
-        }
-      }
-    } catch (e) {
-      console.error(e);
-      // In the future if we wanna show some message it can be tied to this bool
-      this.showErrorMessage = true;
-    }
-
-    this.awaitRequest = false;
-    if(this.errorCount == 0){
-      this.dispatchEvent(errorInTab(false, "screenshots"));
-    } else {
-      this.dispatchEvent(errorInTab(true, "screenshots"));
-    }
-  }
-
   async screenshotSrcListParse() {
 
     if (!this.manifest || !this.manifest.screenshots) {
@@ -460,44 +325,6 @@ export class ManifestScreenshotsForm extends LitElement {
       }
     }
     this.srcList = srcList;
-  }
-
-  async newScreenshotSrcListParse() {
-    if (!this.manifest) {
-      return;
-    }
-
-    let srcList: string[] = [];
-
-    if(this.manifest.screenshots && this.manifest.screenshots.length > this.initialScreenshotLength){
-
-      let initialCounter = this.initialScreenshotLength;
-
-      //this.manifest!.screenshots?.forEach((sc: any) => {
-      for(let i = 0; i < this.manifest!.screenshots!.length; i++){
-        let sc = this.manifest!.screenshots![i];
-        if(initialCounter != 0){
-          initialCounter--;
-        } else {
-          let scURL: string = this.handleImageUrl(sc) || '';
-
-          await this.testImage(scURL).then(
-            function fulfilled(_img) {
-            },
-    
-            function rejected() {
-              scURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${scURL}`;
-            }
-          );
-
-          if(scURL){
-            srcList.push(scURL as string);
-          }
-        }
-      }
-    }
-
-    this.newSrcList = srcList;
   }
 
   testImage(url: string) {
@@ -557,19 +384,6 @@ export class ManifestScreenshotsForm extends LitElement {
           <p>Below are the screenshots that are currently in your manifest.</p>
           <div class="sc-gallery">
             ${this.srcList.length > 0 ? this.srcList.map((img: any) => html`<img class="screenshot" src=${img} alt="your app screenshot" decoding="async" loading="lazy"/>`) : html`<div class="center_text"><sl-icon name="card-image"></sl-icon> There are no screenshots in your manifest</div>`}
-          </div>
-          <h3>Generate Screenshots</h3>
-          <p>Specify the URLs to generate desktop and mobile screenshots from. You may add up to 8 screenshots or Store Listings.</p>
-          ${this.renderScreenshotInputUrlList()}
-          <sl-button id="add-sc" @click=${this.addNewScreenshot} ?disabled=${this.addScreenshotUrlDisabled}>+ Add URL</sl-button>
-          
-          <div class="screenshots-actions">
-            <sl-button
-              type="submit"
-              ?loading=${this.awaitRequest}
-              ?disabled=${this.generateScreenshotButtonDisabled}
-              @click=${this.generateScreenshots}
-              >Generate Screenshots</sl-button>
           </div>
           <div class="sc-gallery">
             ${this.newSrcList.map((img: any) => html`<img class="screenshot" alt="your generated screenshot" src=${img} />`)}

@@ -1,7 +1,6 @@
 # Service Workers in the PWA Starter
 
-The PWA Starter uses [VitePWA](https://vite-plugin-pwa.netlify.app/) and [Workbox](https://developers.google.com/web/tools/workbox/) as our Service Worker solution. This ensures your PWA loads offline, and is still fast on slower network connections.
-
+The PWA Starter uses [VitePWA](https://vite-plugin-pwa.netlify.app/) and [Workbox](https://developers.google.com/web/tools/workbox/) as our service worker solution. This ensures your PWA loads offline, and is still fast on slower network connections.
 
 ## Getting Started
 
