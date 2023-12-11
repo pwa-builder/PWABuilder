@@ -97,7 +97,6 @@ export class AppIndex extends LitElement {
     window.addEventListener('vaadin-router-location-changed', ev => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-
       recordPageView(
         ev.detail.location.pathname, // path
         ev.detail.location.route?.component // page name
