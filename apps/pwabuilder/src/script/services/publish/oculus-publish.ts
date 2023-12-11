@@ -34,7 +34,6 @@ export async function generateOculusPackage(
       `Error generating Oculus package.\nStatus code: ${createPackageResponse.status}\nError: ${createPackageResponse.statusText}\nDetails: ${responseText}`
     );
 
-
     Object.defineProperty(createPackageResponse, "stack_trace", {value: responseText});
     //@ts-ignore
     err.response = createPackageResponse;
