@@ -27,7 +27,6 @@ export async function generateIOSPackage(
   });
 
   if (!createPackageResponse.ok) {
-
     const responseText = await createPackageResponse.text();
 
     let err = new Error(
