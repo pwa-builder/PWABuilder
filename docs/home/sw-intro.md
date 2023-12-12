@@ -136,6 +136,7 @@ If you are unfamiliar with creating certificates to secure an endpoint, you can 
 One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI 
 in the [Azure Static Web Apps](/starter/publish?id=azure-static-web-apps) section of the PWA Starter documentation.
 
+
 ## Next Steps
 
 If you're looking to get more in depth information about service workers, check out [this resource](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).

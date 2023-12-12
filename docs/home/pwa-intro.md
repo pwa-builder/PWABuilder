@@ -146,4 +146,6 @@ If you're ready to dive in with building your first PWA, the [PWA Starter](https
 
 The PWA Starter is a template that comes with a service worker and manifest built in, and allows you to jump right in with your first PWA. 
 
-Head over to the [PWA Starter Quick Start](/starter/quick-start/) to learn more.
+
+Head over to the [PWA Starter Quick Start](/starter/quick-start) to learn more.
+
