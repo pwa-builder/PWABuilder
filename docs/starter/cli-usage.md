@@ -1,6 +1,6 @@
 # Using the PWABuilder CLI
 
-The PWABuilder allows you to create new progressive web app(PWA) projects from a template in just a few seconds. This article has more in-depth coverage on usage of the CLI. If you want to get started quickly with the PWA Starter, check out the [Quick Start.](/starter/quick-start)
+The [PWABuilder CLI](https://www.npmjs.com/package/@pwabuilder/cli) allows you to create new progressive web app(PWA) projects from a template in just a few seconds. This article has more in-depth coverage on usage of the CLI. If you want to get started quickly with the PWA Starter, check out the [Quick Start.](/starter/quick-start)
 
 ## create
 
@@ -36,7 +36,7 @@ pwa create <app-name> -t [default | basic]
 
 As of right now, the CLI has two available templates: `default` and `basic`.
 
-The `default` template is the classic version of the PWA Starter, with all included dependencies.
+The `default` template is the classic version of the [PWA Starter](https://github.com/pwa-builder/pwa-starter), with all included dependencies.
 
 The `basic` template is a new template that has fewer dependencies and is closer to VanillaJS than the original PWA Starter template.
 

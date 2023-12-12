@@ -1,12 +1,12 @@
 # Introduction to Service Workers
 
-Service workers are one of the key components of a progressive web app, and are a requirement for your PWA to be installable and work properly offline.
+[Service workers](https://developer.mozilla.org/docs/Web/API/Service_Worker_API) are one of the key components of a progressive web app, and are a requirement for your PWA to be installable and work properly offline.
 
 This article will provide an overview of service worker basics and what they can do for your PWA.
 
 ## Overview
 
-Service workers are a specific type of [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) that serve as a proxy between your application and the network. All requests that go to or from your PWA will pass through the service worker first. 
+Service workers are a specific type of [web worker](https://developer.mozilla.org/docs/Web/API/Web_Workers_API/Using_web_workers) that serve as a proxy between your application and the network. All requests that go to or from your PWA will pass through the service worker first. 
 This allows your service worker to handle requests in situations where the network may be unavailable.
 
 Service workers are event-driven and run separately from your applications primary thread. Instead of blocking the user interface, a service worker will listen for events (like a `fetch` event, for example) and handle it asynchronously.
@@ -92,7 +92,7 @@ self.addEventListener('activate', event => {
 });
 ```
 
-By default, a newly activated service worker won't claim any clients until they are reloaded.
+By default, a newly activated service worker won't [claim any clients](https://developer.mozilla.org/docs/Web/API/Clients/claim) until they are reloaded.
 
 Using `self.clients.claim()` in our activation listener tells our service worker to take control of new clients right away.
 
@@ -127,7 +127,7 @@ The Cache-First strategy is basic and has some cons (for example, updating stale
 
 ## Security
 
-Service workers have to be served from a secure, HTTPS-enabled endpoint in order to function. Because service workers are essential to progressive web apps, all PWAs must therefore be served on HTTPS to work properly.
+Service workers have to be served from a secure, [HTTPS-enabled endpoint](https://developer.mozilla.org/docs/Glossary/https) in order to function. Because service workers are essential to progressive web apps, all PWAs must therefore be served on HTTPS to work properly.
 
 For testing purposes, service workers will function without HTTPS when served from `localhost`, but if you want to distribute your PWA, you will need to secure your application.
 
@@ -135,7 +135,6 @@ If you are unfamiliar with creating certificates to secure an endpoint, you can 
 
 One option is to use the [Azure Static Web Apps CLI](https://azure.github.io/static-web-apps-cli/) to host your application with Azure. The PWA Starter template supports the CLI by default, and you can find documentation on publishing the starter with the CLI 
 in the [Azure Static Web Apps](/starter/publish?id=azure-static-web-apps) section of the PWA Starter documentation.
-
 
 
 ## Next Steps

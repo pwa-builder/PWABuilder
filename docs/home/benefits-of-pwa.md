@@ -1,6 +1,6 @@
 # Benefits of Progressive Web Apps
 
-Building a Progressive Web App has plenty of advantages, from both a developer and user perspective. If you're looking for a summary of what PWAs can bring to the table, the following article covers several benefits, broken down by how they affect either the development experience or the user experience.
+Building a [Progressive Web App](/home/pwa-intro/) has plenty of advantages, from both a developer and user perspective. If you're looking for a summary of what PWAs can bring to the table, the following article covers several benefits, broken down by how they affect either the development experience or the user experience.
 
 If you are unclear on what a Progressive Web App is from a technical perspective, feel free to check out our [Beginner's Guide to Progressive Web Apps.](/home/pwa-intro/)
 
@@ -22,7 +22,7 @@ By packaging your PWA with PWABuilder and delivering it to as many app stores as
 
 Because Progressive Web Apps are served and updated over the web, and make use of the cache to enable offline capability, updates are automatically reflected for your users. Any time the served version of your app is updated, users will see changes in installed versions of your app the next time they connect to the network. 
 
-Re-uploading your app to native app stores is only necessary if you change your Web App Manifest or if you want to change the listing itself. New content can be delivered quickly and effectively without waiting on native app store processes.
+Re-uploading your app to native app stores is only necessary if you change your [Web App Manifest](https://developer.mozilla.org/docs/Web/Manifest) or if you want to change the listing itself. New content can be delivered quickly and effectively without waiting on native app store processes.
 
 ### Variety of Development Options
 
@@ -52,9 +52,9 @@ In the past, one of the main advantages native app development technology has ha
 
 App Capabilities that can be implemented from the web include, but are not limited to:
 
-- Push notifications
-- Background sync
-- Sharing files to and from your applications 
+- [Push notifications](/home/native-features?id=push-notifications)
+- [Background sync](/home/native-features?id=background-sync)
+- [Sharing files to and from your applications](/home/native-features?id=web-share-api)
 - Custom file and URL handling
 - Integration with hardware devices, like touch screens, microphones, and other sensors
 

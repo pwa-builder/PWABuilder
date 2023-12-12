@@ -3416,7 +3416,7 @@ export class AppReport extends LitElement {
                       ` :
                       html`
                         <p class="card-desc">
-                          PWABuilder has analysesd your PWA and has identified some app capabilities that could enhance your PWA
+                          PWABuilder has analyzed your PWA and has identified some app capabilities that could enhance your PWA
                         </p>
                       `
                         }

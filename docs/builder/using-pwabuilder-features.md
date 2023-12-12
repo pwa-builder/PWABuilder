@@ -1,6 +1,6 @@
 # Using PWABuilder Features
 
-In addition to packaging, the PWABuilder site also has some tools for improving your progressive web app and editing your manifest. This page will show you how to use the manifest editor, download a new manifest, and add that manifest to your progressive web app.
+In addition to packaging, the [PWABuilder site](https://pwabuilder.com) also has some tools for improving your progressive web app and editing your manifest. This page will show you how to use the manifest editor, download a new manifest, and add that manifest to your progressive web app.
 
 All of the PWABuilder related tools can be accessed from the report card page. Take a look at the [PWABuilder Quick Start](/builder/quick-start) to see how to get started and navigate to the report card page for your app.
 
