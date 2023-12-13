@@ -71,10 +71,11 @@ export type AuditServiceWorkerResult = {
 export async function Report(
 	url: string
   ): Promise<ReportAudit> {
+	const referrer = sessionStorage.getItem('ref');
 	const fetchReport = await fetch(
 		`${
 			env.api
-		}/Report?site=${encodeURIComponent(url)}&desktop=true`,
+		}/Report?site=${encodeURIComponent(url)}&desktop=true${referrer ? '&ref=' + encodeURIComponent(referrer) : ''}`,
 		{
 			headers: new Headers(getHeaders())
 		}

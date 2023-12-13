@@ -23,7 +23,7 @@ export async function generateWindowsPackage(
   // sets en-us as the default fallback
   if(!windowsOptions.resourceLanguage || windowsOptions.resourceLanguage.length === 0){
     windowsOptions.resourceLanguage = 'en-us';
-  } 
+  }
   // the api expects a comma separated string instead of a list, so we do it this way
   else {
     if(typeof(windowsOptions.resourceLanguage) != "string"){
@@ -41,19 +41,18 @@ export async function generateWindowsPackage(
 
   let headers = {...getHeaders(), 'content-type': 'application/json' };
 
-  //console.info('Before fetching windows package');
-  const response = await fetch(`${env.windowsPackageGeneratorUrl}`, {
+  const referrer = sessionStorage.getItem('ref');
+  const response = await fetch(`${env.windowsPackageGeneratorUrl}${referrer ? '?ref=' + encodeURIComponent(referrer) : ''}`, {
     method: 'POST',
     body: JSON.stringify(windowsOptions),
     headers: new Headers(headers),
   });
-  //console.info('After fetching windows package', response);
+
   if (response.status === 200) {
     const data = await response.blob();
 
     //set generated flag
     hasGeneratedWindowsPackage = true;
-    //console.info('After fetching windows package', data);
     return data;
   } else {
     const responseText = await response.text();
@@ -64,7 +63,7 @@ export async function generateWindowsPackage(
       //@ts-ignore
       err.response = response;
     throw err;
-    
+
   }
 }
 
