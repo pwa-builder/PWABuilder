@@ -422,7 +422,7 @@ export class AppHome extends LitElement {
     // Resetting for a new url, keep referrer value
     const referrer = sessionStorage.getItem('ref');
     sessionStorage.clear();
-    if(referrer){
+    if( referrer ) {
       sessionStorage.setItem('ref', referrer);
     }
     resetInitialManifest();
