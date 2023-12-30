@@ -363,7 +363,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
   },
   launch_handler: {
     description: [
-      `launch_handlers is an optional member that controls the launch behvaior of a web application.`,
+      `launch_handlers is an optional member that controls the launch behavior of a web application.`,
     ],
     purpose: null,
     example: null,
