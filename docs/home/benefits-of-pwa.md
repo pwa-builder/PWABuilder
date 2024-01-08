@@ -58,7 +58,7 @@ App Capabilities that can be implemented from the web include, but are not limit
 - Custom file and URL handling
 - Integration with hardware devices, like touch screens, microphones, and other sensors
 
-You can learn about how to add native features to your PWA in our [Adding App Capabilities](/home/native-features/) article.
+You can learn about how to add native features to your PWA in our [Adding App Capabilities](/home/native-features) article.
 
 ### Reliable Offline Experience
 
