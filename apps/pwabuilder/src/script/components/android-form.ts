@@ -302,6 +302,20 @@ export class AndroidForm extends AppPackageFormBase {
                 inputHandler: (val: string) => this.packageOptions.launcherName = val
               })}
             </div>
+
+            <div class="form-group">
+              <label>${localeStrings.text.android.titles.source_code}</label>
+              <div class="form-check">
+                ${this.renderFormInput({
+                  label: 'Enable',
+                  tooltip: 'If enabled, your download will include the source code for your Android app.',
+                  inputId: 'include-src-input',
+                  type: 'checkbox',
+                  checked: this.packageOptions.includeSourceCode === true,
+                  inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
+                })}
+              </div>
+            </div>
           </div>
 
           <!-- The "all settings" section of the options dialog -->
@@ -310,8 +324,36 @@ export class AndroidForm extends AppPackageFormBase {
               <p>All Settings</p>
               <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
             </div>
-
               <div class="adv-settings">
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Host',
+                    tooltip: `The host portion of your PWA's URL. For example, mypwa.com`,
+                    inputId: 'host-input',
+                    required: true,
+                    placeholder: 'mypwa.com',
+                    value: this.packageOptions.host,
+                    minLength: 3,
+                    spellcheck: false,
+                    inputHandler: (val: string) => this.packageOptions.host = val
+                  })}
+                </div>
+
+                <div class="form-group">
+                  ${this.renderFormInput({
+                    label: 'Start URL',
+                    tooltip: `The start path for your PWA. Must be relative to the Host URL. If Host URL contains your PWA, you can use '/' to specify a default`,
+                    tooltipLink: 'https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string',
+                    inputId: 'start-url-input',
+                    required: true,
+                    placeholder: '/index.html',
+                    value: this.packageOptions.startUrl,
+                    spellcheck: false,
+                    validationErrorMessage: "You must specify a relative start URL. If you don't have a start URL, use '/'",
+                    inputHandler: (val: string) => this.packageOptions.startUrl = val
+                  })}
+                </div>
+
                 <div class="form-group">
                   ${this.renderFormInput({
                     label: 'Version',
@@ -339,35 +381,6 @@ export class AndroidForm extends AppPackageFormBase {
                     placeholder: '1',
                     value: this.packageOptions.appVersionCode.toString(),
                     inputHandler: (val: string) => this.packageOptions.appVersionCode = parseInt(val, 10)
-                  })}
-                </div>
-
-                <div class="form-group">
-                  ${this.renderFormInput({
-                    label: 'Host',
-                    tooltip: `The host portion of your PWA's URL. For example, mypwa.com`,
-                    inputId: 'host-input',
-                    required: true,
-                    placeholder: 'mypwa.com',
-                    value: this.packageOptions.host,
-                    minLength: 3,
-                    spellcheck: false,
-                    inputHandler: (val: string) => this.packageOptions.host = val
-                  })}
-                </div>
-
-                <div class="form-group">
-                  ${this.renderFormInput({
-                    label: 'Start URL',
-                    tooltip: `The start path for your PWA. Must be relative to the Host URL. If Host URL contains your PWA, you can use '/' to specify a default`,
-                    tooltipLink: 'https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string',
-                    inputId: 'start-url-input',
-                    required: true,
-                    placeholder: '/index.html',
-                    value: this.packageOptions.startUrl,
-                    spellcheck: false,
-                    validationErrorMessage: "You must specify a relative start URL. If you don't have a start URL, use '/'",
-                    inputHandler: (val: string) => this.packageOptions.startUrl = val
                   })}
                 </div>
 
@@ -514,34 +527,77 @@ export class AndroidForm extends AppPackageFormBase {
                 </div>
 
                 <div class="form-group">
-                  <label>${localeStrings.text.android.titles.fallback}</label>
+                  <label>
+                    ${localeStrings.text.android.titles.settings_shortcut}
+                  </label>
                   <div class="form-check">
                     ${this.renderFormInput({
-                      label: 'Custom Tabs',
-                      tooltip: `When Trusted Web Activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback to run your app.`,
-                      tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
-                      inputId: 'chrome-custom-tab-fallback-input',
-                      type: 'radio',
-                      name: 'fallbackType',
-                      value: 'customtabs',
-                      checked: this.packageOptions.fallbackType === 'customtabs',
-                      inputHandler: () => this.packageOptions.fallbackType = 'customtabs'
-                    })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Web View',
-                      tooltip: `When Trusted Web Activity (TWA) is unavailable, use a web view as a fallback to run your app.`,
-                      tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
-                      inputId: 'web-view-fallback-input',
-                      type: 'radio',
-                      name: 'fallbackType',
-                      value: 'webview',
-                      checked: this.packageOptions.fallbackType === 'webview',
-                      inputHandler: () => this.packageOptions.fallbackType = 'webview'
+                      label: 'Enable',
+                      tooltip: 'If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.',
+                      tooltipLink: 'https://github.com/pwa-builder/PWABuilder/issues/1113',
+                      inputId: 'site-settings-shortcut-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.enableSiteSettingsShortcut === true,
+                      inputHandler: (_, checked) => this.packageOptions.enableSiteSettingsShortcut = checked
                     })}
                   </div>
                 </div>
+
+                ${this.isGooglePlayApk ?
+                html`
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.notification}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: `If enabled, your PWA can send push notifications without browser permission prompts.`,
+                      tooltipLink: 'https://github.com/GoogleChromeLabs/svgomg-twa/issues/60',
+                      inputId: 'notification-delegation-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.enableNotifications === true,
+                      inputHandler: (_, checked) => this.packageOptions.enableNotifications = checked
+                    })}
+                  </div>
+                </div>` : null}
+
+                ${this.isGooglePlayApk ?
+                html`
+                <div class="form-group">
+                  <label
+                    >${localeStrings.text.android.titles
+                      .location_delegation}</label
+                  >
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your PWA can access navigator.geolocation without browser permission prompts.',
+                      inputId: 'location-delegation-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.features.locationDelegation?.enabled === true,
+                      inputHandler: (_, checked) => this.packageOptions.features.locationDelegation!.enabled = checked
+                    })}
+                  </div>
+                </div>` : null}
+
+                ${this.isGooglePlayApk ?
+                  html`
+                  <div class="form-group">
+                    <label
+                      >${localeStrings.text.android.titles
+                        .google_play_billing}</label
+                    >
+                    <div class="form-check">
+                      ${this.renderFormInput({
+                        label: 'Enable',
+                        tooltip: 'If enabled, your PWA can sell in-app purchases and subscriptions via the Digital Goods API.',
+                        tooltipLink: 'https://developer.chrome.com/docs/android/trusted-web-activity/receive-payments-play-billing/',
+                        inputId: 'google-play-billing-input',
+                        type: 'checkbox',
+                        checked: this.packageOptions.features.playBilling?.enabled === true,
+                        inputHandler: (_, checked) => this.packageOptions.features.playBilling!.enabled = checked
+                      })}
+                    </div>
+                  </div>` : null}
 
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.display_mode}</label>
@@ -589,127 +645,6 @@ export class AndroidForm extends AppPackageFormBase {
                 ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
-                  <label>${localeStrings.text.android.titles.notification}</label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: `If enabled, your PWA can send push notifications without browser permission prompts.`,
-                      tooltipLink: 'https://github.com/GoogleChromeLabs/svgomg-twa/issues/60',
-                      inputId: 'notification-delegation-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.enableNotifications === true,
-                      inputHandler: (_, checked) => this.packageOptions.enableNotifications = checked
-                    })}
-                  </div>
-                </div>` : null}
-
-                ${this.isGooglePlayApk ?
-                html`
-                <div class="form-group">
-                  <label
-                    >${localeStrings.text.android.titles
-                      .location_delegation}</label
-                  >
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: 'If enabled, your PWA can access navigator.geolocation without browser permission prompts.',
-                      inputId: 'location-delegation-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.features.locationDelegation?.enabled === true,
-                      inputHandler: (_, checked) => this.packageOptions.features.locationDelegation!.enabled = checked
-                    })}
-                  </div>
-                </div>` : null}
-
-                ${this.isGooglePlayApk ?
-                html`
-                <div class="form-group">
-                  <label
-                    >${localeStrings.text.android.titles
-                      .google_play_billing}</label
-                  >
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: 'If enabled, your PWA can sell in-app purchases and subscriptions via the Digital Goods API.',
-                      tooltipLink: 'https://developer.chrome.com/docs/android/trusted-web-activity/receive-payments-play-billing/',
-                      inputId: 'google-play-billing-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.features.playBilling?.enabled === true,
-                      inputHandler: (_, checked) => this.packageOptions.features.playBilling!.enabled = checked
-                    })}
-                  </div>
-                </div>` : null}
-
-                <div class="form-group">
-                  <label>
-                    ${localeStrings.text.android.titles.settings_shortcut}
-                  </label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: 'If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app.',
-                      tooltipLink: 'https://github.com/pwa-builder/PWABuilder/issues/1113',
-                      inputId: 'site-settings-shortcut-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.enableSiteSettingsShortcut === true,
-                      inputHandler: (_, checked) => this.packageOptions.enableSiteSettingsShortcut = checked
-                    })}
-                  </div>
-                </div>
-
-                ${this.isGooglePlayApk ?
-                html`
-                <div class="form-group">
-                  <label>
-                    ${localeStrings.text.android.titles.chromeos_only}
-                  </label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: 'If enabled, your Android package will only run on ChromeOS devices.',
-                      inputId: 'chromeos-only-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.isChromeOSOnly === true,
-                      inputHandler: (_, checked) => this.packageOptions.isChromeOSOnly = checked
-                    })}
-                  </div>
-                </div>` : null}
-
-                <div class="form-group">
-                  <label>
-                    ${localeStrings.text.android.titles.metaquest}
-                  </label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: 'If enabled, your Android package will be compatible with Meta Quest devices.',
-                      inputId: 'metaquest-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.isMetaQuest === true,
-                      inputHandler: (_, checked) => this.isMetaQuestChanged(checked)
-                    })}
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label>${localeStrings.text.android.titles.source_code}</label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Enable',
-                      tooltip: 'If enabled, your download will include the source code for your Android app.',
-                      inputId: 'include-src-input',
-                      type: 'checkbox',
-                      checked: this.packageOptions.includeSourceCode === true,
-                      inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
-                    })}
-                  </div>
-                </div>
-
-                ${this.isGooglePlayApk ?
-                html`
-                <div class="form-group">
                   <label>${localeStrings.text.android.titles.signing_key}</label>
                   <div class="form-check">
                     ${this.renderFormInput({
@@ -749,9 +684,71 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
-                ${this.renderSigningKeyFields()}` :
-                null}
+                ${this.renderSigningKeyFields()}` : null}
 
+                ${this.isGooglePlayApk ?
+                html`
+                <div class="form-group">
+                  <label>
+                    ${localeStrings.text.android.titles.chromeos_only}
+                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your Android package will only run on ChromeOS devices.',
+                      inputId: 'chromeos-only-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.isChromeOSOnly === true,
+                      inputHandler: (_, checked) => this.packageOptions.isChromeOSOnly = checked
+                    })}
+                  </div>
+                </div>` : null}
+
+                <div class="form-group">
+                  <label>
+                    ${localeStrings.text.android.titles.metaquest}
+                  </label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Enable',
+                      tooltip: 'If enabled, your Android package will be compatible with Meta Quest devices.',
+                      inputId: 'metaquest-input',
+                      type: 'checkbox',
+                      checked: this.packageOptions.isMetaQuest === true,
+                      inputHandler: (_, checked) => this.isMetaQuestChanged(checked)
+                    })}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.fallback}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Custom Tabs',
+                      tooltip: `When Trusted Web Activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback to run your app.`,
+                      tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
+                      inputId: 'chrome-custom-tab-fallback-input',
+                      type: 'radio',
+                      name: 'fallbackType',
+                      value: 'customtabs',
+                      checked: this.packageOptions.fallbackType === 'customtabs',
+                      inputHandler: () => this.packageOptions.fallbackType = 'customtabs'
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Web View',
+                      tooltip: `When Trusted Web Activity (TWA) is unavailable, use a web view as a fallback to run your app.`,
+                      tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
+                      inputId: 'web-view-fallback-input',
+                      type: 'radio',
+                      name: 'fallbackType',
+                      value: 'webview',
+                      checked: this.packageOptions.fallbackType === 'webview',
+                      inputHandler: () => this.packageOptions.fallbackType = 'webview'
+                    })}
+                  </div>
+                </div>
               </div>
           </sl-details>
         </div>

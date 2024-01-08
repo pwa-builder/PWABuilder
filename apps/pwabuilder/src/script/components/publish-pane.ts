@@ -603,7 +603,7 @@ export class PublishPane extends LitElement {
       @media(min-height: 900px){
         #pp-frame-wrapper {
           width: 100%;
-          height: 80vh;
+          height: 85vh;
         }
       }
 
