@@ -543,6 +543,49 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
 
+                <div class="form-group">
+                  <label>${localeStrings.text.android.titles.display_mode}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Standalone',
+                      tooltip: 'Recommended for most apps. The Android status bar and navigation bar will be shown while your app is running.',
+                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive',
+                      inputId: 'display-standalone-input',
+                      type: 'radio',
+                      name: 'displayMode',
+                      value: 'standalone',
+                      checked: this.packageOptions.display === 'standalone',
+                      inputHandler: () => this.packageOptions.display = 'standalone'
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Fullscreen',
+                      tooltip: `The Android status bar and navigation bar will be hidden while your app is running. Suitable for immersive experiences such as games or media apps.`,
+                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive#immersive',
+                      inputId: 'display-fullscreen-input',
+                      type: 'radio',
+                      name: 'displayMode',
+                      value: 'fullscreen',
+                      checked: this.packageOptions.display === 'fullscreen',
+                      inputHandler: () => this.packageOptions.display = 'fullscreen'
+                    })}
+                  </div>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+                      label: 'Fullscreen sticky',
+                      tooltip: `The Android status bar and navigation bar will be hidden while your app is running, and if the user swipes from the edge of the Android device, the system bars will be semi-transparent, and the touch gesture will be passed to your app. Recommended for drawing apps, and games that require lots of swiping.`,
+                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive#sticky-immersive',
+                      inputId: 'display-fullscreen-sticky-input',
+                      type: 'radio',
+                      name: 'displayMode',
+                      value: 'fullscreen-sticky',
+                      checked: this.packageOptions.display === 'fullscreen-sticky',
+                      inputHandler: () => this.packageOptions.display = 'fullscreen-sticky'
+                    })}
+                  </div>
+                </div>
+
                 ${this.isGooglePlayApk ?
                 html`
                 <div class="form-group">
@@ -598,49 +641,6 @@ export class AndroidForm extends AppPackageFormBase {
                       })}
                     </div>
                   </div>` : null}
-
-                <div class="form-group">
-                  <label>${localeStrings.text.android.titles.display_mode}</label>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Standalone',
-                      tooltip: 'Recommended for most apps. The Android status bar and navigation bar will be shown while your app is running.',
-                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive',
-                      inputId: 'display-standalone-input',
-                      type: 'radio',
-                      name: 'displayMode',
-                      value: 'standalone',
-                      checked: this.packageOptions.display === 'standalone',
-                      inputHandler: () => this.packageOptions.display = 'standalone'
-                    })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Fullscreen',
-                      tooltip: `The Android status bar and navigation bar will be hidden while your app is running. Suitable for immersive experiences such as games or media apps.`,
-                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive#immersive',
-                      inputId: 'display-fullscreen-input',
-                      type: 'radio',
-                      name: 'displayMode',
-                      value: 'fullscreen',
-                      checked: this.packageOptions.display === 'fullscreen',
-                      inputHandler: () => this.packageOptions.display = 'fullscreen'
-                    })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-                      label: 'Fullscreen sticky',
-                      tooltip: `The Android status bar and navigation bar will be hidden while your app is running, and if the user swipes from the edge of the Android device, the system bars will be semi-transparent, and the touch gesture will be passed to your app. Recommended for drawing apps, and games that require lots of swiping.`,
-                      tooltipLink: 'https://developer.android.com/training/system-ui/immersive#sticky-immersive',
-                      inputId: 'display-fullscreen-sticky-input',
-                      type: 'radio',
-                      name: 'displayMode',
-                      value: 'fullscreen-sticky',
-                      checked: this.packageOptions.display === 'fullscreen-sticky',
-                      inputHandler: () => this.packageOptions.display = 'fullscreen-sticky'
-                    })}
-                  </div>
-                </div>
 
                 ${this.isGooglePlayApk ?
                 html`
