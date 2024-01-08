@@ -7,7 +7,7 @@ date: 2023-01-08
 updatedDate: 2022-01-08
 trending: true
 featured: false
-image: posts/introducing-manifest-editor/hero.png
+image: posts/goodnotes-showcase/person-drawing.jpg
 isPost: true
 backUrl: '/'
 author:
