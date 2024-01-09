@@ -30,7 +30,7 @@ When Inking, or drawing, on a device, low latency is paramount to having a good 
 [The Ink API](https://blogs.windows.com/msedgedev/2021/08/18/enhancing-inking-on-the-web/), which was announced at Microsoft Build 2021, uses a newer API in Windows 11 that works directly with the operating system’s compositor to draw additional ink strokes outside of Microsoft Edge’s application loop. This API allows your PWA to avoid the delay of sending the event down the entire rendering stack (which could cause latency and instead gives these points to the operating system compositor as soon as we get them. The compositor can then join the points with ink lines and show these lines in the next frame that is going to be displayed on the screen, greatly lowering latency and avoiding the normal browser rendering pipeline. GoodNotes was able to integrate this API into their existing canvas implementation to ensure that writing and drawing in their app gave users the low latency inking experience they expect on Windows, all through a PWA!
 
 ### Using the Ink API
-To start using the Ink API, you first need to get a InkPresenter Object, which you can do with the following code:
+To start using the Ink API, you first need to get an InkPresenter Object, which you can do with the following code:
 
 ```typescript
 async getInkPresenter() {
