@@ -6,7 +6,7 @@ description: In this blog post, we will explore how GoodNotes uses web APIs to m
 date: 2023-01-08
 updatedDate: 2022-01-08
 trending: true
-featured: false
+featured: true
 image: posts/goodnotes-showcase/person-drawing.jpg
 isPost: true
 backUrl: '/'
@@ -17,6 +17,7 @@ tags:
   - post
   - PWA
   - showcase
+  - inking
 ---
 
 [GoodNotes](https://www.goodnotes.com/) is a popular note-taking app that lets you create and organize handwritten notes, sketches, and PDF annotations. It has been available on iOS / ipadOS for a long time and has [recently launched a Progressive Web Application (PWA)](https://www.goodnotes.com/windows) that works on any device with a web browser, including Windows, and is in the Microsoft Store!
