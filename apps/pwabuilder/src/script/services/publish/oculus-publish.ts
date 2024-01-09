@@ -18,7 +18,8 @@ export async function generateOculusPackage(
 
   let headers = {...getHeaders(), 'content-type': 'application/json' };
 
-  const createPackageUrl = `${env.oculusPackageGeneratorUrl}`;
+  const referrer = sessionStorage.getItem('ref');
+  const createPackageUrl = `${env.oculusPackageGeneratorUrl}${referrer ? '?ref=' + encodeURIComponent(referrer) : ''}`;
   const createPackageResponse = await fetch(createPackageUrl, {
     method: 'POST',
     body: JSON.stringify(options),
@@ -26,18 +27,15 @@ export async function generateOculusPackage(
   });
 
   if (!createPackageResponse.ok) {
-    
     const responseText = await createPackageResponse.text();
 
     let err = new Error(
       `Error generating Oculus package.\nStatus code: ${createPackageResponse.status}\nError: ${createPackageResponse.statusText}\nDetails: ${responseText}`
     );
-    
 
     Object.defineProperty(createPackageResponse, "stack_trace", {value: responseText});
     //@ts-ignore
     err.response = createPackageResponse;
-    
     throw err;
   }
 

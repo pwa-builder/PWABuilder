@@ -20,7 +20,8 @@ export async function generateAndroidPackage(androidOptions: AndroidPackageOptio
 
   let headers = {...getHeaders(), 'content-type': 'application/json' };
 
-  const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage`;
+  const referrer = sessionStorage.getItem('ref');
+  const generateAppUrl = `${env.androidPackageGeneratorUrl}/generateAppPackage${referrer ? '?ref=' + encodeURIComponent(referrer) : ''}`;
   const response = await fetch(generateAppUrl, {
     method: 'POST',
     body: JSON.stringify(androidOptions),

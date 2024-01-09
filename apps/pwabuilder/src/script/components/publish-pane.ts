@@ -603,7 +603,7 @@ export class PublishPane extends LitElement {
       @media(min-height: 900px){
         #pp-frame-wrapper {
           width: 100%;
-          height: 80vh;
+          height: 85vh;
         }
       }
 
@@ -955,6 +955,7 @@ export class PublishPane extends LitElement {
     if(e.target === dialog){
       this.blob = undefined;
       this.generating = false;
+      this.feedbackMessages = [];
       await dialog!.hide();
       recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
@@ -1049,7 +1050,7 @@ export class PublishPane extends LitElement {
         class=${classMap({noX: this.preventClosing, dialog: true})}
         @sl-hide=${(e: any) => this.hideDialog(e)}
         @sl-request-close=${(e:any) => this.handleRequestClose(e)}
-        noHeader 
+        noHeader
       >
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
