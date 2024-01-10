@@ -11,9 +11,11 @@ image: posts/whats-new-in-pwa/whats-new-header.png
 isPost: true
 backUrl: '/'
 author:
-  name: Zachary Teutsch
-  twitter: https://twitter.com/devteutsch
+  name: Zach Teutsch
+  twitter: devteutsch
   title: PWABuilder Engineer
+  tagline: I like to go to music festivals and code!
+  image: /placeholder-person.png
 tags:
   - post
   - PWA

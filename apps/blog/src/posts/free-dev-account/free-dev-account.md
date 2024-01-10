@@ -12,8 +12,10 @@ isPost: true
 backUrl: '/'
 author:
   name: Gleb Khmyznikov
-  twitter: https://twitter.com/khmyznikov
+  twitter: khmyznikov
   title: Software Engineer
+  tagline: Serbia based Web Developer who loves nature
+  image: /placeholder-person.png
 tags:
   - post
   - PWA

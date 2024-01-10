@@ -12,8 +12,10 @@ isPost: true
 backUrl: '/'
 author:
   name: Zach Teutsch
-  twitter: https://twitter.com/devteutsch
+  twitter: devteutsch
   title: PWABuilder Engineer
+  tagline: I like to go to music festivals and code!
+  image: /placeholder-person.png
 tags:
   - post
   - CLI

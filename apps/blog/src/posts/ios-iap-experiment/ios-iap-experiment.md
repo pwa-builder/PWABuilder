@@ -11,9 +11,11 @@ image: posts/ios-iap-experiment/pic-1-min.jpg
 isPost: true
 backUrl: '/'
 author:
-  name: "Gleb Khmyznikov"
-  twitter: https://twitter.com/khmyznikov
+  name: Gleb Khmyznikov
+  twitter: khmyznikov
   title: Software Engineer
+  tagline: Serbia based Web Developer who loves nature
+  image: /placeholder-person.png
 tags:
   - post
   - PWA

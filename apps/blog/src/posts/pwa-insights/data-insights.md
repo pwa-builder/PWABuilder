@@ -13,6 +13,8 @@ backUrl: '/'
 author:
   name: Amrutha Srinivasan
   title: PWABuilder Engineer
+  image: /placeholder-person.png
+  tagline: California based backend Software Engineer
 tags:
   - post
   - PWA

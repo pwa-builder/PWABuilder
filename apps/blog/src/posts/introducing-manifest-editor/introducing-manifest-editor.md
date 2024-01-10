@@ -12,7 +12,10 @@ isPost: true
 backUrl: '/'
 author:
   name: Jaylyn Barbee
-  title: PWABuilder SWE
+  twitter: jaylynsatwork
+  title: Software Engineer
+  tagline: East Coast based Software Engineer who loves to cooking, gaming, and playing volleyball!
+  image: /author_images/jaylyn_image.jpg
 tags:
   - post
   - PWA
