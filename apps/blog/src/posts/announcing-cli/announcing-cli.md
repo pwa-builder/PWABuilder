@@ -12,8 +12,10 @@ isPost: true
 backUrl: '/'
 author:
   name: Zach Teutsch
-  twitter: https://twitter.com/devteutsch
-  title: PWABuilder Engineer
+  twitter: devteutsch
+  title: Software Engineer
+  tagline: San Francisco based engineer who enjoys gaming and playing basketball.
+  image: author_images/zach_image.jpg
 tags:
   - post
   - CLI

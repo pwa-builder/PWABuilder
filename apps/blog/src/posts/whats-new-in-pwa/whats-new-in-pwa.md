@@ -11,9 +11,11 @@ image: posts/whats-new-in-pwa/whats-new-header.png
 isPost: true
 backUrl: '/'
 author:
-  name: Zachary Teutsch
-  twitter: https://twitter.com/devteutsch
-  title: PWABuilder Engineer
+  name: Zach Teutsch
+  twitter: devteutsch
+  title: Software Engineer
+  tagline: San Francisco based engineer who enjoys gaming and playing basketball.
+  image: author_images/zach_image.jpg
 tags:
   - post
   - PWA
