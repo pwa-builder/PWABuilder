@@ -12,6 +12,7 @@ import {
 } from '../utils/css/breakpoints';
 import { cleanUrl, isValidURL } from '../utils/url';
 
+import '../components/app-header';
 import '../components/companies-packaged';
 import '../components/resource-hub';
 import '../components/success-stories';
