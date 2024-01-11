@@ -14,8 +14,8 @@ author:
   name: Gleb Khmyznikov
   twitter: khmyznikov
   title: Software Engineer
-  tagline: Serbia based Web Developer who loves nature
-  image: /placeholder-person.png
+  image: author_images/gleb_image.jpg
+  tagline: Eastern Europe based Software Engineer who loves PC hardware, gaming handhelds, classic cars and web technologies.
 tags:
   - post
   - PWA

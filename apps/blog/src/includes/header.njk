@@ -5,12 +5,19 @@
   <nav aria-label="Navigation" class="w-full h-12" role="navigation" tabindex="-1">
     <ul class="w-full h-full flex justify-between items-center headerUl">
       <li class="ml-auto mr-3 font-bold">
+        <a class="headerA" href="https://blog.pwabuilder.com"> Blog </a>
+      </li>
+      <li class="mr-3 font-bold">
         <a class="headerA" href="https://docs.pwabuilder.com" target="_blank"> Docs </a>
       </li>
-      <li>
-        <a class="headerA" href="https://github.com/pwa-builder/pwabuilder" target="_blank">
-          <ion-icon name="logo-github" size="large"></ion-icon>
-        </a>
+      <li class="dropdown-li">
+        <span class="headerSpan trigger"> Community </span>
+        <div class="dropdown">
+          <p>Follow us on</p>
+          <a class="dropdown-link" href="https://github.com/pwa-builder/PWABuilder" target="_blank">Github</a>
+          <a class="dropdown-link" href="https://twitter.com/pwabuilder" target="_blank">Twitter</a>
+          <a class="dropdown-link" href="https://aka.ms/pwabuilderdiscord" target="_blank">Discord</a>
+        </div>
       </li>
     </ul>
   </nav>
@@ -26,6 +33,15 @@
      color: rgb(41, 44, 58);
   }
 
+  .headerSpan {
+     color: rgb(41, 44, 58);
+     font-weight: bold;
+  }
+
+  .headerA:hover, .headerSpan:hover {
+    color: #4f3fb6;
+  }
+
   .headerUl {
     list-style: none;
     margin-top: 0;
@@ -34,4 +50,74 @@
   .headerUl li {
     list-style: none;
   }
+
+  .dropdown-li {
+    position: relative;
+  }
+
+  .trigger:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .dropdown {
+    visibility: hidden;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: #ffffff;
+    width: 136px;
+    padding: 16px 22px;
+    border-radius: 5px;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 16px 24px 0px;
+    z-index: 1;
+  }
+
+  .dropdown p {
+    font-weight: bold;
+  }
+
+  .dropdown a {
+    text-decoration: none;
+    font-weight: normal;
+  }
+
+  .dropdown p, .dropdown a {
+    margin: 0;
+    font-size: 16px;
+    color: #777777;
+  }
+
+  .dropdown a:hover {
+    color: #4f3fb6;
+    font-weight: bold;
+  }
+
 </style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var trigger = document.querySelector('.trigger');
+    var dropdown = document.querySelector('.dropdown');
+
+    // Toggle dropdown on hover
+    trigger.addEventListener('mouseenter', function() {
+      if(dropdown.style.visibility === "hidden" || dropdown.style.visibility.length == 0){
+        dropdown.style.visibility = 'visible';
+      } else {
+        dropdown.style.visibility = 'hidden';
+      }
+    });
+
+    // Hide dropdown on click-away
+    document.addEventListener('click', function(event) {
+      var isClickInsideTrigger = trigger.contains(event.target);
+      if (!isClickInsideTrigger) {
+        dropdown.style.visibility = 'hidden';
+      }
+    });
+  });
+</script>
