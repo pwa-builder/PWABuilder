@@ -14,7 +14,7 @@ author:
   name: Gleb Khmyznikov
   twitter: khmyznikov
   title: Software Engineer
-  image: author_images/gleb_image.jpg
+  image: /author_images/gleb_image.jpg
   tagline: Eastern Europe based Software Engineer who loves PC hardware, gaming handhelds, classic cars and web technologies.
 tags:
   - post

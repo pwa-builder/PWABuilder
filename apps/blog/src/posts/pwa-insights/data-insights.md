@@ -14,7 +14,7 @@ author:
   name: Amrutha Srinivasan
   twitter: amruthasrin
   title: Software Engineer
-  image: author_images/amrtuha_image.jpeg
+  image: /author_images/amrutha_image.jpeg
   tagline: Software Engineer working on making Windows the best developer platform out there!
 tags:
   - post
