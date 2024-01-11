@@ -12,8 +12,10 @@ isPost: true
 backUrl: '/'
 author:
   name: Justin Willis
-  twitter: https://twitter.com/Justinwillis96
-  title: Software Engineer APS W+D 
+  twitter: Justinwillis96
+  title: Software Engineer
+  tagline: Software Engineer who loves to game and spend time in the Mountains
+  image: /placeholder-person.png
 tags:
   - post
   - web-components
