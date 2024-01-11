@@ -523,7 +523,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <app-header part="header"></app-header>
+      <app-header part="header" .page=${"home"}></app-header>
       <main>
         <div id="home-block">
           <div id="wrapper">
