@@ -757,8 +757,6 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
     });
     this.dispatchEvent(fieldChangeAttempted);
 
-    console.log(categories);
-
     this.validatePlatformList("categories", categories, (categories.length == 0));
   }
 
@@ -770,8 +768,6 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
     let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
-
-    console.log(updatedValue);
 
     if(passed || removal){
       this.dispatchUpdateEvent(field!, [...updatedValue], removal)
