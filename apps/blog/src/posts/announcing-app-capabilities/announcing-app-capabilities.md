@@ -15,12 +15,13 @@ author:
   twitter: jaylynsatwork
   title: Software Engineer
   tagline: East Coast based Software Engineer who loves to cooking, gaming, and playing volleyball!
-  image: /author_images/jaylyn_image.jpg
+  image: /author_images/justin_image.jpg
 tags:
   - post
   - PWA
   - Report Card
   - pwabuilder.com
+  - App Capabilities
 ---
 
 

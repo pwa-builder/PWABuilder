@@ -18,7 +18,6 @@ author:
   tagline: Eastern Europe based Software Engineer who loves PC hardware, gaming handhelds, classic cars and web technologies.
 tags:
   - post
-  - PWA
   - Windows
   - Microsoft Store
   - Free

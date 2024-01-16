@@ -20,7 +20,6 @@ tags:
   - post
   - CLI
   - PWA Starter
-  - PWA
   - PWA template
 ---
 

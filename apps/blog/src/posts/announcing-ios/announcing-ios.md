@@ -17,7 +17,6 @@ author:
 tags:
   - post
   - iOS
-  - PWA
   - Apple
   - App Store
 ---

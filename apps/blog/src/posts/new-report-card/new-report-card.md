@@ -15,7 +15,6 @@ author:
   title: PWABuilder PM
 tags:
   - post
-  - PWA
   - packaging
   - pwabuilder.com
 ---

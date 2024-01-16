@@ -14,8 +14,8 @@ author:
   name: Justin Willis
   twitter: Justinwillis96
   title: Software Engineer
-  tagline: Software Engineer who loves to game and spend time in the Mountains
-  image: /placeholder-person.png
+  tagline: When i'm not developing PWAs you can find me hiking, gaming or playing with my pets!
+  image: /author_images/justin_image.jpg
 tags:
   - post
   - PWA Starter

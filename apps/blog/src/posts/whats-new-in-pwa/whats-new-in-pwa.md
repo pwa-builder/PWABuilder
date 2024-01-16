@@ -18,7 +18,6 @@ author:
   image: /author_images/zach_image.jpg
 tags:
   - post
-  - PWA
   - App Capabilities
 ---
 

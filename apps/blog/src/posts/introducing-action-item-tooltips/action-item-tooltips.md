@@ -18,7 +18,6 @@ author:
   image: /author_images/jaylyn_image.jpg
 tags:
   - post
-  - PWA
   - PWABuilder
 ---
 

@@ -12,11 +12,12 @@ isPost: true
 backUrl: '/'
 author:
   name: Justin Willis
-  twitter: https://twitter.com/Justinwillis96
+  twitter: Justinwillis96
   title: Software Engineer
+  tagline: When i'm not developing PWAs you can find me hiking, gaming or playing with my pets!
+  image: /author_images/justin_image.jpg
 tags:
   - post
-  - PWA
   - Windows
   - Android
   - iOS

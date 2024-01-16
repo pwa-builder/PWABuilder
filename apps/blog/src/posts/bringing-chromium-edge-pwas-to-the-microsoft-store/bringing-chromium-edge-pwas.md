@@ -14,13 +14,11 @@ author:
   name: Justin Willis
   twitter: Justinwillis96
   title: Software Engineer
-  tagline: Software Engineer who loves to game and spend time in the Mountains
-  image: /placeholder-person.png
+  tagline: When i'm not developing PWAs you can find me hiking, gaming or playing with my pets!
+  image: /author_images/justin_image.jpg
 tags:
   - post
-  - Chromium
   - Edge
-  - PWAs
 ---
 
 The Microsoft Store was the [first app store](https://blogs.windows.com/msedgedev/2018/02/06/welcoming-progressive-web-apps-edge-windows-10/#Vsxe9rFMkrMQbXiJ.97) to support Progressive Web Apps. PWAs have since become one of the leading ways to distribute apps to users on Windows. However, a lot has changed on the web platform since that original blog post, with modern technologies and APIs such as Web Assembly, Web Bluetooth, Web USB, Web Share, Web Shortcuts, and more enabling developers to ship increasingly advanced apps on the web. Also, Microsoft Edge itself has changed since that original blog post, including the announcement of the new Edge, [which uses the the open source Chromium engine](https://blogs.windows.com/windowsexperience/2018/12/06/microsoft-edge-making-the-web-better-through-more-open-source-collaboration/)<span aria-hidden="true">.</span> We know that developers are excited to use the full power of the new Edge with their PWAs in the Microsoft Store and because of this, today we are extremely excited to announce the first Preview of the new [PWABuilder](https://pwabuilder.com) Windows platform! This significant update enables you to easily start packaging your Progressive Web Apps, using the new Chromium-based Edge, for the Microsoft Store!
