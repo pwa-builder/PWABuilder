@@ -597,7 +597,7 @@ export const maniTests: Array<Validation> = [
             this.testRequired = true;
             return value && Array.isArray(value);
         },
-        errorString: "Categories should be an array of string category values."
+        errorString: "Categories should be an array of string category values"
     },
     {
         member: "lang",
