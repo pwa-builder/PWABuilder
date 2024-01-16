@@ -10,12 +10,9 @@ import "./manifest-field-tooltip";
 const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 
-// How to handle categories field?
 const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories", "edge_side_panel"];
 let manifestInitialized: boolean = false;
 let fieldsValidated: boolean = false;
-
-
 
 @customElement('manifest-platform-form')
 export class ManifestPlatformForm extends LitElement {
@@ -712,7 +709,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
 
     this.updateRelatedAppsInManifest(inputs, select, true);
 
-    
+
   }
 
   async updateRelatedAppsInManifest(inputs: any, select: any, push: boolean, removal: boolean = false){
@@ -760,7 +757,9 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
     });
     this.dispatchEvent(fieldChangeAttempted);
 
-    this.validatePlatformList("categories", categories);
+    console.log(categories);
+
+    this.validatePlatformList("categories", categories, (categories.length == 0));
   }
 
   async validatePlatformList(field: string, updatedValue: any[], removal: boolean = false){
@@ -772,9 +771,10 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
     const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
     let passed = validation!.valid;
 
+    console.log(updatedValue);
 
     if(passed || removal){
-      this.dispatchUpdateEvent(field!, [...updatedValue])
+      this.dispatchUpdateEvent(field!, [...updatedValue], removal)
     }
 
     if(passed){
