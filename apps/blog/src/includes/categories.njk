@@ -11,7 +11,7 @@
     <li class="flex-grow-0 flex-shrink-0">
       <div class="px-2 py-1 mx-1 tag-pill">
         {% set tagUrl %}/tags/{{ tag | slug }}/{% endset %}
-        <a href="{{ tagUrl | url }}" class="capitalize relative text-sm">{{ tag }}</a>
+        <a href="{{ tagUrl | url }}" class="relative text-sm">{{ tag }}</a>
       </div>
     </li>
     {% endfor %}

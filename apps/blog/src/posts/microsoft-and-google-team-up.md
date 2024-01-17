@@ -16,9 +16,8 @@ author:
   title: Software Engineer APS W+D 
 tags:
   - post
-  - Microsoft
-  - Google
-  - PlayStore
+  - App Stores
+  - App Capabilities
 ---
 
 ![hero-image](https://cdn-images-1.medium.com/max/800/1*6L9UnfO5V3UBpJ3RwaW1Vw.png)

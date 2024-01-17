@@ -16,10 +16,8 @@ author:
   title: PWABuilder Engineer
 tags:
   - post
+  - App Stores
   - iOS
-  - PWA
-  - Apple
-  - App Store
 ---
 
 <img src="/posts/announcing-ios/ios-announcement.png" alt="IOS Announcement Banner" role="presentation"/>

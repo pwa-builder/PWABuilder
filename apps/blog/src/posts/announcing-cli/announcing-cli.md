@@ -12,14 +12,16 @@ isPost: true
 backUrl: '/'
 author:
   name: Zach Teutsch
-  twitter: https://twitter.com/devteutsch
-  title: PWABuilder Engineer
+  twitter: devteutsch
+  title: Software Engineer
+  tagline: San Francisco based engineer who enjoys gaming and playing basketball.
+  image: /author_images/zach_image.jpg
 tags:
   - post
-  - CLI
   - PWA Starter
-  - PWA
-  - PWA template
+  - CLI
+  - Tools
+  - Announcement
 ---
 
 PWABuilder is launching a brand new CLI that can create a new templated [Progressive Web App](https://docs.pwabuilder.com/#/home/pwa-intro) for you and have you developing in just seconds. 
