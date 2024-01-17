@@ -12,6 +12,7 @@ import {
 } from '../utils/css/breakpoints';
 import { cleanUrl, isValidURL } from '../utils/url';
 
+import '../components/app-header';
 import '../components/companies-packaged';
 import '../components/resource-hub';
 import '../components/success-stories';
@@ -523,7 +524,7 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <app-header part="header"></app-header>
+      <app-header part="header" .page=${"home"}></app-header>
       <main>
         <div id="home-block">
           <div id="wrapper">

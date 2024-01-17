@@ -17,9 +17,7 @@ author:
   title: Program Manager APS W+D 
 tags:
   - post
-  - Chromium
   - Microsoft Edge
-  - PWA
   - Microsoft Store
 ---
 

@@ -12,11 +12,14 @@ isPost: true
 backUrl: '/'
 author:
   name: Amrutha Srinivasan
-  title: PWABuilder Engineer
+  twitter: amruthasrin
+  title: Software Engineer
+  image: /author_images/amrutha_image.jpeg
+  tagline: Software Engineer working on making Windows the best developer platform out there!
 tags:
   - post
-  - PWA
-  - Insights
+  - App Capabilities
+  - Service Worker
 ---
 
 

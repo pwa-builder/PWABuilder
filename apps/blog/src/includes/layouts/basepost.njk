@@ -113,6 +113,11 @@
         {{ content | safe }}
       {% endblock %}
     </main>
+    {% if isPost %}
+      {% block authorProfile %}
+        {% include 'author-profile.njk' %}
+      {% endblock %}
+    {% endif %}
     
     {% block footer %}
       {% include 'footer.njk' %}

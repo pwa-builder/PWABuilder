@@ -12,11 +12,15 @@ isPost: true
 backUrl: '/'
 author:
   name: Justin Willis
-  twitter: https://twitter.com/Justinwillis96
-  title: Software Engineer APS W+D 
+  twitter: Justinwillis96
+  title: Software Engineer
+  tagline: When i'm not developing PWAs you can find me hiking, gaming or playing with my pets!
+  image: /author_images/justin_image.jpg
 tags:
   - post
   - Inking
+  - Demo
+  - PWA Starter
 ---
 
 Looking to build a Progressive Web App but not sure where to start? Or maybe you have already started on your PWA but your users have told you it still feels like a website. These are two common scenarios that developers commonly find themselves in, but where do you go from there? [PWABuilder](https://twitter.com/pwabuilder?s=20) of course! In today's post I wanted to walk you through building a PWA from scratch with PWABuilder and talk about how PWABuilder can help you improve the app-like experience of your PWA. Let's jump in!

@@ -15,9 +15,8 @@ author:
   title: PWABuilder PM
 tags:
   - post
-  - PWA
-  - packaging
-  - pwabuilder.com
+  - Announcement
+  - PWABuilder.com
 ---
 
 Today marks a big day in the history of the PWABuilder site. Over the past decade the PWABuilder team has been constantly iterating on our site’s user experience and user interface. It’s has been our mission to ensure that PWA developers have all the resources and tools at their fingertips to deliver high quality experiences to their customers across a variety of platforms and devices. 
