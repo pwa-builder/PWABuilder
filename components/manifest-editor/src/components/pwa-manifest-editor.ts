@@ -43,14 +43,12 @@ export class PWAManifestEditor extends LitElement {
 
   set initialManifest(manifest: Manifest) {
     let oldVal = this._initialManifest;
-    this._initialManifest = manifest
+    this._initialManifest = this.removeEmptyFields(manifest);
     this.manifest = JSON.parse(JSON.stringify(this.initialManifest));
     this.requestUpdate('initialManifest', oldVal);
   }
 
   @property({type: Object}) get initialManifest() { return this._initialManifest; }
-
-  //@property({type: Object}) initialManifest: Manifest = {};
 
   @property({type: String}) manifestURL: string = '';
 
@@ -123,6 +121,17 @@ export class PWAManifestEditor extends LitElement {
   async updated() {
     //console.log(await validateRequiredFields(this._initialManifest))
     (this.shadowRoot?.querySelector('sl-tab-group') as unknown as SlTabGroup).show(this.startingTab);
+  }
+
+  private removeEmptyFields(manifest: Manifest): Manifest {
+    var new_manifest: Manifest = manifest;
+    for(const key in manifest) {
+      const value = manifest[key];
+      if((typeof value === "string" || Array.isArray(value)) && value.length === 0){
+        delete new_manifest[key];
+      }
+    }
+    return new_manifest;
   }
 
   private updateManifest(e: CustomEvent){

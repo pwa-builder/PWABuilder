@@ -1,4 +1,4 @@
-import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { errorInTab, insertAfter } from '../utils/helpers';
@@ -265,6 +265,12 @@ export class ManifestScreenshotsForm extends LitElement {
       let passed = validation!.valid;
 
       if(!passed){
+
+        if(this.shadowRoot!.querySelector(`.error-message`)){
+          let error_p = this.shadowRoot!.querySelector(`.error-message`);
+          error_p!.parentElement!.removeChild(error_p!);
+        }
+
         let title = this.shadowRoot!.querySelector('h3');
         title!.classList.add("error");
 
@@ -281,14 +287,8 @@ export class ManifestScreenshotsForm extends LitElement {
         }
 
       }
-    } else {
-      /* This handles the case where the field is not in the manifest.. 
-      we only want to make it red if its REQUIRED. */
-      if(required_fields.includes(field)){
-        let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-        input!.classList.add("error");
-      }
-    }
+    } 
+
     this.validationPromise = undefined;
     if(this.errorCount == 0){
       this.dispatchEvent(errorInTab(false, "screenshots"));
