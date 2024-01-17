@@ -7,8 +7,6 @@ import { getEditorState, emitter } from './utils/codemirror';
 import { resizeObserver } from './utils/events';
 import { Lazy, CodeEditorEvents, CodeEditorSyncEvent, increment } from './utils/helpers';
 
-//import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../../apps/pwabuilder/src/script/utils/analytics';
-
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
   @property({
@@ -92,7 +90,7 @@ export class CodeEditor extends LitElement {
 
   updated(changedProperties: Map<string, any>) {
     if (changedProperties.has('startText')) {
-      this.editorState = getEditorState(this.startText || '', this.editorStateType, [], !this.readOnly);
+      this.editorState = getEditorState(this.startText || '', this.editorStateType, [], this.readOnly);
 
       if (this.editorView) {
         this.editorView.setState(this.editorState);
