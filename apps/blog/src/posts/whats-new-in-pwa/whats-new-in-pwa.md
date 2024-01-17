@@ -18,6 +18,7 @@ author:
   image: /author_images/zach_image.jpg
 tags:
   - post
+  - App Spotlight
   - App Capabilities
 ---
 

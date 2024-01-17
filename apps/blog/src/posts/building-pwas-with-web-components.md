@@ -18,7 +18,7 @@ author:
   image: /author_images/justin_image.jpg
 tags:
   - post
-  - web-components
+  - Web Components
 ---
 
 ![An image of 3 people working together to build a Progressive Web App!](https://miro.medium.com/max/2232/1*qtBDuHwNbYU5vGz-Z6dYHQ.png)

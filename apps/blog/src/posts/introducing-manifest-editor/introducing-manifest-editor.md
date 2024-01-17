@@ -18,8 +18,9 @@ author:
   image: /author_images/jaylyn_image.jpg
 tags:
   - post
-  - manifest
-  - pwabuilder.com
+  - Announcement
+  - Manifest Editor
+  - PWABuilder.com
 ---
 
 With our site redesign that was released in early October, some of you may have noticed the new manifest editor component! We wanted a guided experience that would make this daunting process much easier for our users. Being that it is a component, we will be able to reuse it across [PWABuilder](https://www.pwabuilder.com/) toolings when the time is right. We will continue to improve this experience, add more information about each field, and provide step by step instructions on how to implement them. The best part is, all of this will happen without having to leave [pwabuilder.com](https://www.pwabuilder.com/)!

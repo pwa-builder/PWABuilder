@@ -18,9 +18,10 @@ author:
   image: /author_images/zach_image.jpg
 tags:
   - post
-  - CLI
   - PWA Starter
-  - PWA template
+  - CLI
+  - Tools
+  - Announcement
 ---
 
 PWABuilder is launching a brand new CLI that can create a new templated [Progressive Web App](https://docs.pwabuilder.com/#/home/pwa-intro) for you and have you developing in just seconds. 

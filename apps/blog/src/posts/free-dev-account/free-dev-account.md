@@ -18,9 +18,9 @@ author:
   tagline: Eastern Europe based Software Engineer who loves PC hardware, gaming handhelds, classic cars and web technologies.
 tags:
   - post
+  - App Stores
   - Windows
   - Microsoft Store
-  - Free
 ---
 
 <img alt="get a free windows developer account" src="/posts/free-dev-account/free-account-pic-1.jpg" />

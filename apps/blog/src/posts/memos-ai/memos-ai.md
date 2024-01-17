@@ -20,6 +20,8 @@ tags:
   - post
   - PWA Starter
   - AI
+  - View/Page Transitions
+  - Demo
 ---
 
 ![Short live demo](/posts/memos-ai/record-new-note.png)

@@ -18,9 +18,9 @@ author:
   image: /author_images/justin_image.jpg
 tags:
   - post
-  - Windows
-  - Android
-  - iOS
+  - VSCode Extension
+  - Announcement
+  - Tools
 ---
 
 <img alt="vscode release graphic" src="/posts/announcing-vscode/vscode-release-graphic.png" />

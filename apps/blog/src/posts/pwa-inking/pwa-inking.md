@@ -15,6 +15,7 @@ tags:
   - Inking
   - Microsoft Edge
   - Windows
+  - Demo
 ---
 
 <img src="https://media.giphy.com/media/gfrRt9TzYCv24qaoCl/giphy.gif" alt="GIF of the pwa-inking component working" width="480" height="408">

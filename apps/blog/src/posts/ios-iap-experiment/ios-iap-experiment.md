@@ -20,8 +20,6 @@ tags:
   - post
   - iOS
   - Swift
-  - in-app purchases
-  - ChatGPT
 ---
 
 <figure>

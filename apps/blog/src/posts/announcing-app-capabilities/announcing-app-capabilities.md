@@ -18,10 +18,9 @@ author:
   image: /author_images/justin_image.jpg
 tags:
   - post
-  - PWA
-  - Report Card
-  - pwabuilder.com
+  - PWABuilder.com
   - App Capabilities
+  - Announcement
 ---
 
 

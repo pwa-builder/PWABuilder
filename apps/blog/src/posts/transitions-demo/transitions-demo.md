@@ -18,8 +18,9 @@ author:
   image: /author_images/jaylyn_image.jpg
 tags:
   - post
+  - Demo
   - PWA Starter
-  - App Capabilities
+  - View/Page Transitions
 ---
 
 <img src="/posts/transitions-demo/demo-homepage.png" alt="Navigation bar for transitions demo"></img>

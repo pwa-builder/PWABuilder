@@ -18,7 +18,9 @@ author:
   image: /author_images/jaylyn_image.jpg
 tags:
   - post
-  - PWABuilder
+  - Announcement
+  - PWABuilder.com
+  - Manifest Editor
 ---
 
 With the revamp of the report card page, [PWABuilder](https://www.pwabuilder.com/) saw the introduction of the action items list that gave users actionable tasks to that could help fix or improve their [Progressive Web App](https://docs.pwabuilder.com/#/home/pwa-intro). Previously, clicking on these tasks would trigger an animation, scrolling down to it's corresponding card where the user could then take actions by opening the respective modal and figuring out the rest on their own. To make this process more clear and efficient, starting with the manifest items, we added tooltips activated by hovering the (i) or clicking the action item as a whole. 

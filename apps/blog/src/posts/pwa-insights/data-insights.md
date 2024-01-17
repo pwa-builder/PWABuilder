@@ -18,6 +18,8 @@ author:
   tagline: Software Engineer working on making Windows the best developer platform out there!
 tags:
   - post
+  - App Capabilities
+  - Service Worker
 ---
 
 
