@@ -475,10 +475,17 @@ export const maniTests: Array<Validation> = [
         ]),
         docsLink:
             "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
-        errorString: "screenshots must be an array with a length > 0",
+        errorString: "Screenshots must be an array of screenshot objects",
         quickFix: true,
-        test: (value: string) =>
-            value && Array.isArray(value) && value.length > 0 ? true : false,
+        testRequired: undefined,
+        test: function (value: any[]) {
+            if (typeof value === "undefined") {
+                this.testRequired = false;
+                return true;
+            }
+            this.testRequired = true;
+            return value && Array.isArray(value);
+        },
     },
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
@@ -491,9 +498,9 @@ export const maniTests: Array<Validation> = [
         errorString: "",
         quickFix: true,
         test: function (value: any) {
-            const exist = value && Array.isArray(value) && value.length > 0 ? true : false;
+            const exist = value && Array.isArray(value);
             if (!exist) {
-                this.errorString = "shortcuts must be an array with a length > 0";
+                this.errorString = "shortcuts must be an array of shortcut objects";
                 return false;
             }
 
@@ -510,54 +517,9 @@ export const maniTests: Array<Validation> = [
                 return false;
             }
 
-            // Commenting this block out, this shouldn't be an error but instead a warning.
-            /* we use every here bc every shortcut needs at 
-                least one icon with size 96x96 no  icons at all
-            const has96x96Icon = value.every((shortcut: {icons?: Icon[]}) => {
-                if (!shortcut.icons) return true;
-                // we use some here bc only one icon has to be that size
-                return shortcut.icons!.some((icon: Icon) => {
-                    return icon.sizes === "96x96";
-                });
-            });
-            if (!has96x96Icon) {
-                this.errorString = "One or more of your shortcuts has icons but does not have one with size 96x96";
-                return false;
-            } */
-
             return true;
         }
     },
-    // {
-    //     infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
-    //     displayString: "Shortcuts have at least a 96x96 icon",
-    //     category: "recommended",
-    //     member: "shortcuts",
-    //     defaultValue: [],
-    //     docsLink:
-    //         "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
-    //     errorString: "One or more of your shortcuts has icons but does not have one with size 96x96",
-    //     quickFix: false,
-    //     test: (value: any[]) => {
-    //         if (value && value.length === 0) return true;
-    //         const isArray = value && Array.isArray(value);
-    //         if (isArray) {
-    //             /* we use every here bc every shortcut needs at 
-    //             least one icon with size 96x96 no  icons at all */
-    //             const has96x96Icon = value.every((shortcut) => {
-    //                 if (!shortcut.icons) return true;
-    //                 // we use some here bc only one icon has to be that size
-    //                 return shortcut.icons!.some((icon: Icon) => {
-    //                     return icon.sizes === "96x96";
-    //                 });
-    //             });
-    //             return has96x96Icon;
-    //         }
-    //         else {
-    //             return false;
-    //         }
-    //     }
-    // },
     {
         infoString: "The iarc_rating_id member is a string that represents the International Age Rating Coalition (IARC) certification code of the web application. It is intended to be used to determine which ages the web application is appropriate for.",
         displayString: "Manifest has iarc_rating_id field",
@@ -569,7 +531,6 @@ export const maniTests: Array<Validation> = [
         quickFix: true,
         errorString: "iarc_rating_id must be a string with a length > 0",
         test: (value: string) => {
-            // should exist
             return value && typeof value === "string" && value.length > 0;
         }
     },
@@ -631,12 +592,12 @@ export const maniTests: Array<Validation> = [
         test: function (value: any[]) {
             if (typeof value === "undefined") {
                 this.testRequired = false;
-                return false;
+                return true;
             }
             this.testRequired = true;
-            return value && Array.isArray(value) && value.length > 0;
+            return value && Array.isArray(value);
         },
-        errorString: "categories should be a non-empty array"
+        errorString: "Categories should be an array of string category values"
     },
     {
         member: "lang",

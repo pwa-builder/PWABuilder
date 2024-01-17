@@ -14,7 +14,7 @@ import {
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
-  @property({ type: String }) heading = 'PWABuilder';
+  @property({ type: String }) page = 'home';
 
   static get styles() {
     return css`
@@ -73,13 +73,10 @@ export class AppHeader extends LitElement {
         display: inline-block;
         height: 18px;
         font-size: 20px;
-        border-bottom: 1px solid transparent;
       }
 
       .nav_link:hover span{
         cursor: pointer;
-        border-color: var(--font-color);
-        padding-bottom: 4px;
       }
 
       nav sl-icon {
@@ -98,6 +95,10 @@ export class AppHeader extends LitElement {
 
       .link:visited, .link:active, .link:link {
         color: #777777;
+      }
+
+      .hover-color:hover {
+        color: var(--primary-color);
       }
 
       sl-menu {
@@ -223,6 +224,7 @@ export class AppHeader extends LitElement {
   }
 
   firstUpdated() {
+    console.log("first updated page", this.page)
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
@@ -260,6 +262,7 @@ export class AppHeader extends LitElement {
   }
 
   render() {
+    console.log(this.page)
     return html`
       <header part="header">
        
@@ -268,30 +271,34 @@ export class AppHeader extends LitElement {
        
 
         <nav id="desktop-nav">
-          <a
-            class="nav_link"
-            appearance="hypertext"
-            href="https://blog.pwabuilder.com"
-            target="_blank"
-            aria-label="PWABuilder Blog, will open in separate tab"
-            rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <span>Blog</span>
-          </a>
-          <a
-            class="nav_link"
-            appearance="hypertext"
-            href="https://docs.pwabuilder.com"
-            target="_blank"
-            aria-label="PWABuilder Docs, will open in separate tab"
-            rel="noopener"
-            @click=${() => recordPWABuilderProcessStep(`header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
-          >
-            <span>Docs</span>
-          </a>
+        ${this.page === "home" ? 
+          html`
+            <a
+              class="nav_link"
+              appearance="hypertext"
+              href="https://blog.pwabuilder.com"
+              aria-label="PWABuilder Blog, will open in separate tab"
+              rel="noopener"
+              @click=${() => recordPWABuilderProcessStep(`header.blog_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            >
+              <span class="hover-color">Blog</span>
+            </a>
+            <a
+              class="nav_link"
+              appearance="hypertext"
+              href="https://docs.pwabuilder.com"
+              target="_blank"
+              aria-label="PWABuilder Docs, will open in separate tab"
+              rel="noopener"
+              @click=${() => recordPWABuilderProcessStep(`header.docs_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+            >
+              <span class="hover-color">Docs</span>
+            </a>
+          ` : null
+        }
+          
           <sl-dropdown distance="5">
-            <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span>Community</span></button>
+            <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span class="hover-color">Community</span></button>
             
             <sl-menu>
                 <p class="col-header">Follow us on</p>
