@@ -32,12 +32,12 @@ export function findSuitableIcon(
   }
 
   const iconInfos = isIconInfos(icons) ? icons : icons.map(i => new IconInfo(i));
-  const exactMatch = iconInfos.find(i => i.isExactMatch(purpose, desiredWidth, desiredHeight, mimeType));
+  const exactMatch = iconInfos.findLast(i => i.isExactMatch(purpose, desiredWidth, desiredHeight, mimeType));
   if (exactMatch) {
     return exactMatch.getIcon();
   }
 
-  var largerMatch = iconInfos.find(i => i.isSuitableIcon(purpose, desiredWidth, desiredHeight, mimeType));
+  var largerMatch = iconInfos.findLast(i => i.isSuitableIcon(purpose, desiredWidth, desiredHeight, mimeType));
   return largerMatch?.getIcon() || null;
 }
 
@@ -69,12 +69,7 @@ export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
 }
 
 function isIconInfos(icons: Icon[] | IconInfo[]): icons is IconInfo[] {
-  const firstIcon = icons[0];
-  if (firstIcon instanceof IconInfo) {
-    return true;
-  }
-
-  return false;
+  return ( icons[0] instanceof IconInfo );
 }
 
 /**
