@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 import { AndroidPackageOptions } from "../android-interfaces";
 import { URL } from "url";
 
-import { getSessionID, standard_headers, trackEvent, trackException } from "../services/usage-analytics";
+import { standard_headers, trackEvent, trackException } from "../services/usage-analytics";
 import { getURL } from "../services/web-publish";
 
 export const WindowsDocsURL =
@@ -75,7 +75,7 @@ export async function packageForWindows(options: any) {
   try {
 
     response = await fetch(
-      "https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip",
+      "https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip",
       {
         method: "POST",
         body: JSON.stringify(options),

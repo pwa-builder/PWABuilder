@@ -15,7 +15,8 @@ author:
   title: Software engineering intern
 tags:
   - post
-  - PWA
+  - PWABuilder.com
+  - Announcement
 ---
 
 We have all been there. Staring at this mysterious `json` object that seems so important for a progressive web app. Besides a name and icons, what else should you include? Why do you need a background color if you already have that in your CSS stylesheets? Which are the different display modes, and which one should you use?  

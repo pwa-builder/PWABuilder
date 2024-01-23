@@ -2901,7 +2901,7 @@ export class AppReport extends LitElement {
 
   render() {
     return html`
-      <app-header></app-header>
+      <app-header .page=${"report"}></app-header>
       <div id="report-wrapper">
         <div id="content-holder">
           <div id="header-row">

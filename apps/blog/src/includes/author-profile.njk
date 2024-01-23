@@ -1,0 +1,55 @@
+{% if author.image %}
+<section class="author-profile light:bg-secondary flex flex-col relative bg-cover bg-center bg-no-repeat">
+    <h2> Author Profile </h2>
+    <img class="profile-pic" src={{author.image}} alt="profile picture" />
+    <div class="ap-words">
+        <p class="identifiers"> {{author.name}} 
+            {% if author.twitter %}
+                <a class="ap-twitter" href="https://twitter.com/{{author.twitter}}" target="_blank">@{{ author.twitter}}</a> 
+            {% endif %}
+        </p>
+        <p class="tagline">{{author.tagline}}</p>
+    </div>
+</section>
+{% endif %}
+
+<style>
+  .author-profile {
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 36px;
+  }
+
+  .profile-pic {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+  }
+  .ap-words{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .identifiers {
+    color: #4f3fb6;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .tagline {
+    margin: 0;
+  }
+
+  .ap-twitter {
+    text-decoration: none;
+  }
+</style>
