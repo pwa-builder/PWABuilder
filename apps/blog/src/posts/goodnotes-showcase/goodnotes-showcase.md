@@ -4,7 +4,7 @@ title: How GoodNotes uses web APIs to create a great PWA for Windows
 excerpt: Let's explore how GoodNotes uses web APIs to make their PWA great on Windows, especially on devices that support pen and touch input.
 description: In this blog post, we will explore how GoodNotes uses web APIs to make their PWA great on Windows, especially on devices that support pen and touch input.
 date: 2024-01-24
-updatedDate: 2024-01-24
+updatedDate: 2024-01-25
 trending: true
 featured: true
 image: posts/goodnotes-showcase/person-drawing.jpg
