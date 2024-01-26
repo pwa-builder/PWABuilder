@@ -503,7 +503,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
   },
   "share_target.params.title": {
     description: [
-      `Name of the query parameter for the title of the doucument being shared.`,
+      `Name of the query parameter for the title of the document being shared.`,
     ],
     purpose: null,
     example: null,
