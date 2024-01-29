@@ -363,7 +363,7 @@ The `share_target` member is an object which can contain the following members:
 *  `method`: `GET` or `POST`. Use `POST` if the shared data includes binary data like images.
 * `enctype`: The encoding of the data when the method is a `POST` request. Otherwise, ignored.
 * `params`: The object that allows you to configure the share parameters. Should corresponded to the object exposed by `navigator.share()`. ***Required member*** 
-    * `title`: Name of the query parameter for the title of the doucument being shared.
+    * `title`: Name of the query parameter for the title of the document being shared.
     * `text`: Name of the query parameter for the body of the message being shared.
     * `url`: Name of the query parameter for the URL being shared.
     * `files`
