@@ -61,7 +61,7 @@ Once you've uploaded your `.aab` file, Google Play re-signs your app. Because of
 
 To update your asset links and remove the address bar from your app, login to the [Google Play Console](https://developer.android.com/distribute/console), select your app, then choose `Setup` -> `App integrity`, then copy your `SHA-256 fingerprint`:
 
-<img src="/static/google-play-signing.png" width="600px" />
+<img src="/static/google-play-signing.png" alt="Google Play Console screenshot with App Signing flow" width="600px" />
 
 Then, paste the fingerprint into your `assetlinks.json` file:
 
