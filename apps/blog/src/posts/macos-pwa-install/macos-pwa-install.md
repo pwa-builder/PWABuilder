@@ -7,7 +7,7 @@ date: 2024-02-01
 updatedDate: 2024-02-01
 trending: true
 featured: true
-image: posts/macos-pwa-install/pic-1.jpg
+image: posts/macos-pwa-install/pic-1-wide.jpg
 isPost: true
 backUrl: '/'
 author:
@@ -22,17 +22,22 @@ tags:
   - WebApps
 ---
 
-![PWA Install Sonoma](/posts/macos-pwa-install/pic-2.jpg)
+<figure>
+  <video preload="none" controls poster="/posts/macos-pwa-install/pic-1-wide.jpg">
+    <source src="/posts/macos-pwa-install/video.webm" type="video/webm">
+  </video>
+  <figcaption>Installing PWA on macOS Safari</figcaption>
+</figure>
 
 ### Backstory
 
 Traditionally for Apple, the company has been slow to adopt new web technologies. However, with the release of macOS Sonoma, Apple has made a big step forward in supporting Web Apps in general and Progressive Web Applications specifically. This is great news for developers and users alike, as it means that PWAs will be more accessible on Mac than ever before.
 
-But, also traditionally for Apple, there is no built-in browsers experiences for prompting PWA installation in Safari. This is where the [pwa-install](https://github.com/khmyznikov/pwa-install) component comes in. It's a simple, lightweight, framework agnostic web-component that provides a native-like installation experience for PWAs on iOS/iPadOS and now on macOS Sonoma. It's easy to use and works with any PWA or simple Web App, so you can get started right away.
+But, also traditionally for Apple, there is no built-in browsers experiences for prompting PWA installation on Safari. This is where the [pwa-install](https://github.com/khmyznikov/pwa-install) component comes in. It's a simple, lightweight, framework agnostic web-component that provides a native-like installation experience for PWAs on iOS/iPadOS and now on macOS Sonoma. It's easy to use and works with any PWA or simple Web App, so you can get started right away.
 
 ![PWA Install Instructions](/posts/macos-pwa-install/pic-3.jpg)
 
-Why Easy Installation Matters? Progressive Web Applications offer a lot of flexibility and user engagement. One of the main selling points is their app-like presence on your device. However, not every browser has made it easy to install them. This update is set to make the installation of PWAs feel more native, especially for users on macOS Safari.
+Why easy installation matters? Progressive Web Applications offer a lot of flexibility and user engagement. One of the main selling points is their app-like presence on your device. However, not every browser has made it easy to install them. This update is set to make the installation of PWAs feel more native, especially for users on macOS Safari.
 
 ### Implementation
 
@@ -59,13 +64,20 @@ static isAppleDesktop(): boolean {
     return audioCheck && webGLCheck;
 }
 ```
-Combined the user agent and specific for Safari on Sonoma feature detections, we can detect Web Apps availability on macOS platform. We had to run previous and current macOS version with latest Safari 17 side by side and with help of [tool like this](https://browserleaks.com/features) we were able to detect the difference between them.
+Combined the user agent and specific for Safari on Sonoma feature detections, we can detect Web Apps availability on macOS platform. We had to run previous and current macOS version with latest Safari 17 side by side and with help of [tool like this](https://browserleaks.com/features) we were able to detect the difference we can use.
 
 ### Installation
 
-This isn't just about Safari on MacOS. From sleek installation instructions on iOS to elegant gallery views on Android, the component keeps the user experience consistent no matter the device.
+This isn't just about Safari on MacOS. The component keeps the user experience consistent no matter the device.
 
-Adding this component to your project is simple. The readme includes a one-line npm install command, import instructions, and basic HTML for adding the component to a app. There's even a live [demo](https://khmyznikov.com/pwa-install/) to show you exactly how it should look and work.
+| &nbsp;&nbsp;iOS&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Android |
+| --- | --- | --- |
+|![iOS install prompt](/posts/macos-pwa-install/pic-4.jpg)|![iOS install instructions](/posts/macos-pwa-install/pic-5.jpg)|![Android Gallery](/posts/macos-pwa-install/pic-6.jpg)|
+
+![Chrome Prompt](/posts/macos-pwa-install/pic-7.jpg)
+
+Adding this component to your project is simple. The [readme](https://github.com/khmyznikov/pwa-install?tab=readme-ov-file#install) includes a one-line npm install command, import instructions, and basic HTML for adding the component to a app. There's even a live [demo](https://khmyznikov.com/pwa-install/) to show you exactly how it should look and work.
+React polyfill is also available for those who use React. Another modern framework users can use the component as a web component.
 
 What's Coming Soon for PWA Installation? Samsung Internet and Firefox Mobile are the next browsers to get the pwa-install component. This will make it even easier for users on Android devices to install PWAs from their favorite browsers.
 
