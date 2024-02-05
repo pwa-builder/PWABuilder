@@ -4,7 +4,7 @@ title: Image recommendations for Windows PWA packages
 excerpt: Everything you need to know on how to control the look & feel of your icons on the Windows platform
 description: Your PWA for Windows should have a square, 512x512 or larger PNG image but sometimes more
 date: 2021-06-24
-updatedDate: 2021-06-24
+updatedDate: 2024-01-18
 trending: false
 featured: false
 image: docs/windows/windows-store-documentation/StoreLogo.png
@@ -41,7 +41,7 @@ Your [web app manifest icons](https://www.w3.org/TR/appmanifest/#icons-member) s
 - 44x44 - [app icon](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#app-icon)
 - 71x71 - [small tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#small-tile)
 - 150x150 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile)
-- 350x150 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile)
+- 310x150 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile)
 - 310x310 - [large tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#large-tile)
 - 50x50 - [store logo](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#store-logo)
 - 620x300 - [splash screen](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#splash-screen)
@@ -67,7 +67,7 @@ Your [web app manifest icons](https://www.w3.org/TR/appmanifest/#icons-member) s
 - 225x225 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile) 1.5x display scale
 - 300x300 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile) 2x display scale
 - 600x600 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile) 4x display scale
-- 350x150 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile)
+- 310x150 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile)
 - 388x188 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile) 1.25x display scale
 - 465x225 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile) 1.5x display scale
 - 620x300 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile) 2x display scale
@@ -117,7 +117,7 @@ Your [web app manifest icons](https://www.w3.org/TR/appmanifest/#icons-member) s
 - 225x225 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile) 1.5x display scale
 - 300x300 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile) 2x display scale
 - 600x600 - [medium tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#medium-tile) 4x display scale
-- 350x150 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile)
+- 310x150 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile)
 - 388x188 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile) 1.25x display scale
 - 465x225 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile) 1.5x display scale
 - 620x300 - [wide tile](https://github.com/pwa-builder/pwabuilder-windows-chromium-docs/blob/master/image-recommendations.md#wide-tile) 2x display scale
