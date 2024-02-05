@@ -83,6 +83,6 @@ What's coming soon for PWA installation? Samsung Internet and Firefox Mobile are
 
 ### Conclusion
 
-The pwa-install component aims to improve the install process for PWAs, with the most recent update making the experience feel more native for Safari users on the new MacOS Sonoma. Whether you're aiming to reach MacOS, iOS, or wider audiences, the component is essential for seamless PWA installations.
+The pwa-install component aims to improve the install process for PWAs, with the most recent update making the experience feel more native for Safari users on the new MacOS Sonoma. Whether you're aiming to reach MacOS, iOS, or wider audiences, this component can play for you a vital role in creating a seamless PWA installation experience.
 
 Jump into the [demo](https://khmyznikov.com/pwa-install/), see the new features for yourself,. If you like the progress, feel free to [contribute](https://github.com/khmyznikov/pwa-install) features or translations through pull requests.
