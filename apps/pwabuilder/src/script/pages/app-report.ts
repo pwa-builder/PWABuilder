@@ -133,6 +133,7 @@ export class AppReport extends LitElement {
   @state() showConfirmationModal: boolean = false;
   @state() thingToAdd: string = "";
   @state() retestConfirmed: boolean = false;
+  @state() readdDenied: boolean = false;
 
   @state() createdManifest: boolean = false;
   @state() manifestContext: ManifestContext | undefined;
@@ -2899,9 +2900,32 @@ export class AppReport extends LitElement {
     }
   }
 
+  renderReaddDialog() {
+    var dialogContent = html`
+      <p>Have you added your new ${this.thingToAdd} to your site?</p>
+      <div id="confirmationButtons">
+        <sl-button @click=${() => this.retest(true)}> Yes </sl-button>
+        <sl-button @click=${() => this.readdDenied = true}> No </sl-button>
+      </div>
+    `
+
+    if(this.retestConfirmed) {
+      dialogContent = html`
+        <p>Retesting your site now!</p>
+      `;
+    } 
+    else if (this.readdDenied) {
+      dialogContent = html`
+        <p>Add your new ${this.thingToAdd}, and then we can retest your site. </p>
+      `;
+    }
+
+    return dialogContent;
+  }
+
   render() {
     return html`
-      <app-header></app-header>
+      <app-header .page=${"report"}></app-header>
       <div id="report-wrapper">
         <div id="content-holder">
           <div id="header-row">
@@ -3455,20 +3479,8 @@ export class AppReport extends LitElement {
       </div>
 
 
-      <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => this.showConfirmationModal = false} noHeader>
-        ${this.retestConfirmed ?
-          html`
-          <p>Retesting your site now!</p>
-          ` :
-          html`
-            <p>Have you added your new ${this.thingToAdd} to your site?</p>
-            <div id="confirmationButtons">
-              <sl-button>No</sl-button>
-              <sl-button @click=${() => this.retest(true)}>Yes</sl-button>
-            </div>
-          `
-        }
-
+      <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => {this.showConfirmationModal = false; this.readdDenied = false;}} noHeader>
+        ${this.renderReaddDialog()}
       </sl-dialog>
 
       <share-card

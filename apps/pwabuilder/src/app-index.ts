@@ -5,7 +5,6 @@ import { Router, Route } from '@vaadin/router';
 import './shoelace';
 import './script/pages/app-home';
 import './script/components/app-footer';
-import './script/components/app-header';
 import './script/components/app-button';
 //import './script/components/cookie-banner';
 import './script/components/discord-box';

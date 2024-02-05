@@ -4,7 +4,7 @@ title: Announcing the App Capabilities Card
 excerpt: Introducing the new App Capabilities section of the PWABuilder Report Card page
 description: Introducing the new App Capabilities section of the PWABuilder Report Card page
 date: 2023-10-16
-updatedDate: 2023-10-16
+updatedDate: 2024-01-26
 trending: true
 featured: true
 image: posts/announcing-app-capabilities/hero.png
@@ -12,13 +12,15 @@ isPost: true
 backUrl: '/'
 author:
   name: Jaylyn Barbee
-  twitter: https://twitter.com/jaylynsatwork
+  twitter: jaylynsatwork
   title: Software Engineer
+  tagline: East Coast based Software Engineer who loves to cooking, gaming, and playing volleyball!
+  image: /author_images/jaylyn_image.jpg
 tags:
   - post
-  - PWA
-  - Report Card
-  - pwabuilder.com
+  - PWABuilder.com
+  - App Capabilities
+  - Announcement
 ---
 
 

@@ -12,13 +12,15 @@ isPost: true
 backUrl: '/'
 author:
   name: Jaylyn Barbee
-  twitter: https://twitter.com/jaylynsatwork
-  title: PWABuilder Engineer
+  twitter: jaylynsatwork
+  title: Software Engineer
+  tagline: East Coast based Software Engineer who loves to cooking, gaming, and playing volleyball!
+  image: /author_images/jaylyn_image.jpg
 tags:
   - post
-  - PWA
+  - Demo
   - PWA Starter
-  - App Capabilities
+  - View/Page Transitions
 ---
 
 <img src="/posts/transitions-demo/demo-homepage.png" alt="Navigation bar for transitions demo"></img>

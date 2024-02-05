@@ -12,11 +12,13 @@ isPost: true
 backUrl: '/'
 author:
   name: Justin Willis
-  twitter: https://twitter.com/Justinwillis96
-  title: Software Engineer APS W+D 
+  twitter: Justinwillis96
+  title: Software Engineer
+  tagline: When i'm not developing PWAs you can find me hiking, gaming or playing with my pets!
+  image: /author_images/justin_image.jpg
 tags:
   - post
-  - web-components
+  - Web Components
 ---
 
 ![An image of 3 people working together to build a Progressive Web App!](https://miro.medium.com/max/2232/1*qtBDuHwNbYU5vGz-Z6dYHQ.png)
