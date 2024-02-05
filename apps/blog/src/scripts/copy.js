@@ -44,20 +44,19 @@ const handleCodeCopying = () => {
   }
 }
 
-const handleShareButton = () => {
+/* const handleShareButton = () => {
   if (navigator.clipboard) {
     const shareButtons = document.querySelectorAll(".share")
     shareButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        navigator.share({
+      btn.addEventListener("click", async () => {
+        const blogTitle = document.querySelector('h1')?.innerText;
+        
+        console.log("hitting this", blogTitle)
+        await navigator.share({
+          title: "Check out this PWABuilder Blog",
+          text: blogTitle || "",
           url: location.href
         });
-        // navigator.clipboard.writeText(location.href).then(() => {
-        //   btn.textContent = "copied"
-        //   setTimeout(() => {
-        //     btn.textContent = "share"
-        //   }, 2000)
-        // })
       })
     })
   } else {
@@ -73,6 +72,6 @@ const handleShareButton = () => {
       }, 2000)
     })
   }
-}
+} */
 
-export { handleCodeCopying, handleShareButton }
+export { handleCodeCopying }
