@@ -43,7 +43,7 @@ Why does easy installation matter? Progressive Web Applications offer a lot of f
 
 But how it was archived? Safari on macOS Sonoma supports the Web App Manifest, which is a JSON file that describes the Web App metadata. This includes the app's name, description, icons, and more. The pwa-install component uses this information to create a native-like installation experience for PWAs on iOS/iPadOS and macOS Sonoma.
 
-But here's a catch: Safari on macOS don't provide any API to detect Web Apps availability. So we had to use a workaround to detect Web Apps availability on macOS platform.
+But here's a catch: Safari on macOS doesn't provide any API to detect Web Apps availability. So we had to use a workaround to detect Web Apps availability on macOS platform.
 
 [Here's how it works](https://github.com/khmyznikov/pwa-install/blob/cf73d0c382fd87aa6b5a5cc40f0474150efe3487/src/utils.ts#L24):
 
