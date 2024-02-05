@@ -77,7 +77,7 @@ This isn't just about Safari on MacOS. The component keeps the user experience c
 ![Chrome Prompt](/posts/macos-pwa-install/pic-7.jpg)
 
 Adding this component to your project is simple. The [readme](https://github.com/khmyznikov/pwa-install?tab=readme-ov-file#install) includes a one-line npm install command, import instructions, and basic HTML for adding the component to a app. There's even a live [demo](https://khmyznikov.com/pwa-install/) to show you exactly how it should look and work.
-React polyfill is also available for those who use React. Another modern framework users can use the component as a web component.
+Most modern frameworks can use the component as a web component. React polyfill is included.
 
 What's coming soon for PWA installation? Samsung Internet and Firefox Mobile are the next browsers to get the pwa-install component. This will make it even easier for users on Android devices to install PWAs from their favorite browsers.
 
