@@ -37,7 +37,7 @@ But, also traditionally for Apple, there is no built-in browsers experiences for
 
 ![PWA Install Instructions](/posts/macos-pwa-install/pic-3.jpg)
 
-Why easy installation matters? Progressive Web Applications offer a lot of flexibility and user engagement. One of the main selling points is their app-like presence on your device. However, not every browser has made it easy to install them. This update is set to make the installation of PWAs feel more native, especially for users on macOS Safari.
+Why does easy installation matter? Progressive Web Applications offer a lot of flexibility and user engagement. One of the main selling points is their app-like presence on your device. However, not every browser has made it easy to install them. This update is set to make the installation of PWAs feel more native, especially for users on macOS Safari.
 
 ### Implementation
 
