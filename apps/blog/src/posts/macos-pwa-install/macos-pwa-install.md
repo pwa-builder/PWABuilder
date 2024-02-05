@@ -19,7 +19,7 @@ author:
 tags:
   - post
   - macOS
-  - WebApps
+  - Web Apps
 ---
 
 <figure>
