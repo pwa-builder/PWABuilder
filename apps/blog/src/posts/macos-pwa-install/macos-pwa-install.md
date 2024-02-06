@@ -26,14 +26,14 @@ tags:
   <video preload="none" controls poster="/posts/macos-pwa-install/pic-1-wide.jpg">
     <source src="/posts/macos-pwa-install/video.webm" type="video/webm">
   </video>
-  <figcaption>Installing PWA on macOS Safari</figcaption>
+  <figcaption>Installing PWA's on macOS Safari</figcaption>
 </figure>
 
 ### Backstory
 
 Apple has long been associated with a slower adoption of web technologies. However, with the release of macOS Sonoma, Apple has made a big step forward in supporting Web Apps in general and Progressive Web Applications specifically. This is great news for developers and users alike, as it means that PWAs will be more accessible on Mac than ever before.
 
-But, фccording to the unfortunate tradition of Apple, there is no built-in browsers experiences for prompting PWA installation on Safari. This is where the [pwa-install](https://github.com/khmyznikov/pwa-install) component comes in. It's a simple, lightweight, framework agnostic web-component that provides a native-like installation experience for PWAs on iOS/iPadOS and now on macOS Sonoma. It's easy to use and works with any PWA or simple Web App, so you can get started right away.
+But, according to the unfortunate tradition of Apple, there is no built-in browsers experiences for prompting PWA installation on Safari. This is where the [pwa-install](https://github.com/khmyznikov/pwa-install) component comes in. It's a simple, lightweight, framework agnostic web-component that provides a native-like installation experience for PWAs on iOS/iPadOS and now on macOS Sonoma. It's easy to use and works with any PWA or simple Web App, so you can get started right away.
 
 ![PWA Install Instructions](/posts/macos-pwa-install/pic-3.jpg)
 
@@ -64,7 +64,7 @@ static isAppleDesktop(): boolean {
     return audioCheck && webGLCheck;
 }
 ```
-When we combine the user agent and Sonoma specific Safari feature detections, we can detect Web Apps availability on macOS platform. We had to run previous and current macOS version with latest Safari 17 side by side and with help of [tool like this](https://browserleaks.com/features) we were able to detect the difference we can use.
+When we combine the user agent and Sonoma specific Safari feature detections, we can detect Web Apps availability on macOS platform. We had to run previous and current macOS version with latest Safari 17 side by side and with help of [tool like this](https://browserleaks.com/features), we were able to detect the difference we can use.
 
 ### Installation
 
