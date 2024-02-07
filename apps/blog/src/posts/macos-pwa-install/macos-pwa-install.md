@@ -31,9 +31,9 @@ tags:
 
 ### Backstory
 
-Apple has long been associated with a slower adoption of web technologies. However, with the release of macOS Sonoma, Apple has made a big step forward in supporting Web Apps in general and Progressive Web Applications specifically. This is great news for developers and users alike, as it means that PWAs will be more accessible on Mac than ever before.
+With the release of macOS Sonoma, we are excited to see Apple making a big step forward in supporting Web Apps in general and Progressive Web Applications specifically. This is great news for developers and users alike, as it means that PWAs will be more accessible on Mac than ever before.
 
-But, according to the unfortunate tradition of Apple, there is no built-in browsers experiences for prompting PWA installation on Safari. This is where the [pwa-install](https://github.com/khmyznikov/pwa-install) component comes in. It's a simple, lightweight, framework agnostic web-component that provides a native-like installation experience for PWAs on iOS/iPadOS and now on macOS Sonoma. It's easy to use and works with any PWA or simple Web App, so you can get started right away.
+Unfortunately, there is no built-in browsers experiences for prompting PWA installation on Safari. This is where the [pwa-install](https://github.com/khmyznikov/pwa-install) component comes in. It's a simple, lightweight, framework agnostic web-component that provides a native-like installation experience for PWAs on iOS/iPadOS and now on macOS Sonoma. It's easy to use and works with any PWA or simple Web App, so you can get started right away.
 
 ![PWA Install Instructions](/posts/macos-pwa-install/pic-3.jpg)
 
