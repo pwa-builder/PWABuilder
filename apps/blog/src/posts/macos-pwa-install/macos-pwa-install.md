@@ -64,7 +64,7 @@ static isAppleDesktop(): boolean {
     return audioCheck && webGLCheck;
 }
 ```
-When we combine the user agent and Sonoma specific Safari feature detections, we can detect Web Apps availability on macOS platform. We had to run previous and current macOS version with latest Safari 17 side by side and with help of [tool like this](https://browserleaks.com/features), we were able to detect the difference we can use.
+When we combine the user agent and Sonoma specific Safari feature detections, we can detect Web Apps availability on macOS platform. We run previous and current macOS version with latest Safari 17 side by side and with help of [tool like this](https://browserleaks.com/features), we were able to detect the difference we can use.
 
 ### Installation
 
