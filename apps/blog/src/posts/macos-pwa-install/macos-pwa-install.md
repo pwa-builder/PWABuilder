@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Web Apps on macOS Sonoma got a proper install experience
-excerpt: This post guides us how we detected Web Apps availability on macOS platform.
+excerpt: How we detected Web Apps availability on macOS platform.
 description: How we enabled Sonoma's Web Apps support for PWA Install component.
 date: 2024-02-01
 updatedDate: 2024-02-01
