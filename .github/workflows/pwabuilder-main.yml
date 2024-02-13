@@ -70,6 +70,13 @@ jobs:
 
   generate_release:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      deployments: write
+      packages: write
+      pull-requests: read
+      
     name: Generate Release including changelog
     steps:
       - uses: "marvinpinto/action-automatic-releases@latest"

@@ -31,18 +31,18 @@ export function findSuitableIcon(
     return null;
   }
 
-  const iconInfos = isIconInfos(icons) ? icons : icons.map(i => new IconInfo(i));
-  const exactMatch = iconInfos.find(i => i.isExactMatch(purpose, desiredWidth, desiredHeight, mimeType));
+  const iconInfos: IconInfo[] = isIconInfos(icons) ? icons : icons.map(i => new IconInfo(i));
+  const exactMatch: IconInfo | undefined = iconInfos.findLast(i  => i.isExactMatch(purpose, desiredWidth, desiredHeight, mimeType));
   if (exactMatch) {
     return exactMatch.getIcon();
   }
 
-  var largerMatch = iconInfos.find(i => i.isSuitableIcon(purpose, desiredWidth, desiredHeight, mimeType));
+  var largerMatch: IconInfo | undefined  = iconInfos.findLast(i => i.isSuitableIcon(purpose, desiredWidth, desiredHeight, mimeType));
   return largerMatch?.getIcon() || null;
 }
 
 /**
- * Finds a app icon suitable as a general purpose app icon: idealy, a large, square, PNG icon whose purpose is any.
+ * Finds a app icon suitable as a general purpose app icon: ideally, a large, square, PNG icon whose purpose is any.
  * @param icons The icons in which to find a good primary app icon.
  * @returns An icon suitable to use as a general purpose app icon.
  */
@@ -69,12 +69,7 @@ export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
 }
 
 function isIconInfos(icons: Icon[] | IconInfo[]): icons is IconInfo[] {
-  const firstIcon = icons[0];
-  if (firstIcon instanceof IconInfo) {
-    return true;
-  }
-
-  return false;
+  return ( icons[0] instanceof IconInfo );
 }
 
 /**
