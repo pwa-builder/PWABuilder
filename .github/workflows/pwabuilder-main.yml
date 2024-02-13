@@ -72,10 +72,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: read
-      deployments: read
-      packages: none
-      pull-requests: write
+      contents: write
+      deployments: write
+      packages: write
+      pull-requests: read
       
     name: Generate Release including changelog
     steps:
