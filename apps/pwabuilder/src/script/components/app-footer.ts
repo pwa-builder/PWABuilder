@@ -155,6 +155,13 @@ export class AppFooter extends LitElement {
             <a
               target="_blank"
               rel="noopener"
+              href="https://go.microsoft.com/fwlink/?linkid=2259814"
+              @click=${() => recordPWABuilderProcessStep(`footer.consumer_health_policy_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
+              >Consumer Health Privacy</a
+            >
+            <a
+              target="_blank"
+              rel="noopener"
               href="https://github.com/pwa-builder/PWABuilder/blob/master/TERMS_OF_USE.md"
               @click=${() => recordPWABuilderProcessStep(`footer.terms_of_use_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
               >Terms of Use</a

@@ -68,25 +68,6 @@ jobs:
           skip_app_build: true # Skip building the app using the default build commands for the specified app framework - optional
           output_location: "" # Built app content directory - optional
 
-  generate_release:
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: write
-      deployments: write
-      packages: write
-      pull-requests: read
-      
-    name: Generate Release including changelog
-    steps:
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.CHANGELOG_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: false
-          title: "Production Build"
-
-
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
