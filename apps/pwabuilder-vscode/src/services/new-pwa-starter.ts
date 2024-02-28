@@ -141,10 +141,10 @@ export function isNpmInstalled(): boolean {
 async function fetchFromGithub(): Promise<string> {
   const streamPipeline = promisify(pipeline);
 
-  const fetchedZipPath: string = `${repositoryParentURI?.fsPath}\\fetchedTemplate.zip`;
-  const decompressedZipPath: string = `${repositoryParentURI?.fsPath}\\decompressedTemplate`;
-  const decompressedRepoPath: string = `${decompressedZipPath}\\pwa-starter-main`;
-  const finalLocationPath: string = `${repositoryParentURI?.fsPath}\\${repositoryName}`;
+  const fetchedZipPath: string = `${repositoryParentURI?.fsPath}/fetchedTemplate.zip`;
+  const decompressedZipPath: string = `${repositoryParentURI?.fsPath}/decompressedTemplate`;
+  const decompressedRepoPath: string = `${decompressedZipPath}/pwa-starter-main`;
+  const finalLocationPath: string = `${repositoryParentURI?.fsPath}/${repositoryName}`;
 
   const res = await fetch(starterRepositoryURI);
   if(res.body) {

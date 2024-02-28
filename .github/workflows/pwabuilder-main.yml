@@ -68,7 +68,6 @@ jobs:
           skip_app_build: true # Skip building the app using the default build commands for the specified app framework - optional
           output_location: "" # Built app content directory - optional
 
-
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest

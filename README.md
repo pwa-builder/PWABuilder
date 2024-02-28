@@ -22,10 +22,7 @@ This repo is home to several projects in the PWABuilder family of tools.
 
 | Components  | Overview | Source | Docs | Contribute |
 |-------| ----- | -------- | -------------- | --------|
-| `<pwa-auth>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaauth.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaauth) | Web component for authenticating users | [/components/pwa-auth](/components/pwa-auth) | [/components/pwa-auth/docs](/components/pwa-auth/docs) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| `<pwa-update>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwaupdate) | Web component for great PWA update experience | [/components/pwa-update](/components/pwa-update) | [/components/pwa-update](/components/pwa-update) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| `<pwa-install>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwainstall.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwainstall) | Web component for great PWA install experience | [/components/pwa-install](/components/pwa-install) | [/components/pwa-install](/components/pwa-install) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
-| `<pwa-inking>`<br /><br /> [![npm version](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking.svg)](https://badge.fury.io/js/@pwabuilder%2Fpwa-inking) | Web component for adding inking to your PWAs | [/components/pwa-inking](/components/pwa-inking) | [/components/pwa-inking](/components/pwa-inking) | [Wiki](https://github.com/pwa-builder/PWABuilder/wiki)
+| `<pwa-install>`<br /><br /> [![npm version](https://badge.fury.io/js/@khmyznikov%2Fpwainstall.svg)](https://badge.fury.io/js/@khmyznikov%2Fpwainstall) | Web component for great PWA install experience | [pwa-install](https://github.com/khmyznikov/pwa-install) | [pwa-install](https://github.com/khmyznikov/pwa-install) | [Wiki](https://github.com/khmyznikov/pwa-install?tab=readme-ov-file#pwa-install)
 
 
 ## Recommended Development setup
