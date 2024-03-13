@@ -1,4 +1,4 @@
-!> iOS does not support PWAs natively and packaging PWAs for iOS is **Experimental**. We can not guarantee that your app will be accepted into Apple's App Store.
+!> Packaging PWAs for iOS is **Experimental**. Despite the numerous positive experiences of the community, the acceptance into Apple's App Store depends only on **UI/UX of your PWA** and usage of **native capabilities** such as Push Notification, In-app purchase, etc.
 
 # Publishing PWAs to the App Store
 
@@ -12,7 +12,9 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
   
-- A Mac OSX device with Xcode installed
+- A macOS device with Xcode installed
+
+- Xcode should support at least  iOS 15
   
 - An Apple Developer account (which are available for a yearly subscription of $99)
 
@@ -64,6 +66,15 @@ Before you can start the submission process, you'll need to build the Swift proj
 5. Click `Product` > `Build` in Xcode to build your project.
 
 6. With the project opened in Xcode, click ▶️ to test your PWA in an iPhone simulator. You may also choose other iOS simulators to try our your app on those devices.
+
+## Adjusting Capabilities
+
+Under xcode `Signing & Capabilities` tab, check and disable all capabilites your app don't needed.
+Use only those that are actually involved in your application. This is important for passing publishing verification.  
+
+<div class="docs-image">
+     <img src="/assets/builder/ios/signing-and-capabilities.jpg" alt="XCode Signing and Capabilities tab" width=500>
+</div>
 
 ## Publishing
 
@@ -293,6 +304,32 @@ The last thing you need to do is submit your app for review:
 5. Once you've set and reviewed the metadata for your app, hit `Submit for Review` to complete your submission.
 
 Your PWA still has to be approved, but if it is, it will appear in the App Store typically within 24-48 hours.
+
+## Push Notifications
+
+PWABuilder for iOS supports `Push Notifications` via [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging).
+
+Things you need to do to enable it:
+
+1. Go to [AppDelegate](https://github.com/pwa-builder/pwabuilder-ios/blob/main/Microsoft.PWABuilder.IOS.Web/Resources/ios-project-src/pwa-shell/AppDelegate.swift) file and uncomment one row under each `TODO`.
+
+2. Follow [FCM Documentation](https://firebase.google.com/docs/cloud-messaging/ios/first-message) for iOS.
+
+3. For code on `JS` side, take a look at this [example component](https://github.com/khmyznikov/ios-pwa-shell/blob/main/src/components/push.ts).
+
+4. Remember, Push Notifications debuggable only on real device.
+
+## Apple In-app Purchase and Subscription
+
+It is possible to enable StoreKit 2 IAP for you PWA, but more manual steps need to be done.
+
+1. Use main branch of [our repository](https://github.com/khmyznikov/ios-pwa-wrap) as example.
+
+2. Folow [our blogpost](https://blog.pwabuilder.com/posts/you-won't-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/) for further instructions.
+
+## Additional code examples
+
+Any non-standard APIs supported by this solution you can find in [our example repository](https://github.com/khmyznikov/ios-pwa-shell).
 
 ## Next Steps
 

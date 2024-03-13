@@ -21,7 +21,8 @@
       "types": [
           "node", "vite/client"
       ],
-      "sourceMap": true
+      "sourceMap": true,
+      "skipLibCheck": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
