@@ -81,15 +81,3 @@ pwa build
 ```
 
 The build command outputs a transpiled and server-ready version of your application to the `dist` directory. You can use this command once you are ready to deploy your PWA to a production server.
-
-### Passing custom arguments to Vite
-
-Just like with the start command, you can pass arguments through the CLI to the Vite build process.
-
-Using the `--viteArgs` flag:
-
-```
-pwa start --viteArgs="Custom Args String"
-```
-
-To learn more about what you can do with Vite, check out [their documentation](https://vitejs.dev/config/)
