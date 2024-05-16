@@ -1,10 +1,10 @@
 import type { Arguments, CommandBuilder} from "yargs";
 import * as prompts from "@clack/prompts";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
-import { outputMessage, promisifiedExecWrapper, timeFunction } from "../util/util";
-import { trackCreateEventWrapper, trackErrorWrapper, trackException } from "../analytics/usage-analytics";
+import { outputMessage, promisifiedExecWrapper } from "../util/util";
+import { trackCreateEventWrapper, trackErrorWrapper } from "../analytics/usage-analytics";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
-import { formatCodeSnippet, formatEmphasis, formatEmphasisStrong, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
+import { formatCodeSnippet, formatEmphasis, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 
 // START TYPES
 type CreateOptions = {
@@ -40,7 +40,8 @@ const ARTIFACT_NAMES: (string) => string[] = (name: string) => {
 
 const TEMPLATE_TO_URL_MAP = {
   'default': ["https://github.com/pwa-builder/pwa-starter/archive/refs/heads/main.zip", "pwa-starter-main"],
-  'basic': ["https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip", "pwa-starter-basic-main"]
+  'basic': ["https://github.com/pwa-builder/pwa-starter-basic/archive/refs/heads/main.zip", "pwa-starter-basic-main"],
+  'whisper': ["https://github.com/pwa-builder/pwa-whisper-starter/archive/refs/heads/main.zip", "pwa-whisper-starter-main"]
 };
 
 // END DEFAULTS
@@ -55,6 +56,7 @@ const TEMPLATE_LIST_OUTPUT_STRING: string = `Available templates:
 
 1. ${formatEmphasis("default")} - Original PWA Starter template.
 2. ${formatEmphasis("basic")} - Simplified PWA Starter with fewer dependencies
+3. ${formatEmphasis("whisper")} - PWA Starter with transformers.js (set up to use Whisper) and Fluent UI
 
 You can specify a template with the ${formatCodeSnippet('-t (--template)')} flag.
 For example: ${formatCodeSnippet('pwa create -t="default"')}`;
@@ -89,7 +91,8 @@ const INVALID_TEMPLATE_ERROR_STRING: string = `Invalid template provided. Cancel
     
 Valid template names:
 1. ${formatErrorEmphasisStrong("default")} - Original PWA Starter template
-2. ${formatErrorEmphasisStrong("basic")} - Simplified PWA Starter with fewer dependencies`;
+2. ${formatErrorEmphasisStrong("basic")} - Simplified PWA Starter with fewer dependencies
+3. ${formatErrorEmphasisStrong("whisper")} - PWA Starter with transformers.js (set up to use Whisper) and Fluent UI`;
 // END ERROR STRINGS
 
 
