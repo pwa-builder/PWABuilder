@@ -4,6 +4,7 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
+import { CampaignMap } from '../util/campaignUtil';
 import { spawn } from 'child_process';
 const path = require('node:path'); 
 
@@ -14,7 +15,8 @@ export interface CreateEventData {
 export interface PWABuilderData {
   user: {
     id: string
-  }
+  },
+  campaignMap?: CampaignMap
 }
 
 export function initAnalytics(): void {
@@ -81,18 +83,23 @@ function getUserID(): string {
     const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
     userId = userData.user.id;
   } else {
-    userId = crypto.randomUUID();
-    const newUserData: PWABuilderData = {
-      user: {
-        id: userId
-      }
-    }
-    fs.writeFileSync(pwabuilderDataFilePath, JSON.stringify(newUserData), {encoding: 'utf-8'});
+    userId = createUserDataAndWrite(pwabuilderDataFilePath).user.id;
   }
 
   return userId;
 }
 
+export function createUserDataAndWrite(path: string): PWABuilderData {
+  const userId: string = crypto.randomUUID();
+  const newUserData: PWABuilderData = {
+    user: {
+      id: userId
+    }
+  }
+  fs.writeFileSync(path, JSON.stringify(newUserData), {encoding: 'utf-8'});
+  return newUserData;
+}
+  
 function addUserIDtoTelemetry(id: string): void {
   defaultClient.addTelemetryProcessor((envelope, context) => {
     envelope["tags"]['ai.user.id'] = id;

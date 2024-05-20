@@ -5,6 +5,7 @@ import { outputMessage, promisifiedExecWrapper } from "../util/util";
 import { trackCreateEventWrapper, trackErrorWrapper } from "../analytics/usage-analytics";
 import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
 import { formatCodeSnippet, formatEmphasis, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
+import { WHISPER_CAMPAIGN, handleCampaign } from "../util/campaignUtil";
 
 // START TYPES
 type CreateOptions = {
@@ -121,6 +122,7 @@ export const builder: CommandBuilder<CreateOptions, CreateOptions> = (yargs) =>
 
 export const handler = async (argv: Arguments<CreateOptions>): Promise<void> => {
   try {
+    handleCampaign(WHISPER_CAMPAIGN);
     await handleCreateCommand(argv);
   } catch (error) {
     trackErrorWrapper(error as Error);
