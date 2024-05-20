@@ -1,6 +1,6 @@
 {
   "name": "@pwabuilder/cli",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^18.11.10",
+    "@types/node": "^18.19.33",
     "@types/yargs": "^17.0.15",
     "shx": "^0.3.4",
     "typescript": "^4.9.3"
