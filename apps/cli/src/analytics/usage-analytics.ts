@@ -12,6 +12,10 @@ export interface CreateEventData {
   template: string
 }
 
+export interface MessageShowEventData {
+  label: string
+}
+
 export interface PWABuilderData {
   user: {
     id: string
@@ -121,23 +125,37 @@ function spawnAnalyticsProcess(event: string, properties?: any) {
   child.unref();
 }
 
+function getThisPackageVersion(): string {
+  return require("../../package.json").version;
+}
+
+function appendPackageVersionToEventData(eventData: object): object {
+  var versionAppendedEventData: object = eventData;
+  versionAppendedEventData['version'] = getThisPackageVersion();
+  return versionAppendedEventData;
+}
+
 function resolveNodeSpawnArgs(event: string, properties?: any): string [] {
   const scriptPath: string = path.resolve(__dirname, 'track-events.js')
   return properties ? [scriptPath, event, JSON.stringify(properties)] : [scriptPath, event];
 }
 
 export function trackErrorWrapper(_error: Error): void {
-  spawnAnalyticsProcess('error', {error: _error});
+  spawnAnalyticsProcess('error', {error: _error, version: getThisPackageVersion()});
 }
 
 export function trackCreateEventWrapper(createEventData: CreateEventData): void {
-  spawnAnalyticsProcess('create', createEventData);
+  spawnAnalyticsProcess('create', appendPackageVersionToEventData(createEventData));
 }
 
 export function trackBuildEventWrapper(): void {
-  spawnAnalyticsProcess('build');
+  spawnAnalyticsProcess('build', {version: getThisPackageVersion()});
 }
 
 export function trackStartEventWrapper(): void {
-  spawnAnalyticsProcess('start');
+  spawnAnalyticsProcess('start', {version: getThisPackageVersion()});
+}
+
+export function trackMessageShowEventWrapper(messageShowEventData: MessageShowEventData): void {
+  spawnAnalyticsProcess('messageShow', appendPackageVersionToEventData(messageShowEventData));
 }

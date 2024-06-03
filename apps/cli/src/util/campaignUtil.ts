@@ -1,7 +1,7 @@
 import os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
-import { PWABuilderData, createUserDataAndWrite } from '../analytics/usage-analytics';
+import { PWABuilderData, createUserDataAndWrite, trackMessageShowEventWrapper } from '../analytics/usage-analytics';
 import { outputMessage } from './util';
 import { formatCodeSnippet, formatEmphasis, formatEmphasisStrong } from './textUtil';
 import * as prompts from "@clack/prompts";
@@ -63,7 +63,8 @@ function handleShowCampaign(userData: PWABuilderData, campaign: Campaign) {
         outputMessage(campaign.displayText);
         campaign.displayed = true;
         userDataWithCampaign.campaignMap[campaign.name] = campaign;
-        rewritePWABuilderDataFile(userDataWithCampaign)
+        trackMessageShowEventWrapper({label: campaign.name});
+        rewritePWABuilderDataFile(userDataWithCampaign);
     }
 }
 
