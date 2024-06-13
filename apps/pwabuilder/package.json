@@ -55,7 +55,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "lit-analyzer": "^1.2.1",
+    "lit-analyzer": "^2.0.3",
     "mkdirp": "^1.0.4",
     "msw": "^0.33.0",
     "ncp": "^2.0.0",
