@@ -703,7 +703,7 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
     });
   }
 
-  public openPrompt(): void {
+  openPrompt(): void {
     this.openmodal = true;
 
     let event = new CustomEvent("show");
@@ -713,7 +713,7 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
     });
   }
 
-  public closePrompt(): void {
+  closePrompt(): void {
     this.openmodal = false;
 
     let event = new CustomEvent("hide");
@@ -729,7 +729,7 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
     return eligibleUser;
   }
 
-  public async install(): Promise<boolean> {
+  async install(): Promise<boolean> {
     if (this.deferredprompt) {
       this.deferredprompt.prompt();
 
@@ -766,7 +766,7 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
     return false;
   }
 
-  public getInstalledStatus(): boolean {
+  getInstalledStatus(): boolean {
     // cast to any because the typescript navigator object
     // does not have this non standard safari object
     if ((navigator as any).standalone) {
@@ -829,7 +829,7 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
           <div id="headerContainer">
           <div id="logoContainer">
             <img src="${
-              this.iconpath ? this.iconpath : this.manifestdata.icons[0].src
+              this.iconpath || this.manifestdata.icons[0].src
             }" alt="App Logo"/>
 
             <div id="installTitle">
@@ -879,13 +879,8 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
                       @click="${() => this.scrollToLeft()}"
                       aria-label="previous image"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 512 512"
-                      >
-                        <path
-                          d="M401.4 224h-214l83-79.4c11.9-12.5 11.9-32.7 0-45.2s-31.2-12.5-43.2 0L89 233.4c-6 5.8-9 13.7-9 22.4v.4c0 8.7 3 16.6 9 22.4l138.1 134c12 12.5 31.3 12.5 43.2 0 11.9-12.5 11.9-32.7 0-45.2l-83-79.4h214c16.9 0 30.6-14.3 30.6-32 .1-18-13.6-32-30.5-32z"
-                        />
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M401 224H187l83-79c12-13 12-33 0-46s-31-12-43 0L89 233c-6 6-9 14-9 23s3 17 9 23l138 134c12 12 31 12 43 0 12-13 12-33 0-46l-83-79h214c17 0 31-14 31-32s-14-32-31-32z"/>
                       </svg>
                     </button>
                     <section id="screenshots">
@@ -901,13 +896,8 @@ export class pwainstall extends LitElement implements PWAInstallComponent {
                       @click="${() => this.scrollToRight()}"
                       aria-label="next image"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 512 512"
-                      >
-                        <path
-                          d="M284.9 412.6l138.1-134c6-5.8 9-13.7 9-22.4v-.4c0-8.7-3-16.6-9-22.4l-138.1-134c-12-12.5-31.3-12.5-43.2 0-11.9 12.5-11.9 32.7 0 45.2l83 79.4h-214c-17 0-30.7 14.3-30.7 32 0 18 13.7 32 30.6 32h214l-83 79.4c-11.9 12.5-11.9 32.7 0 45.2 12 12.5 31.3 12.5 43.3 0z"
-                        />
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="m285 413 138-134c6-6 9-14 9-23s-3-17-9-23L285 99a30 30 0 0 0-43 0 33 33 0 0 0 0 46l83 79H111c-17 0-31 14-31 32s14 32 31 32h214l-83 79a33 33 0 0 0 0 46c12 12 31 12 43 0z"/>
                       </svg>
                     </button>
                   </div>
