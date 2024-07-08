@@ -33,7 +33,7 @@ Are you a Web Developer? Do you use Windows or are you interested in switching t
 
 ### Installing Windows Subsystem for Linux (WSL)
 
-WSL allows developers to install a Linux distribution (such as Ubuntu, Debian, Arch, etc.) and use Linux applications, utilities, and command-line tools directly on Windows, with low overhead. To install WSL:
+[WSL](https://learn.microsoft.com/en-us/windows/wsl/install) allows developers to install a Linux distribution (such as Ubuntu, Debian, Arch, etc.) and use Linux applications, utilities, and command-line tools directly on Windows, with low overhead. To install WSL:
 1. Open PowerShell in administrator mode.
 2. Enter the following command: `wsl --install`
 3. Restart your machine.
@@ -46,7 +46,9 @@ WSL allows developers to install a Linux distribution (such as Ubuntu, Debian, A
 WSL enables several key experiences for web developers:
 - Node.js and other Node-based tools are sometimes built with the assumption that there will be a Unix-based environment, which means they may not work well on Windows. WSL fixes this.
 - Node.js can be slow on Windows, especially around NPM installs. WSL provides a solution to this.
-- WSL allows you to test your PWA in browsers on Linux, right from your PC. Learn more
+- WSL allows you to test your PWA in browsers on Linux, right from your PC.
+
+Learn more about WSL [here](https://learn.microsoft.com/en-us/windows/wsl/about)
 
 
 ## Progressive Web Applications on Windows
@@ -72,6 +74,7 @@ Progressive Web Applications are first-class on Windows.
 - Run natively on both arm64 and x86/64 devices, with no extra developer effort needed.
 - Automatic, seamless updates
 - Can be installed directly from the browser or from the store
+
 and much more. 
 
 ### PWAs in the Microsoft Store
