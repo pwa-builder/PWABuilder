@@ -27,8 +27,6 @@ tags:
   margin-right: auto;
   width: 50%;"></img>
 
-# Build PWAs on and for Windows!
-
 Are you a Web Developer? Do you use Windows or are you interested in switching to Windows? Let's dive into how you can use Windows to have the **BEST Web Development experience**. We will set up a dev environment with **WSL (Windows Subsystem for Linux)** and discuss how it brings a familiar dev environment to your PC. Then, we'll explore the details of how **PWAs (Progressive Web Applications)** work on Windows. Finally, if you make it to the end, we'll quickly get started building a new PWA on Windows!
 
 ## Setting up your Dev Environment
@@ -43,7 +41,7 @@ WSL allows developers to install a Linux distribution (such as Ubuntu, Debian, A
 5. The first time you launch a newly installed Linux distribution, a console window will open, and you'll see a message asking you to wait for the distro to finish installing.
 
 
-## Why WSL?
+#### Why WSL?
 
 WSL enables several key experiences for web developers:
 - Node.js and other Node-based tools are sometimes built with the assumption that there will be a Unix-based environment, which means they may not work well on Windows. WSL fixes this.
