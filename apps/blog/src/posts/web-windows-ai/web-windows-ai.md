@@ -7,7 +7,7 @@ date: 2024-07-08
 updatedDate: 2024-07-08
 trending: true
 featured: true
-image: posts/whats-new-in-pwa/whats-new-header.png
+image: posts/web-windows-ai/header-photo.png
 isPost: true
 backUrl: '/'
 author:
@@ -21,6 +21,11 @@ tags:
   - AI
   - PWAs
 ---
+
+<img src="/posts/web-windows-ai/header-photo.png" alt="Cover photo displaying the text 'AI + Windows + Web'" style="display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;"></img>
 
 # Build PWAs on and for Windows!
 
@@ -37,6 +42,7 @@ WSL allows developers to install a Linux distribution (such as Ubuntu, Debian, A
 4. This command will enable the necessary features to run WSL and install the Ubuntu distribution of Linux.
 5. The first time you launch a newly installed Linux distribution, a console window will open, and you'll see a message asking you to wait for the distro to finish installing.
 
+
 ## Why WSL?
 
 WSL enables several key experiences for web developers:
@@ -44,10 +50,11 @@ WSL enables several key experiences for web developers:
 - Node.js can be slow on Windows, especially around NPM installs. WSL provides a solution to this.
 - WSL allows you to test your PWA in browsers on Linux, right from your PC. Learn more
 
+
 ## Progressive Web Applications on Windows
 
-Progressive Web Applications are first-class on Windows. PWAs
-- Are deeply integrated, with PWAs in the Microsoft Store, showing up in normal app settings, synced across your Windows devices and more
+Progressive Web Applications are first-class on Windows. 
+- PWAs are deeply integrated, with PWAs in the Microsoft Store, showing up in normal app settings, synced across your Windows devices and more
 - Have access to all the capabilities a large majority of application types need, including:
 - File System Access
 - Custom Titlebars
