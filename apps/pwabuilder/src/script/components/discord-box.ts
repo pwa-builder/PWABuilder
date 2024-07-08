@@ -80,7 +80,7 @@ export class DiscordBox extends LitElement {
         <div id="discord-box">
           <img id="logo" src="/assets/images/discord_logo.svg" alt="discord logo"/>
           <p>Want to chat? Join us on <a @click=${() => recordPWABuilderProcessStep("discord_box_link_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener" aria-label="Click to join us on Discord">Discord</a></p>
-          <button id="close-wrapper" @click=${() => this.close()} aria-label="discord modal close" type="button"><img id="close" src="/assets/images/Close_desk.png" role="presentation"/></button>
+          <button id="close-wrapper" @click=${() => this.close()} aria-label="discord modal close" type="button"><sl-icon id="close" name="x-lg"></sl-icon></button>
         </div>`
         : null}
     `;
