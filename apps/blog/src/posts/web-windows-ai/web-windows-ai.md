@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Let's build AI enhanced Progressive Web Apps on Windows
+title: Building AI enhanced Progressive Web Apps on Windows
 excerpt: Building AI enhanced PWAs!
 description: This post covers the latest around on-device AI on the Web and how to build AI enhanced PWAs on Windows.
 date: 2024-07-08
