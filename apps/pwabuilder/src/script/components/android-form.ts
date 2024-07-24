@@ -492,7 +492,7 @@ export class AndroidForm extends AppPackageFormBase {
                   ${this.renderFormInput({
                     label: 'Monochrome icon URL',
                     tooltip: `Optional. The URL to a PNG image containing only white and black colors, enabling Android to fill the icon with user-specified color or
-                    gradient depending on theme, color mode, or Android ontrast settings.`,
+                    gradient depending on theme, color mode, or Android contrast settings. *Adaptive-icons is a work in progress and might not work as you expect at the moment.`,
                     tooltipLink: 'https://w3c.github.io/manifest/#monochrome-icons-and-solid-fills',
                     inputId: 'monochrome-icon-url-input',
                     spellcheck: false,
