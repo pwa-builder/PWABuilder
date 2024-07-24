@@ -63,7 +63,7 @@ There are a ton of options you can configure when packaging for Android. Here's 
 | **Nav divider dark color** | The color of the Android navigation bar divider in your app when the Android device is in dark mode. Typically this is set to your manifest's theme_color. |
 | **Icon URL** | The URL to a square PNG image to use for your app's icon. Can be absolute or relative to your manifest. Google recommends a 512x512 PNG without shadows.  |
 | **Maskable icon URL** | Optional. The URL to a PNG image with a minimum safe zone of trimmable padding, enabling rounded icons on certain Android versions. Google recommends a 512x512 PNG without shadows. |
-| **Monochrome icon URL** | Optional. The URL to a PNG image containing only white and black colors, enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or Android contrast settings. *Adaptive-icons is a work in progress and might not work as you expect at the moment. |
+| **Monochrome icon URL** | Optional. The URL to a PNG image used when displaying notifications, designers of monochrome icons could set all pixels to black and only use transparency to create a silhouette of their icon. *In the future it can work as Themed icon enabling Android to fill the icon with user-specified color or gradient depending on theme, color mode, or Android contrast settings. |
 | **Manifest URL** | The absolute URL of your web manifest. |
 | **Splash fade out duration (ms)** | How long the splash screen fade out animation should last in milliseconds. |
 | **Settings shortcut** | If enabled, users can long-press on your app tile and a Settings menu item will appear, letting users manage space for your app. |
