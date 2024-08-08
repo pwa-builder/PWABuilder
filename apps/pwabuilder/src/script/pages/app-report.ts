@@ -916,26 +916,28 @@ export class AppReport extends LitElement {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
           border-radius: var(--card-border-radius);
+          padding: 20px;
+          background-color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
         }
 
-        #todo-detail::part(base) {
+        #todo-detail {
           border-radius: var(--card-border-radius);
           border: none;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
         }
 
-        #todo-detail::part(header) {
+        .details-summary {
           height: 60px;
-        }
-
-        #todo-detail::part(summary) {
           color: var(--primary-color);
           font-size: 20px;
           font-weight: bold;
-        }
-
-        #todo-detail::part(content){
-          padding-top: 0;
-          padding-bottom: 1em;
+          margin-bottom: 20px;
+          height: fit-content;
         }
 
         #todo-summary-left {
@@ -946,6 +948,7 @@ export class AppReport extends LitElement {
 
         #todo-summary-left > h2 {
           font-size: var(--subheader-font-size);
+          margin: 0;
         }
 
         #pagination-actions {
@@ -1901,7 +1904,6 @@ export class AppReport extends LitElement {
 
   // Expands the Action items details on load
   firstUpdated() {
-    this.rotateNinety("todo", undefined, true);
 
   }
 
@@ -2439,11 +2441,7 @@ export class AppReport extends LitElement {
     this.showConfirmationModal = false;
 
     details.forEach((detail: any) => {
-      if(detail.id != "todo-detail"){
-        detail.hide();
-      } else {
-        detail.show()
-      }
+      detail.hide();
     });
 
     // reset retest data
@@ -2832,8 +2830,6 @@ export class AppReport extends LitElement {
     recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     this.pageNumber = 1;
-    /* let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
-    todoDetail.show(); */
 
     this.stopShowingNotificationTooltip = true;
     // if its in the list, remove it, else add it
@@ -3094,11 +3090,8 @@ export class AppReport extends LitElement {
           }
 
           <div id="todo">
-            <sl-details
-              id="todo-detail"
-              @sl-show=${(e: Event) => this.rotateNinety("todo", e)}
-              @sl-hide=${(e: Event) => this.rotateZero("todo", e)}
-              open
+            <div
+              id="todo-detail"    
               >
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
@@ -3122,8 +3115,6 @@ export class AppReport extends LitElement {
                       :
                       null}
                 </div>
-                  <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
-
               </div>
               <div class="todo-items-holder">
                 ${this.filteredTodoItems.length > 0 ? this.paginate().map((todo: any) =>
@@ -3173,7 +3164,7 @@ export class AppReport extends LitElement {
                 </button>
               </div>` : null}
               <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
-            </sl-details>
+            </div>
           </div>
 
           <div id="manifest" class="flex-col">
