@@ -127,7 +127,7 @@
  
  .token.class-name,
  .language-json .token.property {
-   color: #2B91AF;
+   color: #247b95;
  }
  
  .token.tag,
@@ -155,7 +155,7 @@
  }
  
  .line-numbers .line-numbers-rows > span:before {
-   color: #2B91AF;
+   color: #247b95;
  }
  
  /* overrides color-values for the Line Highlight plugin
