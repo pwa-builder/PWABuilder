@@ -2800,26 +2800,25 @@ export class AppReport extends LitElement {
     })
 
     if(yellow + purple + red != 0){
+
+      let redClassMap = classMap({'indicator' : true, 'selected': this.filterList.includes("required")});
+      let yellowClassMap = classMap({'indicator' : true, 'selected': this.filterList.includes("recommended")});
+      let purpleClassMap = classMap({'indicator' : true, 'selected': this.filterList.includes("enhancement")});
+
       return html`
       <div id="indicators-holder">
         ${red != 0 ?
-          this.filterList.includes("required") ?
-            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></button>` :
-            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></button>`
+          html`<button type="button" class=${redClassMap} tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${this.filterList.includes("required") ? stop_white_src : stop_src} alt="invalid result icon"/><p>${red}</p></button>`
           : null
         }
         ${yellow != 0 ?
-          this.filterList.includes("recommended") || this.filterList.includes("optional") ?
-            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></button>` :
-            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
+          html`<button type="button" class=${yellowClassMap} tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${this.filterList.includes("recommended") ? yield_white_src : yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
           : null
         }
         ${purple != 0 ?
-          this.filterList.includes("enhancement") ?
-          html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></button>` :
-          html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
-            : null
-          }
+          html`<button type="button" class=${purpleClassMap} tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${this.filterList.includes("enhancement") ? enhancement_white_src : enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
+          : null
+        }
       </div>`
     }
     return null;
