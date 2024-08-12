@@ -1,6 +1,7 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { outputError, isDirectoryTemplate, spawnWrapper } from "../util/util";
 import { trackErrorWrapper, trackStartEventWrapper } from "../analytics/usage-analytics";
+import { WHISPER_CAMPAIGN, handleCampaign } from "../util/campaignUtil";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Run the PWA Starter on a Vite dev server.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite start process.';
@@ -29,6 +30,7 @@ export const builder: CommandBuilder<StartOptions, StartOptions> = (yargs) =>
 
 export const handler = (argv: Arguments<StartOptions>): void => {
   try {
+    handleCampaign(WHISPER_CAMPAIGN);
     trackStartEventWrapper();
     handleStartCommand(argv);
   } catch (error) {
