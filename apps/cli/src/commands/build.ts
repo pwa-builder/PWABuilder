@@ -1,6 +1,7 @@
 import type { Arguments, CommandBuilder } from "yargs";
 import { isDirectoryTemplate, outputError, spawnWrapper } from "../util/util";
 import { trackBuildEventWrapper, trackErrorWrapper } from "../analytics/usage-analytics";
+import { WHISPER_CAMPAIGN, handleCampaign } from "../util/campaignUtil";
 
 const COMMAND_DESCRIPTION_STRING: string = 'Build the PWA Starter using Vite.';
 const VITEARGS_DESCRIPTION_STRING: string = 'Arguments to pass directly to the Vite build process.';
@@ -28,6 +29,7 @@ export const builder: CommandBuilder = (yargs) =>
 
 export const handler = async (argv: Arguments<BuildOptions>): Promise<void> => {
   try {
+    handleCampaign(WHISPER_CAMPAIGN);
     trackBuildEventWrapper();
     await handleBuildCommand(argv);
   } catch (error) {

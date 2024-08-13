@@ -28,6 +28,7 @@ PWABuilder currently offers two different PWA templates:
 
 * **default** - The original PWA Starter template. This template has [full documentation]() available and is our recommended choice.
 * **basic** - A simplified version of the PWA Starter template. This template has fewer dependencies and is closer to VanillaJS than the default template.
+* **whisper** - The original PWA Starter template set up to get you started with on-device AI. This adds [Fluent UI](https://learn.microsoft.com/en-us/fluent-ui/web-components/) and [Transformers.js](https://huggingface.co/docs/transformers.js/index) on top of the original Starter template.
 
 You can specify a template with the `-t|--template` option:
 
