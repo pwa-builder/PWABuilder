@@ -2799,22 +2799,28 @@ export class AppReport extends LitElement {
 
     if(yellow + purple + red != 0){
 
-      let redClassMap = classMap({'indicator' : true, 'selected': this.filterList.includes("required")});
-      let yellowClassMap = classMap({'indicator' : true, 'selected': this.filterList.includes("recommended")});
-      let purpleClassMap = classMap({'indicator' : true, 'selected': this.filterList.includes("enhancement")});
+      let redSelected = this.filterList.includes("required");
+      let yellowSelected = this.filterList.includes("recommended");
+      let purpleSelected = this.filterList.includes("enhancement");
+
+      let redClassMap = classMap({'indicator' : true, 'selected': redSelected});
+      let yellowClassMap = classMap({'indicator' : true, 'selected': yellowSelected});
+      let purpleClassMap = classMap({'indicator' : true, 'selected': purpleSelected});
+
+
 
       return html`
       <div id="indicators-holder">
         ${red != 0 ?
-          html`<button type="button" class=${redClassMap} tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${this.filterList.includes("required") ? stop_white_src : stop_src} alt="invalid result icon"/><p>${red}</p></button>`
+          html`<button type="button" class=${redClassMap} data-indicator="required" aria-pressed="${redSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${redSelected ? stop_white_src : stop_src} alt="invalid result icon"/><p>${red}</p></button>`
           : null
         }
         ${yellow != 0 ?
-          html`<button type="button" class=${yellowClassMap} tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${this.filterList.includes("recommended") ? yield_white_src : yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
+          html`<button type="button" class=${yellowClassMap} data-indicator="yellow" aria-pressed="${yellowSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yellowSelected ? yield_white_src : yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
           : null
         }
         ${purple != 0 ?
-          html`<button type="button" class=${purpleClassMap} tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${this.filterList.includes("enhancement") ? enhancement_white_src : enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
+          html`<button type="button" class=${purpleClassMap} data-indicator="enhancement" aria-pressed="${purpleSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${purpleSelected ? enhancement_white_src : enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
           : null
         }
       </div>`
@@ -2826,6 +2832,10 @@ export class AppReport extends LitElement {
   // filter todos by severity
   filterTodoItems(filter: string, e: Event){
     e.stopPropagation();
+
+    /* let button = this.shadowRoot!.querySelector('[data-indicator="' + filter + '"]');
+    let isPressed = button!.getAttribute("aria-pressed") === "true";
+    button!.setAttribute("aria-pressed", isPressed ? "false" : "true"); */
 
     recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
@@ -2908,7 +2918,7 @@ export class AppReport extends LitElement {
       dialogContent = html`
         <p>Retesting your site now!</p>
       `;
-    } 
+    }
     else if (this.readdDenied) {
       dialogContent = html`
         <p>Add your new ${this.thingToAdd}, and then we can retest your site. </p>
@@ -3039,8 +3049,8 @@ export class AppReport extends LitElement {
                   src=${`/assets/windows_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="Windows"
                 />
-                <img 
-                  title="iOS" 
+                <img
+                  title="iOS"
                   src=${`/assets/apple_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="iOS" />
                 <img
@@ -3091,7 +3101,7 @@ export class AppReport extends LitElement {
 
           <div id="todo">
             <div
-              id="todo-detail"    
+              id="todo-detail"
               >
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
