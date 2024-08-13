@@ -2798,7 +2798,7 @@ export class AppReport extends LitElement {
     })
 
     if(yellow + purple + red != 0){
-
+      
       let redSelected = this.filterList.includes("required");
       let yellowSelected = this.filterList.includes("recommended");
       let purpleSelected = this.filterList.includes("enhancement");
@@ -2806,8 +2806,6 @@ export class AppReport extends LitElement {
       let redClassMap = classMap({'indicator' : true, 'selected': redSelected});
       let yellowClassMap = classMap({'indicator' : true, 'selected': yellowSelected});
       let purpleClassMap = classMap({'indicator' : true, 'selected': purpleSelected});
-
-
 
       return html`
       <div id="indicators-holder">

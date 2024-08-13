@@ -4,6 +4,7 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 import * as fs from 'fs';
 import { doesFileExist } from '../util/fileUtil';
+import { CampaignMap } from '../util/campaignUtil';
 import { spawn } from 'child_process';
 const path = require('node:path'); 
 
@@ -11,10 +12,15 @@ export interface CreateEventData {
   template: string
 }
 
+export interface MessageShowEventData {
+  label: string
+}
+
 export interface PWABuilderData {
   user: {
     id: string
-  }
+  },
+  campaignMap?: CampaignMap
 }
 
 export function initAnalytics(): void {
@@ -81,18 +87,23 @@ function getUserID(): string {
     const userData: PWABuilderData = JSON.parse(fs.readFileSync(pwabuilderDataFilePath, {encoding: 'utf-8'}));
     userId = userData.user.id;
   } else {
-    userId = crypto.randomUUID();
-    const newUserData: PWABuilderData = {
-      user: {
-        id: userId
-      }
-    }
-    fs.writeFileSync(pwabuilderDataFilePath, JSON.stringify(newUserData), {encoding: 'utf-8'});
+    userId = createUserDataAndWrite(pwabuilderDataFilePath).user.id;
   }
 
   return userId;
 }
 
+export function createUserDataAndWrite(path: string): PWABuilderData {
+  const userId: string = crypto.randomUUID();
+  const newUserData: PWABuilderData = {
+    user: {
+      id: userId
+    }
+  }
+  fs.writeFileSync(path, JSON.stringify(newUserData), {encoding: 'utf-8'});
+  return newUserData;
+}
+  
 function addUserIDtoTelemetry(id: string): void {
   defaultClient.addTelemetryProcessor((envelope, context) => {
     envelope["tags"]['ai.user.id'] = id;
@@ -114,23 +125,37 @@ function spawnAnalyticsProcess(event: string, properties?: any) {
   child.unref();
 }
 
+function getThisPackageVersion(): string {
+  return require("../../package.json").version;
+}
+
+function appendPackageVersionToEventData(eventData: object): object {
+  var versionAppendedEventData: object = eventData;
+  versionAppendedEventData['version'] = getThisPackageVersion();
+  return versionAppendedEventData;
+}
+
 function resolveNodeSpawnArgs(event: string, properties?: any): string [] {
   const scriptPath: string = path.resolve(__dirname, 'track-events.js')
   return properties ? [scriptPath, event, JSON.stringify(properties)] : [scriptPath, event];
 }
 
 export function trackErrorWrapper(_error: Error): void {
-  spawnAnalyticsProcess('error', {error: _error});
+  spawnAnalyticsProcess('error', {error: _error, version: getThisPackageVersion()});
 }
 
 export function trackCreateEventWrapper(createEventData: CreateEventData): void {
-  spawnAnalyticsProcess('create', createEventData);
+  spawnAnalyticsProcess('create', appendPackageVersionToEventData(createEventData));
 }
 
 export function trackBuildEventWrapper(): void {
-  spawnAnalyticsProcess('build');
+  spawnAnalyticsProcess('build', {version: getThisPackageVersion()});
 }
 
 export function trackStartEventWrapper(): void {
-  spawnAnalyticsProcess('start');
+  spawnAnalyticsProcess('start', {version: getThisPackageVersion()});
+}
+
+export function trackMessageShowEventWrapper(messageShowEventData: MessageShowEventData): void {
+  spawnAnalyticsProcess('messageShow', appendPackageVersionToEventData(messageShowEventData));
 }
