@@ -54,7 +54,7 @@ export class ShareCard extends LitElement {
         top: 5px;
         right: 5px;
         z-index: 1000;
-        color: #C2C9D1;
+        color: #000000;
       }
       .dialog_header {
         height: 12px !important;

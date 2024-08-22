@@ -916,26 +916,28 @@ export class AppReport extends LitElement {
           width: 100%;
           box-shadow: 0px 4px 30px 0px #00000014;
           border-radius: var(--card-border-radius);
+          padding: 20px;
+          background-color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
         }
 
-        #todo-detail::part(base) {
+        #todo-detail {
           border-radius: var(--card-border-radius);
           border: none;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
         }
 
-        #todo-detail::part(header) {
+        .details-summary {
           height: 60px;
-        }
-
-        #todo-detail::part(summary) {
           color: var(--primary-color);
           font-size: 20px;
           font-weight: bold;
-        }
-
-        #todo-detail::part(content){
-          padding-top: 0;
-          padding-bottom: 1em;
+          margin-bottom: 20px;
+          height: fit-content;
         }
 
         #todo-summary-left {
@@ -946,6 +948,7 @@ export class AppReport extends LitElement {
 
         #todo-summary-left > h2 {
           font-size: var(--subheader-font-size);
+          margin: 0;
         }
 
         #pagination-actions {
@@ -1901,7 +1904,6 @@ export class AppReport extends LitElement {
 
   // Expands the Action items details on load
   firstUpdated() {
-    this.rotateNinety("todo", undefined, true);
 
   }
 
@@ -2439,11 +2441,7 @@ export class AppReport extends LitElement {
     this.showConfirmationModal = false;
 
     details.forEach((detail: any) => {
-      if(detail.id != "todo-detail"){
-        detail.hide();
-      } else {
-        detail.show()
-      }
+      detail.hide();
     });
 
     // reset retest data
@@ -2800,26 +2798,29 @@ export class AppReport extends LitElement {
     })
 
     if(yellow + purple + red != 0){
+      
+      let redSelected = this.filterList.includes("required");
+      let yellowSelected = this.filterList.includes("recommended");
+      let purpleSelected = this.filterList.includes("enhancement");
+
+      let redClassMap = classMap({'indicator' : true, 'selected': redSelected});
+      let yellowClassMap = classMap({'indicator' : true, 'selected': yellowSelected});
+      let purpleClassMap = classMap({'indicator' : true, 'selected': purpleSelected});
+
       return html`
       <div id="indicators-holder">
         ${red != 0 ?
-          this.filterList.includes("required") ?
-            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_white_src} alt="invalid result icon"/><p>${red}</p></button>` :
-            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${stop_src} alt="invalid result icon"/><p>${red}</p></button>`
+          html`<button type="button" class=${redClassMap} data-indicator="required" aria-pressed="${redSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${redSelected ? stop_white_src : stop_src} alt="invalid result icon"/><p>${red}</p></button>`
           : null
         }
         ${yellow != 0 ?
-          this.filterList.includes("recommended") || this.filterList.includes("optional") ?
-            html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_white_src} alt="yield result icon"/><p>${yellow}</p></button>` :
-            html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
+          html`<button type="button" class=${yellowClassMap} data-indicator="yellow" aria-pressed="${yellowSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yellowSelected ? yield_white_src : yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
           : null
         }
         ${purple != 0 ?
-          this.filterList.includes("enhancement") ?
-          html`<button type="button" class="indicator selected" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_white_src} alt="enhancement result icon"/><p>${purple}</p></button>` :
-          html`<button type="button" class="indicator" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
-            : null
-          }
+          html`<button type="button" class=${purpleClassMap} data-indicator="enhancement" aria-pressed="${purpleSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${purpleSelected ? enhancement_white_src : enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
+          : null
+        }
       </div>`
     }
     return null;
@@ -2830,11 +2831,13 @@ export class AppReport extends LitElement {
   filterTodoItems(filter: string, e: Event){
     e.stopPropagation();
 
+    /* let button = this.shadowRoot!.querySelector('[data-indicator="' + filter + '"]');
+    let isPressed = button!.getAttribute("aria-pressed") === "true";
+    button!.setAttribute("aria-pressed", isPressed ? "false" : "true"); */
+
     recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     this.pageNumber = 1;
-    /* let todoDetail: SlDetails = (this.shadowRoot!.getElementById('todo-detail')! as unknown as SlDetails);
-    todoDetail.show(); */
 
     this.stopShowingNotificationTooltip = true;
     // if its in the list, remove it, else add it
@@ -2913,7 +2916,7 @@ export class AppReport extends LitElement {
       dialogContent = html`
         <p>Retesting your site now!</p>
       `;
-    } 
+    }
     else if (this.readdDenied) {
       dialogContent = html`
         <p>Add your new ${this.thingToAdd}, and then we can retest your site. </p>
@@ -3044,8 +3047,8 @@ export class AppReport extends LitElement {
                   src=${`/assets/windows_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="Windows"
                 />
-                <img 
-                  title="iOS" 
+                <img
+                  title="iOS"
                   src=${`/assets/apple_icon${this.darkMode ? "_light" : ""}.svg`}
                   alt="iOS" />
                 <img
@@ -3095,11 +3098,8 @@ export class AppReport extends LitElement {
           }
 
           <div id="todo">
-            <sl-details
+            <div
               id="todo-detail"
-              @sl-show=${(e: Event) => this.rotateNinety("todo", e)}
-              @sl-hide=${(e: Event) => this.rotateZero("todo", e)}
-              open
               >
               <div class="details-summary" slot="summary">
                 <div id="todo-summary-left">
@@ -3123,8 +3123,6 @@ export class AppReport extends LitElement {
                       :
                       null}
                 </div>
-                  <img class="dropdown_icon" data-card="todo" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
-
               </div>
               <div class="todo-items-holder">
                 ${this.filteredTodoItems.length > 0 ? this.paginate().map((todo: any) =>
@@ -3174,7 +3172,7 @@ export class AppReport extends LitElement {
                 </button>
               </div>` : null}
               <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
-            </sl-details>
+            </div>
           </div>
 
           <div id="manifest" class="flex-col">

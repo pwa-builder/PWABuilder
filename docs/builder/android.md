@@ -29,7 +29,7 @@ The first step is to generate your Android package with PWABuilder:
 4. Click on `Generate Package` in the Android section.
 
 <div class="docs-image">
-    <img src="/assets/builder/android/store_package.jpg" width=550>
+    <img src="/assets/builder/android/store_package.jpg" alt="PWABuilder store package selection page showing options to generate packages for both Windows and Android" width=550>
 </div>
 
 5. Make sure you are on the `Google Play` tab and fill out the required options for your package.
@@ -37,7 +37,7 @@ The first step is to generate your Android package with PWABuilder:
 6. Click `Download Package`.
 
 <div class="docs-image">
-    <img src="/assets/builder/android/android-options.png" width=550>
+    <img src="/assets/builder/android/android-options.png" alt="Android packaging options page on PWABuilder.com" width=550>
 </div>
 
 ## Configuration Options
