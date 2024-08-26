@@ -161,3 +161,7 @@ sl-alert::part(base) {
 sl-alert::part(icon) {
     color: #491576;
 }
+
+.sidebar .search input[type=search]::placeholder {
+    color: rgba(0, 0, 0, 0.886);
+}
