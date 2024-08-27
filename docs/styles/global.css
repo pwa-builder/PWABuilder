@@ -118,13 +118,13 @@ sl-menu-item[checked]::part(base) {
     border:#ada6b4 1px solid;
 }
 
-sl-menu::part(base) {
+sl-menu {
     width: 100%;
     border-radius: 10px;
     background: linear-gradient(to right, #f9f4ff, #e7f6fa);
 }
 
-sl-menu-item::part(base):hover {
+sl-menu-item:hover::part(base), sl-menu-item:focus-within::part(base) {
     background: #4F3FB6;
     color: white;
     border: 1px solid white;
@@ -161,3 +161,17 @@ sl-alert::part(base) {
 sl-alert::part(icon) {
     color: #491576;
 }
+
+/* Search Input */
+
+.sidebar .search input[type=search]::placeholder {
+    color: rgba(0, 0, 0, 0.886);
+}
+
+.sidebar .search .clear-button svg {
+    background: #4d4d4d;
+    border-radius: 50%;
+}
+
+/* sl-menu-item */
+

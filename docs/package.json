@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/node": "^20.4.2",
     "cpx": "^1.5.0",
-    "docsify-cli": "^4.4.4"
+    "docsify-cli": "^4.4.4",
+    "typescript": "^5.5.4"
   }
 }

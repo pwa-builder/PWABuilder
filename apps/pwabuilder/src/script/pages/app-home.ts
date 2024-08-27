@@ -164,6 +164,9 @@ export class AppHome extends LitElement {
           display: flex;
           flex-direction: column;
         }
+        #input-box::part(input) {
+          -webkit-text-fill-color: var(--sl-input-color);
+        }
         #start-button {
           grid-area: 1 / 5 / auto / auto;
           width: 100%;

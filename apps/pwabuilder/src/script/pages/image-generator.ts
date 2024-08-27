@@ -86,11 +86,6 @@ export class ImageGenerator extends LitElement {
           font-size: 10px;
         }
 
-
-        app-file-input:hover {
-          cursor: pointer;
-        }
-
         sl-button {
           height: 24px;
           padding: 8px 0;
@@ -107,6 +102,11 @@ export class ImageGenerator extends LitElement {
 
         #submit {
           margin-top: 8px;
+        }
+
+        #submit sl-button::part(base) {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
         }
 
         .background {
@@ -229,7 +229,7 @@ export class ImageGenerator extends LitElement {
                 </div>
               </section>
               <section id="submit" class="form-bottom">
-                <sl-button id="generateButton" class="primary" ?disabled=${!this.generateEnabled || this.generating}
+                <sl-button id="generateButton" variant="primary" ?disabled=${!this.generateEnabled || this.generating}
                   @click=${this.generateZip}
                   ?loading=${this.generating}>
                   ${localeStrings.button.generate}

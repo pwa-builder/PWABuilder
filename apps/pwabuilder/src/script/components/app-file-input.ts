@@ -50,13 +50,12 @@ export class FileInput extends LitElement implements FileInputElement {
   render() {
     return html`
       <div>
-        <fast-button
-          class="file-button"
-          appearance="lightweight"
+        <sl-button
+          variant="secondary"
           @click=${this.clickModalInput}
         >
           ${this.buttonText}
-        </fast-button>
+        </sl-button>
         <input
           id="${ifDefined(this.inputId)}"
           class="file-input hidden"
