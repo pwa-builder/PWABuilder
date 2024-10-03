@@ -17,7 +17,7 @@ export const env = {
 //@ts-ignore
 if (import.meta.env.PROD) {
   env.isProduction = true;
-  env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
+  env.api = 'https://pwabuilder-apiv2-container.calmflower-2e2ebb94.eastus.azurecontainerapps.io/api';
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.windowsPackageGeneratorUrl =
@@ -38,7 +38,7 @@ if (import.meta.env.PROD) {
   env.validateGiveawayUrl =
     'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 } else {
-  env.api = 'https://pwabuilder-apiv2-node.azurewebsites.net/api';
+  env.api = 'https://pwabuilder-apiv2-container.calmflower-2e2ebb94.eastus.azurecontainerapps.io/api';
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.windowsPackageGeneratorUrl =
