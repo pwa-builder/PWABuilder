@@ -1039,7 +1039,9 @@ export class PublishPane extends LitElement {
       let packagingOptions = platForm!.getPackageOptions();
       this.generate(this.selectedStore.toLowerCase() as Platform, packagingOptions);
     } else {
-      form!.reportValidity();
+      const details = platForm.shadowRoot!.querySelector('sl-details');
+      const expanding = details ? details.show() : Promise.resolve();
+      expanding.then(() => form!.reportValidity()); // it may contain errors collapsed
     }
   }
 

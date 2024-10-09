@@ -8,7 +8,7 @@ import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
-import { AppNameInputPattern } from '../utils/constants';
+import { AppNameInputPattern, DnameInputPattern } from '../utils/constants';
 
 @customElement('android-form')
 
@@ -786,6 +786,7 @@ export class AndroidForm extends AppPackageFormBase {
             required: true,
             placeholder: 'John Doe',
             value: this.packageOptions.signing.fullName || '',
+            pattern: DnameInputPattern,
             spellcheck: false,
             inputHandler: (val: string) => this.packageOptions.signing.fullName = val
           })}
@@ -800,6 +801,7 @@ export class AndroidForm extends AppPackageFormBase {
             required: true,
             placeholder: 'My Company',
             value: this.packageOptions.signing.organization || '',
+            pattern: DnameInputPattern,
             spellcheck: false,
             inputHandler: (val: string) => this.packageOptions.signing.organization = val
           })}
@@ -814,6 +816,7 @@ export class AndroidForm extends AppPackageFormBase {
             required: true,
             placeholder: 'Engineering Department',
             value: this.packageOptions.signing.organizationalUnit,
+            pattern: DnameInputPattern,
             spellcheck: false,
             inputHandler: (val: string) => this.packageOptions.signing.organizationalUnit = val
           })}
@@ -828,6 +831,7 @@ export class AndroidForm extends AppPackageFormBase {
             required: true,
             placeholder: 'US',
             value: this.packageOptions.signing.countryCode,
+            pattern: DnameInputPattern,
             spellcheck: false,
             minLength: 2,
             maxLength: 2,
