@@ -1,10 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-const url = 'https://preview.pwabuilder.com/';
-
 // before each test
 test.beforeEach(async ({ page }) => {
-    await page.goto(url);
+    await page.goto('/');
 });
 
 test('ensure application loads home page', async ({ page }) => {
