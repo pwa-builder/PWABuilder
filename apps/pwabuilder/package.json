@@ -30,7 +30,7 @@
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
     "cors": "^2.8.5",
-    "express": "^4.17.3",
+    "express": "^4.21.1",
     "ionicons": "^6.0.3",
     "lit": "^2.2.1"
   },
@@ -57,7 +57,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "lit-analyzer": "^1.2.1",
     "mkdirp": "^1.0.4",
-    "msw": "^0.33.0",
+    "msw": "^2.4.9",
     "ncp": "^2.0.0",
     "nyc": "^15.1.0",
     "playwright": "^1.17.2",
