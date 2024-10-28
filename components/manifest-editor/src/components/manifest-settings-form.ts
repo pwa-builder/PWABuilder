@@ -604,7 +604,7 @@ export class ManifestSettingsForm extends LitElement {
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">The URL that loads when your PWA starts</p>
-            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange} required="true"></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
