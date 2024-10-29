@@ -939,7 +939,7 @@ export class ManifestShareForm extends LitElement {
                     <p class="field-desc">(required)</p>
                   </div>
                   <p class="field-desc">The URL for the web share target </p>
-                  <sl-input name="action" placeholder="Add action (ex: /share-receiver)" value=${this.manifest.share_target?.action! || ""} @sl-change=${() => this.handleTopLevelInputChange("action")} data-field="share_target.action"></sl-input>
+                  <sl-input name="action" placeholder="Add action (ex: /share-receiver)" value=${this.manifest.share_target?.action! || ""} @sl-change=${() => this.handleTopLevelInputChange("action")} data-field="share_target.action" required="true"></sl-input>
                   <p class="action-error-message error-message">Action is a required field and must be in the scope of your PWA</p>
                 </div>
                 <div class="form-field">
@@ -997,7 +997,7 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.title"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <sl-input name="title" class="params" placeholder="Add title" value=${this.manifest.share_target?.params?.title! || ""} @sl-change=${() => this.handleParameterInputChange("title")} data-field="share_target.params.title"></sl-input>
+                  <sl-input name="title" class="params" placeholder="Add title" value=${this.manifest.share_target?.params?.title! || ""} @sl-change=${() => this.handleParameterInputChange("title")} data-field="share_target.params.title" required="true"></sl-input>
                 </div>
                 <div class="form-field">
                   <div class="field-header">
@@ -1006,7 +1006,7 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.text"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <sl-input name="text" class="params" placeholder="Add text" value=${this.manifest.share_target?.params?.text! || ""} @sl-change=${() => this.handleParameterInputChange("text")} data-field="share_target.params.text"></sl-input>
+                  <sl-input name="text" class="params" placeholder="Add text" value=${this.manifest.share_target?.params?.text! || ""} @sl-change=${() => this.handleParameterInputChange("text")} data-field="share_target.params.text" required="true"></sl-input>
                 </div>
                 <div class="form-field">
                   <div class="field-header">
@@ -1015,7 +1015,7 @@ export class ManifestShareForm extends LitElement {
                       <manifest-field-tooltip .field=${"share_target.params.url"}></manifest-field-tooltip>
                     </div>
                   </div>
-                  <sl-input name="url" class="params" placeholder="Add url" value=${this.manifest.share_target?.params?.url! || ""} @sl-change=${() => this.handleParameterInputChange("url")} data-field="share_target.params.url"></sl-input>
+                  <sl-input name="url" class="params" placeholder="Add url" value=${this.manifest.share_target?.params?.url! || ""} @sl-change=${() => this.handleParameterInputChange("url")} data-field="share_target.params.url" required="true"></sl-input>
                 </div>
               </div>
               <div class="form-row long">
