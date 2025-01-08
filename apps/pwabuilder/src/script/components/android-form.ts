@@ -180,11 +180,8 @@ export class AndroidForm extends AppPackageFormBase {
 
   isMetaQuestChanged(checked: boolean) {
     this.packageOptions.isMetaQuest = checked;
-    if (checked) {
-      this.packageOptions.minSdkVersion = 23;
-    } else {
-      delete this.packageOptions.minSdkVersion;
-    }
+    // Always keep minSdkVersion at 23 as Google Play Console no longer accepts lower versions
+    this.packageOptions.minSdkVersion = 23;
   }
 
   androidSigningKeyUploaded(event: any) {
