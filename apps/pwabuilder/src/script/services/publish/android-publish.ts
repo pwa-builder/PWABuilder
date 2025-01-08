@@ -117,7 +117,8 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
     themeColor: '#ffffff',
     themeColorDark: '#000000',
     webManifestUrl: '',
-    fullScopeUrl: ''
+    fullScopeUrl: '',
+    minSdkVersion: 23
   };
 }
 
@@ -174,7 +175,6 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
 
   const fullScopeUrl = new URL(manifest.scope || '.', manifestUrlOrRoot).toString();
 
-
   // Need to remove file endings, like .png, from the share_target config
   // so that Android can parse it correctly.
   // https://github.com/pwa-builder/PWABuilder/issues/3846
@@ -192,7 +192,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
             if (accept.startsWith(".") === false) {
               goodFiles.push(accept);
             }
-          })
+          });
 
           files.accept = goodFiles;
         }
@@ -256,7 +256,8 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
     shareTarget: manifest.share_target,
     webManifestUrl: maniUrl,
     pwaUrl: manifestContext.siteUrl,
-    fullScopeUrl: fullScopeUrl
+    fullScopeUrl: fullScopeUrl,
+    minSdkVersion: 23  // Setting minSdkVersion to 23 by default as Google Play Console no longer accepts lower versions
   };
 }
 
