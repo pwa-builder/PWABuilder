@@ -31,15 +31,6 @@ export async function generateWindowsPackage(
     }
   }
 
-  // temp fix for packaging problem
-  if (!windowsOptions.enableWebAppWidgets) {
-    windowsOptions.enableWebAppWidgets = true;
-  }
-
-  if (!windowsOptions.manifestUrl || windowsOptions.manifestUrl.length === 0) {
-    windowsOptions.manifestUrl = await getManifestUrl();
-  }
-
   const validationErrors = validateWindowsOptions(windowsOptions);
   if (validationErrors.length > 0 || !windowsOptions) {
     throw new Error(
