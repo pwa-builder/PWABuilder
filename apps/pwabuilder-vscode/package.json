@@ -375,7 +375,7 @@
     "@typescript-eslint/parser": "^5.1.0",
     "@vscode/test-electron": "^1.6.2",
     "copyfiles": "^2.4.1",
-    "esbuild": "^0.14.28",
+    "esbuild": "^0.25.0",
     "eslint": "^8.1.0",
     "glob": "^7.1.7",
     "hint": "^6.1.9",
