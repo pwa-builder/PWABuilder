@@ -109,7 +109,7 @@ export class WindowsForm extends AppPackageFormBase {
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
           --sl-input-font-size-small: 22px;
-          
+
         }
 
         #languageDrop::part(display-input){
@@ -187,7 +187,7 @@ export class WindowsForm extends AppPackageFormBase {
           color: #7f7f7f;
           font-size: 14px;
         }
-       
+
     `
     ];
   }
@@ -203,7 +203,7 @@ export class WindowsForm extends AppPackageFormBase {
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
     }
-    
+
     this.packageOptions = createWindowsPackageOptionsFromManifest(
       manifestContext!.manifest
     );
@@ -269,6 +269,20 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
+  updateActionsSelection(val: string, checked: boolean) {
+    this.packageOptions.enableActions = checked;
+    this.requestUpdate();
+  }
+
+  actionsFileChanged(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (file) {
+      console.log('File uploaded:', file.name);
+    }
+  }
+
   rotateZero(){
     recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
@@ -298,24 +312,24 @@ export class WindowsForm extends AppPackageFormBase {
       <div id="multiSelectBox">
         <div class="multi-wrap">
           <p class="sub-multi">Select Multiple Languages</p>
-          <sl-select id="languageDrop" 
+          <sl-select id="languageDrop"
             placeholder="Select one or more languages"
-            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value} 
+            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
             value=${this.packageOptions.resourceLanguage!}
-            ?stayopenonselect=${true} 
+            ?stayopenonselect=${true}
             multiple
             .maxOptionsVisible=${5}
             size="small"
           >
-          ${windowsLanguages.map((lang: any) => 
+          ${windowsLanguages.map((lang: any) =>
             html`
-              ${lang.codes.map((code: string) =>  
+              ${lang.codes.map((code: string) =>
                 html`
                   <sl-option value=${code}>${lang.name} - ${code}</sl-option>
                 `
               )}
             `
-          )} 
+          )}
           </sl-select>
         </div>
       </div>
@@ -331,8 +345,8 @@ export class WindowsForm extends AppPackageFormBase {
       <div id="iconColorPicker">
         <div class="color-wrap">
           <p class="sub-multi">Select your Windows icons background color</p>
-          <sl-radio-group 
-            id="icon-bg-radio-group" 
+          <sl-radio-group
+            id="icon-bg-radio-group"
             .value=${'transparent'}
             @sl-change=${() => this.toggleIconBgRadios()}
           >
@@ -430,7 +444,7 @@ export class WindowsForm extends AppPackageFormBase {
             <div class="form-group" id="ai-hub">
               <div id="ai-hub-label">
                 <label>Does your app use AI?</label>
-                <info-circle-tooltip 
+                <info-circle-tooltip
                   text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
                   link="https://blogs.windows.com/windowsdeveloper/2023/05/23/welcoming-ai-to-the-microsoft-store-on-windows/"
                   @click=${() => {
@@ -617,15 +631,38 @@ export class WindowsForm extends AppPackageFormBase {
                     type: 'checkbox',
                     checked: this.packageOptions.enableWebAppWidgets,
                     disabled: !this.packageOptions.enableWebAppWidgets,
-                    inputHandler: (_val: string, checked: boolean) => 
+                    inputHandler: (_val: string, checked: boolean) =>
                       (this.packageOptions.enableWebAppWidgets = checked),
                   })}
                 </div>
               </div>
+              <div class="form-group" id="actions-picker">
+                <label>Actions</label>
+                <div class="form-check">
+                  ${this.renderFormInput({
+                    label: 'Enable Actions',
+                    value: 'Actions',
+                    tooltip:
+                      'Enables your Windows package to serve the actions listed in your ActionsManifest.json.',
+                    tooltipLink:
+                      'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
+                    inputId: 'actions-checkbox',
+                    type: 'checkbox',
+                    checked: this.packageOptions.enableActions,
+                    inputHandler: (_val: string, checked: boolean) =>
+                      (this.updateActionsSelection(_val, checked)),
+                  })}
+                </div>
+                ${this.packageOptions.enableActions ?
+                  html`
+                    <input id="actions-file-picker" type="file" accept=".json" @change=${this.actionsFileChanged()}/>
+                  ` :
+                  null
+                }
+              </div>
             </div>
           </sl-details>
         </div>
-
       </form>
     </div>
     `;
