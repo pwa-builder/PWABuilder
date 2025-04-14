@@ -26,6 +26,7 @@ export class WindowsForm extends AppPackageFormBase {
   @state() activeLanguages: string[] = [];
   @state() activeLanguageCodes: string[] = [];
   @state() userBackgroundColor: string = "";
+  @state() showUploadActionsFile: boolean = false;
 
   static get styles() {
     return [
@@ -269,17 +270,37 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
-  updateActionsSelection(val: string, checked: boolean) {
-    this.packageOptions.enableActions = checked;
-    this.requestUpdate();
+  updateActionsSelection(checked: boolean) {
+    this.showUploadActionsFile = checked;
+    if(!checked){
+      delete this.packageOptions.webActionManifestFile;
+    }
   }
 
   actionsFileChanged(e: Event) {
+    if(!e){
+      return;
+    }
+
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
+    const reader = new FileReader();
 
     if (file) {
-      console.log('File uploaded:', file.name);
+
+      reader.onload = () => {
+        try {
+          const text: string = reader.result as string;
+          const parsed = JSON.parse(text);
+          const stringified: string = JSON.stringify(parsed, null, 2);
+
+          this.packageOptions.webActionManifestFile = stringified;
+        } catch (err) {
+          console.error('Invalid JSON file:', err);
+        }
+      };
+
+      reader.readAsText(file);
     }
   }
 
@@ -648,14 +669,14 @@ export class WindowsForm extends AppPackageFormBase {
                       'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
                     inputId: 'actions-checkbox',
                     type: 'checkbox',
-                    checked: this.packageOptions.enableActions,
+                    checked: this.showUploadActionsFile,
                     inputHandler: (_val: string, checked: boolean) =>
-                      (this.updateActionsSelection(_val, checked)),
+                      (this.updateActionsSelection(checked)),
                   })}
                 </div>
-                ${this.packageOptions.enableActions ?
+                ${this.showUploadActionsFile ?
                   html`
-                    <input id="actions-file-picker" type="file" accept=".json" @change=${this.actionsFileChanged()}/>
+                    <input id="actions-file-picker" type="file" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
                   ` :
                   null
                 }
