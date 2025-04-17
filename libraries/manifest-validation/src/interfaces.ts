@@ -52,13 +52,19 @@ export interface Manifest {
     iconBlobUrls?: string[];
     icons?: Icon[];
     share_target?: ShareTarget;
-  
+    protocol_handler?: ProtocolHandler
+
     // for custom properties as well as using object notations: manifest[key]
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - accomodate custom entries... these can be a pain
     [key: string]: string | boolean | undefined | Array<any> | any;
   }
-  
+
+  export interface ProtocolHandler {
+    protocol: string;
+    url: string;
+  }
+
   export interface ShortcutItem {
     name: string;
     url: string;
@@ -66,7 +72,7 @@ export interface Manifest {
     short_name?: string;
     icons?: Icon[];
   }
-  
+
   export interface Icon {
     src: string;
     generated?: boolean;
@@ -75,7 +81,7 @@ export interface Manifest {
     purpose?: "any" | "maskable" | "monochrome";
     label?: string;
   }
-  
+
   export interface Screenshot extends Icon {
     platform?:
       | "narrow"
@@ -93,7 +99,7 @@ export interface Manifest {
       | "microsoft-inbox"
       | "microsoft-store";
   }
-  
+
   export interface RelatedApplication {
     platform: string;
     url?: string | null;
@@ -101,26 +107,26 @@ export interface Manifest {
     min_version?: string | null;
     fingerprints?: Fingerprint[];
   }
-  
+
   export interface Fingerprint {
     type: string;
     value: string;
   }
-  
+
   export interface ShareTarget {
     action?: string;
     method?: string;
     enctype?: string;
     params?: ShareTargetParams;
   }
-  
+
   export interface ShareTargetParams {
     title?: string;
     text?: string;
     url?: string;
     files?: FilesParams[];
   }
-  
+
   export interface FilesParams {
     name: string;
     accept: string[];

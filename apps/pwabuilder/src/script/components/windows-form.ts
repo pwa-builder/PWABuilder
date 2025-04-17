@@ -60,6 +60,10 @@ export class WindowsForm extends AppPackageFormBase {
           flex-direction: column;
         }
 
+        .form-check:hover input:disabled {
+          color: green;
+        }
+
         sl-details {
           margin-top: 1em;
         }
@@ -652,6 +656,7 @@ export class WindowsForm extends AppPackageFormBase {
                     type: 'checkbox',
                     checked: this.packageOptions.enableWebAppWidgets,
                     disabled: !this.packageOptions.enableWebAppWidgets,
+                    disabledTooltipText: "You must have widgets set up in your web manifest to enable Widgets for your Windows package.",
                     inputHandler: (_val: string, checked: boolean) =>
                       (this.packageOptions.enableWebAppWidgets = checked),
                   })}
@@ -670,6 +675,8 @@ export class WindowsForm extends AppPackageFormBase {
                     inputId: 'actions-checkbox',
                     type: 'checkbox',
                     checked: this.showUploadActionsFile,
+                    disabled: (!this.packageOptions.manifest?.share_target || !this.packageOptions.manifest?.protocol_handlers),
+                    disabledTooltipText: "You must have both share_target and protocol_handlers set up in your web manifest to enable Actions.",
                     inputHandler: (_val: string, checked: boolean) =>
                       (this.updateActionsSelection(checked)),
                   })}
