@@ -18,7 +18,7 @@ export async function generateManifest(skipPrompts?: boolean) {
   }
   else {
     maniAnswer = await vscode.window.showInformationMessage(
-      "PWABuilder Studio will generate your Web Manifest, first, you will need to choose where to save your manifest.json file.",
+      "PWABuilder Studio will generate your Web Manifest. First, you will need to choose where to save your manifest.json file.",
       {
         title: "Ok",
       },
