@@ -8,7 +8,7 @@
     "test": "tsc"
   },
   "devDependencies": {
-    "@open-wc/building-rollup": "^1.10.0",
+    "@open-wc/building-rollup": "^3.0.2",
     "@open-wc/rollup-plugin-html": "^1.2.5",
     "@rollup/plugin-strip": "^2.1.0",
     "@web/dev-server": "^0.1.17",
