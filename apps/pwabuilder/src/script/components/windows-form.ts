@@ -683,7 +683,7 @@ export class WindowsForm extends AppPackageFormBase {
                 </div>
                 ${this.showUploadActionsFile ?
                   html`
-                    <input id="actions-file-picker" type="file" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
+                    <input id="actions-file-picker" type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
                   ` :
                   null
                 }
