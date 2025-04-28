@@ -936,8 +936,11 @@ export class AppReport extends LitElement {
           color: var(--primary-color);
           font-size: 20px;
           font-weight: bold;
-          margin-bottom: 20px;
           height: fit-content;
+        }
+
+        #todo-summary {
+          margin-bottom: 20px;
         }
 
         #todo-summary-left {
@@ -2798,7 +2801,7 @@ export class AppReport extends LitElement {
     })
 
     if(yellow + purple + red != 0){
-      
+
       let redSelected = this.filterList.includes("required");
       let yellowSelected = this.filterList.includes("recommended");
       let purpleSelected = this.filterList.includes("enhancement");
@@ -3101,7 +3104,7 @@ export class AppReport extends LitElement {
             <div
               id="todo-detail"
               >
-              <div class="details-summary" slot="summary">
+              <div id="todo-summary" class="details-summary" slot="summary">
                 <div id="todo-summary-left">
                   <h2>Action Items</h2>
 
