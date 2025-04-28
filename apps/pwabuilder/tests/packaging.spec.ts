@@ -2,11 +2,10 @@ import { test, expect, Page } from '@playwright/test';
 
 let currentPage: Page | undefined;
 
-const url = 'https://preview.pwabuilder.com/';
 // before each test
 test.beforeEach(async ({ page }) => {
   currentPage = page;
-  await page.goto(url);
+  await page.goto('/');
 });
 
 // only run this test once
@@ -49,15 +48,12 @@ test('Ensure demo app can be packaged for Windows', async ({ page }) => {
 
   await expect(generateButton).toBeVisible();
 
-  // wait on request to https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip to finish
-  const pageRequest = page.waitForRequest(
-    'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip'
-  );
+  // wait on request to finish
+  const pageRequest = page.waitForRequest('https://pwabuilder-windows-docker-dev.azurewebsites.net/msix/generatezip');
   await generateButton.click();
   const request = await pageRequest;
 
-  // wait for response to https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip to finish
-
+  // wait for response to finish
   const response = await request.response();
 
   if (response) {

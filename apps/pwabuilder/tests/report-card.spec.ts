@@ -2,11 +2,10 @@ import { test, expect, Page } from '@playwright/test';
 
 let currentPage: Page | undefined;
 
-const url = 'https://preview.pwabuilder.com';
 // before each test
 test.beforeEach(async ({ page }) => {
     currentPage = page;
-    await page.goto(url);
+    await page.goto('/');
 });
 
 

@@ -545,7 +545,7 @@ export class ManifestInfoForm extends LitElement {
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">The name of your app as displayed to the user</p>
-            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange} required="true"></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -557,7 +557,7 @@ export class ManifestInfoForm extends LitElement {
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">Used in app launchers</p>
-            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange}></sl-input>
+            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange} required="true"></sl-input>
           </div>
         </div>
 

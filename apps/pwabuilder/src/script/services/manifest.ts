@@ -217,7 +217,7 @@ function getSiteUrlFromManifestOrQueryString(): string | null {
 }
 
 export async function createManifestContextFromEmpty(url: string): Promise<ManifestContext> {
-  let createdManifest;
+  let createdManifest = {};
   try {
     const response = await fetch(`${env.manifestCreatorUrl}?url=${url}`, {
       method: 'POST',
@@ -295,7 +295,7 @@ export function updateManifestEvent<T extends Partial<Manifest>>(detail: T) {
     id: '',
     generatedUrl: '',
     default: {
-      short_name: manifest.short_name || 'My PWA',
+      short_name: manifest?.short_name || 'My PWA',
     },
     errors: [],
     suggestions: [],

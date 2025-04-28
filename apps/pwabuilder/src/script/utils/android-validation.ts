@@ -4,7 +4,7 @@ import { PackageOptions, ShareTarget, ShortcutItem } from './interfaces';
  * Settings for the Android APK generation. This is the raw data passed to the CloudApk service.
  * It should match the CloudApk service's AndroidPackageOptions interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/androidPackageOptions.ts
  */
-export interface AndroidPackageOptions  extends PackageOptions {
+export interface AndroidPackageOptions extends PackageOptions {
   appVersion: string;
   appVersionCode: number;
   backgroundColor: string;
@@ -105,6 +105,19 @@ export function generatePackageId(host: string): string {
   parts.push('twa');
 
   return parts.join('.');
+}
+
+// https://github.com/frohoff/jdk8u-jdk/blob/da0da73ab82ed714dc5be94acd2f0d00fbdfe2e9/src/share/classes/sun/security/x509/AVA.java#L95C33-L95C49
+export const dnameInvalidCharacters = '\\,\\=\\+\\<\\>\\#\\;\\\\"';
+
+// Sanitize over escape, otherwise it may conflict with bubblewrap escapes https://github.com/GoogleChromeLabs/bubblewrap/issues/373
+export function sanitizeDname(input: string | undefined): string {
+  if (!input) {
+    return "";
+  }
+
+  const regex = new RegExp(`([${dnameInvalidCharacters}])`, 'g');
+  return input.replace(regex, '');
 }
 
 export function validateAndroidPackageId(packageId?: string | null): AndroidPackageValidationError[] {
