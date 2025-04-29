@@ -106,7 +106,7 @@ const installedRelatedApplications = navigator.getInstalledRelatedApps();
 
 #### How can I tell if my PWA was launched from the Microsoft Store app?
 
-When yoru app launches, `document.referrer` will be set to `app-info://platform/microsoft-store`. Note: if your PWA navigates to another URL, or you manually refresh the page of your PWA, `document.referrer` will be empty.
+When your app launches, `document.referrer` will be set to `app-info://platform/microsoft-store`. Note: if your PWA navigates to another URL, or you manually refresh the page of your PWA, `document.referrer` will be empty.
 
 ## Android
 
