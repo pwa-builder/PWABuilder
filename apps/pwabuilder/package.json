@@ -26,7 +26,7 @@
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@shoelace-style/shoelace": "^2.7.0",
     "@vaadin/router": "^1.7.4",
-    "accessibility-insights-scan": "^2.3.2",
+    "accessibility-insights-scan": "^2.7.0",
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
     "cors": "^2.8.5",
