@@ -103,6 +103,11 @@ Once you have added the `related_applications` entry, you can get a list of chec
 ```js
 const installedRelatedApplications = navigator.getInstalledRelatedApps();
 ```
+
+#### How can I tell if my PWA was launched from the Microsoft Store app?
+
+When your app launches, `document.referrer` will be set to `app-info://platform/microsoft-store`. Note: if your PWA navigates to another URL, or you manually refresh the page of your PWA, `document.referrer` will be empty.
+
 ## Android
 
 #### Why is the browser address bar still showing in my PWA?
@@ -110,7 +115,6 @@ const installedRelatedApplications = navigator.getInstalledRelatedApps();
 If your address bar is still showing, it probably means there's a problem with your `assetlinks.json` file.
 
 Check out [this article](/builder/asset-links-faq) for info on debugging `assetlinks.json` issues.
-
 
 #### How can I check if my PWA is already installed on Android?
 
@@ -130,6 +134,10 @@ In the `related_application` member array, add:
 ?> **Note** The `platform` field should always be "webapp" and the `url` should be the full path to your web manifest.
 
 Once you have told your PWA about itself via `related_applications`, you can call the built-in `navigator.getRelatedApplications()` to retrieve a list of installed apps, including your PWA itself.
+
+#### How can I tell if my PWA was launched from the Android app?
+
+When your app launches, `document.referrer` will be set to `android-app://` and the HTTP `Referer` header will be set as well. Note: if your PWA navigates to another URL, or you manually refresh the page of your PWA, `document.referrer` will be empty.
 
 ## iOS
 
