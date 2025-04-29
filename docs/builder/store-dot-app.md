@@ -7,6 +7,7 @@ PWABuilder’s Store.app integration utilizes PWABuilder’s best-in-class PWA s
 ## Prerequisites
 
 Before you list your app on Store.app, you will need:
+
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 - Your manifest must include data for:
   - `name`
@@ -22,25 +23,26 @@ Once you have checked all these boxes, you are ready to list!
 Head over to Store.app to create your listing:
 
 1. Go to [Store.app](https://store.app) and click "Login" on the top right
-2. Next to "Don’t have an account yet?", click "Sign Up" 
-3. Enter your details and click "Create Account" 
+2. Next to "Don’t have an account yet?", click "Sign Up"
+3. Enter your details and click "Create Account"
 4. Go to your email and find the Store.app verification email - click the link to verify your email address
-5. Go back to Store.app, and click "Request Developer Access" 
+5. Go back to Store.app, and click "Request Developer Access"
 6. Enter your details and click "Submit"
 7. You’ll receive a confirmation email momentarily. Now log back into Store.app
 8. Click "Developer" in the sidebar
-9. Click "Claim or add new app" 
-10. Enter the URL of your app or search for it by name (if it’s already listed) 
-11. Follow the instructions to claim your listing
-12. Once claimed, return to your listing in your dev panel. You’ll now be able to publish your listing
-13. To update your listing, go back to your dev panel and either re-fetch your manifest or enter manual overrides, and publish updates
+9. Click "List a new app"
+10. Enter the Slug of your app that will be your Store.app listing URL (e.g. `https://store.app/your-slug`)
+11. Link a domain to your listing by clicking the Claim button in the Domain section and follow the instructions
+12. Fill up the rest of the information for your app that you want to appear on your listing
+13. Click "Activate Listing"
 
 ## Next Steps
 
 Progressive web apps are cross-platform and can be used anywhere!
 
-After you've successfully published your app to the Google Play Store, you can package and publish for other platforms:
+After you've successfully published your app to Store.app, you can package and publish for other platforms:
 
 - [How to Package for Microsoft Store](/builder/windows)
 - [How to Package for Meta Quest](/builder/meta)
 - [How to Package for the App Store](/builder/app-store)
+- [How to Package for the Google Play Store](/builder/android)
