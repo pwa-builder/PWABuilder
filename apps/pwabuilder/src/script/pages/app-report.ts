@@ -2110,8 +2110,6 @@ export class AppReport extends LitElement {
     this.filteredTodoItems = this.allTodoItems;
 
     FindServiceWorker(url).then( async (result) => {
-      console.log('#########FIND SERVICE WORKER', result);
-      console.log('#########PREV DATA REPORT AUDIT', this.reportAudit?.audits?.serviceWorker);
         if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
             console.log("content:", result.content);
@@ -2273,7 +2271,7 @@ export class AppReport extends LitElement {
       },{});
 
       this.serviceWorkerResults = serviceWorkerResults.map((value) => {
-        const prevResult = reducerServiceWorkerResult[value.member];
+        const prevResult = reducerServiceWorkerResult[value.member!];
 
         //Validate if the service worker result has changed for some reason
         if (value.member == 'has_service_worker' && prevResult && prevResult.result != value.result) {
