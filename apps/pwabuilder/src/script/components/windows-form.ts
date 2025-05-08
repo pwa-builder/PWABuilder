@@ -798,7 +798,7 @@ export class WindowsForm extends AppPackageFormBase {
                 ${this.showUploadActionsFile ?
                   html`
                     <input type="text" name="decryption" placeholder="enter decryption key to access" @change=${(e: Event) => this.decryptURLWithPassword(e)} />
-                    <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
+                    <input id="actions-file-picker" ?disabled=${!this.schemaUrl} class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
                     ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
                   ` :
                   null
