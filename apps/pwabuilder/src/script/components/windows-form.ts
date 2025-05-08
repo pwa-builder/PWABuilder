@@ -788,7 +788,7 @@ export class WindowsForm extends AppPackageFormBase {
                     tooltip:
                       'Enables your Windows package to serve the actions listed in your ActionsManifest.json.',
                     tooltipLink:
-                      'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
+                      'https://aka.ms/pwa-winaction',
                     inputId: 'actions-checkbox',
                     type: 'checkbox',
                     checked: this.showUploadActionsFile,
