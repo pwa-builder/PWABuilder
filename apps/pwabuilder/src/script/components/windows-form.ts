@@ -424,7 +424,7 @@ export class WindowsForm extends AppPackageFormBase {
       reader.readAsText(file);
     }
   }
-  
+
   rotateZero(){
     recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
@@ -800,7 +800,7 @@ export class WindowsForm extends AppPackageFormBase {
                 </div>
                 ${this.showUploadActionsFile ?
                   html`
-                    <input type="text" name="decryption" placeholder="enter decryption key to access" @change=${(e: Event) => this.decryptURLWithPassword(e)} />
+                    <input type="text" name="decryption" label="password-input" placeholder="enter decryption key to access" @change=${(e: Event) => this.decryptURLWithPassword(e)} />
                     <input id="actions-file-picker" ?disabled=${!this.schemaUrl} class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
                     ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
                   ` :
