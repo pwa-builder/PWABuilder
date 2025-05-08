@@ -161,6 +161,7 @@ export interface TestResult {
   infoString: string;
   result: boolean;
   category: string;
+  member: string;
 }
 
 export interface OrganizedResults {
