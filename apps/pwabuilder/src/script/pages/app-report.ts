@@ -2274,14 +2274,11 @@ export class AppReport extends LitElement {
         const prevResult = reducerServiceWorkerResult[value.member!];
 
         //Validate if the service worker result has changed for some reason
-        if (value.member == 'has_service_worker' && prevResult && prevResult.result != value.result) {
+        if (value.member == 'has_service_worker' && prevResult && prevResult.result && !value.result ) {
           this.showServiceWorkerWarningBanner = true;
+          return prevResult;
         }
 
-        //Should we merge the results?
-        if (prevResult) {
-          return {...value, ...prevResult};
-        }
         return value;
       });
 
