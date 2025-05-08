@@ -80,6 +80,10 @@ export class WindowsForm extends AppPackageFormBase {
           color: green;
         }
 
+        .form-check:hover input:disabled {
+          color: green;
+        }
+
         sl-details {
           margin-top: 1em;
         }
@@ -420,8 +424,7 @@ export class WindowsForm extends AppPackageFormBase {
       reader.readAsText(file);
     }
   }
-
-
+  
   rotateZero(){
     recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
