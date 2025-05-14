@@ -19,7 +19,7 @@ export const homeStyles = css`
   }
 
   #home-block {
-    background: url(/assets/new/Hero1920_withmani.jpg);
+    background: url(/assets/new/Hero1920_withmani.webp);
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
