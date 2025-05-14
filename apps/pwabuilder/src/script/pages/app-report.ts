@@ -39,6 +39,7 @@ import { manifest_fields } from '@pwabuilder/manifest-information';
 import { SlDropdown } from '@shoelace-style/shoelace';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
+import { findBestAppIcon } from '../utils/icons';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -2191,8 +2192,12 @@ export class AppReport extends LitElement {
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
 
-    manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    manifest = getManifestContext().manifest;
     this.validationResults = await validateManifest(manifest, true);
+
+    const icon = findBestAppIcon(manifest.icons);
+    this.validationResults.push({infoString: "Icons are used to create packages for different stores and must meet certain formatting requirements.", displayString: "Manifest has suitable icons", category: 'required', member: 'suitable-icons', valid: !!icon, errorString: "Can't find a suitable icon to use for the package stores. Ensure your manifest has a square, large (512x512 or better) PNG icon; Check if the proposed any or maskable is set. And if the format of the image matches the mimetype.", testRequired: true, quickFix: true});
+
 
     //  This just makes it so that the valid things are first
     // and the invalid things show after.
