@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 
 import { customElement, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 
 @customElement('discord-box')
 export class DiscordBox extends LitElement {

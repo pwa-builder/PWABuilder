@@ -1,7 +1,10 @@
 import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { extensions } from '../utils/extensions';
-import { SlInput } from '@shoelace-style/shoelace';
+import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/tag/tag.js';
+import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 
 @customElement('search-extensions')
 export class SearchExtensions extends LitElement {

@@ -6,8 +6,8 @@ import { hidden } from '../utils/css/hidden';
 import { fastButtonCss } from '../utils/css/fast-elements';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 import { ifDefined } from 'lit/directives/if-defined.js';
-
 import { FileInputElement } from '../utils/interfaces.components';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement implements FileInputElement {
@@ -51,7 +51,7 @@ export class FileInput extends LitElement implements FileInputElement {
     return html`
       <div>
         <sl-button
-          variant="secondary"
+          variant="default"
           @click=${this.clickModalInput}
         >
           ${this.buttonText}

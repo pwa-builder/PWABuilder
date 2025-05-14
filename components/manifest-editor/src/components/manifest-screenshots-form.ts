@@ -10,6 +10,7 @@ import {
 import { resolveUrl } from '../utils/urls';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
+import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 
 let manifestInitialized = false;
 

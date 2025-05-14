@@ -7,6 +7,8 @@ import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 import {
   // smallBreakPoint,

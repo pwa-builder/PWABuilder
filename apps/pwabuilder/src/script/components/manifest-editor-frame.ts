@@ -13,6 +13,7 @@ import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
