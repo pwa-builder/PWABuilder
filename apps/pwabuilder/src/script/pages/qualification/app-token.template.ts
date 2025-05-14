@@ -388,12 +388,12 @@ export function rotateNinety(card: string, shadowRoot: Element["shadowRoot"], e?
 	}
 
 	// only allow one details to be open at a time
-	let details = shadowRoot!.querySelectorAll("sl-details");
-	details.forEach((detail: SlDetails) => {
+	let details = shadowRoot!.querySelectorAll<SlDetails>("sl-details");
+	details.forEach(detail => {
 		if(detail.dataset.card !== card){
 			detail.hide();
 		}
-	})
+	});
 }
 
 export const qualificationStrings: string[] = [
