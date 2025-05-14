@@ -2,10 +2,10 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import debounce from 'lodash-es/debounce';
 import { getEditorState, emitter } from './utils/codemirror';
 import { resizeObserver } from './utils/events';
 import { Lazy, CodeEditorEvents, CodeEditorSyncEvent, increment } from './utils/helpers';
+import { debounce } from './utils/debounce';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
@@ -77,7 +77,7 @@ export class CodeEditor extends LitElement {
       CodeEditorEvents.update,
       debounce((event: Event) => {
         this.dispatchEvent(event);
-      })
+      }, 0)
     );
 
     resizeObserver.observe(this);

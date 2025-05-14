@@ -15,7 +15,7 @@
     "concurrently": "^5.3.0",
     "deepmerge": "^4.2.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.50.6",
+    "rollup": "^3.29.5",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-lit-css": "^3.0.1",
     "tslib": "^2.2.0",
@@ -30,7 +30,7 @@
   "main": "dist/manifest-previewer.js",
   "module": "dist/manifest-previewer.js",
   "dependencies": {
-    "lit": "^2.2.4"
+    "lit": "^3.3.0"
   },
   "types": "dist/manifest-previewer.d.ts",
   "keywords": [

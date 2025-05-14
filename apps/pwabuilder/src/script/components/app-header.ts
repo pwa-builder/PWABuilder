@@ -226,7 +226,6 @@ export class AppHeader extends LitElement {
   }
 
   firstUpdated() {
-    console.log("first updated page", this.page)
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
@@ -264,7 +263,6 @@ export class AppHeader extends LitElement {
   }
 
   render() {
-    console.log(this.page)
     return html`
       <header part="header">
        
