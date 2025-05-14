@@ -6,9 +6,16 @@ import { singleFieldValidation, validateSingleField } from '@pwabuilder/manifest
 import { errorInTab, insertAfter } from '../utils/helpers';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 
-const platformOptions: Array<String> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
-const platformText: Array<String> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
+const platformOptions: Array<string> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
+const platformText: Array<string> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
 
 const platformFields = ["iarc_rating_id", "prefer_related_applications", "related_applications", "shortcuts", "protocol_handlers", "categories", "edge_side_panel"];
 let manifestInitialized: boolean = false;
@@ -591,7 +598,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
         html`
           <form class="field-holder" @submit=${(e: any) => this.addRelatedAppToManifest(e)}>
             <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
-            <sl-select placeholder="Select a Platform" hoist=${true} placement="bottom">
+            <sl-select placeholder="Select a Platform" ?hoist=${true} placement="bottom">
               ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>` )}
             </sl-select>
             <sl-input class="field-input" name="url" placeholder="App URL" /></sl-input>
@@ -939,7 +946,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
               <manifest-field-tooltip .field=${"prefer_related_applications"}></manifest-field-tooltip>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
+            <sl-select placeholder="Select an option" data-field="prefer_related_applications" ?hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
               <sl-option value="true">true</sl-option>
               <sl-option value="false">false</sl-option>
             </sl-select>
@@ -962,7 +969,7 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
                         <h4 class="shortcut-header">Related App #${i + 1}</h4>
                         <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.removeData("related " + i.toString())}></sl-icon-button>
                       </div>
-                      <sl-select placeholder="Select a Platform" placement="bottom" hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}>
+                      <sl-select placeholder="Select a Platform" placement="bottom" ?hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}>
                         ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>` )}
                       </sl-select>
                       <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>

@@ -4,6 +4,7 @@ import { smallBreakPoint } from '../utils/css/breakpoints';
 import { draw } from '../utils/share-card-helper';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 @customElement('share-card')
 export class ShareCard extends LitElement {

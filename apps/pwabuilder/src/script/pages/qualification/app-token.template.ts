@@ -1,8 +1,13 @@
 import { html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { SlDetails } from "@shoelace-style/shoelace";
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 import { AppToken } from './app-token';
+import "@shoelace-style/shoelace/dist/components/details/details.js";
+import SlDetails from '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
 
 export function decideHeroSection(
   siteURL: string,

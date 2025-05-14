@@ -7,6 +7,9 @@ import '../../components/arrow-link'
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 import { AuthModule } from '../../services/auth_service';
 
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+
 type Params = {
   appicon?: string;
   appname?: string;

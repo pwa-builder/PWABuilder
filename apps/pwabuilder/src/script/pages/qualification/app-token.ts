@@ -13,10 +13,17 @@ import { localeStrings } from '../../../locales';
 import style from './app-token.style';
 import { decideHeroSection, renderAppCard, rotateNinety, rotateZero } from './app-token.template';
 import { CheckUserTokenAvailability, GetTokenCampaignStatus, populateAppCard } from './app-token.helper';
-import { SlInput } from '@shoelace-style/shoelace';
 import { classMap } from 'lit/directives/class-map.js';
 import { FindWebManifest } from '../app-report.api';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
+
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 @customElement('app-token')
 export class AppToken extends LitElement {

@@ -2,7 +2,7 @@ import { LitElement, css, html } from 'lit';
 
 import { customElement } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import {
   smallBreakPoint,
   mediumBreakPoint,
