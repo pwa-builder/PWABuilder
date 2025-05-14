@@ -43,7 +43,6 @@ export class OculusForm extends AppPackageFormBase {
         display: flex;
         overflow: auto;
         flex-direction: column;
-        height: 54vh;
       }
 
       sl-details {
@@ -87,14 +86,6 @@ export class OculusForm extends AppPackageFormBase {
         margin: 0;
         font-size: 18px;
         font-weight: bold;
-      }
-
-      #form-holder{
-        display: flex;
-        flex-direction: column;
-        border-radius: 10px;
-        justify-content: spacve-between;
-        height: 100%;
       }
 
       sl-button::part(label){
@@ -362,7 +353,7 @@ export class OculusForm extends AppPackageFormBase {
             </sl-details>
         </div>
       </form>
-      
+
     </div>
     `;
   }
