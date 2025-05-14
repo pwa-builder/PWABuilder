@@ -1,5 +1,3 @@
-import { once } from 'lodash-es';
-import debounce from 'lodash-es/debounce';
 import {
   EditorState,
   Extension,
@@ -30,6 +28,8 @@ import {
   CodeEditorEvents,
   CodeEditorUpdateEvent,
 } from './helpers';
+import { debounce } from './debounce';
+import { once } from './once';
 
 export const emitter = new EventTarget();
 
