@@ -10,4 +10,34 @@
   "githubPullRequests.ignoredPullRequestBranches": [
     "main"
   ],
+  "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "[typescript]": {
+        "editor.tabSize": 2,
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "[javascript]": {
+        "editor.tabSize": 2
+    },
+    "[aspnetcorerazor]": {
+        "editor.formatOnSave": false
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules": true
+    },
+    "editor.formatOnSave": true
 }

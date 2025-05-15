@@ -6,6 +6,14 @@ import { required_fields, validateSingleField, singleFieldValidation } from '@pw
 import { errorInTab, insertAfter } from '../utils/helpers';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import '@shoelace-style/shoelace/dist/components/divider/divider.js';
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
 const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
@@ -604,7 +612,7 @@ export class ManifestSettingsForm extends LitElement {
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">The URL that loads when your PWA starts</p>
-            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange} required="true"></sl-input>
+            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange} required></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -614,7 +622,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The text direction of your PWA</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Direction" data-field="dir" ?hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
               ${dirOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
             </sl-select>
           </div>
@@ -639,7 +647,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Language" data-field="lang" ?hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
               ${languageCodes.map((lang: langCodes) => html`<sl-option value=${lang.code}>${lang.formatted}</sl-option>`)}
             </sl-select>
           </div>
@@ -653,7 +661,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select an Orientation" data-field="orientation" ?hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
               ${orientationOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
             </sl-select>
           </div>
@@ -665,7 +673,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
+            <sl-select placeholder="Select a Display" data-field="display" ?hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
               ${displayOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
             </sl-select>
           </div>

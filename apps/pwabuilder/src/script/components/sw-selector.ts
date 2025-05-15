@@ -4,6 +4,10 @@ import { customElement, state } from 'lit/decorators.js';
 import '../components/sw-panel'
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { service_workers } from '../utils/service-workers/service-workers';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
+import '@shoelace-style/shoelace/dist/components/tab/tab.js';
+import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
 
 @customElement('sw-selector')
 export class SWSelector extends LitElement {

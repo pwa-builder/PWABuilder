@@ -7,7 +7,8 @@ import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 import { PackageOptions } from '../utils/interfaces';
-import { SlColorPicker } from '@shoelace-style/shoelace';
+import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
+import SlColorPicker from '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 
 /**
  * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.

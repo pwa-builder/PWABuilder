@@ -8,6 +8,8 @@ import '../components/test-publish-pane';
 import { getManifest } from '../services/manifest';
 import { Router } from '@vaadin/router';
 
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+
 @customElement('powerplatform-publish')
 export class AppReport extends LitElement {
 

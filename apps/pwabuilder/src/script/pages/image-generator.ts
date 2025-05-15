@@ -9,6 +9,8 @@ import { FileInputDetails, Lazy } from '../utils/interfaces';
 import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
 import { env } from '../utils/environment';
 
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+
 interface PlatformInformation {
   label: string;
   value: string;

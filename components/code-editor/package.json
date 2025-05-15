@@ -22,14 +22,12 @@
     "@codemirror/search": "6.3.0",
     "@codemirror/lang-javascript": "^6.1.6",
     "codemirror": "^6.0.1",
-    "lit": "^2.2.1",
-    "lodash-es": "^4.17.21"
+    "lit": "^3.3.0"
   },
   "devDependencies": {
-    "@types/lodash-es": "^4.17.6",
-    "@web/dev-server": "^0.1.31",
+    "@web/dev-server": "^0.4.6",
     "npm-run-all": "^4.1.5",
-    "typescript": "^4.6.3"
+    "typescript": "^5.3.3"
   },
   "prettier": {
     "tabWidth": 2,

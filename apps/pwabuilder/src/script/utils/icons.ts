@@ -200,17 +200,17 @@ export class IconInfo {
     return this.hasPurpose(purpose) &&
       this.hasSize(desiredSize) &&
       !this.isEmbedded &&
-      this.hasMimeType(mimeType);
+      this.hasMimeType(mimeType) && this.validateSameMimeTypeAndExtension(mimeType);
   }
 
   /**
    * Checks if this icon is suitable: matches the specified purpose,
    * is the desired dimensions or larger,
    * and has the desired mime type.
-   * @param purpose 
-   * @param desiredWidth 
-   * @param desiredHeight 
-   * @param mimeType 
+   * @param purpose
+   * @param desiredWidth
+   * @param desiredHeight
+   * @param mimeType
    */
   isSuitableIcon(
     purpose: 'any' | 'maskable' | 'monochrome' | null,
@@ -239,6 +239,7 @@ export class IconInfo {
       this.isAtLeast(desiredWidth, desiredHeight) &&
       !this.isEmbedded &&
       this.hasMimeType(mimeType) &&
+      this.validateSameMimeTypeAndExtension(mimeType) &&
       matchesSquareRequirement;
     return !!largerIcon;
   }
@@ -278,6 +279,13 @@ export class IconInfo {
     return format?.exts[0] || null;
   }
 
+  private getMimeTypeByExtension(): ImageFormat | null {
+    const srcLower = this.icon.src?.toLowerCase() || '';
+    const extension = IconInfo.formats
+      .find(f => f.exts.some(ext => srcLower.endsWith(`.${ext}`)));
+    return extension ?? null;
+  }
+
   private getFormat(): ImageFormat | null {
     const formatByMimeType = IconInfo.formats.find(f => f.mime === this.icon.type);
     if (formatByMimeType) {
@@ -285,10 +293,7 @@ export class IconInfo {
     }
 
     // Couldn't find it by mime type. See if we can guess it by looking at src.
-    const srcLower = this.icon.src?.toLowerCase() || '';
-    const guessedFormat = IconInfo.formats
-      .find(f => f.exts.some(ext => srcLower.endsWith(`.${ext}`)));
-    return guessedFormat ?? null;
+    return this.getMimeTypeByExtension();
   }
 
   private getMimeTypeOrGuessFromSrc(): string | null {
@@ -298,5 +303,23 @@ export class IconInfo {
 
     const guessFormat = this.getFormat();
     return guessFormat?.mime || null;
+  }
+
+  private validateSameMimeTypeAndExtension(mimeType?: string | null): boolean {
+    const extensionMimeType = this.getMimeTypeByExtension();
+    if (!extensionMimeType) {
+      return false;
+    }
+
+    const typeOrExtensionMimeType = this.getFormat();
+    if (!typeOrExtensionMimeType) {
+      return false;
+    }
+
+    if (!mimeType) {
+      return extensionMimeType.mime === typeOrExtensionMimeType.mime;
+    }
+
+    return mimeType === extensionMimeType.mime && mimeType === typeOrExtensionMimeType.mime;
   }
 }

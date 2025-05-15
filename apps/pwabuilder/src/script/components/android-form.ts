@@ -9,6 +9,7 @@ import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 import { AppNameInputPattern, DnameInputPattern } from '../utils/constants';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
 
 @customElement('android-form')
 

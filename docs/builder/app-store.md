@@ -14,7 +14,7 @@ There are some boxes you'll need to check before your PWA is ready to be publish
   
 - A macOS device with Xcode installed
 
-- Xcode should support at least  iOS 15
+- Xcode should support iOS 17 or later
   
 - An Apple Developer account (which are available for a yearly subscription of $99)
 

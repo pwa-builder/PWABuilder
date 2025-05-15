@@ -13,6 +13,11 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
 import "../components/arrow-link";
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/radio/radio.js';
+import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
 
 import Ajv2020 from "ajv/dist/2020";
 import addFormats from "ajv-formats";

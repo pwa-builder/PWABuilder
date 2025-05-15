@@ -13,6 +13,7 @@ import { maxSigningKeySizeInBytes } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
 
 @customElement('oculus-form')
 

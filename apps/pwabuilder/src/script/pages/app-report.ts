@@ -21,6 +21,14 @@ import '../components/manifest-info-card'
 import '../components/sw-info-card'
 import '../components/arrow-link'
 
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
+
 import {
   Icon,
   ManifestContext,
@@ -36,9 +44,11 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
-import { SlDropdown } from '@shoelace-style/shoelace';
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
+import { findBestAppIcon } from '../utils/icons';
+import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -122,6 +132,8 @@ export class AppReport extends LitElement {
   @state() showSecurityErrorBanner: boolean = false;
   @state() showSecurityWarningBanner: boolean = false;
   @state() securityIssues: string[] = [];
+
+  @state() showServiceWorkerWarningBanner: boolean = false;
 
   @state() enhancementTotalScore: number = 0;
 
@@ -2192,8 +2204,12 @@ export class AppReport extends LitElement {
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
 
-    manifest = JSON.parse(sessionStorage.getItem("PWABuilderManifest")!).manifest;
+    manifest = getManifestContext().manifest;
     this.validationResults = await validateManifest(manifest, true);
+
+    const icon = findBestAppIcon(manifest.icons);
+    this.validationResults.push({infoString: "Icons are used to create packages for different stores and must meet certain formatting requirements.", displayString: "Manifest has suitable icons", category: 'required', member: 'suitable-icons', valid: !!icon, errorString: "Can't find a suitable icon to use for the package stores. Ensure your manifest has a square, large (512x512 or better) PNG icon; Check if the proposed any or maskable is set. And if the format of the image matches the mimetype.", testRequired: true, quickFix: true});
+
 
     //  This just makes it so that the valid things are first
     // and the invalid things show after.
@@ -2263,8 +2279,30 @@ export class AppReport extends LitElement {
 
     let todos: unknown[] = [];
 
-    const serviceWorkerTestResult = serviceWorkerResults;
-    this.serviceWorkerResults = serviceWorkerTestResult;
+    const prevServiceWorkerResults = this.serviceWorkerResults;
+    if (prevServiceWorkerResults && prevServiceWorkerResults.length > 0) {
+      //Compare processed service worker results with the new ones
+
+      const reducerServiceWorkerResult: Record<string, TestResult> = prevServiceWorkerResults.reduce((acc, curr) => {
+        return {...acc, [curr.member]: curr}
+      },{});
+
+      this.serviceWorkerResults = serviceWorkerResults.map((value) => {
+        const prevResult = reducerServiceWorkerResult[value.member!];
+
+        //Validate if the service worker result has changed for some reason
+        if (value.member == 'has_service_worker' && prevResult && prevResult.result && !value.result ) {
+          this.showServiceWorkerWarningBanner = true;
+          return prevResult;
+        }
+
+        return value;
+      });
+
+    } else {
+      this.serviceWorkerResults = serviceWorkerResults;
+    }
+
 
     this.swValidCounter = 0;
     this.swRequiredCounter = 0;
@@ -2314,7 +2352,7 @@ export class AppReport extends LitElement {
     //save serviceworker tests in session storage
     sessionStorage.setItem(
       'service_worker_tests',
-      JSON.stringify(serviceWorkerTestResult)
+      JSON.stringify(serviceWorkerResults)
     );
     // this.requestUpdate();
     return todos;
@@ -3093,6 +3131,22 @@ export class AppReport extends LitElement {
                   <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified that you are delivering mixed resources when your PWA is loading. Check out the documentation linked below to learn more.</p>
                   <div class="error-actions">
                     <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content" target="_blank" rel="noopener">Mixed Content Documentation</a>
+                  </div>
+                </div>
+              </div>
+            ` :
+            null
+          }
+
+          ${this.showServiceWorkerWarningBanner ?
+            html`
+              <div class="feedback-holder type-warning">
+                <img src="/assets/new/yield.svg" alt="warning result icon" />
+                <div class="error-info">
+                  <p class="error-title">Service worker registration timeout</p>
+                  <p class="error-desc">We detected a link to your service worker however, our tests timed out waiting for it to be registered. This can happen for a number of reasons and may even be intentional. To learn more about site load times and when you should be registering your service worker, follow the link below.</p>
+                  <div class="error-actions">
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration" target="_blank" rel="noopener">Service Worker Registration Documentation</a>
                   </div>
                 </div>
               </div>

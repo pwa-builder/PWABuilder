@@ -4,8 +4,10 @@ import { Manifest } from '../utils/interfaces';
 import { validateSingleField, required_fields, singleFieldValidation } from '@pwabuilder/manifest-validation';
 import { insertAfter, errorInTab } from '../utils/helpers';
 import {classMap} from 'lit/directives/class-map.js';
-
 import "./manifest-field-tooltip";
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
+import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
 
 const defaultColor: string = "#000000";
 let manifestInitialized: boolean = false;
@@ -545,7 +547,7 @@ export class ManifestInfoForm extends LitElement {
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">The name of your app as displayed to the user</p>
-            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange} required="true"></sl-input>
+            <sl-input placeholder="PWA Name" value=${this.manifest.name! || ""} data-field="name" @sl-change=${this.handleInputChange} required></sl-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -557,7 +559,7 @@ export class ManifestInfoForm extends LitElement {
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">Used in app launchers</p>
-            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange} required="true"></sl-input>
+            <sl-input placeholder="PWA Short Name" value=${this.manifest.short_name! || ""} data-field="short_name" @sl-change=${this.handleInputChange} required></sl-input>
           </div>
         </div>
 
@@ -601,7 +603,7 @@ export class ManifestInfoForm extends LitElement {
             <p class="field-desc">Select a Background color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} hoist=${true} data-field="background_color" @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
+                <sl-color-picker id="background_color_picker" value=${this.manifest.background_color! || defaultColor} ?hoist=${true} data-field="background_color" @sl-change=${() => this.handleColorSwitch("background_color")}></sl-color-picker>
                 <p id="background_color_string" class="color_string">${this.manifest.background_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
@@ -616,7 +618,7 @@ export class ManifestInfoForm extends LitElement {
             <p class="field-desc">Select a Theme color</p>
             <span class="color-holder">
               <div class="color-section">
-                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} hoist=${true} data-field="theme_color" @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
+                <sl-color-picker id="theme_color_picker" value=${this.manifest.theme_color! || defaultColor} ?hoist=${true} data-field="theme_color" @sl-change=${() => this.handleColorSwitch("theme_color")}></sl-color-picker>
                 <p id="theme_color_string" class="color_string">${this.manifest.theme_color?.toLocaleUpperCase() || defaultColor}</p>
               </div>
             </span>
