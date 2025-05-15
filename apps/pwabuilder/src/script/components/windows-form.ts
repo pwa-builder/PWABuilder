@@ -22,13 +22,6 @@ const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
 let actionsSchemaValidation: any = null;
 
-const encryptedSchema = {
-  "encrypted": "s+En3NVL4S07lD0o0yGjnXxE0ogmOZjDrcY/1OwNI/HnhP/0MuvU128qfTGqJ5a+pa/y6HRU05Ze4A94oyTT+Y94kDgyc3cZhJJlnoobkk5L/KqordTIkOJzd+Kk3Ne6uIFfpdolBebyAsAUG4k8HfFxrSmXZolOpgNkFtIFO9NmrIothQ8c6AmclrmwoLEO7/WhIfNz",
-  "iv": "FTS/P9blv27EMwzl",
-  "salt": "/az9m+mDok+U453B/9KRkA==",
-  "tag": "oarRvJIvZaz3rWA/StuzQQ=="
-};
-
 @customElement('windows-form')
 
 export class WindowsForm extends AppPackageFormBase {
@@ -43,7 +36,6 @@ export class WindowsForm extends AppPackageFormBase {
   @state() userBackgroundColor: string = "";
   @state() showUploadActionsFile: boolean = false;
   @state() actionsFileError: string | null = null;
-  @state() schemaUrl: string | null = null
 
   static get styles() {
     return [
@@ -308,7 +300,21 @@ export class WindowsForm extends AppPackageFormBase {
     if (!checked) {
       delete this.packageOptions.webActionManifestFile;
       actionsSchemaValidation = null;
-      this.schemaUrl = null;
+    } else {
+      try {
+        const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
+        const SCHEMA_URL = "https://raw.githubusercontent.com/microsoft/App-Actions-On-Windows-Samples/refs/heads/main/schema/ActionsSchema.json?token=GHSAT0AAAAAADD4LIMQ7SLS7TZ25YF3NMVO2BF7BSA";
+        if (!ajv.getSchema(SCHEMA_ID)) {
+          const response = await fetch(SCHEMA_URL);
+          const actionsSchema = await response.json();
+          ajv.addSchema(actionsSchema, SCHEMA_ID);
+        }
+
+        actionsSchemaValidation = ajv.getSchema(SCHEMA_ID);
+        this.actionsFileError = null;
+      } catch (err) {
+        this.actionsFileError = "Schema setup failed.";
+      }
     }
   }
 
@@ -320,71 +326,6 @@ export class WindowsForm extends AppPackageFormBase {
       bytes[i] = binStr.charCodeAt(i);
     }
     return bytes.buffer;
-  }
-
-
-  async decryptURLWithPassword(e: Event): Promise<void> {
-    const input = e.target as HTMLInputElement;
-    const password: string = input.value.trim();
-
-    const { encrypted, iv, salt, tag } = encryptedSchema;
-
-    try {
-      const ivBuf = this.base64ToArrayBuffer(iv);
-      const saltBuf = this.base64ToArrayBuffer(salt);
-      const tagBuf = this.base64ToArrayBuffer(tag);
-      const encryptedBuf = this.base64ToArrayBuffer(encrypted);
-
-      const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        new TextEncoder().encode(password),
-        { name: "PBKDF2" },
-        false,
-        ["deriveKey"]
-      );
-
-      const key = await crypto.subtle.deriveKey(
-        {
-          name: "PBKDF2",
-          salt: saltBuf,
-          iterations: 100000,
-          hash: "SHA-256"
-        },
-        keyMaterial,
-        { name: "AES-GCM", length: 256 },
-        false,
-        ["decrypt"]
-      );
-
-      const combined = new Uint8Array(encryptedBuf.byteLength + tagBuf.byteLength);
-      combined.set(new Uint8Array(encryptedBuf), 0);
-      combined.set(new Uint8Array(tagBuf), encryptedBuf.byteLength);
-
-      const decrypted = await crypto.subtle.decrypt(
-        {
-          name: "AES-GCM",
-          iv: ivBuf,
-          tagLength: 128,
-        },
-        key,
-        combined
-      );
-
-      this.schemaUrl = new TextDecoder().decode(decrypted);
-
-      const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
-      if (!ajv.getSchema(SCHEMA_ID)) {
-        const response = await fetch(this.schemaUrl);
-        const actionsSchema = await response.json();
-        ajv.addSchema(actionsSchema, SCHEMA_ID);
-      }
-
-      actionsSchemaValidation = ajv.getSchema(SCHEMA_ID);
-      this.actionsFileError = null;
-    } catch (err) {
-      console.error("Failed to decrypt schema URL or compile schema:", err);
-      this.actionsFileError = "Invalid decryption key or schema setup failed.";
-    }
   }
 
   async actionsFileChanged(e: Event) {
@@ -800,8 +741,7 @@ export class WindowsForm extends AppPackageFormBase {
                 </div>
                 ${this.showUploadActionsFile ?
                   html`
-                    <input type="text" name="decryption" label="password-input" placeholder="enter decryption key to access" @change=${(e: Event) => this.decryptURLWithPassword(e)} />
-                    <input id="actions-file-picker" ?disabled=${!this.schemaUrl} class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
+                    <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
                     ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
                   ` :
                   null
