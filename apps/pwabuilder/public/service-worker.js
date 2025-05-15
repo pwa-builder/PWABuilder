@@ -5,7 +5,18 @@ import {
     imageCache,
     staticResourceCache
 } from "workbox-recipes";
+import { precacheAndRoute } from "workbox-precaching";
 import { ExpirationPlugin } from "workbox-expiration";
+
+// Precache the our versioned files. This variable is injected by the build process. See vite.config.ts for more info.
+const allStaticAssets = (self.__WB_MANIFEST || []);
+const assetsToPrecache = allStaticAssets.filter(entry => entry.url.startsWith("assets/code/"));
+try {
+    console.log("Service worker precaching", assetsToPrecache);
+    precacheAndRoute(assetsToPrecache);
+} catch (e) {
+    console.warn("Service worker warning: error during precache", e);
+}
 
 // Static resource recipe: https://developers.google.com/web/tools/workbox/modules/workbox-recipes#static_resources_cache
 // This is a stale-while-revalidate strategy for CSS, JS, and web workers.
