@@ -143,7 +143,7 @@ export function createWindowsPackageOptionsFromManifest(
       padding: 0.0,
     },
     resourceLanguage: languages,
-    enableWebAppWidgets: Object.keys(manifest).includes("widgets")
+    enableWebAppWidgets: Object.keys(manifest).includes("widgets"),
   };
 
   return options;

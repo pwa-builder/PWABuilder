@@ -209,24 +209,24 @@ export class AppPackageFormBase extends LitElement {
     return html`
     <div class="colorPickerAndValue">
       <sl-color-picker
-              id="${formInput.inputId}" 
-              class="form-control" 
+              id="${formInput.inputId}"
+              class="form-control"
               placeholder="${formInput.placeholder || ''}"
-              value="${(ifDefined(formInput.value) as string)}" 
-              type="color" 
+              value="${(ifDefined(formInput.value) as string)}"
+              type="color"
               ?required="${formInput.required}"
-              name="${ifDefined(formInput.name)}" 
+              name="${ifDefined(formInput.name)}"
               minlength="${ifDefined(formInput.minLength)}"
               maxlength="${ifDefined(formInput.maxLength)}"
               min=${ifDefined(formInput.minValue)}
-              max="${ifDefined(formInput.maxValue)}" 
+              max="${ifDefined(formInput.maxValue)}"
               pattern="${ifDefined(formInput.pattern)}"
-              spellcheck="${ifDefined(formInput.spellcheck)}" 
-              ?checked="${formInput.checked}" 
+              spellcheck="${ifDefined(formInput.spellcheck)}"
+              ?checked="${formInput.checked}"
               ?readonly="${formInput.readonly}"
               custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
               ?disabled=${formInput.disabled}
-              @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}" 
+              @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}"
               @sl-invalid=${this.inputInvalid}
             ></sl-color-picker>
             <p>${formInput.value}</p>
@@ -236,18 +236,34 @@ export class AppPackageFormBase extends LitElement {
   private renderFormInputTextbox(formInput: FormInput): TemplateResult {
     const inputType = formInput.type || 'text';
     const inputClass = formInput.type === 'radio' ? 'form-check-input' : 'form-control';
-    return html`
-      <input id="${formInput.inputId}" class="${inputClass}" placeholder="${formInput.placeholder || ''}"
-        value="${ifDefined(formInput.value)}" type="${inputType}" ?required="${formInput.required}"
-        name="${ifDefined(formInput.name)}" minlength="${ifDefined(formInput.minLength)}"
-        maxlength="${ifDefined(formInput.maxLength)}" min=${ifDefined(formInput.minValue)}
-        max="${ifDefined(formInput.maxValue)}" pattern="${ifDefined(formInput.pattern)}"
-        spellcheck="${ifDefined(formInput.spellcheck)}" ?checked="${formInput.checked}" ?readonly="${formInput.readonly}"
+
+    const input = html`
+      <input id="${formInput.inputId}"
+        class="${inputClass}"
+        placeholder="${formInput.placeholder || ''}"
+        value="${ifDefined(formInput.value)}"
+        type="${inputType}"
+        ?required="${formInput.required}"
+        name="${ifDefined(formInput.name)}"
+        minlength="${ifDefined(formInput.minLength)}"
+        maxlength="${ifDefined(formInput.maxLength)}"
+        min=${ifDefined(formInput.minValue)}
+        max="${ifDefined(formInput.maxValue)}"
+        pattern="${ifDefined(formInput.pattern)}"
+        spellcheck="${ifDefined(formInput.spellcheck)}"
+        ?checked="${formInput.checked}"
+        ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
         ?disabled=${formInput.disabled}
-        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}" @invalid=${this.inputInvalid} />
+        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}"
+        @invalid=${this.inputInvalid} />
     `;
+
+    return formInput.disabled
+      ? html`<sl-tooltip content="${formInput.disabledTooltipText}">${input}</sl-tooltip>`
+      : input;
   }
+
 
   private renderFormInputLabel(formInput: FormInput): TemplateResult {
     return html`
@@ -285,12 +301,12 @@ export class AppPackageFormBase extends LitElement {
     const inputElement = e.target as HTMLSlColorPicker;
 
     if(!inputElement || !inputElement.nextElementSibling) return;
-    
+
     const formattedValue = inputElement.getFormattedValue('hex').toLocaleUpperCase();
     const colorValue = inputElement.nextElementSibling;
     const newValue = document.createElement('p');
     newValue.textContent = formattedValue;
-    
+
     colorValue.replaceWith(newValue);
 
     // Fire the input handler
@@ -304,7 +320,7 @@ export class AppPackageFormBase extends LitElement {
       inputElement.setCustomValidity(errorMessage);
       inputElement.title = errorMessage;
     }
-    
+
   }
 
   private inputChanged(e: UIEvent, formInput: FormInput) {
@@ -382,5 +398,6 @@ export interface FormInput {
   validationErrorMessage?: string;
   checked?: boolean;
   disabled?: boolean;
+  disabledTooltipText?: string;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }

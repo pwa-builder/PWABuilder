@@ -19,6 +19,14 @@ import '@shoelace-style/shoelace/dist/components/radio/radio.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 
+import Ajv2020 from "ajv/dist/2020";
+import addFormats from "ajv-formats";
+
+import { classMap } from 'lit/directives/class-map.js';
+const ajv = new Ajv2020({ allErrors: true });
+addFormats(ajv);
+let actionsSchemaValidation: any = null;
+
 @customElement('windows-form')
 
 export class WindowsForm extends AppPackageFormBase {
@@ -31,6 +39,8 @@ export class WindowsForm extends AppPackageFormBase {
   @state() activeLanguages: string[] = [];
   @state() activeLanguageCodes: string[] = [];
   @state() userBackgroundColor: string = "";
+  @state() showUploadActionsFile: boolean = false;
+  @state() actionsFileError: string | null = null;
 
   static get styles() {
     return [
@@ -62,6 +72,13 @@ export class WindowsForm extends AppPackageFormBase {
           display: flex;
           overflow: auto;
           flex-direction: column;
+        }
+        .form-check:hover input:disabled {
+          color: green;
+        }
+
+        .form-check:hover input:disabled {
+          color: green;
         }
 
         sl-details {
@@ -114,7 +131,7 @@ export class WindowsForm extends AppPackageFormBase {
           --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
           --sl-input-border-color-focus: #4F3FB6ac;
           --sl-input-font-size-small: 22px;
-          
+
         }
 
         #languageDrop::part(display-input){
@@ -192,7 +209,15 @@ export class WindowsForm extends AppPackageFormBase {
           color: #7f7f7f;
           font-size: 14px;
         }
-       
+
+        .actions-error {
+          border-color: var(--error-color) !important;
+        }
+
+        .actions-error-message {
+          font-size: var(--font-size);
+        }
+
     `
     ];
   }
@@ -208,7 +233,7 @@ export class WindowsForm extends AppPackageFormBase {
     if (manifestContext.isGenerated) {
       manifestContext = await fetchOrCreateManifest();
     }
-    
+
     this.packageOptions = createWindowsPackageOptionsFromManifest(
       manifestContext!.manifest
     );
@@ -274,6 +299,78 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
+  async updateActionsSelection(checked: boolean) {
+    this.showUploadActionsFile = checked;
+
+    if (!checked) {
+      delete this.packageOptions.webActionManifestFile;
+      actionsSchemaValidation = null;
+    } else {
+      try {
+        const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
+        const SCHEMA_URL = "https://raw.githubusercontent.com/microsoft/App-Actions-On-Windows-Samples/refs/heads/main/schema/ActionsSchema.json";
+        if (!ajv.getSchema(SCHEMA_ID)) {
+          const response = await fetch(SCHEMA_URL);
+          const actionsSchema = await response.json();
+          ajv.addSchema(actionsSchema, SCHEMA_ID);
+        }
+
+        actionsSchemaValidation = ajv.getSchema(SCHEMA_ID);
+        this.actionsFileError = null;
+      } catch (err) {
+        this.actionsFileError = "Schema setup failed.";
+      }
+    }
+  }
+
+  base64ToArrayBuffer(b64: string) {
+    const binStr = atob(b64);
+    const len = binStr.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binStr.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  async actionsFileChanged(e: Event) {
+    if (!e) return;
+
+    if (!actionsSchemaValidation) {
+      this.actionsFileError = "Please enter the decryption key first.";
+      return;
+    }
+
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const reader = new FileReader();
+
+    if (file) {
+      reader.onload = () => {
+        try {
+          const text: string = reader.result as string;
+          const parsed = JSON.parse(text);
+
+          const isValid = actionsSchemaValidation(parsed);
+
+          if (!isValid) {
+            const errorDetails = ajv.errorsText(actionsSchemaValidation.errors, { separator: '\n' });
+            throw new Error(`Schema validation failed:\n${errorDetails}`);
+          }
+
+          const stringified: string = JSON.stringify(parsed, null, 2);
+          this.packageOptions.webActionManifestFile = stringified;
+          this.actionsFileError = null;
+        } catch (err) {
+          console.error('Invalid Actions Manifest file:', err);
+          this.actionsFileError = (err as Error).message;
+        }
+      };
+
+      reader.readAsText(file);
+    }
+  }
+
   rotateZero(){
     recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
@@ -303,24 +400,24 @@ export class WindowsForm extends AppPackageFormBase {
       <div id="multiSelectBox">
         <div class="multi-wrap">
           <p class="sub-multi">Select Multiple Languages</p>
-          <sl-select id="languageDrop" 
+          <sl-select id="languageDrop"
             placeholder="Select one or more languages"
-            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value} 
+            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
             value=${this.packageOptions.resourceLanguage!}
-            ?stayopenonselect=${true} 
+            ?stayopenonselect=${true}
             multiple
             .maxOptionsVisible=${5}
             size="small"
           >
-          ${windowsLanguages.map((lang: any) => 
+          ${windowsLanguages.map((lang: any) =>
             html`
-              ${lang.codes.map((code: string) =>  
+              ${lang.codes.map((code: string) =>
                 html`
                   <sl-option value=${code}>${lang.name} - ${code}</sl-option>
                 `
               )}
             `
-          )} 
+          )}
           </sl-select>
         </div>
       </div>
@@ -336,8 +433,8 @@ export class WindowsForm extends AppPackageFormBase {
       <div id="iconColorPicker">
         <div class="color-wrap">
           <p class="sub-multi">Select your Windows icons background color</p>
-          <sl-radio-group 
-            id="icon-bg-radio-group" 
+          <sl-radio-group
+            id="icon-bg-radio-group"
             .value=${'transparent'}
             @sl-change=${() => this.toggleIconBgRadios()}
           >
@@ -435,7 +532,7 @@ export class WindowsForm extends AppPackageFormBase {
             <div class="form-group" id="ai-hub">
               <div id="ai-hub-label">
                 <label>Does your app use AI?</label>
-                <info-circle-tooltip 
+                <info-circle-tooltip
                   text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
                   link="https://blogs.windows.com/windowsdeveloper/2023/05/23/welcoming-ai-to-the-microsoft-store-on-windows/"
                   @click=${() => {
@@ -622,15 +719,42 @@ export class WindowsForm extends AppPackageFormBase {
                     type: 'checkbox',
                     checked: this.packageOptions.enableWebAppWidgets,
                     disabled: !this.packageOptions.enableWebAppWidgets,
-                    inputHandler: (_val: string, checked: boolean) => 
+                    disabledTooltipText: "You must have widgets set up in your web manifest to enable Widgets for your Windows package.",
+                    inputHandler: (_val: string, checked: boolean) =>
                       (this.packageOptions.enableWebAppWidgets = checked),
                   })}
                 </div>
               </div>
+              <div class="form-group" id="actions-picker">
+                <label>Actions</label>
+                <div class="form-check">
+                  ${this.renderFormInput({
+                    label: 'Enable Actions',
+                    value: 'Actions',
+                    tooltip:
+                      'Enables your Windows package to serve the actions listed in your ActionsManifest.json.',
+                    tooltipLink:
+                      'https://aka.ms/pwa-winaction',
+                    inputId: 'actions-checkbox',
+                    type: 'checkbox',
+                    checked: this.showUploadActionsFile,
+                    disabled: (!this.packageOptions.manifest?.share_target || !this.packageOptions.manifest?.protocol_handlers),
+                    disabledTooltipText: "You must have both share_target and protocol_handlers set up in your web manifest to enable Actions.",
+                    inputHandler: (_val: string, checked: boolean) =>
+                      (this.updateActionsSelection(checked)),
+                  })}
+                </div>
+                ${this.showUploadActionsFile ?
+                  html`
+                    <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
+                    ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
+                  ` :
+                  null
+                }
+              </div>
             </div>
           </sl-details>
         </div>
-
       </form>
     </div>
     `;
