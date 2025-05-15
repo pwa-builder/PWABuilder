@@ -308,7 +308,7 @@ export class WindowsForm extends AppPackageFormBase {
     } else {
       try {
         const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
-        const SCHEMA_URL = "https://raw.githubusercontent.com/microsoft/App-Actions-On-Windows-Samples/refs/heads/main/schema/ActionsSchema.json?token=GHSAT0AAAAAADD4LIMQ7SLS7TZ25YF3NMVO2BF7BSA";
+        const SCHEMA_URL = "https://raw.githubusercontent.com/microsoft/App-Actions-On-Windows-Samples/refs/heads/main/schema/ActionsSchema.json";
         if (!ajv.getSchema(SCHEMA_ID)) {
           const response = await fetch(SCHEMA_URL);
           const actionsSchema = await response.json();
