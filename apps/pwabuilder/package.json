@@ -68,7 +68,8 @@
     "ts-node": "^10.1.0",
     "tslib": "^2.1.0",
     "typescript": "^5.3.3",
-    "vite": "^6.2.7"
+    "vite": "^6.2.7",
+    "vite-plugin-pwa": "^1.0.0"
   },
   "prettier": {
     "tabWidth": 2,
