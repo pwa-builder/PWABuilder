@@ -17,7 +17,7 @@ export class CommunityHub extends LitElement {
 
   static get styles() {
     return [
-    css`
+      css`
       #community-panel {
         display: flex;
         align-items: flex-start;
@@ -34,7 +34,7 @@ export class CommunityHub extends LitElement {
         justify-content: center;
       }
 
-      #community-photo img { 
+      #community-photo img {
         width: 500px;
         height: auto;
       }
@@ -65,7 +65,7 @@ export class CommunityHub extends LitElement {
 
        /* < 480px */
        ${smallBreakPoint(css`
-          #community-photo img { 
+          #community-photo img {
             display: none;
           }
           #community-panel {
@@ -82,7 +82,7 @@ export class CommunityHub extends LitElement {
 
       /* 480px - 639px */
       ${mediumBreakPoint(css`
-          #community-photo img { 
+          #community-photo img {
             display: none;
           }
           #success-panel {
@@ -103,11 +103,11 @@ export class CommunityHub extends LitElement {
           }
       `)}
 
-      
+
 
       /* 640px - 1023px */
       ${largeBreakPoint(css`
-          #community-photo img { 
+          #community-photo img {
             max-width: 18em;
             height: auto;
           }
@@ -120,7 +120,7 @@ export class CommunityHub extends LitElement {
       `)}
 
       @media (min-width: 640px) and (max-width: 850px) {
-        #community-photo img { 
+        #community-photo img {
           display: none;
         }
         #success-panel {
@@ -129,23 +129,23 @@ export class CommunityHub extends LitElement {
         }
       }
 
-      
-      
+
+
 
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
-          
+
       `)}
 
       @media (min-width: 1024px) and (max-width: 1160px) {
-        #community-photo img { 
+        #community-photo img {
           width: 380px;
         }
       }
 
       /* > 1920px */
       ${xxxLargeBreakPoint(css`
-          #community-photo img { 
+          #community-photo img {
             width: 569px;
             height: auto;
           }
@@ -167,7 +167,7 @@ export class CommunityHub extends LitElement {
     return html`
       <div id="community-panel">
         <div id="community-photo">
-          <img src="/assets/new/community-image.png" alt="social hub image" role="img"/>
+          <img src="/assets/new/community-image.webp" alt="social hub image" role="img"/>
         </div>
         <div id="community-content">
           <h2>Join our community</h2>
