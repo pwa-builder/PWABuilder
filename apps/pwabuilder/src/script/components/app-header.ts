@@ -2,7 +2,9 @@ import { Router } from '@vaadin/router';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
+import '@shoelace-style/shoelace/dist/components/menu/menu.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import {
   xxxLargeBreakPoint,
   xxLargeBreakPoint,
@@ -224,7 +226,6 @@ export class AppHeader extends LitElement {
   }
 
   firstUpdated() {
-    console.log("first updated page", this.page)
     // Cant seem to type `event` as a KeyboardEvent without TypeScript complaining
     // with an error I dont fully understand.
     // revisit: Justin
@@ -262,7 +263,6 @@ export class AppHeader extends LitElement {
   }
 
   render() {
-    console.log(this.page)
     return html`
       <header part="header">
        

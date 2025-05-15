@@ -7,9 +7,9 @@ import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
 
 @customElement('ios-form')
-
 export class IOSForm extends AppPackageFormBase {
   @property({ type: Boolean }) generating: boolean = false;
   @state() showAllSettings = false;

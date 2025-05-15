@@ -1,4 +1,3 @@
-// import debounce from 'lodash-es/debounce';
 import { LitElement } from 'lit';
 
 export const resizeObserver = new ResizeObserver(ResizeObserverHandler);

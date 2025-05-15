@@ -35,10 +35,11 @@
     <!--<script type="module" src="/build/src/script/pages/app-index.js"></script>-->
     <script type="module" src="/src/app-index.ts"></script>
 
-    <!-- preload font -->
-    <link rel="preload" as="font" href="/assets/fonts/Hind-Bold.ttf" />
-    <link rel="preload" as="font" href="/assets/fonts/Hind-Regular.ttf" />
-    
+    <!-- preloads -->
+    <link rel="preload" as="image" href="/assets/new/Hero1920_withmani.webp" />
+    <link rel="preload" as="font" href="/assets/fonts/Hind-Bold.ttf" type="font/ttf" crossorigin="anonymous" />
+    <link rel="preload" as="font" href="/assets/fonts/Hind-Regular.ttf" type="font/ttf" crossorigin="anonymous" />
+
     <!-- Site verification -->
     <meta name="google-site-verification" content="FUVku2bfkgdFbDkGPIfaU3hJmKdF9LT_gqu6CF2Xx8Y" />
     <meta name="msvalidate.01" content="37FDCC457CFDBE819B0CA62C035DC8B8" />
@@ -46,16 +47,7 @@
 
 <body>
   <app-index></app-index>
-  <span id="pageTitle"></span> <!-- Add this line -->
-  <!-- for analytics -->
-  <script type="text/javascript" src="https://az416426.vo.msecnd.net/scripts/c/ms.analytics-web-2.min.js"></script>
-  <script>
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for(const registration of registrations) {
-        registration.unregister();
-      } 
-    })
-  </script>
+  <span id="pageTitle"></span>
 </body>
 
 </html>

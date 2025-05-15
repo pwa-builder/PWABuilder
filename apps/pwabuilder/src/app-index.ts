@@ -3,7 +3,6 @@ import { customElement, state } from 'lit/decorators.js';
 import { Router, Route } from '@vaadin/router';
 
 import './shoelace';
-import './script/pages/app-home';
 import './script/components/app-footer';
 import './script/components/app-button';
 //import './script/components/cookie-banner';
@@ -157,7 +156,13 @@ export class AppIndex extends LitElement {
         path: '',
         animate: true,
         children: [
-          { path: '/', component: 'app-home' },
+          { 
+            path: '/', 
+            component: 'app-home',
+            action: async () => {
+              await import ('./script/pages/app-home.js');
+            }
+          },
           {
             path: '/reportcard',
             component: 'app-report',

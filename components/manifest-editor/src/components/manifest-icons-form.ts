@@ -10,6 +10,10 @@ import {
 import { resolveUrl } from '../utils/urls';
 import {classMap} from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 const baseUrl = 'https://appimagegenerator-prod-dev.azurewebsites.net';
 

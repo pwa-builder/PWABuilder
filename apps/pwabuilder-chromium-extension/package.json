@@ -23,10 +23,15 @@
     "url": "https://github.com/pwa-builder/pwabuilder-chromium-extension/issues"
   },
   "homepage": "https://github.com/pwa-builder/pwabuilder-chromium-extension#readme",
+  "dependencies": {
+    "@shoelace-style/shoelace": "^2.20.1",
+    "lit": "^3.3.0",
+    "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
+    "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation"
+  },
   "devDependencies": {
     "@types/chrome": "0.0.180",
     "copy-webpack-plugin": "^10.2.4",
-    "lit": "^2.3.1",
     "ts-loader": "^9.2.8",
     "typescript": "^4.5.4",
     "webpack": "^5.76.0",
@@ -34,10 +39,5 @@
     "@zip.js/zip.js": "2.4.7",
     "@web/dev-server": "^0.1.31",
     "npm-run-all": "^4.1.5"
-  },
-  "dependencies": {
-    "@shoelace-style/shoelace": "^2.0.0-beta.83",
-    "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
-    "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation"
   }
 }

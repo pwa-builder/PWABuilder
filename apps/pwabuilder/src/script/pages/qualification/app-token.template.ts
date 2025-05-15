@@ -1,8 +1,13 @@
 import { html } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
-import { SlDetails } from "@shoelace-style/shoelace";
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../../utils/analytics';
 import { AppToken } from './app-token';
+import "@shoelace-style/shoelace/dist/components/details/details.js";
+import SlDetails from '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
+import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
 
 export function decideHeroSection(
   siteURL: string,
@@ -383,12 +388,12 @@ export function rotateNinety(card: string, shadowRoot: Element["shadowRoot"], e?
 	}
 
 	// only allow one details to be open at a time
-	let details = shadowRoot!.querySelectorAll("sl-details");
-	details.forEach((detail: SlDetails) => {
+	let details = shadowRoot!.querySelectorAll<SlDetails>("sl-details");
+	details.forEach(detail => {
 		if(detail.dataset.card !== card){
 			detail.hide();
 		}
-	})
+	});
 }
 
 export const qualificationStrings: string[] = [

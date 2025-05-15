@@ -10,6 +10,7 @@
     "start-for-tests": "npm run build && vite --port 3000",
     "dev:deps": "concurrently \"node ../../scripts/watchDeps.js\" \"rollup --config rollup.config.dev.mjs --watch\" \"web-dev-server\"",
     "build": "tsc && vite build",
+    "preview": "vite build --mode preview && vite preview",
     "start": "npm run build && npx nodemon server.js",
     "start-remote": "vite --host",
     "postinstall": "npm run copy-sl-assets",
@@ -24,7 +25,7 @@
     "@pwabuilder/manifest-information": "file:../../libraries/manifest-information",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    "@shoelace-style/shoelace": "^2.7.0",
+    "@shoelace-style/shoelace": "^2.20.1",
     "@vaadin/router": "^1.7.4",
     "accessibility-insights-scan": "^2.7.0",
     "browser-fs-access": "^0.23.0",
@@ -32,7 +33,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "ionicons": "^6.0.3",
-    "lit": "^2.2.1"
+    "lit": "^3.3.0"
   },
   "devDependencies": {
     "@azure/msal-browser": "^2.37.0",
@@ -63,10 +64,12 @@
     "playwright": "^1.17.2",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
+    "rollup-plugin-visualizer": "^5.14.0",
     "ts-node": "^10.1.0",
     "tslib": "^2.1.0",
     "typescript": "^5.3.3",
-    "vite": "^6.2.7"
+    "vite": "^6.2.7",
+    "vite-plugin-pwa": "^1.0.0"
   },
   "prettier": {
     "tabWidth": 2,

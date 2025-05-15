@@ -12,7 +12,6 @@ import { getManifestInfo } from "./checks/manifest";
 import { SiteData } from "./interfaces/validation";
 import { getSwInfo } from "./checks/sw";
 
-
 @customElement("pwa-extension")
 export class PwaExtension extends LitElement {
 
