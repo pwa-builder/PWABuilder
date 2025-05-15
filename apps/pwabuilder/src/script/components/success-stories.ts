@@ -18,7 +18,7 @@ export class SuccessStories extends LitElement {
 
   static get styles() {
     return [
-    css`
+      css`
       #success-panel::before {
         content: "";
       }
@@ -27,7 +27,7 @@ export class SuccessStories extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-image: url(/assets/new/successBG_1920.png);
+        background-image: url(/assets/new/successBG_1920.webp);
         background-repeat: no-repeat;
         background-size: cover;
         background-position: right;
@@ -55,7 +55,7 @@ export class SuccessStories extends LitElement {
       /* < 480px */
       ${smallBreakPoint(css`
           #success-panel {
-            background-image: url(/assets/new/successBG_320.png);
+            background-image: url(/assets/new/successBG_320.webp);
             padding: 2em 1em;
           }
           #success-panel h2 {
@@ -65,7 +65,7 @@ export class SuccessStories extends LitElement {
             font-size: 1.75em;
             margin-bottom: .5em;
           }
-          
+
           #success-cards {
             display: flex;
             flex-direction: column;
@@ -79,7 +79,7 @@ export class SuccessStories extends LitElement {
       /* 480px - 639px */
       ${mediumBreakPoint(css`
         #success-panel {
-          background-image: url(/assets/new/successBG_480.png);
+          background-image: url(/assets/new/successBG_480.webp);
           padding: 1em;
           padding-bottom: 2em;
         }
@@ -90,7 +90,7 @@ export class SuccessStories extends LitElement {
           padding-left: 5px;
           margin-bottom: .5em;
         }
-        
+
         #success-cards {
           display: flex;
           flex-direction: column;
@@ -104,7 +104,7 @@ export class SuccessStories extends LitElement {
       /* 640px - 1023px */
       ${largeBreakPoint(css`
           #success-panel {
-            background-image: url(/assets/new/successBG_1024.png);
+            background-image: url(/assets/new/successBG_1024.webp);
             padding-left: 2em;
           }
           #success-panel h2 {
@@ -114,7 +114,7 @@ export class SuccessStories extends LitElement {
 
       @media (min-width: 640px) and (max-width: 850px) {
         #success-panel {
-          background-image: url(/assets/new/successBG_480.png);
+          background-image: url(/assets/new/successBG_480.webp);
           padding: 1em;
           padding-bottom: 2em;
         }
@@ -123,7 +123,7 @@ export class SuccessStories extends LitElement {
           text-align: center;
           width: 100%;
         }
-        
+
         #success-cards {
           display: flex;
           flex-direction: column;
@@ -133,7 +133,7 @@ export class SuccessStories extends LitElement {
           align-self: center;
         }
       }
-      
+
 
       /*1024px - 1365px*/
       ${xLargeBreakPoint(css`
