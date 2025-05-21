@@ -59,6 +59,9 @@ Before you can start the submission process, you'll need to build the Swift proj
 
 ?> **Note** If you get an error running `pod install`, try running `brew install cocoapods` first. (If you need to install Homebrew, [click here](https://docs.brew.sh/Installation))
 
+?> **Note** In case you already **have cocoapods installed**, check that the specs are up to date, otherwise you may receive a [missing privacy manifest error](https://github.com/pwa-builder/PWABuilder/issues/4877).
+To solve this you can run `pod repo update`, and then `pod update` if you already run `pod install`.
+
 4. Open the `.xcworkspace` file in your src directory. 
 
 !> If you open and attempt to build the `.xcodeproj` file, your build will fail. The `.xcworkspace` file is the correct file you need to build.
