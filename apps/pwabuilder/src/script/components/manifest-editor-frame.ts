@@ -25,6 +25,7 @@ export class ManifestEditorFrame extends LitElement {
   @state() manifest: Manifest = {};
   @state() manifestURL: string = '';
   @state() baseURL: string = '';
+  @state() tooltipOpen: boolean = false;
 
   static get styles() {
     return [
@@ -245,12 +246,24 @@ export class ManifestEditorFrame extends LitElement {
 
   // hides modal
   async hideDialog(e: any){
-    let dialog: any = this.shadowRoot!.querySelector(".dialog");
+    const dialog: any = this.shadowRoot!.querySelector(".dialog");
     if(e.target === dialog){
       await dialog!.hide();
       recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
       document.body.style.height = "unset";
     }
+  }
+
+  async openDialog(){
+    document.body.style.height = "100vh"
+    const dialog = this.shadowRoot!.querySelector(".dialog");
+
+    dialog?.removeEventListener('sl-request-close', () => {});
+    dialog?.addEventListener('sl-request-close', (event: any) => {
+      if (event.detail.source === 'keyboard' && this.tooltipOpen) {
+          event.preventDefault();
+      }
+    }, { once: true });
   }
 
   /* Next functions are for analytics */
@@ -291,7 +304,7 @@ export class ManifestEditorFrame extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
+      <sl-dialog class="dialog" @sl-show=${() => this.openDialog()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">
@@ -311,6 +324,7 @@ export class ManifestEditorFrame extends LitElement {
               @generateScreenshotsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "screenshots")}
               @uploadIcons=${() => this.handleUploadIcon()}
               @generateIconsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "icons")}
+              @trigger-hover=${(e: CustomEvent) => this.tooltipOpen = e.detail.entering}
             ></pwa-manifest-editor>
             
           </div>
