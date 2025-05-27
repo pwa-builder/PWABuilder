@@ -1,4 +1,4 @@
-import { Manifest } from '@pwabuilder/manifest-validation';
+import { Manifest, Validation } from '@pwabuilder/manifest-validation';
 import { ManifestContext, TestResult } from '../utils/interfaces';
 import { createManifestContextFromEmpty } from '../services/manifest';
 import { ReportAudit } from './app-report.api';
@@ -105,4 +105,17 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	];
 
 	return organizedResults;
-  }
+}
+
+export function processImages(
+	audits?: ReportAudit['audits']
+): Array<Validation> {
+	const iconsValidation = audits?.images?.details?.iconsValidation;
+	const screenshotValidation = audits?.images?.details?.screenshotsValidation;
+
+	const results = [iconsValidation, screenshotValidation].filter(
+		(v): v is Validation => v !== undefined
+	);
+
+	return results;
+}

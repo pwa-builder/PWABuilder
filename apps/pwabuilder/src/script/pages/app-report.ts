@@ -45,7 +45,7 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import { processManifest, processSecurity, processServiceWorker } from './app-report.helper';
+import { processImages, processManifest, processSecurity, processServiceWorker } from './app-report.helper';
 import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
 import { findBestAppIcon } from '../utils/icons';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
@@ -70,9 +70,9 @@ export class AppReport extends LitElement {
     iconURL: '/assets/new/icon_placeholder.png',
     iconAlt: 'Your sites logo'
   };
-  @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a'};
-  @property({ type: Object }) BorderStyles = { borderTop: '1px solid #00000033'};
-  @property({ type: Object }) LastEditedStyles = { color: '#000000b3'};
+  @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a' };
+  @property({ type: Object }) BorderStyles = { borderTop: '1px solid #00000033' };
+  @property({ type: Object }) LastEditedStyles = { color: '#000000b3' };
   @property() manifestCard = {};
   @property() serviceWorkerCard = {};
   @property() securityCard = {};
@@ -132,6 +132,9 @@ export class AppReport extends LitElement {
   @state() showSecurityErrorBanner: boolean = false;
   @state() showSecurityWarningBanner: boolean = false;
   @state() securityIssues: string[] = [];
+
+  @state() showIconsWarningBanner: boolean = false;
+  @state() showScreenshotsWarningBanner: boolean = false;
 
   @state() showServiceWorkerWarningBanner: boolean = false;
 
@@ -2184,6 +2187,8 @@ export class AppReport extends LitElement {
     // TODO: move installability score to different place
     this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit!.audits!.offlineSupport))),
     this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
+    this.allTodoItems.push(...await this.testImages(processImages(this.reportAudit?.audits)));
+
     this.filteredTodoItems = this.allTodoItems;
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
 
@@ -2383,6 +2388,26 @@ export class AppReport extends LitElement {
 
     //save security tests in session storage
     sessionStorage.setItem('security_tests', JSON.stringify(securityTests));
+    this.requestUpdate();
+    return todos;
+  }
+
+  async testImages(imagesValidation: Validation[]) {
+    let todos: unknown[] = [];
+
+    imagesValidation.forEach((result: Validation) => {
+      if (!result.valid) {
+        if (result.member === "icons") {
+          this.showIconsWarningBanner = true;
+        } else if (result.member === "screenshots") {
+          this.showScreenshotsWarningBanner = true;
+        }
+        todos.push({ "card": "mani-details", "field": result.member, "fix": result.errorString, "status": "recommended" });
+      }
+    });
+
+    //save security tests in session storage
+    sessionStorage.setItem('image_tests', JSON.stringify(imagesValidation));
     this.requestUpdate();
     return todos;
   }
@@ -3151,6 +3176,38 @@ export class AppReport extends LitElement {
                 </div>
               </div>
             ` :
+            null
+          }
+
+              ${this.showIconsWarningBanner ?
+            html`
+                  <div class="feedback-holder type-warning">
+                    <img src="/assets/new/yield.svg" alt="invalid result icon" />
+                    <div class="error-info">
+                      <p class="error-title">Manifest icons could not be fetched</p>
+                      <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+                      <div class="error-actions">
+                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                      </div>
+                    </div>
+                  </div>
+                ` :
+            null
+          }
+
+              ${this.showScreenshotsWarningBanner ?
+            html`
+                  <div class="feedback-holder type-warning">
+                    <img src="/assets/new/yield.svg" alt="invalid result icon" />
+                    <div class="error-info">
+                      <p class="error-title">Manifest screenshots could not be fetched</p>
+                      <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+                      <div class="error-actions">
+                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                      </div>
+                    </div>
+                  </div>
+                ` :
             null
           }
 
