@@ -3185,7 +3185,7 @@ export class AppReport extends LitElement {
                     <img src="/assets/new/yield.svg" alt="invalid result icon" />
                     <div class="error-info">
                       <p class="error-title">Manifest icons could not be fetched</p>
-                      <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and found issues. Check out the documentation linked below to learn more.</p>
                       <div class="error-actions">
                         <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
                       </div>
@@ -3201,7 +3201,7 @@ export class AppReport extends LitElement {
                     <img src="/assets/new/yield.svg" alt="invalid result icon" />
                     <div class="error-info">
                       <p class="error-title">Manifest screenshots could not be fetched</p>
-                      <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and found issues. Check out the documentation linked below to learn more.</p>
                       <div class="error-actions">
                         <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
                       </div>
