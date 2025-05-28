@@ -133,8 +133,8 @@ export class AppReport extends LitElement {
   @state() showSecurityWarningBanner: boolean = false;
   @state() securityIssues: string[] = [];
 
-  @state() showIconsWarningBanner: boolean = false;
-  @state() showScreenshotsWarningBanner: boolean = false;
+  @state() showIconsErrorBanner: boolean = false;
+  @state() showScreenshotsErrorBanner: boolean = false;
 
   @state() showServiceWorkerWarningBanner: boolean = false;
 
@@ -2190,7 +2190,7 @@ export class AppReport extends LitElement {
     this.allTodoItems.push(...await this.testImages(processImages(this.reportAudit?.audits)));
 
     this.filteredTodoItems = this.allTodoItems;
-    this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2];
+    this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2] && this.canPackageList[3];
 
     this.runningTests = false;
     this.requestUpdate();
@@ -2398,13 +2398,15 @@ export class AppReport extends LitElement {
     imagesValidation.forEach((result: Validation) => {
       if (!result.valid) {
         if (result.member === "icons") {
-          this.showIconsWarningBanner = true;
+          this.showIconsErrorBanner = true;
         } else if (result.member === "screenshots") {
-          this.showScreenshotsWarningBanner = true;
+          this.showScreenshotsErrorBanner = true;
         }
-        todos.push({ "card": "mani-details", "field": result.member, "fix": result.errorString, "status": "recommended" });
+        todos.push({ "card": "mani-details", "field": result.member, "fix": result.errorString, "status": "required" });
       }
     });
+
+    this.canPackageList[3] = !(this.showSecurityErrorBanner || this.showScreenshotsErrorBanner);
 
     //save security tests in session storage
     sessionStorage.setItem('image_tests', JSON.stringify(imagesValidation));
@@ -3179,15 +3181,15 @@ export class AppReport extends LitElement {
             null
           }
 
-              ${this.showIconsWarningBanner ?
+              ${this.showIconsErrorBanner ?
             html`
-                  <div class="feedback-holder type-warning">
-                    <img src="/assets/new/yield.svg" alt="invalid result icon" />
+                  <div class="feedback-holder type-error">
+                  <img src="/assets/new/stop.svg" alt="invalid result icon" />
                     <div class="error-info">
                       <p class="error-title">Manifest icons could not be fetched</p>
-                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and found issues. Check out the documentation linked below to learn more.</p>
+                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
                       <div class="error-actions">
-                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/03" target="_blank" rel="noopener">Manifest Documentation</a>
                       </div>
                     </div>
                   </div>
@@ -3195,15 +3197,15 @@ export class AppReport extends LitElement {
             null
           }
 
-              ${this.showScreenshotsWarningBanner ?
+              ${this.showScreenshotsErrorBanner ?
             html`
-                  <div class="feedback-holder type-warning">
-                    <img src="/assets/new/yield.svg" alt="invalid result icon" />
+                  <div class="feedback-holder type-error">
+                  <img src="/assets/new/stop.svg" alt="invalid result icon" />
                     <div class="error-info">
                       <p class="error-title">Manifest screenshots could not be fetched</p>
-                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and found issues. Check out the documentation linked below to learn more.</p>
+                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
                       <div class="error-actions">
-                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/03" target="_blank" rel="noopener">Manifest Documentation</a>
                       </div>
                     </div>
                   </div>
