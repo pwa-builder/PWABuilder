@@ -136,7 +136,7 @@ export function createWindowsPackageOptionsFromManifest(
       generate: false,
     },
     manifestUrl: maniURL,
-    manifest: manifest,
+    manifestFile: manifest,
     images: {
       baseImage: icon?.src || '',
       backgroundColor: 'transparent',
