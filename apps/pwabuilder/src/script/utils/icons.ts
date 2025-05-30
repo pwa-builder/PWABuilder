@@ -281,8 +281,9 @@ export class IconInfo {
 
   private getMimeTypeByExtension(): ImageFormat | null {
     const srcLower = this.icon.src?.toLowerCase() || '';
+    const srcParsed = srcLower.split('?')[0].split('#')[0];
     const extension = IconInfo.formats
-      .find(f => f.exts.some(ext => srcLower.endsWith(`.${ext}`)));
+      .find(f => f.exts.some(ext => srcParsed.endsWith(`.${ext}`)));
     return extension ?? null;
   }
 
