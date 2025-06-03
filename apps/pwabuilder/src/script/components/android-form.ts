@@ -852,7 +852,7 @@ export class AndroidForm extends AppPackageFormBase {
             id="signing-key-file-input"
             @change="${(e: Event) =>
               this.androidSigningKeyUploaded(e.target)}"
-            accept=".keystore"
+            accept=".keystore, .jks"
             required
           />
         </div>
