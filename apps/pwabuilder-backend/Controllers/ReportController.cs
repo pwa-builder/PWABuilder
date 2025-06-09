@@ -55,10 +55,10 @@ namespace PWABuilder.Controllers
                 // Run Lighthouse audit
                 var auditResult = await _lighthouseService.RunAuditAsync(site, desktop ?? false);
 
-                if (auditResult == null || auditResult.Error != null)
-                {
-                    throw new Exception(auditResult?.Error ?? "UnexpectedError");
-                }
+                // if (auditResult == null || auditResult.Error != null)
+                // {
+                //     throw new Exception(auditResult?.Error ?? "UnexpectedError");
+                // }
 
                 // Manifest validation
                 // if (validation == true && auditResult.ManifestJson != null)

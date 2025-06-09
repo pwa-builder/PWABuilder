@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace PWABuilder.Models
 {
     public class OutputStatus
@@ -8,7 +10,7 @@ namespace PWABuilder.Models
 
     public class OutputBody
     {
-        public string? Data { get; set; }
+        public JsonDocument? Data { get; set; }
         public OutputError? Error { get; set; }
     }
 
