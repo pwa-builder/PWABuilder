@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="PuppeteerSharp" Version="20.1.3" />
+  </ItemGroup>
+
 </Project>
