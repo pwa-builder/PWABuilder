@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using PWABuilder.Services;
 using PWABuilder.Utils;
 using PWABuilder.Models;
+using System.Text.Json;
 
 namespace PWABuilder.Controllers
 {
@@ -45,7 +46,7 @@ namespace PWABuilder.Controllers
             if (paramCheckResult.Status != 200)
             {
                 _logger.LogError("Report: {paramCheckResult}", paramCheckResult);
-                return StatusCode(paramCheckResult.Status, paramCheckResult.Body);
+                return StatusCode(paramCheckResult.Status, paramCheckResult);
             }
 
             _logger.LogInformation("Report: function is processing a request for site: {Site}", site);
@@ -55,10 +56,38 @@ namespace PWABuilder.Controllers
                 // Run Lighthouse audit
                 var auditResult = await _lighthouseService.RunAuditAsync(site, desktop ?? false);
 
-                // if (auditResult == null || auditResult.Error != null)
-                // {
-                //     throw new Exception(auditResult?.Error ?? "UnexpectedError");
-                // }
+                var root = auditResult.RootElement;
+                var audits = root.TryGetProperty("audits", out var auditsElem) ? auditsElem : default;
+                var artifacts_lh = root.TryGetProperty("artifacts", out var artifactsElem) ? artifactsElem : default;
+
+                if (audits.ValueKind == JsonValueKind.Undefined)
+                {
+                    _logger.LogWarning("Lighthouse output missing audits.");
+                    var auditFailedOutput = RequestUtils.CreateStatusCodeErrorResult(500, "AuditFailed", "Lighthouse audit failed or timed out.");
+                    return StatusCode(auditFailedOutput.Status, auditFailedOutput);
+                }
+
+                // Prepare artifacts and features
+                var artifacts = new Dictionary<string, object>();
+                object? swFeatures = null;
+
+                // Service Worker analysis (pseudo, implement AnalyzeServiceWorkerAsync)
+                if (audits.TryGetProperty("service-worker-audit", out var swAudit) &&
+                    swAudit.TryGetProperty("details", out var swDetails) &&
+                    swDetails.TryGetProperty("scriptUrl", out var swUrlElem))
+                {
+                    var swUrl = swUrlElem.GetString();
+                    artifacts["ServiceWorker"] = new { url = swUrl };
+                    try
+                    {
+                        // swFeatures = await _serviceWorkerAnalyzer.AnalyzeAsync(swUrl);
+                    }
+                    catch (Exception ex)
+                    {
+                        swFeatures = new { error = ex.Message };
+                    }
+                    // artifacts["ServiceWorkerRaw"] = swFeatures?.raw;
+                }
 
                 // Manifest validation
                 // if (validation == true && auditResult.ManifestJson != null)
@@ -86,30 +115,26 @@ namespace PWABuilder.Controllers
 
                 _logger.LogInformation("Report: function is DONE processing a request for site: {Site}", site);
 
-                var output = new OutputStatus
+                // Build the report object (as a C# anonymous or strongly-typed object)
+                var report = new
                 {
-                    Status = 200,
-                    Body = new OutputBody { Data = auditResult }
+                    audits = new
+                    {
+                        isOnHttps = new { score = audits.TryGetProperty("https-audit", out var httpsAudit) && httpsAudit.GetProperty("score").GetBoolean() },
+                        // ...other audit fields...
+                    },
+                    artifacts
                 };
+
+                var output = RequestUtils.CreateStatusCodeOKResult(auditResult);
 
                 return StatusCode(output.Status, output);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Report: function failed for {Site} with error: {Error}", site, ex.Message);
+                var output = RequestUtils.CreateStatusCodeErrorResult(500, ex.ToString(), ex.Message);
 
-                var output = new OutputStatus
-                {
-                    Status = 500,
-                    Body = new OutputBody
-                    {
-                        Error = new OutputError
-                        {
-                            Object = ex.ToString(),
-                            Message = ex.Message
-                        }
-                    }
-                };
                 return StatusCode(output.Status, output);
             }
         }
