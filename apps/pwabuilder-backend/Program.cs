@@ -2,8 +2,11 @@ using PWABuilder.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Remove duplicate logging.
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILighthouseService, LighthouseService>();
 
