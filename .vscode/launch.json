@@ -4,19 +4,41 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug in VSCode",
-            "type": "edge",
+            "name": "PWABuilder launch (backend+frontend)",
+            "type": "coreclr",
+            "requireExactSource": false,
             "request": "launch",
-            "version": "stable",
-            "url": "http://localhost:8000",
-            "webRoot": "${workspaceFolder}/build",
-            "sourceMaps": true,
-            "skipFiles": ["node_modules"],
-            "smartStep": true,
-            "pathMapping": {
-                "/": "${workspaceFolder}/build/index.html"
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/apps/pwabuilder-backend/bin/Debug/net9.0/PWABuilder.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/apps/pwabuilder-backend",
+            "stopAtEntry": false,
+            "launchSettingsProfile": "PWABuilder",
+            "launchSettingsFilePath": "${workspaceFolder}/apps/pwabuilder-backend/Properties/launchSettings.json",
+            "serverReadyAction": {
+                "action": "startDebugging",
+                "name": "Launch Edge",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
-            "preLaunchTask": "npm: debug"
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5777"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/src/Views"
+            },
+            "postDebugTask": "tasks.stop-debugging"
+        },
+        {
+            "name": "Launch Edge",
+            "url": "http://localhost:5777/",
+            "request": "launch",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}/apps/pwabuilder-frontend",
+            "sourceMaps": true,
+            "trace": true,
+            "preLaunchTask": "tasks.launch-vite",
+            "postDebugTask": "tasks.stop-debugging"
         }
-    ]
+    ],
 }

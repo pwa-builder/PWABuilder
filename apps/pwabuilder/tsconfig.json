@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "lib": [ "es2017", "esnext", "dom", "dom.iterable" ],
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./types",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "types": [ "node", "vite/client" ],
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "ts-lit-plugin",
+        "strict": true,
+        "rules": {
+          "no-invalid-css": "off",
+          "no-incompatible-type-binding": "warning"
+        },
+        "globalAttributes": [
+          "telemetry-area-id",
+          "telemetry-data",
+          "telemetry-event-id",
+          "fetchpriority"
+        ]
+      }
+    ]
+  },
+  "include": [ "Frontend/src/**/*.ts" ],
+  "exclude": [ "node_modules" ]
+}

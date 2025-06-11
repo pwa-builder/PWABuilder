@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.36105.23 d17.13
+VisualStudioVersion = 17.13.36105.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PWABuilder", "apps\pwabuilder-backend\PWABuilder.csproj", "{125875F1-4E50-4C3C-8F94-229A4D3D19E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PWABuilder", "apps\pwabuilder\PWABuilder.csproj", "{125875F1-4E50-4C3C-8F94-229A4D3D19E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

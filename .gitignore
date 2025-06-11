@@ -365,7 +365,7 @@ src/nuget.config
 src/coverage
 
 # Ignore Roslyn files
-src/Microsoft.Store.Web.csproj.AnyCPU.Debug.Roslyn.sarif
+.sarif
 
 #Ignore edgestoreweb sitemap which is copied to root folder.
 src/wwwroot/sitemap.xml

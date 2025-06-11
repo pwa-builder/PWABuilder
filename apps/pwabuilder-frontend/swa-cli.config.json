@@ -6,7 +6,7 @@
       "outputLocation": "dist",
       "appBuildCommand": "npm run build --if-present",
       "run": "npm start",
-      "appDevserverUrl": "http://localhost:3000"
+      "appDevserverUrl": "http://localhost:5777"
     }
   }
 }

@@ -1,28 +1,93 @@
 {
     "version": "2.0.0",
     "tasks": [
-      {
-        "label": "npm: debug",
-        "type": "npm",
-        "script": "debug",
-        "isBackground": true,
-        "problemMatcher": [
-            {
-                "pattern": [
-                  {
-                    "regexp": ".",
+        {
+            "label": "tasks.npm-install",
+            "type": "npm",
+            "script": "install",
+            "path": "apps/pwabuilder-frontend",
+            "isBackground": true,
+            "detail": "npm run intall"
+        },
+        {
+            "label": "tasks.launch-vite",
+            "type": "npm",
+            "script": "start",
+            "path": "apps/pwabuilder-frontend",
+            "isBackground": true,
+            "dependsOn": "tasks.npm-install",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",
                     "file": 1,
-                    "location": 2,
-                    "message": 3
-                  }
-                ],
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5,
+                    "code": 6
+                },
                 "background": {
-                  "activeOnStart": true,
-                  "beginsPattern": ".",
-                  "endsPattern": "Web Dev Server started"
+                    "activeOnStart": true,
+                    "beginsPattern": "vite",
+                    "endsPattern": "ready in"
                 }
-              }
-        ]
-      }
+            },
+            "detail": "npm run dev-server"
+        },
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "tasks.stop-debugging",
+            "dependsOn": [
+                "tasks.npm-run-stop",
+                "tasks.terminate-all",
+                "tasks.debug-stop"
+            ],
+            "dependsOrder": "parallel"
+        },
+        {
+            "label": "tasks.npm-run-stop",
+            "type": "npm",
+            "script": "stop",
+            "path": "apps/pwabuilder-frontend",
+            "presentation": {
+                "close": true
+            },
+            "isBackground": true,
+            "detail": "Executes npm run stop command. See package.json for details."
+        },
+        {
+            "label": "tasks.debug-stop",
+            "command": "${command:workbench.action.debug.stop}"
+        },
+        {
+            "label": "tasks.terminate-all",
+            "command": "echo ${input:terminate}",
+            "type": "shell",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "terminate",
+            "type": "command",
+            "command": "workbench.action.tasks.terminate",
+            "args": "terminateAll"
+        }
     ]
-  }
+}
