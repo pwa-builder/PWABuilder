@@ -115,13 +115,16 @@ namespace PWABuilder.Controllers
 
                 _logger.LogInformation("Report: function is DONE processing a request for site: {Site}", site);
 
-                // Build the report object (as a C# anonymous or strongly-typed object)
+                // Build the report object
                 var report = new
                 {
                     audits = new
                     {
-                        isOnHttps = new { score = audits.TryGetProperty("https-audit", out var httpsAudit) && httpsAudit.GetProperty("score").GetBoolean() },
-                        // ...other audit fields...
+                        isOnHttps = new
+                        {
+                            score = audits.TryGetProperty("https-audit", out var httpsAudit) && httpsAudit.TryGetProperty("score", out _)
+                        },
+                        // ...
                     },
                     artifacts
                 };
