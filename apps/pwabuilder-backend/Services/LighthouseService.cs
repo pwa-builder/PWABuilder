@@ -16,7 +16,7 @@ namespace PWABuilder.Services
         {
             var nodePath = @"C:\Program Files\nodejs\node.exe";  // Adjust as needed for your system
 
-            var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "node-scripts", "audit-runner.js");
+            var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), @"node-scripts\dist\src", "audit-runner.js");
 
             var args = $"{scriptPath} {url} {(desktop ? "desktop" : "mobile")}";
 

@@ -1,0 +1,21 @@
+{
+  "name": "node-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node audit-runner.js",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lighthouse": "11.1.0",
+    "puppeteer": "^23.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
