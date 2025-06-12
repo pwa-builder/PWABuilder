@@ -2,6 +2,8 @@
 using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
+using PWABuilder.Services;
+using System.Text.RegularExpressions;
 
 namespace PWABuilder.Controllers
 {
@@ -10,9 +12,11 @@ namespace PWABuilder.Controllers
     public class FindWebManifestController
     {
         private readonly ILogger<ManifestController> logger;
-        public FindWebManifestController(ILogger<ManifestController> logger)
+        private readonly PuppeteerService puppeteer;
+        public FindWebManifestController(ILogger<ManifestController> logger, PuppeteerService puppeteer)
         {
             this.logger = logger;
+            this.puppeteer = puppeteer;
         }
 
         [HttpGet]
@@ -20,9 +24,10 @@ namespace PWABuilder.Controllers
         {
             var siteUri = new Uri(site);
             using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent");
+
             try
             {
-                client.DefaultRequestHeaders.Add("User-Agent", $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent");
                 var response = client.GetAsync(siteUri).Result;
                 if (!response.IsSuccessStatusCode)
                 {
@@ -30,9 +35,9 @@ namespace PWABuilder.Controllers
                 }
 
                 var rawHtml = response.Content.ReadAsStringAsync().Result;
-                var link = Finder.getBetween(rawHtml, "rel=\"manifest\"", ">");
-                link = Finder.getBetween(link, "href=\"", "\"");
-                link = link.EndsWith("/") ? link.Remove(link.Length - 1) : link;
+                var linkMatch = Regex.Matches(rawHtml, @"<link\s*rel=""manifest""\s*href=\s*['""](.*?)['""]>");
+                var link = linkMatch.Count() > 0 ? linkMatch.First().Groups[1].Value : null;
+                link = link != null && link.EndsWith("/") ? link.Remove(link.Length - 1) : link;
 
                 var manifestUri = new Uri(siteUri, link);
                 var manifest = client.GetAsync(manifestUri).Result;
@@ -46,22 +51,8 @@ namespace PWABuilder.Controllers
             }
             catch (Exception ex)
             {
-                // download the browser executable
-                await new BrowserFetcher().DownloadAsync();
-
-                // browser execution configs
-                var launchOptions = new LaunchOptions
-                {
-                    Headless = true, // = false for testing
-                };
-
-                // open a new page in the controlled browser
-                using var browser = await Puppeteer.LaunchAsync(launchOptions);
-                using var page = await browser.NewPageAsync();
-                
-                // visit the target page
-                await page.GoToAsync(site, 15000, [WaitUntilNavigation.Load]);
-                await page.WaitForNetworkIdleAsync(new() { IdleTime = 1000 });
+                await puppeteer.CreateAsync();
+                using var page = await puppeteer.GoToSite(site);
                 var jsSelectAllManifestLink = @"Array.from(document.querySelectorAll('link[rel*=manifest]')).map(a => a.href);";
                 var urls = await page.EvaluateExpressionAsync<string[]>(jsSelectAllManifestLink);
 
