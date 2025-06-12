@@ -323,7 +323,7 @@ export class AppHeader extends LitElement {
                     rel="noopener"
                     data-tag="twitter_link"
                   >
-                    Twitter
+                    X
                   </a>
                 </sl-menu-item>
                 <sl-menu-item @click=${() => this.handleClickingLink("discord_link", "header.discord_clicked")}>

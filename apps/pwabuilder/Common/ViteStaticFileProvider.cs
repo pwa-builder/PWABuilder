@@ -1,4 +1,4 @@
-﻿namespace Microsoft.Store.Web.Utilities;
+﻿namespace Microsoft.PWABuilder.Common;
 
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;

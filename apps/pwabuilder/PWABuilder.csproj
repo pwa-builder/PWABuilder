@@ -10,5 +10,13 @@
     <Folder Include="Common\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
+
+  <Target Name="EnsureWebRootExists" BeforeTargets="Build">
+    <Message Importance="high" Text="Ensuring wwwroot folder exists" />
+    <PropertyGroup>
+      <WebRootPath>$(ProjectDir)wwwroot</WebRootPath>
+    </PropertyGroup>
+    <Exec Command="mkdir $(WebRootPath)" Condition="!Exists('$(WebRootPath)')" />
+  </Target>
   
 </Project>

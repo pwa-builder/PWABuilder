@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace PWABuilder.Controllers;
+namespace Microsoft.PWABuilder.Controllers;
 
 /// <summary>
 /// Controller for PWA web manifest-related actions, such as finding a manifest for a web app or validating a manifest.

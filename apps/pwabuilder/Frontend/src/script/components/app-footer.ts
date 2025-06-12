@@ -189,7 +189,7 @@ export class AppFooter extends LitElement {
             aria-label="Follow us on X, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <span title="Follow us on Twitter"><sl-icon name="twitter" role="presentation"></sl-icon></span>
+            <span title="Follow us on X"><sl-icon name="twitter-x" role="presentation"></sl-icon></span>
           </a>
 
           <a

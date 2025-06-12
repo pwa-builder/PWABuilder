@@ -30,7 +30,7 @@ export const communityCards: Array<CardData> = [
     company: "github"
   },
   {
-    imageUrl: '/assets/new/twitter.png',
+    imageUrl: '/assets/icons/twitter-x.svg',
     title: localeStrings.text.community_hub.titles.twitter,
     description: localeStrings.text.community_hub.description.twitter,
     links: [

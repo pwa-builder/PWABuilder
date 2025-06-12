@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace PWABuilder.Controllers;
+namespace Microsoft.PWABuilder.Controllers;
 
 [Route("[controller]")]
 public class HomeController : Controller

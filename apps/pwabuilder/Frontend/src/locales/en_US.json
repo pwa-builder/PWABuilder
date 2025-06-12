@@ -209,12 +209,12 @@
     "community_hub": {
       "titles": {
         "github": "Contribute on GitHub",
-        "twitter": "Follow us on Twitter!",
+        "twitter": "Follow us on X!",
         "discord": "Join us on our Discord Server"
       },
       "description": {
         "github": "Contribute to this open source project by joining our PWA community on GitHub.",
-        "twitter": "Meet our fellow PWA enthusiast and follow our latest releases and updates on Twitter.",
+        "twitter": "Meet our fellow PWA enthusiast and follow our latest releases and updates on X.",
         "discord": "Join the PWABuilder Discord community to connect with the people and resources you need."
       }
     },
