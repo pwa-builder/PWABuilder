@@ -1,3 +1,4 @@
+import { Validation } from '@pwabuilder/manifest-validation';
 import { env } from '../utils/environment';
 import { getHeaders } from '../utils/platformTrackingHeaders';
 
@@ -27,6 +28,9 @@ export type ReportAudit = {
 		splashScreen: { score: boolean },
 		themedOmnibox: { score: boolean },
 		viewport: { score: boolean }
+		images: {
+			score: boolean, details: { iconsValidation?: Validation, screenshotsValidation?: Validation }
+		}
 	},
 	artifacts: {
 		webAppManifest: {

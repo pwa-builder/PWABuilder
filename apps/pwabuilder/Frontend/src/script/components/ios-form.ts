@@ -46,7 +46,6 @@ export class IOSForm extends AppPackageFormBase {
         display: flex;
         overflow: auto;
         flex-direction: column;
-        height: 54vh;
       }
 
       sl-details {
@@ -82,17 +81,6 @@ export class IOSForm extends AppPackageFormBase {
         font-size: 18px;
         font-weight: bold;
       }
-
-      #form-holder{
-          display: flex;
-          flex-direction: column;
-          border-radius: 10px;
-          justify-content: spacve-between;
-          height: 100%;
-        }
-
-
-
     `;
     return [
       ...super.styles,
@@ -197,16 +185,16 @@ export class IOSForm extends AppPackageFormBase {
             <div class="adv-settings">
               <div>
                 <div class="">
-                  <div class="form-group">
-                    ${this.renderFormInput({
-                      label: 'Image URL',
-                      inputId: 'imageUrlInput',
-                      tooltip: `The URL of a square 512x512 or larger PNG image from which to generate your iOS app icons. This can be an absolute URL or a URL relative to your web manifest.`,
-                      placeholder: '/images/512x512.png',
-                      value: this.packageOptions.imageUrl,
-                      required: true,
-                      inputHandler: (val: string) => this.packageOptions.imageUrl = val
-                    })}
+              <div class="form-group">
+                ${this.renderFormInput({
+                  label: 'Image URL',
+                  inputId: 'imageUrlInput',
+                  tooltip: `The URL of a square 512x512 or larger PNG image from which to generate your iOS app icons. This can be an absolute URL or a URL relative to your web manifest.`,
+                  placeholder: '/images/512x512.png',
+                  value: this.packageOptions.imageUrl,
+                  required: true,
+                  inputHandler: (val: string) => this.packageOptions.imageUrl = val
+                })}
                   </div>
                 </div>
               </div>

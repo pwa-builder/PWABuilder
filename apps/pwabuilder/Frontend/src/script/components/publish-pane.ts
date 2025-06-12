@@ -22,6 +22,7 @@ import './oculus-form';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
 import { classMap } from 'lit/directives/class-map.js';
+import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
 
 @customElement('publish-pane')
 export class PublishPane extends LitElement {
@@ -72,6 +73,7 @@ export class PublishPane extends LitElement {
     }
 }
 
+  objectStore = 'form-data'
 
   readonly platforms: ICardData[] = [
     {
@@ -952,9 +954,12 @@ export class PublishPane extends LitElement {
     );
   }
 
-  async hideDialog(e: any){
+  async hideDialog(e: any) {
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
-    if(e.target === dialog){
+    if (e.target === dialog) {
+      this.saveFormData().catch(err => {
+        console.error('Error saving form data on dialog hide:', err);
+      });
       this.blob = undefined;
       this.generating = false;
       this.feedbackMessages = [];
@@ -975,6 +980,9 @@ export class PublishPane extends LitElement {
   backToCards(){
     this.cardsOrForm = !this.cardsOrForm;
     this.feedbackMessages = [];
+    this.saveFormData().catch(err => {
+      console.error('Error saving form data on back to cards:', err);
+    });
     recordPWABuilderProcessStep(`left_${this.selectedStore}_form`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
@@ -1044,6 +1052,72 @@ export class PublishPane extends LitElement {
       const details = platForm.shadowRoot!.querySelector('sl-details');
       const expanding = details ? details.show() : Promise.resolve();
       expanding.then(() => form!.reportValidity()); // it may contain errors collapsed
+    }
+    this.saveFormData().catch(err => {
+      console.error('Error saving form data on submit:', err);
+    });
+  }
+
+  private getFormKey(): string {
+    return `${getURL()}-${this.selectedStore}-form-data`;
+  }
+
+  // Save form data to IndexedDB
+  async saveFormData() {
+    try {
+      const platForm = this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase;
+      if (platForm && platForm.getForm) {
+        const form = platForm.getForm();
+        if (form) {
+          const data: Record<string, any> = {};
+          Array.from(form.elements).forEach((el: any) => {
+            if (el.id) {
+              if (el.type === "checkbox" || el.type === "radio") {
+                data[el.id] = el.checked;
+              } else {
+                data[el.id] = el.value;
+              }
+            }
+          });
+          await setDataInDB(this.objectStore, this.getFormKey(), data);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to save form data:', error);
+      throw error;
+    }
+  }
+
+  // Load form data from IndexedDB
+  async loadFormData() {
+    try {
+      const platForm = this.shadowRoot!.getElementById("packaging-form") as AppPackageFormBase;
+      if (platForm && platForm.getForm) {
+        const form = platForm.getForm();
+        if (form) {
+          const data = await getDataFromDB(this.objectStore, this.getFormKey());
+          if (data) {
+            Array.from(form.elements).forEach((el: any) => {
+              if (el.id && data.hasOwnProperty(el.id)) {
+                if (el.type === "checkbox" || el.type === "radio") {
+                  el.checked = data[el.id];
+                } else {
+                  el.value = data[el.id];
+                }
+              }
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load form data:', error);
+    }
+  }
+
+  // Load form data after rendering the form
+  updated(changedProps: Map<string, any>) {
+    if (changedProps.has('cardsOrForm') && !this.cardsOrForm) {
+      setTimeout(() => this.loadFormData(), 0);
     }
   }
 
