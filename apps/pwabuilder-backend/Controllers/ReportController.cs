@@ -1,12 +1,7 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using PWABuilder.Services;
 using PWABuilder.Utils;
-using PWABuilder.Models;
-using System.Text.Json;
 
 namespace PWABuilder.Controllers
 {
@@ -16,6 +11,7 @@ namespace PWABuilder.Controllers
     {
         private readonly ILogger<ReportController> _logger;
         private readonly ILighthouseService _lighthouseService;
+
         // private readonly IManifestValidationService _manifestValidationService;
         // private readonly IAnalyticsService _analyticsService;
         // private readonly IImageValidationService _imageValidationService;
@@ -23,10 +19,10 @@ namespace PWABuilder.Controllers
         public ReportController(
             ILogger<ReportController> logger,
             ILighthouseService lighthouseService
-            // IManifestValidationService manifestValidationService,
-            // IAnalyticsService analyticsService,
-            // IImageValidationService imageValidationService
-            )
+        // IManifestValidationService manifestValidationService,
+        // IAnalyticsService analyticsService,
+        // IImageValidationService imageValidationService
+        )
         {
             _logger = logger;
             _lighthouseService = lighthouseService;
@@ -39,8 +35,9 @@ namespace PWABuilder.Controllers
         public async Task<IActionResult> Get(
             [FromQuery] string site,
             [FromQuery] bool? desktop,
-            [FromQuery] bool? validation,
-            [FromQuery(Name = "ref")] string referrer = null)
+            // [FromQuery] bool? validation,
+            [FromQuery(Name = "ref")] string referrer = null
+        )
         {
             var paramCheckResult = RequestUtils.CheckParams(Request, ["site"]);
             if (paramCheckResult.Status != 200)
@@ -49,7 +46,10 @@ namespace PWABuilder.Controllers
                 return StatusCode(paramCheckResult.Status, paramCheckResult);
             }
 
-            _logger.LogInformation("Report: function is processing a request for site: {Site}", site);
+            _logger.LogInformation(
+                "Report: function is processing a request for site: {Site}",
+                site
+            );
 
             try
             {
@@ -57,13 +57,21 @@ namespace PWABuilder.Controllers
                 var auditResult = await _lighthouseService.RunAuditAsync(site, desktop ?? false);
 
                 var root = auditResult.RootElement;
-                var audits = root.TryGetProperty("audits", out var auditsElem) ? auditsElem : default;
-                var artifacts_lh = root.TryGetProperty("artifacts", out var artifactsElem) ? artifactsElem : default;
+                var audits = root.TryGetProperty("audits", out var auditsElem)
+                    ? auditsElem
+                    : default;
+                var artifacts_lh = root.TryGetProperty("artifacts", out var artifactsElem)
+                    ? artifactsElem
+                    : default;
 
                 if (audits.ValueKind == JsonValueKind.Undefined)
                 {
                     _logger.LogWarning("Lighthouse output missing audits.");
-                    var auditFailedOutput = RequestUtils.CreateStatusCodeErrorResult(500, "AuditFailed", "Lighthouse audit failed or timed out.");
+                    var auditFailedOutput = RequestUtils.CreateStatusCodeErrorResult(
+                        500,
+                        "AuditFailed",
+                        "Lighthouse audit failed or timed out."
+                    );
                     return StatusCode(auditFailedOutput.Status, auditFailedOutput);
                 }
 
@@ -72,9 +80,11 @@ namespace PWABuilder.Controllers
                 object? swFeatures = null;
 
                 // Service Worker analysis (pseudo, implement AnalyzeServiceWorkerAsync)
-                if (audits.TryGetProperty("service-worker-audit", out var swAudit) &&
-                    swAudit.TryGetProperty("details", out var swDetails) &&
-                    swDetails.TryGetProperty("scriptUrl", out var swUrlElem))
+                if (
+                    audits.TryGetProperty("service-worker-audit", out var swAudit)
+                    && swAudit.TryGetProperty("details", out var swDetails)
+                    && swDetails.TryGetProperty("scriptUrl", out var swUrlElem)
+                )
                 {
                     var swUrl = swUrlElem.GetString();
                     artifacts["ServiceWorker"] = new { url = swUrl };
@@ -113,30 +123,211 @@ namespace PWABuilder.Controllers
                 // };
                 // await _analyticsService.UploadAsync(auditResult, analyticsInfo);
 
-                _logger.LogInformation("Report: function is DONE processing a request for site: {Site}", site);
+                _logger.LogInformation(
+                    "Report: function is DONE processing a request for site: {Site}",
+                    site
+                );
 
                 // Build the report object
-                var report = new
+                var report = new Report
                 {
-                    audits = new
+                    audits = new Audits
                     {
-                        isOnHttps = new
+                        isOnHttps = new ScoreObj
                         {
-                            score = audits.TryGetProperty("https-audit", out var httpsAudit) && httpsAudit.TryGetProperty("score", out _)
+                            score =
+                                audits.TryGetProperty("https-audit", out var httpsAudit)
+                                && httpsAudit.ValueKind == JsonValueKind.Object
+                                && httpsAudit.TryGetProperty("score", out var scoreProp)
+                                && scoreProp.ValueKind == JsonValueKind.True,
                         },
-                        // ...
+                        noMixedContent = new ScoreObj
+                        {
+                            score =
+                                audits.TryGetProperty("is-on-https", out var mixedContentAudit)
+                                && mixedContentAudit.ValueKind == JsonValueKind.Object
+                                && mixedContentAudit.TryGetProperty("score", out var mixedScore)
+                                && (
+                                    mixedScore.ValueKind == JsonValueKind.True
+                                    || mixedScore.ValueKind == JsonValueKind.False
+                                ),
+                        },
+                        installableManifest = new InstallableManifestAudit
+                        {
+                            score =
+                                audits.TryGetProperty(
+                                    "installable-manifest",
+                                    out var installableManifestAudit
+                                )
+                                && installableManifestAudit.ValueKind == JsonValueKind.Object
+                                && installableManifestAudit.TryGetProperty("score", out var imScore)
+                                && (
+                                    imScore.ValueKind == JsonValueKind.True
+                                    || imScore.ValueKind == JsonValueKind.False
+                                ),
+                            details = new InstallableManifestDetails
+                            {
+                                url =
+                                    installableManifestAudit.ValueKind == JsonValueKind.Object
+                                    && installableManifestAudit.TryGetProperty(
+                                        "details",
+                                        out var installableDetails
+                                    )
+                                    && installableDetails.ValueKind == JsonValueKind.Object
+                                    && installableDetails.TryGetProperty(
+                                        "debugData",
+                                        out var debugData
+                                    )
+                                    && debugData.ValueKind == JsonValueKind.Object
+                                    && debugData.TryGetProperty(
+                                        "manifestUrl",
+                                        out var manifestUrlElem
+                                    )
+                                        ? manifestUrlElem.GetString()
+                                        : null,
+                                validation =
+                                    installableManifestAudit.ValueKind == JsonValueKind.Object
+                                    && installableManifestAudit.TryGetProperty(
+                                        "details",
+                                        out var installableDetails2
+                                    )
+                                    && installableDetails2.ValueKind == JsonValueKind.Object
+                                    && installableDetails2.TryGetProperty(
+                                        "validation",
+                                        out var validationElem
+                                    )
+                                        ? validationElem.ToString()
+                                        : null,
+                            },
+                        },
+                        serviceWorker = new ServiceWorkerAudit
+                        {
+                            score =
+                                audits.TryGetProperty("service-worker-audit", out var swAuditObj)
+                                && swAuditObj.ValueKind == JsonValueKind.Object
+                                && swAuditObj.TryGetProperty("score", out var swScore)
+                                && (
+                                    swScore.ValueKind == JsonValueKind.True
+                                    || swScore.ValueKind == JsonValueKind.False
+                                ),
+                            details = new ServiceWorkerDetails
+                            {
+                                url =
+                                    swAuditObj.ValueKind == JsonValueKind.Object
+                                    && swAuditObj.TryGetProperty("details", out var swDetailsObj)
+                                    && swDetailsObj.ValueKind == JsonValueKind.Object
+                                    && swDetailsObj.TryGetProperty(
+                                        "scriptUrl",
+                                        out var scriptUrlElem
+                                    )
+                                        ? scriptUrlElem.GetString()
+                                        : null,
+                                scope =
+                                    swAuditObj.ValueKind == JsonValueKind.Object
+                                    && swAuditObj.TryGetProperty("details", out var swDetailsObj2)
+                                    && swDetailsObj2.ValueKind == JsonValueKind.Object
+                                    && swDetailsObj2.TryGetProperty(
+                                        "scopeUrl",
+                                        out var scopeUrlElem
+                                    )
+                                        ? scopeUrlElem.GetString()
+                                        : null,
+                                features = swFeatures,
+                                error =
+                                    swAuditObj.ValueKind == JsonValueKind.Object
+                                    && swAuditObj.TryGetProperty("details", out var swDetailsObj3)
+                                    && swDetailsObj3.ValueKind == JsonValueKind.Object
+                                    && swDetailsObj3.TryGetProperty("error", out var errorElem)
+                                        ? errorElem.GetString()
+                                        : null,
+                            },
+                        },
+                        offlineSupport = new ScoreObj
+                        {
+                            score =
+                                audits.TryGetProperty("offline-audit", out var offlineAudit)
+                                && offlineAudit.ValueKind == JsonValueKind.Object
+                                && offlineAudit.TryGetProperty("score", out var offlineScore)
+                                && (
+                                    offlineScore.ValueKind == JsonValueKind.True
+                                    || offlineScore.ValueKind == JsonValueKind.False
+                                ),
+                        },
+                        images = new ImagesAudit
+                        {
+                            score =
+                                audits.TryGetProperty("images-audit", out var imagesAudit)
+                                && imagesAudit.ValueKind == JsonValueKind.Object
+                                && imagesAudit.TryGetProperty("score", out var imagesScore)
+                                && (
+                                    imagesScore.ValueKind == JsonValueKind.True
+                                    || imagesScore.ValueKind == JsonValueKind.False
+                                ),
+                            details = new ImagesDetails
+                            {
+                                iconsValidation =
+                                    imagesAudit.ValueKind == JsonValueKind.Object
+                                    && imagesAudit.TryGetProperty("details", out var imagesDetails)
+                                    && imagesDetails.ValueKind == JsonValueKind.Object
+                                    && imagesDetails.TryGetProperty(
+                                        "iconsValidation",
+                                        out var iconsValidationElem
+                                    )
+                                        ? iconsValidationElem.ToString()
+                                        : null,
+                                screenshotsValidation =
+                                    imagesAudit.ValueKind == JsonValueKind.Object
+                                    && imagesAudit.TryGetProperty("details", out var imagesDetails2)
+                                    && imagesDetails2.ValueKind == JsonValueKind.Object
+                                    && imagesDetails2.TryGetProperty(
+                                        "screenshotsValidation",
+                                        out var screenshotsValidationElem
+                                    )
+                                        ? screenshotsValidationElem.ToString()
+                                        : null,
+                            },
+                        },
                     },
-                    artifacts
+                    artifacts = new Artifacts
+                    {
+                        webAppManifest =
+                            artifacts_lh.ValueKind == JsonValueKind.Object
+                            && artifacts_lh.TryGetProperty("Manifest", out var manifestElem)
+                            && manifestElem.ValueKind == JsonValueKind.Object
+                                ? new
+                                {
+                                    url = manifestElem.TryGetProperty("url", out var urlElem)
+                                        ? urlElem.GetString()
+                                        : null,
+                                    raw = manifestElem.TryGetProperty("raw", out var rawElem)
+                                        ? rawElem.GetString()
+                                        : null,
+                                }
+                                : null,
+                        serviceWorker =
+                            artifacts_lh.ValueKind == JsonValueKind.Object
+                            && artifacts_lh.TryGetProperty("ServiceWorker", out var swElem)
+                                ? swElem.ToString()
+                                : null,
+                    },
                 };
-
                 var output = RequestUtils.CreateStatusCodeOKResult(auditResult);
 
                 return StatusCode(output.Status, output);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Report: function failed for {Site} with error: {Error}", site, ex.Message);
-                var output = RequestUtils.CreateStatusCodeErrorResult(500, ex.ToString(), ex.Message);
+                _logger.LogError(
+                    ex,
+                    "Report: function failed for {Site} with error: {Error}",
+                    site,
+                    ex.Message
+                );
+                var output = RequestUtils.CreateStatusCodeErrorResult(
+                    500,
+                    ex.ToString(),
+                    ex.Message
+                );
 
                 return StatusCode(output.Status, output);
             }
