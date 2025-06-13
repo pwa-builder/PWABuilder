@@ -6,7 +6,7 @@ recordProcessStep,
 recordPWABuilderProcessStep,
 } from '../utils/analytics';
 import { getURL } from '../services/app-info';
-import { generatePackage, Platform } from '../services/package';
+import { generatePackage, Platform } from '../services/publish';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 

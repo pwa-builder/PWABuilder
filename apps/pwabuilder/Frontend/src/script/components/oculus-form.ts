@@ -6,7 +6,7 @@ import {
   createOculusPackageOptionsFromManifest,
   emptyOculusPackageOptions,
   emptyOculusSigningKey,
-} from '../services/package/oculus-publish';
+} from '../services/publish/oculus-publish';
 import { getManifestContext } from '../services/app-info';
 import { SigningMode } from '../utils/oculus-validation';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';

@@ -1,12 +1,16 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+  AnalyticsBehavior,
+  recordProcessStep,
+  recordPWABuilderProcessStep,
+} from '../utils/analytics';
 import { getManifestContext, getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
-import { generatePackage, Platform } from '../services/package';
+import { generatePackage, Platform } from '../services/publish';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 

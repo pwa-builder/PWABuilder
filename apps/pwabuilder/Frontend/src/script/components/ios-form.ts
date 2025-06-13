@@ -5,7 +5,7 @@ import { AppPackageFormBase } from './app-package-form-base';
 import {
 createIOSPackageOptionsFromManifest,
 emptyIOSPackageOptions,
-} from '../services/package/ios-publish';
+} from '../services/publish/ios-publish';
 import { getManifestContext } from '../services/app-info';
 import {
 AnalyticsBehavior,

@@ -4,7 +4,7 @@ import { fetchOrCreateManifest } from '../services/manifest';
 import {
 createAndroidPackageOptionsFromManifest,
 emptyAndroidPackageOptions,
-} from '../services/package/android-publish';
+} from '../services/publish/android-publish';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';

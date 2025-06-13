@@ -5,22 +5,25 @@ import {
   createWindowsPackageOptionsFromManifest,
   emptyWindowsPackageOptions,
   windowsLanguages,
-} from '../services/package/windows-publish';
+} from '../services/publish/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+  AnalyticsBehavior,
+  recordPWABuilderProcessStep,
+} from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
-import "../components/arrow-link";
+import '../components/arrow-link';
 import '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/option/option.js';
 import '@shoelace-style/shoelace/dist/components/radio/radio.js';
 import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 
-import Ajv2020 from "ajv/dist/2020";
-import addFormats from "ajv-formats";
+import Ajv2020 from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
 
 import { classMap } from 'lit/directives/class-map.js';
 const ajv = new Ajv2020({ allErrors: true });
