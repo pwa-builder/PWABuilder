@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.PWABuilder.Common;;
+using Microsoft.PWABuilder.Common;
+using PWABuilder.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<ViteEntryPointProvider>();
+builder.Services.AddTransient<PuppeteerService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
