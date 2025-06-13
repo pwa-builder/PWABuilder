@@ -1,4 +1,8 @@
+import customSettings from "./custom-settings.js";
+
 const lighthouseSettings = {
+  extends: "lighthouse:default",
+  settings: { ...customSettings },
   artifacts: [
     { id: "DevtoolsLog", gatherer: "devtools-log" },
     { id: "InstallabilityErrors", gatherer: "installability-errors" },

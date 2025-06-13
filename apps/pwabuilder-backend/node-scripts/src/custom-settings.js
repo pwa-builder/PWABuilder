@@ -1,4 +1,5 @@
 const customSettings = {
+  screenEmulation: { mobile: false }, // Defaults to false, but overridden by the CLI flag
   logLevel: "silent",
   maxWaitForFcp: 10 * 1000,
   maxWaitForLoad: 15 * 1000,
