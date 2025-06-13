@@ -16,7 +16,7 @@
     },
     {
       "name": "launch.edge",
-      "url": "https://localhost:7217/home",
+      "url": "https://localhost:7217",
       "request": "launch",
       "type": "msedge",
       "webRoot": "${workspaceFolder}/frontend",

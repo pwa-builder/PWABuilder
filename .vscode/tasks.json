@@ -2,18 +2,39 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "tasks.build-backend",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/pwabuilder"
+            },
+        },
+        {
             "label": "tasks.npm-install",
+            "detail": "npm run install",
             "type": "npm",
+            "path": "apps/pwabuilder/Frontend",
             "script": "install",
-            "path": "apps/pwabuilder-frontend",
-            "isBackground": true,
-            "detail": "npm run intall"
+            "isBackground": true
         },
         {
             "label": "tasks.launch-vite",
+            "detail": "npm run dev",
             "type": "npm",
-            "script": "start",
-            "path": "apps/pwabuilder-frontend",
+            "path": "apps/pwabuilder/Frontend",
+            "script": "dev",
             "isBackground": true,
             "dependsOn": "tasks.npm-install",
             "problemMatcher": {
@@ -31,25 +52,7 @@
                     "beginsPattern": "vite",
                     "endsPattern": "ready in"
                 }
-            },
-            "detail": "npm run dev-server"
-        },
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "shell",
-            "args": [
-                "build",
-                // Ask dotnet build to generate full paths for file names.
-                "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "group": "build",
-            "presentation": {
-                "reveal": "silent"
-            },
-            "problemMatcher": "$msCompile"
+            }
         },
         {
             "label": "tasks.stop-debugging",
@@ -64,7 +67,7 @@
             "label": "tasks.npm-run-stop",
             "type": "npm",
             "script": "stop",
-            "path": "apps/pwabuilder-frontend",
+            "path": "apps/pwabuilder/Frontend",
             "presentation": {
                 "close": true
             },
