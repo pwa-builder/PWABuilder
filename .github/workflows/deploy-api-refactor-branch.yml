@@ -11,11 +11,14 @@ env:
   CONTAINER_APP_NAME: pwabuilder-api-refactor-app
   CONTAINER_APP_ENV: pwabuilder-api-refactor-env
   ACR_NAME: pwabuilder
-  IMAGE_NAME: pwabuilder-api-refactor
+  IMAGE_NAME: pwabuilder-api-refactor 
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     
     steps:
     - name: Checkout code
