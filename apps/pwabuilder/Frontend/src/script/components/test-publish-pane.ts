@@ -28,7 +28,7 @@ import './android-form';
 import './ios-form';
 import './oculus-form';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { createWindowsPackageOptionsFromManifest } from '../services/package/windows-publish';
+import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 import { ManifestContext } from '../utils/interfaces';
 
 @customElement('test-publish-pane')
