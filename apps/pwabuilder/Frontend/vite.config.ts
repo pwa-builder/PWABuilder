@@ -8,6 +8,7 @@ export default defineConfig({
   build: {
     sourcemap: true,
     assetsDir: "code",
+    outDir: "../wwwroot"
   },
   plugins: [
     // JS bundle visualizer. Will generate a file called `dist/pwabuilder-bundle-stats.html` that contains a visual representation of the bundles created.

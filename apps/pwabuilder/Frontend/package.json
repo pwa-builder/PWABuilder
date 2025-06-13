@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@pwabuilder/code-editor": "file:../../../components/code-editor",
     "@pwabuilder/manifest-editor": "file:../../../components/manifest-editor",
     "@pwabuilder/manifest-information": "file:../../../libraries/manifest-information",
     "@pwabuilder/manifest-validation": "file:../../../libraries/manifest-validation",
