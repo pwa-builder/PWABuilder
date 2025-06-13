@@ -50,7 +50,20 @@ jobs:
     - name: Check ACR permissions
       run: |
         echo "Checking role assignments for ACR..."
-        az role assignment list --scope "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.ACR_RESOURCE_GROUP }}/providers/Microsoft.ContainerRegistry/registries/${{ env.ACR_NAME }}" --query "[].{principalId:principalId, roleDefinitionName:roleDefinitionName, principalType:principalType}" --output table
+        echo "ACR Scope: /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.ACR_RESOURCE_GROUP }}/providers/Microsoft.ContainerRegistry/registries/${{ env.ACR_NAME }}"
+        
+        echo "1. Role assignments at ACR level:"
+        az role assignment list --scope "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.ACR_RESOURCE_GROUP }}/providers/Microsoft.ContainerRegistry/registries/${{ env.ACR_NAME }}" --query "[].{principalId:principalId, roleDefinitionName:roleDefinitionName, principalType:principalType}" --output table || echo "No role assignments found at ACR level"
+        
+        echo "2. Role assignments at Resource Group level:"
+        az role assignment list --resource-group "${{ env.ACR_RESOURCE_GROUP }}" --query "[].{principalId:principalId, roleDefinitionName:roleDefinitionName, principalType:principalType, scope:scope}" --output table || echo "No role assignments found at RG level"
+        
+        echo "3. All role assignments for current identity:"
+        CURRENT_OBJECT_ID=$(az ad sp show --id ${{ secrets.AZURE_APP_ID }} --query "id" --output tsv 2>/dev/null || echo "unknown")
+        echo "Current SP Object ID: $CURRENT_OBJECT_ID"
+        if [ "$CURRENT_OBJECT_ID" != "unknown" ]; then
+          az role assignment list --assignee "$CURRENT_OBJECT_ID" --query "[].{roleDefinitionName:roleDefinitionName, scope:scope}" --output table || echo "No role assignments found for current identity"
+        fi
         
     - name: Verify ACR exists
       run: |
