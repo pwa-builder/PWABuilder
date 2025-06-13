@@ -15,7 +15,7 @@ npm install
 
 # Install Puppeteer globally for development
 echo "🤖 Installing Puppeteer..."
-npm install -g puppeteer
+sudo npm install -g puppeteer
 
 # Set Puppeteer to skip downloading Chromium (we installed Chrome instead)
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true

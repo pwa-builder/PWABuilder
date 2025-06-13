@@ -1,16 +1,17 @@
 {
   "name": "PWABuilder Development Container",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "pwabuilder",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "nodeGypDependencies": true,
-      "version": "lts"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+  "build": {
+    "dockerfile": "Dockerfile"
   },
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",  
+  // Remove the features section since we're installing Node.js in the Dockerfile
+  // "features": {
+  //   "ghcr.io/devcontainers/features/node:1": {
+  //     "nodeGypDependencies": true,
+  //     "version": "lts"
+  //   },
+  //   "ghcr.io/devcontainers/features/github-cli:1": {}
+  // },
   "customizations": {
     "vscode": {
       "settings": {
@@ -39,8 +40,7 @@
     "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true",
     "PUPPETEER_EXECUTABLE_PATH": "/usr/bin/google-chrome-stable"
   },
-
-  "forwardPorts": [5000, 5001, 7217, 3000],
+  "forwardPorts": [5000, 5001, 7217, 3000, 5173],
   "portsAttributes": {
     "5000": {
       "label": "HTTP",
@@ -55,15 +55,14 @@
       "onAutoForward": "notify"
     },
     "3000": {
+      "label": "Vite Dev Server (Legacy)",
+      "onAutoForward": "notify"
+    },
+    "5173": {
       "label": "Vite Dev Server",
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "bash .devcontainer/setup.sh",
-  
-  "remoteUser": "vscode",
-  
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached"
-  ]
+  "postCreateCommand": "bash .devcontainer/setup.sh",  
+  "remoteUser": "vscode"
 }
