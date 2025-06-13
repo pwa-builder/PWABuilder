@@ -36,9 +36,21 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         
+    - name: Debug Azure identity
+      run: |
+        echo "Current Azure account info:"
+        az account show --query "{subscriptionId:id, tenantId:tenantId, user:user}" --output table
+        echo "Current service principal object ID:"
+        az ad sp show --id ${{ secrets.AZURE_APP_ID }} --query "id" --output tsv || echo "Could not get SP info"
+        
     - name: Create Container Apps resource group (if it doesn't exist)
       run: |
         az group create --name ${{ env.CONTAINER_APP_RESOURCE_GROUP }} --location ${{ env.AZURE_LOCATION }} || true
+        
+    - name: Check ACR permissions
+      run: |
+        echo "Checking role assignments for ACR..."
+        az role assignment list --scope "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.ACR_RESOURCE_GROUP }}/providers/Microsoft.ContainerRegistry/registries/${{ env.ACR_NAME }}" --query "[].{principalId:principalId, roleDefinitionName:roleDefinitionName, principalType:principalType}" --output table
         
     - name: Verify ACR exists
       run: |
