@@ -2,9 +2,15 @@ import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { AppPackageFormBase } from './app-package-form-base';
-import { createIOSPackageOptionsFromManifest, emptyIOSPackageOptions } from '../services/publish/ios-publish';
+import {
+createIOSPackageOptionsFromManifest,
+emptyIOSPackageOptions,
+} from '../services/package/ios-publish';
 import { getManifestContext } from '../services/app-info';
-import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+AnalyticsBehavior,
+recordPWABuilderProcessStep,
+} from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
 import '@shoelace-style/shoelace/dist/components/details/details.js';

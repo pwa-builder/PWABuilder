@@ -1,13 +1,19 @@
 import { css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { createAndroidPackageOptionsFromManifest, emptyAndroidPackageOptions } from '../services/publish/android-publish';
+import {
+createAndroidPackageOptionsFromManifest,
+emptyAndroidPackageOptions,
+} from '../services/package/android-publish';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
-import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import {
+recordPWABuilderProcessStep,
+AnalyticsBehavior,
+} from '../utils/analytics';
 import { AppNameInputPattern, DnameInputPattern } from '../utils/constants';
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 

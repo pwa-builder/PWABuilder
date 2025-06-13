@@ -6,7 +6,7 @@ import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
 import { OculusAppPackageOptions } from '../utils/oculus-validation';
-import { generatePackage, Platform } from '../services/publish';
+import { generatePackage, Platform } from '../services/package';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
@@ -24,7 +24,7 @@ import './android-form';
 import './ios-form';
 import './oculus-form';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
+import { createWindowsPackageOptionsFromManifest } from '../services/package/windows-publish';
 import { ManifestContext } from '../utils/interfaces';
 
 @customElement('test-publish-pane')

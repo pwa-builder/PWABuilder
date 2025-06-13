@@ -1,8 +1,12 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { AnalyticsBehavior, recordProcessStep, recordPWABuilderProcessStep } from '../utils/analytics';
+import {
+AnalyticsBehavior,
+recordProcessStep,
+recordPWABuilderProcessStep,
+} from '../utils/analytics';
 import { getURL } from '../services/app-info';
-import { generatePackage, Platform } from '../services/publish';
+import { generatePackage, Platform } from '../services/package';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 

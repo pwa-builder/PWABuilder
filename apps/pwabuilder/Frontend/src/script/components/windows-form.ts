@@ -5,7 +5,7 @@ import {
   createWindowsPackageOptionsFromManifest,
   emptyWindowsPackageOptions,
   windowsLanguages,
-} from '../services/publish/windows-publish';
+} from '../services/package/windows-publish';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';

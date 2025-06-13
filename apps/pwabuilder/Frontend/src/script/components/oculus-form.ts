@@ -6,11 +6,14 @@ import {
   createOculusPackageOptionsFromManifest,
   emptyOculusPackageOptions,
   emptyOculusSigningKey,
-} from '../services/publish/oculus-publish';
+} from '../services/package/oculus-publish';
 import { getManifestContext } from '../services/app-info';
 import { SigningMode } from '../utils/oculus-validation';
 import { maxSigningKeySizeInBytes } from '../utils/android-validation';
-import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
+import {
+recordPWABuilderProcessStep,
+AnalyticsBehavior,
+} from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
 import '@shoelace-style/shoelace/dist/components/details/details.js';

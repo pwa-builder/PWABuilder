@@ -1,4 +1,4 @@
-import { Platform } from './publish';
+import { Platform } from './package';
 
 export interface BlogPost {
   title: string;
@@ -43,7 +43,8 @@ export const allPosts: Array<BlogPost> = [
     description:
       'Learn how your PWA can run on iOS and be published to the iOS App Store',
     date: 'Oct 28, 2021',
-    imageUrl: 'https://blog.pwabuilder.com/posts/announcing-ios/ios-announcement.png',
+    imageUrl:
+      'https://blog.pwabuilder.com/posts/announcing-ios/ios-announcement.png',
     shareUrl:
       'https://blog.pwabuilder.com/posts/publish-your-pwa-to-the-ios-app-store/',
     clickUrl:
@@ -63,3 +64,4 @@ export const allPosts: Array<BlogPost> = [
     tags: ['Web Components', 'PWA'],
   },
 ];
+
