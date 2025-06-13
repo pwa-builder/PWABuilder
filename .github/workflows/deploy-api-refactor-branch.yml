@@ -36,38 +36,14 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         
-    - name: Debug Azure identity
-      run: |
-        echo "Current Azure account info:"
-        az account show --query "{subscriptionId:id, tenantId:tenantId, user:user}" --output table
-        echo "Current service principal object ID:"
-        az ad sp show --id ${{ secrets.AZURE_APP_ID }} --query "id" --output tsv || echo "Could not get SP info"
-        
     - name: Create Container Apps resource group (if it doesn't exist)
       run: |
         az group create --name ${{ env.CONTAINER_APP_RESOURCE_GROUP }} --location ${{ env.AZURE_LOCATION }} || true
         
-    - name: Check ACR permissions
+    - name: Test ACR access
       run: |
-        echo "Checking role assignments for ACR..."
-        echo "ACR Scope: /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.ACR_RESOURCE_GROUP }}/providers/Microsoft.ContainerRegistry/registries/${{ env.ACR_NAME }}"
-        
-        echo "1. Role assignments at ACR level:"
-        az role assignment list --scope "/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ env.ACR_RESOURCE_GROUP }}/providers/Microsoft.ContainerRegistry/registries/${{ env.ACR_NAME }}" --query "[].{principalId:principalId, roleDefinitionName:roleDefinitionName, principalType:principalType}" --output table || echo "No role assignments found at ACR level"
-        
-        echo "2. Role assignments at Resource Group level:"
-        az role assignment list --resource-group "${{ env.ACR_RESOURCE_GROUP }}" --query "[].{principalId:principalId, roleDefinitionName:roleDefinitionName, principalType:principalType, scope:scope}" --output table || echo "No role assignments found at RG level"
-        
-        echo "3. All role assignments for current identity:"
-        CURRENT_OBJECT_ID=$(az ad sp show --id ${{ secrets.AZURE_APP_ID }} --query "id" --output tsv 2>/dev/null || echo "unknown")
-        echo "Current SP Object ID: $CURRENT_OBJECT_ID"
-        if [ "$CURRENT_OBJECT_ID" != "unknown" ]; then
-          az role assignment list --assignee "$CURRENT_OBJECT_ID" --query "[].{roleDefinitionName:roleDefinitionName, scope:scope}" --output table || echo "No role assignments found for current identity"
-        fi
-        
-    - name: Verify ACR exists
-      run: |
-        az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --query "{Name:name, ResourceGroup:resourceGroup, LoginServer:loginServer}" --output table
+        echo "Testing ACR access with current permissions..."
+        az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --query "{Name:name, ResourceGroup:resourceGroup, LoginServer:loginServer}" --output table || echo "Still no ACR access"
         
     - name: Build and push Docker image
       run: |
