@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_RESOURCE_GROUP: pwabuilder-pre
+  AZURE_RESOURCE_GROUP: pwabuilder-prod
   AZURE_LOCATION: eastus
   CONTAINER_APP_NAME: pwabuilder-api-refactor-app
   CONTAINER_APP_ENV: pwabuilder-api-refactor-env
