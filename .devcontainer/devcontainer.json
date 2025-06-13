@@ -1,5 +1,69 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "name": "PWABuilder Development Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "pwabuilder",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  
   "features": {
-  }
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+        "dotnet.inlayHints.enableInlayHintsForParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForIndexerParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForOtherParameters": true,
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": true,
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": true
+      },
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-vscode.vscode-json",
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+
+  "containerEnv": {
+    "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true",
+    "PUPPETEER_EXECUTABLE_PATH": "/usr/bin/google-chrome-stable"
+  },
+
+  "forwardPorts": [5000, 5001, 7217, 3000],
+  "portsAttributes": {
+    "5000": {
+      "label": "HTTP",
+      "onAutoForward": "notify"
+    },
+    "5001": {
+      "label": "HTTPS", 
+      "onAutoForward": "notify"
+    },
+    "7217": {
+      "label": "Dev Server",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  
+  "remoteUser": "vscode",
+  
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached"
+  ]
 }
