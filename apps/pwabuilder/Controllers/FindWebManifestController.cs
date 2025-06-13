@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
