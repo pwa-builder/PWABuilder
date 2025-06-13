@@ -682,16 +682,26 @@ export const maniTests: Array<Validation> = [
                 return false;
             }
 
-            const valid = value.every((protocolHandler: any) => {
-                const isRelativeUrl = protocolHandler.url && protocolHandler.url.startsWith("/");
-                const hasProtocol = protocolHandler.protocol && protocolHandler.protocol.length > 0;
-                const isProtocolValid = hasProtocol && (validProtocols.includes(protocolHandler.protocol) || protocolHandler.protocol.startsWith("web+"));
-                const hasUrl = protocolHandler.url && protocolHandler.url.length > 0;
+            const isRelativePath = (url: string): boolean => {
+                return typeof url === "string" && (
+                    url.startsWith("/") || url.startsWith("./") || url.startsWith("../")
+                );
+            };
 
-                return isRelativeUrl && hasProtocol && hasUrl && isProtocolValid;
+            const valid = value.every((protocolHandler: any) => {
+                const hasProtocol = typeof protocolHandler.protocol === "string" && protocolHandler.protocol.length > 0;
+                const isProtocolValid = hasProtocol && (
+                    validProtocols.includes(protocolHandler.protocol) || protocolHandler.protocol.startsWith("web+")
+                );
+
+                const hasUrl = typeof protocolHandler.url === "string" && protocolHandler.url.length > 0;
+                const isRelativeUrl = hasUrl && isRelativePath(protocolHandler.url);
+
+                return hasProtocol && isProtocolValid && hasUrl && isRelativeUrl;
             });
+
             if (!valid) {
-                this.errorString = "protocol_handlers should all be relative URLs that are within the scope of the app, should have a url and a valid protocol";
+                this.errorString = "Each protocol_handler must have a valid 'protocol' and a relative 'url' (starting with '/', './', or '../')";
                 return false;
             }
 

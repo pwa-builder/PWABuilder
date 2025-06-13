@@ -1,33 +1,29 @@
 {
-    // VS Code debugger launch file. When you press F5 in VS Code,
-    // this debugger configuration will launch.
-    "version": "0.2.0",
-    "configurations": [
-
+  "version": "0.2.0",
+  "configurations": [
     {
       "name": "launch.backend",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "tasks.build-backend",
       "postDebugTask": "tasks.stop-debugging",
-      "program": "${workspaceFolder}/apps/pwabuilder/bin/Debug/net9.0/PWABuilder.dll",
+      "program": "${workspaceFolder}/bin/Debug/net9.0/PWABuilder.dll",
       "serverReadyAction": {
         "action": "startDebugging",
         "name": "launch.edge",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
-      "cwd": "${workspaceFolder}/apps/pwabuilder"
+      }
     },
     {
       "name": "launch.edge",
       "url": "https://localhost:7217",
       "request": "launch",
       "type": "msedge",
-      "webRoot": "${workspaceFolder}/apps/pwabuilder/Frontend",
+      "webRoot": "${workspaceFolder}/frontend",
       "sourceMaps": true,
       "trace": true,
       "preLaunchTask": "tasks.launch-vite",
-      "postDebugTask": "tasks.stop-debugging",
+      "postDebugTask": "tasks.stop-debugging"
     }
   ]
 }

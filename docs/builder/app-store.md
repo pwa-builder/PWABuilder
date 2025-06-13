@@ -59,18 +59,21 @@ Before you can start the submission process, you'll need to build the Swift proj
 
 ?> **Note** If you get an error running `pod install`, try running `brew install cocoapods` first. (If you need to install Homebrew, [click here](https://docs.brew.sh/Installation))
 
+?> **Note** In case you already **have cocoapods installed**, check that the specs are up to date, otherwise you may receive a [missing privacy manifest error](https://github.com/pwa-builder/PWABuilder/issues/4877).
+To solve this you can run `pod repo update`, and then `pod update` if you already run `pod install`.
+
 4. Open the `.xcworkspace` file in your src directory. 
 
 !> If you open and attempt to build the `.xcodeproj` file, your build will fail. The `.xcworkspace` file is the correct file you need to build.
    
 5. Click `Product` > `Build` in Xcode to build your project.
 
-6. With the project opened in Xcode, click ▶️ to test your PWA in an iPhone simulator. You may also choose other iOS simulators to try our your app on those devices.
+6. With the project opened in Xcode, click ▶️ to test your PWA in an iPhone simulator. You may also choose other iOS simulators to try out your app on those devices.
 
 ## Adjusting Capabilities
 
-Under xcode `Signing & Capabilities` tab, check and disable all capabilites your app don't needed.
-Use only those that are actually involved in your application. This is important for passing publishing verification.  
+Select the `Project Navigator` tab. Select your application. Under the `Signing & Capabilities` tab, check and disable all capabilites your app does not needed.
+Use only those that are actually involved in your application. This is important for passing publishing verification.
 
 <div class="docs-image">
      <img src="/assets/builder/ios/signing-and-capabilities.jpg" alt="XCode Signing and Capabilities tab" width=500>
@@ -138,9 +141,9 @@ Next, you will need to use the Keychain Acess application to create a Certificat
 
 3. Enter your email address and your name. You may leave `CA Email Address` empty.
 
-5. Choose the `Saved to disk` option and select `Continue`.
+4. Choose the `Saved to disk` option and select `Continue`.
 
-6. You'll be prompted to save a `.certSigningRequest` file to disk.
+5. You'll be prompted to save a `.certSigningRequest` file to disk.
 
 #### 4. Create a Certificate
 
@@ -178,7 +181,7 @@ Next, you can use the certificate you created to create a Provisioning Profile:
 
 2. Select `Profiles` and select the `+` symbol to add a new profile.
 
-3. On the next page, select `App Store` under `Distribution` and click `Continue`.
+3. On the next page, select `App Store Connect` under `Distribution` and click `Continue`.
 
 4. You will be prompted to select an app ID, choose the Bundle ID you created in Step 2 and click `Continue`.
 
@@ -224,7 +227,7 @@ First, you'll need to **sign in to Xcode**:
 
 1. Click `Xcode` in the top menu bar.
 
-2. Click `Preferences`.
+2. Click `Settings`.
 
 3. Navigate to the `Accounts` panel.
 
