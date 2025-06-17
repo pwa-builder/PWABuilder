@@ -6,14 +6,12 @@ import ServiceWorkerGatherer from '../service-worker/service-worker-gatherer.js'
 export default class OfflineGatherer extends Gatherer {
 	constructor() {
 		super();
-		const meta: LH.Gatherer.GathererMetaWithDependencies<
-			typeof ServiceWorkerGatherer
-		> = {
+
+		this.meta = {
 			supportedModes: ['navigation'],
+			// @ts-ignore
 			dependencies: { ServiceWorkerGatherer: ServiceWorkerGatherer.symbol },
 		};
-
-		this.meta = meta;
 	}
 
 	async getArtifact(context: LH.Gatherer.Context): Promise<any> {

@@ -95,7 +95,7 @@ export default class ServiceWorkerAudit extends Audit {
 		const { mainDocumentUrl } = artifacts.URL;
 		if (!mainDocumentUrl)
 			throw new Error('mainDocumentUrl must exist in navigation mode');
-		if ('ServiceWorkerGatherer' in artifacts == false) {
+		if (!('ServiceWorkerGatherer' in artifacts)) {
 			throw new Error(
 				'ServiceWorkerGatherer artifact is required for this audit'
 			);

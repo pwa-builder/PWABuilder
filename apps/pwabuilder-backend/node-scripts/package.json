@@ -6,6 +6,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
+    "build": "tsc",
     "lighthouse": "lighthouse"
   },
   "dependencies": {
