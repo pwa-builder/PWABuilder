@@ -15,6 +15,19 @@ namespace PWABuilder.Controllers
         // private readonly IManifestValidationService _manifestValidationService;
         // private readonly IAnalyticsService _analyticsService;
         // private readonly IImageValidationService _imageValidationService;
+        private static object? TryParseJson(string? json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+            try
+            {
+                return JsonSerializer.Deserialize<object>(json);
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         public ReportController(
             ILogger<ReportController> logger,
@@ -302,6 +315,10 @@ namespace PWABuilder.Controllers
                                     raw = manifestElem.TryGetProperty("raw", out var rawElem)
                                         ? rawElem.GetString()
                                         : null,
+                                    json = manifestElem.TryGetProperty("raw", out var rawElem2)
+                                    && rawElem2.ValueKind == JsonValueKind.String
+                                        ? TryParseJson(rawElem2.GetString())
+                                        : null,
                                 }
                                 : null,
                         serviceWorker =
@@ -311,7 +328,10 @@ namespace PWABuilder.Controllers
                                 : null,
                     },
                 };
-                var output = RequestUtils.CreateStatusCodeOKResult(auditResult);
+
+                string jsonString = JsonSerializer.Serialize(report);
+                JsonDocument jsonDoc = JsonDocument.Parse(jsonString);
+                var output = RequestUtils.CreateStatusCodeOKResult(jsonDoc);
 
                 return StatusCode(output.Status, output);
             }
