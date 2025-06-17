@@ -59,7 +59,7 @@ namespace PWABuilder.Services
         {
             var lighthouseSettingsPath = Path.Combine(
                 Directory.GetCurrentDirectory(),
-                "node-scripts\\src",
+                "node-scripts\\dist\\src",
                 "lighthouserc.js"
             );
 
@@ -71,7 +71,7 @@ namespace PWABuilder.Services
                 + $"--output=json --output-path=stdout "
                 + $"--port={headlessChromePort} "
                 + $"--config-path=\"{lighthouseSettingsPath}\" "
-                + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit "
+                + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit "
                 + $"--form-factor={(desktop ? "desktop" : "mobile")} "
                 + $"{(desktop ? "" : "--screenEmulation.mobile ")}"
                 + $"--screenEmulation.width={viewPorts[desktop].Width} "
@@ -212,9 +212,24 @@ namespace PWABuilder.Services
                 throw new Exception("Failed to parse Lighthouse output as JSON.");
 
             var audits = rootNode["audits"] as JsonObject;
-            var artifacts = rootNode["artifacts"] as JsonObject;
+            var artifacts = new JsonObject();
+            var manifestRawNode = new JsonObject();
+
+            if (
+                audits?["web-app-manifest-raw-audit"] is JsonObject manifestRawAudit
+                && manifestRawAudit["details"] is JsonObject details
+            )
+            {
+                var manifestUrl = details["manifestUrl"]?.GetValue<string>();
+                var manifestRaw = details["manifestRaw"]?.GetValue<string>();
+                if (!string.IsNullOrEmpty(manifestUrl))
+                    manifestRawNode["url"] = manifestUrl;
+                if (!string.IsNullOrEmpty(manifestRaw))
+                    manifestRawNode["raw"] = manifestRaw;
+            }
 
             Console.WriteLine(rootNode["audits"]);
+            Console.WriteLine(rootNode["artifacts"]);
             Console.WriteLine(rootNode["configSettings"]);
             // Inject error
             if (
@@ -232,22 +247,20 @@ namespace PWABuilder.Services
             }
 
             // Manifest replacement
-            if (
-                !string.IsNullOrEmpty(pptManifestRaw)
-                && artifacts != null
-                && artifacts["Manifest"] is JsonObject manifestNode
-            )
+            if (!string.IsNullOrEmpty(pptManifestRaw))
             {
-                var lhManifestRaw = manifestNode["raw"]?.GetValue<string>();
+                var lhManifestRaw = manifestRawNode["raw"]?.GetValue<string>();
                 if (
                     string.IsNullOrEmpty(lhManifestRaw)
                     || pptManifestRaw.Length > lhManifestRaw.Length
                 )
                 {
-                    manifestNode["raw"] = pptManifestRaw;
-                    manifestNode["url"] = pptManifestUrl ?? "";
+                    manifestRawNode["raw"] = pptManifestRaw;
+                    manifestRawNode["url"] = pptManifestUrl ?? "";
                 }
             }
+
+            artifacts["Manifest"] = manifestRawNode;
 
             // Build and return the result object
             var resultNode = new JsonObject
