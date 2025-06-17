@@ -1,7 +1,8 @@
 import { Audit, NetworkRecords } from "lighthouse";
+import * as LH from "lighthouse/types/lh.js";
 
 export default class HttpsAudit extends Audit {
-  static get meta() {
+  static get meta(): LH.Audit.Meta {
     return {
       id: "https-audit",
       title: "HTTPS Security",
