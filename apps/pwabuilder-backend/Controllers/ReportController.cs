@@ -11,6 +11,7 @@ namespace PWABuilder.Controllers
     {
         private readonly ILogger<ReportController> _logger;
         private readonly ILighthouseService _lighthouseService;
+        private readonly IServiceWorkerAnalyzer _serviceWorkerAnalyzer;
 
         // private readonly IManifestValidationService _manifestValidationService;
         // private readonly IAnalyticsService _analyticsService;
@@ -31,7 +32,8 @@ namespace PWABuilder.Controllers
 
         public ReportController(
             ILogger<ReportController> logger,
-            ILighthouseService lighthouseService
+            ILighthouseService lighthouseService,
+            IServiceWorkerAnalyzer serviceWorkerAnalyzer
         // IManifestValidationService manifestValidationService,
         // IAnalyticsService analyticsService,
         // IImageValidationService imageValidationService
@@ -39,6 +41,7 @@ namespace PWABuilder.Controllers
         {
             _logger = logger;
             _lighthouseService = lighthouseService;
+            _serviceWorkerAnalyzer = serviceWorkerAnalyzer;
             // _manifestValidationService = manifestValidationService;
             // _analyticsService = analyticsService;
             // _imageValidationService = imageValidationService;
@@ -89,21 +92,23 @@ namespace PWABuilder.Controllers
                 }
 
                 // Prepare artifacts and features
-                var artifacts = new Dictionary<string, object>();
+                // var artifacts = new Dictionary<string, object>();
                 object? swFeatures = null;
 
                 // Service Worker analysis (pseudo, implement AnalyzeServiceWorkerAsync)
-                if (
+                string? swUrl =
                     audits.TryGetProperty("service-worker-audit", out var swAudit)
                     && swAudit.TryGetProperty("details", out var swDetails)
+                    && swDetails.ValueKind == JsonValueKind.Object
                     && swDetails.TryGetProperty("scriptUrl", out var swUrlElem)
-                )
+                        ? swUrlElem.GetString()
+                        : null;
+
+                if (!string.IsNullOrEmpty(swUrl))
                 {
-                    var swUrl = swUrlElem.GetString();
-                    artifacts["ServiceWorker"] = new { url = swUrl };
                     try
                     {
-                        // swFeatures = await _serviceWorkerAnalyzer.AnalyzeAsync(swUrl);
+                        swFeatures = await _serviceWorkerAnalyzer.AnalyzeAsync(swUrl);
                     }
                     catch (Exception ex)
                     {
