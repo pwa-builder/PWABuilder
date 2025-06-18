@@ -16,19 +16,6 @@ namespace PWABuilder.Controllers
         // private readonly IManifestValidationService _manifestValidationService;
         // private readonly IAnalyticsService _analyticsService;
         // private readonly IImageValidationService _imageValidationService;
-        private static object? TryParseJson(string? json)
-        {
-            if (string.IsNullOrWhiteSpace(json))
-                return null;
-            try
-            {
-                return JsonSerializer.Deserialize<object>(json);
-            }
-            catch
-            {
-                return null;
-            }
-        }
 
         public ReportController(
             ILogger<ReportController> logger,

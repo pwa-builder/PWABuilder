@@ -13,7 +13,7 @@ namespace PWABuilder.Utils
                 if (string.IsNullOrWhiteSpace(req.Query[param]))
                 {
                     output.Status = 400;
-                    var err = new System.Exception($"Exception - no '{param}' param");
+                    var err = new Exception($"Exception - no '{param}' param");
                     output.Body = new OutputBody
                     {
                         Error = new OutputError { Object = err.ToString(), Message = err.Message },

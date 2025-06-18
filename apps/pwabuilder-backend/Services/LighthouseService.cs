@@ -228,9 +228,6 @@ namespace PWABuilder.Services
                     manifestRawNode["raw"] = manifestRaw;
             }
 
-            Console.WriteLine(rootNode["audits"]);
-            Console.WriteLine(rootNode["artifacts"]);
-            Console.WriteLine(rootNode["configSettings"]);
             // Inject error
             if (
                 valveTriggered
