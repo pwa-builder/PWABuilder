@@ -1,8 +1,9 @@
 using System.Text.Json;
+using PWABuilder.Models;
 
 namespace PWABuilder.Utils
 {
-    public static class ReportUtils
+    public class ReportUtils
     {
         private static object? TryParseJson(string? json)
         {
