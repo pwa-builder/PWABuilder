@@ -19,6 +19,7 @@ builder
             .WhenWritingNull;
     });
 builder.Services.AddScoped<ILighthouseService, LighthouseService>();
+builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 
 var app = builder.Build();
 
