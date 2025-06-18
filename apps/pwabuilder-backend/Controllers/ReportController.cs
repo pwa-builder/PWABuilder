@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
 
@@ -12,25 +13,25 @@ namespace PWABuilder.Controllers
         private readonly ILogger<ReportController> _logger;
         private readonly ILighthouseService _lighthouseService;
         private readonly IServiceWorkerAnalyzer _serviceWorkerAnalyzer;
+        private readonly IAnalyticsService _analyticsService;
 
         // private readonly IManifestValidationService _manifestValidationService;
-        // private readonly IAnalyticsService _analyticsService;
         // private readonly IImageValidationService _imageValidationService;
 
         public ReportController(
             ILogger<ReportController> logger,
             ILighthouseService lighthouseService,
-            IServiceWorkerAnalyzer serviceWorkerAnalyzer
+            IServiceWorkerAnalyzer serviceWorkerAnalyzer,
+         IAnalyticsService analyticsService
         // IManifestValidationService manifestValidationService,
-        // IAnalyticsService analyticsService,
         // IImageValidationService imageValidationService
         )
         {
             _logger = logger;
             _lighthouseService = lighthouseService;
             _serviceWorkerAnalyzer = serviceWorkerAnalyzer;
+            _analyticsService = analyticsService;
             // _manifestValidationService = manifestValidationService;
-            // _analyticsService = analyticsService;
             // _imageValidationService = imageValidationService;
         }
 
@@ -118,15 +119,15 @@ namespace PWABuilder.Controllers
                 // }
 
                 // Analytics
-                // var analyticsInfo = new AnalyticsInfo
-                // {
-                //     Url = site,
-                //     PlatformId = Request.Headers["platform-identifier"],
-                //     PlatformIdVersion = Request.Headers["platform-identifier-version"],
-                //     CorrelationId = Request.Headers["correlation-id"],
-                //     Properties = !string.IsNullOrEmpty(referrer) ? new Dictionary<string, string> { { "referrer", referrer } } : null
-                // };
-                // await _analyticsService.UploadAsync(auditResult, analyticsInfo);
+                var analyticsInfo = new AnalyticsInfo
+                {
+                    Url = new Uri(site),
+                    PlatformId = Request.Headers["platform-identifier"],
+                    PlatformIdVersion = Request.Headers["platform-identifier-version"],
+                    CorrelationId = Request.Headers["correlation-id"],
+                    Properties = !string.IsNullOrEmpty(referrer) ? new Dictionary<string, string> { { "referrer", referrer } } : null
+                };
+                await _analyticsService.UploadToAppInsights(auditResult, analyticsInfo);
 
                 _logger.LogInformation(
                     "Report: function is DONE processing a request for site: {Site}",

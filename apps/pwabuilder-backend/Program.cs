@@ -1,10 +1,19 @@
+using Microsoft.Extensions.Configuration;
+using PWABuilder.Models;
 using PWABuilder.Services;
+using PWABuilder.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Remove duplicate logging.
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+// Configuration
+var appSettings = builder.Configuration.GetSection("AppSettings");
+var aiOptions = AppInsights.setUpAppInsights(appSettings);
+builder.Services.Configure<AppSettings>(appSettings);
+builder.Services.AddApplicationInsightsTelemetry(aiOptions);
 
 // Add services to the container.
 builder
@@ -18,6 +27,7 @@ builder
             .JsonIgnoreCondition
             .WhenWritingNull;
     });
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 
