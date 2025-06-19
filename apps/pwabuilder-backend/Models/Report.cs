@@ -7,8 +7,8 @@ namespace PWABuilder.Models
         public bool? DetectedPushRegistration { get; set; }
         public bool? DetectedSignsOfLogic { get; set; }
         public bool? DetectedEmpty { get; set; }
-        public List<string> Raw { get; set; }
-        public string Error { get; set; }
+        public List<string>? Raw { get; set; }
+        public string? Error { get; set; }
     }
 
     public class Report
@@ -86,6 +86,6 @@ namespace PWABuilder.Models
     public class ServiceWorker
     {
         public string? url { get; set; }
-        public string? raw { get; set; }
+        public List<string>? raw { get; set; }
     }
 }

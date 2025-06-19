@@ -1,7 +1,9 @@
+using PWABuilder.Models;
+
 namespace PWABuilder.Services
 {
     public interface IServiceWorkerAnalyzer
     {
-        Task<object?> AnalyzeAsync(string swUrl);
+        Task<AnalyzeServiceWorkerResponse> AnalyzeServiceWorkerAsync(string serviceWorkerUrl);
     }
 }

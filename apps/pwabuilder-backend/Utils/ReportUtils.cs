@@ -26,20 +26,16 @@ namespace PWABuilder.Utils
             return allNull ? null : factory();
         }
 
-        public static Report MapReport(JsonElement audits, JsonElement artifacts_lh)
+        public static Report MapReport(
+            JsonElement audits,
+            JsonElement artifacts_lh,
+            string? swUrl,
+            AnalyzeServiceWorkerResponse? swFeatures
+        )
         {
             audits.TryGetProperty("images-audit", out var imagesAudit);
             audits.TryGetProperty("installable-manifest", out var installableManifestAudit);
             audits.TryGetProperty("service-worker-audit", out var swAudit);
-
-            string? swUrl =
-                swAudit.ValueKind == JsonValueKind.Object
-                && swAudit.TryGetProperty("details", out var swDetails)
-                && swDetails.ValueKind == JsonValueKind.Object
-                && swDetails.TryGetProperty("scriptUrl", out var swUrlElem)
-                    ? swUrlElem.GetString()
-                    : null;
-            object? swFeatures = null;
 
             var iconsValidation =
                 imagesAudit.ValueKind == JsonValueKind.Object
@@ -119,18 +115,31 @@ namespace PWABuilder.Utils
                     ? errorElem.GetString()
                     : null;
 
+            var filteredSwFeatures =
+                swFeatures == null
+                    ? null
+                    : new AnalyzeServiceWorkerResponse
+                    {
+                        DetectedBackgroundSync = swFeatures.DetectedBackgroundSync,
+                        DetectedPeriodicBackgroundSync = swFeatures.DetectedPeriodicBackgroundSync,
+                        DetectedPushRegistration = swFeatures.DetectedPushRegistration,
+                        DetectedSignsOfLogic = swFeatures.DetectedSignsOfLogic,
+                        DetectedEmpty = swFeatures.DetectedEmpty,
+                        Error = swFeatures.Error,
+                    };
+
             var finalServiceWorkerDetails = CreateIfNotAllNull(
                 () =>
                     new ServiceWorkerDetails
                     {
                         url = scriptUrl,
                         scope = scopeUrl,
-                        features = swFeatures,
+                        features = filteredSwFeatures,
                         error = error,
                     },
                 scriptUrl,
                 scopeUrl,
-                swFeatures,
+                filteredSwFeatures,
                 error
             );
 
@@ -143,40 +152,42 @@ namespace PWABuilder.Utils
                         score =
                             audits.TryGetProperty("https-audit", out var httpsAudit)
                             && httpsAudit.ValueKind == JsonValueKind.Object
-                            && httpsAudit.TryGetProperty("score", out var scoreProp)
-                            && scoreProp.ValueKind == JsonValueKind.True,
+                            && httpsAudit.TryGetProperty("score", out var httpsScoreElem)
+                            && httpsScoreElem.TryGetDouble(out var httpsScore)
+                                ? httpsScore != 0
+                                : false,
                     },
                     noMixedContent = new ScoreObj
                     {
                         score =
                             audits.TryGetProperty("is-on-https", out var mixedContentAudit)
                             && mixedContentAudit.ValueKind == JsonValueKind.Object
-                            && mixedContentAudit.TryGetProperty("score", out var mixedScore)
-                            && (
-                                mixedScore.ValueKind == JsonValueKind.True
-                                || mixedScore.ValueKind == JsonValueKind.False
-                            ),
+                            && mixedContentAudit.TryGetProperty("score", out var mixedScoreElem)
+                            && mixedScoreElem.TryGetDouble(out var mixedScore)
+                                ? mixedScore != 0
+                                : false,
                     },
                     installableManifest = new InstallableManifestAudit
                     {
                         score =
                             installableManifestAudit.ValueKind == JsonValueKind.Object
-                            && installableManifestAudit.TryGetProperty("score", out var imScore)
-                            && (
-                                imScore.ValueKind == JsonValueKind.True
-                                || imScore.ValueKind == JsonValueKind.False
-                            ),
+                            && installableManifestAudit.TryGetProperty(
+                                "score",
+                                out var installableScoreElem
+                            )
+                            && installableScoreElem.TryGetDouble(out var installableScore)
+                                ? installableScore != 0
+                                : false,
                         details = finalInstallableManifestDetails,
                     },
                     serviceWorker = new ServiceWorkerAudit
                     {
                         score =
                             swAudit.ValueKind == JsonValueKind.Object
-                            && swAudit.TryGetProperty("score", out var swScore)
-                            && (
-                                swScore.ValueKind == JsonValueKind.True
-                                || swScore.ValueKind == JsonValueKind.False
-                            ),
+                            && swAudit.TryGetProperty("score", out var swScoreElem)
+                            && swScoreElem.TryGetDouble(out var swScore)
+                                ? swScore != 0
+                                : false,
                         details = finalServiceWorkerDetails,
                     },
                     offlineSupport = new ScoreObj
@@ -184,21 +195,19 @@ namespace PWABuilder.Utils
                         score =
                             audits.TryGetProperty("offline-audit", out var offlineAudit)
                             && offlineAudit.ValueKind == JsonValueKind.Object
-                            && offlineAudit.TryGetProperty("score", out var offlineScore)
-                            && (
-                                offlineScore.ValueKind == JsonValueKind.True
-                                || offlineScore.ValueKind == JsonValueKind.False
-                            ),
+                            && offlineAudit.TryGetProperty("score", out var offlineScoreElem)
+                            && offlineScoreElem.TryGetDouble(out var offlineScore)
+                                ? offlineScore != 0
+                                : false,
                     },
                     images = new ImagesAudit
                     {
                         score =
                             imagesAudit.ValueKind == JsonValueKind.Object
-                            && imagesAudit.TryGetProperty("score", out var imagesScore)
-                            && (
-                                imagesScore.ValueKind == JsonValueKind.True
-                                || imagesScore.ValueKind == JsonValueKind.False
-                            ),
+                            && imagesAudit.TryGetProperty("score", out var imagesScoreElem)
+                            && imagesScoreElem.TryGetDouble(out var imagesScore)
+                                ? imagesScore != 0
+                                : false,
                         details = finalImagesDetails,
                     },
                 },
@@ -224,7 +233,7 @@ namespace PWABuilder.Utils
                             }
                             : null,
                     serviceWorker = !string.IsNullOrEmpty(swUrl)
-                        ? new ServiceWorker { url = swUrl }
+                        ? new ServiceWorker { url = swUrl, raw = swFeatures?.Raw }
                         : null,
                 },
             };

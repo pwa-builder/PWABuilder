@@ -22,7 +22,7 @@ namespace PWABuilder.Controllers
             ILogger<ReportController> logger,
             ILighthouseService lighthouseService,
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
-         IAnalyticsService analyticsService
+            IAnalyticsService analyticsService
         // IManifestValidationService manifestValidationService,
         // IImageValidationService imageValidationService
         )
@@ -40,7 +40,7 @@ namespace PWABuilder.Controllers
             [FromQuery] string site,
             [FromQuery] bool? desktop,
             // [FromQuery] bool? validation,
-            [FromQuery(Name = "ref")] string referrer = null
+            [FromQuery(Name = "ref")] string? referrer = null
         )
         {
             var paramCheckResult = RequestUtils.CheckParams(Request, ["site"]);
@@ -79,11 +79,7 @@ namespace PWABuilder.Controllers
                     return StatusCode(auditFailedOutput.Status, auditFailedOutput);
                 }
 
-                // Prepare artifacts and features
-                // var artifacts = new Dictionary<string, object>();
-                object? swFeatures = null;
-
-                // Service Worker analysis (pseudo, implement AnalyzeServiceWorkerAsync)
+                AnalyzeServiceWorkerResponse? swFeatures = null;
                 string? swUrl =
                     audits.TryGetProperty("service-worker-audit", out var swAudit)
                     && swAudit.TryGetProperty("details", out var swDetails)
@@ -96,13 +92,12 @@ namespace PWABuilder.Controllers
                 {
                     try
                     {
-                        swFeatures = await _serviceWorkerAnalyzer.AnalyzeAsync(swUrl);
+                        swFeatures = await _serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(swUrl);
                     }
                     catch (Exception ex)
                     {
-                        swFeatures = new { error = ex.Message };
+                        swFeatures = new AnalyzeServiceWorkerResponse { Error = ex.Message };
                     }
-                    // artifacts["ServiceWorkerRaw"] = swFeatures?.raw;
                 }
 
                 // Manifest validation
@@ -125,7 +120,9 @@ namespace PWABuilder.Controllers
                     PlatformId = Request.Headers["platform-identifier"],
                     PlatformIdVersion = Request.Headers["platform-identifier-version"],
                     CorrelationId = Request.Headers["correlation-id"],
-                    Properties = !string.IsNullOrEmpty(referrer) ? new Dictionary<string, string> { { "referrer", referrer } } : null
+                    Properties = !string.IsNullOrEmpty(referrer)
+                        ? new Dictionary<string, string> { { "referrer", referrer } }
+                        : null,
                 };
                 await _analyticsService.UploadToAppInsights(auditResult, analyticsInfo);
 
@@ -135,7 +132,7 @@ namespace PWABuilder.Controllers
                 );
 
                 // Build the report object
-                var report = ReportUtils.MapReport(audits, artifacts_lh);
+                var report = ReportUtils.MapReport(audits, artifacts_lh, swUrl, swFeatures);
 
                 var output = RequestUtils.CreateStatusCodeOKResult(report);
 
