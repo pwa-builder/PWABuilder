@@ -16,15 +16,15 @@ namespace PWABuilder.Controllers
         private readonly IAnalyticsService _analyticsService;
 
         // private readonly IManifestValidationService _manifestValidationService;
-        // private readonly IImageValidationService _imageValidationService;
+        private readonly IImageValidationService _imageValidationService;
 
         public ReportController(
             ILogger<ReportController> logger,
             ILighthouseService lighthouseService,
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
-            IAnalyticsService analyticsService
-        // IManifestValidationService manifestValidationService,
-        // IImageValidationService imageValidationService
+            IAnalyticsService analyticsService,
+            // IManifestValidationService manifestValidationService,
+            IImageValidationService imageValidationService
         )
         {
             _logger = logger;
@@ -32,7 +32,7 @@ namespace PWABuilder.Controllers
             _serviceWorkerAnalyzer = serviceWorkerAnalyzer;
             _analyticsService = analyticsService;
             // _manifestValidationService = manifestValidationService;
-            // _imageValidationService = imageValidationService;
+            _imageValidationService = imageValidationService;
         }
 
         [HttpGet]
@@ -79,14 +79,9 @@ namespace PWABuilder.Controllers
                     return StatusCode(auditFailedOutput.Status, auditFailedOutput);
                 }
 
+                // Service Worker features analysis
                 AnalyzeServiceWorkerResponse? swFeatures = null;
-                string? swUrl =
-                    audits.TryGetProperty("service-worker-audit", out var swAudit)
-                    && swAudit.TryGetProperty("details", out var swDetails)
-                    && swDetails.ValueKind == JsonValueKind.Object
-                    && swDetails.TryGetProperty("scriptUrl", out var swUrlElem)
-                        ? swUrlElem.GetString()
-                        : null;
+                var swUrl = ReportUtils.TryGetServiceWorkerUrl(audits);
 
                 if (!string.IsNullOrEmpty(swUrl))
                 {
@@ -107,11 +102,53 @@ namespace PWABuilder.Controllers
                 // }
 
                 // Image validation
-                // if (auditResult.ManifestJson != null && auditResult.ManifestUrl != null)
-                // {
-                //     auditResult.IconsValidation = await _imageValidationService.ValidateIconsAsync(auditResult.ManifestJson, auditResult.ManifestUrl);
-                //     auditResult.ScreenshotsValidation = await _imageValidationService.ValidateScreenshotsAsync(auditResult.ManifestJson, auditResult.ManifestUrl);
-                // }
+                var webAppManifest = ReportUtils.TryGetWebManifest(artifacts_lh);
+                var imagesAudit = new ImagesAudit
+                {
+                    details = new ImagesDetails
+                    {
+                        iconsValidation = null,
+                        screenshotsValidation = null,
+                    },
+                    score = false,
+                };
+
+                if (
+                    webAppManifest != null
+                    && webAppManifest.json != null
+                    && webAppManifest.url != null
+                )
+                {
+                    try
+                    {
+                        var iconsValidation =
+                            await _imageValidationService.ValidateIconsMetadataAsync(
+                                webAppManifest.json,
+                                webAppManifest.url
+                            );
+                        var screenshotsValidation =
+                            await _imageValidationService.ValidateScreenshotsMetadataAsync(
+                                webAppManifest.json,
+                                webAppManifest.url
+                            );
+
+                        bool score = false;
+                        if (iconsValidation != null && screenshotsValidation != null)
+                        {
+                            score =
+                                (iconsValidation.valid ?? false)
+                                && (screenshotsValidation.valid ?? false);
+                        }
+
+                        imagesAudit.details = new ImagesDetails
+                        {
+                            iconsValidation = iconsValidation,
+                            screenshotsValidation = screenshotsValidation,
+                        };
+                        imagesAudit.score = score;
+                    }
+                    catch { }
+                }
 
                 // Analytics
                 var analyticsInfo = new AnalyticsInfo
@@ -132,7 +169,13 @@ namespace PWABuilder.Controllers
                 );
 
                 // Build the report object
-                var report = ReportUtils.MapReport(audits, artifacts_lh, swUrl, swFeatures);
+                var report = ReportUtils.MapReportOutput(
+                    audits,
+                    webAppManifest,
+                    swUrl,
+                    swFeatures,
+                    imagesAudit
+                );
 
                 var output = RequestUtils.CreateStatusCodeOKResult(report);
 

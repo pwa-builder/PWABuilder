@@ -11,6 +11,18 @@ namespace PWABuilder.Models
         public string? Error { get; set; }
     }
 
+    public class Validation
+    {
+        public string? member { get; set; }
+        public string? category { get; set; }
+        public string? displayString { get; set; }
+        public string? errorString { get; set; }
+        public string? infoString { get; set; }
+        public string? docsLink { get; set; }
+        public bool? quickFix { get; set; }
+        public bool? valid { get; set; }
+    }
+
     public class Report
     {
         public Audits? audits { get; set; }

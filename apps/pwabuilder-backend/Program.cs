@@ -29,6 +29,7 @@ builder
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
+builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
 
 var app = builder.Build();
 

@@ -26,36 +26,55 @@ namespace PWABuilder.Utils
             return allNull ? null : factory();
         }
 
-        public static Report MapReport(
+        public static string? TryGetServiceWorkerUrl(JsonElement audits)
+        {
+            return
+                audits.TryGetProperty("service-worker-audit", out var swAudit)
+                && swAudit.TryGetProperty("details", out var swDetails)
+                && swDetails.ValueKind == JsonValueKind.Object
+                && swDetails.TryGetProperty("scriptUrl", out var swUrlElem)
+                ? swUrlElem.GetString()
+                : null;
+        }
+
+        public static WebAppManifest? TryGetWebManifest(JsonElement artifacts_lh)
+        {
+            return
+                artifacts_lh.ValueKind == JsonValueKind.Object
+                && artifacts_lh.TryGetProperty("Manifest", out var manifestElem)
+                && manifestElem.ValueKind == JsonValueKind.Object
+                ? new WebAppManifest
+                {
+                    url = manifestElem.TryGetProperty("url", out var urlElem)
+                        ? urlElem.GetString()
+                        : null,
+                    raw = manifestElem.TryGetProperty("raw", out var rawElem)
+                        ? rawElem.GetString()
+                        : null,
+                    json =
+                        manifestElem.TryGetProperty("raw", out var rawElem2)
+                        && rawElem2.ValueKind == JsonValueKind.String
+                            ? TryParseJson(rawElem2.GetString())
+                            : null,
+                }
+                : null;
+        }
+
+        public static Report MapReportOutput(
             JsonElement audits,
-            JsonElement artifacts_lh,
+            WebAppManifest? webAppManifest,
             string? swUrl,
-            AnalyzeServiceWorkerResponse? swFeatures
+            AnalyzeServiceWorkerResponse? swFeatures,
+            ImagesAudit imagesAudit
         )
         {
-            audits.TryGetProperty("images-audit", out var imagesAudit);
             audits.TryGetProperty("installable-manifest", out var installableManifestAudit);
             audits.TryGetProperty("service-worker-audit", out var swAudit);
 
             var iconsValidation =
-                imagesAudit.ValueKind == JsonValueKind.Object
-                && imagesAudit.TryGetProperty("details", out var imagesDetailsObj)
-                && imagesDetailsObj.ValueKind == JsonValueKind.Object
-                && imagesDetailsObj.TryGetProperty("iconsValidation", out var iconsValidationElem)
-                    ? iconsValidationElem.ToString()
-                    : null;
-
+                imagesAudit.details != null ? imagesAudit.details.iconsValidation : null;
             var screenshotsValidation =
-                imagesAudit.ValueKind == JsonValueKind.Object
-                && imagesAudit.TryGetProperty("details", out var imagesDetailsObj2)
-                && imagesDetailsObj2.ValueKind == JsonValueKind.Object
-                && imagesDetailsObj2.TryGetProperty(
-                    "screenshotsValidation",
-                    out var screenshotsValidationElem
-                )
-                    ? screenshotsValidationElem.ToString()
-                    : null;
-
+                imagesAudit.details != null ? imagesAudit.details.screenshotsValidation : null;
             var finalImagesDetails = CreateIfNotAllNull(
                 () =>
                     new ImagesDetails
@@ -202,36 +221,13 @@ namespace PWABuilder.Utils
                     },
                     images = new ImagesAudit
                     {
-                        score =
-                            imagesAudit.ValueKind == JsonValueKind.Object
-                            && imagesAudit.TryGetProperty("score", out var imagesScoreElem)
-                            && imagesScoreElem.TryGetDouble(out var imagesScore)
-                                ? imagesScore != 0
-                                : false,
+                        score = imagesAudit.score,
                         details = finalImagesDetails,
                     },
                 },
                 artifacts = new Artifacts
                 {
-                    webAppManifest =
-                        artifacts_lh.ValueKind == JsonValueKind.Object
-                        && artifacts_lh.TryGetProperty("Manifest", out var manifestElem)
-                        && manifestElem.ValueKind == JsonValueKind.Object
-                            ? new WebAppManifest
-                            {
-                                url = manifestElem.TryGetProperty("url", out var urlElem)
-                                    ? urlElem.GetString()
-                                    : null,
-                                raw = manifestElem.TryGetProperty("raw", out var rawElem)
-                                    ? rawElem.GetString()
-                                    : null,
-                                json =
-                                    manifestElem.TryGetProperty("raw", out var rawElem2)
-                                    && rawElem2.ValueKind == JsonValueKind.String
-                                        ? TryParseJson(rawElem2.GetString())
-                                        : null,
-                            }
-                            : null,
+                    webAppManifest = webAppManifest,
                     serviceWorker = !string.IsNullOrEmpty(swUrl)
                         ? new ServiceWorker { url = swUrl, raw = swFeatures?.Raw }
                         : null,
