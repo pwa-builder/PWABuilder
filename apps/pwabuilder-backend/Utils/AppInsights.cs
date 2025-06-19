@@ -4,7 +4,9 @@ namespace PWABuilder.Utils
 {
     public static class AppInsights
     {
-        public static ApplicationInsightsServiceOptions setUpAppInsights(IConfigurationSection appSettings)
+        public static ApplicationInsightsServiceOptions setUpAppInsights(
+            IConfigurationSection appSettings
+        )
         {
             var connectionString = appSettings["ApplicationInsightsConnectionString"];
             var aiOptions = new ApplicationInsightsServiceOptions();
