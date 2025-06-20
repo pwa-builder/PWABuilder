@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using PWABuilder.Models;
+﻿using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
@@ -7,6 +6,6 @@ namespace PWABuilder.Services
     {
         Task TrackEvent(AnalyticsInfo analyticsInfo, string? error, bool success);
 
-        Task UploadToAppInsights(JsonDocument webAppReport, AnalyticsInfo analyticsInfo);
+        Task UploadToAppInsights(Report webAppReport, AnalyticsInfo analyticsInfo);
     }
 }

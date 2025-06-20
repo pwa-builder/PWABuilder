@@ -150,6 +150,15 @@ namespace PWABuilder.Controllers
                     catch { }
                 }
 
+                // Build the report object
+                var report = ReportUtils.MapReportOutput(
+                    audits,
+                    webAppManifest,
+                    swUrl,
+                    swFeatures,
+                    imagesAudit
+                );
+
                 // Analytics
                 var analyticsInfo = new AnalyticsInfo
                 {
@@ -161,20 +170,11 @@ namespace PWABuilder.Controllers
                         ? new Dictionary<string, string> { { "referrer", referrer } }
                         : null,
                 };
-                await _analyticsService.UploadToAppInsights(auditResult, analyticsInfo);
+                await _analyticsService.UploadToAppInsights(report, analyticsInfo);
 
                 _logger.LogInformation(
                     "Report: function is DONE processing a request for site: {Site}",
                     site
-                );
-
-                // Build the report object
-                var report = ReportUtils.MapReportOutput(
-                    audits,
-                    webAppManifest,
-                    swUrl,
-                    swFeatures,
-                    imagesAudit
                 );
 
                 var output = RequestUtils.CreateStatusCodeOKResult(report);
