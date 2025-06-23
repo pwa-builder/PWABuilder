@@ -40,10 +40,10 @@
         },
         {
             "label": "tasks.node-scripts-npm-build",
-            "type": "npm",
-            "script": "build",
-            "path": "apps/pwabuilder/node-scripts",
             "detail": "npm run build (tsc) in node-scripts",
+            "type": "npm",
+            "path": "apps/pwabuilder/node-scripts",
+            "script": "build",
             "dependsOn": "tasks.node-scripts-npm-install",
             "isBackground": true
         },
@@ -54,7 +54,7 @@
             "path": "apps/pwabuilder/Frontend",
             "script": "dev",
             "isBackground": true,
-            "dependsOn": "tasks.node-scripts-npm-install",
+            "dependsOn": "tasks.node-scripts-npm-build",
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",
