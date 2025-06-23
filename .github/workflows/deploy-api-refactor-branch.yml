@@ -1,0 +1,92 @@
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [ feature/api-consolidation-refactor ]
+  workflow_dispatch:
+
+env:
+  # ACR Configuration
+  ACR_RESOURCE_GROUP: pwabuilder-registry
+  ACR_NAME: pwabuilder
+  
+  # Container Apps Configuration  
+  CONTAINER_APP_RESOURCE_GROUP: pwabuilder-pre
+  AZURE_LOCATION: westus
+  CONTAINER_APP_NAME: pwabuilder-api-refactor-app
+  CONTAINER_APP_ENV: pwabuilder-api-refactor-env
+  
+  IMAGE_NAME: pwabuilder-api-refactor 
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Log in to Azure with Managed Identity
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_APP_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        
+    - name: Verify current identity
+      run: |
+        echo "Current identity info:"
+        az account show --query "{subscriptionId:id, tenantId:tenantId, user:user}" --output table
+        
+    - name: Create Container Apps resource group (if it doesn't exist)
+      run: |
+        az group create --name ${{ env.CONTAINER_APP_RESOURCE_GROUP }} --location ${{ env.AZURE_LOCATION }} || true
+        
+    - name: Test ACR access
+      run: |
+        echo "Testing ACR access with current permissions..."
+        echo "Forcing credential refresh..."
+        az account get-access-token --resource https://management.azure.com/ > /dev/null
+        sleep 5
+        az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --query "{Name:name, ResourceGroup:resourceGroup, LoginServer:loginServer}" --output table || echo "Still no ACR access - permissions may still be propagating"
+        
+    - name: Build and push Docker image
+      run: |
+        az acr build --registry ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --image ${{ env.IMAGE_NAME }}:${{ github.sha }} --file Dockerfile.production .
+        
+    - name: Create Container Apps environment (if it doesn't exist)
+      run: |
+        az containerapp env create \
+          --name ${{ env.CONTAINER_APP_ENV }} \
+          --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP }} \
+          --location ${{ env.AZURE_LOCATION }} || true
+          
+    - name: Deploy to Container Apps
+      run: |
+        # Get ACR server name
+        ACR_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.ACR_RESOURCE_GROUP }} --query loginServer --output tsv)
+        
+        # Update existing container app or create new one
+        az containerapp update \
+          --name ${{ env.CONTAINER_APP_NAME }} \
+          --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP }} \
+          --image $ACR_SERVER/${{ env.IMAGE_NAME }}:${{ github.sha }} || \
+        az containerapp create \
+          --name ${{ env.CONTAINER_APP_NAME }} \
+          --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP }} \
+          --environment ${{ env.CONTAINER_APP_ENV }} \
+          --image $ACR_SERVER/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --registry-server $ACR_SERVER \
+          --target-port 8080 \
+          --ingress 'external' \
+          --cpu 1.0 \
+          --memory 2Gi \
+          --min-replicas 1 \
+          --max-replicas 10
+    - name: Get application URL
+      run: |
+        APP_URL=$(az containerapp show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn --output tsv)
+        echo "🌐 Application deployed at: https://$APP_URL"

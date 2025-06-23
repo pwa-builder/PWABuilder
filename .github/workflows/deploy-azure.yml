@@ -1,0 +1,82 @@
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AZURE_RESOURCE_GROUP: pwabuilder-rg
+  AZURE_LOCATION: eastus
+  CONTAINER_APP_NAME: pwabuilder-app
+  CONTAINER_APP_ENV: pwabuilder-env
+  ACR_NAME: pwabuilderacr
+  IMAGE_NAME: pwabuilder
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Create resource group (if it doesn't exist)
+      run: |
+        az group create --name ${{ env.AZURE_RESOURCE_GROUP }} --location ${{ env.AZURE_LOCATION }} || true
+        
+    - name: Create Azure Container Registry (if it doesn't exist)
+      run: |
+        az acr create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.ACR_NAME }} --sku Basic --admin-enabled true || true
+        
+    - name: Build and push Docker image
+      run: |
+        az acr build --registry ${{ env.ACR_NAME }} --image ${{ env.IMAGE_NAME }}:${{ github.sha }} --file Dockerfile.production .
+        
+    - name: Create Container Apps environment (if it doesn't exist)
+      run: |
+        az containerapp env create \
+          --name ${{ env.CONTAINER_APP_ENV }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --location ${{ env.AZURE_LOCATION }} || true
+          
+    - name: Get ACR credentials
+      id: acr-creds
+      run: |
+        ACR_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query loginServer --output tsv)
+        ACR_USERNAME=$(az acr credential show --name ${{ env.ACR_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query username --output tsv)
+        ACR_PASSWORD=$(az acr credential show --name ${{ env.ACR_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query passwords[0].value --output tsv)
+        echo "acr-server=$ACR_SERVER" >> $GITHUB_OUTPUT
+        echo "acr-username=$ACR_USERNAME" >> $GITHUB_OUTPUT
+        echo "acr-password=$ACR_PASSWORD" >> $GITHUB_OUTPUT
+        
+    - name: Deploy to Container Apps
+      run: |
+        az containerapp update \
+          --name ${{ env.CONTAINER_APP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --image ${{ steps.acr-creds.outputs.acr-server }}/${{ env.IMAGE_NAME }}:${{ github.sha }} || \
+        az containerapp create \
+          --name ${{ env.CONTAINER_APP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --environment ${{ env.CONTAINER_APP_ENV }} \
+          --image ${{ steps.acr-creds.outputs.acr-server }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --registry-server ${{ steps.acr-creds.outputs.acr-server }} \
+          --registry-username ${{ steps.acr-creds.outputs.acr-username }} \
+          --registry-password ${{ steps.acr-creds.outputs.acr-password }} \
+          --target-port 8080 \
+          --ingress 'external' \
+          --cpu 1.0 \
+          --memory 2Gi \
+          --min-replicas 1 \
+          --max-replicas 10
+          
+    - name: Get application URL
+      run: |
+        APP_URL=$(az containerapp show --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn --output tsv)
+        echo "🌐 Application deployed at: https://$APP_URL"

@@ -3,20 +3,31 @@
     // this debugger configuration will launch.
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "Debug in VSCode",
-            "type": "edge",
-            "request": "launch",
-            "version": "stable",
-            "url": "http://localhost:8000",
-            "webRoot": "${workspaceFolder}/build",
-            "sourceMaps": true,
-            "skipFiles": ["node_modules"],
-            "smartStep": true,
-            "pathMapping": {
-                "/": "${workspaceFolder}/build/index.html"
-            },
-            "preLaunchTask": "npm: debug"
-        }
-    ]
+
+    {
+      "name": "launch.backend",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "tasks.build-backend",
+      "postDebugTask": "tasks.stop-debugging",
+      "program": "${workspaceFolder}/apps/pwabuilder/bin/Debug/net9.0/PWABuilder.dll",
+      "serverReadyAction": {
+        "action": "startDebugging",
+        "name": "launch.edge",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "cwd": "${workspaceFolder}/apps/pwabuilder"
+    },
+    {
+      "name": "launch.edge",
+      "url": "https://localhost:7217",
+      "request": "launch",
+      "type": "msedge",
+      "webRoot": "${workspaceFolder}/apps/pwabuilder/Frontend",
+      "sourceMaps": true,
+      "trace": true,
+      "preLaunchTask": "tasks.launch-vite",
+      "postDebugTask": "tasks.stop-debugging",
+    }
+  ]
 }
