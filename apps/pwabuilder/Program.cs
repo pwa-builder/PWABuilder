@@ -54,12 +54,17 @@ if (app.Environment.IsDevelopment())
     // For development, tell ASP.NET to serve .ts files. This is needed for Vite to serve web workers.
     var contentFileProvider = new FileExtensionContentTypeProvider();
     contentFileProvider.Mappings[".ts"] = "application/javascript";
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new ViteStaticFileProvider(builder.Environment.WebRootPath, builder.Environment.ContentRootPath),
-        ServeUnknownFileTypes = true,
-        ContentTypeProvider = contentFileProvider
-    });
+    app.UseStaticFiles(
+        new StaticFileOptions
+        {
+            FileProvider = new ViteStaticFileProvider(
+                builder.Environment.WebRootPath,
+                builder.Environment.ContentRootPath
+            ),
+            ServeUnknownFileTypes = true,
+            ContentTypeProvider = contentFileProvider,
+        }
+    );
 }
 else
 {

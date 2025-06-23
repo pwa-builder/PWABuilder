@@ -10,6 +10,7 @@ namespace Microsoft.PWABuilder.Controllers;
 public class ManifestController : ControllerBase
 {
     private readonly ILogger<ManifestController> logger;
+
     public ManifestController(ILogger<ManifestController> logger)
     {
         this.logger = logger;

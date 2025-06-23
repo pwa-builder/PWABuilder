@@ -3,14 +3,11 @@ using PWABuilder.Common;
 
 namespace PWABuilder.Services
 {
-    public class PuppeteerService: IAsyncDisposable
+    public class PuppeteerService : IAsyncDisposable
     {
-
         private IBrowser browser;
-        
-        public PuppeteerService()
-        {
-        }
+
+        public PuppeteerService() { }
 
         public async Task CreateAsync()
         {
@@ -21,21 +18,21 @@ namespace PWABuilder.Services
             var launchOptions = new LaunchOptions
             {
                 Headless = false, // = false for testing
-                Args = ["--no-sandbox", "--disable-setuid-sandbox"]
+                Args = ["--no-sandbox", "--disable-setuid-sandbox"],
             };
 
             // open a new page in the controlled browser
             var browser = await Puppeteer.LaunchAsync(launchOptions);
-            
 
             this.browser = browser;
         }
 
         public async Task<IPage> GoToSite(string site)
         {
-            if (this.browser == null) await this.CreateAsync();
+            if (browser == null)
+                await CreateAsync();
 
-            var page = await this.browser.NewPageAsync();
+            var page = await browser.NewPageAsync();
             await page.SetUserAgentAsync(Constant.DESKTOP_USERAGENT);
             await page.GoToAsync(site, 15000, [WaitUntilNavigation.Load]);
             await page.WaitForNetworkIdleAsync(new() { IdleTime = 1000 });
@@ -45,12 +42,13 @@ namespace PWABuilder.Services
 
         public IBrowser GetBrowser()
         {
-            return this.browser;
+            return browser;
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (this.browser != null) await this.browser.DisposeAsync();
+            if (browser != null)
+                await browser.DisposeAsync();
         }
     }
 }
