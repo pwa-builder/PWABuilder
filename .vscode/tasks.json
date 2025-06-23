@@ -30,13 +30,31 @@
             "isBackground": true
         },
         {
+            "label": "tasks.node-scripts-npm-install",
+            "detail": "npm install in node-scripts",
+            "type": "npm",
+            "path": "apps/pwabuilder/node-scripts",
+            "script": "install",
+            "dependsOn": "tasks.npm-install",
+            "isBackground": true
+        },
+        {
+            "label": "tasks.node-scripts-npm-build",
+            "type": "npm",
+            "script": "build",
+            "path": "apps/pwabuilder/node-scripts",
+            "detail": "npm run build (tsc) in node-scripts",
+            "dependsOn": "tasks.node-scripts-npm-install",
+            "isBackground": true
+        },
+        {
             "label": "tasks.launch-vite",
             "detail": "npm run dev",
             "type": "npm",
             "path": "apps/pwabuilder/Frontend",
             "script": "dev",
             "isBackground": true,
-            "dependsOn": "tasks.npm-install",
+            "dependsOn": "tasks.node-scripts-npm-install",
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",
