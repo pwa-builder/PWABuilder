@@ -31,6 +31,7 @@ You will need the following things properly installed on your computer.
 
 * [Node.js](http://nodejs.org/)
 * [NPM](https://www.npmjs.com/get-npm)
+* [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 
 You should also be familiar with [TypeScript](https://www.typescriptlang.org/) which we use for this project. This helps give you more guidance as you code from [intellisense](https://code.visualstudio.com/docs/editor/intellisense) when using [VSCode](https://code.visualstudio.com/).
 
@@ -44,37 +45,13 @@ Additionally, when you open the project in VS Code, you'll be prompted to instal
 
 ### Development
 
-Navigate to the folder of the project you plan to work on (example [/apps/pwabuilder](/apps/pwabuilder)), and follow the README for how to get started. 
+Run `VSCode Run and Debug` (F5 key) to build the project and start a local Edge browser.  
 
-Running `npm install` in the project folder will automatically install and build all dependencies.
-
-
-### About this monorepo
-
-This monorepo does not use a root package.json like other monorepos you might be used to. Instead, projects live in their separate folders and are mostly independent of each other. 
-
-However, when there are dependencies between projects, our tooling should automatically handle linking and dependency building when you run `npm install` in the project root. 
-
-For example `/apps/pwabuilder` has a dependency on `library/site-analytics`. This dependency is defined in the pwabuilder package.json like so: 
-
-```json
-  //package.json
-  "dependencies": {
-    "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
-    ...
+### API 
+Replace the api environment variables in `apps\pwabuilder\Frontend\src\script\utils\environment.ts` to point to the local api 
 ```
-
-Running `npm install` in the pwabuilder folder will also run `npm install` and `npm run build` for the `site-analytics` project. In most cases, and unless working on a dependency, a developer will not have to worry about how these projects are linked.
-
-For automatic linking of projects to work, ensure each project has a `preinstall` script like so:
-
-```json
-  // package.json
-  "scripts": {
-    "preinstall": "node ../../scripts/setupDeps.js",
-    ...
+env.api = 'https://localhost:7217/api';
 ```
-
 
 ## License
 

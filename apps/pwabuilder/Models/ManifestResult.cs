@@ -1,4 +1,4 @@
-﻿namespace PWABuilder.Models
+namespace PWABuilder.Models
 {
     public class ManifestResult(object json, Uri url)
     {

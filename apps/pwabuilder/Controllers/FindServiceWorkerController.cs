@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
-using System.Text.RegularExpressions;
 
 namespace PWABuilder.Controllers
 {
@@ -14,7 +14,10 @@ namespace PWABuilder.Controllers
 
         private readonly PuppeteerService puppeteer;
 
-        public FindServiceWorkerController(ILogger<FindServiceWorkerController> logger, PuppeteerService puppeteer)
+        public FindServiceWorkerController(
+            ILogger<FindServiceWorkerController> logger,
+            PuppeteerService puppeteer
+        )
         {
             this.logger = logger;
             this.puppeteer = puppeteer;
@@ -25,7 +28,10 @@ namespace PWABuilder.Controllers
         {
             var siteUri = new Uri(site);
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent");
+            client.DefaultRequestHeaders.Add(
+                "User-Agent",
+                $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent"
+            );
 
             try
             {
@@ -36,8 +42,14 @@ namespace PWABuilder.Controllers
                 }
 
                 var rawHtml = response.Content.ReadAsStringAsync().Result;
-                var match = Regex.Matches(rawHtml, @"navigator\s*\.\s*serviceWorker\s*\.\s*register\(\s*['""](.*?)['""]");
-                match = match.Count() == 0 ? Regex.Matches(rawHtml, @"new Workbox\s*\(\s*['""](.*)['""]") : match;
+                var match = Regex.Matches(
+                    rawHtml,
+                    @"navigator\s*\.\s*serviceWorker\s*\.\s*register\(\s*['""](.*?)['""]"
+                );
+                match =
+                    match.Count() == 0
+                        ? Regex.Matches(rawHtml, @"new Workbox\s*\(\s*['""](.*)['""]")
+                        : match;
                 var link = match.Count() > 0 ? match.First().Groups[1] : null;
                 if (link == null)
                 {
@@ -53,15 +65,28 @@ namespace PWABuilder.Controllers
 
                 var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
 
-                return new ServiceWorkerResult() { Status = 200, Body = new ServiceWorkerBodyResult() { Content = new ServiceWorkerContentResult() { Raw = rawServiceWorker, Url = serviceWorkerUri } } };
-
+                return new ServiceWorkerResult()
+                {
+                    Status = 200,
+                    Body = new ServiceWorkerBodyResult()
+                    {
+                        Content = new ServiceWorkerContentResult()
+                        {
+                            Raw = rawServiceWorker,
+                            Url = serviceWorkerUri,
+                        },
+                    },
+                };
             }
-            catch (Exception ex)
+            catch
             {
                 await puppeteer.CreateAsync();
                 var page = await puppeteer.GoToSite(site);
-                var jsGetServiceWorker = @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting.scriptURL : null ) : Promise.resolve(null))";
-                var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(jsGetServiceWorker);
+                var jsGetServiceWorker =
+                    @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting.scriptURL : null ) : Promise.resolve(null))";
+                var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(
+                    jsGetServiceWorker
+                );
 
                 var serviceWorkerUri = new Uri(siteUri, serviceWorkerUrl);
                 var serviceWorker = client.GetAsync(serviceWorkerUri).Result;
@@ -72,10 +97,19 @@ namespace PWABuilder.Controllers
 
                 var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
 
-                return new ServiceWorkerResult() { Status = 200, Body = new ServiceWorkerBodyResult() { Content = new ServiceWorkerContentResult() { Raw = rawServiceWorker, Url = serviceWorkerUri } } };
+                return new ServiceWorkerResult()
+                {
+                    Status = 200,
+                    Body = new ServiceWorkerBodyResult()
+                    {
+                        Content = new ServiceWorkerContentResult()
+                        {
+                            Raw = rawServiceWorker,
+                            Url = serviceWorkerUri,
+                        },
+                    },
+                };
             }
-            
-
         }
     }
 }
