@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
@@ -31,6 +32,10 @@ builder
             .JsonIgnoreCondition
             .WhenWritingNull;
     });
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PWABuilder", Version = "v1" });
+});
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
@@ -50,6 +55,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseWebSockets(); // used for hot module reload with Vite local dev server.
+
+    app.MapSwagger();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "PWABuilder v1"));
 
     // For development, tell ASP.NET to serve .ts files. This is needed for Vite to serve web workers.
     var contentFileProvider = new FileExtensionContentTypeProvider();
