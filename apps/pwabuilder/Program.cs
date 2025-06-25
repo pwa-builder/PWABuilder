@@ -19,7 +19,8 @@ builder.Services.AddApplicationInsightsTelemetry(aiOptions);
 
 // Add services to the container.
 builder.Services.AddSingleton<ViteEntryPointProvider>();
-builder.Services.AddTransient<PuppeteerService>();
+builder.Services.AddTransient<IPuppeteerService, PuppeteerService>();
+builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 builder
     .Services.AddControllers()

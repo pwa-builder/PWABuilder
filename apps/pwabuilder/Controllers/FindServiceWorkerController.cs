@@ -11,15 +11,17 @@ namespace PWABuilder.Controllers
     public class FindServiceWorkerController
     {
         private readonly ILogger<FindServiceWorkerController> logger;
-
-        private readonly PuppeteerService puppeteer;
+        private readonly HttpClient http;
+        private readonly IPuppeteerService puppeteer;
 
         public FindServiceWorkerController(
             ILogger<FindServiceWorkerController> logger,
-            PuppeteerService puppeteer
+            IHttpClientFactory httpClientFactory,
+            IPuppeteerService puppeteer
         )
         {
             this.logger = logger;
+            this.http = httpClientFactory.CreateClient();
             this.puppeteer = puppeteer;
         }
 
@@ -27,15 +29,14 @@ namespace PWABuilder.Controllers
         public async Task<ActionResult<ServiceWorkerResult>> GetAsync([FromQuery] string site)
         {
             var siteUri = new Uri(site);
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(
+            http.DefaultRequestHeaders.Add(
                 "User-Agent",
                 $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent"
             );
 
             try
             {
-                var response = client.GetAsync(siteUri).Result;
+                var response = http.GetAsync(siteUri).Result;
                 if (!response.IsSuccessStatusCode)
                 {
                     return new BadRequestResult();
@@ -53,11 +54,11 @@ namespace PWABuilder.Controllers
                 var link = match.Count() > 0 ? match.First().Groups[1] : null;
                 if (link == null)
                 {
-                    return new BadRequestResult();
+                    throw new Exception("Service worker not found by regex, trying with puppeteer");
                 }
 
                 var serviceWorkerUri = new Uri(siteUri, link.Value);
-                var serviceWorker = client.GetAsync(serviceWorkerUri).Result;
+                var serviceWorker = http.GetAsync(serviceWorkerUri).Result;
                 if (!serviceWorker.IsSuccessStatusCode)
                 {
                     return new BadRequestResult();
@@ -89,7 +90,7 @@ namespace PWABuilder.Controllers
                 );
 
                 var serviceWorkerUri = new Uri(siteUri, serviceWorkerUrl);
-                var serviceWorker = client.GetAsync(serviceWorkerUri).Result;
+                var serviceWorker = http.GetAsync(serviceWorkerUri).Result;
                 if (!serviceWorker.IsSuccessStatusCode)
                 {
                     return new BadRequestResult();

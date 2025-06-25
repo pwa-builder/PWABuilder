@@ -11,14 +11,17 @@ namespace PWABuilder.Controllers
     public class FindWebManifestController
     {
         private readonly ILogger<FindWebManifestController> logger;
-        private readonly PuppeteerService puppeteer;
+        private readonly HttpClient http;
+        private readonly IPuppeteerService puppeteer;
 
         public FindWebManifestController(
             ILogger<FindWebManifestController> logger,
-            PuppeteerService puppeteer
+            IHttpClientFactory httpClientFactory,
+            IPuppeteerService puppeteer
         )
         {
             this.logger = logger;
+            this.http = httpClientFactory.CreateClient();
             this.puppeteer = puppeteer;
         }
 
@@ -26,15 +29,14 @@ namespace PWABuilder.Controllers
         public async Task<ActionResult<ManifestResult>> GetAsync([FromQuery] string site)
         {
             var siteUri = new Uri(site);
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(
+            http.DefaultRequestHeaders.Add(
                 "User-Agent",
                 $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent"
             );
 
             try
             {
-                var response = client.GetAsync(siteUri).Result;
+                var response = http.GetAsync(siteUri).Result;
                 if (!response.IsSuccessStatusCode)
                 {
                     return new BadRequestResult();
@@ -43,13 +45,18 @@ namespace PWABuilder.Controllers
                 var rawHtml = response.Content.ReadAsStringAsync().Result;
                 var linkMatch = Regex.Matches(
                     rawHtml,
-                    @"<link\s*rel=""manifest""\s*href=\s*['""](.*?)['""]>"
+                    @"<link\s*rel=""manifest""\s*href=\s*['""](.*?)['""]\/>"
                 );
                 var link = linkMatch.Count() > 0 ? linkMatch.First().Groups[1].Value : null;
                 link = link != null && link.EndsWith("/") ? link.Remove(link.Length - 1) : link;
 
+                if(link == null)
+                {
+                    throw new Exception("Web Manifest not found by regex, trying with puppeteer");
+                }
+
                 var manifestUri = new Uri(siteUri, link);
-                var manifest = client.GetAsync(manifestUri).Result;
+                var manifest = http.GetAsync(manifestUri).Result;
                 if (!manifest.IsSuccessStatusCode)
                 {
                     return new BadRequestResult();
@@ -67,7 +74,7 @@ namespace PWABuilder.Controllers
                 var urls = await page.EvaluateExpressionAsync<string[]>(jsSelectAllManifestLink);
 
                 var manifestUri = new Uri(siteUri, urls.Last());
-                var manifest = client.GetAsync(manifestUri).Result;
+                var manifest = http.GetAsync(manifestUri).Result;
                 if (!manifest.IsSuccessStatusCode)
                 {
                     return new BadRequestResult();

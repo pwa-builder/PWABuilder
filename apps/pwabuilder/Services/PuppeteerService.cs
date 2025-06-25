@@ -3,7 +3,7 @@ using PWABuilder.Common;
 
 namespace PWABuilder.Services
 {
-    public class PuppeteerService : IAsyncDisposable
+    public class PuppeteerService : IPuppeteerService
     {
         private IBrowser browser;
 

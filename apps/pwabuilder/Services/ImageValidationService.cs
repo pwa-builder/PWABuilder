@@ -5,7 +5,12 @@ namespace PWABuilder.Services
 {
     public class ImageValidationService : IImageValidationService
     {
-        private readonly HttpClient httpClient = new HttpClient();
+        private readonly HttpClient httpClient;
+
+        public ImageValidationService(IHttpClientFactory httpClientFactory) 
+        {
+            this.httpClient = httpClientFactory.CreateClient();
+        }
 
         public class ManifestIcon
         {

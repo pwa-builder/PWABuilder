@@ -7,6 +7,11 @@ namespace PWABuilder.Services
     {
         private readonly HttpClient httpClient = new HttpClient();
 
+        public ServiceWorkerAnalyzer(IHttpClientFactory httpClientFactory)
+        {
+            this.httpClient = httpClientFactory.CreateClient();
+        }
+
         private readonly Regex[] PushRegexes =
         {
             new Regex(@"[.|\n\s*]addEventListener\s*\(\s*['""]push['""]", RegexOptions.Multiline),
