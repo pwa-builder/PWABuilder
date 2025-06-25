@@ -10,7 +10,11 @@
         public (int Width, int Height)? GetSize()
         {
             var parts = Sizes.Split('x');
-            if (parts.Length == 2 && int.TryParse(parts[0], out var width) && int.TryParse(parts[1], out var height))
+            if (
+                parts.Length == 2
+                && int.TryParse(parts[0], out var width)
+                && int.TryParse(parts[1], out var height)
+            )
             {
                 return (width, height);
             }
@@ -18,8 +22,9 @@
         }
 
         public bool IsPngOrSvg() =>
-            Type == "image/png" || Type == "image/svg" ||
-            Src.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-            Src.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
+            Type == "image/png"
+            || Type == "image/svg"
+            || Src.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+            || Src.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
     }
 }

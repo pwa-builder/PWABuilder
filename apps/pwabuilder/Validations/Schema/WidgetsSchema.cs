@@ -5,7 +5,8 @@ namespace PWABuilder.Validations.Schema
 {
     public class WidgetsSchema
     {
-		private static readonly string Schema = @"{
+        private static readonly string Schema =
+            @"{
 			'type': 'array',
 			'minItems': 1,
 			'items': {
