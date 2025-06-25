@@ -5,7 +5,8 @@ namespace PWABuilder.Validations.Schema
 {
     public class FileHandlerSchema
     {
-        private static readonly string Schema = @"{
+        private static readonly string Schema =
+            @"{
 			'type': 'array',
 			'minItems': 1,
 			'items': {
@@ -33,10 +34,10 @@ namespace PWABuilder.Validations.Schema
 			  }
 		}";
 
-		public static bool ValidateFileHandlerSchema(string jObject)
-		{
-			var jSchema = JSchema.Parse(Schema);
-			return JObject.Parse(jObject).IsValid(jSchema);
-		}
+        public static bool ValidateFileHandlerSchema(string jObject)
+        {
+            var jSchema = JSchema.Parse(Schema);
+            return JObject.Parse(jObject).IsValid(jSchema);
+        }
     }
 }
