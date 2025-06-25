@@ -5,7 +5,7 @@ namespace PWABuilder.Services
 {
     public class ServiceWorkerAnalyzer : IServiceWorkerAnalyzer
     {
-        private readonly HttpClient httpClient = new HttpClient();
+        private readonly HttpClient httpClient;
 
         public ServiceWorkerAnalyzer(IHttpClientFactory httpClientFactory)
         {
