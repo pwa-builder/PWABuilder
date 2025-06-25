@@ -10,7 +10,7 @@ namespace PWABuilder.Services
     {
         private readonly IOptions<AppSettings> settings;
         private readonly ILogger<AnalyticsService> logger;
-        private readonly TelemetryClient _telemetryClient;
+        private readonly TelemetryClient telemetryClient;
         private readonly bool isAppInsightsEnabled;
 
         public AnalyticsService(
@@ -21,7 +21,7 @@ namespace PWABuilder.Services
         {
             this.settings = settings;
             this.logger = logger;
-            _telemetryClient = telemetryClient;
+            this.telemetryClient = telemetryClient;
             isAppInsightsEnabled = !string.IsNullOrEmpty(
                 this.settings.Value.ApplicationInsightsConnectionString
             );
@@ -45,12 +45,12 @@ namespace PWABuilder.Services
                     analyticsInfoProperties
                         .ToList()
                         .ForEach(prop => properties.Add(prop.Key, prop.Value));
-                    _telemetryClient.TrackEvent("ReportCardEvent", properties);
+                    telemetryClient.TrackEvent("ReportCardEvent", properties);
                 }
                 else
                 {
                     properties.Add("error", error ?? string.Empty);
-                    _telemetryClient.TrackEvent("ReportCardFailureEvent", properties);
+                    telemetryClient.TrackEvent("ReportCardFailureEvent", properties);
                 }
             });
         }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
 
@@ -8,35 +9,37 @@ namespace PWABuilder.Controllers
     [Route("api/[controller]")]
     public class AuditServiceWorkerController : ControllerBase
     {
-        private readonly ILogger<AuditServiceWorkerController> _logger;
-        private readonly IServiceWorkerAnalyzer _serviceWorkerAnalyzer;
+        private readonly ILogger<AuditServiceWorkerController> logger;
+        private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
 
         public AuditServiceWorkerController(
             ILogger<AuditServiceWorkerController> logger,
             IServiceWorkerAnalyzer serviceWorkerAnalyzer
         )
         {
-            _logger = logger;
-            _serviceWorkerAnalyzer = serviceWorkerAnalyzer;
+            this.logger = logger;
+            this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string url)
+        public async Task<ActionResult<AnalyzeServiceWorkerResponse>> GetAsync(
+            [FromQuery] string url
+        )
         {
             var paramCheckResult = RequestUtils.CheckParams(Request, ["url"]);
             if (paramCheckResult.Status != 200)
             {
-                _logger.LogError("AuditServiceWorker: Missing required 'url' parameter.");
+                logger.LogError("AuditServiceWorker: Missing required 'url' parameter.");
                 return StatusCode(paramCheckResult.Status, paramCheckResult);
             }
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 $"AuditServiceWorker: function is processing a request for url: {url}"
             );
 
             try
             {
-                var swFeatures = await _serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(url);
+                var swFeatures = await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(url);
 
                 var result = new
                 {
@@ -51,7 +54,7 @@ namespace PWABuilder.Controllers
                     },
                 };
 
-                _logger.LogInformation(
+                logger.LogInformation(
                     $"AuditServiceWorker: function is DONE processing for url: {url}"
                 );
 
@@ -59,7 +62,7 @@ namespace PWABuilder.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(
+                logger.LogError(
                     $"AuditServiceWorker: function has ERRORED while processing for url: {url} with this error: {ex.Message}"
                 );
 

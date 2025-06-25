@@ -10,33 +10,33 @@ namespace PWABuilder.Controllers
     [Route("api/[controller]")]
     public class ReportController : ControllerBase
     {
-        private readonly ILogger<ReportController> _logger;
-        private readonly ILighthouseService _lighthouseService;
-        private readonly IServiceWorkerAnalyzer _serviceWorkerAnalyzer;
-        private readonly IAnalyticsService _analyticsService;
+        private readonly ILogger<ReportController> logger;
+        private readonly ILighthouseService lighthouseService;
+        private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
+        private readonly IAnalyticsService analyticsService;
+        private readonly IImageValidationService imageValidationService;
 
-        // private readonly IManifestValidationService _manifestValidationService;
-        private readonly IImageValidationService _imageValidationService;
+        // private readonly IManifestValidationService manifestValidationService;
 
         public ReportController(
             ILogger<ReportController> logger,
             ILighthouseService lighthouseService,
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
             IAnalyticsService analyticsService,
-            // IManifestValidationService manifestValidationService,
             IImageValidationService imageValidationService
+        // IManifestValidationService manifestValidationService,
         )
         {
-            _logger = logger;
-            _lighthouseService = lighthouseService;
-            _serviceWorkerAnalyzer = serviceWorkerAnalyzer;
-            _analyticsService = analyticsService;
-            // _manifestValidationService = manifestValidationService;
-            _imageValidationService = imageValidationService;
+            this.logger = logger;
+            this.lighthouseService = lighthouseService;
+            this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
+            this.analyticsService = analyticsService;
+            this.imageValidationService = imageValidationService;
+            // this.manifestValidationService = manifestValidationService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(
+        public async Task<ActionResult<Report>> GetAsync(
             [FromQuery] string site,
             [FromQuery] bool? desktop,
             // [FromQuery] bool? validation,
@@ -46,11 +46,11 @@ namespace PWABuilder.Controllers
             var paramCheckResult = RequestUtils.CheckParams(Request, ["site"]);
             if (paramCheckResult.Status != 200)
             {
-                _logger.LogError("Report: {paramCheckResult}", paramCheckResult);
+                logger.LogError("Report: {paramCheckResult}", paramCheckResult);
                 return StatusCode(paramCheckResult.Status, paramCheckResult);
             }
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Report: function is processing a request for site: {Site}",
                 site
             );
@@ -58,7 +58,7 @@ namespace PWABuilder.Controllers
             try
             {
                 // Run Lighthouse audit
-                var auditResult = await _lighthouseService.RunAuditAsync(site, desktop ?? false);
+                var auditResult = await lighthouseService.RunAuditAsync(site, desktop ?? false);
 
                 var root = auditResult.RootElement;
                 var audits = root.TryGetProperty("audits", out var auditsElem)
@@ -70,7 +70,7 @@ namespace PWABuilder.Controllers
 
                 if (audits.ValueKind == JsonValueKind.Undefined)
                 {
-                    _logger.LogWarning("Lighthouse output missing audits.");
+                    logger.LogWarning("Lighthouse output missing audits.");
                     var auditFailedOutput = RequestUtils.CreateStatusCodeErrorResult(
                         500,
                         "AuditFailed",
@@ -87,7 +87,7 @@ namespace PWABuilder.Controllers
                 {
                     try
                     {
-                        swFeatures = await _serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(swUrl);
+                        swFeatures = await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(swUrl);
                     }
                     catch (Exception ex)
                     {
@@ -98,7 +98,7 @@ namespace PWABuilder.Controllers
                 // Manifest validation
                 // if (validation == true && auditResult.ManifestJson != null)
                 // {
-                //     auditResult.ManifestValidation = await _manifestValidationService.ValidateAsync(auditResult.ManifestJson);
+                //     auditResult.ManifestValidation = await manifestValidationService.ValidateAsync(auditResult.ManifestJson);
                 // }
 
                 // Image validation
@@ -122,12 +122,12 @@ namespace PWABuilder.Controllers
                     try
                     {
                         var iconsValidation =
-                            await _imageValidationService.ValidateIconsMetadataAsync(
+                            await imageValidationService.ValidateIconsMetadataAsync(
                                 webAppManifest.json,
                                 webAppManifest.url
                             );
                         var screenshotsValidation =
-                            await _imageValidationService.ValidateScreenshotsMetadataAsync(
+                            await imageValidationService.ValidateScreenshotsMetadataAsync(
                                 webAppManifest.json,
                                 webAppManifest.url
                             );
@@ -170,9 +170,9 @@ namespace PWABuilder.Controllers
                         ? new Dictionary<string, string> { { "referrer", referrer } }
                         : null,
                 };
-                await _analyticsService.UploadToAppInsights(report, analyticsInfo);
+                await analyticsService.UploadToAppInsights(report, analyticsInfo);
 
-                _logger.LogInformation(
+                logger.LogInformation(
                     "Report: function is DONE processing a request for site: {Site}",
                     site
                 );
@@ -183,7 +183,7 @@ namespace PWABuilder.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(
+                logger.LogError(
                     ex,
                     "Report: function failed for {Site} with error: {Error}",
                     site,
