@@ -1,16 +1,5 @@
 namespace PWABuilder.Models
 {
-    public class AnalyzeServiceWorkerResponse
-    {
-        public bool? DetectedBackgroundSync { get; set; }
-        public bool? DetectedPeriodicBackgroundSync { get; set; }
-        public bool? DetectedPushRegistration { get; set; }
-        public bool? DetectedSignsOfLogic { get; set; }
-        public bool? DetectedEmpty { get; set; }
-        public List<string>? Raw { get; set; }
-        public string? Error { get; set; }
-    }
-
     public class Validation
     {
         public string? member { get; set; }

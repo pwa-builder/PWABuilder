@@ -36,7 +36,7 @@ namespace PWABuilder.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(
+        public async Task<ActionResult<Report>> GetAsync(
             [FromQuery] string site,
             [FromQuery] bool? desktop,
             // [FromQuery] bool? validation,

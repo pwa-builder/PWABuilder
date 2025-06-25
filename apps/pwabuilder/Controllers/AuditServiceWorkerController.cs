@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
 
@@ -21,7 +22,9 @@ namespace PWABuilder.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string url)
+        public async Task<ActionResult<AnalyzeServiceWorkerResponse>> GetAsync(
+            [FromQuery] string url
+        )
         {
             var paramCheckResult = RequestUtils.CheckParams(Request, ["url"]);
             if (paramCheckResult.Status != 200)
