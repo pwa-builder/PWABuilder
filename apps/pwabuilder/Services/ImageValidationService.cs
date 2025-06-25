@@ -7,7 +7,7 @@ namespace PWABuilder.Services
     {
         private readonly HttpClient httpClient;
 
-        public ImageValidationService(IHttpClientFactory httpClientFactory) 
+        public ImageValidationService(IHttpClientFactory httpClientFactory)
         {
             this.httpClient = httpClientFactory.CreateClient();
         }
