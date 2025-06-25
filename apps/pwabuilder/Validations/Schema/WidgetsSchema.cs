@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 
 namespace PWABuilder.Validations.Schema
@@ -83,12 +82,6 @@ namespace PWABuilder.Validations.Schema
         {
             var jSchema = JSchema.Parse(Schema);
             return JObject.Parse(jObject).IsValid(jSchema);
-        }
-
-        public static bool ValidateWidgetSchema(object obj)
-        {
-            var jSchema = JSchema.Parse(Schema);
-            return JObject.FromObject(obj).IsValid(jSchema);
         }
     }
 }

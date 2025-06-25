@@ -166,7 +166,11 @@ namespace PWABuilder.Validations
                 QuickFix = true,
                 Test = (value) =>
                 {
-                    var result = FileHandlerSchema.ValidateFileHandlerSchema(value);
+                    if (value is not JsonElement jsonElement)
+                    {
+                        return false;
+                    }
+                    var result = FileHandlerSchema.ValidateFileHandlerSchema(jsonElement.GetRawText());
                     return result;
                 }
             };
@@ -487,7 +491,11 @@ namespace PWABuilder.Validations
                 ErrorString = "widgets should be an array of valid objects",
                 Test = (value) =>
                 {
-                    var validation = WidgetsSchema.ValidateWidgetSchema(value);
+                    if (value is not JsonElement jsonElement)
+                    {
+                        return false;
+                    }
+                    var validation = WidgetsSchema.ValidateWidgetSchema(jsonElement.GetRawText());
                     return validation;
                 }
             };
