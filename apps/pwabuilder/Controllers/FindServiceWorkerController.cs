@@ -65,8 +65,7 @@ namespace PWABuilder.Controllers
                 }
 
                 var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
-
-                return new ServiceWorkerResult()
+                var output = new ServiceWorkerResult()
                 {
                     Status = 200,
                     Body = new ServiceWorkerBodyResult()
@@ -78,6 +77,8 @@ namespace PWABuilder.Controllers
                         },
                     },
                 };
+
+                return StatusCode(output.Status, output.Body);
             }
             catch
             {
@@ -104,7 +105,7 @@ namespace PWABuilder.Controllers
 
                     var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
 
-                    return new ServiceWorkerResult()
+                    var output = new ServiceWorkerResult()
                     {
                         Status = 200,
                         Body = new ServiceWorkerBodyResult()
@@ -116,6 +117,8 @@ namespace PWABuilder.Controllers
                             },
                         },
                     };
+
+                    return StatusCode(output.Status, output.Body);
                 }
                 catch (Exception ex)
                 {

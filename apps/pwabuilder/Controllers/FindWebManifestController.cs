@@ -63,7 +63,13 @@ namespace PWABuilder.Controllers
                 }
 
                 var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                return new ManifestResult(manifestJson, manifestUri);
+                var output = new
+                {
+                    Status = 200,
+                    Body = new { Content = new ManifestResult(manifestJson, manifestUri) },
+                };
+
+                return StatusCode(output.Status, output.Body);
             }
             catch
             {
@@ -89,7 +95,13 @@ namespace PWABuilder.Controllers
                     }
 
                     var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                    return new ManifestResult(manifestJson, manifestUri);
+                    var output = new
+                    {
+                        Status = 200,
+                        Body = new { Content = new ManifestResult(manifestJson, manifestUri) },
+                    };
+
+                    return StatusCode(output.Status, output.Body);
                 }
                 catch (Exception ex)
                 {
