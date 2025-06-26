@@ -4,7 +4,7 @@ name: Deploy PWABuilder Docs to GitHub Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["fix-4985-update-docs-github-pages-action-workflow"]
+    branches: ["main"]
     paths: ["docs/**"]
 
   # Allows you to run this workflow manually from the Actions tab
