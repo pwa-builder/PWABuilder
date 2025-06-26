@@ -8,7 +8,7 @@ namespace PWABuilder.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FindWebManifestController
+    public class FindWebManifestController : ControllerBase
     {
         private readonly ILogger<FindWebManifestController> logger;
         private readonly HttpClient http;
@@ -50,7 +50,7 @@ namespace PWABuilder.Controllers
                 var link = linkMatch.Count() > 0 ? linkMatch.First().Groups[1].Value : null;
                 link = link != null && link.EndsWith("/") ? link.Remove(link.Length - 1) : link;
 
-                if(link == null)
+                if (link == null)
                 {
                     throw new Exception("Web Manifest not found by regex, trying with puppeteer");
                 }
@@ -67,21 +67,35 @@ namespace PWABuilder.Controllers
             }
             catch
             {
-                await puppeteer.CreateAsync();
-                using var page = await puppeteer.GoToSite(site);
-                var jsSelectAllManifestLink =
-                    @"Array.from(document.querySelectorAll('link[rel*=manifest]')).map(a => a.href);";
-                var urls = await page.EvaluateExpressionAsync<string[]>(jsSelectAllManifestLink);
-
-                var manifestUri = new Uri(siteUri, urls.Last());
-                var manifest = http.GetAsync(manifestUri).Result;
-                if (!manifest.IsSuccessStatusCode)
+                logger.LogWarning(
+                    "Web manifest not found by regex, trying with puppeteer for site {Site}",
+                    site
+                );
+                try
                 {
-                    return new BadRequestResult();
-                }
+                    await puppeteer.CreateAsync();
+                    using var page = await puppeteer.GoToSite(site);
+                    var jsSelectAllManifestLink =
+                        @"Array.from(document.querySelectorAll('link[rel*=manifest]')).map(a => a.href);";
+                    var urls = await page.EvaluateExpressionAsync<string[]>(
+                        jsSelectAllManifestLink
+                    );
 
-                var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                return new ManifestResult(manifestJson, manifestUri);
+                    var manifestUri = new Uri(siteUri, urls.Last());
+                    var manifest = http.GetAsync(manifestUri).Result;
+                    if (!manifest.IsSuccessStatusCode)
+                    {
+                        return new BadRequestResult();
+                    }
+
+                    var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
+                    return new ManifestResult(manifestJson, manifestUri);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error finding web manifest for site {Site}", site);
+                    return StatusCode(400, new { error = new { message = ex.Message } });
+                }
             }
         }
     }
