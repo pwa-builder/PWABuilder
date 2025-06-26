@@ -2,7 +2,7 @@
 
 You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the [Microsoft Partner Center](https://partner.microsoft.com/en-us) to create your app submission.
 
-!> In order to package for Windows and submit to the Microsoft Store, you will need a [Partner Center Account](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership).
+!> In order to package for Windows and submit to the Microsoft Store, you will need a [Partner Center Account](https://aka.ms/partnercenterregistration).
 
 #### How does it work?
 
@@ -16,7 +16,7 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 
-- A Windows Developer account with Partner Center (which are available for a one-time fee of $19). Create one <a href="https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership" aria-label="Click here to follow instructions">here</a> 
+- A Windows Developer account with Partner Center (which are available for a one-time fee of $19). Create one <a href="https://aka.ms/partnercenterregistration" aria-label="Click here to follow instructions">here</a> 
 
 !> If you want in-depth guidance on how to enroll as a Windows Developer, take a look at [this documentation.](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account)
 
@@ -48,7 +48,7 @@ You will need **all three** to package with PWABuilder.
 
 ## Packaging
 
-!> The packaging process requires data from Partner Center to properly create your package. Unless you are creating a test package, you will need to use [Partner Center](https://partner.microsoft.com/en-us/dashboard/account/v3/enrollment/introduction/partnership) prior to packaging.
+!> The packaging process requires data from Partner Center to properly create your package. Unless you are creating a test package, you will need to use [Partner Center](https://aka.ms/partnercenterregistration) prior to packaging.
 
 Before you can submit your PWA to the Microsoft Store, you'll need to create the proper packages with PWABuilder.
 
