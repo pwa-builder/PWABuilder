@@ -231,7 +231,7 @@ Due to the fact that iOS has very limited support for PWAs we will be supporting
 
 #### Error: `Unable to parse color from string: none` 
 
-This usually is a result of the fields `background_color` or `theme_color` being set to `none` in the `manifest` file. These fields are optional so if you do not want to specifiy a color, you can omit the field all together.
+This usually is a result of the fields `background_color` or `theme_color` being set to `none` in the `manifest` file. These fields are optional so if you do not want to specify a color, you can omit the field all together.
   
 #### Error: `Failed to download Web Manifest [URL to Web Manifest]. Responded with status 503`
 
