@@ -8,7 +8,7 @@ namespace PWABuilder.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FindServiceWorkerController
+    public class FindServiceWorkerController : ControllerBase
     {
         private readonly ILogger<FindServiceWorkerController> logger;
         private readonly HttpClient http;
@@ -81,35 +81,47 @@ namespace PWABuilder.Controllers
             }
             catch
             {
-                await puppeteer.CreateAsync();
-                var page = await puppeteer.GoToSite(site);
-                var jsGetServiceWorker =
-                    @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting.scriptURL : null ) : Promise.resolve(null))";
-                var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(
-                    jsGetServiceWorker
+                logger.LogWarning(
+                    "Service worker not found by regex, trying with puppeteer for site {Site}",
+                    site
                 );
-
-                var serviceWorkerUri = new Uri(siteUri, serviceWorkerUrl);
-                var serviceWorker = http.GetAsync(serviceWorkerUri).Result;
-                if (!serviceWorker.IsSuccessStatusCode)
+                try
                 {
-                    return new BadRequestResult();
-                }
+                    await puppeteer.CreateAsync();
+                    var page = await puppeteer.GoToSite(site);
+                    var jsGetServiceWorker =
+                        @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting.scriptURL : null ) : Promise.resolve(null))";
+                    var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(
+                        jsGetServiceWorker
+                    );
 
-                var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
-
-                return new ServiceWorkerResult()
-                {
-                    Status = 200,
-                    Body = new ServiceWorkerBodyResult()
+                    var serviceWorkerUri = new Uri(siteUri, serviceWorkerUrl);
+                    var serviceWorker = http.GetAsync(serviceWorkerUri).Result;
+                    if (!serviceWorker.IsSuccessStatusCode)
                     {
-                        Content = new ServiceWorkerContentResult()
+                        return new BadRequestResult();
+                    }
+
+                    var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
+
+                    return new ServiceWorkerResult()
+                    {
+                        Status = 200,
+                        Body = new ServiceWorkerBodyResult()
                         {
-                            Raw = rawServiceWorker,
-                            Url = serviceWorkerUri,
+                            Content = new ServiceWorkerContentResult()
+                            {
+                                Raw = rawServiceWorker,
+                                Url = serviceWorkerUri,
+                            },
                         },
-                    },
-                };
+                    };
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error finding service worker for site {Site}", site);
+                    return StatusCode(400, new { error = new { message = ex.Message } });
+                }
             }
         }
     }

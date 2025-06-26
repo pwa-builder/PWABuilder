@@ -17,7 +17,7 @@ namespace PWABuilder.Services
             // browser execution configs
             var launchOptions = new LaunchOptions
             {
-                Headless = false, // = false for testing
+                Headless = true, // = false for testing
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
             };
 
