@@ -87,6 +87,11 @@ namespace PWABuilder.Controllers
                         jsSelectAllManifestLink
                     );
 
+                    if (urls == null || urls.Length == 0)
+                    {
+                        throw new Exception("Web Manifest not found");
+                    }
+
                     var manifestUri = new Uri(siteUri, urls.Last());
                     var manifest = http.GetAsync(manifestUri).Result;
                     if (!manifest.IsSuccessStatusCode)
