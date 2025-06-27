@@ -42,6 +42,20 @@ builder.Services.AddScoped<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(
+            "AllowAllOrigins",
+            builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }
+        );
+    });
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,6 +70,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseWebSockets(); // used for hot module reload with Vite local dev server.
+    app.UseCors("AllowAllOrigins");
 
     app.MapSwagger();
     app.UseSwagger();

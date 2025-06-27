@@ -96,6 +96,11 @@ namespace PWABuilder.Controllers
                         jsGetServiceWorker
                     );
 
+                    if (serviceWorkerUrl == null)
+                    {
+                        throw new Exception("Service worker not found");
+                    }
+
                     var serviceWorkerUri = new Uri(siteUri, serviceWorkerUrl);
                     var serviceWorker = http.GetAsync(serviceWorkerUri).Result;
                     if (!serviceWorker.IsSuccessStatusCode)
