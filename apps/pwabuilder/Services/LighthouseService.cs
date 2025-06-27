@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using PuppeteerSharp;
@@ -8,7 +10,6 @@ namespace PWABuilder.Services
     public class LighthouseService : ILighthouseService
     {
         private const int lhTimeoutMilliseconds = 300000;
-        private const int headlessChromePort = 9222;
 
         private readonly string[] disabledFeatures =
         [
@@ -55,6 +56,15 @@ namespace PWABuilder.Services
                 "Mozilla/5.0 (Linux; Android 10; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36 PWABuilderHttpAgent",
         };
 
+        private static int GetAvailablePort()
+        {
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+            return port;
+        }
+
         public async Task<JsonDocument> RunAuditAsync(string url, bool desktop)
         {
             var lighthouseSettingsPath = Path.Combine(
@@ -62,6 +72,7 @@ namespace PWABuilder.Services
                 "node-scripts\\dist\\src",
                 "lighthouserc.js"
             );
+            int headlessChromePort = GetAvailablePort();
 
             var lhPath = $"C:\\Program Files\\nodejs\\lighthouse.cmd";
             var lhArgs =
@@ -157,7 +168,8 @@ namespace PWABuilder.Services
                     catch { }
                 });
 
-            await pptPage.GoToAsync(url);
+            await pptPage.GoToAsync(url, WaitUntilNavigation.Load);
+            await pptPage.WaitForNetworkIdleAsync(new() { IdleTime = 1000 });
 
             // Start Lighthouse process
             var lhPsi = new ProcessStartInfo
