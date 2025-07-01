@@ -53,8 +53,16 @@ namespace PWABuilder.Services
 
             var page = await browser.NewPageAsync();
             await page.SetUserAgentAsync(Constant.DESKTOP_USERAGENT);
-            await page.GoToAsync(site, 15000, [WaitUntilNavigation.Load]);
-            await page.WaitForNetworkIdleAsync(new() { IdleTime = 1000 });
+            await page.GoToAsync(
+                site,
+                new NavigationOptions
+                {
+                    Timeout = 30000,
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded],
+                }
+            );
+
+            await Task.Delay(1000);
 
             return page;
         }

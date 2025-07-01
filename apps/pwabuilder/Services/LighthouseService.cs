@@ -175,8 +175,16 @@ namespace PWABuilder.Services
                     catch { }
                 });
 
-            await pptPage.GoToAsync(url, WaitUntilNavigation.Load);
-            await pptPage.WaitForNetworkIdleAsync(new() { IdleTime = 1000 });
+            await pptPage.GoToAsync(
+                url,
+                new NavigationOptions
+                {
+                    Timeout = 30000,
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded],
+                }
+            );
+
+            await Task.Delay(1000);
 
             // Start Lighthouse process
             var lhPsi = new ProcessStartInfo

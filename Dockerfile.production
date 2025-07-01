@@ -67,7 +67,12 @@ ENV Logging__LogLevel__Default=Information
 
 # Create a non-root user for security
 RUN addgroup --system --gid 1001 appgroup
-RUN adduser --system --uid 1001 --gid 1001 appuser
+RUN adduser --system --uid 1001 --gid 1001 --home /home/appuser appuser
+
+# Folder for Chrome user data
+ENV HOME=/home/appuser
+RUN mkdir -p /home/appuser \
+ && chown -R appuser:appgroup /home/appuser
 
 # Give the user permission to access Chrome
 RUN chown -R appuser:appgroup /usr/bin/google-chrome-stable
