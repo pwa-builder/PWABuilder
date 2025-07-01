@@ -1,6 +1,8 @@
 import { css, unsafeCSS, CSSResultGroup } from 'lit';
 
 export enum BreakpointValues {
+  xSmallUpper = 320,
+  smallLower = 321,
   smallUpper = 479,
   mediumLower = 480,
   mediumUpper = 639,
@@ -35,10 +37,20 @@ export function customBreakPoint(
   `);
 }
 
-export function smallBreakPoint(styles: CSSResultGroup) {
-  const upper = BreakpointValues.smallUpper;
+export function xSmallBreakPoint(styles: CSSResultGroup) {
+  const upper = BreakpointValues.xSmallUpper;
   return unsafeCSS(`
     @media screen ${breakPoints({ upper })} {
+      ${styles}
+    }
+  `);
+}
+
+export function smallBreakPoint(styles: CSSResultGroup) {
+  const lower = BreakpointValues.smallLower;
+  const upper = BreakpointValues.smallUpper;
+  return unsafeCSS(`
+    @media screen ${breakPoints({ lower, upper })} {
       ${styles}
     }
   `);
