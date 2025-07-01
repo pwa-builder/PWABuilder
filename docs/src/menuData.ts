@@ -245,14 +245,262 @@ export const headerHTMLString: string = `<div align=center>
 </div>`;
 
 export const quickMenuListenerScriptString: string = `
+<style>
+/* Accessible navigation tree styles */
+.nav-tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 2px 0;
+}
+
+.nav-item:hover, .nav-item:focus {
+  background-color: #f0f0f0;
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+}
+
+.nav-item.selected {
+  background-color: #e6f3ff;
+  font-weight: bold;
+}
+
+.section-header {
+  margin: 16px 0 8px 0;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #0066cc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.section-header:hover, .section-header:focus {
+  background-color: #e9ecef;
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+}
+
+.section-articles {
+  list-style: none;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.article-item {
+  padding: 4px 12px;
+  margin: 2px 0;
+  border-radius: 4px;
+}
+
+.article-item:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+}
+
+.article-link {
+  color: #0066cc;
+  text-decoration: none;
+  display: block;
+  padding: 4px 0;
+}
+
+.article-link:hover {
+  text-decoration: underline;
+}
+
+/* Hidden expanded/collapsed state indicators for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
 <script>
-  const menu = document.querySelector('sl-menu');
-  menu.addEventListener('click', event => {
-    const href = event.target.dataset.href;
-    console.log("event recieved");
-    console.log(href);
-    if (href) {
-      location.href = href;
+(function() {
+  // Wait for DOM to be ready
+  function initAccessibleNavigation() {
+    const navTree = document.querySelector('.nav-tree');
+    const sections = document.querySelectorAll('.section-header');
+    
+    if (!navTree) return;
+    
+    let currentFocus = 0;
+    const focusableElements = [];
+    
+    // Collect all focusable elements
+    function updateFocusableElements() {
+      focusableElements.length = 0;
+      
+      // Add top-level nav items
+      const navItems = navTree.querySelectorAll('.nav-item');
+      navItems.forEach(item => focusableElements.push(item));
+      
+      // Add section headers
+      sections.forEach(header => focusableElements.push(header));
+      
+      // Add visible article items
+      const visibleArticles = document.querySelectorAll('.section-articles .article-item');
+      visibleArticles.forEach(item => focusableElements.push(item));
+      
+      // Set initial focus to selected item or first item
+      const selectedItem = navTree.querySelector('.nav-item.selected');
+      if (selectedItem) {
+        currentFocus = focusableElements.indexOf(selectedItem);
+      }
+      
+      updateTabIndexes();
     }
-  });
+    
+    function updateTabIndexes() {
+      focusableElements.forEach((element, index) => {
+        element.tabIndex = index === currentFocus ? 0 : -1;
+      });
+    }
+    
+    function setFocus(index) {
+      if (index >= 0 && index < focusableElements.length) {
+        currentFocus = index;
+        updateTabIndexes();
+        focusableElements[currentFocus].focus();
+        
+        // Announce position for screen readers
+        const element = focusableElements[currentFocus];
+        const position = index + 1;
+        const total = focusableElements.length;
+        
+        // Update aria-posinset for current context
+        element.setAttribute('aria-posinset', position);
+        element.setAttribute('aria-setsize', total);
+      }
+    }
+    
+    function handleKeydown(event) {
+      let handled = false;
+      
+      switch(event.key) {
+        case 'ArrowDown':
+          setFocus(currentFocus + 1);
+          handled = true;
+          break;
+          
+        case 'ArrowUp':
+          setFocus(currentFocus - 1);
+          handled = true;
+          break;
+          
+        case 'Home':
+          setFocus(0);
+          handled = true;
+          break;
+          
+        case 'End':
+          setFocus(focusableElements.length - 1);
+          handled = true;
+          break;
+          
+        case 'Enter':
+        case ' ':
+          const currentElement = focusableElements[currentFocus];
+          if (currentElement) {
+            if (currentElement.classList.contains('nav-item')) {
+              // Navigate to the href
+              const href = currentElement.getAttribute('data-href');
+              if (href) {
+                location.href = href;
+              }
+            } else if (currentElement.classList.contains('article-item')) {
+              // Click the link
+              const link = currentElement.querySelector('a');
+              if (link) {
+                link.click();
+              }
+            }
+          }
+          handled = true;
+          break;
+      }
+      
+      if (handled) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }
+    
+    // Handle clicks on nav items
+    function handleNavClick(event) {
+      const navItem = event.target.closest('.nav-item');
+      if (navItem) {
+        const href = navItem.getAttribute('data-href');
+        if (href) {
+          location.href = href;
+        }
+      }
+    }
+    
+    // Initialize navigation
+    updateFocusableElements();
+    
+    // Add event listeners
+    document.addEventListener('keydown', handleKeydown);
+    if (navTree) {
+      navTree.addEventListener('click', handleNavClick);
+    }
+    
+    // Handle section expand/collapse (for future enhancement)
+    sections.forEach(header => {
+      header.addEventListener('click', function() {
+        const section = this.parentElement;
+        const articles = section.querySelector('.section-articles');
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        
+        this.setAttribute('aria-expanded', !isExpanded);
+        
+        // Add screen reader announcement
+        const announcement = document.createElement('div');
+        announcement.className = 'sr-only';
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.textContent = isExpanded ? 
+          this.textContent + ' section collapsed' : 
+          this.textContent + ' section expanded';
+        document.body.appendChild(announcement);
+        
+        setTimeout(() => {
+          document.body.removeChild(announcement);
+        }, 1000);
+        
+        updateFocusableElements();
+      });
+    });
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAccessibleNavigation);
+  } else {
+    initAccessibleNavigation();
+  }
+  
+  // Also initialize after docsify renders content
+  if (window.$docsify) {
+    window.$docsify.plugins = window.$docsify.plugins || [];
+    window.$docsify.plugins.push(function(hook) {
+      hook.doneEach(function() {
+        setTimeout(initAccessibleNavigation, 100);
+      });
+    });
+  }
+})();
 </script>`;
