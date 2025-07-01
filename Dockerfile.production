@@ -20,7 +20,7 @@ EXPOSE 8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Set environment variable for ASP.NET Core to listen on port 8080
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=http://+:8080
 
 # Use the SDK image to build the application
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -64,6 +64,10 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 # Set the port for Azure Web App (optional - Azure auto-detects from EXPOSE)
 ENV WEBSITES_PORT=8080
+
+# Enable detailed logging for debugging
+ENV ASPNETCORE_DETAILEDERRORS=true
+ENV Logging__LogLevel__Default=Information
 
 # Create a non-root user for security
 RUN addgroup --system --gid 1001 appgroup
