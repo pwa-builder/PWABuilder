@@ -237,6 +237,48 @@ sl-menu {
     background-image: var(--sidebar-nav-pagelink-background-image--collapse);
 }
 
+/* Improved focus styles for sidebar navigation links */
+.sidebar nav ul li a:focus {
+    outline: 3px solid #4F3FB6;
+    outline-offset: 2px;
+    background-color: #e7e2ee;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+/* High contrast support for sidebar links */
+@media (prefers-contrast: high), (-ms-high-contrast: active) {
+    .sidebar nav ul li a:focus {
+        outline: 4px solid currentColor;
+        outline-offset: 2px;
+        background-color: transparent;
+        border: 3px solid currentColor;
+    }
+}
+
+@media screen and (-ms-high-contrast: white-on-black) {
+    .sidebar nav ul li a:focus {
+        outline: 4px solid #ffffff;
+        border: 3px solid #ffffff;
+        background-color: transparent;
+        color: #ffffff;
+    }
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+    .sidebar nav ul li a:focus {
+        outline: 4px solid #000000;
+        border: 3px solid #000000;
+        background-color: transparent;
+        color: #000000;
+    }
+}
+
 sl-button {
     width: 100%;
 }
