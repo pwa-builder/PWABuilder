@@ -9,6 +9,13 @@ namespace PWABuilder.Services
 {
     public class LighthouseService : ILighthouseService
     {
+        private readonly IHostEnvironment env;
+
+        public LighthouseService(IHostEnvironment env)
+        {
+            this.env = env;
+        }
+
         private const int lhTimeoutMilliseconds = 300000;
 
         private readonly string[] disabledFeatures =
@@ -121,10 +128,10 @@ namespace PWABuilder.Services
             if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 throw new ArgumentException("Invalid URL.");
 
-            // Puppeteer Setup: Download Chromium if needed
-            await new BrowserFetcher().DownloadAsync();
+            await using var puppeteer = new PuppeteerService(env);
+            await puppeteer.CreateAsync(pptlaunchOptions);
 
-            await using var pptBrowser = await Puppeteer.LaunchAsync(pptlaunchOptions);
+            await using var pptBrowser = puppeteer.GetBrowser();
             await using var pptPage = await pptBrowser.NewPageAsync();
 
             // Set up request interception
