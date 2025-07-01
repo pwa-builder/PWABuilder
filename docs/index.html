@@ -100,6 +100,43 @@
             githubCorner.setAttribute('title', 'View source on GitHub');
         }
         });
+
+        // Fix invalid ARIA attribute values for accessibility compliance
+        function fixAriaAttributes() {
+            // Fix aria-hidden attributes with invalid "hidden" value
+            const elementsWithInvalidAriaHidden = document.querySelectorAll('[aria-hidden="hidden"]');
+            elementsWithInvalidAriaHidden.forEach(element => {
+                element.setAttribute('aria-hidden', 'true');
+            });
+
+            // Fix other common invalid ARIA attribute values
+            const elementsWithInvalidAriaExpanded = document.querySelectorAll('[aria-expanded="expanded"]');
+            elementsWithInvalidAriaExpanded.forEach(element => {
+                element.setAttribute('aria-expanded', 'true');
+            });
+
+            const elementsWithInvalidAriaPressed = document.querySelectorAll('[aria-pressed="pressed"]');
+            elementsWithInvalidAriaPressed.forEach(element => {
+                element.setAttribute('aria-pressed', 'true');
+            });
+        }
+
+        // Run fix after initial DOM load
+        document.addEventListener('DOMContentLoaded', fixAriaAttributes);
+
+        // Also run after Docsify has finished rendering content
+        if (window.$docsify) {
+            window.$docsify.plugins = window.$docsify.plugins || [];
+            window.$docsify.plugins.push(function(hook) {
+                hook.doneEach(function() {
+                    // Small delay to ensure copy-code plugin has finished
+                    setTimeout(fixAriaAttributes, 100);
+                });
+            });
+        }
+
+        // Run periodically to catch dynamically added elements
+        setInterval(fixAriaAttributes, 2000);
     </script>
     
 
