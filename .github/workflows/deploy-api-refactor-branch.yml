@@ -43,11 +43,9 @@ jobs:
       run: docker info
 
     - name: Docker build
-      working-directory: ./apps/pwabuilder
       run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 2GB
 
     - name: Docker push
-      working-directory: ./apps/pwabuilder
       run: docker push pwabuilder.azurecr.io/pwabuilder:production
     
     # - name: Build and push Docker image
