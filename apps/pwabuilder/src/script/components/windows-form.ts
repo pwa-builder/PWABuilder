@@ -103,6 +103,11 @@ export class WindowsForm extends AppPackageFormBase {
           padding: 0 10px;
         }
 
+        sl-details:focus-visible::part(header) {
+          outline: 2px solid #000000;
+          outline-offset: 2px;
+        }
+
         .details-summary {
           display: flex;
           align-items: center;
