@@ -61,10 +61,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Set environment variables for Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-
 # Enable detailed logging for debugging
 ENV ASPNETCORE_DETAILEDERRORS=true
 ENV Logging__LogLevel__Default=Information

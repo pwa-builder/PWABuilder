@@ -5,21 +5,40 @@ namespace PWABuilder.Services
 {
     public class PuppeteerService : IPuppeteerService
     {
-        private IBrowser browser;
+        private IBrowser? browser;
 
-        public PuppeteerService() { }
+        private string? chromePath;
 
-        public async Task CreateAsync()
+        private readonly IHostEnvironment env;
+
+        public PuppeteerService(IHostEnvironment env)
         {
-            // download the browser executable
-            await new BrowserFetcher().DownloadAsync();
+            this.env = env;
+        }
+
+        public async Task CreateAsync(LaunchOptions? customLaunchOptions = null)
+        {
+            if (env.IsProduction())
+            {
+                chromePath = "/usr/bin/google-chrome-stable";
+            }
+            else
+            {
+                // download the browser executable
+                var fetcher = new BrowserFetcher();
+                var revisionInfo = await fetcher.DownloadAsync();
+                chromePath = fetcher.GetExecutablePath(revisionInfo.BuildId);
+            }
 
             // browser execution configs
-            var launchOptions = new LaunchOptions
+            var defaultLaunchOptions = new LaunchOptions
             {
                 Headless = true, // = false for testing
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
             };
+            var launchOptions = customLaunchOptions ?? defaultLaunchOptions;
+
+            launchOptions.ExecutablePath = chromePath;
 
             // open a new page in the controlled browser
             var browser = await Puppeteer.LaunchAsync(launchOptions);
