@@ -1,7 +1,7 @@
 # Use the official ASP.NET Core runtime as the base image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 
-# Install dependencies for Puppeteer
+# Install dependencies for Puppeteer (runtime only, no Node.js needed here)
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -14,10 +14,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js (needed for frontend build)
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
-    && apt-get install -y nodejs
 
 WORKDIR /app
 EXPOSE 8080

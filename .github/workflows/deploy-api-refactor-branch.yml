@@ -39,11 +39,11 @@ jobs:
     - name: Log in to Azure docker registry (ACR)
       run: az acr login --name ${{ env.ACR_NAME }}
 
-    - name: docker info
+    - name: Docker info
       run: docker info
 
     - name: Docker build
-      run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 2GB
+      run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 4GB
 
     - name: Docker push
       run: docker push pwabuilder.azurecr.io/pwabuilder:production

@@ -1,4 +1,4 @@
-import { Platform } from './package';
+import { Platform } from "./publish";
 
 export interface BlogPost {
   title: string;
