@@ -38,7 +38,7 @@ The whole process can be done in just a few steps:
 4. Select `Generate Package` in the iOS section.
    
 <div class="docs-image">
-    <img src="/assets/builder/ios/ios-publish-section.png" width=550>
+    <img src="/assets/builder/ios/ios-publish-section.png" alt="iOS package generation section on PWABuilder showing Generate Package button" width=550>
 </div>
 
 5. You will prompted with editable metadata about your app. PWABuilder automatically populates these fields from your manifest.
