@@ -54,6 +54,12 @@ jobs:
       run: |
         echo "🔄 Restarting Azure Web App to pull latest container..."
         
+        # Force Web App to pull latest container image
+        az webapp config container set \
+          --name ${{ env.WEB_APP_NAME }} \
+          --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} \
+          --docker-custom-image-name pwabuilder.azurecr.io/pwabuilder:production
+        
         # Restart the Web App
         az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }}
         
