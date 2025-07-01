@@ -114,6 +114,31 @@ body {
   background: var(--primary-background-color);
   padding: 0;
   margin: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling at high zoom */
+}
+
+/* Ensure all text wraps properly */
+* {
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Better scaling for very small screens (400% zoom) */
+@media (max-width: 320px) {
+  html,
+  body {
+    font-size: min(max(0.875rem, 5vw), 18px);
+  }
+  
+  :root {
+    --title-font-size: 28px;
+    --header-font-size: 24px;
+    --subheader-font-size: 18px;
+    --body-font-size: 14px;
+    --card-body-font-size: 12px;
+    --interactions-font-size: 12px;
+    --footer-font-size: 10px;
+  }
 }
 
 #pageTitle {
