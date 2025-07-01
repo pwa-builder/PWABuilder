@@ -19,7 +19,7 @@ WORKDIR /app
 EXPOSE 8080
 
 # Set environment variable for ASP.NET Core to listen on port 8080
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=http://+:8080
 
 # Use the SDK image to build the application
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -61,9 +61,17 @@ COPY --from=publish /app/publish .
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
+# Set the port for Azure Web App (optional - Azure auto-detects from EXPOSE)
+ENV WEBSITES_PORT=8080
+
 # Create a non-root user for security
 RUN addgroup --system --gid 1001 appgroup
 RUN adduser --system --uid 1001 --gid 1001 appuser
+
+# Give the user permission to access Chrome
+RUN chown -R appuser:appgroup /usr/bin/google-chrome-stable
+RUN chmod +x /usr/bin/google-chrome-stable
+
 USER appuser
 
 ENTRYPOINT ["dotnet", "PWABuilder.dll"]

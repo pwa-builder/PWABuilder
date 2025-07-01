@@ -35,7 +35,7 @@ public class ViteEntryPointProvider
 
     private static (string jsPath, string cssPath) GetEntryPointJsFromIndex(IWebHostEnvironment env)
     {
-        var indexHtmlPath = Path.Combine(env.WebRootPath, "index.html");
+        var indexHtmlPath = Path.Combine(env.WebRootPath, "vite-index.html");
         if (!File.Exists(indexHtmlPath))
         {
             throw new FileNotFoundException($"Unable to find vite-index.html at {indexHtmlPath}. This means the JS entry point for the app won't be found.");
