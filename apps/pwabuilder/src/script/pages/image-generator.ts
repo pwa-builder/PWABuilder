@@ -224,7 +224,7 @@ export class ImageGenerator extends LitElement {
                 </div>
               </section>
               <section class="form-right platforms-section">
-                <h4>${loc.platforms}</h4>
+                <h3>${loc.platforms}</h3>
                 <p>${loc.platforms_text}</p>
                 <div role="group" class="platform-list">
                   ${this.renderPlatformList()}
