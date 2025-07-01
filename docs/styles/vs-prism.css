@@ -47,6 +47,13 @@
    border: 1px solid #dddddd;
    background-color: white;
  }
+
+ /* Add focus styles for keyboard accessibility */
+ pre[class*="language-"]:focus {
+   outline: 2px solid #247b95;
+   outline-offset: 2px;
+   border-color: #247b95;
+ }
  
  /* Inline code */
  :not(pre) > code[class*="language-"] {

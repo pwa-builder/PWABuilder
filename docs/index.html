@@ -102,6 +102,39 @@
         });
     </script>
     
+    <!-- Make scrollable code blocks keyboard accessible -->
+    <script>
+        function makeCodeBlocksAccessible() {
+            var codeBlocks = document.querySelectorAll('pre[class*="language-"]');
+            codeBlocks.forEach(function(block) {
+                // Add tabindex to make elements focusable
+                block.setAttribute('tabindex', '0');
+                block.setAttribute('role', 'region');
+                block.setAttribute('aria-label', 'Code block');
+            });
+        }
+        
+        // Run after content loads and on route changes
+        document.addEventListener('DOMContentLoaded', makeCodeBlocksAccessible);
+        
+        // Use MutationObserver to handle dynamic content changes
+        if (typeof MutationObserver !== 'undefined') {
+            var observer = new MutationObserver(function(mutations) {
+                var hasNewContent = mutations.some(function(mutation) {
+                    return mutation.type === 'childList' && mutation.addedNodes.length > 0;
+                });
+                if (hasNewContent) {
+                    makeCodeBlocksAccessible();
+                }
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    </script>
+    
 
 </body>
 
