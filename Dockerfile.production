@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 EXPOSE 8080
+ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Set environment variable for ASP.NET Core to listen on port 8080
-ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_URLS=http://+:80
 
 # Use the SDK image to build the application
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
