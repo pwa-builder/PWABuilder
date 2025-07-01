@@ -16,7 +16,9 @@ env:
   CONTAINER_APP_NAME: pwabuilder-api-refactor-app
   CONTAINER_APP_ENV: pwabuilder-api-refactor-env
   
-  IMAGE_NAME: pwabuilder-api-refactor 
+  # Web App Configuration
+  WEB_APP_NAME: pwabuilder-summer25-consolidation
+  WEB_APP_RESOURCE_GROUP: pwabuilder-pre  # Replace with your Web App's resource group
 
 jobs:
   build-and-deploy:
@@ -47,3 +49,18 @@ jobs:
 
     - name: Docker push
       run: docker push pwabuilder.azurecr.io/pwabuilder:production
+      
+    - name: Restart Azure Web App
+      run: |
+        echo "🔄 Restarting Azure Web App to pull latest container..."
+        
+        # Force Web App to pull latest container image
+        az webapp config container set \
+          --name ${{ env.WEB_APP_NAME }} \
+          --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} \
+          --docker-custom-image-name pwabuilder.azurecr.io/pwabuilder:production
+        
+        # Restart the Web App
+        az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }}
+        
+        echo "✅ Web App restart completed"
