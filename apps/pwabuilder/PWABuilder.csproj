@@ -32,7 +32,7 @@
   </Target>
   <Target Name="CompileClient" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
     <Message Text="Building frontend..." Importance="high" />
-    <Exec ContinueOnError="True" Command="del /F /q wwwroot\assets\js" />
+    <Exec ContinueOnError="True" Command="del /F /q wwwroot\code" />
     <Exec WorkingDirectory="./Frontend" Command="npm install" />
     <Exec WorkingDirectory="./Frontend" Command="npm run build" />
     <Move SourceFiles="wwwroot\index.html" DestinationFiles="wwwroot\vite-index.html" ContinueOnError="true" />
