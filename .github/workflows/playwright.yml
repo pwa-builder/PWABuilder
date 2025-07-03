@@ -28,7 +28,7 @@ jobs:
       run: npm install @playwright/test --save-dev
     - name: Run Playwright tests
       run: npx playwright test tests/basic.spec.ts tests/packaging.spec.ts tests/report-card.spec.ts
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report
