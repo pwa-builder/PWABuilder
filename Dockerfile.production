@@ -48,6 +48,10 @@ COPY . .
 WORKDIR /src/apps/pwabuilder/Frontend
 RUN npm install
 RUN npm run build
+# Build lighthouse custom audits
+WORKDIR /src/apps/pwabuilder/node-scripts
+RUN npm install
+RUN npm run build
 
 # Build backend
 WORKDIR /src/apps/pwabuilder
@@ -65,6 +69,16 @@ COPY --from=publish /app/publish .
 ENV ASPNETCORE_DETAILEDERRORS=true
 ENV Logging__LogLevel__Default=Information
 
+# Copy Node.js binary and npm
+COPY --from=build /usr/bin/node /usr/bin/node
+COPY --from=build /usr/bin/npm /usr/bin/npm
+COPY --from=build /usr/lib/node_modules /usr/lib/node_modules
+COPY --from=build /src/apps/pwabuilder/node-scripts /app/node-scripts
+# Node path
+ENV NODE_BIN=/usr/bin/node
+# Lighthouse CLI 
+ENV LIGHTHOUSE_WORKDIR=/app/node-scripts
+
 # Create a non-root user for security
 RUN addgroup --system --gid 1001 appgroup
 RUN adduser --system --uid 1001 --gid 1001 --home /home/appuser appuser
@@ -72,7 +86,7 @@ RUN adduser --system --uid 1001 --gid 1001 --home /home/appuser appuser
 # Folder for Chrome user data
 ENV HOME=/home/appuser
 RUN mkdir -p /home/appuser \
- && chown -R appuser:appgroup /home/appuser
+    && chown -R appuser:appgroup /home/appuser
 
 # Give the user permission to access Chrome
 RUN chown -R appuser:appgroup /usr/bin/google-chrome-stable

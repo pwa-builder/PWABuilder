@@ -162,6 +162,21 @@ namespace PWABuilder.Utils
                 error
             );
 
+            var serviceWorker = !string.IsNullOrEmpty(swUrl)
+                ? new ServiceWorker { url = swUrl, raw = swFeatures?.Raw }
+                : null;
+
+            var finalArtifacts = CreateIfNotAllNull(
+                () =>
+                    new Artifacts
+                    {
+                        webAppManifest = webAppManifest,
+                        serviceWorker = serviceWorker,
+                    },
+                webAppManifest,
+                serviceWorker
+            );
+
             return new Report
             {
                 audits = new Audits
@@ -225,13 +240,7 @@ namespace PWABuilder.Utils
                         details = finalImagesDetails,
                     },
                 },
-                artifacts = new Artifacts
-                {
-                    webAppManifest = webAppManifest,
-                    serviceWorker = !string.IsNullOrEmpty(swUrl)
-                        ? new ServiceWorker { url = swUrl, raw = swFeatures?.Raw }
-                        : null,
-                },
+                artifacts = finalArtifacts,
             };
         }
     }

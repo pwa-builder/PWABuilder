@@ -74,16 +74,37 @@ namespace PWABuilder.Services
 
         public async Task<JsonDocument> RunAuditAsync(string url, bool desktop)
         {
-            var lighthouseSettingsPath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "node-scripts\\dist\\src",
-                "lighthouserc.js"
-            );
             int headlessChromePort = GetAvailablePort();
 
-            var lhPath = $"C:\\Program Files\\nodejs\\lighthouse.cmd";
+            var nodePath = Environment.GetEnvironmentVariable("NODE_BIN");
+            var lighthouseDirectory = Environment.GetEnvironmentVariable("LIGHTHOUSE_WORKDIR");
+            var workingDirectory = !string.IsNullOrWhiteSpace(lighthouseDirectory)
+                ? Path.GetFullPath(lighthouseDirectory, Directory.GetCurrentDirectory())
+                : Path.Combine(Directory.GetCurrentDirectory(), "node-scripts");
+            var lighthouseSettingsPath = Path.Combine(
+                workingDirectory,
+                "dist",
+                "src",
+                "lighthouserc.js"
+            );
+            string lighthouseScript = Path.Combine("node_modules", "lighthouse", "cli", "index.js");
+
+            if (string.IsNullOrWhiteSpace(nodePath) || !File.Exists(nodePath))
+            {
+                throw new FileNotFoundException($"NODE_BIN not found or invalid: {nodePath}");
+            }
+
+            var lighthouseScriptFullPath = Path.Combine(workingDirectory, lighthouseScript);
+            if (!File.Exists(lighthouseScriptFullPath))
+            {
+                throw new FileNotFoundException(
+                    $"Lighthouse script not found: {lighthouseScriptFullPath}"
+                );
+            }
+
             var lhArgs =
-                $"{url} "
+                $"\"{lighthouseScript}\" "
+                + $"{url} "
                 + $"--quiet "
                 + $"--chrome-flags=\"--headless --no-sandbox\" "
                 + $"--output=json --output-path=stdout "
@@ -189,7 +210,8 @@ namespace PWABuilder.Services
             // Start Lighthouse process
             var lhPsi = new ProcessStartInfo
             {
-                FileName = lhPath,
+                FileName = nodePath,
+                WorkingDirectory = workingDirectory,
                 Arguments = lhArgs,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
