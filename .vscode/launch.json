@@ -1,9 +1,8 @@
 {
-    // VS Code debugger launch file. When you press F5 in VS Code,
-    // this debugger configuration will launch.
-    "version": "0.2.0",
-    "configurations": [
-
+  // VS Code debugger launch file. When you press F5 in VS Code,
+  // this debugger configuration will launch.
+  "version": "0.2.0",
+  "configurations": [
     {
       "name": "launch.backend",
       "type": "coreclr",
@@ -16,7 +15,11 @@
         "name": "launch.edge",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
-      "cwd": "${workspaceFolder}/apps/pwabuilder"
+      "cwd": "${workspaceFolder}/apps/pwabuilder",
+      "env": {
+        "LIGHTHOUSE_WORKDIR": "./node-scripts",
+        "NODE_BIN": "C:/Program Files/nodejs/node.exe"
+      }
     },
     {
       "name": "launch.edge",
@@ -27,7 +30,7 @@
       "sourceMaps": true,
       "trace": true,
       "preLaunchTask": "tasks.launch-vite",
-      "postDebugTask": "tasks.stop-debugging",
+      "postDebugTask": "tasks.stop-debugging"
     }
   ]
 }
