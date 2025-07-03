@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Accessibility Improvements</title>
+    <link rel="stylesheet" href="http://localhost:8000/node_modules/@shoelace-style/shoelace/dist/themes/light.css" />
+    <script type="module">
+        import '@shoelace-style/shoelace/dist/components/input/input.js';
+        import { setBasePath } from '@shoelace-style/shoelace/dist/utilities/base-path.js';
+        setBasePath('http://localhost:8000/node_modules/@shoelace-style/shoelace/dist/');
+    </script>
+</head>
+<body>
+    <h1>Accessibility Test</h1>
+    <div id="test-form">
+        <h2>Test Form Fields</h2>
+        <div class="form-field">
+            <label for="name-field">Name (required)</label>
+            <sl-input id="name-field" data-field="name" placeholder="Enter name"></sl-input>
+        </div>
+        <div class="form-field">
+            <label for="short-name-field">Short Name (required)</label>
+            <sl-input id="short-name-field" data-field="short_name" placeholder="Enter short name"></sl-input>
+        </div>
+    </div>
+
+    <script type="module">
+        // Simple test to simulate error creation with our improved accessibility
+        function createErrorDiv(fieldName, errorMessage) {
+            const input = document.querySelector(`[data-field="${fieldName}"]`);
+            const errorId = `${fieldName}-error-${Date.now()}`;
+            
+            // Create error div
+            const div = document.createElement('div');
+            div.classList.add(`${fieldName}-error-div`);
+            div.id = errorId;
+            
+            // Create error paragraph
+            const p = document.createElement('p');
+            p.innerText = errorMessage;
+            p.style.color = "#eb5757";
+            p.setAttribute('aria-live', 'polite');
+            p.setAttribute('role', 'alert');
+            div.appendChild(p);
+            
+            // Insert after input
+            input.parentNode.appendChild(div);
+            
+            // Associate error with input field
+            input.setAttribute('aria-describedby', errorId);
+            
+            console.log(`Created error for ${fieldName} with ID ${errorId}`);
+        }
+
+        // Test the accessibility improvements
+        setTimeout(() => {
+            createErrorDiv('name', 'name is required and must be a string with a length > 0');
+            createErrorDiv('short_name', 'short_name is required and must be a string with a length >= 3');
+        }, 2000);
+    </script>
+</body>
+</html>
