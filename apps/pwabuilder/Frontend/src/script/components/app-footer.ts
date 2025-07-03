@@ -4,6 +4,7 @@ import { customElement } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import {
+  xSmallBreakPoint,
   smallBreakPoint,
   mediumBreakPoint,
   xxxLargeBreakPoint,
@@ -115,6 +116,35 @@ export class AppFooter extends LitElement {
           }
         `
       )}
+
+      ${xSmallBreakPoint(css`
+        footer {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          padding: 12px 10px;
+          font-size: 10px;
+        }
+
+        #icons {
+          margin-top: 8px;
+        }
+
+        #footer-top span {
+          font-size: 10px;
+          line-height: 1.4;
+        }
+
+        #links {
+          margin-top: 8px;
+        }
+
+        #links a {
+          font-size: 10px;
+          margin: 0 6px;
+        }
+      `)}
 
       ${smallBreakPoint(css`
         footer {

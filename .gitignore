@@ -376,8 +376,6 @@ tests/FunctionalTests/*.sarif
 # Ignore all sourcemaps
 *.js.map
 
-# Ignore Cypress artifacts
-/src/Api/client/cypress/screenshots/*
-/src/Api/client/cypress/mochaawesome-report/*
-/src/Api/client/cypress/results/*
-/src/Api/client/cypress/downloads/*
+# Ignore test artifacts
+playwright-report/
+test-results/

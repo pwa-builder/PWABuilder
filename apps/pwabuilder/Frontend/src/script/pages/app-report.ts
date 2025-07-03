@@ -253,6 +253,16 @@ export class AppReport extends LitElement {
           padding: 5px 20px;
         }
 
+        sl-details:focus-visible {
+          outline: 2px solid var(--primary-color);
+          outline-offset: 2px;
+        }
+
+        sl-details::part(header):focus-visible {
+          outline: 2px solid var(--primary-color);
+          outline-offset: 2px;
+        }
+
         sl-details::part(summary-icon){
           display: none;
         }

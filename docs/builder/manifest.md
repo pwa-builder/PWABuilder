@@ -4,7 +4,7 @@ Many capabilities of Progressive Web Apps are exposed through your app's manifes
 
 To edit your manifest via the PWABuilder site:
 
-1. Get to your app's report card page. If you need guidance on this, vist the [Quick Start.](/builder/quick-start)
+1. Get to your app's report card page. If you need guidance on this, visit the [Quick Start.](/builder/quick-start)
 
 2. In the `Manifest` subsection, click `Edit Your Manifest`.
 

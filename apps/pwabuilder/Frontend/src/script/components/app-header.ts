@@ -12,6 +12,7 @@ import {
   largeBreakPoint,
   mediumBreakPoint,
   smallBreakPoint,
+  xSmallBreakPoint,
 } from '../utils/css/breakpoints';
 
 @customElement('app-header')
@@ -175,6 +176,26 @@ export class AppHeader extends LitElement {
           color: black;
         }
       }
+
+      ${xSmallBreakPoint(css`
+        header {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+
+        header img {
+          width: 60px;
+        }
+
+        nav {
+          width: auto;
+          gap: 0.5em;
+        }
+
+        .nav_link span {
+          font-size: 16px;
+        }
+      `)}
 
       ${smallBreakPoint(css`
 

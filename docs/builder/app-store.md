@@ -72,7 +72,7 @@ To solve this you can run `pod repo update`, and then `pod update` if you alread
 
 ## Adjusting Capabilities
 
-Select the `Project Navigator` tab. Select your application. Under the `Signing & Capabilities` tab, check and disable all capabilites your app does not needed.
+Select the `Project Navigator` tab. Select your application. Under the `Signing & Capabilities` tab, check and disable all capabilities your app does not needed.
 Use only those that are actually involved in your application. This is important for passing publishing verification.
 
 <div class="docs-image">
@@ -124,7 +124,7 @@ Next, you will need to create a Bundle ID on your Apple Developer Account that m
    
 5. Add your Bundle ID. **Important:** This must match the bundle ID you created with PWABuilder.
 
-6. In the capabilites section, enable `Associated Domains` and `Push Notifications`.
+6. In the capabilities section, enable `Associated Domains` and `Push Notifications`.
 
 7. Click `Continue` and then `Register` to finish adding the identifier.
 
@@ -133,7 +133,7 @@ Next, you will need to create a Bundle ID on your Apple Developer Account that m
 
 #### 3. Create a Certificate Signing Request (CSR)
 
-Next, you will need to use the Keychain Acess application to create a Certificate Signing Request:
+Next, you will need to use the Keychain Access application to create a Certificate Signing Request:
 
 1. Launch the `Keychain Access` app.
    
@@ -328,7 +328,7 @@ It is possible to enable StoreKit 2 IAP for you PWA, but more manual steps need 
 
 1. Use main branch of [our repository](https://github.com/khmyznikov/ios-pwa-wrap) as example.
 
-2. Folow [our blogpost](https://blog.pwabuilder.com/posts/you-won't-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/) for further instructions.
+2. Follow [our blogpost](https://blog.pwabuilder.com/posts/you-won't-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/) for further instructions.
 
 ## Additional code examples
 

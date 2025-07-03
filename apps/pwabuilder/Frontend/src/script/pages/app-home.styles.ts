@@ -1,5 +1,7 @@
 import { css } from "lit";
 import {
+  xSmallBreakPoint,
+  smallBreakPoint,
   xLargeBreakPoint,
   xxxLargeBreakPoint,
   BreakpointValues,
@@ -35,7 +37,8 @@ export const homeStyles = css`
   }
 
   #wrapper {
-    width: 1000px;
+    width: min(1000px, 90vw);
+    max-width: 100%;
   }
 
   app-header::part(header) {
@@ -138,6 +141,7 @@ export const homeStyles = css`
     grid-area: 1 / 1 / auto / 5;
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
   #input-box::part(input) {
     -webkit-text-fill-color: var(--sl-input-color);
@@ -160,7 +164,8 @@ export const homeStyles = css`
     border: 1px solid #e5e5e5;
     border-radius: var(--input-border-radius);
     color: var(--font-color);
-    width: 28em;
+    width: min(28em, 100%);
+    max-width: 100%;
     font-size: 14px;
     height: 3em;
   }
@@ -307,66 +312,65 @@ export const homeStyles = css`
     }
   }
 
-  /* < 480px */
-  @media (max-width: 480px) {
-    #home-block {
-      padding: 1em;
-      padding-top: 4em;
-      padding-bottom: 2em;
-      background: url(/assets/new/Hero480_withmani.jpg);
-      background-position: center bottom;
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
-    #wrapper {
-      width: 400px;
-    }
-    #home-header {
-      font-size: 32px;
-      line-height: 36px;
-    }
-    #content-grid {
-      display: flex;
-      flex-direction: column;
-      row-gap: 1em;
-    }
-    #input-and-error{
-      width: 100%;
-    }
-    sl-input {
-      width: 100%;
-    }
-    #input-form sl-input::part(base){
-      width: 100%;
-    }
-    #input-area {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      row-gap: 5px;
-    }
-    #input-header-holder img {
-      display: none;
-    }
-    #input-form {
-      width: 100%;
-    }
-    .grid-item-header {
-      font-size: 20px;
-    }
-    #input-header {
-      font-size: 20px;
-    }
-    #input-form .navigation::part(base) {
-      width: 8em;
-    }
-  }
-  @media (max-width: 415px) {
-    #wrapper {
-      width: 300px;
-    }
-  }
+  /* 321px - 479px */
+  ${smallBreakPoint(css`
+      #home-block {
+        padding: 1em;
+        padding-top: 3.5em;
+        padding-bottom: 2em;
+        background: url(/assets/new/Hero480_withmani.jpg);
+        background-position: center bottom;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      #wrapper {
+        width: min(350px, 95vw);
+        max-width: 100%;
+      }
+      #home-header {
+        font-size: 28px;
+        line-height: 32px;
+        text-align: center;
+      }
+      #content-grid {
+        display: flex;
+        flex-direction: column;
+        row-gap: 1em;
+      }
+      .intro-grid-item {
+        width: 100%;
+        margin-right: 0;
+      }
+      .intro-grid-item p {
+        width: 100%;
+        text-align: center;
+      }
+      .grid-item-header {
+        justify-content: center;
+        font-size: 18px;
+      }
+      #input-area {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        row-gap: 8px;
+      }
+      #input-and-error {
+        width: 100%;
+        margin-right: 0;
+      }
+      #input-form sl-input::part(base) {
+        width: 100%;
+      }
+      #input-form {
+        width: 100%;
+      }
+      #input-form .navigation::part(base) {
+        width: 100%;
+      }
+  `)}
+
   @media (min-width: 640px) and (max-width: 955px) {
     #home-block {
       background-position: center;
@@ -389,6 +393,99 @@ export const homeStyles = css`
   ${xxxLargeBreakPoint(css`
       #wrapper {
         width: 1160px;
+      }
+  `)}
+
+  /* <= 320px - Extra small for 400% zoom */
+  ${xSmallBreakPoint(css`
+      #home-block {
+        padding: 0.5em;
+        padding-top: 3em;
+        padding-bottom: 1.5em;
+        background: none;
+        background-color: var(--primary-background-color);
+      }
+      #wrapper {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 0.5em;
+      }
+      #home-header {
+        font-size: 24px;
+        line-height: 28px;
+        max-width: 100%;
+        text-align: center;
+      }
+      #content-grid {
+        display: flex;
+        flex-direction: column;
+        row-gap: 0.75em;
+        width: 100%;
+      }
+      .intro-grid-item {
+        width: 100%;
+        margin-right: 0;
+      }
+      .intro-grid-item p {
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        font-size: 13px;
+      }
+      .grid-item-header {
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+      }
+      .grid-item-header a {
+        font-size: 16px;
+        margin: 0 0 0.25em 0;
+      }
+      #input-form {
+        width: 100%;
+        margin-top: 0.75em;
+      }
+      #input-header-holder {
+        flex-direction: column;
+        text-align: center;
+      }
+      #input-header-holder img {
+        display: none;
+      }
+      #input-header {
+        font-size: 16px;
+        text-align: center;
+      }
+      #input-area {
+        display: flex;
+        flex-direction: column;
+        row-gap: 8px;
+        width: 100%;
+        place-items: stretch;
+      }
+      #input-and-error {
+        width: 100%;
+        margin-right: 0;
+      }
+      #input-form sl-input::part(base) {
+        width: 100%;
+        min-width: 0;
+        font-size: 13px;
+        height: 2.75em;
+      }
+      #start-button {
+        width: 100%;
+        margin-top: 8px;
+      }
+      #input-form .navigation::part(base) {
+        width: 100%;
+        font-size: 13px;
+        height: 2.75em;
+        min-height: 2.75em;
+      }
+      #demo {
+        text-align: center;
+        font-size: 11px;
       }
   `)}
 `;
