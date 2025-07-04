@@ -46,13 +46,13 @@ namespace PWABuilder.Validations
                     "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
                 DisplayString = "Manifest has hex encoded background_color",
                 Category = "recommended",
-                TestRequired = false,
                 Member = "background_color",
                 DefaultValue = "#000000",
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
-                ErrorString = "background_color should be a valid hex color",
+                ErrorString = string.Empty,
                 QuickFix = true,
+                TestRequired = false,
             };
             backGroundColorValidation.Test = (value) =>
             {
@@ -61,6 +61,8 @@ namespace PWABuilder.Validations
                     || jsonElement.ValueKind != JsonValueKind.String
                 )
                 {
+                    backGroundColorValidation.ErrorString =
+                        "background_color should be a valid hex color";
                     return false;
                 }
 
@@ -113,15 +115,12 @@ namespace PWABuilder.Validations
                             .EnumerateArray()
                             .All(icon =>
                             {
-                                if (
-                                    !icon.TryGetProperty("type", out var type)
-                                    || type.ValueKind != JsonValueKind.String
-                                    || type.GetString() is not string typeIcon
-                                    || !typeIcon.Equals("image/webp")
-                                    || !typeIcon.Equals("image/svg+xml")
-                                )
+                                if (icon.TryGetProperty("type", out var type))
                                 {
-                                    return false;
+                                    var invalidValues = new[] { "image/webp", "image/svg+xml" };
+                                    return type.ValueKind == JsonValueKind.String
+                                        && type.GetString() is string typeIcon
+                                        && !invalidValues.Contains(typeIcon);
                                 }
                                 return true;
                             });
@@ -145,8 +144,9 @@ namespace PWABuilder.Validations
                 Member = "categories",
                 DefaultValue = new List<string>(),
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
-                ErrorString = "Categories should be an array of string category values",
+                ErrorString = string.Empty,
                 QuickFix = true,
+                TestRequired = false,
             };
             categoryValidation.Test = (value) =>
             {
@@ -161,6 +161,7 @@ namespace PWABuilder.Validations
                 }
 
                 categoryValidation.TestRequired = true;
+
                 return jsonElement.ValueKind == JsonValueKind.Array
                     && jsonElement.EnumerateArray().All(v => v.ValueKind == JsonValueKind.String);
             };
@@ -271,16 +272,17 @@ namespace PWABuilder.Validations
 
             var preferRelatedAppsValidation = new ManifestSingleField
             {
-                Member = "prefer_related_applications",
-                DisplayString = "Manifest properly sets prefer_related_applications field",
                 InfoString =
                     "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
+                DisplayString = "Manifest properly sets prefer_related_applications field",
                 Category = "optional",
+                Member = "prefer_related_applications",
                 DefaultValue = false,
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
                 ErrorString = string.Empty,
                 QuickFix = false,
+                TestRequired = false,
             };
             preferRelatedAppsValidation.Test = (value) =>
             {
@@ -474,6 +476,7 @@ namespace PWABuilder.Validations
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
                 ErrorString = "Screenshots must be an array of screenshot objects",
                 QuickFix = true,
+                TestRequired = false,
             };
             screenshotsValidation.Test = (value) =>
             {
@@ -542,6 +545,7 @@ namespace PWABuilder.Validations
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
                 ErrorString = "theme_color should be a valid hex color",
                 QuickFix = true,
+                TestRequired = false,
             };
             themeColorValidation.Test = (value) =>
             {
@@ -555,12 +559,12 @@ namespace PWABuilder.Validations
                     return false;
                 }
 
+                themeColorValidation.TestRequired = true;
                 if (
                     jsonElement.ValueKind != JsonValueKind.String
                     || string.IsNullOrWhiteSpace(jsonElement.GetString())
                 )
                 {
-                    themeColorValidation.TestRequired = true;
                     return false;
                 }
 
@@ -1251,6 +1255,7 @@ namespace PWABuilder.Validations
                     DocsLink = r.DocsLink,
                     ErrorString = r.ErrorString,
                     QuickFix = r.QuickFix,
+                    TestRequired = r.TestRequired,
                     Valid = testResult && propertyExist,
                 };
             });
