@@ -53,7 +53,8 @@ export type FindWebManifestResult = {
 	content: {
 		url: string,
 		raw: string,
-		json: unknown
+		json: unknown,
+		validations: Validation[]
 	}
 }
 export type FindServiceWorkerResult = {
