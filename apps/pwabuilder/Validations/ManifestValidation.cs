@@ -289,7 +289,7 @@ namespace PWABuilder.Validations
                 if (
                     value is not JsonElement jsonElement
                     || jsonElement.ValueKind == JsonValueKind.Null
-                        && jsonElement.ValueKind == JsonValueKind.Undefined
+                    || jsonElement.ValueKind == JsonValueKind.Undefined
                 )
                 {
                     preferRelatedAppsValidation.TestRequired = false;
@@ -761,7 +761,8 @@ namespace PWABuilder.Validations
                     || jsonElement.ValueKind != JsonValueKind.Object
                 )
                 {
-                    edgeSidePanelValidation.ErrorString = "edge_side_panel should be an object";
+                    edgeSidePanelValidation.ErrorString =
+                        "The value entered for edge_side_panel.preferred_width should be a number";
                     return false;
                 }
 
@@ -1028,7 +1029,7 @@ namespace PWABuilder.Validations
                 )
                 {
                     orientationValidation.ErrorString =
-                        "orientation must be one of the specified strings and of type string";
+                        "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary";
                     return false;
                 }
 
@@ -1075,7 +1076,7 @@ namespace PWABuilder.Validations
                     || jsonElement.ValueKind != JsonValueKind.String
                 )
                 {
-                    langValidation.ErrorString = "lang must be a valid string";
+                    langValidation.ErrorString = "lang should be set to a valid language code";
                     return false;
                 }
 
