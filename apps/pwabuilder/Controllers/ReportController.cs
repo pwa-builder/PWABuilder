@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
+using PWABuilder.Validations;
 
 namespace PWABuilder.Controllers
 {
@@ -150,13 +151,18 @@ namespace PWABuilder.Controllers
                     catch { }
                 }
 
+                var manifestValidations = ManifestValidations.ValidateManifest(
+                    webAppManifest?.json
+                );
+
                 // Build the report object
                 var report = ReportUtils.MapReportOutput(
                     audits,
                     webAppManifest,
                     swUrl,
                     swFeatures,
-                    imagesAudit
+                    imagesAudit,
+                    manifestValidations
                 );
 
                 // Analytics

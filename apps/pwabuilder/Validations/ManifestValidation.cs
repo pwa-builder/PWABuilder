@@ -15,27 +15,28 @@ namespace PWABuilder.Validations
             var nameValidation = new ManifestSingleField
             {
                 InfoString =
-                    "The name member is a string that represents the name of the web application...",
+                    "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
                 DisplayString = "Manifest has name field",
                 Category = "required",
                 Member = "name",
                 DefaultValue = "cool PWA",
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=name-string",
-                ErrorString = "name is required and can not be empty",
+                ErrorString = "",
                 QuickFix = true,
-                Test = (value) =>
+            };
+            nameValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                    || string.IsNullOrWhiteSpace(jsonElement.GetString())
+                )
                 {
-                    if (
-                        value is not JsonElement jsonElement
-                        || jsonElement.ValueKind != JsonValueKind.String
-                        || string.IsNullOrWhiteSpace(jsonElement.GetString())
-                    )
-                    {
-                        return false;
-                    }
-                    var strValue = jsonElement.GetString();
-                    return strValue.Equals(strValue.Trim());
-                },
+                    nameValidation.ErrorString = "name is required and can not be empty";
+                    return false;
+                }
+                var strValue = jsonElement.GetString();
+                return strValue.Equals(strValue.Trim());
             };
             manifestValidations.Add(nameValidation);
 
@@ -45,35 +46,37 @@ namespace PWABuilder.Validations
                     "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
                 DisplayString = "Manifest has hex encoded background_color",
                 Category = "recommended",
+                TestRequired = false,
                 Member = "background_color",
                 DefaultValue = "#000000",
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
                 ErrorString = "background_color should be a valid hex color",
                 QuickFix = true,
-                Test = (value) =>
+            };
+            backGroundColorValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
                 {
-                    if (
-                        value is not JsonElement jsonElement
-                        || jsonElement.ValueKind != JsonValueKind.String
-                    )
-                    {
-                        return false;
-                    }
-
-                    if (jsonElement.GetString() is string colorValue)
-                    {
-                        return Regex.IsMatch(colorValue, "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
-                    }
-
                     return false;
-                },
+                }
+
+                backGroundColorValidation.TestRequired = true;
+                if (jsonElement.GetString() is string colorValue)
+                {
+                    return Regex.IsMatch(colorValue, "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
+                }
+                return false;
             };
             manifestValidations.Add(backGroundColorValidation);
 
             var shortcutsValidation = new ManifestSingleField
             {
-                InfoString = "The shortcuts member defines an array of shortcuts or links...",
+                InfoString =
+                    "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
                 DisplayString = "Manifest has shortcuts field",
                 Category = "enhancement",
                 Member = "shortcuts",
@@ -81,38 +84,55 @@ namespace PWABuilder.Validations
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
                 ErrorString = string.Empty,
                 QuickFix = true,
-                Test = (value) =>
+            };
+            shortcutsValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.Array
+                )
                 {
-                    if (
-                        value is not JsonElement jsonElement
-                        || jsonElement.ValueKind != JsonValueKind.Array
-                    )
-                    {
-                        return false;
-                    }
+                    shortcutsValidation.ErrorString =
+                        "shortcuts must be an array of shortcut objects";
+                    return false;
+                }
 
-                    foreach (var shortcut in jsonElement.EnumerateArray())
+                var supportedFormats = jsonElement
+                    .EnumerateArray()
+                    .All(shortcuts =>
                     {
-                        if (
-                            shortcut.TryGetProperty("icons", out var iconsObj)
-                            && iconsObj.ValueKind == JsonValueKind.Array
-                        )
+                        if (!shortcuts.TryGetProperty("icons", out var iconsObj))
                         {
-                            foreach (var icon in iconsObj.EnumerateArray())
+                            return true;
+                        }
+                        if (iconsObj.ValueKind != JsonValueKind.Array)
+                        {
+                            return false;
+                        }
+                        return iconsObj
+                            .EnumerateArray()
+                            .All(icon =>
                             {
                                 if (
                                     !icon.TryGetProperty("type", out var type)
                                     || type.ValueKind != JsonValueKind.String
                                     || type.GetString() is not string typeIcon
-                                    || typeIcon != "image/webp"
-                                    || typeIcon != "image/svg+xml"
+                                    || !typeIcon.Equals("image/webp")
+                                    || !typeIcon.Equals("image/svg+xml")
                                 )
+                                {
                                     return false;
-                            }
-                        }
-                    }
-                    return true;
-                },
+                                }
+                                return true;
+                            });
+                    });
+                if (!supportedFormats)
+                {
+                    shortcutsValidation.ErrorString =
+                        "shortcuts cannot contain icons with type image/webp or image/svg+xml";
+                    return false;
+                }
+                return true;
             };
             manifestValidations.Add(shortcutsValidation);
 
@@ -127,33 +147,32 @@ namespace PWABuilder.Validations
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
                 ErrorString = "Categories should be an array of string category values",
                 QuickFix = true,
-                Test = (value) =>
+            };
+            categoryValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind == JsonValueKind.Undefined
+                    || jsonElement.ValueKind == JsonValueKind.Null
+                )
                 {
-                    if (
-                        value is not JsonElement jsonElement
-                        || jsonElement.ValueKind != JsonValueKind.Array
-                    )
-                    {
-                        return false;
-                    }
-
-                    if (jsonElement.EnumerateArray().All(v => v.ValueKind == JsonValueKind.String))
-                    {
-                        return true;
-                    }
-
+                    categoryValidation.TestRequired = false;
                     return false;
-                },
+                }
+
+                categoryValidation.TestRequired = true;
+                return jsonElement.ValueKind == JsonValueKind.Array
+                    && jsonElement.EnumerateArray().All(v => v.ValueKind == JsonValueKind.String);
             };
             manifestValidations.Add(categoryValidation);
 
             var descriptionValidation = new ManifestSingleField
             {
-                Member = "description",
-                DisplayString = "Manifest has description field",
                 InfoString =
                     "The description member is a string that represents the description of your PWA.",
+                DisplayString = "Manifest has description field",
                 Category = "recommended",
+                Member = "description",
                 DefaultValue = string.Empty,
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
                 ErrorString = string.Empty,
@@ -188,11 +207,11 @@ namespace PWABuilder.Validations
 
             var fileHandlerValidation = new ManifestSingleField
             {
-                Member = "file_handlers",
-                DisplayString = "Manifest has file_handlers field",
                 InfoString =
                     "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
+                DisplayString = "Manifest has file_handlers field",
                 Category = "enhancement",
+                Member = "file_handlers",
                 DefaultValue = new List<object>(),
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array",
                 ErrorString =
@@ -200,7 +219,10 @@ namespace PWABuilder.Validations
                 QuickFix = true,
                 Test = (value) =>
                 {
-                    if (value is not JsonElement jsonElement)
+                    if (
+                        value is not JsonElement jsonElement
+                        || jsonElement.ValueKind != JsonValueKind.Array
+                    )
                     {
                         return false;
                     }
@@ -214,11 +236,11 @@ namespace PWABuilder.Validations
 
             var launchHandlerValidation = new ManifestSingleField
             {
-                Member = "launch_handler",
-                DisplayString = "Manifest has launch_handler field",
                 InfoString =
                     "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
+                DisplayString = "Manifest has launch_handler field",
                 Category = "recommended",
+                Member = "launch_handler",
                 DefaultValue = string.Empty,
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array",
@@ -262,32 +284,31 @@ namespace PWABuilder.Validations
             };
             preferRelatedAppsValidation.Test = (value) =>
             {
-                if (value is null)
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind == JsonValueKind.Null
+                        && jsonElement.ValueKind == JsonValueKind.Undefined
+                )
                 {
+                    preferRelatedAppsValidation.TestRequired = false;
                     preferRelatedAppsValidation.ErrorString =
                         "prefer_related_applications should be set to a boolean value";
                     return false;
                 }
 
-                if (value is bool)
-                {
-                    preferRelatedAppsValidation.ErrorString = string.Empty;
-                    return true;
-                }
-
-                preferRelatedAppsValidation.ErrorString =
-                    "prefer_related_applications should be set to a boolean value";
-                return false;
+                preferRelatedAppsValidation.TestRequired = true;
+                return jsonElement.ValueKind == JsonValueKind.True
+                    || jsonElement.ValueKind == JsonValueKind.False;
             };
             manifestValidations.Add(preferRelatedAppsValidation);
 
             var protocolHandlersValidation = new ManifestSingleField
             {
-                Member = "protocol_handlers",
-                DisplayString = "Manifest has protocol_handlers field",
                 InfoString =
                     "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
+                DisplayString = "Manifest has protocol_handlers field",
                 Category = "enhancement",
+                Member = "protocol_handlers",
                 DefaultValue = Array.Empty<object>(),
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
@@ -397,32 +418,33 @@ namespace PWABuilder.Validations
                     return true;
                 }
 
-                foreach (var app in jsonElement.EnumerateArray())
-                {
-                    if (
-                        !app.TryGetProperty("platform", out var _)
-                        || !app.TryGetProperty("url", out var _)
-                        || !app.TryGetProperty("id", out var _)
-                    )
+                return jsonElement
+                    .EnumerateArray()
+                    .All(app =>
                     {
-                        relatedApplicationsValidation.ErrorString =
-                            "related_applications should contain a valid store, url and id";
-                        return false;
-                    }
-                }
+                        if (
+                            !app.TryGetProperty("platform", out var _)
+                            || !app.TryGetProperty("url", out var _)
+                            || !app.TryGetProperty("id", out var _)
+                        )
+                        {
+                            relatedApplicationsValidation.ErrorString =
+                                "related_applications should contain a valid store, url and id";
+                            return false;
+                        }
 
-                relatedApplicationsValidation.ErrorString = string.Empty;
-                return true;
+                        return true;
+                    });
             };
             manifestValidations.Add(relatedApplicationsValidation);
 
             var screenshotsValidation = new ManifestSingleField
             {
-                Member = "screenshots",
-                DisplayString = "Manifest has screenshots field",
                 InfoString =
                     "The screenshots member defines an array of screenshots intended to showcase the application.",
+                DisplayString = "Manifest has screenshots field",
                 Category = "recommended",
+                Member = "screenshots",
                 DefaultValue = JsonConvert.SerializeObject(
                     new[]
                     {
@@ -457,18 +479,16 @@ namespace PWABuilder.Validations
             {
                 if (
                     value is not JsonElement jsonElement
-                    || jsonElement.ValueKind != JsonValueKind.Array
+                    || jsonElement.ValueKind == JsonValueKind.Null
+                    || jsonElement.ValueKind == JsonValueKind.Undefined
                 )
                 {
-                    screenshotsValidation.TestRequired = true;
-                    screenshotsValidation.ErrorString =
-                        "Screenshots must be an array of screenshot objects";
+                    screenshotsValidation.TestRequired = false;
                     return false;
                 }
 
                 screenshotsValidation.TestRequired = true;
-                screenshotsValidation.ErrorString = string.Empty;
-                return true;
+                return jsonElement.ValueKind == JsonValueKind.Array;
             };
             manifestValidations.Add(screenshotsValidation);
 
@@ -527,27 +547,25 @@ namespace PWABuilder.Validations
             {
                 if (
                     value is not JsonElement jsonElement
-                    || jsonElement.ValueKind != JsonValueKind.String
+                    || jsonElement.ValueKind == JsonValueKind.Null
+                    || jsonElement.ValueKind == JsonValueKind.Undefined
+                )
+                {
+                    themeColorValidation.TestRequired = false;
+                    return false;
+                }
+
+                if (
+                    jsonElement.ValueKind != JsonValueKind.String
                     || string.IsNullOrWhiteSpace(jsonElement.GetString())
                 )
                 {
-                    themeColorValidation.ErrorString = "theme_color should be a valid hex color";
+                    themeColorValidation.TestRequired = true;
                     return false;
                 }
 
                 var hexRegex = new Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
-                var isValid = hexRegex.IsMatch(jsonElement.GetString());
-
-                if (!isValid)
-                {
-                    themeColorValidation.ErrorString = "theme_color should be a valid hex color";
-                }
-                else
-                {
-                    themeColorValidation.ErrorString = string.Empty;
-                }
-
-                return isValid;
+                return hexRegex.IsMatch(jsonElement.GetString());
             };
             manifestValidations.Add(themeColorValidation);
 
@@ -566,7 +584,11 @@ namespace PWABuilder.Validations
             };
             iarcRatingIdValidation.Test = (value) =>
             {
-                if (value is string strValue && strValue.Length > 0)
+                if (
+                    value is JsonElement strValue
+                    && strValue.ValueKind == JsonValueKind.String
+                    && string.IsNullOrWhiteSpace(strValue.GetString())
+                )
                 {
                     iarcRatingIdValidation.ErrorString = string.Empty;
                     return true;
@@ -580,10 +602,10 @@ namespace PWABuilder.Validations
 
             var widgetValidation = new ManifestSingleField
             {
-                Member = "widgets",
-                DisplayString = "Manifest has widgets field",
                 InfoString = "Enable Windows 11 widgets board support",
+                DisplayString = "Manifest has widgets field",
                 Category = "enhancement",
+                Member = "widgets",
                 DefaultValue = new List<object>(),
                 DocsLink =
                     "https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets",
@@ -591,7 +613,10 @@ namespace PWABuilder.Validations
                 ErrorString = "widgets should be an array of valid objects",
                 Test = (value) =>
                 {
-                    if (value is not JsonElement jsonElement)
+                    if (
+                        value is not JsonElement jsonElement
+                        || jsonElement.ValueKind != JsonValueKind.Array
+                    )
                     {
                         return false;
                     }
@@ -603,11 +628,11 @@ namespace PWABuilder.Validations
 
             var iconsValidation = new ManifestSingleField
             {
-                Member = "icons",
-                DisplayString = "Manifest has icons field",
                 InfoString =
                     "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+                DisplayString = "Manifest has icons field",
                 Category = "required",
+                Member = "icons",
                 DefaultValue = JsonConvert.SerializeObject(
                     new[]
                     {
@@ -680,11 +705,11 @@ namespace PWABuilder.Validations
 
             var iconsPurposeAnyValidation = new ManifestSingleField
             {
-                Member = "icons",
-                DisplayString = "Icons have at least one icon with purpose any",
                 InfoString =
                     "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
+                DisplayString = "Icons have at least one icon with purpose any",
                 Category = "recommended",
+                Member = "icons",
                 DefaultValue = iconsValidation.DefaultValue,
                 DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
                 ErrorString = "Need at least one icon with purpose set to any",
@@ -697,7 +722,9 @@ namespace PWABuilder.Validations
                     || jsonElement.ValueKind != JsonValueKind.Array
                     || jsonElement.GetArrayLength() == 0
                 )
+                {
                     return false;
+                }
 
                 var icons = JsonConvert.DeserializeObject<List<Icon>>(jsonElement.GetRawText());
                 if (icons == null)
@@ -712,16 +739,15 @@ namespace PWABuilder.Validations
 
             var edgeSidePanelValidation = new ManifestSingleField
             {
-                Member = "edge_side_panel",
-                DisplayString = "Manifest has edge_side_panel field",
                 InfoString =
                     "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
+                DisplayString = "Manifest has edge_side_panel field",
                 Category = "enhancement",
+                Member = "edge_side_panel",
                 DefaultValue = string.Empty,
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
-                ErrorString =
-                    "The value entered for edge_side_panel.preferred_width should be a number",
+                ErrorString = string.Empty,
                 QuickFix = false,
             };
             edgeSidePanelValidation.Test = (value) =>
@@ -744,8 +770,6 @@ namespace PWABuilder.Validations
                         return false;
                     }
                 }
-
-                edgeSidePanelValidation.ErrorString = string.Empty;
                 return true;
             };
             manifestValidations.Add(edgeSidePanelValidation);
@@ -834,6 +858,344 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(handleLinksValidation);
 
+            var scopeValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
+                DisplayString = "Manifest has scope field",
+                Category = "optional",
+                Member = "scope",
+                DefaultValue = "/",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=scope-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            scopeValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                    || string.IsNullOrWhiteSpace(jsonElement.GetString())
+                )
+                {
+                    scopeValidation.ErrorString = "scope must be a string with a length > 0";
+                    return false;
+                }
+
+                return true;
+            };
+            manifestValidations.Add(scopeValidation);
+
+            var shortNameValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
+                DisplayString = "Manifest has a short_name field",
+                Category = "required",
+                Member = "short_name",
+                DefaultValue = "placeholder",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            shortNameValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
+                {
+                    shortNameValidation.ErrorString = "short_name must be a string";
+                    return false;
+                }
+
+                var name = jsonElement.GetString();
+
+                if (string.IsNullOrWhiteSpace(name) || name.Length < 3)
+                {
+                    shortNameValidation.ErrorString =
+                        "short_name is required and must be a string with a length >= 3";
+                    return false;
+                }
+
+                if (name != name.Trim())
+                {
+                    shortNameValidation.ErrorString =
+                        "short_name should not have any leading or trailing whitespace";
+                    return false;
+                }
+
+                shortNameValidation.ErrorString = string.Empty;
+                return true;
+            };
+            manifestValidations.Add(shortNameValidation);
+
+            var startUrlValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
+                DisplayString = "Manifest has start_url field",
+                Category = "required",
+                Member = "start_url",
+                DefaultValue = "/",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            startUrlValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
+                {
+                    startUrlValidation.ErrorString =
+                        "start_url is required and must be a string with a length > 0";
+                    return false;
+                }
+
+                var url = jsonElement.GetString();
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    startUrlValidation.ErrorString =
+                        "start_url is required and must be a string with a length > 0";
+                    return false;
+                }
+
+                // TODO: Add relative URL validation against scope if needed
+                return true;
+            };
+            manifestValidations.Add(startUrlValidation);
+
+            var displayValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
+                DisplayString = "Manifest has display field",
+                Category = "recommended",
+                Member = "display",
+                DefaultValue = "standalone",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=display-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            displayValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
+                {
+                    displayValidation.ErrorString = "display must be a string";
+                    return false;
+                }
+
+                var allowedValues = new[] { "fullscreen", "standalone", "minimal-ui", "browser" };
+                var str = jsonElement.GetString();
+
+                if (!allowedValues.Contains(str))
+                {
+                    displayValidation.ErrorString =
+                        "display must be one of the following strings: fullscreen, standalone, minimal-ui, browser";
+                    return false;
+                }
+
+                return true;
+            };
+            manifestValidations.Add(displayValidation);
+
+            var orientationValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The orientation mode changes the default orientation of the app. For example, if set to 'portrait', the app will be displayed in landscape mode by default.",
+                DisplayString = "Manifest has orientation field",
+                Category = "recommended",
+                Member = "orientation",
+                DefaultValue = "any",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            orientationValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
+                {
+                    orientationValidation.ErrorString =
+                        "orientation must be one of the specified strings and of type string";
+                    return false;
+                }
+
+                var str = jsonElement.GetString();
+                var validOptions = new[]
+                {
+                    "any",
+                    "natural",
+                    "landscape",
+                    "landscape-primary",
+                    "landscape-secondary",
+                    "portrait",
+                    "portrait-primary",
+                    "portrait-secondary",
+                };
+
+                var isValid = validOptions.Contains(str);
+                if (!isValid)
+                {
+                    orientationValidation.ErrorString =
+                        "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary";
+                }
+
+                return isValid;
+            };
+            manifestValidations.Add(orientationValidation);
+
+            var langValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The lang member is a string that represents the default language of your PWA.",
+                DisplayString = "Manifest specifies a language",
+                Category = "optional",
+                Member = "lang",
+                DefaultValue = "en",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=lang-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            langValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
+                {
+                    langValidation.ErrorString = "lang must be a valid string";
+                    return false;
+                }
+
+                var str = jsonElement.GetString();
+                if (string.IsNullOrWhiteSpace(str) || !Languages.IsValidLanguageCode(str))
+                {
+                    langValidation.ErrorString = "lang should be set to a valid language code";
+                    return false;
+                }
+
+                return true;
+            };
+            manifestValidations.Add(langValidation);
+
+            var dirValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "The dir member is a string that represents the default text direction of your PWA.",
+                DisplayString = "Manifest specifies a default direction of text",
+                Category = "optional",
+                Member = "dir",
+                DefaultValue = "ltr",
+                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            dirValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                )
+                {
+                    dirValidation.ErrorString =
+                        "dir must be one of the following strings: ltr, rtl, or auto";
+                    return false;
+                }
+
+                var dirValue = jsonElement.GetString();
+                var validValues = new[] { "ltr", "rtl", "auto" };
+                var isValid =
+                    !string.IsNullOrWhiteSpace(dirValue) && validValues.Contains(dirValue);
+
+                if (!isValid)
+                {
+                    dirValidation.ErrorString =
+                        "dir must be one of the following strings: ltr, rtl, or auto";
+                }
+
+                return isValid;
+            };
+            manifestValidations.Add(dirValidation);
+
+            var scopeExtensionsValidation = new ManifestSingleField
+            {
+                InfoString =
+                    "Allow PWA that control multiple subdomains and top level domains to behave as one contiguous app. E.g. a site may span example.com, example.co.uk and support.example.com",
+                DisplayString = "Manifest has scope_extensions field",
+                Category = "optional",
+                Member = "scope_extensions",
+                DefaultValue = "[]",
+                DocsLink =
+                    "https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            scopeExtensionsValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.Array
+                )
+                {
+                    scopeExtensionsValidation.ErrorString =
+                        "scope_extensions should be a valid array with origin";
+                    return false;
+                }
+
+                var allValid = jsonElement
+                    .EnumerateArray()
+                    .All(extension =>
+                        extension.ValueKind == JsonValueKind.Object
+                        && extension.TryGetProperty("origin", out JsonElement originElement)
+                        && originElement.ValueKind == JsonValueKind.String
+                    );
+
+                if (!allValid)
+                {
+                    scopeExtensionsValidation.ErrorString =
+                        "scope_extensions should be a valid array with origin";
+                }
+
+                return allValid;
+            };
+            manifestValidations.Add(scopeExtensionsValidation);
+
+            var idValidation = new ManifestSingleField
+            {
+                Member = "id",
+                DisplayString = "Manifest has an app ID",
+                InfoString =
+                    "The id member is a string that represents the unique identifier of your PWA to the browser.",
+                Category = "recommended",
+                DefaultValue = "/",
+                DocsLink = "https://developer.chrome.com/blog/pwa-manifest-id",
+                ErrorString = string.Empty,
+                QuickFix = true,
+            };
+            idValidation.Test = (value) =>
+            {
+                if (
+                    value is not JsonElement jsonElement
+                    || jsonElement.ValueKind != JsonValueKind.String
+                    || string.IsNullOrWhiteSpace(jsonElement.GetString())
+                )
+                {
+                    idValidation.ErrorString = "id must be a string with a length > 0";
+                    return false;
+                }
+
+                return true;
+            };
+            manifestValidations.Add(idValidation);
+
             return manifestValidations;
         }
 
@@ -865,6 +1227,33 @@ namespace PWABuilder.Validations
                 Exists = false,
                 Errors = ["Field not found"],
             };
+        }
+
+        public static IEnumerable<ManifestSingleField> ValidateManifest(object? webManifest)
+        {
+            if (webManifest is not JsonElement webManifestJson)
+            {
+                return Enumerable.Empty<ManifestSingleField>();
+            }
+
+            var maniTests = GetValidations();
+            return maniTests.Select(r =>
+            {
+                var propertyExist = webManifestJson.TryGetProperty(r.Member, out JsonElement value);
+                var testResult = r.Test(value);
+                return new ManifestSingleField
+                {
+                    Member = r.Member,
+                    DisplayString = r.DisplayString,
+                    InfoString = r.InfoString,
+                    Category = r.Category,
+                    DefaultValue = r.DefaultValue,
+                    DocsLink = r.DocsLink,
+                    ErrorString = r.ErrorString,
+                    QuickFix = r.QuickFix,
+                    Valid = testResult && propertyExist,
+                };
+            });
         }
     }
 }

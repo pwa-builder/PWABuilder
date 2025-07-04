@@ -1,5 +1,6 @@
 using System.Text.Json;
 using PWABuilder.Models;
+using PWABuilder.Validations.Models;
 
 namespace PWABuilder.Utils
 {
@@ -65,7 +66,8 @@ namespace PWABuilder.Utils
             WebAppManifest? webAppManifest,
             string? swUrl,
             AnalyzeServiceWorkerResponse? swFeatures,
-            ImagesAudit imagesAudit
+            ImagesAudit imagesAudit,
+            IEnumerable<ManifestSingleField>? manifestValidations = null
         )
         {
             audits.TryGetProperty("installable-manifest", out var installableManifestAudit);
@@ -179,6 +181,7 @@ namespace PWABuilder.Utils
 
             return new Report
             {
+                validations = manifestValidations,
                 audits = new Audits
                 {
                     isOnHttps = new ScoreObj
