@@ -1132,7 +1132,7 @@ namespace PWABuilder.Validations
                 DisplayString = "Manifest has scope_extensions field",
                 Category = "optional",
                 Member = "scope_extensions",
-                DefaultValue = "[]",
+                DefaultValue = new List<object>(),
                 DocsLink =
                     "https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array",
                 ErrorString = string.Empty,
