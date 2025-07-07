@@ -190,6 +190,7 @@ namespace PWABuilder.Utils
                             audits.TryGetProperty("https-audit", out var httpsAudit)
                             && httpsAudit.ValueKind == JsonValueKind.Object
                             && httpsAudit.TryGetProperty("score", out var httpsScoreElem)
+                            && httpsScoreElem.ValueKind == JsonValueKind.Number
                             && httpsScoreElem.TryGetDouble(out var httpsScore)
                                 ? httpsScore != 0
                                 : false,
@@ -200,6 +201,7 @@ namespace PWABuilder.Utils
                             audits.TryGetProperty("is-on-https", out var mixedContentAudit)
                             && mixedContentAudit.ValueKind == JsonValueKind.Object
                             && mixedContentAudit.TryGetProperty("score", out var mixedScoreElem)
+                            && mixedScoreElem.ValueKind == JsonValueKind.Number
                             && mixedScoreElem.TryGetDouble(out var mixedScore)
                                 ? mixedScore != 0
                                 : false,
@@ -212,6 +214,7 @@ namespace PWABuilder.Utils
                                 "score",
                                 out var installableScoreElem
                             )
+                            && installableScoreElem.ValueKind == JsonValueKind.Number
                             && installableScoreElem.TryGetDouble(out var installableScore)
                                 ? installableScore != 0
                                 : false,
@@ -222,6 +225,7 @@ namespace PWABuilder.Utils
                         score =
                             swAudit.ValueKind == JsonValueKind.Object
                             && swAudit.TryGetProperty("score", out var swScoreElem)
+                            && swScoreElem.ValueKind == JsonValueKind.Number
                             && swScoreElem.TryGetDouble(out var swScore)
                                 ? swScore != 0
                                 : false,
@@ -233,6 +237,7 @@ namespace PWABuilder.Utils
                             audits.TryGetProperty("offline-audit", out var offlineAudit)
                             && offlineAudit.ValueKind == JsonValueKind.Object
                             && offlineAudit.TryGetProperty("score", out var offlineScoreElem)
+                            && offlineScoreElem.ValueKind == JsonValueKind.Number
                             && offlineScoreElem.TryGetDouble(out var offlineScore)
                                 ? offlineScore != 0
                                 : false,
