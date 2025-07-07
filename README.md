@@ -31,7 +31,8 @@ You will need the following things properly installed on your computer.
 
 * [Node.js](http://nodejs.org/)
 * [NPM](https://www.npmjs.com/get-npm)
-* [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+* [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) 
+* [Docker Desktop]()
 
 You should also be familiar with [TypeScript](https://www.typescriptlang.org/) which we use for this project. This helps give you more guidance as you code from [intellisense](https://code.visualstudio.com/docs/editor/intellisense) when using [VSCode](https://code.visualstudio.com/).
 
@@ -45,13 +46,19 @@ Additionally, when you open the project in VS Code, you'll be prompted to instal
 
 ### Development
 
-Run `VSCode Run and Debug` (F5 key) to build the project and start a local Edge browser.  
+Set the `NODE_BIN` environment variable, `.vscode/launch.json` for VS code and `apps\pwabuilder\Properties\launchSettings.json` for Visual Studio:
+- Windows: `C:/Program Files/nodejs/node.exe`
+- Mac: `/usr/local/bin/node`
+- Linux: `/usr/bin/node`
 
-### API 
-Replace the api environment variables in `apps\pwabuilder\Frontend\src\script\utils\environment.ts` to point to the local api 
-```
-env.api = 'https://localhost:7217/api';
-```
+Using VS Code (App and API)
+- Run `VSCode Run and Debug` (F5 key) to build the project and start a local Edge browser.
+- Closing the Edge browser will terminate the debug session.
+
+Using Visual Studio (API only)
+- Open the solution and run the `https` profile (F5 key)
+
+Alternatively, build the `Dockerfile.production` container and access it from `http://localhost:8080` 
 
 ## License
 
