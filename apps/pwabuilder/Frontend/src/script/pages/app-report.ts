@@ -2115,7 +2115,7 @@ export class AppReport extends LitElement {
         // TODO: can use json instead of raw
         findersResults.manifest = result.content;
         await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
-        findersResults.manifestTodos = await this.testManifest();
+        findersResults.manifestTodos = await this.testManifest(result.content.validations);
         this.allTodoItems.push(...findersResults.manifestTodos);
         this.requestUpdate();
       }
@@ -2197,7 +2197,7 @@ export class AppReport extends LitElement {
   }
 
   // Tests the Manifest and populates the manifest card detail dropdown
-  async testManifest() {
+  async testManifest(validationResults: Validation[] = []) {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     this.manifestDataLoading = true;
@@ -2210,7 +2210,11 @@ export class AppReport extends LitElement {
     }
 
     manifest = getManifestContext().manifest;
-    this.validationResults = await validateManifest(manifest, true);
+    if (validationResults.length > 0){
+      this.validationResults = validationResults;
+    } else {
+      this.validationResults = await validateManifest(manifest, true);
+    }
 
     const icon = findBestAppIcon(manifest.icons);
     this.validationResults.push({infoString: "Icons are used to create packages for different stores and must meet certain formatting requirements.", displayString: "Manifest has suitable icons", category: 'required', member: 'suitable-icons', valid: !!icon, errorString: "Can't find a suitable icon to use for the package stores. Ensure your manifest has a square, large (512x512 or better) PNG icon; Check if the proposed any or maskable is set. And if the format of the image matches the mimetype.", testRequired: true, quickFix: true});

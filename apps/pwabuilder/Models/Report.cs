@@ -1,3 +1,5 @@
+using PWABuilder.Validations.Models;
+
 namespace PWABuilder.Models
 {
     public class Validation
@@ -14,6 +16,7 @@ namespace PWABuilder.Models
 
     public class Report
     {
+        public IEnumerable<ManifestSingleField>? validations { get; set; }
         public Audits? audits { get; set; }
         public Artifacts? artifacts { get; set; }
     }

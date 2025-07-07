@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
+using PWABuilder.Validations;
 
 namespace PWABuilder.Controllers
 {
@@ -63,10 +64,14 @@ namespace PWABuilder.Controllers
                 }
 
                 var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
+                var validations = ManifestValidations.ValidateManifest(manifestJson);
                 var output = new
                 {
                     Status = 200,
-                    Body = new { Content = new ManifestResult(manifestJson, manifestUri) },
+                    Body = new
+                    {
+                        Content = new ManifestResult(manifestJson, manifestUri, validations),
+                    },
                 };
 
                 return StatusCode(output.Status, output.Body);
@@ -100,10 +105,14 @@ namespace PWABuilder.Controllers
                     }
 
                     var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
+                    var validations = ManifestValidations.ValidateManifest(manifestJson);
                     var output = new
                     {
                         Status = 200,
-                        Body = new { Content = new ManifestResult(manifestJson, manifestUri) },
+                        Body = new
+                        {
+                            Content = new ManifestResult(manifestJson, manifestUri, validations),
+                        },
                     };
 
                     return StatusCode(output.Status, output.Body);

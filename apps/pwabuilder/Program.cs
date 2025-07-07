@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
@@ -16,6 +18,8 @@ var appSettings = builder.Configuration.GetSection("AppSettings");
 var aiOptions = AppInsights.setUpAppInsights(appSettings);
 builder.Services.Configure<AppSettings>(appSettings);
 builder.Services.AddApplicationInsightsTelemetry(aiOptions);
+JsonConvert.DefaultSettings = () =>
+    new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
 // Add services to the container.
 builder.Services.AddSingleton<ViteEntryPointProvider>();
