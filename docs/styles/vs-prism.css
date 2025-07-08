@@ -166,27 +166,3 @@
    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
  }
-
-/* Accessibility fix: Improve color contrast for builtin tokens (console, etc.)
- * Original color #669900 had contrast ratio of 3.43:1 against white background
- * New color #4d7300 provides contrast ratio of 5.57:1, exceeding WCAG AA requirement of 4.5:1
- * 
- * This targets the problematic green color that appears in syntax highlighting.
- * The !important is necessary to override external CDN stylesheets.
- */
-.token.builtin {
-  color: #4d7300 !important;
-}
-
-/* Override any green colors that might come from external themes
- * This includes inline styles and common token patterns
- */
-pre[class*="language-"] .token[style*="#669900"],
-pre[class*="language-"] span[style*="#669900"],
-code[class*="language-"] .token[style*="#669900"],
-code[class*="language-"] span[style*="#669900"],
-/* Target common Prism.js patterns for console object */
-.language-javascript .token.console,
-.language-typescript .token.console {
-  color: #4d7300 !important;
-}
