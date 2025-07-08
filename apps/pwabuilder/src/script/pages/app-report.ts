@@ -253,6 +253,16 @@ export class AppReport extends LitElement {
           padding: 5px 20px;
         }
 
+        sl-details:focus-visible {
+          outline: 2px solid var(--primary-color);
+          outline-offset: 2px;
+        }
+
+        sl-details::part(header):focus-visible {
+          outline: 2px solid var(--primary-color);
+          outline-offset: 2px;
+        }
+
         sl-details::part(summary-icon){
           display: none;
         }
@@ -2654,7 +2664,8 @@ export class AppReport extends LitElement {
 
   formatSWStrings(member: string){
     const words = member.split('_');
-    const capitalizedWords = words.map(word => word.toLowerCase());
+    // Capitalize first letter of each word (handles single characters correctly)
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
     const joined = capitalizedWords.join(" ");
     return joined;
   }
@@ -3495,7 +3506,7 @@ export class AppReport extends LitElement {
                         <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", result.member)}>
                           <sw-info-card .field=${result.member}>
                             <div class="circle-icon" tabindex="0" slot="trigger">
-                              <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                              <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${this.formatSWStrings(result.member) + ' icon'}" />
                               ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
                             </div>
                           </sw-info-card>
@@ -3572,11 +3583,11 @@ export class AppReport extends LitElement {
                       <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", result.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
                         <manifest-info-card .field=${result.member} .placement=${"bottom"}>
                           <div class="circle-icon" tabindex="0" slot="trigger">
-                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${result.member + ' icon'}" />
+                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${this.formatSWStrings(result.member) + ' icon'}" />
                             ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
                           </div>
                         </manifest-info-card>
-                        <p>${result.member}</p>
+                        <p>${this.formatSWStrings(result.member)}</p>
                     </div>
                     `
                     : null )
