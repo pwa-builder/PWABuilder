@@ -8,3 +8,5 @@ sl-icons/
 types/
 .env
 docs/**/_sidebar.md
+playwright-report/
+test-results/

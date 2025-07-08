@@ -141,6 +141,7 @@ export const homeStyles = css`
     grid-area: 1 / 1 / auto / 5;
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
   #input-box::part(input) {
     -webkit-text-fill-color: var(--sl-input-color);
