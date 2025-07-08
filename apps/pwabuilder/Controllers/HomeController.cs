@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Microsoft.PWABuilder.Controllers;
 
 [Route("[controller]")]
-[Route("{*url:regex(^(?!api|code|assets|.*css$|.*json$|.*js$).*$)}")]
+[Route("{*url:regex(^(?!api|code|assets|swagger|.*css$|.*json$|.*js$).*$)}")]
 public class HomeController : Controller
 {
     [HttpGet("")]
