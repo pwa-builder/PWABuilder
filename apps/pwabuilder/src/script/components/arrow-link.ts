@@ -35,6 +35,11 @@ export class ArrowLink extends LitElement {
         cursor: pointer;
       }
 
+      .arrow_anchor:focus-visible {
+        outline: 2px solid #000000;
+        outline-offset: 2px;
+      }
+
       .arrow_anchor:hover img {
         animation: bounce 1s;
       }
