@@ -5,7 +5,7 @@
     "configurations": [
         {
             "name": "Debug in VSCode",
-            "type": "edge",
+            "type": "msedge",
             "request": "launch",
             "version": "stable",
             "url": "http://localhost:8000",
