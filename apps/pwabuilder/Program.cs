@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PWABuilder.IOS.Services;
 using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
@@ -24,6 +25,9 @@ JsonConvert.DefaultSettings = () =>
 // Add services to the container.
 builder.Services.AddSingleton<ViteEntryPointProvider>();
 builder.Services.AddTransient<IPuppeteerService, PuppeteerService>();
+builder.Services.AddTransient<TempDirectory>();
+builder.Services.AddTransient<ImageGenerator>();
+builder.Services.AddTransient<IOSPackageCreator>();
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 builder
