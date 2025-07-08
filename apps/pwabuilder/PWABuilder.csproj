@@ -26,15 +26,43 @@
   <ItemGroup>
     <PublicFilesToCopyToWwwroot Include="Frontend\public\*.*" />
   </ItemGroup>
-  <Target Name="CopyPublicFilesToWwwroot" BeforeTargets="Build" Condition="$(Configuration) != 'Release'">
+  <Target
+    Name="CopyPublicFilesToWwwroot"
+    BeforeTargets="Build"
+    Condition="$(Configuration) != 'Release'"
+  >
     <Message Text="Copying files from /public to /wwwroot" Importance="high" />
-    <Copy SourceFiles="@(PublicFilesToCopyToWwwroot)" DestinationFolder="wwwroot" SkipUnchangedFiles="true" />
+    <Copy
+      SourceFiles="@(PublicFilesToCopyToWwwroot)"
+      DestinationFolder="wwwroot"
+      SkipUnchangedFiles="true"
+    />
   </Target>
-  <Target Name="CompileClient" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
+  <Target
+    Name="CompileClient"
+    AfterTargets="PostBuildEvent"
+    Condition="$(Configuration) == 'Release'"
+  >
     <Message Text="Building frontend..." Importance="high" />
     <Exec ContinueOnError="True" Command="del /F /q wwwroot\code" />
     <Exec WorkingDirectory="./Frontend" Command="npm install" />
     <Exec WorkingDirectory="./Frontend" Command="npm run build" />
-    <Move SourceFiles="wwwroot\index.html" DestinationFiles="wwwroot\vite-index.html" ContinueOnError="true" />
+    <Move
+      SourceFiles="wwwroot\index.html"
+      DestinationFiles="wwwroot\vite-index.html"
+      ContinueOnError="true"
+    />
   </Target>
+
+  <ItemGroup>
+    <None Update="Resources\next-steps.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="next-steps.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
