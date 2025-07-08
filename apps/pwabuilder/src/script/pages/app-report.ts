@@ -2654,6 +2654,7 @@ export class AppReport extends LitElement {
 
   formatSWStrings(member: string){
     const words = member.split('_');
+    // Capitalize first letter of each word (handles single characters correctly)
     const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
     const joined = capitalizedWords.join(" ");
     return joined;
