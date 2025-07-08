@@ -334,6 +334,11 @@ export class PublishPane extends LitElement {
       #pp-form-header > button:hover {
         cursor: pointer;
       }
+      #pp-form-header > button:focus {
+        outline: 2px solid #000000;
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
       #pp-form-header-content {
         display: flex;
         gap: 1em;
@@ -1145,7 +1150,7 @@ export class PublishPane extends LitElement {
             :
             html`
               <div id="pp-form-header">
-                <button type="button"><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" @click=${() => this.backToCards()} /></button>
+                <button type="button" @click=${() => this.backToCards()}><img src="/assets/new/back_for_package_form.svg" alt="back to store cards button" /></button>
                 <div id="pp-form-header-content">
                   <img src="${this.storeMap[this.selectedStore].logo}" alt="${this.selectedStore} logo" />
                   <div id="pp-form-header-text">
