@@ -13,6 +13,9 @@
     --sidebar-nav-pagelink-background-image--active: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11.2' height='7' viewBox='0 0 11.2 7'%3E%3Cpath d='M1.5 1.5l4.1 4 4.1-4' stroke-width='1.5' stroke='rgb%2873, 21, 118%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
     --sidebar-nav-pagelink-background-image--collapse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11.2' viewBox='0 0 7 11.2'%3E%3Cpath d='M1.5 1.5l4 4.1 -4 4.1' stroke-width='1.5' stroke='rgb%2873, 21, 118%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
     --sidebar-nav-pagelink-background-image--loaded: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11.2' height='7' viewBox='0 0 11.2 7'%3E%3Cpath d='M1.5 1.5l4.1 4 4.1-4' stroke-width='1.5' stroke='rgb%2873, 21, 118%29' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    /* High contrast chevron icons for Desert and Aquatic modes */
+    --sidebar-nav-pagelink-background-image--high-contrast: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='11.2' viewBox='0 0 7 11.2'%3E%3Cpath d='M1.5 1.5l4 4.1 -4 4.1' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --sidebar-nav-pagelink-background-image--high-contrast-active: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11.2' height='7' viewBox='0 0 11.2 7'%3E%3Cpath d='M1.5 1.5l4.1 4 4.1-4' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='square' stroke-linejoin='miter' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
     /* Search */
     --search-flex-order: 1;
     --search-input-border-radius: 15px;
@@ -131,9 +134,103 @@ sl-menu-item:hover::part(base), sl-menu-item:focus-within::part(base) {
     outline: 2px solid black;
 }
 
+sl-menu-item:focus::part(base) {
+    background: #4F3FB6;
+    color: white;
+    border: 2px solid white;
+    outline: 3px solid black;
+    outline-offset: 1px;
+}
+
 sl-menu {
     padding-bottom: 10px;
     width: 100%;
+}
+
+/* High Contrast Mode Support for Focus Indicators */
+@media (prefers-contrast: high), (forced-colors: active) {
+    .sidebar .search input[type=search]:focus {
+        outline: 4px solid CanvasText;
+        outline-offset: 2px;
+        border: 3px solid CanvasText;
+    }
+    
+    .sidebar .search .clear-button:focus {
+        outline: 4px solid CanvasText;
+        outline-offset: 2px;
+    }
+    
+    sl-menu-item:focus::part(base),
+    sl-menu-item:hover::part(base), 
+    sl-menu-item:focus-within::part(base) {
+        outline: 4px solid CanvasText;
+        outline-offset: 2px;
+        border: 3px solid CanvasText;
+        background: Canvas;
+        color: CanvasText;
+    }
+}
+
+/* Sidebar navigation chevron icons for high contrast themes */
+@media (prefers-contrast: high), (forced-colors: active) {
+    .sidebar nav ul li::before {
+        background-image: var(--sidebar-nav-pagelink-background-image--high-contrast) !important;
+    }
+    
+    .sidebar nav ul li.active::before {
+        background-image: var(--sidebar-nav-pagelink-background-image--high-contrast-active) !important;
+    }
+    
+    .sidebar nav ul li.collapse::before {
+        background-image: var(--sidebar-nav-pagelink-background-image--high-contrast) !important;
+    }
+}
+
+/* Ensure chevron icons are visible in sidebar navigation */
+.sidebar nav ul li::before {
+    content: '';
+    background-image: var(--sidebar-nav-pagelink-background-image);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 11px;
+    height: 11px;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.sidebar nav ul li.active::before,
+.sidebar nav ul li.open::before {
+    background-image: var(--sidebar-nav-pagelink-background-image--active);
+}
+
+.sidebar nav ul li.collapse::before {
+    background-image: var(--sidebar-nav-pagelink-background-image--collapse);
+}
+
+/* Improved focus styles for sidebar navigation links */
+.sidebar nav ul li a:focus {
+    outline: 3px solid #4F3FB6;
+    outline-offset: 2px;
+    background-color: #e7e2ee;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+/* High contrast support for sidebar links */
+@media (prefers-contrast: high), (forced-colors: active) {
+    .sidebar nav ul li a:focus {
+        outline: 4px solid CanvasText;
+        outline-offset: 2px;
+        background-color: Canvas;
+        border: 3px solid CanvasText;
+        color: CanvasText;
+    }
 }
 
 sl-button {
@@ -168,9 +265,20 @@ sl-alert::part(icon) {
     color: rgba(0, 0, 0, 0.886);
 }
 
+.sidebar .search input[type=search]:focus {
+    outline: 3px solid #4F3FB6;
+    outline-offset: 2px;
+    border: 2px solid #491576;
+}
+
 .sidebar .search .clear-button svg {
     background: #4d4d4d;
     border-radius: 50%;
+}
+
+.sidebar .search .clear-button:focus {
+    outline: 3px solid #4F3FB6;
+    outline-offset: 2px;
 }
 
 /* sl-menu-item */
