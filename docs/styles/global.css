@@ -148,60 +148,31 @@ sl-menu {
 }
 
 /* High Contrast Mode Support for Focus Indicators */
-@media (prefers-contrast: high), (-ms-high-contrast: active) {
+@media (prefers-contrast: high), (forced-colors: active) {
     .sidebar .search input[type=search]:focus {
-        outline: 4px solid currentColor;
+        outline: 4px solid CanvasText;
         outline-offset: 2px;
-        border: 3px solid currentColor;
+        border: 3px solid CanvasText;
     }
     
     .sidebar .search .clear-button:focus {
-        outline: 4px solid currentColor;
+        outline: 4px solid CanvasText;
         outline-offset: 2px;
     }
     
     sl-menu-item:focus::part(base),
     sl-menu-item:hover::part(base), 
     sl-menu-item:focus-within::part(base) {
-        outline: 4px solid currentColor;
+        outline: 4px solid CanvasText;
         outline-offset: 2px;
-        border: 3px solid currentColor;
-    }
-}
-
-/* Additional support for Windows High Contrast themes */
-@media screen and (-ms-high-contrast: white-on-black) {
-    .sidebar .search input[type=search]:focus {
-        outline: 4px solid #ffffff;
-        border: 3px solid #ffffff;
-    }
-    
-    sl-menu-item:focus::part(base) {
-        background: transparent;
-        color: #ffffff;
-        border: 3px solid #ffffff;
-        outline: 4px solid #ffffff;
-        outline-offset: 1px;
-    }
-}
-
-@media screen and (-ms-high-contrast: black-on-white) {
-    .sidebar .search input[type=search]:focus {
-        outline: 4px solid #000000;
-        border: 3px solid #000000;
-    }
-    
-    sl-menu-item:focus::part(base) {
-        background: transparent;
-        color: #000000;
-        border: 3px solid #000000;
-        outline: 4px solid #000000;
-        outline-offset: 1px;
+        border: 3px solid CanvasText;
+        background: Canvas;
+        color: CanvasText;
     }
 }
 
 /* Sidebar navigation chevron icons for high contrast themes */
-@media (prefers-contrast: high), (-ms-high-contrast: active) {
+@media (prefers-contrast: high), (forced-colors: active) {
     .sidebar nav ul li::before {
         background-image: var(--sidebar-nav-pagelink-background-image--high-contrast) !important;
     }
@@ -252,30 +223,13 @@ sl-menu {
 }
 
 /* High contrast support for sidebar links */
-@media (prefers-contrast: high), (-ms-high-contrast: active) {
+@media (prefers-contrast: high), (forced-colors: active) {
     .sidebar nav ul li a:focus {
-        outline: 4px solid currentColor;
+        outline: 4px solid CanvasText;
         outline-offset: 2px;
-        background-color: transparent;
-        border: 3px solid currentColor;
-    }
-}
-
-@media screen and (-ms-high-contrast: white-on-black) {
-    .sidebar nav ul li a:focus {
-        outline: 4px solid #ffffff;
-        border: 3px solid #ffffff;
-        background-color: transparent;
-        color: #ffffff;
-    }
-}
-
-@media screen and (-ms-high-contrast: black-on-white) {
-    .sidebar nav ul li a:focus {
-        outline: 4px solid #000000;
-        border: 3px solid #000000;
-        background-color: transparent;
-        color: #000000;
+        background-color: Canvas;
+        border: 3px solid CanvasText;
+        color: CanvasText;
     }
 }
 
