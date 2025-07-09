@@ -31,17 +31,15 @@ function writeChildMenu(child: ChildMenu): ChildMenu {
   }
 
   writeString = writeString + constructHeaderLineString(child);
-  let articleIndex = 0;
   for(var article of child.articles) {
-    writeString = writeString + constructMenuItemLineString(article, articleIndex, child.articles.length);
-    articleIndex++;
+    writeString = writeString + constructMenuItemLineString(article);
     if (article.includeOnHomePage) {
       condensedChildMenu.articles = condensedChildMenu.articles.concat(article);
     }
   }
   writeString = writeString + constructSectionCloseString();
 
-  // Add the accessibility script at the end
+  // Add the navigation script at the end
   writeString = writeString + quickMenuListenerScriptString;
 
   fs.writeFileSync(path, writeString);
@@ -56,70 +54,52 @@ function writeMainMenu() {
   for(var childMenu of mainMenu.childMenus) {
     if(childMenu.articles.length > 0) {
       writeString = writeString + constructHeaderLineString(childMenu);
-      let articleIndex = 0;
       for(var article of childMenu.articles) {
-        writeString = writeString + constructMenuItemLineString(article, articleIndex, childMenu.articles.length);
-        articleIndex++;
+        writeString = writeString + constructMenuItemLineString(article);
       }
       writeString = writeString + constructSectionCloseString();
     }  
   }
 
-  // Add the accessibility script at the end
+  // Add the navigation script at the end
   writeString = writeString + quickMenuListenerScriptString;
 
   fs.writeFileSync(path, writeString);
 }
 
-function constructMenuItemLineString(article: Article, index: number, total: number): string {
-  return `\n<li role="treeitem" 
-         aria-setsize="${total}" 
-         aria-posinset="${index + 1}"
-         tabindex="-1"
-         class="article-item">
-    <a href="${article.path}" title="${article.pageTitle}" class="article-link">${article.menuTitle}</a>
-  </li>`;
+function constructMenuItemLineString(article: Article): string {
+  return `\n    <sl-tree-item data-href="${article.path}">${article.menuTitle}</sl-tree-item>`;
 }
 
 function constructHeaderLineString(childMenu: ChildMenu): string {
-  return `\n\n<section role="group" aria-label="${childMenu.header} section">
-<h2 role="treeitem" aria-expanded="true" class="section-header" tabindex="0">${childMenu.header}</h2>
-<ul role="group" aria-label="${childMenu.header} articles" class="section-articles">`;
-}
-
-function constructSectionCloseString(): string {
-  return `\n</ul>\n</section>`;
+  return `\n\n<sl-tree>
+  <sl-tree-item expanded>
+    ${childMenu.header}`;
 }
 
 function constructTopLevelNavString(activeHeader: string): string {
-  var topLevelNavHTMLString: string = `\n<nav role="navigation" aria-label="Main navigation">
-<ul role="tree" aria-label="Documentation sections" class="nav-tree">`;
+  var topLevelNavHTMLString: string = `\n<sl-tree>`;
 
-  let index = 0;
   for(var entry of topLevelNavEntries) {
-    topLevelNavHTMLString = topLevelNavHTMLString + constructTopLevelNavEntryString(entry, activeHeader, index, topLevelNavEntries.length);
-    index++;
+    topLevelNavHTMLString = topLevelNavHTMLString + constructTopLevelNavEntryString(entry, activeHeader);
   }
 
-  topLevelNavHTMLString = topLevelNavHTMLString + `\n</ul>
-</nav>`;
+  topLevelNavHTMLString = topLevelNavHTMLString + `\n</sl-tree>`;
 
   return topLevelNavHTMLString;
 }
 
-function constructTopLevelNavEntryString(entry: string[], header: string, index: number, total: number): string {
+function constructTopLevelNavEntryString(entry: string[], header: string): string {
   const isSelected = entry[0] === header;
   return `
-  <li role="treeitem" 
-      aria-expanded="false" 
-      aria-selected="${isSelected}" 
-      aria-setsize="${total}" 
-      aria-posinset="${index + 1}"
-      tabindex="${isSelected ? '0' : '-1'}"
-      data-href="${entry[1]}"
-      class="nav-item${isSelected ? ' selected' : ''}">
-    <span class="nav-label">${entry[0]}</span>
-  </li>`;
+  <sl-tree-item ${isSelected ? 'selected' : ''} data-href="${entry[1]}">
+    ${entry[0]}
+  </sl-tree-item>`;
+}
+
+function constructSectionCloseString(): string {
+  return `\n  </sl-tree-item>
+</sl-tree>`;
 }
 
 function removeFile(path: string): void {
