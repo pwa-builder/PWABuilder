@@ -74,8 +74,8 @@ namespace PWABuilder.IOS.Common
 
         public static IEnumerable<ImageTargetSize> GetAll()
         {
-            return new[]
-            {
+            return
+            [
                 ImageTargetSize.Size16x16,
                 ImageTargetSize.Size20x20,
                 ImageTargetSize.Size29x29,
@@ -102,7 +102,7 @@ namespace PWABuilder.IOS.Common
                 ImageTargetSize.Size256x256,
                 ImageTargetSize.Size512x512,
                 ImageTargetSize.Size1024x1024,
-            };
+            ];
         }
 
         public static bool IsLaunchIconSize(this ImageTargetSize targetSize)

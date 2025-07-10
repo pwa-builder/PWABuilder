@@ -59,10 +59,8 @@
             }
 
             // Find icons that have the specified dimensions, ordered by those with purpose = "any" (or empty), then ordered by png, then jpg.
-            return 
-                Icons.Where(i =>
-                    i.GetAllDimensions().Any(d => d.width == width && d.height == height)
-                )
+            return Icons
+                .Where(i => i.GetAllDimensions().Any(d => d.width == width && d.height == height))
                 .OrderBy(i => !string.IsNullOrEmpty(i.Src) ? 0 : 1)
                 .ThenBy(i => i.GetImageFormatPreferredSortOrder());
         }
@@ -130,8 +128,8 @@
                 return isLookingAnyPurpose;
             }
 
-            return 
-                Purpose.Split(' ')
+            return Purpose
+                .Split(' ')
                 .Any(p => string.Equals(p, purpose, StringComparison.InvariantCultureIgnoreCase));
         }
 
@@ -178,8 +176,8 @@
                 return new List<(int width, int height)>(0);
             }
 
-            return 
-                Sizes.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            return Sizes
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                 .Select(size => size.Split('x', StringSplitOptions.RemoveEmptyEntries))
                 .Select(widthAndHeight =>
                 {

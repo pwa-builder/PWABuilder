@@ -90,3 +90,6 @@ fastlane/test_output
 iOSInjectionProject/
 /Podfile.lock
 /Pods
+
+# MacOS finder temp
+*.DS_Store

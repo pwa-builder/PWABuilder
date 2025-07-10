@@ -13,26 +13,26 @@ namespace PWABuilder.Services
         }
 
         private readonly Regex[] PushRegexes =
-        {
+        [
             new Regex(@"[.|\n\s*]addEventListener\s*\(\s*['""]push['""]", RegexOptions.Multiline),
             new Regex(@"[.|\n\s*]onpush\s*=", RegexOptions.Multiline),
-        };
+        ];
         private readonly Regex[] PeriodicSyncRegexes =
-        {
+        [
             new Regex(
                 @"[.|\n\s*]addEventListener\s*\(\s*['""]periodicsync['""]",
                 RegexOptions.Multiline
             ),
             new Regex(@"[.|\n\s*]onperiodicsync\s*=", RegexOptions.Multiline),
-        };
+        ];
         private readonly Regex[] BackgroundSyncRegexes =
-        {
+        [
             new Regex(@"[.|\n\s*]addEventListener\s*\(\s*['""]sync['""]", RegexOptions.Multiline),
             new Regex(@"[.|\n\s*]onsync\s*=", RegexOptions.Multiline),
             new Regex(@"BackgroundSyncPlugin", RegexOptions.Multiline),
-        };
+        ];
         private readonly Regex[] ServiceWorkerRegexes =
-        {
+        [
             new Regex(@"importScripts|self\.|^self", RegexOptions.Multiline),
             new Regex(@"[.|\n\s*]addAll", RegexOptions.Multiline),
             new Regex(
@@ -40,14 +40,14 @@ namespace PWABuilder.Services
                 RegexOptions.Multiline
             ),
             new Regex(@"[.|\n\s*]addEventListener\s*\(\s*['""]fetch['""]", RegexOptions.Multiline),
-        };
+        ];
         private readonly Regex[] EmptyRegexes =
-        {
+        [
             new Regex(
                 @"\.addEventListener\(['""]fetch['""],\(?(function)?\(?\w*\)?(=>)?{?(return(?!\w)|\w+\.respondWith\(fetch\(\w+\.request\)(?!\.catch)|})",
                 RegexOptions.Multiline
             ),
-        };
+        ];
 
         public async Task<List<string>> FindAndFetchImportScriptsAsync(
             string code,

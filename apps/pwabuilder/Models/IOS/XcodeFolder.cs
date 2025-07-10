@@ -12,7 +12,7 @@ namespace PWABuilder.IOS.Models
         public XcodeFolder(string directoryPath)
             : base(directoryPath)
         {
-            Name = System.IO.Path.GetFileName(directoryPath.TrimEnd('\\').TrimEnd('/'));
+            Name = Path.GetFileName(directoryPath.TrimEnd('\\').TrimEnd('/'));
         }
 
         /// <summary>

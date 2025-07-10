@@ -50,9 +50,7 @@ namespace PWABuilder.IOS.Models
             var iconsMatchingDimensions = GetIconsWithDimensions(width, height)
                 .Where(i => i.GetFormat() == IconFormat.Png);
 
-            return iconsMatchingDimensions
-                .Select(i => i.GetSrcUri(ManifestUri))
-                .FirstOrDefault();
+            return iconsMatchingDimensions.Select(i => i.GetSrcUri(ManifestUri)).FirstOrDefault();
         }
 
         /// <summary>

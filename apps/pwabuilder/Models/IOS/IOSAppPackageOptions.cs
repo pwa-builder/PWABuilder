@@ -111,11 +111,7 @@
                 );
             }
 
-            var validSplashColor = GetValidColor(
-                SplashColor,
-                Manifest.Background_color,
-                "#ffffff"
-            );
+            var validSplashColor = GetValidColor(SplashColor, Manifest.Background_color, "#ffffff");
             var validProgressColor = GetValidColor(
                 ProgressBarColor,
                 Manifest.Theme_color,

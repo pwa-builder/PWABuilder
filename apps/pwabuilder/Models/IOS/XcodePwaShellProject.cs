@@ -125,9 +125,7 @@ namespace PWABuilder.IOS.Models
         private void UpdateShortcuts(XcodeFile infoPlistXmlFile)
         {
             var shortcutsTemplate = "<key>{{PWABuilder.iOS.shortcuts}}</key>";
-            var shortcuts = (
-                options.Manifest.Shortcuts ?? new List<WebManifestShortcutItem>(0)
-            )
+            var shortcuts = (options.Manifest.Shortcuts ?? new List<WebManifestShortcutItem>(0))
                 .Select(s => IOSAppShortcut.FromWebManifestShortcut(s, options.ManifestUri))
                 .Where(s => s != null)
                 .Select(s => s!) // because of the above null check

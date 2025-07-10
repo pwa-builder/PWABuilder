@@ -38,28 +38,39 @@ public class ViteEntryPointProvider
         var indexHtmlPath = Path.Combine(env.WebRootPath, "vite-index.html");
         if (!File.Exists(indexHtmlPath))
         {
-            throw new FileNotFoundException($"Unable to find vite-index.html at {indexHtmlPath}. This means the JS entry point for the app won't be found.");
+            throw new FileNotFoundException(
+                $"Unable to find vite-index.html at {indexHtmlPath}. This means the JS entry point for the app won't be found."
+            );
         }
 
         var fileContents = File.ReadAllText(indexHtmlPath);
 
         // Look for the <script type="module" src="/assets/js/whatever.js"> tag.
-        var srcRegex = new Regex("<script\\s+[^>]+src=['|\"]([^\"']+)['|\"]", RegexOptions.IgnoreCase);
+        var srcRegex = new Regex(
+            "<script\\s+[^>]+src=['|\"]([^\"']+)['|\"]",
+            RegexOptions.IgnoreCase
+        );
         var jsRegexResult = srcRegex.Match(fileContents);
         if (!jsRegexResult.Success || jsRegexResult.Groups.Count < 2)
         {
-            throw new InvalidOperationException($"Unable to find the JavaScript entry point in {indexHtmlPath}. Has the format of the file been changed?");
+            throw new InvalidOperationException(
+                $"Unable to find the JavaScript entry point in {indexHtmlPath}. Has the format of the file been changed?"
+            );
         }
 
         var jsPath = jsRegexResult.Groups[1].Value;
 
-        var cssRegex = new Regex("<link\\s+rel=['|\"]stylesheet['|\"]\\s+href=['|\"](/code/index-[a-z0-9]+\\.css)['|\"]", RegexOptions.IgnoreCase);
+        var cssRegex = new Regex(
+            "<link\\s+rel=['|\"]stylesheet['|\"]\\s+href=['|\"](/code/index-[a-z0-9]+\\.css)['|\"]",
+            RegexOptions.IgnoreCase
+        );
         var cssRegexResult = cssRegex.Match(fileContents);
         if (cssRegexResult.Success && cssRegexResult.Groups.Count < 2)
         {
-            throw new InvalidOperationException($"Unable to find the CSS entry point in {indexHtmlPath}. Has the format of the file been changed?");
+            throw new InvalidOperationException(
+                $"Unable to find the CSS entry point in {indexHtmlPath}. Has the format of the file been changed?"
+            );
         }
-
 
         var cssPath = cssRegexResult.Groups[1].Value;
         return (jsPath, cssPath);

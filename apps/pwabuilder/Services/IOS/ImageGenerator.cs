@@ -164,10 +164,7 @@ namespace PWABuilder.IOS.Services
                 { new StringContent("ios"), "platform" },
             };
 
-            var imagesResponse = await http.PostAsync(
-                imageGeneratorServiceUrl,
-                imageGeneratorArgs
-            );
+            var imagesResponse = await http.PostAsync(imageGeneratorServiceUrl, imageGeneratorArgs);
             if (!imagesResponse.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(
