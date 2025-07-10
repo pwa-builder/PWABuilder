@@ -9,7 +9,7 @@ namespace PWABuilder.Services
 
         public ImageValidationService(IHttpClientFactory httpClientFactory)
         {
-            this.httpClient = httpClientFactory.CreateClient();
+            httpClient = httpClientFactory.CreateClient();
         }
 
         public class ManifestIcon

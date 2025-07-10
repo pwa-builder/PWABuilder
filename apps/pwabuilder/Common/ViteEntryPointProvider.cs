@@ -12,14 +12,14 @@ public class ViteEntryPointProvider
         // If we're in development, production entry point isn't used.
         if (env.IsDevelopment())
         {
-            this.EntryPointJs = string.Empty;
-            this.EntryPointCss = string.Empty;
+            EntryPointJs = string.Empty;
+            EntryPointCss = string.Empty;
         }
         else
         {
             var (jsPath, cssPath) = GetEntryPointJsFromIndex(env);
-            this.EntryPointJs = jsPath;
-            this.EntryPointCss = cssPath;
+            EntryPointJs = jsPath;
+            EntryPointCss = cssPath;
         }
     }
 

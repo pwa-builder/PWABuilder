@@ -25,7 +25,7 @@ public class ViteStaticFileProvider : IFileProvider
     /// <param name="contentRootPath">The content root path.</param>
     public ViteStaticFileProvider(string webRootPath, string contentRootPath)
     {
-        this.physicalFileProvider = new PhysicalFileProvider(webRootPath);
+        physicalFileProvider = new PhysicalFileProvider(webRootPath);
         this.contentRootPath = contentRootPath;
     }
 
@@ -74,6 +74,6 @@ public class ViteStaticFileProvider : IFileProvider
     /// <returns>A directory watcher.</returns>
     public IChangeToken Watch(string filter)
     {
-        return this.physicalFileProvider.Watch(filter);
+        return physicalFileProvider.Watch(filter);
     }
 }

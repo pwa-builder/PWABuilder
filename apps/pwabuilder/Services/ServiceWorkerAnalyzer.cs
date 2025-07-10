@@ -9,7 +9,7 @@ namespace PWABuilder.Services
 
         public ServiceWorkerAnalyzer(IHttpClientFactory httpClientFactory)
         {
-            this.httpClient = httpClientFactory.CreateClient();
+            httpClient = httpClientFactory.CreateClient();
         }
 
         private readonly Regex[] PushRegexes =

@@ -21,7 +21,7 @@ namespace PWABuilder.Controllers
         )
         {
             this.logger = logger;
-            this.http = httpClientFactory.CreateClient();
+            http = httpClientFactory.CreateClient();
             this.puppeteer = puppeteer;
         }
 
