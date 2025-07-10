@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using PWABuilder.IOS.Common;
 
 namespace PWABuilder.IOS.Models
@@ -20,8 +16,8 @@ namespace PWABuilder.IOS.Models
             : base(rootDirectory)
         {
             this.options = options;
-            this.macSafeProjectName = GetMacSafeFileName(options.Name);
-            this.swiftModuleName = GetSwiftSafeModuleName(options.Name);
+            macSafeProjectName = GetMacSafeFileName(options.Name);
+            swiftModuleName = GetSwiftSafeModuleName(options.Name);
         }
 
         public async Task ApplyChanges()
@@ -33,7 +29,7 @@ namespace PWABuilder.IOS.Models
             UpdateProjectFolderReferences();
             UpdateModuleReferences();
 
-            await this.Save();
+            await Save();
         }
 
         private void UpdateAppColors()
@@ -130,7 +126,7 @@ namespace PWABuilder.IOS.Models
         {
             var shortcutsTemplate = "<key>{{PWABuilder.iOS.shortcuts}}</key>";
             var shortcuts = (
-                this.options.Manifest.Shortcuts ?? new List<WebManifestShortcutItem>(0)
+                options.Manifest.Shortcuts ?? new List<WebManifestShortcutItem>(0)
             )
                 .Select(s => IOSAppShortcut.FromWebManifestShortcut(s, options.ManifestUri))
                 .Where(s => s != null)

@@ -53,16 +53,12 @@
       ContinueOnError="true"
     />
   </Target>
-
   <ItemGroup>
-    <None Update="Resources\next-steps.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="next-steps.md">
+    <None Update="Resources\IOS\ios-next-steps.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Resources\IOS\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

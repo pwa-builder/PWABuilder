@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     /// <summary>
     /// Represents an XCode project workspace.
@@ -28,13 +22,13 @@ namespace PWABuilder.IOS.Models
         public void Load()
         {
             var directories = new Queue<string>();
-            directories.Enqueue(this.rootDirectory);
+            directories.Enqueue(rootDirectory);
 
             // Go through the whole project and push files and folders into our items list.
             while (directories.Count > 0)
             {
                 var dir = directories.Dequeue();
-                this.folders.Add(new XcodeFolder(dir));
+                folders.Add(new XcodeFolder(dir));
 
                 var subDirs = Directory.EnumerateDirectories(dir);
                 foreach (var subDir in subDirs)
@@ -44,14 +38,14 @@ namespace PWABuilder.IOS.Models
 
                 foreach (var file in Directory.EnumerateFiles(dir))
                 {
-                    this.files.Add(new XcodeFile(file));
+                    files.Add(new XcodeFile(file));
                 }
             }
         }
 
         public XcodeFile GetFile(string fileName)
         {
-            var file = this.files.FirstOrDefault(f =>
+            var file = files.FirstOrDefault(f =>
                 string.Equals(f.Name, fileName, StringComparison.OrdinalIgnoreCase)
             );
             if (file == null)
@@ -64,7 +58,7 @@ namespace PWABuilder.IOS.Models
 
         public XcodeFile GetFileByPath(string partialOrCompletePath)
         {
-            var file = this.files.FirstOrDefault(f =>
+            var file = files.FirstOrDefault(f =>
                 f.ItemPath.Contains(partialOrCompletePath, StringComparison.OrdinalIgnoreCase)
             );
             if (file == null)
@@ -79,7 +73,7 @@ namespace PWABuilder.IOS.Models
 
         public XcodeFolder GetFolder(string folderName)
         {
-            var folder = this.folders.FirstOrDefault(f =>
+            var folder = folders.FirstOrDefault(f =>
                 string.Equals(f.Name, folderName, StringComparison.OrdinalIgnoreCase)
             );
             if (folder == null)
@@ -97,13 +91,13 @@ namespace PWABuilder.IOS.Models
         public async Task Save()
         {
             // Apply the changes to the files.
-            foreach (var file in this.files)
+            foreach (var file in files)
             {
                 await file.ApplyChanges();
             }
 
             // Move directories if need.
-            foreach (var folder in this.folders)
+            foreach (var folder in folders)
             {
                 folder.ApplyChanges();
             }

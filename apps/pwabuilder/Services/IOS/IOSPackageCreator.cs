@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using System.IO.Compression;
 using Microsoft.Extensions.Options;
 using PWABuilder.IOS.Common;
 using PWABuilder.IOS.Models;
@@ -50,7 +44,7 @@ namespace PWABuilder.IOS.Services
 
                 // Create any missing images for the iOS template.
                 // This should be done before project.ApplyChanges(). Otherwise, it'll attempt to write the images to the "pwa-shell" directory, which no longer exists after ApplyChanges().
-                await this.imageGenerator.Generate(
+                await imageGenerator.Generate(
                     options,
                     WebAppManifestContext.From(options.Manifest, options.ManifestUri),
                     outputDir
@@ -81,7 +75,7 @@ namespace PWABuilder.IOS.Services
             var zipFilePath = temp.CreateFile();
             using var zipFile = File.Create(zipFilePath);
             using var zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create);
-            zipArchive.CreateEntryFromFile(appSettings.NextStepsPath, "next-steps.html");
+            zipArchive.CreateEntryFromFile(appSettings.NextStepsPath, "ios-next-steps.html");
             zipArchive.CreateEntryFromDirectory(outputDir, "src");
             return zipFilePath;
         }

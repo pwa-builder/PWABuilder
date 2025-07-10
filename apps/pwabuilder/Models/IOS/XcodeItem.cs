@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     public abstract class XcodeItem
     {
         protected XcodeItem(string path)
         {
-            this.ItemPath = path;
+            ItemPath = path;
         }
 
         public string ItemPath { get; protected init; }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     /// <summary>
     /// Represents an iOS app shortcut.
@@ -9,8 +7,8 @@ namespace PWABuilder.IOS.Models
     {
         public IOSAppShortcut(string name, Uri uri)
         {
-            this.Name = name;
-            this.Uri = uri;
+            Name = name;
+            Uri = uri;
         }
 
         /// <summary>
@@ -53,9 +51,9 @@ namespace PWABuilder.IOS.Models
         {
             return "\t\t<dict>\n"
                 + "\t\t\t<key>UIApplicationShortcutItemType</key>\n"
-                + $"\t\t\t<string>{safeXmlValueConverter(this.Uri.ToString())}</string>\n"
+                + $"\t\t\t<string>{safeXmlValueConverter(Uri.ToString())}</string>\n"
                 + "\t\t\t<key>UIApplicationShortcutItemTitle</key>\n"
-                + $"\t\t\t<string>{safeXmlValueConverter(this.Name)}</string>\n"
+                + $"\t\t\t<string>{safeXmlValueConverter(Name)}</string>\n"
                 + "\t\t</dict>";
         }
     }

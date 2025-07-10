@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using PWABuilder.IOS.Models;
-
-namespace PWABuilder.IOS.Services
+﻿namespace PWABuilder.IOS.Services
 {
     /// <summary>
     /// Creates and tracks temporary files and directories and deletes them when CleanUp() is called.
@@ -34,13 +25,13 @@ namespace PWABuilder.IOS.Services
         public string CreateFile()
         {
             var tempFileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".tmp");
-            this.filesToCleanUp.Add(tempFileName);
+            filesToCleanUp.Add(tempFileName);
             return tempFileName;
         }
 
         public void CleanUp()
         {
-            foreach (var file in this.filesToCleanUp)
+            foreach (var file in filesToCleanUp)
             {
                 if (!string.IsNullOrWhiteSpace(file))
                 {
@@ -55,7 +46,7 @@ namespace PWABuilder.IOS.Services
                 }
             }
 
-            foreach (var directory in this.directoriesToCleanUp)
+            foreach (var directory in directoriesToCleanUp)
             {
                 if (!string.IsNullOrWhiteSpace(directory))
                 {
@@ -77,7 +68,7 @@ namespace PWABuilder.IOS.Services
 
         public void Dispose()
         {
-            this.CleanUp();
+            CleanUp();
             GC.SuppressFinalize(this);
         }
     }

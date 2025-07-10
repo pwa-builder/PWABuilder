@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using PWABuilder.IOS.Common;
+﻿using PWABuilder.IOS.Common;
 
 namespace PWABuilder.IOS.Models
 {
@@ -55,7 +51,7 @@ namespace PWABuilder.IOS.Models
                 .Where(i => i.GetFormat() == IconFormat.Png);
 
             return iconsMatchingDimensions
-                .Select(i => i.GetSrcUri(this.ManifestUri))
+                .Select(i => i.GetSrcUri(ManifestUri))
                 .FirstOrDefault();
         }
 
@@ -89,7 +85,7 @@ namespace PWABuilder.IOS.Models
             };
             return candidates
                 .Where(i => i != null) // first suitable icon
-                .Select(i => i!.GetSrcUri(this.ManifestUri)) // grab its URL
+                .Select(i => i!.GetSrcUri(ManifestUri)) // grab its URL
                 .Where(uri => uri != null) // filter out any that don't have a URL
                 .FirstOrDefault();
         }
@@ -101,7 +97,7 @@ namespace PWABuilder.IOS.Models
         /// <returns>A new URI containing an absolute path relative to this web manifest's path.</returns>
         public Uri ResolveUri(string path)
         {
-            return new Uri(this.ManifestUri, path);
+            return new Uri(ManifestUri, path);
         }
 
         /// <summary>
@@ -110,7 +106,7 @@ namespace PWABuilder.IOS.Models
         /// <returns>A dictionary containing <see cref="IconFormat"/> keys and a list of <see cref="WebManifestIcon"/> values.</returns>
         private Dictionary<IconFormat, List<WebManifestIcon>> GetIconsOrderedByLargest()
         {
-            var iconsOrEmpty = this.Icons ?? Enumerable.Empty<WebManifestIcon>();
+            var iconsOrEmpty = Icons ?? Enumerable.Empty<WebManifestIcon>();
             return iconsOrEmpty
                 .GroupBy(i => i.GetFormat())
                 .ToDictionary(

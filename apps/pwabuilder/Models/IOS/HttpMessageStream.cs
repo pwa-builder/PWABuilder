@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     /// <summary>
     /// A readable stream opened from an <see cref="HttpResponseMessage"/>. Upon disposal, both the stream and the message are disposed.
@@ -51,8 +44,8 @@ namespace PWABuilder.IOS.Models
         {
             if (disposing)
             {
-                this.message.Dispose();
-                this.stream.Dispose();
+                message.Dispose();
+                stream.Dispose();
             }
 
             base.Dispose(disposing);

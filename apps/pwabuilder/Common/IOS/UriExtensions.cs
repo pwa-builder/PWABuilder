@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PWABuilder.IOS.Common
+﻿namespace PWABuilder.IOS.Common
 {
     public static class UriExtensions
     {

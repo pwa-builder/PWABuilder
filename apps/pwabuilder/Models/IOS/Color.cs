@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace PWABuilder.IOS.Models
 {
@@ -10,9 +6,9 @@ namespace PWABuilder.IOS.Models
     {
         public Color(byte r, byte g, byte b)
         {
-            this.R = r;
-            this.G = g;
-            this.B = b;
+            R = r;
+            G = g;
+            B = b;
         }
 
         public byte R { get; init; }

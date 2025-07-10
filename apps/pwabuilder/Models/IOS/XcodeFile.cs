@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     /// <summary>
     /// A file within an XCode workspace.
@@ -17,7 +11,7 @@ namespace PWABuilder.IOS.Models
         public XcodeFile(string filePath)
             : base(filePath)
         {
-            this.Name = Path.GetFileName(filePath);
+            Name = Path.GetFileName(filePath);
         }
 
         /// <summary>
@@ -31,7 +25,7 @@ namespace PWABuilder.IOS.Models
         /// <param name="newName">The new name.</param>
         public void Rename(string newName)
         {
-            this.newFileName = newName;
+            newFileName = newName;
         }
 
         /// <summary>
@@ -46,19 +40,19 @@ namespace PWABuilder.IOS.Models
                 if (!contents.Contains(existing))
                 {
                     throw new ArgumentException(
-                        $"Expected {this.Name} to contain \"{existing}\", but it did not contain that string."
+                        $"Expected {Name} to contain \"{existing}\", but it did not contain that string."
                     );
                 }
 
                 return contents.Replace(existing, replacement);
             });
 
-            if (this.sourceTransforms == null)
+            if (sourceTransforms == null)
             {
-                this.sourceTransforms = new Queue<Func<string, string>>(2);
+                sourceTransforms = new Queue<Func<string, string>>(2);
             }
 
-            this.sourceTransforms.Enqueue(replaceFunc);
+            sourceTransforms.Enqueue(replaceFunc);
         }
 
         /// <summary>
@@ -67,28 +61,28 @@ namespace PWABuilder.IOS.Models
         /// <returns></returns>
         public async Task ApplyChanges()
         {
-            if (this.sourceTransforms == null || this.sourceTransforms.Count == 0)
+            if (sourceTransforms == null || sourceTransforms.Count == 0)
             {
                 return;
             }
 
-            var contents = await File.ReadAllTextAsync(this.ItemPath);
-            foreach (var transform in this.sourceTransforms)
+            var contents = await File.ReadAllTextAsync(ItemPath);
+            foreach (var transform in sourceTransforms)
             {
                 contents = transform(contents);
             }
 
             sourceTransforms.Clear();
-            await File.WriteAllTextAsync(this.ItemPath, contents);
+            await File.WriteAllTextAsync(ItemPath, contents);
 
             // Move the file if need be.
-            if (!string.IsNullOrWhiteSpace(this.newFileName))
+            if (!string.IsNullOrWhiteSpace(newFileName))
             {
-                var directoryPath = Path.GetDirectoryName(this.ItemPath);
-                var newFilePath = Path.Combine(directoryPath!, this.newFileName);
-                File.Move(this.ItemPath, newFilePath);
+                var directoryPath = Path.GetDirectoryName(ItemPath);
+                var newFilePath = Path.Combine(directoryPath!, newFileName);
+                File.Move(ItemPath, newFilePath);
 
-                this.newFileName = null;
+                newFileName = null;
             }
         }
     }

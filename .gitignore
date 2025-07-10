@@ -379,3 +379,6 @@ tests/FunctionalTests/*.sarif
 # Ignore test artifacts
 playwright-report/
 test-results/
+
+# MacOS finder temp
+*.DS_Store

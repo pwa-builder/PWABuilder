@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     /// <summary>
     /// W3C web manifest. https://www.w3.org/TR/appmanifest/
@@ -58,14 +53,14 @@ namespace PWABuilder.IOS.Models
         /// <returns>A match</returns>
         public IEnumerable<WebManifestIcon> GetIconsWithDimensions(int width, int height)
         {
-            if (this.Icons == null)
+            if (Icons == null)
             {
                 return Enumerable.Empty<WebManifestIcon>();
             }
 
             // Find icons that have the specified dimensions, ordered by those with purpose = "any" (or empty), then ordered by png, then jpg.
-            return this
-                .Icons.Where(i =>
+            return 
+                Icons.Where(i =>
                     i.GetAllDimensions().Any(d => d.width == width && d.height == height)
                 )
                 .OrderBy(i => !string.IsNullOrEmpty(i.Src) ? 0 : 1)
@@ -88,7 +83,7 @@ namespace PWABuilder.IOS.Models
 
         public Uri? GetSrcUri(Uri manifestUri)
         {
-            if (Uri.TryCreate(manifestUri, this.Src, out var iconUri))
+            if (Uri.TryCreate(manifestUri, Src, out var iconUri))
             {
                 return iconUri;
             }
@@ -98,7 +93,7 @@ namespace PWABuilder.IOS.Models
 
         public IconFormat GetFormat()
         {
-            return this.Type switch
+            return Type switch
             {
                 "image/png" => IconFormat.Png,
                 "image/jpeg" => IconFormat.Jpg,
@@ -119,7 +114,7 @@ namespace PWABuilder.IOS.Models
         /// <returns></returns>
         public bool IsLightMode()
         {
-            return string.Equals(this.Color_scheme, "light", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(Color_scheme, "light", StringComparison.OrdinalIgnoreCase);
         }
 
         public bool HasPurpose(string purpose)
@@ -130,29 +125,29 @@ namespace PWABuilder.IOS.Models
                 "any",
                 StringComparison.InvariantCultureIgnoreCase
             );
-            if (string.IsNullOrWhiteSpace(this.Purpose))
+            if (string.IsNullOrWhiteSpace(Purpose))
             {
                 return isLookingAnyPurpose;
             }
 
-            return this
-                .Purpose.Split(' ')
+            return 
+                Purpose.Split(' ')
                 .Any(p => string.Equals(p, purpose, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public bool IsAnyPurpose()
         {
-            return this.HasPurpose("any");
+            return HasPurpose("any");
         }
 
         public bool IsSquare()
         {
-            if (this.Sizes == null)
+            if (Sizes == null)
             {
                 return false;
             }
 
-            return this.GetAllDimensions().Any(d => d.width == d.height);
+            return GetAllDimensions().Any(d => d.width == d.height);
         }
 
         /// <summary>
@@ -178,13 +173,13 @@ namespace PWABuilder.IOS.Models
         /// <returns>The largest dimension from the <see cref="Sizes"/> string. If no valid size could be found, null.</returns>
         public List<(int width, int height)> GetAllDimensions()
         {
-            if (this.Sizes == null)
+            if (Sizes == null)
             {
                 return new List<(int width, int height)>(0);
             }
 
-            return this
-                .Sizes.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            return 
+                Sizes.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                 .Select(size => size.Split('x', StringSplitOptions.RemoveEmptyEntries))
                 .Select(widthAndHeight =>
                 {
@@ -203,7 +198,7 @@ namespace PWABuilder.IOS.Models
 
         public int GetImageFormatPreferredSortOrder()
         {
-            return this.GetFormat() switch
+            return GetFormat() switch
             {
                 IconFormat.Png => 0, // best format
                 IconFormat.Jpg => 1, // Windows apps can use JPG
@@ -215,7 +210,7 @@ namespace PWABuilder.IOS.Models
         private IconFormat GuessFormatFromExtension()
         {
             // No src? Punt.
-            if (string.IsNullOrWhiteSpace(this.Src))
+            if (string.IsNullOrWhiteSpace(Src))
             {
                 return IconFormat.Unspecified;
             }
@@ -233,7 +228,7 @@ namespace PWABuilder.IOS.Models
 
             foreach (var (extension, format) in extensionFormats)
             {
-                if (this.Src.EndsWith(extension, StringComparison.InvariantCultureIgnoreCase))
+                if (Src.EndsWith(extension, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return format;
                 }

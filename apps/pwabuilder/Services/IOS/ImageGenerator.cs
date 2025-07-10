@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
+﻿using System.IO.Compression;
 using System.Net;
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PWABuilder.IOS.Common;
 using PWABuilder.IOS.Models;
@@ -33,11 +26,11 @@ namespace PWABuilder.IOS.Services
             ILogger<ImageGenerator> logger
         )
         {
-            this.http = new HttpClient(
+            http = new HttpClient(
                 new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All }
             );
-            this.http.AddLatestEdgeUserAgent();
-            this.imageGeneratorServiceUrl = new Uri(appSettings.Value.ImageGeneratorApiUrl);
+            http.AddLatestEdgeUserAgent();
+            imageGeneratorServiceUrl = new Uri(appSettings.Value.ImageGeneratorApiUrl);
             this.logger = logger;
         }
 
@@ -171,7 +164,7 @@ namespace PWABuilder.IOS.Services
                 { new StringContent("ios"), "platform" },
             };
 
-            var imagesResponse = await this.http.PostAsync(
+            var imagesResponse = await http.PostAsync(
                 imageGeneratorServiceUrl,
                 imageGeneratorArgs
             );
@@ -203,7 +196,7 @@ namespace PWABuilder.IOS.Services
 
         private async Task<ImageGeneratorServiceZipFile> DownloadIOSImagesZip(Uri url)
         {
-            var zipStream = await this.http.GetStreamAsync(url);
+            var zipStream = await http.GetStreamAsync(url);
             var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, false);
             return new ImageGeneratorServiceZipFile(zipArchive);
         }

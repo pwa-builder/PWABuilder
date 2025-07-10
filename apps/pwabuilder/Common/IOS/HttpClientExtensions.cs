@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Common
+﻿namespace PWABuilder.IOS.Common
 {
     public static class HttpClientExtensions
     {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PWABuilder.IOS.Models
+﻿namespace PWABuilder.IOS.Models
 {
     /// <summary>
     /// Options for creating an iOS PWA package.
@@ -117,18 +112,18 @@ namespace PWABuilder.IOS.Models
             }
 
             var validSplashColor = GetValidColor(
-                this.SplashColor,
-                this.Manifest.Background_color,
+                SplashColor,
+                Manifest.Background_color,
                 "#ffffff"
             );
             var validProgressColor = GetValidColor(
-                this.ProgressBarColor,
-                this.Manifest.Theme_color,
+                ProgressBarColor,
+                Manifest.Theme_color,
                 "#000000"
             );
             var validStatusBarColor = GetValidColor(
-                this.StatusBarColor,
-                this.Manifest.Background_color,
+                StatusBarColor,
+                Manifest.Background_color,
                 "#ffffff"
             );
             var permittedUris = (PermittedUrls ?? new List<string>(0))
