@@ -57,6 +57,10 @@ export class ShareCard extends LitElement {
         z-index: 1000;
         color: #000000;
       }
+      .dialog::part(close-button__base):focus-visible {
+        outline: 2px solid #4f3fb6;
+        outline-offset: 2px;
+      }
       .dialog_header {
         height: 12px !important;
       }
@@ -128,6 +132,10 @@ export class ShareCard extends LitElement {
       .standard-button:hover {
         cursor: pointer;
         box-shadow: var(--button-box-shadow);
+      }
+      .standard-button:focus-visible {
+        outline: 2px solid #4f3fb6;
+        outline-offset: 2px;
       }
       .primary {
         background-color: var(--font-color);
