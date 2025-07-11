@@ -26,7 +26,7 @@ namespace PWABuilder.Validations
                     ? offlineScore != 0
                     : false;
 
-            var hasServiceWorker = response?.Error == null;
+            var hasServiceWorker = response != null && response?.Error == null;
 
             if (
                 audits != null
@@ -88,10 +88,11 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = offlineSupport,
-                        InfoString = offlineSupport
-                            ? "Has offline support"
-                            : "Does not have offline support",
+                        Result = offlineSupport && hasServiceWorker,
+                        InfoString =
+                            offlineSupport && hasServiceWorker
+                                ? "Has offline support"
+                                : "Does not have offline support",
                         Category = "optional",
                         Member = "offline_support",
                     },

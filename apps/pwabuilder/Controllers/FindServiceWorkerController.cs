@@ -91,7 +91,7 @@ namespace PWABuilder.Controllers
                     await puppeteer.CreateAsync();
                     var page = await puppeteer.GoToSite(site);
                     var jsGetServiceWorker =
-                        @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting.scriptURL : null ) : Promise.resolve(null))";
+                        @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting?.scriptURL : null ) : Promise.resolve(null))";
                     var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(
                         jsGetServiceWorker
                     );
