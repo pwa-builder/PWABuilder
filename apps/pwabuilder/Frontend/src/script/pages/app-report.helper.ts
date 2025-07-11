@@ -3,7 +3,7 @@ import { ManifestContext, TestResult } from '../utils/interfaces';
 import { createManifestContextFromEmpty } from '../services/manifest';
 import { ReportAudit } from './app-report.api';
 
-export async function processManifest(appUrl: string, manifestArtifact?: ReportAudit['artifacts']['webAppManifest']): Promise<ManifestContext> {
+export async function processManifest(appUrl: string, manifestArtifact?: ReportAudit['artifacts']['webAppManifestDetails']): Promise<ManifestContext> {
 	let manifestContext: ManifestContext;
 	let manifest: Manifest;
 

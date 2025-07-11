@@ -22,7 +22,7 @@ export type ReportAudit = {
 		}
 	},
 	artifacts: {
-		webAppManifest: {
+		webAppManifestDetails: {
 			raw?: string,
 			url?: string,
 			value?: unknown,

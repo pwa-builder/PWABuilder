@@ -1,4 +1,5 @@
-﻿using PWABuilder.Models;
+﻿using PWABuilder.IOS.Models;
+using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
@@ -10,6 +11,14 @@ namespace PWABuilder.Services
             Report webAppReport,
             AnalyticsInfo analyticsInfo,
             AnalyzeServiceWorkerResponse? serviceWorkerFeatures
+        );
+
+        Task Record(
+            string url,
+            bool success,
+            IOSAppPackageOptions.Validated? packageOptions,
+            AnalyticsInfo? analyticsInfo,
+            string? error
         );
     }
 }

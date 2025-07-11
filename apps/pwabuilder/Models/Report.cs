@@ -55,11 +55,11 @@ namespace PWABuilder.Models
 
     public class Artifacts
     {
-        public WebAppManifest? webAppManifest { get; set; }
+        public WebAppManifestDetails? webAppManifestDetails { get; set; }
         public ServiceWorker? serviceWorker { get; set; }
     }
 
-    public class WebAppManifest
+    public class WebAppManifestDetails
     {
         public string? url { get; set; }
         public string? raw { get; set; }

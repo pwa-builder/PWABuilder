@@ -2121,7 +2121,7 @@ export class AppReport extends LitElement {
 
     // Take only good results, ignore errors.
     FindWebManifest(url).then( async (result) => {
-      if (result?.content?.raw && !this.reportAudit?.artifacts?.webAppManifest?.raw) {
+      if (result?.content?.raw && !this.reportAudit?.artifacts?.webAppManifestDetails?.raw) {
         // TODO: can use json instead of raw
         findersResults.manifest = result.content;
         await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
@@ -2174,9 +2174,9 @@ export class AppReport extends LitElement {
     console.log(this.reportAudit);
 
     // Check for previously successfull FindMani
-    if (this.reportAudit?.artifacts?.webAppManifest?.raw) {
-      if (!findersResults.manifest.raw || this.reportAudit?.artifacts.webAppManifest.raw != findersResults.manifest.raw) {
-        await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifest?.url, this.reportAudit?.artifacts?.webAppManifest?.raw);
+    if (this.reportAudit?.artifacts?.webAppManifestDetails?.raw) {
+      if (!findersResults.manifest.raw || this.reportAudit?.artifacts.webAppManifestDetails.raw != findersResults.manifest.raw) {
+        await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifestDetails?.url, this.reportAudit?.artifacts?.webAppManifestDetails?.raw);
         findersResults.manifestTodos = [];
       }
     } else {
