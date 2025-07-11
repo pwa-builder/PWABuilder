@@ -1,6 +1,6 @@
-using PWABuilder.Models;
+using PWABuilder.Validations.Models;
 
-namespace PWABuilder.Services
+namespace PWABuilder.Validations.Services
 {
     public interface IImageValidationService
     {

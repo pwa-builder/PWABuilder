@@ -55,272 +55,327 @@ namespace PWABuilder.Services
             });
         }
 
-        public async Task UploadToAppInsights(Report webAppReport, AnalyticsInfo analyticsInfo)
+        public async Task UploadToAppInsights(
+            Report webAppReport,
+            AnalyticsInfo analyticsInfo,
+            AnalyzeServiceWorkerResponse? serviceWorkerFeatures
+        )
         {
-            var manifestJson = webAppReport.artifacts?.webAppManifest?.json;
-
-            var enrichAnalyticsInfoProperties =
-                analyticsInfo.Properties ?? new Dictionary<string, string>();
-
-            if (manifestJson == null || manifestJson is not JsonElement manifestJsonElement)
+            if (!isAppInsightsEnabled)
             {
-                enrichAnalyticsInfoProperties.Add("hasManifest", "False");
-            }
-            else
-            {
-                if (
-                    ManifestValidations.ValidateSingleField("name", manifestJsonElement) is
-                    { Exists: true } name
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("name", name.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "background_color",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } backGroundColor
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasBackgroundColor",
-                        backGroundColor.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("categories", manifestJsonElement) is
-                    { Exists: true } categories
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("hasCategories", categories.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("description", manifestJsonElement) is
-                    { Exists: true } description
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasDescription",
-                        description.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("file_handlers", manifestJsonElement) is
-                    { Exists: true } fileHandler
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasFileHandlers",
-                        fileHandler.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "launch_handler",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } launchHandler
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasLaunchHandlers",
-                        launchHandler.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "prefer_related_applications",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } preferRelatedApps
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasPreferRelatedApps",
-                        preferRelatedApps.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "related_applications",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } relatedApps
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasRelatedApps",
-                        relatedApps.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "protocol_handlers",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } protocolHandler
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasProtocolHandlers",
-                        protocolHandler.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("screenshots", manifestJsonElement) is
-                    { Exists: true } screenshots
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasScreenshots",
-                        screenshots.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("share_target", manifestJsonElement) is
-                    { Exists: true } shareTarget
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasShareTarget",
-                        shareTarget.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("shortcuts", manifestJsonElement) is
-                    { Exists: true } shortcuts
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("hasShortcuts", shortcuts.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("theme_color", manifestJsonElement) is
-                    { Exists: true } themeColor
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("hasThemeColor", themeColor.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "iarc_rating_id",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } iarcRatingId
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("hasRating", iarcRatingId.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("widgets", manifestJsonElement) is
-                    { Exists: true } widgets
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("hasWidgets", widgets.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("icons", manifestJsonElement) is
-                    { Exists: true } icons
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add("hasIcons", icons.Valid.ToString());
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "edge_side_panel",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } edgeSidePanel
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasEdgeSidePanel",
-                        edgeSidePanel.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField(
-                        "display_override",
-                        manifestJsonElement
-                    ) is
-                    { Exists: true } displayOverride
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasDisplayOverride",
-                        displayOverride.Valid.ToString()
-                    );
-                }
-
-                if (
-                    ManifestValidations.ValidateSingleField("handle_links", manifestJsonElement) is
-                    { Exists: true } handleLinks
-                )
-                {
-                    enrichAnalyticsInfoProperties.Add(
-                        "hasHandleLinks",
-                        handleLinks.Valid.ToString()
-                    );
-                }
+                logger.LogWarning("Application Insights is not enabled.");
+                return;
             }
 
-            var serviceWorker = webAppReport?.audits?.serviceWorker?.details?.features;
-            if (
-                serviceWorker != null
-                && serviceWorker is AnalyzeServiceWorkerResponse serviceWorkerFeatures
-            )
+            if (webAppReport == null || analyticsInfo == null)
             {
-                enrichAnalyticsInfoProperties.Add(
-                    "hasBackgroundSync",
-                    (serviceWorkerFeatures.DetectedBackgroundSync ?? false).ToString()
-                );
-                enrichAnalyticsInfoProperties.Add(
-                    "hasPeriodicBackgroundSync",
-                    (serviceWorkerFeatures.DetectedPeriodicBackgroundSync ?? false).ToString()
-                );
-                enrichAnalyticsInfoProperties.Add(
-                    "hasSignsOfLogic",
-                    (serviceWorkerFeatures.DetectedSignsOfLogic ?? false).ToString()
-                );
-                enrichAnalyticsInfoProperties.Add(
-                    "hasEmptyLogic",
-                    (serviceWorkerFeatures.DetectedEmpty ?? false).ToString()
-                );
-                enrichAnalyticsInfoProperties.Add(
-                    "hasPushRegistration",
-                    (serviceWorkerFeatures.DetectedPushRegistration ?? false).ToString()
-                );
+                logger.LogError("WebAppReport or AnalyticsInfo is null.");
+                return;
             }
 
-            var offlineSupport = webAppReport?.audits?.offlineSupport;
-            if (offlineSupport != null)
+            if (analyticsInfo.Properties == null)
             {
-                enrichAnalyticsInfoProperties.Add(
-                    "hasOfflineSupport",
-                    offlineSupport.score.ToString()
-                );
+                analyticsInfo.Properties = new Dictionary<string, string>();
             }
+            {
+                var manifestJson = webAppReport.artifacts?.webAppManifest?.json;
 
-            analyticsInfo.Properties = enrichAnalyticsInfoProperties;
+                var enrichAnalyticsInfoProperties =
+                    analyticsInfo.Properties ?? new Dictionary<string, string>();
 
-            await TrackEvent(analyticsInfo, null, true);
+                if (manifestJson == null || manifestJson is not JsonElement manifestJsonElement)
+                {
+                    enrichAnalyticsInfoProperties.Add("hasManifest", "False");
+                }
+                else
+                {
+                    if (
+                        ManifestValidations.ValidateSingleField("name", manifestJsonElement) is
+                        { Exists: true } name
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add("name", name.Valid.ToString());
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "background_color",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } backGroundColor
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasBackgroundColor",
+                            backGroundColor.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "categories",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } categories
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasCategories",
+                            categories.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "description",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } description
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasDescription",
+                            description.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "file_handlers",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } fileHandler
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasFileHandlers",
+                            fileHandler.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "launch_handler",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } launchHandler
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasLaunchHandlers",
+                            launchHandler.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "prefer_related_applications",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } preferRelatedApps
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasPreferRelatedApps",
+                            preferRelatedApps.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "related_applications",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } relatedApps
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasRelatedApps",
+                            relatedApps.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "protocol_handlers",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } protocolHandler
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasProtocolHandlers",
+                            protocolHandler.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "screenshots",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } screenshots
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasScreenshots",
+                            screenshots.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "share_target",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } shareTarget
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasShareTarget",
+                            shareTarget.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField("shortcuts", manifestJsonElement) is
+                        { Exists: true } shortcuts
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasShortcuts",
+                            shortcuts.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "theme_color",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } themeColor
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasThemeColor",
+                            themeColor.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "iarc_rating_id",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } iarcRatingId
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasRating",
+                            iarcRatingId.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField("widgets", manifestJsonElement) is
+                        { Exists: true } widgets
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add("hasWidgets", widgets.Valid.ToString());
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField("icons", manifestJsonElement) is
+                        { Exists: true } icons
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add("hasIcons", icons.Valid.ToString());
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "edge_side_panel",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } edgeSidePanel
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasEdgeSidePanel",
+                            edgeSidePanel.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "display_override",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } displayOverride
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasDisplayOverride",
+                            displayOverride.Valid.ToString()
+                        );
+                    }
+
+                    if (
+                        ManifestValidations.ValidateSingleField(
+                            "handle_links",
+                            manifestJsonElement
+                        ) is
+                        { Exists: true } handleLinks
+                    )
+                    {
+                        enrichAnalyticsInfoProperties.Add(
+                            "hasHandleLinks",
+                            handleLinks.Valid.ToString()
+                        );
+                    }
+                }
+
+                if (serviceWorkerFeatures != null)
+                {
+                    enrichAnalyticsInfoProperties.Add(
+                        "hasBackgroundSync",
+                        (serviceWorkerFeatures.DetectedBackgroundSync ?? false).ToString()
+                    );
+                    enrichAnalyticsInfoProperties.Add(
+                        "hasPeriodicBackgroundSync",
+                        (serviceWorkerFeatures.DetectedPeriodicBackgroundSync ?? false).ToString()
+                    );
+                    enrichAnalyticsInfoProperties.Add(
+                        "hasSignsOfLogic",
+                        (serviceWorkerFeatures.DetectedSignsOfLogic ?? false).ToString()
+                    );
+                    enrichAnalyticsInfoProperties.Add(
+                        "hasEmptyLogic",
+                        (serviceWorkerFeatures.DetectedEmpty ?? false).ToString()
+                    );
+                    enrichAnalyticsInfoProperties.Add(
+                        "hasPushRegistration",
+                        (serviceWorkerFeatures.DetectedPushRegistration ?? false).ToString()
+                    );
+                }
+                var serviceWorkerValidation = webAppReport?.serviceWorkerValidations;
+
+                var offlineSupport =
+                    serviceWorkerValidation != null && serviceWorkerValidation.Any()
+                        ? serviceWorkerValidation.ToList().Find(x => x.Member == "offline_support")
+                        : null;
+                if (offlineSupport != null)
+                {
+                    enrichAnalyticsInfoProperties.Add(
+                        "hasOfflineSupport",
+                        offlineSupport.Result.ToString()
+                    );
+                }
+
+                analyticsInfo.Properties = enrichAnalyticsInfoProperties;
+
+                await TrackEvent(analyticsInfo, null, true);
+            }
         }
     }
 }

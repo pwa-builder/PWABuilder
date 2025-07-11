@@ -6,6 +6,10 @@ namespace PWABuilder.Services
     {
         Task TrackEvent(AnalyticsInfo analyticsInfo, string? error, bool success);
 
-        Task UploadToAppInsights(Report webAppReport, AnalyticsInfo analyticsInfo);
+        Task UploadToAppInsights(
+            Report webAppReport,
+            AnalyticsInfo analyticsInfo,
+            AnalyzeServiceWorkerResponse? serviceWorkerFeatures
+        );
     }
 }

@@ -1,28 +1,17 @@
 import { Validation } from '@pwabuilder/manifest-validation';
 import { env } from '../utils/environment';
 import { getHeaders } from '../utils/platformTrackingHeaders';
+import { TestResult } from '../utils/interfaces';
 
 export type ReportAudit = {
+  manifestValidations: Validation[],
+  serviceWorkerValidations: TestResult[],
+  securityValidations: TestResult[],
 	audits: {
-		isOnHttps: { score: boolean },
-		noMixedContent: { score: boolean },
-		installableManifest: {
-		  score: boolean,
-		  details: { url?: string }
-		},
 		serviceWorker: {
-		  score: boolean,
-		  details: {
 			url?: string,
 			scope?: string,
-			features?: { detectedBackgroundSync: boolean,
-				detectedPeriodicBackgroundSync: boolean,
-				detectedPushRegistration: boolean,
-				detectedSignsOfLogic: boolean,
-				raw?: string[] }
-			}
 		},
-		offlineSupport: { score: boolean },
 		appleTouchIcon: { score: boolean },
 		maskableIcon: { score: boolean },
 		splashScreen: { score: boolean },
@@ -64,13 +53,7 @@ export type FindServiceWorkerResult = {
 	}
 }
 export type AuditServiceWorkerResult = {
-	content: {
-		score: boolean,
-		details:{
-			url: string,
-			features: ReportAudit['audits']['serviceWorker']['details']['features']
-		}
-	}
+	validations: TestResult[],
 }
 
 export async function Report(
@@ -170,6 +153,6 @@ export async function AuditServiceWorker(
 	}
 
 	const jsonResult: AuditServiceWorkerResult = await fetchReport.json();
-	console.info('AuditServiceWorker succeeded', jsonResult?.content);
+	console.info('AuditServiceWorker succeeded', jsonResult?.validations);
 	return jsonResult;
 }

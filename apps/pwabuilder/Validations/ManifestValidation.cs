@@ -1234,31 +1234,37 @@ namespace PWABuilder.Validations
             };
         }
 
-        public static IEnumerable<ManifestSingleField> ValidateManifest(object? webManifest)
+        public static async Task<IEnumerable<Validation>> ValidateManifestAsync(object? webManifest)
         {
-            if (webManifest is not JsonElement webManifestJson)
+            return await Task.Run(() =>
             {
-                return Enumerable.Empty<ManifestSingleField>();
-            }
-
-            var maniTests = GetValidations();
-            return maniTests.Select(r =>
-            {
-                var propertyExist = webManifestJson.TryGetProperty(r.Member, out JsonElement value);
-                var testResult = r.Test(value);
-                return new ManifestSingleField
+                if (webManifest is not JsonElement webManifestJson)
                 {
-                    Member = r.Member,
-                    DisplayString = r.DisplayString,
-                    InfoString = r.InfoString,
-                    Category = r.Category,
-                    DefaultValue = r.DefaultValue,
-                    DocsLink = r.DocsLink,
-                    ErrorString = r.ErrorString,
-                    QuickFix = r.QuickFix,
-                    TestRequired = r.TestRequired,
-                    Valid = testResult && propertyExist,
-                };
+                    return Enumerable.Empty<Validation>();
+                }
+
+                var maniTests = GetValidations();
+                return maniTests.Select(r =>
+                {
+                    var propertyExist = webManifestJson.TryGetProperty(
+                        r.Member,
+                        out JsonElement value
+                    );
+                    var testResult = r.Test(value);
+                    return new Validation
+                    {
+                        Member = r.Member,
+                        DisplayString = r.DisplayString,
+                        InfoString = r.InfoString,
+                        Category = r.Category,
+                        DefaultValue = r.DefaultValue,
+                        DocsLink = r.DocsLink,
+                        ErrorString = r.ErrorString,
+                        QuickFix = r.QuickFix,
+                        TestRequired = r.TestRequired,
+                        Valid = testResult && propertyExist,
+                    };
+                });
             });
         }
     }
