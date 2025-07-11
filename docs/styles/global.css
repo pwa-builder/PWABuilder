@@ -52,26 +52,57 @@
 
 .home-nav-container {
     display: flex;
-    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin-top: 10px;
     margin-bottom: 10px;
+    align-items: stretch;
 }
 
 .home-nav-card {
-    width: 33%;
+    flex: 1 1 300px; /* Flex grow, shrink, and min basis of 300px */
+    min-width: 280px; /* Minimum width to prevent cards from getting too narrow */
+    max-width: 400px; /* Maximum width to prevent cards from getting too wide */
     margin: 10px;
     text-align: center;
     justify-content: space-around;
     --border-color: #491576;
 }
 
-@media (max-width: 875px) {
+/* Responsive breakpoints that account for both screen size and content */
+@media (max-width: 1024px) {
+    .home-nav-container {
+        justify-content: center;
+    }
+    
+    .home-nav-card {
+        flex: 1 1 calc(50% - 2rem); /* Two cards per row on medium screens */
+        max-width: 450px;
+    }
+}
+
+@media (max-width: 768px) {
     .home-nav-container {
         flex-direction: column;
     }
 
     .home-nav-card {
-        width: 100%;
+        flex: 1 1 auto;
+        width: auto;
+        max-width: none;
+        min-width: auto;
+    }
+}
+
+/* Handle very large font sizes by going to single column earlier */
+@media (max-width: 900px) {
+    .home-nav-container {
+        flex-direction: column;
+    }
+
+    .home-nav-card {
+        width: auto;
+        max-width: none;
     }
 }
 .home-nav-container sl-button::part(base) {
@@ -91,7 +122,7 @@
 
 .home-nav-card h2 {
     text-align: center;
-    font-size: 21px;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem); /* Responsive font size */
     font-weight: 600;
 }
 .home-nav-card::part(body) {
@@ -99,10 +130,11 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+    padding: 1rem; /* Use rem units for consistent spacing */
 }
 
 .home-nav-card sl-button {
-    margin-top: 10px;
+    margin-top: auto; /* Push button to bottom */
 }
 
 /* Home Nav CSS END */
