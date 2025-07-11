@@ -8,16 +8,16 @@ namespace PWABuilder.IOS.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class PackagesController : ControllerBase
+    public class IOSPackageController : ControllerBase
     {
-        private readonly ILogger<PackagesController> logger;
+        private readonly ILogger<IOSPackageController> logger;
         private readonly IOSPackageCreator packageCreator;
         private readonly IAnalyticsService analyticsService;
 
-        public PackagesController(
+        public IOSPackageController(
             IOSPackageCreator packageCreator,
             IAnalyticsService analyticsService,
-            ILogger<PackagesController> logger
+            ILogger<IOSPackageController> logger
         )
         {
             this.packageCreator = packageCreator;
