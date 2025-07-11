@@ -103,7 +103,7 @@ namespace PWABuilder.Controllers
                 // }
 
                 // Image validation
-                var webAppManifest = ReportUtils.TryGetWebManifest(artifacts_lh);
+                var webAppManifestDetails = ReportUtils.TryGetWebManifest(artifacts_lh);
                 var imagesAudit = new ImagesAudit
                 {
                     details = new ImagesDetails
@@ -115,22 +115,22 @@ namespace PWABuilder.Controllers
                 };
 
                 if (
-                    webAppManifest != null
-                    && webAppManifest.json != null
-                    && webAppManifest.url != null
+                    webAppManifestDetails != null
+                    && webAppManifestDetails.json != null
+                    && webAppManifestDetails.url != null
                 )
                 {
                     try
                     {
                         var iconsValidation =
                             await imageValidationService.ValidateIconsMetadataAsync(
-                                webAppManifest.json,
-                                webAppManifest.url
+                                webAppManifestDetails.json,
+                                webAppManifestDetails.url
                             );
                         var screenshotsValidation =
                             await imageValidationService.ValidateScreenshotsMetadataAsync(
-                                webAppManifest.json,
-                                webAppManifest.url
+                                webAppManifestDetails.json,
+                                webAppManifestDetails.url
                             );
 
                         bool score = false;
@@ -152,13 +152,13 @@ namespace PWABuilder.Controllers
                 }
 
                 var manifestValidations = ManifestValidations.ValidateManifest(
-                    webAppManifest?.json
+                    webAppManifestDetails?.json
                 );
 
                 // Build the report object
                 var report = ReportUtils.MapReportOutput(
                     audits,
-                    webAppManifest,
+                    webAppManifestDetails,
                     swUrl,
                     swFeatures,
                     imagesAudit,

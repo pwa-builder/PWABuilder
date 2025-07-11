@@ -24,8 +24,7 @@ if (import.meta.env.PROD) {
     'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'https://pwabuilder-cloudapk.azurewebsites.net';
-  env.iosPackageGeneratorUrl =
-    'https://pwabuilder-ios.azurewebsites.net/packages/create';
+  env.iosPackageGeneratorUrl = '/api/iospackage/create';
   env.oculusPackageGeneratorUrl =
     'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
   env.imageGeneratorUrl =
@@ -45,8 +44,7 @@ if (import.meta.env.PROD) {
     'https://pwabuilder-windows-docker-dev.azurewebsites.net/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'https://pwabuilder-cloudapk.azurewebsites.net';
-  env.iosPackageGeneratorUrl =
-    'https://pwabuilder-ios.azurewebsites.net/packages/create';
+  env.iosPackageGeneratorUrl = '/api/iospackage/create';
   env.oculusPackageGeneratorUrl =
     'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
   env.imageGeneratorUrl =

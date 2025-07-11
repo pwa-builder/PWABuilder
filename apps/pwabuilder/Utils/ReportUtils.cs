@@ -38,13 +38,13 @@ namespace PWABuilder.Utils
                 : null;
         }
 
-        public static WebAppManifest? TryGetWebManifest(JsonElement artifacts_lh)
+        public static WebAppManifestDetails? TryGetWebManifest(JsonElement artifacts_lh)
         {
             return
                 artifacts_lh.ValueKind == JsonValueKind.Object
                 && artifacts_lh.TryGetProperty("Manifest", out var manifestElem)
                 && manifestElem.ValueKind == JsonValueKind.Object
-                ? new WebAppManifest
+                ? new WebAppManifestDetails
                 {
                     url = manifestElem.TryGetProperty("url", out var urlElem)
                         ? urlElem.GetString()
@@ -63,7 +63,7 @@ namespace PWABuilder.Utils
 
         public static Report MapReportOutput(
             JsonElement audits,
-            WebAppManifest? webAppManifest,
+            WebAppManifestDetails? webAppManifestDetails,
             string? swUrl,
             AnalyzeServiceWorkerResponse? swFeatures,
             ImagesAudit imagesAudit,
@@ -172,10 +172,10 @@ namespace PWABuilder.Utils
                 () =>
                     new Artifacts
                     {
-                        webAppManifest = webAppManifest,
+                        webAppManifestDetails = webAppManifestDetails,
                         serviceWorker = serviceWorker,
                     },
-                webAppManifest,
+                webAppManifestDetails,
                 serviceWorker
             );
 
