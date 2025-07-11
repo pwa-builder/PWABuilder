@@ -26,6 +26,8 @@
 
 <body>
     <div id="app"></div>
+    <!-- ARIA live region for search result announcements -->
+    <div id="search-announcements" aria-live="polite" aria-atomic="true" class="sr-only"></div>
 
     <script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"></script>
 
@@ -79,6 +81,117 @@
                 }
             ]
         };
+    </script>
+    
+    <script>
+        // Accessibility enhancement for search results
+        function initializeSearchAccessibility() {
+            const searchAnnouncementsEl = document.getElementById('search-announcements');
+            let lastSearchTerm = '';
+            let searchTimeout;
+            
+            // Function to announce search results status
+            function announceSearchResults(resultsCount, searchTerm) {
+                if (!searchAnnouncementsEl || !searchTerm) return;
+                
+                let message = '';
+                if (resultsCount === 0) {
+                    message = `No search results found for "${searchTerm}". Please try different keywords.`;
+                } else if (resultsCount > 0) {
+                    message = `${resultsCount} search result${resultsCount === 1 ? '' : 's'} found for "${searchTerm}".`;
+                }
+                
+                if (message) {
+                    searchAnnouncementsEl.textContent = message;
+                    // Clear the message after a delay to avoid repetitive announcements
+                    setTimeout(() => {
+                        searchAnnouncementsEl.textContent = '';
+                    }, 1000);
+                }
+            }
+            
+            // Function to check search results
+            function checkSearchResults() {
+                const searchInput = document.querySelector('.search input[type="search"]');
+                const searchTerm = searchInput ? searchInput.value.trim() : '';
+                
+                if (searchTerm && searchTerm !== lastSearchTerm) {
+                    lastSearchTerm = searchTerm;
+                    
+                    // Clear previous timeout
+                    if (searchTimeout) {
+                        clearTimeout(searchTimeout);
+                    }
+                    
+                    // Wait for search results to populate then check
+                    searchTimeout = setTimeout(() => {
+                        // Try multiple possible selectors for search results
+                        let resultItems = document.querySelectorAll('.search .results-panel .matching-post');
+                        if (resultItems.length === 0) {
+                            resultItems = document.querySelectorAll('.search ul li');
+                        }
+                        if (resultItems.length === 0) {
+                            resultItems = document.querySelectorAll('.results-panel li');
+                        }
+                        if (resultItems.length === 0) {
+                            resultItems = document.querySelectorAll('.search .results li');
+                        }
+                        
+                        announceSearchResults(resultItems.length, searchTerm);
+                    }, 300);
+                } else if (!searchTerm && lastSearchTerm) {
+                    // Search was cleared
+                    lastSearchTerm = '';
+                    if (searchAnnouncementsEl) {
+                        searchAnnouncementsEl.textContent = '';
+                    }
+                }
+            }
+            
+            // Function to setup search monitoring
+            function setupSearchMonitoring() {
+                const searchInput = document.querySelector('.search input[type="search"]');
+                if (!searchInput) {
+                    // Search input doesn't exist yet, try again later
+                    setTimeout(setupSearchMonitoring, 500);
+                    return;
+                }
+                
+                // Monitor search input changes
+                searchInput.addEventListener('input', checkSearchResults);
+                searchInput.addEventListener('keyup', checkSearchResults);
+                
+                // Also monitor DOM changes in the search area
+                const searchContainer = document.querySelector('.search');
+                if (searchContainer) {
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'childList' || mutation.type === 'subtree') {
+                                // Delay check to allow results to populate
+                                setTimeout(checkSearchResults, 100);
+                            }
+                        });
+                    });
+                    
+                    observer.observe(searchContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+            }
+            
+            // Initialize after DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(setupSearchMonitoring, 2000);
+                });
+            } else {
+                setTimeout(setupSearchMonitoring, 2000);
+            }
+        }
+        
+        // Initialize search accessibility
+        initializeSearchAccessibility();
     </script>
     <!-- Docsify v4 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4 "></script>
