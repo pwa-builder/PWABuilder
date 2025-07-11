@@ -247,12 +247,15 @@ export const headerHTMLString: string = `<div align=center>
 export const quickMenuListenerScriptString: string = `
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const trees = document.querySelectorAll('sl-tree');
-    trees.forEach(tree => {
-      tree.addEventListener('sl-selection-change', event => {
-        const selectedItem = event.detail.selection[0];
-        if (selectedItem && selectedItem.dataset.href) {
-          location.href = selectedItem.dataset.href;
+    const treeItems = document.querySelectorAll('sl-tree-item[data-href]');
+    treeItems.forEach(item => {
+      item.addEventListener('click', event => {
+        const href = event.currentTarget.dataset.href;
+        if (href) {
+          // Prevent default tree item selection behavior
+          event.preventDefault();
+          event.stopPropagation();
+          location.href = href;
         }
       });
     });
