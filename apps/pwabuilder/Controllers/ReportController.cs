@@ -86,24 +86,21 @@ namespace PWABuilder.Controllers
                 ServiceWorkerValidationResult? serviceWorkerValidationResult = null;
                 var swUrl = ReportUtils.TryGetServiceWorkerUrl(audits);
 
-                if (!string.IsNullOrEmpty(swUrl))
+                try
                 {
-                    try
+                    serviceWorkerValidationResult =
+                        await ServiceWorkerValidation.ValidateServiceWorkerAsync(
+                            serviceWorkerAnalyzer,
+                            swUrl,
+                            audits
+                        );
+                }
+                catch (Exception ex)
+                {
+                    serviceWorkerValidationResult = new ServiceWorkerValidationResult
                     {
-                        serviceWorkerValidationResult =
-                            await ServiceWorkerValidation.ValidateServiceWorkerAsync(
-                                swUrl,
-                                serviceWorkerAnalyzer,
-                                audits
-                            );
-                    }
-                    catch (Exception ex)
-                    {
-                        serviceWorkerValidationResult = new ServiceWorkerValidationResult
-                        {
-                            Error = ex.Message,
-                        };
-                    }
+                        Error = ex.Message,
+                    };
                 }
 
                 // Manifest validation

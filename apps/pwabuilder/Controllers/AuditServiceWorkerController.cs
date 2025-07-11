@@ -39,8 +39,8 @@ namespace PWABuilder.Controllers
             try
             {
                 var swValidation = await ServiceWorkerValidation.ValidateServiceWorkerAsync(
-                    url,
-                    serviceWorkerAnalyzer
+                    serviceWorkerAnalyzer,
+                    url
                 );
 
                 var result = new

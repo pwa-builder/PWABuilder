@@ -7,20 +7,14 @@ namespace PWABuilder.Validations
     public static class ServiceWorkerValidation
     {
         public static async Task<ServiceWorkerValidationResult> ValidateServiceWorkerAsync(
-            string serviceWorkerUrl,
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
+            string? serviceWorkerUrl,
             JsonElement? audits = null
         )
         {
-            var response = await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(serviceWorkerUrl);
-
-            if (response == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(response),
-                    "Service worker analysis response is null."
-                );
-            }
+            var response = string.IsNullOrWhiteSpace(serviceWorkerUrl)
+                ? null
+                : await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(serviceWorkerUrl);
 
             var offlineSupport =
                 audits != null
@@ -32,7 +26,7 @@ namespace PWABuilder.Validations
                     ? offlineScore != 0
                     : false;
 
-            var hasServiceWorker = response.Error == null;
+            var hasServiceWorker = response?.Error == null;
 
             if (
                 audits != null
@@ -64,9 +58,9 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = response.DetectedPeriodicBackgroundSync ?? false,
+                        Result = response?.DetectedPeriodicBackgroundSync ?? false,
                         InfoString =
-                            (response.DetectedPeriodicBackgroundSync ?? false)
+                            (response?.DetectedPeriodicBackgroundSync ?? false)
                                 ? "Uses Periodic Sync for a rich offline experience"
                                 : "Does not use Periodic Sync for a rich offline experience",
                         Category = "optional",
@@ -74,9 +68,9 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = response.DetectedBackgroundSync ?? false,
+                        Result = response?.DetectedBackgroundSync ?? false,
                         InfoString =
-                            (response.DetectedBackgroundSync ?? false)
+                            (response?.DetectedBackgroundSync ?? false)
                                 ? "Uses Background Sync for a rich offline experience"
                                 : "Does not use Background Sync for a rich offline experience",
                         Category = "optional",
@@ -84,9 +78,9 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = response.DetectedPushRegistration ?? false,
+                        Result = response?.DetectedPushRegistration ?? false,
                         InfoString =
-                            (response.DetectedPushRegistration ?? false)
+                            (response?.DetectedPushRegistration ?? false)
                                 ? "Uses Push Notifications"
                                 : "Does not use Push Notifications",
                         Category = "optional",
