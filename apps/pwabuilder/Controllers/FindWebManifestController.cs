@@ -64,7 +64,7 @@ namespace PWABuilder.Controllers
                 }
 
                 var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                var validations = ManifestValidations.ValidateManifest(manifestJson);
+                var validations = await ManifestValidations.ValidateManifestAsync(manifestJson);
                 var output = new
                 {
                     Status = 200,
@@ -105,7 +105,7 @@ namespace PWABuilder.Controllers
                     }
 
                     var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                    var validations = ManifestValidations.ValidateManifest(manifestJson);
+                    var validations = await ManifestValidations.ValidateManifestAsync(manifestJson);
                     var output = new
                     {
                         Status = 200,

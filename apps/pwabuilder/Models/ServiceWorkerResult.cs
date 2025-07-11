@@ -1,3 +1,5 @@
+using PWABuilder.Validations.Models;
+
 namespace PWABuilder.Models
 {
     public class ServiceWorkerBodyErrorResult
@@ -15,6 +17,7 @@ namespace PWABuilder.Models
     public class ServiceWorkerBodyResult
     {
         public ServiceWorkerContentResult? Content { get; set; }
+        public IEnumerable<TestResult>? Validations { get; set; }
         public ServiceWorkerBodyErrorResult? Error { get; set; }
     }
 

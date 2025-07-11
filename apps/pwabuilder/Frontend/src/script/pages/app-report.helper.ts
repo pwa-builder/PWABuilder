@@ -25,7 +25,7 @@ export async function processManifest(appUrl: string, manifestArtifact?: ReportA
 	return manifestContext;
 }
 
-export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serviceWorker'], offline?: ReportAudit['audits']['offlineSupport']/*,installable?: boolean*/): Array<TestResult> {
+export function processServiceWorker(serviceWorker?: any, offline?: {score: boolean}/*,installable?: boolean*/): Array<TestResult> {
 	console.info('Testing Service Worker');
 
 	const swFeatures = serviceWorker?.details?.features || null;
@@ -75,7 +75,7 @@ export function processServiceWorker(serviceWorker?: ReportAudit['audits']['serv
 	return swTestResult;
   }
 
-  export function processSecurity(audits?: ReportAudit['audits']): Array<TestResult> {
+  export function processSecurity(audits?: any): Array<TestResult> {
 
 
 	// TODO: Adjust this to use the new security audits

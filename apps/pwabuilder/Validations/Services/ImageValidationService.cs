@@ -1,7 +1,7 @@
 using System.Text.Json;
-using PWABuilder.Models;
+using PWABuilder.Validations.Models;
 
-namespace PWABuilder.Services
+namespace PWABuilder.Validations.Services
 {
     public class ImageValidationService : IImageValidationService
     {
@@ -115,32 +115,32 @@ namespace PWABuilder.Services
 
                 return new Validation
                 {
-                    member = "icons",
-                    category = "required",
-                    displayString = "Manifest icons exist",
-                    errorString = isValid
+                    Member = "icons",
+                    Category = "required",
+                    DisplayString = "Manifest icons exist",
+                    ErrorString = isValid
                         ? ""
                         : $"Couldn't fetch the following icons: {string.Join(", ", missingIcons)}",
-                    infoString =
+                    InfoString =
                         "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-                    docsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
-                    quickFix = false,
-                    valid = isValid,
+                    DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+                    QuickFix = false,
+                    Valid = isValid,
                 };
             }
             catch (Exception ex)
             {
                 return new Validation
                 {
-                    member = "icons",
-                    category = "required",
-                    displayString = "Manifest icons exist",
-                    errorString = $"Error validating icons: {ex.Message}",
-                    infoString =
+                    Member = "icons",
+                    Category = "required",
+                    DisplayString = "Manifest icons exist",
+                    ErrorString = $"Error validating icons: {ex.Message}",
+                    InfoString =
                         "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-                    docsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
-                    quickFix = false,
-                    valid = false,
+                    DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+                    QuickFix = false,
+                    Valid = false,
                 };
             }
         }
@@ -236,32 +236,32 @@ namespace PWABuilder.Services
 
                 return new Validation
                 {
-                    member = "screenshots",
-                    category = "required",
-                    displayString = "Manifest screenshots exist",
-                    errorString = isValid
+                    Member = "screenshots",
+                    Category = "required",
+                    DisplayString = "Manifest screenshots exist",
+                    ErrorString = isValid
                         ? ""
                         : $"Couldn't fetch the following screenshots: {string.Join(", ", missingScreenshots)}",
-                    infoString =
+                    InfoString =
                         "The screenshots member defines an array of screenshots intended to showcase the application.",
-                    docsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
-                    quickFix = false,
-                    valid = isValid,
+                    DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
+                    QuickFix = false,
+                    Valid = isValid,
                 };
             }
             catch (Exception ex)
             {
                 return new Validation
                 {
-                    member = "screenshots",
-                    category = "required",
-                    displayString = "Manifest screenshots exist",
-                    errorString = $"Error validating screenshots: {ex.Message}",
-                    infoString =
+                    Member = "screenshots",
+                    Category = "required",
+                    DisplayString = "Manifest screenshots exist",
+                    ErrorString = $"Error validating screenshots: {ex.Message}",
+                    InfoString =
                         "The screenshots member defines an array of screenshots intended to showcase the application.",
-                    docsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
-                    quickFix = false,
-                    valid = false,
+                    DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
+                    QuickFix = false,
+                    Valid = false,
                 };
             }
         }

@@ -2136,10 +2136,10 @@ export class AppReport extends LitElement {
     this.filteredTodoItems = this.allTodoItems;
 
     FindServiceWorker(url).then( async (result) => {
-        if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker?.score) {
+        if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker) {
           await AuditServiceWorker(result.content.url).then( async (result) => {
-            console.log("content:", result.content);
-            findersResults.workerTodos = await this.testServiceWorker(processServiceWorker(result.content));
+            console.log("content:", result.validations);
+            findersResults.workerTodos = await this.createServiceWorkerResults(result.validations);
             this.allTodoItems.push(...findersResults.workerTodos);
             this.requestUpdate();
           });
@@ -2154,13 +2154,13 @@ export class AppReport extends LitElement {
       this.reportAudit = await Report(url);
     } catch (e) {
       console.error(e);
-      this.allTodoItems.push(...await this.testSecurity(processSecurity()));
+      this.allTodoItems.push(...await this.createSecurityResults(processSecurity()));
       if (!findersResults.manifest?.raw) {
         await this.applyManifestContext(url, undefined, undefined);
         this.allTodoItems.push(...await this.testManifest());
       }
       if (!findersResults.serviceWorker?.raw) {
-        this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker({score: false, details: {}})));
+        this.allTodoItems.push(...await this.createServiceWorkerResults(processServiceWorker({score: false, details: {}})));
       }
 
       this.filteredTodoItems = this.allTodoItems;
@@ -2195,9 +2195,9 @@ export class AppReport extends LitElement {
     }
 
     // TODO: move installability score to different place
-    this.allTodoItems.push(...await this.testServiceWorker(processServiceWorker(this.reportAudit?.audits?.serviceWorker, this.reportAudit!.audits!.offlineSupport))),
-    this.allTodoItems.push(...await this.testSecurity(processSecurity(this.reportAudit?.audits)));
-    this.allTodoItems.push(...await this.testImages(processImages(this.reportAudit?.audits)));
+    this.allTodoItems.push(...await this.createServiceWorkerResults(this.reportAudit?.serviceWorkerValidations ?? [])),
+    this.allTodoItems.push(...await this.createSecurityResults(this.reportAudit?.securityValidations ?? []));
+    this.allTodoItems.push(...await this.createTestsImagesResults(processImages(this.reportAudit?.audits)));
 
     this.filteredTodoItems = this.allTodoItems;
     this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2] && this.canPackageList[3];
@@ -2293,8 +2293,7 @@ export class AppReport extends LitElement {
   }
 
   // Tests the SW and populates the SW card detail dropdown
-  async testServiceWorker(serviceWorkerResults: TestResult[]) {
-    //call service worker tests
+  async createServiceWorkerResults(serviceWorkerResults: TestResult[]) {
 
     let todos: unknown[] = [];
 
@@ -2378,7 +2377,7 @@ export class AppReport extends LitElement {
   }
 
   // Tests the Security and populates the Security card detail dropdown
-  async testSecurity(securityAudit: TestResult[]) {
+  async createSecurityResults(securityAudit: TestResult[]) {
 
     //Call security tests
     let todos: unknown[] = [];
@@ -2406,7 +2405,7 @@ export class AppReport extends LitElement {
     return todos;
   }
 
-  async testImages(imagesValidation: Validation[]) {
+  async createTestsImagesResults(imagesValidation: Validation[]) {
     let todos: unknown[] = [];
 
     imagesValidation.forEach((result: Validation) => {

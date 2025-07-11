@@ -4,6 +4,8 @@ using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
 using PWABuilder.Validations;
+using PWABuilder.Validations.Models;
+using PWABuilder.Validations.Services;
 
 namespace PWABuilder.Controllers
 {
@@ -81,19 +83,24 @@ namespace PWABuilder.Controllers
                 }
 
                 // Service Worker features analysis
-                AnalyzeServiceWorkerResponse? swFeatures = null;
+                ServiceWorkerValidationResult? serviceWorkerValidationResult = null;
                 var swUrl = ReportUtils.TryGetServiceWorkerUrl(audits);
 
-                if (!string.IsNullOrEmpty(swUrl))
+                try
                 {
-                    try
+                    serviceWorkerValidationResult =
+                        await ServiceWorkerValidation.ValidateServiceWorkerAsync(
+                            serviceWorkerAnalyzer,
+                            swUrl,
+                            audits
+                        );
+                }
+                catch (Exception ex)
+                {
+                    serviceWorkerValidationResult = new ServiceWorkerValidationResult
                     {
-                        swFeatures = await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(swUrl);
-                    }
-                    catch (Exception ex)
-                    {
-                        swFeatures = new AnalyzeServiceWorkerResponse { Error = ex.Message };
-                    }
+                        Error = ex.Message,
+                    };
                 }
 
                 // Manifest validation
@@ -137,8 +144,8 @@ namespace PWABuilder.Controllers
                         if (iconsValidation != null && screenshotsValidation != null)
                         {
                             score =
-                                (iconsValidation.valid ?? false)
-                                && (screenshotsValidation.valid ?? false);
+                                (iconsValidation.Valid ?? false)
+                                && (screenshotsValidation.Valid ?? false);
                         }
 
                         imagesAudit.details = new ImagesDetails
@@ -151,18 +158,21 @@ namespace PWABuilder.Controllers
                     catch { }
                 }
 
-                var manifestValidations = ManifestValidations.ValidateManifest(
+                var manifestValidations = await ManifestValidations.ValidateManifestAsync(
                     webAppManifestDetails?.json
                 );
+
+                var securityValidations = await SecurityValidation.ValidateSecurityAsync(audits);
 
                 // Build the report object
                 var report = ReportUtils.MapReportOutput(
                     audits,
                     webAppManifestDetails,
                     swUrl,
-                    swFeatures,
+                    serviceWorkerValidationResult,
                     imagesAudit,
-                    manifestValidations
+                    manifestValidations,
+                    securityValidations
                 );
 
                 // Analytics
@@ -176,7 +186,11 @@ namespace PWABuilder.Controllers
                         ? new Dictionary<string, string> { { "referrer", referrer } }
                         : null,
                 };
-                await analyticsService.UploadToAppInsights(report, analyticsInfo);
+                await analyticsService.UploadToAppInsights(
+                    report,
+                    analyticsInfo,
+                    serviceWorkerValidationResult?.SWFeatures
+                );
 
                 logger.LogInformation(
                     "Report: function is DONE processing a request for site: {Site}",

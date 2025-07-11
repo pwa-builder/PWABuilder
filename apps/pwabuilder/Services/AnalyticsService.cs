@@ -56,7 +56,11 @@ namespace PWABuilder.Services
             });
         }
 
-        public async Task UploadToAppInsights(Report webAppReport, AnalyticsInfo analyticsInfo)
+        public async Task UploadToAppInsights(
+            Report webAppReport,
+            AnalyticsInfo analyticsInfo,
+            AnalyzeServiceWorkerResponse? serviceWorkerFeatures
+        )
         {
             var manifestJson = webAppReport.artifacts?.webAppManifestDetails?.json;
 
@@ -282,11 +286,7 @@ namespace PWABuilder.Services
                 }
             }
 
-            var serviceWorker = webAppReport?.audits?.serviceWorker?.details?.features;
-            if (
-                serviceWorker != null
-                && serviceWorker is AnalyzeServiceWorkerResponse serviceWorkerFeatures
-            )
+            if (serviceWorkerFeatures != null)
             {
                 enrichAnalyticsInfoProperties.Add(
                     "hasBackgroundSync",
@@ -309,13 +309,17 @@ namespace PWABuilder.Services
                     (serviceWorkerFeatures.DetectedPushRegistration ?? false).ToString()
                 );
             }
+            var serviceWorkerValidation = webAppReport?.serviceWorkerValidations;
 
-            var offlineSupport = webAppReport?.audits?.offlineSupport;
+            var offlineSupport =
+                serviceWorkerValidation != null && serviceWorkerValidation.Any()
+                    ? serviceWorkerValidation.ToList().Find(x => x.Member == "offline_support")
+                    : null;
             if (offlineSupport != null)
             {
                 enrichAnalyticsInfoProperties.Add(
                     "hasOfflineSupport",
-                    offlineSupport.score.ToString()
+                    offlineSupport.Result.ToString()
                 );
             }
 

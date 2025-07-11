@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
+using PWABuilder.Validations;
 
 namespace PWABuilder.Controllers
 {
@@ -22,9 +23,7 @@ namespace PWABuilder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<AnalyzeServiceWorkerResponse>> GetAsync(
-            [FromQuery] string url
-        )
+        public async Task<ActionResult<ServiceWorkerBodyResult>> GetAsync([FromQuery] string url)
         {
             var paramCheckResult = RequestUtils.CheckParams(Request, ["url"]);
             if (paramCheckResult.Status != 200)
@@ -39,19 +38,15 @@ namespace PWABuilder.Controllers
 
             try
             {
-                var swFeatures = await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(url);
+                var swValidation = await ServiceWorkerValidation.ValidateServiceWorkerAsync(
+                    serviceWorkerAnalyzer,
+                    url
+                );
 
                 var result = new
                 {
                     Status = 200,
-                    Body = new
-                    {
-                        content = new
-                        {
-                            score = swFeatures?.Error == null,
-                            details = new { url, features = swFeatures },
-                        },
-                    },
+                    Body = new ServiceWorkerBodyResult { Validations = swValidation.Validations },
                 };
 
                 logger.LogInformation(

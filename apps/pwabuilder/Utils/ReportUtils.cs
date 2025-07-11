@@ -65,12 +65,12 @@ namespace PWABuilder.Utils
             JsonElement audits,
             WebAppManifestDetails? webAppManifestDetails,
             string? swUrl,
-            AnalyzeServiceWorkerResponse? swFeatures,
+            ServiceWorkerValidationResult? serviceWorkerResult,
             ImagesAudit imagesAudit,
-            IEnumerable<ManifestSingleField>? manifestValidations = null
+            IEnumerable<Validation> manifestValidations,
+            IEnumerable<TestResult> securityValidations
         )
         {
-            audits.TryGetProperty("installable-manifest", out var installableManifestAudit);
             audits.TryGetProperty("service-worker-audit", out var swAudit);
 
             var iconsValidation =
@@ -86,30 +86,6 @@ namespace PWABuilder.Utils
                     },
                 iconsValidation,
                 screenshotsValidation
-            );
-
-            var manifestUrl =
-                installableManifestAudit.ValueKind == JsonValueKind.Object
-                && installableManifestAudit.TryGetProperty("details", out var imDetailsObj)
-                && imDetailsObj.ValueKind == JsonValueKind.Object
-                && imDetailsObj.TryGetProperty("debugData", out var debugData)
-                && debugData.ValueKind == JsonValueKind.Object
-                && debugData.TryGetProperty("manifestUrl", out var manifestUrlElem)
-                    ? manifestUrlElem.GetString()
-                    : null;
-
-            var validation =
-                installableManifestAudit.ValueKind == JsonValueKind.Object
-                && installableManifestAudit.TryGetProperty("details", out var imDetailsObj2)
-                && imDetailsObj2.ValueKind == JsonValueKind.Object
-                && imDetailsObj2.TryGetProperty("validation", out var validationElem)
-                    ? validationElem.ToString()
-                    : null;
-
-            var finalInstallableManifestDetails = CreateIfNotAllNull(
-                () => new InstallableManifestDetails { url = manifestUrl, validation = validation },
-                manifestUrl,
-                validation
             );
 
             var scriptUrl =
@@ -136,36 +112,21 @@ namespace PWABuilder.Utils
                     ? errorElem.GetString()
                     : null;
 
-            var filteredSwFeatures =
-                swFeatures == null
-                    ? null
-                    : new AnalyzeServiceWorkerResponse
-                    {
-                        DetectedBackgroundSync = swFeatures.DetectedBackgroundSync,
-                        DetectedPeriodicBackgroundSync = swFeatures.DetectedPeriodicBackgroundSync,
-                        DetectedPushRegistration = swFeatures.DetectedPushRegistration,
-                        DetectedSignsOfLogic = swFeatures.DetectedSignsOfLogic,
-                        DetectedEmpty = swFeatures.DetectedEmpty,
-                        Error = swFeatures.Error,
-                    };
-
-            var finalServiceWorkerDetails = CreateIfNotAllNull(
+            var finalServiceWorker = CreateIfNotAllNull(
                 () =>
-                    new ServiceWorkerDetails
+                    new ServiceWorkerAudit
                     {
                         url = scriptUrl,
                         scope = scopeUrl,
-                        features = filteredSwFeatures,
-                        error = error,
+                        error = error ?? serviceWorkerResult?.Error,
                     },
                 scriptUrl,
                 scopeUrl,
-                filteredSwFeatures,
-                error
+                error ?? serviceWorkerResult?.Error
             );
 
             var serviceWorker = !string.IsNullOrEmpty(swUrl)
-                ? new ServiceWorker { url = swUrl, raw = swFeatures?.Raw }
+                ? new ServiceWorker { url = swUrl, raw = serviceWorkerResult?.SWFeatures?.Raw }
                 : null;
 
             var finalArtifacts = CreateIfNotAllNull(
@@ -181,67 +142,12 @@ namespace PWABuilder.Utils
 
             return new Report
             {
-                validations = manifestValidations,
+                manifestValidations = manifestValidations,
+                serviceWorkerValidations = serviceWorkerResult?.Validations,
+                securityValidations = securityValidations,
                 audits = new Audits
                 {
-                    isOnHttps = new ScoreObj
-                    {
-                        score =
-                            audits.TryGetProperty("https-audit", out var httpsAudit)
-                            && httpsAudit.ValueKind == JsonValueKind.Object
-                            && httpsAudit.TryGetProperty("score", out var httpsScoreElem)
-                            && httpsScoreElem.ValueKind == JsonValueKind.Number
-                            && httpsScoreElem.TryGetDouble(out var httpsScore)
-                                ? httpsScore != 0
-                                : false,
-                    },
-                    noMixedContent = new ScoreObj
-                    {
-                        score =
-                            audits.TryGetProperty("is-on-https", out var mixedContentAudit)
-                            && mixedContentAudit.ValueKind == JsonValueKind.Object
-                            && mixedContentAudit.TryGetProperty("score", out var mixedScoreElem)
-                            && mixedScoreElem.ValueKind == JsonValueKind.Number
-                            && mixedScoreElem.TryGetDouble(out var mixedScore)
-                                ? mixedScore != 0
-                                : false,
-                    },
-                    installableManifest = new InstallableManifestAudit
-                    {
-                        score =
-                            installableManifestAudit.ValueKind == JsonValueKind.Object
-                            && installableManifestAudit.TryGetProperty(
-                                "score",
-                                out var installableScoreElem
-                            )
-                            && installableScoreElem.ValueKind == JsonValueKind.Number
-                            && installableScoreElem.TryGetDouble(out var installableScore)
-                                ? installableScore != 0
-                                : false,
-                        details = finalInstallableManifestDetails,
-                    },
-                    serviceWorker = new ServiceWorkerAudit
-                    {
-                        score =
-                            swAudit.ValueKind == JsonValueKind.Object
-                            && swAudit.TryGetProperty("score", out var swScoreElem)
-                            && swScoreElem.ValueKind == JsonValueKind.Number
-                            && swScoreElem.TryGetDouble(out var swScore)
-                                ? swScore != 0
-                                : false,
-                        details = finalServiceWorkerDetails,
-                    },
-                    offlineSupport = new ScoreObj
-                    {
-                        score =
-                            audits.TryGetProperty("offline-audit", out var offlineAudit)
-                            && offlineAudit.ValueKind == JsonValueKind.Object
-                            && offlineAudit.TryGetProperty("score", out var offlineScoreElem)
-                            && offlineScoreElem.ValueKind == JsonValueKind.Number
-                            && offlineScoreElem.TryGetDouble(out var offlineScore)
-                                ? offlineScore != 0
-                                : false,
-                    },
+                    serviceWorker = finalServiceWorker,
                     images = new ImagesAudit
                     {
                         score = imagesAudit.score,

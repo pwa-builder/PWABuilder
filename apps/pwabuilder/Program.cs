@@ -7,6 +7,7 @@ using PWABuilder.IOS.Services;
 using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
+using PWABuilder.Validations.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
