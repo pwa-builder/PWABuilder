@@ -7,7 +7,7 @@ using PWABuilder.Services;
 namespace PWABuilder.IOS.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class PackagesController : ControllerBase
     {
         private readonly ILogger<PackagesController> logger;
