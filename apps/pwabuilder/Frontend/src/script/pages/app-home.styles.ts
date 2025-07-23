@@ -70,6 +70,7 @@ export const homeStyles = css`
   .intro-grid-item {
     width: max-content;
     margin-right: 1em;
+    text-wrap-style: balance;
   }
   
   @keyframes bounce {
