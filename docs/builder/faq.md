@@ -110,7 +110,7 @@ When your app launches, `document.referrer` will be set to `app-info://platform/
 
 #### How can I prompt the user to rate my app in the Microsoft Store?
 
-In JavaScript, navigate to `ms-windows-store://review/?ProductId=[your product ID here]`. The browser will prompt to launch the Microsoft Store ratings & review prompt for your app.
+In JavaScript, navigate to `ms-windows-store://review/?ProductId=[your product ID here]`. The browser will prompt to launch the Microsoft Store ratings & review prompt for your app. [Read more about the ms-windows-store protocol](https://github.com/MicrosoftDocs/windows-dev-docs/blob/docs/hub/apps/develop/launch/launch-store-app.md).
 
 ## Android
 
