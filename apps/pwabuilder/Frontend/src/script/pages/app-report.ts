@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, setManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
@@ -28,6 +28,7 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
+import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 
 import {
   Icon,
@@ -614,6 +615,14 @@ export class AppReport extends LitElement {
           width: 25%;
           height: 20px;
           margin: 10px 0;
+        }
+
+        .d-none {
+          display: none !important;
+        }
+
+        sl-spinner {
+          vertical-align: middle;
         }
 
         /* Packaging Box */
@@ -3113,6 +3122,7 @@ export class AppReport extends LitElement {
                           id="pfs-disabled"
                           aria-disabled="true"
                         >
+                          ${this.renderPackageSpinner()}
                           Package For Stores
                         </button>
                     </sl-tooltip>
@@ -3622,6 +3632,13 @@ export class AppReport extends LitElement {
       ${this.manifestDataLoading ? null : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
+    `;
+  }
+
+  renderPackageSpinner(): TemplateResult {
+    const visibleClass = this.runningTests ? '' : 'd-none';
+    return html`
+      <sl-spinner class="${visibleClass}"></sl-spinner>
     `;
   }
 }
