@@ -92,6 +92,22 @@ type AndroidPackageValidationError = {
 
 const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
 
+// Java keywords that cannot be used as package name parts
+// Reference: https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
+const JAVA_KEYWORDS: Record<string, boolean> = {
+  'abstract': true, 'assert': true, 'boolean': true, 'break': true, 'byte': true, 
+  'case': true, 'catch': true, 'char': true, 'class': true, 'const': true, 
+  'continue': true, 'default': true, 'do': true, 'double': true, 'else': true, 
+  'enum': true, 'extends': true, 'final': true, 'finally': true, 'float': true, 
+  'for': true, 'goto': true, 'if': true, 'implements': true, 'import': true, 
+  'instanceof': true, 'int': true, 'interface': true, 'long': true, 'native': true, 
+  'new': true, 'null': true, 'package': true, 'private': true, 'protected': true, 
+  'public': true, 'return': true, 'short': true, 'static': true, 'strictfp': true, 
+  'super': true, 'switch': true, 'synchronized': true, 'this': true, 'throw': true, 
+  'throws': true, 'transient': true, 'try': true, 'void': true, 'volatile': true, 
+  'while': true, 'true': true, 'false': true
+};
+
 export const maxSigningKeySizeInBytes = 2097152;
 
 export function generatePackageId(host: string): string {
@@ -101,7 +117,8 @@ export function generatePackageId(host: string): string {
     .map(p => p.trim().toLowerCase())
     .map(p => withoutLeadingDigits(p)) // Android Package name parts can't begin with numbers: https://github.com/pwa-builder/PWABuilder/issues/1336#issuecomment-755029058
     .filter(p => p.length > 0)
-    .map(p => p.replace(DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX, '_'));
+    .map(p => p.replace(DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX, '_'))
+    .map(p => avoidJavaKeywords(p)); // Ensure no Java keywords are used
   parts.push('twa');
 
   return parts.join('.');
@@ -427,5 +444,12 @@ function withoutLeadingDigits(input: string): string {
     return `app_${input}`;
   }
 
+  return input;
+}
+
+function avoidJavaKeywords(input: string): string {
+  if (JAVA_KEYWORDS[input]) {
+    return `${input}_`;
+  }
   return input;
 }
