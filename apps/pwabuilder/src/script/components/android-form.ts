@@ -6,7 +6,7 @@ import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
-import { maxSigningKeySizeInBytes } from '../utils/android-validation';
+import { maxSigningKeySizeInBytes, validateAndroidPackageId } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 import { AppNameInputPattern, DnameInputPattern } from '../utils/constants';
 import '@shoelace-style/shoelace/dist/components/details/details.js';
@@ -185,6 +185,22 @@ export class AndroidForm extends AppPackageFormBase {
     this.packageOptions.minSdkVersion = 23;
   }
 
+  /**
+   * Validates the package ID and updates the input's custom validity
+   */
+  validatePackageId(packageId: string, input: HTMLInputElement) {
+    const validationErrors = validateAndroidPackageId(packageId);
+    const errorMessage = validationErrors.length > 0 ? validationErrors[0].error : '';
+    
+    input.setCustomValidity(errorMessage);
+    input.title = errorMessage;
+    
+    // Force revalidation to show the custom error message
+    if (errorMessage) {
+      input.reportValidity();
+    }
+  }
+
   androidSigningKeyUploaded(event: any) {
     const filePicker = event as HTMLInputElement;
     if (filePicker && filePicker.files && filePicker.files.length > 0) {
@@ -261,7 +277,11 @@ export class AndroidForm extends AppPackageFormBase {
                 spellcheck: false,
                 pattern: "[a-zA-Z0-9.-_]*$",
                 validationErrorMessage: "Package ID must contain only letters, numbers, periods, hyphens, and underscores.",
-                inputHandler: (val: string) => this.packageOptions.packageId = val
+                inputHandler: (val: string, checked: boolean, input: HTMLInputElement) => {
+                  this.packageOptions.packageId = val;
+                  // Validate for Java keywords and other validation rules
+                  this.validatePackageId(val, input);
+                }
               })}
             </div>
 
