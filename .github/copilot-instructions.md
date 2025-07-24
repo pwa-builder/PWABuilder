@@ -10,7 +10,7 @@ applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
 - Frontend uses Lit web components for custom element and SPA pages.
 - Frontend uses the extrnal Shoelace library for prebuilt, styled components.
 
-# Typescript Development
+## Typescript Development
 - Enable strict mode in tsconfig.json for maximum type safety
 - Define types for method returns
 - Implement generic components and composables where applicable
@@ -20,7 +20,7 @@ applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
 - Use PascalCase for component names and kebab-case for file names
 - Keep components small and focused on one concern
 
-# C# Development
+## C# Development
 - When writing C#, always use the latest version C#, currently C# 13 features.
 - Write clear and concise comments for each function.
 - Use file-scoped namespaces and single-line using directives.
