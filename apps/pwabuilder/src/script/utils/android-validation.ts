@@ -160,6 +160,18 @@ export function validateAndroidPackageId(packageId?: string | null): AndroidPack
     });
   }
 
+  // Additional check for any Java keywords that might have been missed in generation
+  if (packageId) {
+    const parts = packageId.split('.');
+    const javaKeywordFound = parts.find(part => JAVA_KEYWORDS[part]);
+    if (javaKeywordFound) {
+      packageErrors.push({
+        field: 'packageId',
+        error: `Package ID contains Java keyword "${javaKeywordFound}" which is not allowed in Java package names.`
+      });
+    }
+  }
+
   return packageErrors;
 }
 
