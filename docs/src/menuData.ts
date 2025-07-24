@@ -246,13 +246,18 @@ export const headerHTMLString: string = `<div align=center>
 
 export const quickMenuListenerScriptString: string = `
 <script>
-  const menu = document.querySelector('sl-menu');
-  menu.addEventListener('click', event => {
-    const href = event.target.dataset.href;
-    console.log("event recieved");
-    console.log(href);
-    if (href) {
-      location.href = href;
-    }
+  document.addEventListener('DOMContentLoaded', function() {
+    const treeItems = document.querySelectorAll('sl-tree-item[data-href]');
+    treeItems.forEach(item => {
+      item.addEventListener('click', event => {
+        const href = event.currentTarget.dataset.href;
+        if (href) {
+          // Prevent default tree item selection behavior
+          event.preventDefault();
+          event.stopPropagation();
+          location.href = href;
+        }
+      });
+    });
   });
 </script>`;

@@ -37,6 +37,10 @@ function writeChildMenu(child: ChildMenu): ChildMenu {
       condensedChildMenu.articles = condensedChildMenu.articles.concat(article);
     }
   }
+  writeString = writeString + constructSectionCloseString();
+
+  // Add the navigation script at the end
+  writeString = writeString + quickMenuListenerScriptString;
 
   fs.writeFileSync(path, writeString);
 
@@ -53,39 +57,49 @@ function writeMainMenu() {
       for(var article of childMenu.articles) {
         writeString = writeString + constructMenuItemLineString(article);
       }
+      writeString = writeString + constructSectionCloseString();
     }  
   }
+
+  // Add the navigation script at the end
+  writeString = writeString + quickMenuListenerScriptString;
 
   fs.writeFileSync(path, writeString);
 }
 
 function constructMenuItemLineString(article: Article): string {
-  return `\n\t- [${article.menuTitle}](${article.path} "${article.pageTitle}")`;
+  return `\n    <sl-tree-item data-href="${article.path}">${article.menuTitle}</sl-tree-item>`;
 }
 
 function constructHeaderLineString(childMenu: ChildMenu): string {
-  return `\n\n- <h2>${childMenu.header}</h2> \n`;
+  return `\n\n<sl-tree>
+  <sl-tree-item expanded>
+    ${childMenu.header}`;
 }
 
 function constructTopLevelNavString(activeHeader: string): string {
-  var topLevelNavHTMLString: string = `\n<sl-menu>`;
+  var topLevelNavHTMLString: string = `\n<sl-tree>`;
 
   for(var entry of topLevelNavEntries) {
     topLevelNavHTMLString = topLevelNavHTMLString + constructTopLevelNavEntryString(entry, activeHeader);
   }
 
-  topLevelNavHTMLString = topLevelNavHTMLString + `\n</sl-menu>`;
+  topLevelNavHTMLString = topLevelNavHTMLString + `\n</sl-tree>`;
 
   return topLevelNavHTMLString;
 }
 
 function constructTopLevelNavEntryString(entry: string[], header: string): string {
+  const isSelected = entry[0] === header;
   return `
-  <sl-menu-item onClick="(function (event) {
-    location.href = '${entry[1]}';
-  })();" ${entry[0] == header ? " checked" : ""}>
+  <sl-tree-item ${isSelected ? 'selected' : ''} data-href="${entry[1]}">
     ${entry[0]}
-  </sl-menu-item>`;
+  </sl-tree-item>`;
+}
+
+function constructSectionCloseString(): string {
+  return `\n  </sl-tree-item>
+</sl-tree>`;
 }
 
 function removeFile(path: string): void {
