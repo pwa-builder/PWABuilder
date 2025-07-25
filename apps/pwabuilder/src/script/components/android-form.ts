@@ -189,16 +189,6 @@ export class AndroidForm extends AppPackageFormBase {
    * Validates the package ID and updates the input's custom validity
    */
   validatePackageId(packageId: string, input: HTMLInputElement) {
-    // First check for invalid characters using regex pattern
-    const allowedCharsRegex = /^[a-zA-Z0-9.\-_]*$/;
-    if (packageId && !allowedCharsRegex.test(packageId)) {
-      const errorMessage = "Package ID must contain only letters, numbers, periods, hyphens, and underscores.";
-      input.setCustomValidity(errorMessage);
-      input.title = errorMessage;
-      input.reportValidity();
-      return;
-    }
-
     // Then check other validation rules (Java keywords, etc.)
     const validationErrors = validateAndroidPackageId(packageId);
     const errorMessage = validationErrors.length > 0 ? validationErrors[0].error : '';
@@ -209,7 +199,7 @@ export class AndroidForm extends AppPackageFormBase {
     // Force revalidation to show the custom error message
     if (errorMessage) {
       input.reportValidity();
-    }
+    } 
   }
 
   androidSigningKeyUploaded(event: any) {
@@ -286,8 +276,9 @@ export class AndroidForm extends AppPackageFormBase {
                 minLength: 3,
                 maxLength: Number.MAX_SAFE_INTEGER,
                 spellcheck: false,
+                pattern: "^[a-zA-Z0-9.\\-_]*$",
                 validationErrorMessage: "Package ID must contain only letters, numbers, periods, hyphens, and underscores.",
-                inputHandler: (val: string, checked: boolean, input: HTMLInputElement) => {
+                changedHandler: (val: string, _: boolean, input: HTMLInputElement) => {
                   this.packageOptions.packageId = val;
                   // Validate for Java keywords and other validation rules
                   this.validatePackageId(val, input);
