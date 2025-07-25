@@ -94,19 +94,19 @@ const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
 
 // Java keywords that cannot be used as package name parts
 // Reference: https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
-const JAVA_KEYWORDS: Record<string, boolean> = {
-  'abstract': true, 'assert': true, 'boolean': true, 'break': true, 'byte': true, 
-  'case': true, 'catch': true, 'char': true, 'class': true, 'const': true, 
-  'continue': true, 'default': true, 'do': true, 'double': true, 'else': true, 
-  'enum': true, 'extends': true, 'final': true, 'finally': true, 'float': true, 
-  'for': true, 'goto': true, 'if': true, 'implements': true, 'import': true, 
-  'instanceof': true, 'int': true, 'interface': true, 'long': true, 'native': true, 
-  'new': true, 'null': true, 'package': true, 'private': true, 'protected': true, 
-  'public': true, 'return': true, 'short': true, 'static': true, 'strictfp': true, 
-  'super': true, 'switch': true, 'synchronized': true, 'this': true, 'throw': true, 
-  'throws': true, 'transient': true, 'try': true, 'void': true, 'volatile': true, 
-  'while': true, 'true': true, 'false': true
-};
+const JAVA_KEYWORDS = new Set([
+  'abstract', 'assert', 'boolean', 'break', 'byte', 
+  'case', 'catch', 'char', 'class', 'const', 
+  'continue', 'default', 'do', 'double', 'else', 
+  'enum', 'extends', 'final', 'finally', 'float', 
+  'for', 'goto', 'if', 'implements', 'import', 
+  'instanceof', 'int', 'interface', 'long', 'native', 
+  'new', 'null', 'package', 'private', 'protected', 
+  'public', 'return', 'short', 'static', 'strictfp', 
+  'super', 'switch', 'synchronized', 'this', 'throw', 
+  'throws', 'transient', 'try', 'void', 'volatile', 
+  'while', 'true', 'false'
+]);
 
 export const maxSigningKeySizeInBytes = 2097152;
 
@@ -151,19 +151,10 @@ export function validateAndroidPackageId(packageId?: string | null): AndroidPack
     });
   }
 
-  // Package ID can't contain ".if.", can't start with "if.", and can't end with ".if"
-  // See https://github.com/pwa-builder/PWABuilder/issues/2146
-  if (packageId && (packageId.includes('.if.') || packageId.startsWith('if.') || packageId?.endsWith('.if'))) {
-    packageErrors.push({
-      field: 'packageId',
-      error: 'Package ID must not contain ".if.", must not start with "if.", and must not end with ".if"'
-    });
-  }
-
   // Additional check for any Java keywords that might have been missed in generation
   if (packageId) {
     const parts = packageId.split('.');
-    const javaKeywordFound = parts.find(part => JAVA_KEYWORDS[part]);
+    const javaKeywordFound = parts.find(part => JAVA_KEYWORDS.has(part));
     if (javaKeywordFound) {
       packageErrors.push({
         field: 'packageId',
@@ -460,7 +451,7 @@ function withoutLeadingDigits(input: string): string {
 }
 
 function avoidJavaKeywords(input: string): string {
-  if (JAVA_KEYWORDS[input]) {
+  if (JAVA_KEYWORDS.has(input)) {
     return `${input}_`;
   }
   return input;
