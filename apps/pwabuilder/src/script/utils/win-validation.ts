@@ -30,7 +30,7 @@ export interface WindowsPackageOptions  extends PackageOptions {
   appUserModelId?: string;
   generateModernPackage?: boolean;
   manifestUrl?: string;
-  manifest?: Manifest;
+  manifestFile?: Manifest;
   classicPackage?: {
     generate?: boolean;
     version?: string;
