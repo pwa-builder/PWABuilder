@@ -1102,13 +1102,15 @@ export class PublishPane extends LitElement {
         if (form) {
           const data = await getDataFromDB(this.objectStore, this.getFormKey());
           if (data) {
-            Array.from(form.elements).forEach((el: any) => {
+            (Array.from(form.elements) as HTMLInputElement[]).forEach(el => {
               if (el.id && data.hasOwnProperty(el.id)) {
                 if (el.type === "checkbox" || el.type === "radio") {
                   el.checked = data[el.id];
                 } else {
                   el.value = data[el.id];
                 }
+
+                el.dispatchEvent(new Event('input', { bubbles: true })); // Trigger input event to update its model
               }
             });
           }
