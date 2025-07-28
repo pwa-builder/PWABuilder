@@ -108,6 +108,10 @@ const installedRelatedApplications = navigator.getInstalledRelatedApps();
 
 When your app launches, `document.referrer` will be set to `app-info://platform/microsoft-store`. Note: if your PWA navigates to another URL, or you manually refresh the page of your PWA, `document.referrer` will be empty.
 
+#### How can I prompt the user to rate my app in the Microsoft Store?
+
+In JavaScript, navigate to `ms-windows-store://review/?ProductId=[your product ID here]`. The browser will prompt to launch the Microsoft Store ratings & review prompt for your app. [Read more about the ms-windows-store protocol](https://github.com/MicrosoftDocs/windows-dev-docs/blob/docs/hub/apps/develop/launch/launch-store-app.md).
+
 ## Android
 
 #### Why is the browser address bar still showing in my PWA?

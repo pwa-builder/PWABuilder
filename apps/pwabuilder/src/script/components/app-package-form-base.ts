@@ -255,12 +255,13 @@ export class AppPackageFormBase extends LitElement {
         ?readonly="${formInput.readonly}"
         custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
         ?disabled=${formInput.disabled}
-        @input="${(e: UIEvent) => this.inputChanged(e, formInput)}"
+        @input="${(e: UIEvent) => this.onInput(e, formInput)}"
+        @change="${(e: UIEvent) => this.onChange(e, formInput)}"
         @invalid=${this.inputInvalid} />
     `;
 
     return formInput.disabled
-      ? html`<sl-tooltip content="${formInput.disabledTooltipText}">${input}</sl-tooltip>`
+      ? html`<sl-tooltip content="${formInput.disabledTooltipText || ""}">${input}</sl-tooltip>`
       : input;
   }
 
@@ -309,11 +310,6 @@ export class AppPackageFormBase extends LitElement {
 
     colorValue.replaceWith(newValue);
 
-    // Fire the input handler
-    if (formInput.inputHandler) {
-      formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
-    }
-
     // Run validation if necessary.
     if (formInput.validationErrorMessage) {
       const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
@@ -321,21 +317,35 @@ export class AppPackageFormBase extends LitElement {
       inputElement.title = errorMessage;
     }
 
+    // Fire the input handler
+    if (formInput.inputHandler) {
+      formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+    }
   }
 
-  private inputChanged(e: UIEvent, formInput: FormInput) {
+  private onInput(e: UIEvent, formInput: FormInput) {
     const inputElement = e.target as HTMLInputElement | null;
     if (inputElement) {
-      // Fire the input handler
-      if (formInput.inputHandler) {
-        formInput.inputHandler(inputElement.value || '', inputElement.checked, inputElement);
-      }
-
       // Run validation if necessary.
       if (formInput.validationErrorMessage) {
         const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
         inputElement.setCustomValidity(errorMessage);
         inputElement.title = errorMessage;
+      }
+
+      // Fire the input handler
+      if (formInput.inputHandler) {
+        formInput.inputHandler(inputElement.value || '', inputElement.checked, inputElement);
+      }
+    }
+  }
+
+  private onChange(e: UIEvent, formInput: FormInput) {
+    const inputElement = e.target as HTMLInputElement | null;
+    if (inputElement) {
+      // Fire the changed handler
+      if (formInput.changedHandler) {
+        formInput.changedHandler(inputElement.value || '', inputElement.checked, inputElement);
       }
     }
   }
@@ -400,4 +410,5 @@ export interface FormInput {
   disabled?: boolean;
   disabledTooltipText?: string;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
+  changedHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }
