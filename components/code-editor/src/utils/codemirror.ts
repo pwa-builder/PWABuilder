@@ -37,13 +37,17 @@ export const dispatchEvent = debounce((event: Event) => {
   emitter.dispatchEvent(event);
 }, 1500);
 
-// Define the highlight style.
+// Define the highlight style with accessibility improvements.
 const myHighlightStyle = HighlightStyle.define([
   { tag: tags.keyword, color: '#708' },
   { tag: tags.name, color: '#292c3a' },
   { tag: tags.string, color: '#aa1111' },
   { tag: tags.comment, color: '#292c3a' },
-  { tag: tags.bool, color: '#221199'}
+  { tag: tags.bool, color: '#221199'},
+  // Accessibility fix: Use WCAG AA compliant color for builtin tokens like "console"
+  // Original problematic color #669900 had 3.43:1 contrast ratio
+  // New color #4d7300 provides 5.57:1 contrast ratio, exceeding 4.5:1 requirement
+  { tag: tags.variableName, color: '#4d7300' }
 ]);
 
 export function getEditorState(
