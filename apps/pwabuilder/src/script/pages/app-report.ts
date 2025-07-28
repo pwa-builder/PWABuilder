@@ -966,6 +966,10 @@ export class AppReport extends LitElement {
 
         #todo-summary {
           margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
         }
 
         #todo-summary-left {
@@ -977,6 +981,11 @@ export class AppReport extends LitElement {
         #todo-summary-left > h2 {
           font-size: var(--subheader-font-size);
           margin: 0;
+        }
+
+        #todo-indicators {
+          display: flex;
+          align-items: center;
         }
 
         #pagination-actions {
@@ -3228,10 +3237,11 @@ export class AppReport extends LitElement {
             <div
               id="todo-detail"
               >
-              <div id="todo-summary" class="details-summary" slot="summary">
+              <div id="todo-summary">
                 <div id="todo-summary-left">
                   <h2>Action Items</h2>
-
+                </div>
+                <div id="todo-indicators">
                     ${this.allTodoItems.length > 0 ?
                       this.stopShowingNotificationTooltip ?
                         // if they interact with the inicators, we no longer need to show the tooltip
