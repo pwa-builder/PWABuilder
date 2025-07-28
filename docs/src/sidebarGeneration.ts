@@ -48,6 +48,7 @@ function writeChildMenu(child: ChildMenu): ChildMenu {
 }
 
 function writeMainMenu() {
+  console.log("zanz writing main menu to _sidebar.md");
   const path: string = process.cwd() + "/_sidebar.md";
   var writeString = headerHTMLString + constructTopLevelNavString("Home");
 
@@ -68,10 +69,12 @@ function writeMainMenu() {
 }
 
 function constructMenuItemLineString(article: Article): string {
+  console.log("zanz construcitng menu items for ", article);
   return `\n    <sl-tree-item data-href="${article.path}">${article.menuTitle}</sl-tree-item>`;
 }
 
 function constructHeaderLineString(childMenu: ChildMenu): string {
+  console.log("zanz constructing header line string", childMenu.path);
   return `\n\n<sl-tree>
   <sl-tree-item expanded>
     ${childMenu.header}`;

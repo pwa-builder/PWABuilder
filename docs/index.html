@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>PWABuilder Suite Documentation - test</title>
+    <title>PWABuilder Suite Documentation</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="description" content="Documentation for building great progressive web apps with the PWABuilder tooling suite.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
@@ -62,21 +62,26 @@
                         window.recordPageView(document.location.href, getPageName());
                     });
                 },
-                function(hook) {
-                    var summitBanner = [
-                        '<sl-alert open>',
-                        '<sl-icon slot="icon" name="bookmark-heart"></sl-icon>',
-                        '<div>',
-                        '<strong> New blog post! See how to enable in-app purchases on iOS in your PWA! </strong><br />',
-                        'Our latest post, <a href="https://blog.pwabuilder.com/posts/you-won\'t-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/"><b>You Won\’t Believe How We Enabled In-App Purchases for PWAs on iOS</b></a>, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!',
-                        '</div>',
-                        '</sl-alert>'
-                    ].join('');
-
-                    hook.afterEach(function(html) {
-                        return summitBanner + html;
+                function (hook) {
+                    hook.doneEach(() => {
+                        listenForSidebarNav();
                     });
-                }
+                },
+                // function(hook) {
+                //     var summitBanner = [
+                //         '<sl-alert open>',
+                //         '<sl-icon slot="icon" name="bookmark-heart"></sl-icon>',
+                //         '<div>',
+                //         '<strong> New blog post! See how to enable in-app purchases on iOS in your PWA! </strong><br />',
+                //         'Our latest post, <a href="https://blog.pwabuilder.com/posts/you-won\'t-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/"><b>You Won\’t Believe How We Enabled In-App Purchases for PWAs on iOS</b></a>, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!',
+                //         '</div>',
+                //         '</sl-alert>'
+                //     ].join('');
+
+                //     hook.afterEach(function(html) {
+                //         return summitBanner + html;
+                //     });
+                // }
             ]
         };
     </script>
@@ -95,11 +100,29 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const githubCorner = document.querySelector('.github-corner');
-        if (githubCorner) {
-            githubCorner.setAttribute('title', 'View source on GitHub');
-        }
+            const githubCorner = document.querySelector('.github-corner');
+            if (githubCorner) {
+                githubCorner.setAttribute('title', 'View source on GitHub');
+            }
         });
+
+        function listenForSidebarNav() {
+            const secondTreeZanz = document.querySelectorAll("sl-tree")[1];
+            if (secondTreeZanz) {
+                secondTreeZanz.addEventListener('sl-selection-change', function(event) {
+                    const selection = event.detail?.selection;
+                    if (selection && selection[0]) {
+                        const href = selection[0].getAttribute('data-href');
+                        if (href) {
+                            console.log("zanz selection changing to", href);
+                            window.location.href = "#" +href;
+                        }
+                    }
+                });
+            } else {
+                console.log("couldn't find any trees :-(");
+            }
+        }
     </script>
     
 
