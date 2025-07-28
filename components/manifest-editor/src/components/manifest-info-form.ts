@@ -326,15 +326,20 @@ export class ManifestInfoForm extends LitElement {
               this.errorMap[field] = 0;
               let div = document.createElement('div');
               div.classList.add(`${field}-error-div`);
+              const errorId = `${field}-error-${Date.now()}`;
+              div.id = errorId;
               validation.errors.forEach((error: string) => {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
                 p.setAttribute('aria-live', 'polite');
+                p.setAttribute('role', 'alert');
                 div.append(p);
                 this.errorMap[field]++;
               });
               insertAfter(div, input!.parentNode!.parentNode!.lastElementChild);
+              // Associate error with input field
+              input!.setAttribute('aria-describedby', errorId);
             }
             
             input!.classList.add("error-color-field");
@@ -351,15 +356,20 @@ export class ManifestInfoForm extends LitElement {
               this.errorMap[field] = 0;
               let div = document.createElement('div');
               div.classList.add(`${field}-error-div`);
+              const errorId = `${field}-error-${Date.now()}`;
+              div.id = errorId;
               validation.errors.forEach((error: string) => {
                 let p = document.createElement('p');
                 p.innerText = error;
                 p.style.color = "#eb5757";
                 p.setAttribute('aria-live', 'polite');
+                p.setAttribute('role', 'alert');
                 div.append(p);
                 this.errorMap[field]++;
               });
               insertAfter(div, input!.parentNode!.lastElementChild);
+              // Associate error with input field
+              input!.setAttribute('aria-describedby', errorId);
             }
           } 
 
@@ -380,13 +390,18 @@ export class ManifestInfoForm extends LitElement {
           this.errorMap[field] = 0;
           let div = document.createElement('div');
           div.classList.add(`${field}-error-div`);
+          const errorId = `${field}-error-${Date.now()}`;
+          div.id = errorId;
           let p = document.createElement('p');
           p.innerText = `${field} is required and is missing from your manifest.`;
           p.style.color = "#eb5757";
           p.setAttribute('aria-live', 'polite');
+          p.setAttribute('role', 'alert');
           div.append(p);
           this.errorMap[field]++;
           insertAfter(div, input!.parentNode!.lastElementChild);
+          // Associate error with input field
+          input!.setAttribute('aria-describedby', errorId);
           
         }
       }
@@ -460,6 +475,8 @@ export class ManifestInfoForm extends LitElement {
       if(input.classList.contains("error")){
         input.classList.toggle("error");
         delete this.errorMap[fieldName!];
+        // Remove aria-describedby when clearing error
+        input.removeAttribute('aria-describedby');
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
       }
@@ -474,16 +491,21 @@ export class ManifestInfoForm extends LitElement {
       if(validation.errors){
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
+        const errorId = `${fieldName}-error-${Date.now()}`;
+        div.id = errorId;
         this.errorMap[fieldName!] = 0;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           p.setAttribute('aria-live', 'polite');
+          p.setAttribute('role', 'alert');
           div.append(p);
           this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
+        // Associate error with input field
+        input.setAttribute('aria-describedby', errorId);
       }
       input.classList.add("error");
     }
@@ -519,6 +541,8 @@ export class ManifestInfoForm extends LitElement {
     if(input.classList.contains("error-color-field")){
       input.classList.toggle("error-color-field");
       delete this.errorMap[field];
+      // Remove aria-describedby when clearing error
+      input.removeAttribute('aria-describedby');
       let last = input!.parentNode!.parentNode!.lastElementChild;
       input!.parentNode!.parentNode!.removeChild(last!)
     }
