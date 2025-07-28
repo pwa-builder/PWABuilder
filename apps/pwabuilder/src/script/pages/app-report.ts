@@ -3515,7 +3515,7 @@ export class AppReport extends LitElement {
                       html`
                         <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", result.member)}>
                           <sw-info-card .field=${result.member}>
-                            <div class="circle-icon" tabindex="0" slot="trigger">
+                            <div class="circle-icon" tabindex="0" role="button" slot="trigger">
                               <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${this.formatSWStrings(result.member) + ' icon'}" />
                               ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
                             </div>
@@ -3592,7 +3592,7 @@ export class AppReport extends LitElement {
                     html`
                       <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", result.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
                         <manifest-info-card .field=${result.member} .placement=${"bottom"}>
-                          <div class="circle-icon" tabindex="0" slot="trigger">
+                          <div class="circle-icon" tabindex="0" role="button" slot="trigger">
                             <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${this.formatSWStrings(result.member) + ' icon'}" />
                             ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
                           </div>
