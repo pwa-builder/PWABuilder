@@ -92,6 +92,22 @@ type AndroidPackageValidationError = {
 
 const DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX = /[^a-zA-Z0-9_]/g;
 
+// Java keywords that cannot be used as package name parts
+// Reference: https://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
+const JAVA_KEYWORDS = new Set([
+  'abstract', 'assert', 'boolean', 'break', 'byte', 
+  'case', 'catch', 'char', 'class', 'const', 
+  'continue', 'default', 'do', 'double', 'else', 
+  'enum', 'extends', 'final', 'finally', 'float', 
+  'for', 'goto', 'if', 'implements', 'import', 
+  'instanceof', 'int', 'interface', 'long', 'native', 
+  'new', 'null', 'package', 'private', 'protected', 
+  'public', 'return', 'short', 'static', 'strictfp', 
+  'super', 'switch', 'synchronized', 'this', 'throw', 
+  'throws', 'transient', 'try', 'void', 'volatile', 
+  'while', 'true', 'false'
+]);
+
 export const maxSigningKeySizeInBytes = 2097152;
 
 export function generatePackageId(host: string): string {
@@ -101,7 +117,8 @@ export function generatePackageId(host: string): string {
     .map(p => p.trim().toLowerCase())
     .map(p => withoutLeadingDigits(p)) // Android Package name parts can't begin with numbers: https://github.com/pwa-builder/PWABuilder/issues/1336#issuecomment-755029058
     .filter(p => p.length > 0)
-    .map(p => p.replace(DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX, '_'));
+    .map(p => p.replace(DISALLOWED_ANDROID_PACKAGE_CHARS_REGEX, '_'))
+    .map(p => avoidJavaKeywords(p)); // Ensure no Java keywords are used
   parts.push('twa');
 
   return parts.join('.');
@@ -134,13 +151,16 @@ export function validateAndroidPackageId(packageId?: string | null): AndroidPack
     });
   }
 
-  // Package ID can't contain ".if.", can't start with "if.", and can't end with ".if"
-  // See https://github.com/pwa-builder/PWABuilder/issues/2146
-  if (packageId && (packageId.includes('.if.') || packageId.startsWith('if.') || packageId?.endsWith('.if'))) {
-    packageErrors.push({
-      field: 'packageId',
-      error: 'Package ID must not contain ".if.", must not start with "if.", and must not end with ".if"'
-    });
+  // Additional check for any Java keywords that might have been missed in generation
+  if (packageId) {
+    const parts = packageId.split('.');
+    const javaKeywordFound = parts.find(part => JAVA_KEYWORDS.has(part));
+    if (javaKeywordFound) {
+      packageErrors.push({
+        field: 'packageId',
+        error: `Package ID contains Java keyword "${javaKeywordFound}" which is not allowed in Java package names.`
+      });
+    }
   }
 
   return packageErrors;
@@ -427,5 +447,12 @@ function withoutLeadingDigits(input: string): string {
     return `app_${input}`;
   }
 
+  return input;
+}
+
+function avoidJavaKeywords(input: string): string {
+  if (JAVA_KEYWORDS.has(input)) {
+    return `${input}_`;
+  }
   return input;
 }

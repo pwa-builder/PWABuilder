@@ -416,15 +416,20 @@ export class ManifestPlatformForm extends LitElement {
             this.errorMap[field] = 0;
             let div = document.createElement('div');
             div.classList.add(`${field}-error-div`);
+            const errorId = `${field}-error-${Date.now()}`;
+            div.id = errorId;
             validation.errors.forEach((error: string) => {
               let p = document.createElement('p');
               p.innerText = error;
               p.style.color = "#eb5757";
               p.setAttribute('aria-live', 'polite');
+              p.setAttribute('role', 'alert');
               div.append(p);
               this.errorMap[field]++;
             });
             insertAfter(div, input!.parentNode!.lastElementChild);
+            // Associate error with input field
+            input!.setAttribute('aria-describedby', errorId);
           }
 
           // add red outline
@@ -477,6 +482,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
     if(input!.classList.contains("error")){
       input!.classList.toggle("error");
       delete this.errorMap[field!];
+      // Remove aria-describedby when clearing error
+      input!.removeAttribute('aria-describedby');
       let last = input!.parentNode!.lastElementChild
       input!.parentNode!.removeChild(last!)
     }
@@ -532,6 +539,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
       if(input.classList.contains("error")){
         input.classList.toggle("error");
         delete this.errorMap[fieldName!];
+        // Remove aria-describedby when clearing error
+        input.removeAttribute('aria-describedby');
         let last = input!.parentNode!.lastElementChild
         input!.parentNode!.removeChild(last!)
         
@@ -547,15 +556,20 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
         this.errorMap[fieldName!] = 0;
         let div = document.createElement('div');
         div.classList.add(`${fieldName}-error-div`);
+        const errorId = `${fieldName}-error-${Date.now()}`;
+        div.id = errorId;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           p.setAttribute('aria-live', 'polite');
+          p.setAttribute('role', 'alert');
           div.append(p);
           this.errorMap[fieldName!]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
+        // Associate error with input field
+        input.setAttribute('aria-describedby', errorId);
       }
 
       // toggle error class to display error.
@@ -785,6 +799,8 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
       if(input!.classList.contains("error")){
         input!.classList.toggle("error");
         delete this.errorMap[field];
+        // Remove aria-describedby when clearing error
+        input!.removeAttribute('aria-describedby');
         let last = input!.parentNode!.lastElementChild;
         last!.parentNode!.removeChild(last!);
       } 
@@ -807,15 +823,20 @@ dispatchUpdateEvent(field: string, change: any, removal: boolean = false){
         this.errorMap[field] = 0;
         let div = document.createElement('div');
         div.classList.add(`${field}-error-div`);
+        const errorId = `${field}-error-${Date.now()}`;
+        div.id = errorId;
         validation.errors.forEach((error: string) => {
           let p = document.createElement('p');
           p.innerText = error;
           p.style.color = "#eb5757";
           p.setAttribute('aria-live', 'polite');
+          p.setAttribute('role', 'alert');
           div.append(p);
           this.errorMap[field]++;
         });
         insertAfter(div, input!.parentNode!.lastElementChild);
+        // Associate error with input field
+        input!.setAttribute('aria-describedby', errorId);
       }
 
       input!.classList.add("error");
