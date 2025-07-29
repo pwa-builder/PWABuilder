@@ -52,3 +52,10 @@ README.md
 **/playwright-report
 **/.DS_Store
 **/Thumbs.db
+
+# Explicitly allow needed files
+!apps/pwabuilder-microsoft-store/
+!apps/pwabuilder-microsoft-store/**
+!Dockerfile.WindowsChromium
+
+

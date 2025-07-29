@@ -22,6 +22,24 @@
             },
         },
         {
+            "label": "tasks.build-microsoft-package-generator",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store"
+            }
+        },
+        {
             "label": "tasks.npm-install",
             "detail": "npm run install",
             "type": "npm",
@@ -54,7 +72,10 @@
             "path": "apps/pwabuilder/Frontend",
             "script": "dev",
             "isBackground": true,
-            "dependsOn": "tasks.node-scripts-npm-build",
+            "dependsOn": [
+                "tasks.node-scripts-npm-build",
+                "tasks.docker-up"
+            ],
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",

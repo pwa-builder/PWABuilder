@@ -12,7 +12,7 @@
       "program": "${workspaceFolder}/apps/pwabuilder/bin/Debug/net9.0/PWABuilder.dll",
       "serverReadyAction": {
         "action": "startDebugging",
-        "name": "launch.edge",
+        "name": "launch.microsoft-package-generator+launch.edge",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
       "cwd": "${workspaceFolder}/apps/pwabuilder",
@@ -31,6 +31,29 @@
       "trace": true,
       "preLaunchTask": "tasks.launch-vite",
       "postDebugTask": "tasks.stop-debugging"
+    },
+    {
+      "name": "launch.microsoft-package-generator",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "tasks.build-microsoft-package-generator",
+      "postDebugTask": "tasks.stop-debugging",
+      "program": "${workspaceFolder}/apps/pwabuilder-microsoft-store/bin/Debug/net9.0/PWABuilderWindowsChromium.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "launch.microsoft-package-generator+launch.edge",
+      "configurations": [
+        "launch.microsoft-package-generator",
+        "launch.edge"
+      ]
     }
   ]
 }
