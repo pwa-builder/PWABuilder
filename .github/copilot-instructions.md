@@ -5,9 +5,10 @@ applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
 
 # Project Context
 - This repository contains PWABuilder, a website for software developers that helps web devs create progressive web apps (PWAs) and publish them to app stores.
-- The repository also contains some PWABuilder-related tooling. For example, /apps/cli contains the PWABuilder CLI, /apps/pwabuilder-vscode contains VSCode tooling for PWABuilder, /docs contains the documentation web site for PWABuilder.
+- The main repository is for PWABuilder.com, the web app. Its code is located in `apps/pwabuilder`. It is a C# web app using ASP.NET Core. It serves a SPA frontend, located in `apps/pwabuilder/Frontend`, which is built with TypeScript, Lit, and Shoelace. The frontend uses the Vite build system. It communicates with the backend via a REST API.
+- The repository also contains some PWABuilder-related tooling. For example, `/apps/cli` contains the PWABuilder command line app, `/apps/pwabuilder-vscode` contains VSCode tooling for PWABuilder, `/docs` contains the documentation web site (docs.pwabuilder.com) for PWABuilder.
 - Frontend is built with Typescript for type safety
-- Frontend uses Lit web components for custom element and SPA pages.
+- Frontend uses Lit web components for custom elements and SPA pages.
 - Frontend uses the extrnal Shoelace library for prebuilt, styled components.
 
 ## Typescript Development
@@ -17,8 +18,9 @@ applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
 - New web components should inherit from LitElement
 - Where possible, prefer to use existing web components from the Shoelace library
 - Adhere to the single responsibility principle for components
-- Use PascalCase for component names and kebab-case for file names
-- Keep components small and focused on one concern
+- For TypeScript files, use kebab-case for file names.
+- For custom web components built with Lit, keep them small and focused on one concern.
+- All TypeScript classes should be PascalCase.
 
 ## C# Development
 - When writing C#, always use the latest version C#, currently C# 13 features.
@@ -52,22 +54,13 @@ applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
 ## Naming Conventions
 
 - For C#, follow PascalCase for component names, method names, and public members.
-- Use camelCase for private fields and local variables.
-- For C#, don't prefix fields with underscore.
+- For C#, use camelCase for private fields and local variables. Don't prefix private variables with underscores.
 
 ## Nullable Reference Types
 
 - Declare variables non-nullable, and check for `null` at entry points.
 - For C#, always use `is null` or `is not null` instead of `== null` or `!= null`.
 - Trust the C# null annotations and don't add null checks when the type system says a value cannot be null.
-
-## Validation and Error Handling
-
-- Guide the implementation of model validation using data annotations and FluentValidation.
-- Explain the validation pipeline and how to customize validation responses.
-- Demonstrate a global exception handling strategy using middleware.
-- Show how to create consistent error responses across the API.
-- Explain problem details (RFC 7807) implementation for standardized error responses.
 
 ## Testing
 
