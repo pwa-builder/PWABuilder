@@ -17,7 +17,7 @@ RUN dotnet publish "PWABuilderWindowsChromium.csproj" -c Release -o /app/publish
 # -------------------------------------
 # Final runtime image using full Windows image
 # -------------------------------------
-FROM mcr.microsoft.com/windows/server:ltsc2019 AS final
+FROM mcr.microsoft.com/windows/server:ltsc2022 AS final
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
 
