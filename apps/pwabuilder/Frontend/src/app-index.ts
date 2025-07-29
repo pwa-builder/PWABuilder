@@ -221,9 +221,9 @@ export class AppIndex extends LitElement {
         <!-- cookie banner not required so long as we only have essential cookies -->
         <!-- <cookie-banner></cookie-banner> -->
 
-        <div id="content">
+        <main id="content">
           <div id="router-outlet"></div>
-        </div>
+        </main>
         ${this.pageName === "freeToken" || this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
         <app-footer></app-footer>
       </div>
