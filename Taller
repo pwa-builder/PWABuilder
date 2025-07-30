@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller de Motos - Orden de Trabajo</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Taller MotoFix">
+    <meta name="description" content="Sistema digital de órdenes de trabajo para taller de motocicletas">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMyNTYzZWIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01IDEuNDEtMS40MUwxMCAxNC4xN2w3LjU5LTcuNTlMMTkgOGwtOSA5eiIvPgo8L3N2Zz4KPC9zdmc+">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMyNTYzZWIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01IDEuNDEtMS40MUwxMCAxNC4xN2w3LjU5LTcuNTlMMTkgOGwtOSA5eiIvPgo8L3N2Zz4KPC9zdmc+">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlRhbGxlciBNb3RvRml4IC0gT3JkZW4gZGUgVHJhYmFqbyIsCiAgInNob3J0X25hbWUiOiAiTW90b0ZpeCIsCiAgImRlc2NyaXB0aW9uIjogIlNpc3RlbWEgZGlnaXRhbCBkZSBvcmRlbmVzIGRlIHRyYWJham8gcGFyYSB0YWxsZXIgZGUgbW90b2NpY2xldGFzIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmOGZhZmMiLAogICJ0aGVtZV9jb2xvciI6ICIjMjU2M2ViIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqRTVNaUlpSUhacFpYZENiM2c5SWpBZ01DQXhPVElnTVRreUlpQm1hV3hzUFNKdWIyNWxJaUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lQZ28xjcmVqZENCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqRTVNaUlpSUhKNFBTSXlOQ0lnWm1sc2JEMGlJakkxTmpObFlpSXZQZ28xjY0oyWnlCNFBTSTBPQ0lnZVQwaU5EZ2lJSGRwWkhSb1BTSTVOaUlnYUdWcFoyaDBQU0k1TmlJZ2RtbGxkMEp2ZUQwaU1DQXdJakkwSURJMElpQm1hV3hzUFNKM2FHbDBaU0krQ2p4d1lYUm9JR1E5SWsweE1pQXlRelo0TkRnZ01pQXlJRFl1TkRnZ01pQXlJREV5Y3pRdU5EZ2dNVEFnTVRBZ01UQWdNVEFnTVRBdE5DNDBPQ0F4TUMweE1DQXhNRk14Tnk0MU1pQXlJREV5SURKNmJTMHlJREUxYkMwMUxUVWdNUzQwTVMweExqUXhUREV3SURFMExqRTNiRGN1TlRrdE55NDFPVXd4T1NBNGJDMDVJRGw2SWk4K0Nqd3ZjM1puUGdvOEwzTjJaejQ9IiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlOVEV5SWlCb1pXbG5hSFE5SWpVeE1pSWlJSFpwWlhkQ2IzZzlJakFnTUNBMU1USWdOVEV5SWlCbWFXeHNQU0p1YjI1bElpQjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaVBnbzFjbVZqZENCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlpSUhKNFBTSXpNaUlnWm1sc2JEMGlJakkxTmpObFlpSXZQZ284YzNabklIZzlJakV5T0NJZ2VUMGlNVEk0SWlCM2FXUjBhRDBpTWpVMklpQm9aV2xuYUhROUlqSTFOaUlnZG1sbGQwSnZlRDBpTUNBd0lESTBJREkwSWlCbWFXeHNQU0ozYUdsMFpTSStDanhzYVc1bElIZ3hQU0l4TXpBaUlIZ3lQU0l4TXpBaUlIa3hQU0l4TXpBaUlIa3lQU0l6T0RBaUlITjBjbTlyWlMxM2FXUjBhRDBpTkNJZ2MzUnliMnRsUFNKM2FHbDBaU0l2UGdvOGJHbHVaU0I0TVQwaU16Z3dJaUI0TWowaU16Z3dJSGt4UFNJeE16QWlJSGt5UFNJek9EQWlJSE4wY205clpTMTNhV1IwYUQwaU5DSWdjM1J5YjJ0bFBTSjNhR2wwWlNJdlBnbzhiR2x1WlNCNE1UMGlNekF3SWlCNE1qMGlNekF3SWlCNU1UMGlNekF3SWlCNU1qMGlNekF3SWlCemRISnZhMlV0ZDJsa2RHZzlJalFpSUhOMGNtOXJaVDBpZDJocGRHVWlMejRLUEd4cGJtVWdlREU5SWpNd01DSWdlREk5SWpNd01DSWdlVEU5SWpNd01DSWdlVEk5SWpNeU1DSWdjM1J5YjJ0bExYZHBaSFJvUFNJMElpQnpkSEp2YTJVOUluZG9hWFJsSWk4K0NqeHNhVzVsSUhneFBTSXpNREFpSUhneFBTSXpNREFpSUhreFBTSXpNREFpSUhreFBTSXpNREFpSUhOMGNtOXJaUzEzYVdSMGFEMGlOQ0lnYzNSeWIydGxQU0ozYUdsMFpTSXZQZ284YkdsdVpTQjRNVDBpTXpBd0lpQjRNajBpTXpBd0lpQjVNVDBpTXpJd0lpQjVNajBpTXpJd0lpQnpkSEp2YTJVdGQybGtkR2c5SWpRaUlITjBjbTlyWlQwaWQyaHBkR1VpTHo0S1BHeHBibVVnZURFOUlqTXdNQ0lnZURJOUlqTXdNQ0lnZVRFOUlqTXlNQ0lnZVRJOUlqTTRNQ0lnYzNSeWIydGxMWGRwWkhSb1BTSXlJaUJ6ZEhKdmEyVTlJbmRvYVhSbElpOCtDand2YzNabkBnbz04TDNOMlp6ND0iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .form-section {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <!-- Install Banner -->
+    <div id="installBanner" class="bg-green-600 text-white p-3 text-center hidden">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <span class="text-sm">📱 ¡Instala la app en tu móvil!</span>
+            <div class="flex space-x-2">
+                <button onclick="installApp()" class="bg-white text-green-600 px-3 py-1 rounded text-sm font-medium">
+                    Instalar
+                </button>
+                <button onclick="dismissInstall()" class="text-white opacity-75">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold">🏍️ Taller MotoFix</h1>
+                <p class="text-blue-100 text-sm">Orden de Trabajo Digital</p>
+            </div>
+            <div class="text-right">
+                <div class="text-sm opacity-90">Orden #</div>
+                <div class="font-bold text-lg" id="orderNumber">MT-2024-001</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto p-4 space-y-4">
+        <!-- Status Badge -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-600 font-medium">Estado:</span>
+                <span class="status-badge bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                    📝 En Proceso
+                </span>
+            </div>
+            <div class="mt-2 text-xs text-gray-500">
+                Fecha: <span id="currentDate"></span>
+            </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                👤 Datos del Cliente
+            </h2>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo *</label>
+                    <input type="text" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ej: Juan Pérez García">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+                    <input type="tel" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ej: +34 600 123 456">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="cliente@email.com">
+                </div>
+            </div>
+        </div>
+
+        <!-- Motorcycle Information -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                🏍️ Datos de la Motocicleta
+            </h2>
+            
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Marca *</label>
+                        <select class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Seleccionar</option>
+                            <option value="yamaha">Yamaha</option>
+                            <option value="honda">Honda</option>
+                            <option value="kawasaki">Kawasaki</option>
+                            <option value="suzuki">Suzuki</option>
+                            <option value="ducati">Ducati</option>
+                            <option value="bmw">BMW</option>
+                            <option value="ktm">KTM</option>
+                            <option value="otra">Otra</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+                        <input type="text" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ej: R1">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Año</label>
+                        <input type="number" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="2020" min="1990" max="2024">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cilindrada</label>
+                        <input type="text" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="125cc">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Matrícula</label>
+                    <input type="text" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="1234-ABC" style="text-transform: uppercase;">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kilómetros</label>
+                    <input type="number" class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="15000">
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Type -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                🔧 Tipo de Servicio
+            </h2>
+            
+            <div class="space-y-2">
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                    <span class="flex-1">🛠️ Mantenimiento Preventivo</span>
+                </label>
+                
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                    <span class="flex-1">⚙️ Reparación</span>
+                </label>
+                
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                    <span class="flex-1">🔍 Diagnóstico</span>
+                </label>
+                
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                    <span class="flex-1">🏁 Revisión ITV</span>
+                </label>
+                
+                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                    <span class="flex-1">🎨 Personalización</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Problem Description -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                📝 Descripción del Problema
+            </h2>
+            
+            <textarea class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 resize-none" placeholder="Describe el problema o síntomas que presenta la motocicleta..."></textarea>
+            
+            <div class="mt-3">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Urgencia</label>
+                <div class="flex space-x-2">
+                    <label class="flex-1">
+                        <input type="radio" name="urgency" value="baja" class="sr-only">
+                        <div class="p-2 text-center border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-green-300 transition-colors">
+                            <div class="text-green-600">🟢</div>
+                            <div class="text-xs font-medium">Baja</div>
+                        </div>
+                    </label>
+                    
+                    <label class="flex-1">
+                        <input type="radio" name="urgency" value="media" class="sr-only">
+                        <div class="p-2 text-center border border-gray-200 rounded-lg cursor-pointer hover:bg-yellow-50 hover:border-yellow-300 transition-colors">
+                            <div class="text-yellow-600">🟡</div>
+                            <div class="text-xs font-medium">Media</div>
+                        </div>
+                    </label>
+                    
+                    <label class="flex-1">
+                        <input type="radio" name="urgency" value="alta" class="sr-only">
+                        <div class="p-2 text-center border border-gray-200 rounded-lg cursor-pointer hover:bg-red-50 hover:border-red-300 transition-colors">
+                            <div class="text-red-600">🔴</div>
+                            <div class="text-xs font-medium">Alta</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accessories -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                🎒 Accesorios Entregados
+            </h2>
+            
+            <div class="space-y-2">
+                <label class="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                    <span class="flex items-center">
+                        <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        🗝️ Llaves
+                    </span>
+                    <input type="number" class="w-16 p-1 text-center border border-gray-200 rounded text-sm" placeholder="1" min="0">
+                </label>
+                
+                <label class="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                    <span class="flex items-center">
+                        <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        🪖 Casco
+                    </span>
+                    <input type="number" class="w-16 p-1 text-center border border-gray-200 rounded text-sm" placeholder="1" min="0">
+                </label>
+                
+                <label class="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                    <span class="flex items-center">
+                        <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        📄 Documentación
+                    </span>
+                    <input type="number" class="w-16 p-1 text-center border border-gray-200 rounded text-sm" placeholder="1" min="0">
+                </label>
+                
+                <label class="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                    <span class="flex items-center">
+                        <input type="checkbox" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        🧰 Kit de herramientas
+                    </span>
+                    <input type="number" class="w-16 p-1 text-center border border-gray-200 rounded text-sm" placeholder="1" min="0">
+                </label>
+            </div>
+            
+            <div class="mt-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Otros accesorios</label>
+                <input type="text" class="input-focus w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" placeholder="Especificar otros accesorios...">
+            </div>
+        </div>
+
+        <!-- Estimated Cost -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                💰 Presupuesto Estimado
+            </h2>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-600">Mano de obra:</span>
+                    <input type="number" class="w-24 p-2 text-right border border-gray-200 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.00" step="0.01">
+                </div>
+                
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span class="text-gray-600">Repuestos:</span>
+                    <input type="number" class="w-24 p-2 text-right border border-gray-200 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.00" step="0.01">
+                </div>
+                
+                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                    <span class="font-semibold text-blue-800">Total estimado:</span>
+                    <span class="font-bold text-xl text-blue-800" id="totalEstimated">€0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-section bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                📋 Notas Adicionales
+            </h2>
+            
+            <textarea class="input-focus w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent h-20 resize-none" placeholder="Observaciones del técnico, instrucciones especiales, etc."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3 pb-6">
+            <button onclick="saveOrder()" class="btn-primary w-full py-4 text-white font-semibold rounded-xl shadow-lg">
+                💾 Guardar Orden de Trabajo
+            </button>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="printOrder()" class="bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl font-medium transition-colors">
+                    🖨️ Imprimir
+                </button>
+                
+                <button onclick="shareOrder()" class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl font-medium transition-colors">
+                    📤 Compartir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+            <div class="text-6xl mb-4">✅</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">¡Orden Guardada!</h3>
+            <p class="text-gray-600 mb-4">La orden de trabajo se ha guardado correctamente.</p>
+            <button onclick="closeModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
+                Continuar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // PWA Installation
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').classList.remove('hidden');
+        });
+        
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('App instalada');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBanner').classList.add('hidden');
+                });
+            }
+        }
+        
+        function dismissInstall() {
+            document.getElementById('installBanner').classList.add('hidden');
+        }
+        
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'motofix-v1';
+                    const urlsToCache = ['/'];
+                    
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then((cache) => cache.addAll(urlsToCache))
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then((response) => {
+                                    return response || fetch(event.request);
+                                })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then((registration) => {
+                        console.log('SW registrado:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('SW falló:', error);
+                    });
+            });
+        }
+        
+        // Offline Storage
+        function saveToLocal(data) {
+            const orders = JSON.parse(localStorage.getItem('motofix-orders') || '[]');
+            orders.push({
+                ...data,
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                synced: false
+            });
+            localStorage.setItem('motofix-orders', JSON.stringify(orders));
+        }
+        
+        function getLocalOrders() {
+            return JSON.parse(localStorage.getItem('motofix-orders') || '[]');
+        }
+        
+        // Network Status
+        function updateOnlineStatus() {
+            const statusBadge = document.querySelector('.status-badge');
+            if (navigator.onLine) {
+                statusBadge.innerHTML = '🌐 En Línea';
+                statusBadge.className = 'status-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+            } else {
+                statusBadge.innerHTML = '📱 Sin Conexión';
+                statusBadge.className = 'status-badge bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium';
+            }
+        }
+        
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES');
+        
+        // Generate random order number
+        document.getElementById('orderNumber').textContent = 'MT-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 1000) + 1).padStart(3, '0');
+        
+        // Handle urgency selection
+        document.querySelectorAll('input[name="urgency"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Remove previous selections
+                document.querySelectorAll('input[name="urgency"]').forEach(r => {
+                    r.parentElement.querySelector('div').classList.remove('bg-green-100', 'bg-yellow-100', 'bg-red-100', 'border-green-400', 'border-yellow-400', 'border-red-400');
+                });
+                
+                // Add selection to current
+                const container = this.parentElement.querySelector('div');
+                if (this.value === 'baja') {
+                    container.classList.add('bg-green-100', 'border-green-400');
+                } else if (this.value === 'media') {
+                    container.classList.add('bg-yellow-100', 'border-yellow-400');
+                } else if (this.value === 'alta') {
+                    container.classList.add('bg-red-100', 'border-red-400');
+                }
+            });
+        });
+        
+        // Calculate total estimated cost
+        function updateTotal() {
+            const labor = parseFloat(document.querySelector('input[placeholder="0.00"]:nth-of-type(1)').value) || 0;
+            const parts = parseFloat(document.querySelector('input[placeholder="0.00"]:nth-of-type(2)').value) || 0;
+            const total = labor + parts;
+            document.getElementById('totalEstimated').textContent = '€' + total.toFixed(2);
+        }
+        
+        // Add event listeners for cost calculation
+        document.querySelectorAll('input[placeholder="0.00"]').forEach(input => {
+            input.addEventListener('input', updateTotal);
+        });
+        
+        // Save order function
+        function saveOrder() {
+            // Collect form data
+            const formData = {
+                orderNumber: document.getElementById('orderNumber').textContent,
+                customerName: document.querySelector('input[placeholder*="Juan Pérez"]').value,
+                phone: document.querySelector('input[type="tel"]').value,
+                email: document.querySelector('input[type="email"]').value,
+                brand: document.querySelector('select').value,
+                model: document.querySelector('input[placeholder="Ej: R1"]').value,
+                year: document.querySelector('input[type="number"][placeholder="2020"]').value,
+                displacement: document.querySelector('input[placeholder="125cc"]').value,
+                license: document.querySelector('input[placeholder="1234-ABC"]').value,
+                kilometers: document.querySelector('input[placeholder="15000"]').value,
+                services: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.parentElement.textContent.trim()),
+                problem: document.querySelector('textarea').value,
+                urgency: document.querySelector('input[name="urgency"]:checked')?.value,
+                accessories: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.parentElement.textContent.trim()),
+                laborCost: document.querySelector('input[placeholder="0.00"]:nth-of-type(1)').value,
+                partsCost: document.querySelector('input[placeholder="0.00"]:nth-of-type(2)').value,
+                notes: document.querySelectorAll('textarea')[1].value
+            };
+            
+            // Save to local storage
+            saveToLocal(formData);
+            
+            // Show success modal
+            document.getElementById('successModal').classList.remove('hidden');
+            
+            // Update status
+            const statusBadge = document.querySelector('.status-badge');
+            statusBadge.innerHTML = '✅ Guardado Localmente';
+            statusBadge.className = 'status-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+        }
+        
+        // Print order function
+        function printOrder() {
+            window.print();
+        }
+        
+        // Share order function
+        function shareOrder() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Orden de Trabajo - Taller MotoFix',
+                    text: 'Orden de trabajo #' + document.getElementById('orderNumber').textContent,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const orderNumber = document.getElementById('orderNumber').textContent;
+                const text = `Orden de trabajo ${orderNumber} - Taller MotoFix`;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Información copiada al portapapeles');
+                });
+            }
+        }
+        
+        // Close modal function
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+        
+        // Auto-uppercase license plate
+        document.querySelector('input[placeholder="1234-ABC"]').addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+        
+        // Form validation
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('input[placeholder*="*"], select');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            return isValid;
+        }
+        
+        // Add form validation to save button
+        document.querySelector('.btn-primary').addEventListener('click', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                alert('Por favor, completa todos los campos obligatorios marcados con *');
+            }
+        });
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOnlineStatus();
+            
+            // Show install banner after 3 seconds if not installed
+            setTimeout(() => {
+                if (!window.matchMedia('(display-mode: standalone)').matches && !deferredPrompt) {
+                    // Check if running in browser (not installed)
+                    const banner = document.getElementById('installBanner');
+                    if (banner.classList.contains('hidden')) {
+                        banner.classList.remove('hidden');
+                    }
+                }
+            }, 3000);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9673a7fb56ffdea5',t:'MTc1Mzg2NTkyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
