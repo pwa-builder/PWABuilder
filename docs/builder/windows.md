@@ -1,6 +1,6 @@
 # Publishing PWAs to the Microsoft Store
 
-You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the [Microsoft Partner Center](https://partner.microsoft.com/en-us) to create your app submission.
+You can use PWABuilder to build application packages that are submittable the Microsoft Store. Once you have your packages through PWABuilder, you'll need to go through the [Microsoft Partner Center](https://aka.ms/partnercenterregistration) to create your app submission.
 
 !> In order to package for Windows and submit to the Microsoft Store, you will need a [Partner Center Account](https://aka.ms/partnercenterregistration).
 
@@ -16,15 +16,15 @@ There are some boxes you'll need to check before your PWA is ready to be publish
 
 - A valid PWA with a web manifest, published to the web and secured through HTTPS
 
-- A Windows Developer account with Partner Center (which are available for a one-time fee of $19). Create one <a href="https://aka.ms/partnercenterregistration" aria-label="Click here to follow instructions">here</a> 
+- A Windows Developer account with Partner Center. <a href="https://aka.ms/partnercenterregistration">Create your Partner Center account</a>.
 
-!> If you want in-depth guidance on how to enroll as a Windows Developer, take a look at [this documentation.](https://learn.microsoft.com/en-us/windows/apps/publish/partner-center/open-a-developer-account)
+!> If you want in-depth guidance on how to enroll as a Windows Developer, see [opening a Partner Center developer account.](https://learn.microsoft.com/windows/apps/publish/partner-center/open-a-developer-account)
 
 ## Reserve Your App
 
 In order to create a proper package of your PWA, you'll first need to reserve a name for your application in the Microsoft Partner Center. This will also allow you to get package info that's required for PWABuilder:
 
-1. Log in to the [Partner Center Dashboard](https://partner.microsoft.com/en-us/dashboard/home). Remember, you will need to be enrolled as a Windows Developer before you can complete these next steps.
+1. Log in to the [Partner Center Dashboard](https://partner.microsoft.com/dashboard). Remember, you will need to be enrolled as a Windows Developer before you can complete these next steps.
 
 2. Navigate to the `Apps and Games` section. If you don't see `Apps and Games` on your dashboard, check the navigation menu in the top left.
 
@@ -85,7 +85,7 @@ You can now use the packages you downloaded to submit your application through P
 
 To submit your PWA through Partner Center:
 
-1. Navigate back to the `Apps and Games` section in the [Partner Center Dashboard.](https://partner.microsoft.com/en-us/dashboard/home)
+1. Navigate back to the [Apps and Games section](https://partner.microsoft.com/dashboard/apps-and-games) in the [Partner Center Dashboard.](https://partner.microsoft.com/dashboard)
 
 2. Select the listing you create earlier from your app list.
 
