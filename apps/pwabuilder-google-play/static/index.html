@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+  <title>CloudAPK tester</title>
+</head>
+
+<body class="container">
+  <h1 class="display-4">
+    Cloud APK
+  </h1>
+  <h5 class="display-5"><small class="text-muted">Test the service using the JSON below</small></h5>
+  <br>
+
+  <div class="card w-100">
+    <div class="card-header d-flex align-items-center">
+      <span class="flex-grow-1">JSON</span>
+      <span class="text-muted">Presets:</span>
+      <button id="unsignedBtn" class="btn btn-link">Unsigned</button>
+      <button id="signedBtn" class="btn btn-link">Signed (new key)</button>
+      <button id="existingKeyBtn" class="btn btn-link">Signed (existing key)</button>
+      <button id="chooseKeyBtn" class="btn btn-link">Signed (choose a key)</button>
+      <input type="file" class="d-none" id="filePicker" aria-describedby="inputGroupFileAddon01" accept=".keystore">
+    </div>
+    <div class="card-body">
+      <textarea class="form-control" rows="15">
+
+        </textarea>
+    </div>
+    <div class="card-footer">
+      <button id="submitBtn" class="btn btn-primary btn-lg">
+        <div class="spinner-border d-none" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        Submit
+      </button>
+    </div>
+  </div>
+
+  <div class="card w-100">
+    <div class="card-header">
+      Results
+    </div>
+    <div class="card-body">
+      <pre id="results"></pre>
+    </div>
+  </div>
+
+  <script src="/index.js?v=2"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>
