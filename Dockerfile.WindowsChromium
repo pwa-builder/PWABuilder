@@ -19,10 +19,9 @@ RUN dotnet publish "PWABuilderWindowsChromium.csproj" -c Release -o /app/publish
 # -------------------------------------
 FROM mcr.microsoft.com/windows/server:ltsc2022 AS final
 
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
-
 # App working directory
 WORKDIR /app
+SHELL ["cmd", "/S", "/C"]
 
 # Set env variables (like aspnet image would)
 ENV ASPNETCORE_URLS=http://+:5000
@@ -35,18 +34,17 @@ EXPOSE 443
 # Install dotnet runtime using dotnet-install script
 COPY apps/pwabuilder-microsoft-store/Resources/dotnet-install.ps1 .
 RUN powershell -ExecutionPolicy Bypass -File ./dotnet-install.ps1 -Runtime aspnetcore -Version 9.0.0 -InstallDir C:\dotnet
+RUN powershell $env:Path = 'C:\dotnet;' + $env:Path; [Environment]::SetEnvironmentVariable('PATH', $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
 # Install Windows SDK tools
-RUN Invoke-WebRequest https://go.microsoft.com/fwlink/?linkid=2120843 -OutFile downloadsdk.exe -UseBasicParsing
-RUN .\downloadsdk.exe /quiet /norestart /log log.txt
-RUN Remove-Item downloadsdk.exe -Force
+RUN ["powershell.exe", "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"]
 
-# Set PATH explicitly and safely
-RUN $env:Path = 'C:\dotnet;' + $env:Path; \
-  [Environment]::SetEnvironmentVariable('PATH', $env:Path, [System.EnvironmentVariableTarget]::Machine)
+RUN powershell -Command "$ErrorActionPreference = 'Stop'; Invoke-WebRequest https://go.microsoft.com/fwlink/?linkid=2120843 -OutFile downloadsdk.exe -UseBasicParsing"
+RUN powershell -Command "$ErrorActionPreference = 'Stop'; ./downloadsdk.exe /quiet /norestart /log log.txt"
+RUN powershell -Command "$ErrorActionPreference = 'Stop'; Remove-Item downloadsdk.exe -Force
 
 # Copy app from build stage
 COPY --from=build /app/publish/ C:/app/
 
 # Start the app
-ENTRYPOINT ["dotnet", "PWABuilderWindowsChromium.dll"]
+CMD dotnet "PWABuilderWindowsChromium.dll"
