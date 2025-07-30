@@ -31,6 +31,28 @@
       "trace": true,
       "preLaunchTask": "tasks.launch-vite",
       "postDebugTask": "tasks.stop-debugging"
+    },
+    {
+      "name": "Attach: Google Play Service",
+      "type": "node",
+      "request": "attach",
+      "preLaunchTask": "tasks.google-play:dev",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "port": 5858,
+      "skipFiles": ["<node_internals>/**"],
+      "localRoot": "${workspaceFolder}/apps/pwabuilder-google-play",
+      "remoteRoot": "${workspaceFolder}/apps/pwabuilder-google-play"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch All PWABuilder (Local)",
+      "configurations": [
+        "launch.backend",
+        "Attach: Google Play Service"
+      ]
     }
   ]
 }
