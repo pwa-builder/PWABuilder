@@ -6,36 +6,11 @@ This is implemented as a web API that takes a URL and generates an .msix app pac
 
 The package is published to: https://pwabuilder-winserver.centralus.cloudapp.azure.com
 
-
 ## Running this locally
 
 To run this locally, your dev machine should be Windows 10 version 2004 (May 2020 Update, Build 10.0.19041) or later.
 
 You'll also need Windows SDK 10.0.19041.0 or later installed. appsettings.development.json has a WindowsSdkDirectory setting - you should modify this to point to your installed Windows SDK.
-
-Open `Microsoft.PWABuilder.Windows.Chromium.sln` in Visual Studio and hit F5. You'll be taken to a [testing page](http://pwabuilder-win-chromium-platfom.centralus.cloudapp.azure.com/) where you can test the APIs.
-
-## Updating to a new version of pwa_builder.exe
-
-The Edge team, specifically Mustapha Jaber, maintains pwa_builder.exe. This is the tool that creates the .msix package.
-
-To upgrade to a newer version of pwa_builder.exe, grab the package from Nuget, rename it .zip and unzip the contents of the file to `/Resources/cli/pwabuilder`.
-
-If you're unable to find the NuGet package, you can access it at https://pkgs.dev.azure.com/microsoft/90b2a23c-cab8-4e7c-90e7-a977f32c1f5d/_packaging/87a76f17-0b5a-4a08-bdc8-4c7962df1d5c/nuget/v3/flat2/pwa_builder/92.885.0-ci-20210510-171828/pwa_builder.92.885.0-ci-20210510-171828.nupkg (update the URL with the correct version you see in Web project -> NuGet Packages)
-
-If you're having trouble accessing the pwa_builder private NuGet feed, add the following feed to your NuGet Package Sources: `https://pkgs.dev.azure.com/microsoft/Edge/_packaging/edge/nuget/v3/index.json`
-
-## Deployment
-
-Deployment is currently a manual file copy operation:
-
-1. In Visual Studio, click Build -> Publish. It will prompt you to publish to a folder.
-2. When publish succeeds, open the folder that was published to and copy the files in it.
-3. Remote desktop into the PWABuilder.Windows.Chromium virtual machine in Azure and paste the files to `C:\inetpub\wwwroot`
-
-The reason this process is currently manual is because when this PWA hosted web app technology was released in May 2020, server builds of Windows didn't support the proper Windows SDK, specifically, Windows SDK 10.0.19041.0 or later.
-
-If this has changed, you may consider migrating the virtual machine to a proper server VM. Once it's a server VM, you can setup direct deployment from Visual Studio or Github actions.
 
 ## The API
 
