@@ -72,10 +72,7 @@
             "path": "apps/pwabuilder/Frontend",
             "script": "dev",
             "isBackground": true,
-            "dependsOn": [
-                "tasks.node-scripts-npm-build",
-                "tasks.docker-up"
-            ],
+            "dependsOn": "tasks.node-scripts-npm-build",
             "problemMatcher": {
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",
