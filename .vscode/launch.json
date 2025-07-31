@@ -41,16 +41,33 @@
         "NODE_ENV": "test"
       },
       "port": 5858,
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "localRoot": "${workspaceFolder}/apps/pwabuilder-google-play",
       "remoteRoot": "${workspaceFolder}/apps/pwabuilder-google-play"
-    }
+    },
+    {
+      "name": "launch.microsoft-package-generator",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "tasks.build-microsoft-package-generator",
+      "postDebugTask": "tasks.stop-debugging",
+      "program": "${workspaceFolder}/apps/pwabuilder-microsoft-store/bin/Debug/net9.0/PWABuilderWindowsChromium.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
   ],
   "compounds": [
     {
       "name": "Launch All PWABuilder (Local)",
       "configurations": [
         "launch.backend",
+        "launch.microsoft-package-generator",
         "Attach: Google Play Service"
       ]
     }

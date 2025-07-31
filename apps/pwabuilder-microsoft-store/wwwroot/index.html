@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>PWABuilder.Windows.Chromium tester</title>
+</head>
+<body class="container">
+    <h1 class="display-4">
+        PWABuilder.Windows.Chromium
+    </h1>
+    <h5 class="display-5"><small class="text-muted">Test the service using the JSON below</small></h5>
+    <br>
+
+    <div class="card w-100">
+        <div class="card-header d-flex align-items-center">
+            <span class="text-muted">Presets:</span>
+            <button id="simpleBtn" class="btn btn-link">Simple</button>
+            <button id="actionsBtn" class="btn btn-link">Actions</button>
+            <button id="publisherBtn" class="btn btn-link">Publisher</button>
+            <button id="imagesBtn" class="btn btn-link">Images</button>
+            <button id="edgeHtmlBtn" class="btn btn-link">EdgeHTML</button>
+            <button id="widgetsBtn" class="btn btn-link">Widgets</button>
+            <button id="kitchenSinkBtn" class="btn btn-link">Kitchen sink</button>
+        </div>
+        <div class="card-body">
+            <textarea class="form-control" rows="15">
+        </textarea>
+        </div>
+        <div class="card-footer d-flex flex-column">
+            <div class="web-action-upload mb-3">
+                <label class="text-muted">Upload web action manifest file:</label>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="actionManifestFile" accept=".json">
+                        <label class="custom-file-label" for="actionManifestFile">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="clearFileBtn">Clear</button>
+                    </div>
+                </div>
+                <small id="fileStatus" class="form-text text-muted">No file selected</small>
+            </div>
+            <button id="submitBtn" class="btn btn-primary btn-lg">
+                <div class="spinner-border d-none" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                Download
+            </button>
+        </div>
+    </div>
+
+    <div class="card w-100">
+        <div class="card-header">
+            Results
+        </div>
+        <div class="card-body">
+            <pre id="results"></pre>
+        </div>
+    </div>
+
+    <script src="/index.js?v=8"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -41,7 +41,7 @@ if (import.meta.env.PROD) {
   env.manifestCreatorUrl =
     'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
   env.windowsPackageGeneratorUrl =
-    'https://pwabuilder-windows-docker-dev.azurewebsites.net/msix/generatezip';
+    'https://localhost:5001/msix/generatezip';
   env.androidPackageGeneratorUrl =
     'http://localhost:5858';
   env.iosPackageGeneratorUrl = '/api/iospackage/create';
