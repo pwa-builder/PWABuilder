@@ -12,7 +12,7 @@
       "program": "${workspaceFolder}/apps/pwabuilder/bin/Debug/net9.0/PWABuilder.dll",
       "serverReadyAction": {
         "action": "startDebugging",
-        "name": "launch.microsoft-package-generator+launch.edge",
+        "name": "launch.edge",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
       "cwd": "${workspaceFolder}/apps/pwabuilder",
@@ -49,10 +49,10 @@
   ],
   "compounds": [
     {
-      "name": "launch.microsoft-package-generator+launch.edge",
+      "name": "Launch All PWABuilder (Local)",
       "configurations": [
-        "launch.microsoft-package-generator",
-        "launch.edge"
+        "launch.backend",
+        "launch.microsoft-package-generator"
       ]
     }
   ]
