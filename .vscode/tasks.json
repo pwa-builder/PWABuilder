@@ -101,6 +101,39 @@
             "command": "echo ${input:terminate}",
             "type": "shell",
             "problemMatcher": []
+        },
+        {
+            "label": "tasks.pwabuilder-google-play:run",
+            "type": "shell",
+            "command": "npm run docker:build && npm run docker:run",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/pwabuilder-google-play"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "tasks.google-play:install",
+            "type": "npm",
+            "path": "apps/pwabuilder-google-play",
+            "script": "install",
+            "isBackground": true,
+            "detail": "npm install for pwabuilder-google-play"
+        },
+        {
+            "label": "tasks.google-play:dev",
+            "type": "npm",
+            "path": "apps/pwabuilder-google-play",
+            "script": "dev",
+            "dependsOn": "tasks.google-play:install",
+            "isBackground": true,
+            "detail": "npm run dev for pwabuilder-google-play",
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "NODE_ENV": "test"
+                }
+            }
         }
     ],
     "inputs": [
