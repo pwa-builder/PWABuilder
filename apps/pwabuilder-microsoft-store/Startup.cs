@@ -132,6 +132,7 @@ namespace Microsoft.PWABuilder.Windows.Chromium
                 "https://nice-field-047c1420f.azurestaticapps.net",
                 "https://partner.microsoft.com",
                 "https://brave-grass-02c461d10.1.azurestaticapps.net",
+                "https://pwabuilder-summer25-consolidation.azurewebsites.net",
             };
             return allowedOrigins.Any(o => origin.Contains(o, StringComparison.OrdinalIgnoreCase));
         }
