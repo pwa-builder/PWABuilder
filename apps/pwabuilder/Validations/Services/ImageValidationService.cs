@@ -237,7 +237,7 @@ namespace PWABuilder.Validations.Services
                 return new Validation
                 {
                     Member = "screenshots",
-                    Category = "required",
+                    Category = "recommended",
                     DisplayString = "Manifest screenshots exist",
                     ErrorString = isValid
                         ? ""
@@ -254,7 +254,7 @@ namespace PWABuilder.Validations.Services
                 return new Validation
                 {
                     Member = "screenshots",
-                    Category = "required",
+                    Category = "recommended",
                     DisplayString = "Manifest screenshots exist",
                     ErrorString = $"Error validating screenshots: {ex.Message}",
                     InfoString =
