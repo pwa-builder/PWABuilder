@@ -2435,7 +2435,7 @@ export class AppReport extends LitElement {
       if (!result.valid) {
         if (result.member === "icons") {
           this.showIconsErrorBanner = true;
-        } else if (result.member === "screenshots") {
+        } else if (result.member === "screenshots" || result.category === "required") {
           this.showScreenshotsErrorBanner = true;
         }
         todos.push({ "card": "mani-details", "field": result.member, "fix": result.errorString, "status": "required" });
@@ -3237,7 +3237,7 @@ export class AppReport extends LitElement {
 
               ${this.showScreenshotsErrorBanner ?
             html`
-                  <div class="feedback-holder type-error">
+                  <div class="feedback-holder type-warning">
                   <img src="/assets/new/stop.svg" alt="invalid result icon" />
                     <div class="error-info">
                       <p class="error-title">Manifest screenshots could not be fetched</p>
