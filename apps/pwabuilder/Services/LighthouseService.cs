@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using PuppeteerSharp;
+using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
@@ -37,8 +38,8 @@ namespace PWABuilder.Services
         {
             [true] = new ViewPortOptions // desktop
             {
-                Width = 1350,
-                Height = 940,
+                Width = 1024,
+                Height = 768,
                 DeviceScaleFactor = 1,
                 IsMobile = false,
                 HasTouch = false,
@@ -72,8 +73,13 @@ namespace PWABuilder.Services
             return port;
         }
 
-        public async Task<JsonDocument> RunAuditAsync(string url, bool desktop)
+        public async Task<LighthouseReport> RunAuditAsync(string url, bool desktop)
         {
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                throw new ArgumentException("Invalid URL.");
+            }
+
             int headlessChromePort = GetAvailablePort();
 
             var nodePath = Environment.GetEnvironmentVariable("NODE_BIN");
@@ -146,33 +152,30 @@ namespace PWABuilder.Services
                 DefaultViewport = viewPorts[desktop],
             };
 
-            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
-                throw new ArgumentException("Invalid URL.");
-
             await using var puppeteer = new PuppeteerService(env);
             await puppeteer.CreateAsync(pptlaunchOptions);
 
-            await using var pptBrowser = puppeteer.GetBrowser();
-            await using var pptPage = await pptBrowser.NewPageAsync();
+            await using var browser = puppeteer.GetBrowser();
+            await using var page = await browser.NewPageAsync();
 
             // Set up request interception
-            await pptPage.SetBypassServiceWorkerAsync(true);
-            await pptPage.SetRequestInterceptionAsync(true);
+            await page.SetBypassServiceWorkerAsync(true);
+            await page.SetRequestInterceptionAsync(true);
 
             // Skipped resources
-            pptPage.Request += async (sender, e) =>
+            page.Request += async (sender, e) =>
             {
                 await e.Request.ContinueAsync();
             };
 
             // Handle dialogs
-            pptPage.Dialog += async (sender, e) =>
+            page.Dialog += async (sender, e) =>
             {
                 await e.Dialog.Dismiss();
             };
 
             // Intercept manifest
-            pptPage.Response += async (sender, e) =>
+            page.Response += async (sender, e) =>
             {
                 if (e.Response.Request.ResourceType == ResourceType.Manifest)
                 {
@@ -189,14 +192,14 @@ namespace PWABuilder.Services
                     valveTriggered = true;
                     try
                     {
-                        var client = await pptPage.CreateCDPSessionAsync();
+                        var client = await page.CreateCDPSessionAsync();
                         await client.SendAsync("ServiceWorker.enable");
                         await client.SendAsync("ServiceWorker.stopAllWorkers");
                     }
                     catch { }
                 });
 
-            await pptPage.GoToAsync(
+            await page.GoToAsync(
                 url,
                 new NavigationOptions
                 {
@@ -208,7 +211,7 @@ namespace PWABuilder.Services
             await Task.Delay(1000);
 
             // Start Lighthouse process
-            var lhPsi = new ProcessStartInfo
+            var lighthouseStartInfo = new ProcessStartInfo
             {
                 FileName = nodePath,
                 WorkingDirectory = workingDirectory,
@@ -219,7 +222,7 @@ namespace PWABuilder.Services
                 CreateNoWindow = true,
             };
 
-            using var lhProcess = Process.Start(lhPsi);
+            using var lhProcess = Process.Start(lighthouseStartInfo);
             if (
                 lhProcess == null
                 || lhProcess.StandardOutput == null
@@ -255,71 +258,67 @@ namespace PWABuilder.Services
             if (lhProcess.ExitCode != 0)
                 throw new Exception($"Lighthouse failed: {lhError}");
 
-            // Build mutable Json Object
-            var rootNode = JsonNode.Parse(lhOutput)?.AsObject();
-            if (rootNode == null)
-                throw new Exception("Failed to parse Lighthouse output as JSON.");
-
-            var audits = rootNode["audits"] as JsonObject;
-            var artifacts = new JsonObject();
-            var manifestRawNode = new JsonObject();
-
-            if (
-                audits?["web-app-manifest-raw-audit"] is JsonObject manifestRawAudit
-                && manifestRawAudit["details"] is JsonObject details
-            )
+            // Get the result from Lighthouse.
+            var lighthouseReport = JsonSerializer.Deserialize<LighthouseReport>(lhOutput, new JsonSerializerOptions
             {
-                var manifestUrl = details["manifestUrl"]?.GetValue<string>();
-                var manifestRaw = details["manifestRaw"]?.GetValue<string>();
-                if (!string.IsNullOrEmpty(manifestUrl))
-                    manifestRawNode["url"] = manifestUrl;
-                if (!string.IsNullOrEmpty(manifestRaw))
-                    manifestRawNode["raw"] = manifestRaw;
+                PropertyNameCaseInsensitive = true,
+                AllowTrailingCommas = true
+            });
+            if (lighthouseReport == null || lighthouseReport.Audits == null)
+            {
+                var error = new Exception("Lighthouse was null or didn't contain audits");
+                error.Data.Add("LHOutput", lhOutput);
+                throw error;
             }
 
-            // Inject error
-            if (
-                valveTriggered
-                && audits != null
-                && audits["service-worker-audit"] is JsonObject swAuditNode
-            )
+            //var audits = lighthouseReport.Audits;
+            //var artifacts = new JsonObject();
+            //var manifestRawNode = new JsonObject();
+
+            // if (hasWebAppManifestAudit && manifestRawAudit?.Details != null)
+            // {
+            //     var manifestUrl = manifestRawAudit.Details.ManifestUrl;
+            //     var manifestRaw = manifestRawAudit.Details.ManifestRaw;
+                // if (!string.IsNullOrEmpty(manifestUrl))
+                //     manifestRawNode["url"] = manifestUrl;
+                // if (!string.IsNullOrEmpty(manifestRaw))
+                //     manifestRawNode["raw"] = manifestRaw;
+            //}
+
+            // Inject error if the service worker couldn't be found.
+            if (valveTriggered && lighthouseReport.ServiceWorkerAudit != null && lighthouseReport.ServiceWorkerAudit.Details == null)
             {
-                if (swAuditNode["details"] is not JsonObject detailsNode)
-                {
-                    detailsNode = new JsonObject();
-                    swAuditNode["details"] = detailsNode;
-                }
-                detailsNode["error"] = "Service worker timed out";
+                lighthouseReport.ServiceWorkerAudit.Error ??= "SService worker timed out";
             }
 
             // Manifest replacement
-            if (!string.IsNullOrEmpty(pptManifestRaw))
-            {
-                var lhManifestRaw = manifestRawNode["raw"]?.GetValue<string>();
-                if (
-                    string.IsNullOrEmpty(lhManifestRaw)
-                    || pptManifestRaw.Length > lhManifestRaw.Length
-                )
-                {
-                    manifestRawNode["raw"] = pptManifestRaw;
-                    manifestRawNode["url"] = pptManifestUrl ?? "";
-                }
-            }
+            // if (!string.IsNullOrEmpty(pptManifestRaw))
+            // {
+            //     var lhManifestRaw = manifestRawAudit?.Details?.ManifestRaw;
+            //     if (
+            //         string.IsNullOrEmpty(lhManifestRaw)
+            //         || pptManifestRaw.Length > lhManifestRaw.Length
+            //     )
+            //     {
+            //         manifestRawNode["raw"] = pptManifestRaw;
+            //         manifestRawNode["url"] = pptManifestUrl ?? "";
+            //     }
+            // }
 
-            artifacts["Manifest"] = manifestRawNode;
+            // artifacts["Manifest"] = manifestRawNode;
 
             // Build and return the result object
-            var resultNode = new JsonObject
-            {
-                ["audits"] = audits?.DeepClone(),
-                ["artifacts"] = artifacts?.DeepClone(),
-            };
+            // var resultNode = new JsonObject
+            // {
+            //     ["audits"] = audits?.DeepClone(),
+            //     ["artifacts"] = artifacts?.DeepClone(),
+            // };
 
             // Cancel Puppeteer timeout and close browser
             ctsValve.Cancel();
-            await pptBrowser.CloseAsync();
+            await browser.CloseAsync();
 
-            return JsonDocument.Parse(resultNode.ToJsonString());
+            return lighthouseReport;
         }
     }
 }

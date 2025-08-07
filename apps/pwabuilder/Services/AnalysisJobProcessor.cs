@@ -95,6 +95,8 @@ public class AnalysisJobProcessor : IHostedService
             // Run the Lighthouse 
             var lighthouseAudit = await lighthouse.RunAuditAsync(job.Url.ToString(), true);
             analysis.Status = AnalysisStatus.Completed;
+            analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
+            
             await db.SaveAsync(analysis);
         }
         catch (Exception error)

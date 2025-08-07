@@ -1234,37 +1234,34 @@ namespace PWABuilder.Validations
             };
         }
 
-        public static async Task<IEnumerable<Validation>> ValidateManifestAsync(object? webManifest)
-        {
-            return await Task.Run(() =>
+        public static IEnumerable<Validation> ValidateManifestAsync(object? webManifest)
+        {            
+            if (webManifest is not JsonElement webManifestJson)
             {
-                if (webManifest is not JsonElement webManifestJson)
-                {
-                    return Enumerable.Empty<Validation>();
-                }
+                return [];
+            }
 
-                var maniTests = GetValidations();
-                return maniTests.Select(r =>
+            var maniTests = GetValidations();
+            return maniTests.Select(r =>
+            {
+                var propertyExist = webManifestJson.TryGetProperty(
+                    r.Member,
+                    out JsonElement value
+                );
+                var testResult = r.Test(value);
+                return new Validation
                 {
-                    var propertyExist = webManifestJson.TryGetProperty(
-                        r.Member,
-                        out JsonElement value
-                    );
-                    var testResult = r.Test(value);
-                    return new Validation
-                    {
-                        Member = r.Member,
-                        DisplayString = r.DisplayString,
-                        InfoString = r.InfoString,
-                        Category = r.Category,
-                        DefaultValue = r.DefaultValue,
-                        DocsLink = r.DocsLink,
-                        ErrorString = r.ErrorString,
-                        QuickFix = r.QuickFix,
-                        TestRequired = r.TestRequired,
-                        Valid = testResult && propertyExist,
-                    };
-                });
+                    Member = r.Member,
+                    DisplayString = r.DisplayString,
+                    InfoString = r.InfoString,
+                    Category = r.Category,
+                    DefaultValue = r.DefaultValue,
+                    DocsLink = r.DocsLink,
+                    ErrorString = r.ErrorString,
+                    QuickFix = r.QuickFix,
+                    TestRequired = r.TestRequired,
+                    Valid = testResult && propertyExist,
+                };
             });
         }
     }

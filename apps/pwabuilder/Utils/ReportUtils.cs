@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using PWABuilder.Models;
 using PWABuilder.Validations.Models;
@@ -38,31 +39,23 @@ namespace PWABuilder.Utils
                 : null;
         }
 
-        public static WebAppManifestDetails? TryGetWebManifest(JsonElement artifacts_lh)
+        public static WebAppManifestDetails? TryGetWebManifest(LighthouseReport report)
         {
-            return
-                artifacts_lh.ValueKind == JsonValueKind.Object
-                && artifacts_lh.TryGetProperty("Manifest", out var manifestElem)
-                && manifestElem.ValueKind == JsonValueKind.Object
-                ? new WebAppManifestDetails
+            if (report.WebAppManifestAudit != null)
+            {
+                return new WebAppManifestDetails
                 {
-                    url = manifestElem.TryGetProperty("url", out var urlElem)
-                        ? urlElem.GetString()
-                        : null,
-                    raw = manifestElem.TryGetProperty("raw", out var rawElem)
-                        ? rawElem.GetString()
-                        : null,
-                    json =
-                        manifestElem.TryGetProperty("raw", out var rawElem2)
-                        && rawElem2.ValueKind == JsonValueKind.String
-                            ? TryParseJson(rawElem2.GetString())
-                            : null,
-                }
-                : null;
+                    url = report.WebAppManifestAudit.Details?.ManifestUrl,
+                    json = TryParseJson(report.WebAppManifestAudit.Details?.ManifestRaw),
+                    raw = report.WebAppManifestAudit?.Details?.ManifestRaw
+                };
+            }
+
+            return null;
         }
 
         public static Report MapReportOutput(
-            JsonElement audits,
+            LighthouseReport report,
             WebAppManifestDetails? webAppManifestDetails,
             string? swUrl,
             ServiceWorkerValidationResult? serviceWorkerResult,
@@ -71,12 +64,8 @@ namespace PWABuilder.Utils
             IEnumerable<TestResult> securityValidations
         )
         {
-            audits.TryGetProperty("service-worker-audit", out var swAudit);
-
-            var iconsValidation =
-                imagesAudit.details != null ? imagesAudit.details.iconsValidation : null;
-            var screenshotsValidation =
-                imagesAudit.details != null ? imagesAudit.details.screenshotsValidation : null;
+            var iconsValidation = imagesAudit.details?.iconsValidation;
+            var screenshotsValidation = imagesAudit.details?.screenshotsValidation;
             var finalImagesDetails = CreateIfNotAllNull(
                 () =>
                     new ImagesDetails
@@ -88,30 +77,9 @@ namespace PWABuilder.Utils
                 screenshotsValidation
             );
 
-            var scriptUrl =
-                swAudit.ValueKind == JsonValueKind.Object
-                && swAudit.TryGetProperty("details", out var swDetailsObj)
-                && swDetailsObj.ValueKind == JsonValueKind.Object
-                && swDetailsObj.TryGetProperty("scriptUrl", out var scriptUrlElem)
-                    ? scriptUrlElem.GetString()
-                    : null;
-
-            var scopeUrl =
-                swAudit.ValueKind == JsonValueKind.Object
-                && swAudit.TryGetProperty("details", out var swDetailsObj2)
-                && swDetailsObj2.ValueKind == JsonValueKind.Object
-                && swDetailsObj2.TryGetProperty("scopeUrl", out var scopeUrlElem)
-                    ? scopeUrlElem.GetString()
-                    : null;
-
-            var error =
-                swAudit.ValueKind == JsonValueKind.Object
-                && swAudit.TryGetProperty("details", out var swDetailsObj3)
-                && swDetailsObj3.ValueKind == JsonValueKind.Object
-                && swDetailsObj3.TryGetProperty("error", out var errorElem)
-                    ? errorElem.GetString()
-                    : null;
-
+            var scriptUrl = report.ServiceWorkerAudit?.Details?.ScriptUrl;
+            var scopeUrl = report.ServiceWorkerAudit?.Details?.ScopeUrl;
+            var error = report.ServiceWorkerAudit?.Details?.Error;
             var finalServiceWorker = CreateIfNotAllNull(
                 () =>
                     new ServiceWorkerAudit

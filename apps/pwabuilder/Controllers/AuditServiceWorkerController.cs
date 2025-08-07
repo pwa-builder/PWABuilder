@@ -40,7 +40,8 @@ namespace PWABuilder.Controllers
             {
                 var swValidation = await ServiceWorkerValidation.ValidateServiceWorkerAsync(
                     serviceWorkerAnalyzer,
-                    url
+                    url,
+                    new LighthouseReport()
                 );
 
                 var result = new

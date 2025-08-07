@@ -1,4 +1,5 @@
 using System.Text.Json;
+using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Validations.Models;
 
@@ -9,38 +10,14 @@ namespace PWABuilder.Validations
         public static async Task<ServiceWorkerValidationResult> ValidateServiceWorkerAsync(
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
             string? serviceWorkerUrl,
-            JsonElement? audits = null
-        )
+            LighthouseReport lighthouseReport)
         {
             var response = string.IsNullOrWhiteSpace(serviceWorkerUrl)
                 ? null
                 : await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(serviceWorkerUrl);
-
-            var offlineSupport =
-                audits != null
-                && audits.Value.TryGetProperty("offline-audit", out var offlineAudit)
-                && offlineAudit.ValueKind == JsonValueKind.Object
-                && offlineAudit.TryGetProperty("score", out var offlineScoreElem)
-                && offlineScoreElem.ValueKind == JsonValueKind.Number
-                && offlineScoreElem.TryGetDouble(out var offlineScore)
-                    ? offlineScore != 0
-                    : false;
-
+            var offlineSupport = lighthouseReport.OfflineAudit?.Score == 1;
             var hasServiceWorker = response != null && response?.Error == null;
-
-            if (
-                audits != null
-                && audits.Value.TryGetProperty("service-worker-audit", out var swAudit)
-            )
-            {
-                hasServiceWorker =
-                    swAudit.ValueKind == JsonValueKind.Object
-                    && swAudit.TryGetProperty("score", out var swScoreElem)
-                    && swScoreElem.ValueKind == JsonValueKind.Number
-                    && swScoreElem.TryGetDouble(out var swScore)
-                        ? swScore != 0
-                        : false;
-            }
+            hasServiceWorker = lighthouseReport.ServiceWorkerAudit?.Score == 1;
 
             return new ServiceWorkerValidationResult
             {

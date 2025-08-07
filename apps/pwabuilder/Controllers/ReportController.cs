@@ -61,19 +61,10 @@ namespace PWABuilder.Controllers
             try
             {
                 // Run Lighthouse audit
-                var auditResult = await lighthouseService.RunAuditAsync(site, desktop ?? false);
-
-                var root = auditResult.RootElement;
-                var audits = root.TryGetProperty("audits", out var auditsElem)
-                    ? auditsElem
-                    : default;
-                var artifacts_lh = root.TryGetProperty("artifacts", out var artifactsElem)
-                    ? artifactsElem
-                    : default;
-
-                if (audits.ValueKind == JsonValueKind.Undefined)
+                var lighthouseReport = await lighthouseService.RunAuditAsync(site, desktop ?? false);
+                if (lighthouseReport.Audits == null)
                 {
-                    logger.LogWarning("Lighthouse output missing audits.");
+                    logger.LogError("Lighthouse output missing audits.");
                     var auditFailedOutput = RequestUtils.CreateStatusCodeErrorResult(
                         500,
                         "AuditFailed",
@@ -83,16 +74,14 @@ namespace PWABuilder.Controllers
                 }
 
                 // Service Worker features analysis
-                ServiceWorkerValidationResult? serviceWorkerValidationResult = null;
-                var swUrl = ReportUtils.TryGetServiceWorkerUrl(audits);
-
+                ServiceWorkerValidationResult serviceWorkerValidationResult;
                 try
                 {
                     serviceWorkerValidationResult =
                         await ServiceWorkerValidation.ValidateServiceWorkerAsync(
                             serviceWorkerAnalyzer,
-                            swUrl,
-                            audits
+                            lighthouseReport.ServiceWorkerAudit?.Details?.ScriptUrl,
+                            lighthouseReport
                         );
                 }
                 catch (Exception ex)
@@ -103,14 +92,8 @@ namespace PWABuilder.Controllers
                     };
                 }
 
-                // Manifest validation
-                // if (validation == true && auditResult.ManifestJson != null)
-                // {
-                //     auditResult.ManifestValidation = await manifestValidationService.ValidateAsync(auditResult.ManifestJson);
-                // }
-
                 // Image validation
-                var webAppManifestDetails = ReportUtils.TryGetWebManifest(artifacts_lh);
+                var webAppManifestDetails = ReportUtils.TryGetWebManifest(lighthouseReport);
                 var imagesAudit = new ImagesAudit
                 {
                     details = new ImagesDetails
@@ -158,17 +141,14 @@ namespace PWABuilder.Controllers
                     catch { }
                 }
 
-                var manifestValidations = await ManifestValidations.ValidateManifestAsync(
-                    webAppManifestDetails?.json
-                );
-
-                var securityValidations = await SecurityValidation.ValidateSecurityAsync(audits);
+                var manifestValidations = ManifestValidations.ValidateManifestAsync(webAppManifestDetails?.json);
+                var securityValidations = SecurityValidation.ValidateSecurityAsync(lighthouseReport);
 
                 // Build the report object
                 var report = ReportUtils.MapReportOutput(
-                    audits,
+                    lighthouseReport,
                     webAppManifestDetails,
-                    swUrl,
+                    lighthouseReport.ServiceWorkerAudit?.Details?.ScriptUrl,
                     serviceWorkerValidationResult,
                     imagesAudit,
                     manifestValidations,

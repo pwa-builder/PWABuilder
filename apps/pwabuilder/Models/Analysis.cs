@@ -1,17 +1,14 @@
-using Azure;
-using Azure.Data.Tables;
-
 namespace PWABuilder.Models;
 
 /// <summary>
 /// A web app URL that was analyzed with PWABuilder.
 /// </summary>
-public class Analysis : ITableEntity
+public class Analysis
 {
     /// <summary>
     /// The ID of the analysis.
     /// </summary>
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public required string Id { get; set; }
 
     /// <summary>
     /// The URL that was analyzed.
@@ -48,12 +45,13 @@ public class Analysis : ITableEntity
     /// </summary>
     public List<AppStorePackageResult> Packages { get; set; } = [];
 
-    # region ITableEntity implementation
-
-    public string PartitionKey { get => this.CreatedAt.Year.ToString(); set => throw new NotImplementedException(); }
-    public string RowKey { get => this.Id; set => this.Id = value; }
-    public DateTimeOffset? Timestamp { get => this.CreatedAt; set => this.CreatedAt = value ?? DateTimeOffset.UtcNow; }
-    public ETag ETag { get; set; }
-    
-    #endregion
+    /// <summary>
+    /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.
+    /// </summary>
+    /// <param name="uri">The URI of the analysis to generate an ID for.</param>
+    /// <returns>A Redis-cache compatible ID to be used as the key for the object in Redis.</returns>
+    public static string GetId(Uri uri)
+    {
+        return $"analysis:{uri.GetHashCode()}:{DateTime.UtcNow:o}";
+    }
 }

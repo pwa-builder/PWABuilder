@@ -1,24 +1,23 @@
 using Azure;
-using Azure.Data.Tables;
+using StackExchange.Redis;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
 
 namespace PWABuilder.Services;
 
 /// <summary>
-/// Queries and stores Analysis objects in the Azure Table database.
+/// Queries and stores Analysis objects in the PWABuilder's Redis cache in Azure.
 /// </summary>
 public class AnalysisDb
 {
-    private readonly TableClient tableClient;
+    private static readonly TimeSpan analysisExpiration = TimeSpan.FromDays(7);
     private readonly ILogger<AnalysisDb> logger;
+    private readonly IDatabase redis;
 
     public AnalysisDb(IOptions<AppSettings> settings, ILogger<AnalysisDb> logger)
     {
+        this.redis = ConnectionMultiplexer.Connect(settings.Value.AnalysisDbRedisConnectionString).GetDatabase();
         this.logger = logger;
-        var credential = new TableSharedKeyCredential(settings.Value.AzureStorageAccountName, settings.Value.AzureStorageAccessKey);
-        var tableUri = new Uri($"https://{settings.Value.AzureStorageAccountName}.table.core.windows.net/{settings.Value.AzureAnalysesTableName}");
-        this.tableClient = new TableClient(tableUri, settings.Value.AzureAnalysesTableName, credential);
     }
 
     /// <summary>
@@ -29,11 +28,12 @@ public class AnalysisDb
     {
         try
         {
-            await tableClient.UpsertEntityAsync(analysis, TableUpdateMode.Replace);
+            var analysisJson = System.Text.Json.JsonSerializer.Serialize(analysis);
+            await this.redis.StringSetAsync(analysis.Id, analysisJson, expiry: analysisExpiration);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error saving Analysis {id} to the database.", analysis.Id);
+            logger.LogError(ex, "Error saving Analysis {id} to Redis.", analysis.Id);
             throw;
         }
     }
@@ -47,14 +47,16 @@ public class AnalysisDb
     {
         try
         {
-            var response = await tableClient.GetEntityAsync<Analysis>(DateTimeOffset.UtcNow.Year.ToString(), id);
-            return response.Value;
-        }
-        catch (RequestFailedException ex) when (ex.Status == 404)
-        {
-            // Not found, return null
-            logger.LogWarning("Attempted to retrieve Analysis {id}, but it does not exist.", id);
-            return null;
+            var analysisJson = await this.redis.StringGetAsync(id);
+            if (!analysisJson.HasValue)
+            {
+                logger.LogWarning("Attempted to retrieve Analysis {id}, but it does not exist.", id);
+                return null;
+            }
+
+            // See if we can parse it back into an Analysis
+            var analysis = System.Text.Json.JsonSerializer.Deserialize<Analysis>(analysisJson!); // we can be sure analysisJson isn't null here because we checked for HasValue above.
+            return analysis;
         }
         catch (Exception ex)
         {

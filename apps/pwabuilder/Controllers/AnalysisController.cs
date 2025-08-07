@@ -34,6 +34,7 @@ public class AnalysisController : ControllerBase
         // Create a new Analysis object in the database and enqueue an AnalysisJob.
         var analysis = new Analysis
         {
+            Id = Analysis.GetId(url),
             Url = url.ToString(),
             Status = AnalysisStatus.Queued
         };
