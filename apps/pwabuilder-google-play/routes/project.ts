@@ -1,6 +1,6 @@
 import express, { response } from 'express';
-import { BubbleWrapper } from '../build/bubbleWrapper.js';
-import { AndroidPackageOptions as AndroidPackageOptions } from '../build/androidPackageOptions.js';
+import { BubbleWrapper } from '../packaging/bubbleWrapper.js';
+import { AndroidPackageOptions as AndroidPackageOptions } from '../packaging/androidPackageOptions.js';
 import { join } from 'path';
 import tmp, { dir } from 'tmp';
 import archiver from 'archiver';
@@ -8,15 +8,15 @@ import fs from 'fs-extra';
 import {
   LocalKeyFileSigningOptions,
   SigningOptions,
-} from '../build/signingOptions.js';
+} from '../packaging/signingOptions.js';
 import { deleteAsync } from 'del';
-import { GeneratedAppPackage } from '../build/generatedAppPackage.js';
-import { AppPackageRequest } from '../build/appPackageRequest.js';
+import { GeneratedAppPackage } from '../packaging/generatedAppPackage.js';
+import { AppPackageRequest } from '../packaging/appPackageRequest.js';
 import generatePassword from 'password-generator';
 import fetch, { Response } from 'node-fetch';
-import { logUrlResult } from '../build/urlLogger.js';
-import { errorToString } from '../build/utils.js';
-import { AnalyticsInfo, trackEvent } from '../build/analytics.js';
+import { logUrlResult } from '../packaging/urlLogger.js';
+import { errorToString } from '../packaging/utils.js';
+import { AnalyticsInfo, trackEvent } from '../packaging/analytics.js';
 
 const router = express.Router();
 
@@ -214,7 +214,7 @@ function validateApkRequest(request: express.Request): AppPackageRequest {
   }
 
   validationErrors.push(
-    ...requiredFields.filter((f) => !options![f]).map((f) => `${f} is required`)
+    ...requiredFields.filter((f) => !options![f]).map((f) => `${f as string} is required`)
   );
 
   // We must have signing options if the signing is enabled.
