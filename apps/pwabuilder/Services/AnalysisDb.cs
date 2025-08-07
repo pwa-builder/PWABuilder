@@ -25,7 +25,7 @@ public class AnalysisDb
     /// Saves a new or existing analysis to the database.
     /// </summary>
     /// <param name="analysis">The AnalysisJob to add or update.</param>
-    public async Task Save(Analysis analysis)
+    public async Task SaveAsync(Analysis analysis)
     {
         try
         {

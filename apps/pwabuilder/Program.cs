@@ -15,14 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// Load configuration from appsettings and optionally from user secrets
-builder.Configuration
-    .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddUserSecrets<Program>(optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
-
+// App settings
 var appSettings = builder.Configuration.GetSection("AppSettings");
 var aiOptions = AppInsights.setUpAppInsights(appSettings);
 builder.Services.Configure<AppSettings>(appSettings);
@@ -40,7 +33,7 @@ builder.Services.AddSingleton<AnalysisDb>();
 builder.Services.AddSingleton<AnalysisJobQueue>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<ITelemetryService, AnalyticsService>();
+builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddScoped<IImageValidationService, ImageValidationService>();

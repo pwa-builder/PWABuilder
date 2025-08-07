@@ -16,7 +16,7 @@ public class Analysis : ITableEntity
     /// <summary>
     /// The URL that was analyzed.
     /// </summary>
-    public required Uri Url { get; init; }
+    public required string Url { get; init; }
 
     /// <summary>
     /// The date the URL was analyzed.

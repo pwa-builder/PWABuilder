@@ -7,16 +7,16 @@ using PWABuilder.Validations;
 
 namespace PWABuilder.Services
 {
-    public class AnalyticsService : ITelemetryService
+    public class TelemetryService : ITelemetryService
     {
         private readonly IOptions<AppSettings> settings;
-        private readonly ILogger<AnalyticsService> logger;
+        private readonly ILogger<TelemetryService> logger;
         private readonly TelemetryClient telemetryClient;
         private readonly bool isAppInsightsEnabled;
 
-        public AnalyticsService(
+        public TelemetryService(
             IOptions<AppSettings> settings,
-            ILogger<AnalyticsService> logger,
+            ILogger<TelemetryService> logger,
             TelemetryClient telemetryClient
         )
         {

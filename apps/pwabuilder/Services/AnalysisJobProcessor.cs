@@ -12,7 +12,9 @@ public class AnalysisJobProcessor : IHostedService
     private const int MaxRetryCount = 3;
     private readonly AnalysisJobQueue queue;
     private readonly AnalysisDb db;
-    private readonly CancellationTokenSource abortToken = new();
+    private CancellationTokenSource? abortToken;
+    private Task? backgroundTask;
+        
     private readonly ILighthouseService lighthouse;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
@@ -24,12 +26,31 @@ public class AnalysisJobProcessor : IHostedService
         this.logger = logger;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        this.abortToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        this.backgroundTask = Task.Factory.StartNew(() => ListenForJobs(abortToken.Token), abortToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        return Task.CompletedTask;
+    }
+
+    public async Task StopAsync(CancellationToken stoppingToken)
+    {
+        if (abortToken != null)
+        {
+            await abortToken.CancelAsync();
+        }
+        if (backgroundTask != null)
+        {
+            await backgroundTask;
+        }
+    }
+
+    private async Task ListenForJobs(CancellationToken cancelToken)
     {
         // In a loop, check for new AnalysisJob objects in the Azure queue.
-        while (!abortToken.IsCancellationRequested)
+        while (!cancelToken.IsCancellationRequested)
         {
-            var job = await TryDequeueAsync();
+            var job = await TryDequeueAsync(cancelToken);
             if (job != null)
             {
                 await TryProcessJobAsync(job);
@@ -37,21 +58,16 @@ public class AnalysisJobProcessor : IHostedService
             else
             {
                 // No jobs? Wait a few seconds before checking again.
-                await Task.Delay(TimeSpan.FromSeconds(5), abortToken.Token);
+                await Task.Delay(TimeSpan.FromSeconds(3), cancelToken);
             }
         }
     }
 
-    public Task StopAsync(CancellationToken stoppingToken)
-    {
-        return abortToken.CancelAsync();
-    }
-
-    private async Task<AnalysisJob?> TryDequeueAsync()
+    private async Task<AnalysisJob?> TryDequeueAsync(CancellationToken cancelToken)
     {
         try
         {
-            return await queue.DequeueAsync(abortToken.Token);
+            return await queue.DequeueAsync(cancelToken);
         }
         catch (Exception ex)
         {
@@ -74,12 +90,12 @@ public class AnalysisJobProcessor : IHostedService
 
             // Mark the analysis as processing.
             analysis.Status = AnalysisStatus.Processing;
-            await db.Save(analysis);
+            await db.SaveAsync(analysis);
 
             // Run the Lighthouse 
             var lighthouseAudit = await lighthouse.RunAuditAsync(job.Url.ToString(), true);
             analysis.Status = AnalysisStatus.Completed;
-            await db.Save(analysis);
+            await db.SaveAsync(analysis);
         }
         catch (Exception error)
         {
@@ -114,7 +130,7 @@ public class AnalysisJobProcessor : IHostedService
             {
                 analysis.Status = AnalysisStatus.Failed;
                 analysis.Error = error.ToString();
-                await db.Save(analysis);
+                await db.SaveAsync(analysis);
             }
             else
             {
