@@ -7,5 +7,9 @@
         public string ImageGeneratorApiUrl { get; set; } = string.Empty;
         public string AnalyticsUrl { get; set; } = string.Empty;
         public string ApplicationInsightsConnectionString { get; set; } = string.Empty;
+        public string AzureStorageAccountName { get; set; } = string.Empty;
+        public string AzureStorageAccessKey { get; set; } = string.Empty;
+        public string AzureAnalysesQueueName { get; set; } = string.Empty;
+        public string AzureAnalysesTableName { get; set; } = string.Empty;
     }
 }

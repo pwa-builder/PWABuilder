@@ -124,9 +124,9 @@ namespace PWABuilder.Services
                 + $"--disable-full-page-screenshot "
                 + $"--skip-about-blank";
 
-            string pptManifestRaw = "";
-            string pptManifestUrl = "";
-            bool valveTriggered = false;
+            var pptManifestRaw = "";
+            var pptManifestUrl = "";
+            var valveTriggered = false;
 
             var pptDisableFeaturesArg = $"--disable-features={string.Join(",", disabledFeatures)}";
             var pptlaunchOptions = new LaunchOptions

@@ -16,7 +16,7 @@ namespace PWABuilder.Controllers
         private readonly ILogger<ReportController> logger;
         private readonly ILighthouseService lighthouseService;
         private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
-        private readonly IAnalyticsService analyticsService;
+        private readonly ITelemetryService analyticsService;
         private readonly IImageValidationService imageValidationService;
 
         // private readonly IManifestValidationService manifestValidationService;
@@ -25,7 +25,7 @@ namespace PWABuilder.Controllers
             ILogger<ReportController> logger,
             ILighthouseService lighthouseService,
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
-            IAnalyticsService analyticsService,
+            ITelemetryService analyticsService,
             IImageValidationService imageValidationService
         // IManifestValidationService manifestValidationService,
         )

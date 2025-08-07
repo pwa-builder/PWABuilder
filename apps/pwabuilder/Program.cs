@@ -15,7 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// Configuration
+// Load configuration from appsettings and optionally from user secrets
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>(optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
 var appSettings = builder.Configuration.GetSection("AppSettings");
 var aiOptions = AppInsights.setUpAppInsights(appSettings);
 builder.Services.Configure<AppSettings>(appSettings);
@@ -29,7 +36,14 @@ builder.Services.AddTransient<IPuppeteerService, PuppeteerService>();
 builder.Services.AddTransient<TempDirectory>();
 builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
+builder.Services.AddSingleton<AnalysisDb>();
+builder.Services.AddSingleton<AnalysisJobQueue>();
+builder.Services.AddHostedService<AnalysisJobProcessor>();
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<ITelemetryService, AnalyticsService>();
+builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
+builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
+builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
 builder.Services.AddControllersWithViews();
 builder
     .Services.AddControllers()
@@ -46,10 +60,6 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "PWABuilder", Version = "v1" });
 });
-builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
-builder.Services.AddScoped<ILighthouseService, LighthouseService>();
-builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
-builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
 
 if (builder.Environment.IsDevelopment())
 {

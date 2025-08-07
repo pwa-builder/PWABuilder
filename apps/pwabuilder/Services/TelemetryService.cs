@@ -7,7 +7,7 @@ using PWABuilder.Validations;
 
 namespace PWABuilder.Services
 {
-    public class AnalyticsService : IAnalyticsService
+    public class AnalyticsService : ITelemetryService
     {
         private readonly IOptions<AppSettings> settings;
         private readonly ILogger<AnalyticsService> logger;

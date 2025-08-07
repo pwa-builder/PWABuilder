@@ -12,11 +12,11 @@ namespace PWABuilder.IOS.Controllers
     {
         private readonly ILogger<IOSPackageController> logger;
         private readonly IOSPackageCreator packageCreator;
-        private readonly IAnalyticsService analyticsService;
+        private readonly ITelemetryService analyticsService;
 
         public IOSPackageController(
             IOSPackageCreator packageCreator,
-            IAnalyticsService analyticsService,
+            ITelemetryService analyticsService,
             ILogger<IOSPackageController> logger
         )
         {

@@ -1,10 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8c239d4f-255c-44bb-add6-d027783831f5</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.23.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -26,32 +29,16 @@
   <ItemGroup>
     <PublicFilesToCopyToWwwroot Include="Frontend\public\*.*" />
   </ItemGroup>
-  <Target
-    Name="CopyPublicFilesToWwwroot"
-    BeforeTargets="Build"
-    Condition="$(Configuration) != 'Release'"
-  >
+  <Target Name="CopyPublicFilesToWwwroot" BeforeTargets="Build" Condition="$(Configuration) != 'Release'">
     <Message Text="Copying files from /public to /wwwroot" Importance="high" />
-    <Copy
-      SourceFiles="@(PublicFilesToCopyToWwwroot)"
-      DestinationFolder="wwwroot"
-      SkipUnchangedFiles="true"
-    />
+    <Copy SourceFiles="@(PublicFilesToCopyToWwwroot)" DestinationFolder="wwwroot" SkipUnchangedFiles="true" />
   </Target>
-  <Target
-    Name="CompileClient"
-    AfterTargets="PostBuildEvent"
-    Condition="$(Configuration) == 'Release'"
-  >
+  <Target Name="CompileClient" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Release'">
     <Message Text="Building frontend..." Importance="high" />
     <Exec ContinueOnError="True" Command="del /F /q wwwroot\code" />
     <Exec WorkingDirectory="./Frontend" Command="npm install" />
     <Exec WorkingDirectory="./Frontend" Command="npm run build" />
-    <Move
-      SourceFiles="wwwroot\index.html"
-      DestinationFiles="wwwroot\vite-index.html"
-      ContinueOnError="true"
-    />
+    <Move SourceFiles="wwwroot\index.html" DestinationFiles="wwwroot\vite-index.html" ContinueOnError="true" />
   </Target>
   <ItemGroup>
     <None Update="Resources\IOS\ios-next-steps.html">

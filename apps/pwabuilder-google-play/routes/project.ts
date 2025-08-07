@@ -290,7 +290,7 @@ function validateApkRequest(request: express.Request): AppPackageRequest {
     validationErrors.push(
       ...requiredSigningOptions
         .filter((f) => !options?.signing![f])
-        .map((f) => `Signing option ${f} is required`)
+        .map((f) => `Signing option ${f as string} is required`)
     );
   }
 
