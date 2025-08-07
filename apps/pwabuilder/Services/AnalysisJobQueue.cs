@@ -51,20 +51,44 @@ public class AnalysisJobQueue
     {
         try
         {
-            var response = await this.queue.ReceiveMessageAsync(cancellationToken: cancellationToken);
-            if (response.Value != null)
-            {
-                var jobJson = response.Value.MessageText;
-                var job = System.Text.Json.JsonSerializer.Deserialize<AnalysisJob>(jobJson);
-                return job;
-            }
-
-            return null;
+            var response = await this.DequeueCore(cancellationToken);
+            return response;
         }
         catch (Exception error)
         {
             logger.LogError(error, "Error dequeuing AnalysisJob from the Azure Queue.");
             throw;
+        }
+    }
+
+    private async Task<AnalysisJob?> DequeueCore(CancellationToken cancelToken)
+    {
+        // ReceiveMessageAsync will hide this message temporarily from other consumers.
+        // We still need to call DeleteMessageAsync to remove it from the queue.
+        var response = await this.queue.ReceiveMessageAsync(cancellationToken: cancelToken);
+        try
+        {
+            var analysisJobJson = response?.Value?.MessageText;
+            if (analysisJobJson == null)
+            {
+                return null;
+            }
+
+            var job = System.Text.Json.JsonSerializer.Deserialize<AnalysisJob>(analysisJobJson);
+            return job;
+        }
+        catch (Exception serializationError)
+        {
+            logger.LogError(serializationError, "Error deserializing AnalysisJob from the Azure Queue. Queue message is set to expire on {expire}. Message JSON: {queueMessage}", response?.Value?.ExpiresOn, response?.Value?.MessageText);
+            throw;
+        }
+        finally
+        {
+            // We've read the message. Delete it.
+            if (response?.Value?.MessageId != null)
+            {
+                await this.queue.DeleteMessageAsync(response.Value.MessageId, response.Value.PopReceipt, cancelToken);
+            }
         }
     }
 
