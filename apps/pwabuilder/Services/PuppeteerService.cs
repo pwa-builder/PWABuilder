@@ -65,8 +65,6 @@ namespace PWABuilder.Services
                 }
             );
 
-            await Task.Delay(1000);
-
             return page;
         }
 

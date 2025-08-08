@@ -73,24 +73,11 @@ namespace PWABuilder.Services
                 throw new ArgumentException("Invalid URL.");
             }
 
-            Stopwatch zanzWatch = new Stopwatch();
-
-            zanzWatch.Start();
-
-            var viewport = formFactor == BrowserFormFactor.Desktop ? DesktopViewport : MobileViewport;
-            var userAgent = formFactor == BrowserFormFactor.Desktop ? DesktopUserAgent : MobileUserAgent;
             int headlessChromePort = GetAvailablePort();
             var puppeteer = await this.CreatePuppeteer(url, formFactor, headlessChromePort);
 
-            var zanzMark1InitializePuppeteer = zanzWatch.Elapsed;
-            zanzWatch.Restart();
-
             await using var browser = puppeteer.GetBrowser();
-            var zanzMark2CreateBrowser = zanzWatch.Elapsed;
-            zanzWatch.Restart();
             await using var page = await browser.NewPageAsync();
-            var zanzMark3CreatePage = zanzWatch.Elapsed;
-            zanzWatch.Restart();
 
             // Set up request interception
             await page.SetBypassServiceWorkerAsync(true);
@@ -109,7 +96,7 @@ namespace PWABuilder.Services
             };
 
             // Puppeteer valve trigger timeout
-            var ctsValve = new CancellationTokenSource();
+            using var ctsValve = new CancellationTokenSource();
             var valveTriggered = false;
             var valveTask = Task.Delay(lhTimeoutMilliseconds * 2, ctsValve.Token)
                 .ContinueWith(async t =>
@@ -117,15 +104,13 @@ namespace PWABuilder.Services
                     valveTriggered = true;
                     try
                     {
+                        // Start a Chrome dev tools protocol session.
                         var client = await page.CreateCDPSessionAsync();
                         await client.SendAsync("ServiceWorker.enable");
                         await client.SendAsync("ServiceWorker.stopAllWorkers");
                     }
                     catch { }
                 });
-
-            var zanzMark4PuppeteerSetup = zanzWatch.Elapsed;
-            zanzWatch.Restart();
 
             await page.GoToAsync(
                 url,
@@ -136,16 +121,8 @@ namespace PWABuilder.Services
                 }
             );
 
-            var zanzMark5Navigate = zanzWatch.Elapsed;
-            zanzWatch.Restart();
-
-            await Task.Delay(1000);
-
             // Start Lighthouse process
             using var lhProcess = StartLighthouse(url, formFactor, headlessChromePort);
-
-            var zanzMark6LighthouseStart = zanzWatch.Elapsed;
-            zanzWatch.Restart();
 
             // Lighthouse Timeout
             using var ctsLighthouse = new CancellationTokenSource(lhTimeoutMilliseconds);
@@ -153,13 +130,9 @@ namespace PWABuilder.Services
             var lhOutputTask = lhProcess.StandardOutput.ReadToEndAsync();
             var lhErrorTask = lhProcess.StandardError.ReadToEndAsync();
             var lhWaitTask = lhProcess.WaitForExitAsync(ctsLighthouse.Token);
-
-            TimeSpan zanz7WaitForLighthouseCompletion = TimeSpan.Zero;
             try
             {
                 await lhWaitTask;
-                zanz7WaitForLighthouseCompletion = zanzWatch.Elapsed;
-                zanzWatch.Restart();
             }
             catch (OperationCanceledException)
             {
@@ -197,18 +170,9 @@ namespace PWABuilder.Services
                 lighthouseReport.ServiceWorkerAudit.Error ??= "SService worker timed out";
             }
 
-            var zanzMark7ReportSerialization = zanzWatch.Elapsed;
-            zanzWatch.Restart();
-
             // Cancel Puppeteer timeout and close browser
             ctsValve.Cancel();
             await browser.CloseAsync();
-
-            var zanzMark8PuppeteerClose = zanzWatch.Elapsed;
-            zanzWatch.Stop();
-            var times = new TimeSpan[] { zanzMark1InitializePuppeteer, zanzMark2CreateBrowser, zanzMark3CreatePage, zanzMark4PuppeteerSetup, zanzMark5Navigate, zanzMark6LighthouseStart, zanzMark7ReportSerialization, zanzMark8PuppeteerClose };
-            Console.WriteLine("zanz times {0}", times);
-
             return lighthouseReport;
         }
 
