@@ -5,6 +5,6 @@ namespace PWABuilder.Services
 {
     public interface ILighthouseService
     {
-        Task<LighthouseReport> RunAuditAsync(string url, bool desktop);
+        Task<LighthouseReport> RunAuditAsync(string url, BrowserFormFactor formFactor);
     }
 }

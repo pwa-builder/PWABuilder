@@ -93,7 +93,7 @@ public class AnalysisJobProcessor : IHostedService
             await db.SaveAsync(analysis);
 
             // Run the Lighthouse 
-            var lighthouseAudit = await lighthouse.RunAuditAsync(job.Url.ToString(), true);
+            var lighthouseAudit = await lighthouse.RunAuditAsync(job.Url.ToString(), BrowserFormFactor.Desktop);
             analysis.Status = AnalysisStatus.Completed;
             analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
             

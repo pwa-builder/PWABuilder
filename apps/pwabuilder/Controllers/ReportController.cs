@@ -61,7 +61,7 @@ namespace PWABuilder.Controllers
             try
             {
                 // Run Lighthouse audit
-                var lighthouseReport = await lighthouseService.RunAuditAsync(site, desktop ?? false);
+                var lighthouseReport = await lighthouseService.RunAuditAsync(site, desktop == true ? BrowserFormFactor.Desktop : BrowserFormFactor.Mobile);
                 if (lighthouseReport.Audits == null)
                 {
                     logger.LogError("Lighthouse output missing audits.");

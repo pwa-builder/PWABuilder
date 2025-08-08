@@ -16,7 +16,7 @@ namespace PWABuilder.Services
             this.env = env;
         }
 
-        public async Task CreateAsync(LaunchOptions? customLaunchOptions = null)
+        public async Task<IBrowser> CreateAsync(LaunchOptions? customLaunchOptions = null)
         {
             if (env.IsProduction())
             {
@@ -44,12 +44,15 @@ namespace PWABuilder.Services
             var browser = await Puppeteer.LaunchAsync(launchOptions);
 
             this.browser = browser;
+            return browser;
         }
 
         public async Task<IPage> GoToSite(string site)
         {
             if (browser == null)
-                await CreateAsync();
+            {
+                browser = await CreateAsync();
+            }
 
             var page = await browser.NewPageAsync();
             await page.SetUserAgentAsync(Constant.DESKTOP_USERAGENT);
@@ -75,7 +78,9 @@ namespace PWABuilder.Services
         public async ValueTask DisposeAsync()
         {
             if (browser != null)
+            {
                 await browser.DisposeAsync();
+            }
         }
     }
 }

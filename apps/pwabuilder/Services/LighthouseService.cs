@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using PuppeteerSharp;
@@ -34,35 +35,27 @@ namespace PWABuilder.Services
             // 'OptimizationHints'
         ];
 
-        private readonly Dictionary<bool, ViewPortOptions> viewPorts = new()
+        private static readonly ViewPortOptions DesktopViewport = new ViewPortOptions
         {
-            [true] = new ViewPortOptions // desktop
-            {
-                Width = 1024,
-                Height = 768,
-                DeviceScaleFactor = 1,
-                IsMobile = false,
-                HasTouch = false,
-                IsLandscape = true,
-            },
-            [false] = new ViewPortOptions // mobile
-            {
-                Width = 375,
-                Height = 667,
-                DeviceScaleFactor = 2,
-                IsMobile = true,
-                HasTouch = true,
-                IsLandscape = false,
-            },
+            Width = 1024,
+            Height = 768,
+            DeviceScaleFactor = 1,
+            IsMobile = false,
+            HasTouch = false,
+            IsLandscape = true,
+        };
+        private static readonly ViewPortOptions MobileViewport = new ViewPortOptions
+        {
+            Width = 375,
+            Height = 667,
+            DeviceScaleFactor = 2,
+            IsMobile = true,
+            HasTouch = true,
+            IsLandscape = false,
         };
 
-        private readonly Dictionary<bool, string> userAgent = new()
-        {
-            [true] = // desktop
-                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 PWABuilderHttpAgent",
-            [false] = // mobile
-                "Mozilla/5.0 (Linux; Android 10; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36 PWABuilderHttpAgent",
-        };
+        private const string DesktopUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 PWABuilderHttpAgent";
+        private const string MobileUserAgent = "Mozilla/5.0 (Linux; Android 10; Pixel 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36 PWABuilderHttpAgent";
 
         private static int GetAvailablePort()
         {
@@ -73,90 +66,31 @@ namespace PWABuilder.Services
             return port;
         }
 
-        public async Task<LighthouseReport> RunAuditAsync(string url, bool desktop)
+        public async Task<LighthouseReport> RunAuditAsync(string url, BrowserFormFactor formFactor)
         {
             if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
                 throw new ArgumentException("Invalid URL.");
             }
 
+            Stopwatch zanzWatch = new Stopwatch();
+
+            zanzWatch.Start();
+
+            var viewport = formFactor == BrowserFormFactor.Desktop ? DesktopViewport : MobileViewport;
+            var userAgent = formFactor == BrowserFormFactor.Desktop ? DesktopUserAgent : MobileUserAgent;
             int headlessChromePort = GetAvailablePort();
+            var puppeteer = await this.CreatePuppeteer(url, formFactor, headlessChromePort);
 
-            var nodePath = Environment.GetEnvironmentVariable("NODE_BIN");
-            var lighthouseDirectory = Environment.GetEnvironmentVariable("LIGHTHOUSE_WORKDIR");
-            var workingDirectory = !string.IsNullOrWhiteSpace(lighthouseDirectory)
-                ? Path.GetFullPath(lighthouseDirectory, Directory.GetCurrentDirectory())
-                : Path.Combine(Directory.GetCurrentDirectory(), "node-scripts");
-            var lighthouseSettingsPath = Path.Combine(
-                workingDirectory,
-                "dist",
-                "src",
-                "lighthouserc.js"
-            );
-            string lighthouseScript = Path.Combine("node_modules", "lighthouse", "cli", "index.js");
-
-            if (string.IsNullOrWhiteSpace(nodePath) || !File.Exists(nodePath))
-            {
-                throw new FileNotFoundException($"NODE_BIN not found or invalid: {nodePath}");
-            }
-
-            var lighthouseScriptFullPath = Path.Combine(workingDirectory, lighthouseScript);
-            if (!File.Exists(lighthouseScriptFullPath))
-            {
-                throw new FileNotFoundException(
-                    $"Lighthouse script not found: {lighthouseScriptFullPath}"
-                );
-            }
-
-            var lhArgs =
-                $"\"{lighthouseScript}\" "
-                + $"{url} "
-                + $"--quiet "
-                + $"--chrome-flags=\"--headless --no-sandbox\" "
-                + $"--output=json --output-path=stdout "
-                + $"--port={headlessChromePort} "
-                + $"--config-path=\"{lighthouseSettingsPath}\" "
-                + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit "
-                + $"--form-factor={(desktop ? "desktop" : "mobile")} "
-                + $"{(desktop ? "" : "--screenEmulation.mobile ")}"
-                + $"--screenEmulation.width={viewPorts[desktop].Width} "
-                + $"--screenEmulation.height={viewPorts[desktop].Height} "
-                + $"--screenEmulation.deviceScaleFactor={viewPorts[desktop].DeviceScaleFactor} "
-                + $"--emulatedUserAgent=\"{userAgent[desktop]}\" "
-                + $"--locale=en-US "
-                + $"--max-wait-for-fcp=15000 "
-                + $"--max-wait-for-load=30000 "
-                + $"--disable-storage-reset "
-                + $"--disable-full-page-screenshot "
-                + $"--skip-about-blank";
-
-            var pptManifestRaw = "";
-            var pptManifestUrl = "";
-            var valveTriggered = false;
-
-            var pptDisableFeaturesArg = $"--disable-features={string.Join(",", disabledFeatures)}";
-            var pptlaunchOptions = new LaunchOptions
-            {
-                Args =
-                [
-                    "--no-sandbox",
-                    "--no-pings",
-                    "--deny-permission-prompts",
-                    "--disable-domain-reliability",
-                    "--disable-gpu",
-                    "--block-new-web-contents",
-                    pptDisableFeaturesArg,
-                    $"--remote-debugging-port={headlessChromePort}",
-                ],
-                Headless = true,
-                DefaultViewport = viewPorts[desktop],
-            };
-
-            await using var puppeteer = new PuppeteerService(env);
-            await puppeteer.CreateAsync(pptlaunchOptions);
+            var zanzMark1InitializePuppeteer = zanzWatch.Elapsed;
+            zanzWatch.Restart();
 
             await using var browser = puppeteer.GetBrowser();
+            var zanzMark2CreateBrowser = zanzWatch.Elapsed;
+            zanzWatch.Restart();
             await using var page = await browser.NewPageAsync();
+            var zanzMark3CreatePage = zanzWatch.Elapsed;
+            zanzWatch.Restart();
 
             // Set up request interception
             await page.SetBypassServiceWorkerAsync(true);
@@ -174,18 +108,9 @@ namespace PWABuilder.Services
                 await e.Dialog.Dismiss();
             };
 
-            // Intercept manifest
-            page.Response += async (sender, e) =>
-            {
-                if (e.Response.Request.ResourceType == ResourceType.Manifest)
-                {
-                    pptManifestRaw = await e.Response.TextAsync();
-                    pptManifestUrl = e.Response.Url;
-                }
-            };
-
             // Puppeteer valve trigger timeout
             var ctsValve = new CancellationTokenSource();
+            var valveTriggered = false;
             var valveTask = Task.Delay(lhTimeoutMilliseconds * 2, ctsValve.Token)
                 .ContinueWith(async t =>
                 {
@@ -199,6 +124,9 @@ namespace PWABuilder.Services
                     catch { }
                 });
 
+            var zanzMark4PuppeteerSetup = zanzWatch.Elapsed;
+            zanzWatch.Restart();
+
             await page.GoToAsync(
                 url,
                 new NavigationOptions
@@ -208,27 +136,16 @@ namespace PWABuilder.Services
                 }
             );
 
+            var zanzMark5Navigate = zanzWatch.Elapsed;
+            zanzWatch.Restart();
+
             await Task.Delay(1000);
 
             // Start Lighthouse process
-            var lighthouseStartInfo = new ProcessStartInfo
-            {
-                FileName = nodePath,
-                WorkingDirectory = workingDirectory,
-                Arguments = lhArgs,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            };
+            using var lhProcess = StartLighthouse(url, formFactor, headlessChromePort);
 
-            using var lhProcess = Process.Start(lighthouseStartInfo);
-            if (
-                lhProcess == null
-                || lhProcess.StandardOutput == null
-                || lhProcess.StandardError == null
-            )
-                throw new Exception("Failed to start Lighthouse process.");
+            var zanzMark6LighthouseStart = zanzWatch.Elapsed;
+            zanzWatch.Restart();
 
             // Lighthouse Timeout
             using var ctsLighthouse = new CancellationTokenSource(lhTimeoutMilliseconds);
@@ -237,9 +154,12 @@ namespace PWABuilder.Services
             var lhErrorTask = lhProcess.StandardError.ReadToEndAsync();
             var lhWaitTask = lhProcess.WaitForExitAsync(ctsLighthouse.Token);
 
+            TimeSpan zanz7WaitForLighthouseCompletion = TimeSpan.Zero;
             try
             {
                 await lhWaitTask;
+                zanz7WaitForLighthouseCompletion = zanzWatch.Elapsed;
+                zanzWatch.Restart();
             }
             catch (OperationCanceledException)
             {
@@ -271,54 +191,138 @@ namespace PWABuilder.Services
                 throw error;
             }
 
-            //var audits = lighthouseReport.Audits;
-            //var artifacts = new JsonObject();
-            //var manifestRawNode = new JsonObject();
-
-            // if (hasWebAppManifestAudit && manifestRawAudit?.Details != null)
-            // {
-            //     var manifestUrl = manifestRawAudit.Details.ManifestUrl;
-            //     var manifestRaw = manifestRawAudit.Details.ManifestRaw;
-                // if (!string.IsNullOrEmpty(manifestUrl))
-                //     manifestRawNode["url"] = manifestUrl;
-                // if (!string.IsNullOrEmpty(manifestRaw))
-                //     manifestRawNode["raw"] = manifestRaw;
-            //}
-
             // Inject error if the service worker couldn't be found.
             if (valveTriggered && lighthouseReport.ServiceWorkerAudit != null && lighthouseReport.ServiceWorkerAudit.Details == null)
             {
                 lighthouseReport.ServiceWorkerAudit.Error ??= "SService worker timed out";
             }
 
-            // Manifest replacement
-            // if (!string.IsNullOrEmpty(pptManifestRaw))
-            // {
-            //     var lhManifestRaw = manifestRawAudit?.Details?.ManifestRaw;
-            //     if (
-            //         string.IsNullOrEmpty(lhManifestRaw)
-            //         || pptManifestRaw.Length > lhManifestRaw.Length
-            //     )
-            //     {
-            //         manifestRawNode["raw"] = pptManifestRaw;
-            //         manifestRawNode["url"] = pptManifestUrl ?? "";
-            //     }
-            // }
-
-            // artifacts["Manifest"] = manifestRawNode;
-
-            // Build and return the result object
-            // var resultNode = new JsonObject
-            // {
-            //     ["audits"] = audits?.DeepClone(),
-            //     ["artifacts"] = artifacts?.DeepClone(),
-            // };
+            var zanzMark7ReportSerialization = zanzWatch.Elapsed;
+            zanzWatch.Restart();
 
             // Cancel Puppeteer timeout and close browser
             ctsValve.Cancel();
             await browser.CloseAsync();
 
+            var zanzMark8PuppeteerClose = zanzWatch.Elapsed;
+            zanzWatch.Stop();
+            var times = new TimeSpan[] { zanzMark1InitializePuppeteer, zanzMark2CreateBrowser, zanzMark3CreatePage, zanzMark4PuppeteerSetup, zanzMark5Navigate, zanzMark6LighthouseStart, zanzMark7ReportSerialization, zanzMark8PuppeteerClose };
+            Console.WriteLine("zanz times {0}", times);
+
             return lighthouseReport;
         }
+
+        private async Task<PuppeteerService> CreatePuppeteer(string url, BrowserFormFactor formFactor, int headlessChromePort)
+        {
+            var viewport = formFactor == BrowserFormFactor.Desktop
+                ? DesktopViewport
+                : MobileViewport;
+            var disabledFeaturesArg = $"--disable-features={string.Join(",", disabledFeatures)}";
+            var launchOptions = new LaunchOptions
+            {
+                Args =
+                [
+                    "--no-sandbox",
+                    "--no-pings",
+                    "--deny-permission-prompts",
+                    "--disable-domain-reliability",
+                    "--disable-gpu",
+                    "--block-new-web-contents",
+                    disabledFeaturesArg,
+                    $"--remote-debugging-port={headlessChromePort}",
+                ],
+                Headless = true,
+                DefaultViewport = viewport
+            };
+
+            var puppeteer = new PuppeteerService(env);
+            await puppeteer.CreateAsync(launchOptions);
+            return puppeteer;
+        }
+
+        private static Process StartLighthouse(string url, BrowserFormFactor formFactor, int headlessChromePort)
+        {
+            var nodePath = Environment.GetEnvironmentVariable("NODE_BIN");
+            var lighthouseDirectory = Environment.GetEnvironmentVariable("LIGHTHOUSE_WORKDIR");
+            var workingDirectory = !string.IsNullOrWhiteSpace(lighthouseDirectory)
+                ? Path.GetFullPath(lighthouseDirectory, Directory.GetCurrentDirectory())
+                : Path.Combine(Directory.GetCurrentDirectory(), "node-scripts");
+            var lighthouseSettingsPath = Path.Combine(
+                workingDirectory,
+                "dist",
+                "src",
+                "lighthouserc.js"
+            );
+
+            var lighthouseScript = Path.Combine("node_modules", "lighthouse", "cli", "index.js");
+            if (string.IsNullOrWhiteSpace(nodePath) || !File.Exists(nodePath))
+            {
+                throw new FileNotFoundException($"NODE_BIN not found or invalid: {nodePath}");
+            }
+
+            var lighthouseScriptFullPath = Path.Combine(workingDirectory, lighthouseScript);
+            if (!File.Exists(lighthouseScriptFullPath))
+            {
+                throw new FileNotFoundException(
+                    $"Lighthouse script not found: {lighthouseScriptFullPath}"
+                );
+            }
+
+            var viewport = formFactor == BrowserFormFactor.Desktop
+                ? DesktopViewport
+                : MobileViewport;
+            var userAgent = formFactor == BrowserFormFactor.Desktop
+                ? DesktopUserAgent
+                : MobileUserAgent;
+            var lhArgs =
+                $"\"{lighthouseScript}\" "
+                + $"{url} "
+                + $"--quiet "
+                + $"--chrome-flags=\"--headless --no-sandbox\" "
+                + $"--output=json --output-path=stdout "
+                + $"--port={headlessChromePort} "
+                + $"--config-path=\"{lighthouseSettingsPath}\" "
+                + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit "
+                + $"--form-factor={(formFactor == BrowserFormFactor.Desktop ? "desktop" : "mobile")} "
+                + $"{(formFactor == BrowserFormFactor.Mobile ? "--screenEmulation.mobile " : string.Empty)}"
+                + $"--screenEmulation.width={viewport.Width} "
+                + $"--screenEmulation.height={viewport.Height} "
+                + $"--screenEmulation.deviceScaleFactor={viewport.DeviceScaleFactor} "
+                + $"--emulatedUserAgent=\"{userAgent}\" "
+                + $"--locale=en-US "
+                + $"--max-wait-for-fcp=15000 "
+                + $"--max-wait-for-load=30000 "
+                + $"--disable-storage-reset "
+                + $"--disable-full-page-screenshot "
+                + $"--skip-about-blank";
+            var lighthouseStartInfo = new ProcessStartInfo
+            {
+                FileName = nodePath,
+                WorkingDirectory = workingDirectory,
+                Arguments = lhArgs,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+
+            var lhProcess = Process.Start(lighthouseStartInfo);
+            if (lhProcess == null || lhProcess.StandardOutput == null || lhProcess.StandardError == null)
+            {
+                lhProcess?.Dispose();
+                throw new Exception("Failed to start Lighthouse process.");
+            }
+
+            return lhProcess;
+        }
+    }
+
+    /// <summary>
+    /// Browser form factor.
+    /// </summary>
+    public enum BrowserFormFactor
+    {
+        Desktop,
+        Mobile
     }
 }
