@@ -6,6 +6,9 @@ using PWABuilder.Models;
 
 namespace PWABuilder.Services;
 
+/// <summary>
+/// Detects service worker registrations given a URL.
+/// </summary>
 public class ServiceWorkerDetector
 {
     private readonly HttpClient http;

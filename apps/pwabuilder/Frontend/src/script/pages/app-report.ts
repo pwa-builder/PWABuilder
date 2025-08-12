@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, css, html } from 'lit';
+import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, setManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
