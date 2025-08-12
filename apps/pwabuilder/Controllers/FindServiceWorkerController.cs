@@ -31,7 +31,7 @@ namespace PWABuilder.Controllers
             var siteUri = new Uri(site);
             http.DefaultRequestHeaders.Add(
                 "User-Agent",
-                $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent"
+                $"{Constants.DesktopUserAgent} PWABuilderHttpAgent"
             );
 
             try
@@ -88,8 +88,7 @@ namespace PWABuilder.Controllers
                 );
                 try
                 {
-                    await puppeteer.CreateAsync();
-                    var page = await puppeteer.GoToSite(site);
+                    var page = await puppeteer.Navigate(siteUri);
                     var jsGetServiceWorker =
                         @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting?.scriptURL : null ) : Promise.resolve(null))";
                     var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(

@@ -6,7 +6,7 @@ namespace PWABuilder.Models
     {
         public IEnumerable<Validation>? Validations { get; set; } = validations;
         public object Json { get; set; } = json;
-        public string Raw { get; set; } = json.ToString();
+        public string? Raw { get; set; } = json?.ToString();
         public Uri Url { get; set; } = url;
     }
 }

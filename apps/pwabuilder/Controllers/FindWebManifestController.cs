@@ -32,7 +32,7 @@ namespace PWABuilder.Controllers
             var siteUri = new Uri(site);
             http.DefaultRequestHeaders.Add(
                 "User-Agent",
-                $"{Constant.DESKTOP_USERAGENT} PWABuilderHttpAgent"
+                $"{Constants.DesktopUserAgent} PWABuilderHttpAgent"
             );
 
             try
@@ -64,7 +64,7 @@ namespace PWABuilder.Controllers
                 }
 
                 var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                var validations = ManifestValidations.ValidateManifestAsync(manifestJson);
+                var validations = ManifestValidations.ValidateManifest(manifestJson);
                 var output = new
                 {
                     Status = 200,
@@ -84,8 +84,7 @@ namespace PWABuilder.Controllers
                 );
                 try
                 {
-                    await puppeteer.CreateAsync();
-                    using var page = await puppeteer.GoToSite(site);
+                    using var page = await puppeteer.Navigate(siteUri);
                     var jsSelectAllManifestLink =
                         @"Array.from(document.querySelectorAll('link[rel*=manifest]')).map(a => a.href);";
                     var urls = await page.EvaluateExpressionAsync<string[]>(
@@ -105,7 +104,7 @@ namespace PWABuilder.Controllers
                     }
 
                     var manifestJson = manifest.Content.ReadFromJsonAsync<object>().Result;
-                    var validations = ManifestValidations.ValidateManifestAsync(manifestJson);
+                    var validations = ManifestValidations.ValidateManifest(manifestJson);
                     var output = new
                     {
                         Status = 200,

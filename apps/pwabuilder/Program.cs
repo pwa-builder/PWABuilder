@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PWABuilder.Common;
 using PWABuilder.IOS.Services;
 using PWABuilder.Models;
 using PWABuilder.Services;
@@ -31,13 +32,27 @@ builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
 builder.Services.AddSingleton<AnalysisDb>();
 builder.Services.AddSingleton<AnalysisJobQueue>();
+builder.Services.AddSingleton<HtmlFetchCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
+builder.Services.AddSingleton(services =>
+{
+    // Create a single, reusable Puppeteer browser instance. This can be used across different requests so that we're not spinning up multiple browsers for each request.
+    var env = services.GetRequiredService<IHostEnvironment>();
+    return PuppeteerService.CreateBrowserAsync(env);
+});
 builder.Services.AddControllersWithViews();
+
+// An HTTP client with the PWABuilderHttpAgent string appended. 
+builder.Services.AddHttpClient(Constants.PwaBuilderAgentHttpClient, client =>
+{
+    client.DefaultRequestHeaders.UserAgent.ParseAdd($"{Constants.DesktopUserAgent} PWABuilderHttpAgent");
+});
+
 builder
     .Services.AddControllers()
     .AddJsonOptions(options =>

@@ -1234,7 +1234,7 @@ namespace PWABuilder.Validations
             };
         }
 
-        public static IEnumerable<Validation> ValidateManifestAsync(object? webManifest)
+        public static IEnumerable<Validation> ValidateManifest(object? webManifest)
         {            
             if (webManifest is not JsonElement webManifestJson)
             {

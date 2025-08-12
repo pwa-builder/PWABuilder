@@ -13,23 +13,32 @@ public class AnalysisJobProcessor : IHostedService
     private readonly AnalysisJobQueue queue;
     private readonly AnalysisDb db;
     private CancellationTokenSource? abortToken;
-    private Task? backgroundTask;
-        
+    private Task? jobProcessorTask;
+    private readonly ManifestDetectionService manifestDetectionService;
+    private readonly ServiceWorkerDetectionService serviceWorkerDetectionService;
     private readonly ILighthouseService lighthouse;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
-    public AnalysisJobProcessor(AnalysisJobQueue queue, AnalysisDb db, ILighthouseService lighthouse, ILogger<AnalysisJobProcessor> logger)
+    public AnalysisJobProcessor(
+        AnalysisJobQueue queue, 
+        AnalysisDb db, 
+        ManifestDetectionService manifestDetectionService,
+        ServiceWorkerDetectionService serviceWorkerDetectionService,
+        ILighthouseService lighthouse, 
+        ILogger<AnalysisJobProcessor> logger)
     {
         this.queue = queue;
         this.db = db;
         this.lighthouse = lighthouse;
+        this.manifestDetectionService = manifestDetectionService;
+        this.serviceWorkerDetectionService = serviceWorkerDetectionService;
         this.logger = logger;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         this.abortToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        this.backgroundTask = Task.Factory.StartNew(() => ListenForJobs(abortToken.Token), abortToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        this.jobProcessorTask = Task.Factory.StartNew(() => ListenForJobs(abortToken.Token), abortToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         return Task.CompletedTask;
     }
 
@@ -39,9 +48,9 @@ public class AnalysisJobProcessor : IHostedService
         {
             await abortToken.CancelAsync();
         }
-        if (backgroundTask != null)
+        if (jobProcessorTask != null)
         {
-            await backgroundTask;
+            await jobProcessorTask;
         }
     }
 
@@ -53,7 +62,7 @@ public class AnalysisJobProcessor : IHostedService
             var job = await TryDequeueAsync(cancelToken);
             if (job != null)
             {
-                await TryProcessJobAsync(job);
+                await TryProcessJobAsync(job, cancelToken);
             }
             else
             {
@@ -76,7 +85,7 @@ public class AnalysisJobProcessor : IHostedService
         }
     }
 
-    private async Task TryProcessJobAsync(AnalysisJob job)
+    private async Task TryProcessJobAsync(AnalysisJob job, CancellationToken cancelToken)
     {
         try
         {
@@ -88,20 +97,60 @@ public class AnalysisJobProcessor : IHostedService
                 return;
             }
 
+            // Create a new AnalysisLogger that will log message both to the Analysis.Logs object and to this service's logger.
+            var analysisLogger = new AnalysisLogger(analysis, this.logger);
+
             // Mark the analysis as processing.
             analysis.Status = AnalysisStatus.Processing;
             await db.SaveAsync(analysis);
 
-            // Run the Lighthouse 
-            var lighthouseAudit = await lighthouse.RunAuditAsync(job.Url.ToString(), BrowserFormFactor.Desktop);
+            // Kick off all 3 jobs simultaneously so the end result is faster.
+            var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysis, analysisLogger, cancelToken);
+            var serviceWorkerDetectionTask = serviceWorkerDetectionService.TryDetectAsync(job.Url, analysisLogger, cancelToken);
+            var manifestDetectionTask = manifestDetectionService.TryDetectAsync(job.Url, analysisLogger, cancelToken);
+
+            // Step 1: find the manifest.
+            analysis.WebManifest = await manifestDetectionTask;
+            await db.SaveAsync(analysis);
+
+            // Step 2: find the service worker info.
+            analysis.ServiceWorker = await serviceWorkerDetectionTask;
+            await db.SaveAsync(analysis);
+
+            // Step 3, if we have a manifest or service worker, run Lighthouse PWA analysis.
+            if (analysis.WebManifest != null || analysis.ServiceWorker != null)
+            {
+                analysis.LighthouseReport = await lighthouseAnalysisTask;
+                await db.SaveAsync(analysis);
+            }
+            else
+            {
+                // We don't have a manifest or service worker. Skip Lighthouse analysis and log a message.
+                analysisLogger.LogInformation("No manifest or service worker detected for {url}. Skipping Lighthouse analysis.", job.Url);
+            }
+
+            // All done! Mark the analysis as completed.
             analysis.Status = AnalysisStatus.Completed;
             analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
-            
+            analysisLogger.FlushLogs();
             await db.SaveAsync(analysis);
         }
         catch (Exception error)
         {
             await RetryJobOrFail(job, error);
+        }
+    }
+
+    private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, Analysis analysis, AnalysisLogger logger, CancellationToken cancelToken)
+    {
+        try
+        {
+            return await lighthouse.RunAuditAsync(job.Url, BrowserFormFactor.Desktop);
+        }
+        catch (Exception error)
+        {
+            logger.LogError(error, "Error running Lighthouse audit for {url}", job.Url);
+            return null;
         }
     }
 

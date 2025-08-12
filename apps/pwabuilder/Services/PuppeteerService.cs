@@ -5,24 +5,22 @@ namespace PWABuilder.Services
 {
     public class PuppeteerService : IPuppeteerService
     {
-        private IBrowser? browser;
+        private readonly Task<IBrowser> reusableBrowser;
 
-        private string? chromePath;
-
-        private readonly IHostEnvironment env;
-
-        public PuppeteerService(IHostEnvironment env)
+        public PuppeteerService(Task<IBrowser> reusableBrowser)
         {
-            this.env = env;
+            this.reusableBrowser = reusableBrowser;
         }
 
-        public async Task<IBrowser> CreateAsync(LaunchOptions? customLaunchOptions = null)
+        /// <summary>
+        /// Creates a new browser instance. This should only be used when you need your own specially-configured browser, for example, with port for communicating with dev tools. If you only need to navigate to a page, use puppeteerService.NavigateToPage(...).
+        /// </summary>
+        /// <param name="customLaunchOptions">Any custom launch options.</param>
+        /// <returns></returns>
+        public static async Task<IBrowser> CreateBrowserAsync(IHostEnvironment env, LaunchOptions? customLaunchOptions = null)
         {
-            if (env.IsProduction())
-            {
-                chromePath = "/usr/bin/google-chrome-stable";
-            }
-            else
+            var chromePath = "/usr/bin/google-chrome-stable"; // production chrome path
+            if (!env.IsProduction()) // If we're not in production, fetch it.
             {
                 // download the browser executable
                 var fetcher = new BrowserFetcher();
@@ -31,33 +29,29 @@ namespace PWABuilder.Services
             }
 
             // browser execution configs
-            var defaultLaunchOptions = new LaunchOptions
+            var launchOptions = customLaunchOptions ?? new LaunchOptions
             {
                 Headless = true, // = false for testing
                 Args = ["--no-sandbox", "--disable-setuid-sandbox"],
             };
-            var launchOptions = customLaunchOptions ?? defaultLaunchOptions;
-
             launchOptions.ExecutablePath = chromePath;
 
             // open a new page in the controlled browser
-            var browser = await Puppeteer.LaunchAsync(launchOptions);
-
-            this.browser = browser;
-            return browser;
+            return await Puppeteer.LaunchAsync(launchOptions);
         }
 
-        public async Task<IPage> GoToSite(string site)
+        /// <summary>
+        /// Creates a new page in the reusable browser instance and navigates it to the given site and waits for DOMContentLoaded.
+        /// </summary>
+        /// <param name="site"></param>
+        /// <returns></returns>
+        public async Task<IPage> Navigate(Uri site)
         {
-            if (browser == null)
-            {
-                browser = await CreateAsync();
-            }
-
+            var browser = await this.reusableBrowser;
             var page = await browser.NewPageAsync();
-            await page.SetUserAgentAsync(Constant.DESKTOP_USERAGENT);
+            await page.SetUserAgentAsync(Constants.DesktopUserAgent);
             await page.GoToAsync(
-                site,
+                site.ToString(),
                 new NavigationOptions
                 {
                     Timeout = 30000,
@@ -68,17 +62,10 @@ namespace PWABuilder.Services
             return page;
         }
 
-        public IBrowser GetBrowser()
-        {
-            return browser;
-        }
-
         public async ValueTask DisposeAsync()
         {
-            if (browser != null)
-            {
-                await browser.DisposeAsync();
-            }
+            var browser = await this.reusableBrowser;
+            await browser.DisposeAsync();
         }
     }
 }

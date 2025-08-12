@@ -40,7 +40,7 @@ namespace PWABuilder.Controllers
 
         [HttpGet]
         public async Task<ActionResult<Report>> GetAsync(
-            [FromQuery] string site,
+            [FromQuery] Uri site,
             [FromQuery] bool? desktop,
             // [FromQuery] bool? validation,
             [FromQuery(Name = "ref")] string? referrer = null
@@ -141,7 +141,7 @@ namespace PWABuilder.Controllers
                     catch { }
                 }
 
-                var manifestValidations = ManifestValidations.ValidateManifestAsync(webAppManifestDetails?.json);
+                var manifestValidations = ManifestValidations.ValidateManifest(webAppManifestDetails?.json);
                 var securityValidations = SecurityValidation.ValidateSecurityAsync(lighthouseReport);
 
                 // Build the report object
@@ -158,7 +158,7 @@ namespace PWABuilder.Controllers
                 // Analytics
                 var analyticsInfo = new AnalyticsInfo
                 {
-                    Url = new Uri(site),
+                    Url = site,
                     PlatformId = Request.Headers["platform-identifier"],
                     PlatformIdVersion = Request.Headers["platform-identifier-version"],
                     CorrelationId = Request.Headers["correlation-id"],

@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace PWABuilder.Models;
 
 /// <summary>
@@ -36,14 +38,29 @@ public class Analysis
     public string? Error { get; set; }
 
     /// <summary>
-    /// The report generated when an analysis is completed. This will be null if the analysis has not yet completed or if it failed.
+    /// Information about the detected web manifest.
     /// </summary>
-    public AnalysisReport? Report { get; set; }
+    public ManifestResult? WebManifest { get; set; }
+
+    /// <summary>
+    /// Information about the detected service worker.
+    /// </summary>
+    public ServiceWorkerContentResult? ServiceWorker { get; set; }
+
+    /// <summary>
+    /// The Lighthouse report containing detailed metrics about the web app's manifest, service worker, and HTTPS conformance.
+    /// </summary>
+    public LighthouseReport? LighthouseReport { get; set; }
 
     /// <summary>
     /// The list of app store packages the user generated for his PWA after analysis.
     /// </summary>
     public List<AppStorePackageResult> Packages { get; set; } = [];
+
+    /// <summary>
+    /// Logs generated during the analysis. This is intended for debugging purposes and may be shown to the user if their analysis fails.
+    /// </summary>
+    public List<string> Logs { get; init; } = [];
 
     /// <summary>
     /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.

@@ -47,4 +47,21 @@ public class AnalysisController : ControllerBase
         await this.analysisJobQueue.EnqueueAsync(job);
         return job.Id;
     }
+
+    /// <summary>
+    /// Gets the the PWABuilder analysis with the specified ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<Analysis?> Get(string id)
+    {
+        var analysis = await this.analysisDb.GetByIdAsync(id);
+        if (analysis == null)
+        {
+            logger.LogWarning("Analysis with ID {id} not found.", id);
+            return null;
+        }
+        return analysis;
+    }
 }
