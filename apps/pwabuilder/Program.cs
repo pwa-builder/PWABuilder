@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ using PWABuilder.Models;
 using PWABuilder.Services;
 using PWABuilder.Utils;
 using PWABuilder.Validations.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +28,7 @@ JsonConvert.DefaultSettings = () =>
 
 // Add services to the container.
 builder.Services.AddSingleton<ViteEntryPointProvider>();
-builder.Services.AddTransient<IPuppeteerService, PuppeteerService>();
+builder.Services.AddSingleton<IPuppeteerService, PuppeteerService>();
 builder.Services.AddTransient<TempDirectory>();
 builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
@@ -34,11 +36,19 @@ builder.Services.AddSingleton<AnalysisDb>();
 builder.Services.AddSingleton<AnalysisJobQueue>();
 builder.Services.AddSingleton<HtmlFetchCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
+builder.Services.AddSingleton<ManifestDetector>();
+builder.Services.AddSingleton<ServiceWorkerDetector>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
+builder.Services.AddSingleton(services =>
+{
+    // Created an Redis IDatabase instance singletone.
+    var settings = services.GetRequiredService<IOptions<AppSettings>>();
+    return ConnectionMultiplexer.Connect(settings.Value.AnalysisDbRedisConnectionString).GetDatabase();
+});
 builder.Services.AddSingleton(services =>
 {
     // Create a single, reusable Puppeteer browser instance. This can be used across different requests so that we're not spinning up multiple browsers for each request.

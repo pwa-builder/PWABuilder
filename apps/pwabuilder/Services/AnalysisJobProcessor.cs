@@ -14,16 +14,16 @@ public class AnalysisJobProcessor : IHostedService
     private readonly AnalysisDb db;
     private CancellationTokenSource? abortToken;
     private Task? jobProcessorTask;
-    private readonly ManifestDetectionService manifestDetectionService;
-    private readonly ServiceWorkerDetectionService serviceWorkerDetectionService;
+    private readonly ManifestDetector manifestDetectionService;
+    private readonly ServiceWorkerDetector serviceWorkerDetectionService;
     private readonly ILighthouseService lighthouse;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
     public AnalysisJobProcessor(
         AnalysisJobQueue queue, 
         AnalysisDb db, 
-        ManifestDetectionService manifestDetectionService,
-        ServiceWorkerDetectionService serviceWorkerDetectionService,
+        ManifestDetector manifestDetectionService,
+        ServiceWorkerDetector serviceWorkerDetectionService,
         ILighthouseService lighthouse, 
         ILogger<AnalysisJobProcessor> logger)
     {

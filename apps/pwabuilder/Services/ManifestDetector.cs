@@ -5,13 +5,13 @@ using System.Text.Json;
 
 namespace PWABuilder.Services;
 
-public class ManifestDetectionService
+public class ManifestDetector
 {
     private readonly HtmlFetchCache htmlFetchCache;
     private readonly HttpClient http;
     private readonly IPuppeteerService puppeteer;
 
-    public ManifestDetectionService(HtmlFetchCache htmlFetchCache, IHttpClientFactory httpClientFactory, IPuppeteerService puppeteer)
+    public ManifestDetector(HtmlFetchCache htmlFetchCache, IHttpClientFactory httpClientFactory, IPuppeteerService puppeteer)
     {
         this.htmlFetchCache = htmlFetchCache;
         http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);

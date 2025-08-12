@@ -14,9 +14,9 @@ public class AnalysisDb
     private readonly ILogger<AnalysisDb> logger;
     private readonly IDatabase redis;
 
-    public AnalysisDb(IOptions<AppSettings> settings, ILogger<AnalysisDb> logger)
+    public AnalysisDb(IDatabase redis, ILogger<AnalysisDb> logger)
     {
-        this.redis = ConnectionMultiplexer.Connect(settings.Value.AnalysisDbRedisConnectionString).GetDatabase();
+        this.redis = redis;
         this.logger = logger;
     }
 

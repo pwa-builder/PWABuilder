@@ -6,13 +6,13 @@ using PWABuilder.Models;
 
 namespace PWABuilder.Services;
 
-public class ServiceWorkerDetectionService
+public class ServiceWorkerDetector
 {
     private readonly HttpClient http;
     private readonly HtmlFetchCache htmlFetchCache;
     private readonly IPuppeteerService puppeteer;
 
-    public ServiceWorkerDetectionService(
+    public ServiceWorkerDetector(
         HtmlFetchCache htmlFetchCache,
         IHttpClientFactory httpClientFactory,
         IPuppeteerService puppeteer
