@@ -45,7 +45,45 @@ export type FindWebManifestResult = {
 		json: unknown,
 		validations: Validation[]
 	}
+};
+
+export type Analysis = {
+	id: string,
+	url: string,
+	createdAt: string,
+	duration: string | null,
+	status: "Queued" | "Processing" | "Completed" | "Failed",
+	error: string | null,
+	webManifest: ManifestDetection | null,
+	serviceWorker: ServiceWorkerDetection | null,
+	lighthouseReport: LighthouseReport | null,
+	logs: string[],
 }
+
+export type ManifestDetection = {
+	url: string,
+	validations: Validation[],
+	json: object | null,
+	raw: string | null
+}
+
+export type ServiceWorkerDetection = {
+	url: string,
+	raw: string | null,
+	validations: TestResult[]
+}
+
+export type LighthouseReport = {
+	lighthouseVersion: string | null,
+	requestedUrl: string | null,
+	mainDocumentUrl: string | null,
+	finalDisplayedUrl: string | null,
+	fetchTime: string,
+	gatherMode: string | null,
+	runWarnings: string[] | null,
+	userAgent: string | null
+}
+
 export type FindServiceWorkerResult = {
 	content: {
 		url: string,
@@ -83,6 +121,45 @@ export async function Report(
 	const jsonResult: { data: ReportAudit } = await (fetchReport as Response)?.json?.();
 	console.info('Report audit succeeded', jsonResult?.data);
 	return jsonResult?.data;
+}
+
+/**
+ * Queues an analysis job for the specified site.
+ * @param site The site URL to analyze.
+ * @returns The ID of the queued analysis job.
+ */
+export async function queueAnalysis(site: string): Promise<string> {
+	const absoluteUrl = `${env.api}/analyses/enqueue?url=${encodeURIComponent(site)}`;
+	const enqueueResult = await fetch(absoluteUrl, {
+		method: "POST"
+	});
+	if (!enqueueResult.ok) {
+		throw new Error(`Unable to enqueue analysis job for site. Status ${enqueueResult.status} ${enqueueResult.statusText}`);
+	}
+	
+	const analysisId = await enqueueResult.text();
+	return analysisId;
+}
+
+/**
+ * Gets the analysis with the specified ID.
+ * @param id The ID of the analysis to retrieve.
+ * @returns The analysis with the specified ID, or null if not found.
+ */
+export async function getAnalysis(id: string): Promise<Analysis | null> {
+	const absoluteUrl = `${env.api}/analyses?id=${encodeURIComponent(id)}`;
+	const fetchResult = await fetch(absoluteUrl);
+	if (!fetchResult.ok) {
+		throw new Error(`Unable to fetch analysis with ID ${id}. Status ${fetchResult.status} ${fetchResult.statusText}`);
+	}
+
+	// If the status is 204, it means we couldn't find the Analysis.
+	if (fetchResult.status === 204) {
+		return null;
+	}
+
+	const jsonResult = await fetchResult.json();
+	return jsonResult;
 }
 
 export async function FindWebManifest(

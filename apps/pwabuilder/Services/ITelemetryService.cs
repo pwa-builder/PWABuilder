@@ -10,7 +10,7 @@ public interface ITelemetryService
     Task UploadToAppInsights(
         Report webAppReport,
         AnalyticsInfo analyticsInfo,
-        AnalyzeServiceWorkerResponse? serviceWorkerFeatures
+        ServiceWorkerFeatures? serviceWorkerFeatures
     );
 
     Task Record(

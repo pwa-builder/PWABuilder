@@ -27,7 +27,7 @@ namespace PWABuilder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ManifestResult>> GetAsync([FromQuery] Uri site, [FromServices] ManifestDetector manifestDetector, CancellationToken cancelToken)
+        public async Task<ActionResult<ManifestDetection>> GetAsync([FromQuery] Uri site, [FromServices] ManifestDetector manifestDetector, CancellationToken cancelToken)
         {
             var manifestDetection = await manifestDetector.TryDetectAsync(site, this.logger, cancelToken);
             if (manifestDetection != null)

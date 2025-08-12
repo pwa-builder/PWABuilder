@@ -42,6 +42,7 @@ namespace PWABuilder.Controllers
         public async Task<ActionResult<Report>> GetAsync(
             [FromQuery] Uri site,
             [FromQuery] bool? desktop,
+            CancellationToken cancelToken,
             // [FromQuery] bool? validation,
             [FromQuery(Name = "ref")] string? referrer = null
         )
@@ -77,11 +78,18 @@ namespace PWABuilder.Controllers
                 ServiceWorkerValidationResult serviceWorkerValidationResult;
                 try
                 {
+                    var swUrlString = lighthouseReport.ServiceWorkerAudit?.Details?.ScriptUrl;
+                    var swUrl = string.IsNullOrEmpty(swUrlString)
+                        ? null
+                        : new Uri(site, swUrlString);
                     serviceWorkerValidationResult =
                         await ServiceWorkerValidation.ValidateServiceWorkerAsync(
                             serviceWorkerAnalyzer,
-                            lighthouseReport.ServiceWorkerAudit?.Details?.ScriptUrl,
-                            lighthouseReport
+                            swUrl,
+                            site,
+                            lighthouseReport,
+                            logger,
+                            cancelToken
                         );
                 }
                 catch (Exception ex)

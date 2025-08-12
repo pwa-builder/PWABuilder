@@ -23,7 +23,7 @@ namespace PWABuilder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceWorkerBodyResult>> GetAsync([FromQuery] string url)
+        public async Task<ActionResult<ServiceWorkerBodyResult>> GetAsync([FromQuery] Uri url, CancellationToken cancelToken)
         {
             var paramCheckResult = RequestUtils.CheckParams(Request, ["url"]);
             if (paramCheckResult.Status != 200)
@@ -41,7 +41,10 @@ namespace PWABuilder.Controllers
                 var swValidation = await ServiceWorkerValidation.ValidateServiceWorkerAsync(
                     serviceWorkerAnalyzer,
                     url,
-                    new LighthouseReport()
+                    new Uri($"{url.Scheme}://{url.Host}"),
+                    new LighthouseReport(),
+                    logger,
+                    cancelToken
                 );
 
                 var result = new

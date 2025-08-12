@@ -1,4 +1,5 @@
 
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
 
@@ -14,8 +15,9 @@ public class AnalysisJobProcessor : IHostedService
     private readonly AnalysisDb db;
     private CancellationTokenSource? abortToken;
     private Task? jobProcessorTask;
-    private readonly ManifestDetector manifestDetectionService;
-    private readonly ServiceWorkerDetector serviceWorkerDetectionService;
+    private readonly ManifestDetector manifestDetector;
+    private readonly ServiceWorkerDetector serviceWorkerDetector;
+    private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
     private readonly ILighthouseService lighthouse;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
@@ -24,14 +26,16 @@ public class AnalysisJobProcessor : IHostedService
         AnalysisDb db, 
         ManifestDetector manifestDetectionService,
         ServiceWorkerDetector serviceWorkerDetectionService,
+        IServiceWorkerAnalyzer serviceWorkerAnalyzer,
         ILighthouseService lighthouse, 
         ILogger<AnalysisJobProcessor> logger)
     {
         this.queue = queue;
         this.db = db;
         this.lighthouse = lighthouse;
-        this.manifestDetectionService = manifestDetectionService;
-        this.serviceWorkerDetectionService = serviceWorkerDetectionService;
+        this.manifestDetector = manifestDetectionService;
+        this.serviceWorkerDetector = serviceWorkerDetectionService;
+        this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
         this.logger = logger;
     }
 
@@ -104,10 +108,11 @@ public class AnalysisJobProcessor : IHostedService
             analysis.Status = AnalysisStatus.Processing;
             await db.SaveAsync(analysis);
 
-            // Kick off all 3 jobs simultaneously so the end result is faster.
+            // Kick off all jobs simultaneously so the end result is faster.
             var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysis, analysisLogger, cancelToken);
-            var serviceWorkerDetectionTask = serviceWorkerDetectionService.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestDetectionTask = manifestDetectionService.TryDetectAsync(job.Url, analysisLogger, cancelToken);
+            var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
+            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => serviceWorkerDetector.TryAnalyze(d.Result!.Url, job.Url, logger, cancelToken), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+            var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
@@ -117,7 +122,14 @@ public class AnalysisJobProcessor : IHostedService
             analysis.ServiceWorker = await serviceWorkerDetectionTask;
             await db.SaveAsync(analysis);
 
-            // Step 3, if we have a manifest or service worker, run Lighthouse PWA analysis.
+            // Step 3: analyze the service worker to determine features like push notifications, background sync, etc.
+            if (analysis.ServiceWorker != null)
+            {
+                analysis.ServiceWorker.Validations = await serviceWorkerAnalysisTask;
+                await db.SaveAsync(analysis);
+            }
+
+            // Step 4, if we have a manifest or service worker, run Lighthouse PWA analysis.
             if (analysis.WebManifest != null || analysis.ServiceWorker != null)
             {
                 analysis.LighthouseReport = await lighthouseAnalysisTask;
@@ -127,6 +139,13 @@ public class AnalysisJobProcessor : IHostedService
             {
                 // We don't have a manifest or service worker. Skip Lighthouse analysis and log a message.
                 analysisLogger.LogInformation("No manifest or service worker detected for {url}. Skipping Lighthouse analysis.", job.Url);
+            }
+
+            // Step 5, if we have a Lighthouse report and a ServiceWorker, add an Offline check.
+            if (analysis.LighthouseReport != null && analysis.ServiceWorker != null)
+            {
+                analysis.ServiceWorker.Validations.Add(analysis.LighthouseReport.GetOfflineTestResult());
+                await db.SaveAsync(analysis);
             }
 
             // All done! Mark the analysis as completed.

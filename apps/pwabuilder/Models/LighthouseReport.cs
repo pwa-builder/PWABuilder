@@ -1,3 +1,4 @@
+using PWABuilder.Validations.Models;
 using System.Text.Json.Serialization;
 
 namespace PWABuilder.Models;
@@ -53,6 +54,24 @@ public sealed class LighthouseReport
     /// </summary>
     [JsonIgnore]
     public LighthouseAudit? OfflineAudit => GetAuditByName("offline-audit");
+
+    /// <summary>
+    /// Creates a new TestResult containing the test result for offline support.
+    /// </summary>
+    /// <returns></returns>
+    public TestResult GetOfflineTestResult()
+    {
+        var supportsOffline = this.OfflineAudit?.Score == 0;
+        return new TestResult
+        {
+            Result = supportsOffline,
+            InfoString = supportsOffline
+                ? "Has offline support"
+                : "Does not have offline support",
+            Category = "optional",
+            Member = "offline_support",
+        };
+    }
 
     private LighthouseAudit? GetAuditByName(string name)
     {

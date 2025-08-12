@@ -9,19 +9,20 @@ namespace PWABuilder.Validations
     {
         public static async Task<ServiceWorkerValidationResult> ValidateServiceWorkerAsync(
             IServiceWorkerAnalyzer serviceWorkerAnalyzer,
-            string? serviceWorkerUrl,
-            LighthouseReport lighthouseReport)
+            Uri? serviceWorkerUrl,
+            Uri appUrl,
+            LighthouseReport lighthouseReport,
+            ILogger logger,
+            CancellationToken cancelToken)
         {
-            var response = string.IsNullOrWhiteSpace(serviceWorkerUrl)
-                ? null
-                : await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(serviceWorkerUrl);
+            var serviceWorkerAnalysis = serviceWorkerUrl == null ? null : await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(serviceWorkerUrl, appUrl, logger, cancelToken);
             var offlineSupport = lighthouseReport.OfflineAudit?.Score == 1;
-            var hasServiceWorker = response != null && response?.Error == null;
+            var hasServiceWorker = serviceWorkerUrl != null;
             hasServiceWorker = lighthouseReport.ServiceWorkerAudit?.Score == 1;
 
             return new ServiceWorkerValidationResult
             {
-                SWFeatures = response,
+                SWFeatures = serviceWorkerAnalysis,
                 Validations =
                 [
                     new()
@@ -35,9 +36,9 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = response?.DetectedPeriodicBackgroundSync ?? false,
+                        Result = serviceWorkerAnalysis?.PeriodicBackgroundSync ?? false,
                         InfoString =
-                            (response?.DetectedPeriodicBackgroundSync ?? false)
+                            (serviceWorkerAnalysis?.PeriodicBackgroundSync ?? false)
                                 ? "Uses Periodic Sync for a rich offline experience"
                                 : "Does not use Periodic Sync for a rich offline experience",
                         Category = "optional",
@@ -45,9 +46,9 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = response?.DetectedBackgroundSync ?? false,
+                        Result = serviceWorkerAnalysis?.BackgroundSync ?? false,
                         InfoString =
-                            (response?.DetectedBackgroundSync ?? false)
+                            (serviceWorkerAnalysis?.BackgroundSync ?? false)
                                 ? "Uses Background Sync for a rich offline experience"
                                 : "Does not use Background Sync for a rich offline experience",
                         Category = "optional",
@@ -55,9 +56,9 @@ namespace PWABuilder.Validations
                     },
                     new()
                     {
-                        Result = response?.DetectedPushRegistration ?? false,
+                        Result = serviceWorkerAnalysis?.PushRegistration ?? false,
                         InfoString =
-                            (response?.DetectedPushRegistration ?? false)
+                            (serviceWorkerAnalysis?.PushRegistration ?? false)
                                 ? "Uses Push Notifications"
                                 : "Does not use Push Notifications",
                         Category = "optional",

@@ -59,7 +59,7 @@ namespace PWABuilder.Services
         public async Task UploadToAppInsights(
             Report webAppReport,
             AnalyticsInfo analyticsInfo,
-            AnalyzeServiceWorkerResponse? serviceWorkerFeatures
+            ServiceWorkerFeatures? serviceWorkerFeatures
         )
         {
             var manifestJson = webAppReport.artifacts?.webAppManifestDetails?.json;
@@ -290,23 +290,23 @@ namespace PWABuilder.Services
             {
                 enrichAnalyticsInfoProperties.Add(
                     "hasBackgroundSync",
-                    (serviceWorkerFeatures.DetectedBackgroundSync ?? false).ToString()
+                    (serviceWorkerFeatures.BackgroundSync ?? false).ToString()
                 );
                 enrichAnalyticsInfoProperties.Add(
                     "hasPeriodicBackgroundSync",
-                    (serviceWorkerFeatures.DetectedPeriodicBackgroundSync ?? false).ToString()
+                    (serviceWorkerFeatures.PeriodicBackgroundSync ?? false).ToString()
                 );
                 enrichAnalyticsInfoProperties.Add(
                     "hasSignsOfLogic",
-                    (serviceWorkerFeatures.DetectedSignsOfLogic ?? false).ToString()
+                    (serviceWorkerFeatures.SignsOfLogic ?? false).ToString()
                 );
                 enrichAnalyticsInfoProperties.Add(
                     "hasEmptyLogic",
-                    (serviceWorkerFeatures.DetectedEmpty ?? false).ToString()
+                    (serviceWorkerFeatures.Empty ?? false).ToString()
                 );
                 enrichAnalyticsInfoProperties.Add(
                     "hasPushRegistration",
-                    (serviceWorkerFeatures.DetectedPushRegistration ?? false).ToString()
+                    (serviceWorkerFeatures.PushRegistration ?? false).ToString()
                 );
             }
             var serviceWorkerValidation = webAppReport?.serviceWorkerValidations;

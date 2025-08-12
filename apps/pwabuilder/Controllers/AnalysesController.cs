@@ -9,14 +9,14 @@ namespace PWABuilder.Controllers;
 /// Controller that analyzes a URL for PWA compliance. This is a new endpoint meant to replace the legacy URLs of FindWebManifest, FindServiceWorker, and Report.
 /// </summary>
 [ApiController]
-[Route("api/analyses")]
-public class AnalysisController : ControllerBase
+[Route("api/[controller]")]
+public class AnalysesController : ControllerBase
 {
-    private readonly ILogger<AnalysisController> logger;
+    private readonly ILogger<AnalysesController> logger;
     private readonly AnalysisDb analysisDb;
     private readonly AnalysisJobQueue analysisJobQueue;
 
-    public AnalysisController(AnalysisDb analysisDb, AnalysisJobQueue analysisJobQueue, ILogger<AnalysisController> logger)
+    public AnalysesController(AnalysisDb analysisDb, AnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
     {
         this.analysisDb = analysisDb;
         this.analysisJobQueue = analysisJobQueue;
@@ -28,8 +28,8 @@ public class AnalysisController : ControllerBase
     /// </summary>
     /// <param name="url">The URL to analyze.</param>
     /// <returns>The ID of the AnalysisJob.</returns>
-    [HttpPost("analyze")]
-    public async Task<ActionResult<string>> Analyze(Uri url)
+    [HttpPost("enqueue")]
+    public async Task<ActionResult<string>> Enqueue(Uri url)
     {
         // Create a new Analysis object in the database and enqueue an AnalysisJob.
         var analysis = new Analysis
@@ -45,7 +45,7 @@ public class AnalysisController : ControllerBase
         };
         await this.analysisDb.SaveAsync(analysis);
         await this.analysisJobQueue.EnqueueAsync(job);
-        return job.Id;
+        return analysis.Id;
     }
 
     /// <summary>
@@ -54,6 +54,7 @@ public class AnalysisController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
+    [ResponseCache(NoStore = true)] // We don't want to cache this endpoint as the analysis changes in the background.
     public async Task<Analysis?> Get(string id)
     {
         var analysis = await this.analysisDb.GetByIdAsync(id);

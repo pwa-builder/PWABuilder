@@ -26,7 +26,7 @@ namespace PWABuilder.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceWorkerResult>> GetAsync([FromQuery] string site)
+        public async Task<ActionResult<ServiceWorkerHttpResult>> GetAsync([FromQuery] string site)
         {
             var siteUri = new Uri(site);
             http.DefaultRequestHeaders.Add(
@@ -65,7 +65,7 @@ namespace PWABuilder.Controllers
                 }
 
                 var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
-                var output = new ServiceWorkerResult()
+                var output = new ServiceWorkerHttpResult()
                 {
                     Status = 200,
                     Body = new ServiceWorkerBodyResult()
@@ -109,7 +109,7 @@ namespace PWABuilder.Controllers
 
                     var rawServiceWorker = serviceWorker.Content.ReadAsStringAsync().Result;
 
-                    var output = new ServiceWorkerResult()
+                    var output = new ServiceWorkerHttpResult()
                     {
                         Status = 200,
                         Body = new ServiceWorkerBodyResult()

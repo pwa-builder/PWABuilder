@@ -94,7 +94,7 @@ namespace PWABuilder.Utils
             );
 
             var serviceWorker = !string.IsNullOrEmpty(swUrl)
-                ? new ServiceWorker { url = swUrl, raw = serviceWorkerResult?.SWFeatures?.Raw }
+                ? new ServiceWorker { url = swUrl, raw = [] } //raw = serviceWorkerResult?.SWFeatures?.Raw
                 : null;
 
             var finalArtifacts = CreateIfNotAllNull(

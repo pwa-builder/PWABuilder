@@ -34,14 +34,14 @@ builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
 builder.Services.AddSingleton<AnalysisDb>();
 builder.Services.AddSingleton<AnalysisJobQueue>();
-builder.Services.AddSingleton<HtmlFetchCache>();
+builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
 builder.Services.AddSingleton<ManifestDetector>();
 builder.Services.AddSingleton<ServiceWorkerDetector>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
-builder.Services.AddScoped<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
+builder.Services.AddSingleton<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
 builder.Services.AddSingleton(services =>
 {

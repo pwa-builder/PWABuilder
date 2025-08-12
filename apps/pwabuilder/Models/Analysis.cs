@@ -1,4 +1,6 @@
+using PWABuilder.Validations.Models;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 namespace PWABuilder.Models;
 
@@ -30,6 +32,7 @@ public class Analysis
     /// <summary>
     /// The status of the analysis.
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public AnalysisStatus Status { get; set; } = AnalysisStatus.Queued;
 
     /// <summary>
@@ -40,22 +43,17 @@ public class Analysis
     /// <summary>
     /// Information about the detected web manifest.
     /// </summary>
-    public ManifestResult? WebManifest { get; set; }
+    public ManifestDetection? WebManifest { get; set; }
 
     /// <summary>
     /// Information about the detected service worker.
     /// </summary>
-    public ServiceWorkerContentResult? ServiceWorker { get; set; }
+    public ServiceWorkerDetection? ServiceWorker { get; set; }
 
     /// <summary>
     /// The Lighthouse report containing detailed metrics about the web app's manifest, service worker, and HTTPS conformance.
     /// </summary>
     public LighthouseReport? LighthouseReport { get; set; }
-
-    /// <summary>
-    /// The list of app store packages the user generated for his PWA after analysis.
-    /// </summary>
-    public List<AppStorePackageResult> Packages { get; set; } = [];
 
     /// <summary>
     /// Logs generated during the analysis. This is intended for debugging purposes and may be shown to the user if their analysis fails.
@@ -69,6 +67,11 @@ public class Analysis
     /// <returns>A Redis-cache compatible ID to be used as the key for the object in Redis.</returns>
     public static string GetId(Uri uri)
     {
-        return $"analysis:{uri.GetHashCode()}:{DateTime.UtcNow:o}";
+        var hash = uri.GetHashCode() + DateTime.UtcNow.GetHashCode();
+        var hashStr = Math.Abs(hash).ToString();
+
+        // Grab the last 6 characters of this hash code and use that to generate a unique ID.
+        var lastSixChars = hashStr[^Math.Min(6, hashStr.Length)..];
+        return $"analysis:{uri.Host}:{lastSixChars}";
     }
 }

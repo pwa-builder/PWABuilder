@@ -11,19 +11,19 @@ namespace PWABuilder.Common
         /// </summary>
         /// <param name="client">The HTTP client.</param>
         /// <param name="requestUri">The URI to request.</param>
-        /// <param name="accept">The accept header to append to the request, e.g. "text/html"</param>
+        /// <param name="accepts">The accept header to append to the request, e.g. "text/html"</param>
         /// <param name="maxSizeInBytes">The maximum size in bytes of the response.</param>
         /// <param name="cancelToken">Cancellation token.</param>
         /// <returns>The string fetched from the URI.</returns>
         /// <exception cref="InvalidOperationException">The response was longer than the max size.</exception>
-        public static async Task<string?> GetStringAsync(this HttpClient client, Uri requestUri, string? accept, long? maxSizeInBytes, CancellationToken cancelToken)
+        public static async Task<string?> GetStringAsync(this HttpClient client, Uri requestUri, IEnumerable<string> accepts, long? maxSizeInBytes, CancellationToken cancelToken)
         {
             var htmlFetchRequest = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
             // Add the accept header if provided.
-            if (accept != null)
+            foreach (var acceptType in accepts)
             {
-                htmlFetchRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+                htmlFetchRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptType));
             }
 
             // Send it.

@@ -1,15 +1,17 @@
+using System.Security.Policy;
 using System.Text.RegularExpressions;
+using PWABuilder.Common;
 using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
     public class ServiceWorkerAnalyzer : IServiceWorkerAnalyzer
     {
-        private readonly HttpClient httpClient;
+        private readonly WebStringCache webCache;
 
-        public ServiceWorkerAnalyzer(IHttpClientFactory httpClientFactory)
+        public ServiceWorkerAnalyzer(WebStringCache webCache)
         {
-            httpClient = httpClientFactory.CreateClient();
+            this.webCache = webCache;
         }
 
         private readonly Regex[] PushRegexes =
@@ -49,15 +51,77 @@ namespace PWABuilder.Services
             ),
         ];
 
-        public async Task<List<string>> FindAndFetchImportScriptsAsync(
-            string code,
-            string? origin = null
-        )
+        public async Task<ServiceWorkerFeatures?> AnalyzeServiceWorkerAsync(Uri serviceWorkerUrl, Uri appUrl, ILogger logger, CancellationToken cancelToken)
+        {
+            string? serviceWorkerJs = null;
+            var separateContent = new List<string>();            
+            try
+            {
+                serviceWorkerJs = await webCache.Get(serviceWorkerUrl, Constants.JavascriptMimeTypes, cancelToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Service worker analyzer failed to fetch content from {url}", serviceWorkerUrl);
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(serviceWorkerJs))
+            {
+                logger.LogWarning("Service worker analyzer found no content at {url}", serviceWorkerUrl);
+                return new ServiceWorkerFeatures
+                {
+                    Empty = true
+                };
+            }
+
+            
+            separateContent.Add(serviceWorkerJs);
+            try
+            {
+                var scriptsContent = await FindAndFetchImportScriptsAsync(serviceWorkerJs, appUrl, logger, cancelToken);
+                foreach (var scriptContent in scriptsContent)
+                {
+                    serviceWorkerJs += scriptContent;
+                    separateContent.Add(scriptContent);
+                }
+            }
+            catch { }
+            double swSize = System.Text.Encoding.UTF8.GetByteCount(serviceWorkerJs) / 1024.0;
+            string compactContent = Regex.Replace(serviceWorkerJs, @"\n+|\s+|\r", "");
+
+            return new ServiceWorkerFeatures
+            {
+                BackgroundSync = Array.Exists(
+                    BackgroundSyncRegexes,
+                    reg => reg.IsMatch(compactContent)
+                ),
+                PeriodicBackgroundSync = Array.Exists(
+                    PeriodicSyncRegexes,
+                    reg => reg.IsMatch(compactContent)
+                ),
+                PushRegistration = Array.Exists(
+                    PushRegexes,
+                    reg => reg.IsMatch(compactContent)
+                ),
+                SignsOfLogic = Array.Exists(
+                    ServiceWorkerRegexes,
+                    reg => reg.IsMatch(compactContent)
+                ),
+                Empty =
+                    Array.Exists(EmptyRegexes, reg => reg.IsMatch(compactContent))
+                    || swSize < 0.2,
+                Offline = null // This is not determined by this analyzer, but by the Lighthouse audit.
+            };
+        }
+
+        private async Task<List<string>> FindAndFetchImportScriptsAsync(string code, Uri appUrl, ILogger logger, CancellationToken cancelToken)
         {
             // Find all importScripts statements
             var importScripts = Regex.Matches(code, @"importScripts\s*\((.+?)\)");
             if (importScripts.Count == 0)
-                return new List<string>();
+            {
+                return [];
+            }
 
             var urls = new List<string>();
             foreach (Match statement in importScripts)
@@ -70,119 +134,28 @@ namespace PWABuilder.Services
             }
 
             // Normalize URLs
-            var normalizedUrls = new List<string>();
+            var normalizedUrls = new List<Uri>();
             foreach (var url in urls)
             {
-                if (url.StartsWith("https:", StringComparison.OrdinalIgnoreCase))
-                {
-                    normalizedUrls.Add(url);
-                }
-                else if (!string.IsNullOrEmpty(origin))
-                {
-                    try
-                    {
-                        var absoluteUrl = new Uri(new Uri(origin), url).ToString();
-                        normalizedUrls.Add(absoluteUrl);
-                    }
-                    catch { }
-                }
+                normalizedUrls.Add(new Uri(appUrl, url));
             }
 
             // Fetch the content of each script
             var contents = new List<string>();
-            foreach (var url in normalizedUrls)
+            var scriptFetches = normalizedUrls
+                .Select(url => webCache.Get(url, Constants.JavascriptMimeTypes, cancelToken));
+            try
             {
-                try
-                {
-                    var response = await httpClient.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        contents.Add(await response.Content.ReadAsStringAsync());
-                    }
-                }
-                catch { }
+                var scriptResults = await Task.WhenAll(scriptFetches);
+                contents.AddRange(scriptResults.Select(s => s ?? string.Empty).Where(s => s.Length > 0));
+            }
+            catch (Exception ex)
+            {
+                // Log the error and continue with the next script
+                logger.LogWarning(ex, "Service worker analyzer failed to fetch one or more service worker import scripts due to an error.");
             }
 
             return contents;
-        }
-
-        public async Task<AnalyzeServiceWorkerResponse> AnalyzeServiceWorkerAsync(
-            string serviceWorkerUrl
-        )
-        {
-            string? content = null;
-            var separateContent = new List<string>();
-
-            if (!string.IsNullOrEmpty(serviceWorkerUrl))
-            {
-                try
-                {
-                    var response = await httpClient.GetAsync(serviceWorkerUrl);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        content = await response.Content.ReadAsStringAsync();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return new AnalyzeServiceWorkerResponse
-                    {
-                        Error = $"analyzeServiceWorker: fetch failed: {ex.Message}",
-                    };
-                }
-            }
-
-            if (!string.IsNullOrEmpty(content))
-            {
-                separateContent.Add(content);
-
-                try
-                {
-                    string? origin = null;
-                    if (!string.IsNullOrEmpty(serviceWorkerUrl))
-                    {
-                        origin = new Uri(serviceWorkerUrl).GetLeftPart(UriPartial.Authority);
-                    }
-                    var scriptsContent = await FindAndFetchImportScriptsAsync(content, origin);
-                    foreach (var scriptContent in scriptsContent)
-                    {
-                        content += scriptContent;
-                        separateContent.Add(scriptContent);
-                    }
-                }
-                catch { }
-                double swSize = System.Text.Encoding.UTF8.GetByteCount(content) / 1024.0;
-                string compactContent = Regex.Replace(content, @"\n+|\s+|\r", "");
-
-                return new AnalyzeServiceWorkerResponse
-                {
-                    DetectedBackgroundSync = Array.Exists(
-                        BackgroundSyncRegexes,
-                        reg => reg.IsMatch(compactContent)
-                    ),
-                    DetectedPeriodicBackgroundSync = Array.Exists(
-                        PeriodicSyncRegexes,
-                        reg => reg.IsMatch(compactContent)
-                    ),
-                    DetectedPushRegistration = Array.Exists(
-                        PushRegexes,
-                        reg => reg.IsMatch(compactContent)
-                    ),
-                    DetectedSignsOfLogic = Array.Exists(
-                        ServiceWorkerRegexes,
-                        reg => reg.IsMatch(compactContent)
-                    ),
-                    DetectedEmpty =
-                        Array.Exists(EmptyRegexes, reg => reg.IsMatch(compactContent))
-                        || swSize < 0.2,
-                    Raw = swSize < 2048 ? separateContent : new List<string> { ">2Mb" },
-                };
-            }
-
-            return new AnalyzeServiceWorkerResponse
-            {
-                Error = "analyzeServiceWorker: no content of Service Worker or it's unreachable",
-            };
         }
     }
 }

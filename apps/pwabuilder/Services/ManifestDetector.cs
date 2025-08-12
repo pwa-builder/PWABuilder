@@ -7,13 +7,13 @@ namespace PWABuilder.Services;
 
 public class ManifestDetector
 {
-    private readonly HtmlFetchCache htmlFetchCache;
+    private readonly WebStringCache webStringCache;
     private readonly HttpClient http;
     private readonly IPuppeteerService puppeteer;
 
-    public ManifestDetector(HtmlFetchCache htmlFetchCache, IHttpClientFactory httpClientFactory, IPuppeteerService puppeteer)
+    public ManifestDetector(WebStringCache webStringCache, IHttpClientFactory httpClientFactory, IPuppeteerService puppeteer)
     {
-        this.htmlFetchCache = htmlFetchCache;
+        this.webStringCache = webStringCache;
         http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
         this.puppeteer = puppeteer;
     }
@@ -26,7 +26,7 @@ public class ManifestDetector
     /// <param name="logger">The logger to log information, warnings, and exceptions.</param>
     /// <param name="cancelToken"></param>
     /// <returns>The manifest</returns>
-    public async Task<ManifestResult?> TryDetectAsync(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    public async Task<ManifestDetection?> TryDetectAsync(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // See if we can find the manifest quickly by parsing the HTML of the page.
         var manifestResult = await TryGetManifestFromHtmlParsing(appUrl, logger, cancelToken);
@@ -44,7 +44,7 @@ public class ManifestDetector
         return manifestFromPuppeteer;
     }
 
-    private async Task<ManifestResult?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestDetection?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Spin up a headless browser to find the manifest link.
         var manifestUrl = await TryGetManifestUrlFromPuppeteer(appUrl, logger, cancelToken);
@@ -52,11 +52,12 @@ public class ManifestDetector
         // See if we can fetch and parse the manifest.
         var manifestContext = await TryFetchManifest(manifestUrl, logger, cancelToken);
 
+        // Try to 
         var manifestValidationResult = TryValidateManifest(manifestContext, logger, cancelToken);
         return manifestValidationResult;
     }
 
-    private async Task<ManifestResult?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestDetection?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Fetch the HTML of the page.
         var htmlString = await TryGetHtmlPage(appUrl, logger, cancelToken);
@@ -67,6 +68,7 @@ public class ManifestDetector
         // See if we can fetch and parse the manifest.
         var manifestContext = await TryFetchManifest(manifestUrl, logger, cancelToken);
 
+        // Run the validations on the manifest.
         var manifestValidationResult = TryValidateManifest(manifestContext, logger, cancelToken);
         return manifestValidationResult;
     }
@@ -101,7 +103,7 @@ public class ManifestDetector
         }
     }
 
-    private ManifestResult? TryValidateManifest(ManifestContext? manifestContext, ILogger logger, CancellationToken cancelToken)
+    private ManifestDetection? TryValidateManifest(ManifestContext? manifestContext, ILogger logger, CancellationToken cancelToken)
     {
         if (manifestContext == null)
         {
@@ -111,7 +113,13 @@ public class ManifestDetector
         try
         {
             var validations = ManifestValidations.ValidateManifest(manifestContext.Manifest);
-            return new ManifestResult(manifestContext.Manifest, manifestContext.Uri, validations);
+            return new ManifestDetection
+            {
+                Url = manifestContext.Uri,
+                Json = manifestContext.Manifest,
+                Raw = manifestContext.ManifestJson,
+                Validations = validations.ToList()
+            };
         }
         catch (Exception ex)
         {
@@ -129,7 +137,7 @@ public class ManifestDetector
 
         try
         {
-            var manifestJson = await http.GetStringAsync(manifestUrl, accept: null, 1024 * 1024 * 5, cancelToken);
+            var manifestJson = await http.GetStringAsync(manifestUrl, Constants.ManifestMimeTypes, 1024 * 1024 * 5, cancelToken);
             if (manifestJson == null)
             {
                 logger.LogWarning("Manifest at {manifestUrl} returned null content.", manifestUrl);
@@ -161,7 +169,7 @@ public class ManifestDetector
     {
         try
         {
-            var htmlString = await htmlFetchCache.GetHtml(appUrl, cancelToken);
+            var htmlString = await webStringCache.Get(appUrl, ["text/html"], cancelToken);
             return htmlString;
         }
         catch (Exception htmlFetchError)

@@ -423,6 +423,8 @@ export class AppReport extends LitElement {
     this.runningTests = true;
     this.isAppCardInfoLoading = true;
 
+    
+
     let findersResults = {
       manifest: {} as {url?: string, raw?: string, json?: unknown},
       serviceWorker: {} as {url?: string, raw?: string},
