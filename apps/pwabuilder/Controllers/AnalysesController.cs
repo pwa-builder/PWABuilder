@@ -6,7 +6,7 @@ using PWABuilder.Services;
 namespace PWABuilder.Controllers;
 
 /// <summary>
-/// Controller that analyzes a URL for PWA compliance. This is a new endpoint meant to replace the legacy URLs of FindWebManifest, FindServiceWorker, and Report.
+/// Controller that analyzes a URL for PWA compliance.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]

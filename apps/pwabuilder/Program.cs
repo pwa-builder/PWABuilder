@@ -42,7 +42,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddSingleton<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
-builder.Services.AddScoped<IImageValidationService, ImageValidationService>();
+builder.Services.AddSingleton<IImageValidationService, ImageValidationService>();
 builder.Services.AddSingleton(services =>
 {
     // Created an Redis IDatabase instance singletone.

@@ -29,35 +29,34 @@ public class ManifestDetector
     public async Task<ManifestDetection?> TryDetectAsync(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // See if we can find the manifest quickly by parsing the HTML of the page.
-        var manifestResult = await TryGetManifestFromHtmlParsing(appUrl, logger, cancelToken);
-        if (manifestResult != null)
+        var webManifest = await TryGetManifestFromHtmlParsing(appUrl, logger, cancelToken);
+        if (webManifest == null)
         {
-            return manifestResult;
+            webManifest = await TryGetManifestFromPuppeteer(appUrl, logger, cancelToken);
         }
 
-        var manifestFromPuppeteer = await TryGetManifestFromPuppeteer(appUrl, logger, cancelToken);
-        if (manifestFromPuppeteer == null)
+        if (webManifest == null)
         {
             logger.LogInformation("No manifest detected for {appUrl} in either HTML parsing or Puppeteer.", appUrl);
+            return null;
         }
 
-        return manifestFromPuppeteer;
+        // Run the validations on the manifest.
+        var manifestValidationResult = TryValidateManifest(webManifest, logger, cancelToken);
+        return manifestValidationResult;
     }
 
-    private async Task<ManifestDetection?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestContext?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Spin up a headless browser to find the manifest link.
         var manifestUrl = await TryGetManifestUrlFromPuppeteer(appUrl, logger, cancelToken);
 
         // See if we can fetch and parse the manifest.
         var manifestContext = await TryFetchManifest(manifestUrl, logger, cancelToken);
-
-        // Try to 
-        var manifestValidationResult = TryValidateManifest(manifestContext, logger, cancelToken);
-        return manifestValidationResult;
+        return manifestContext;
     }
 
-    private async Task<ManifestDetection?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestContext?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Fetch the HTML of the page.
         var htmlString = await TryGetHtmlPage(appUrl, logger, cancelToken);
@@ -67,10 +66,7 @@ public class ManifestDetector
 
         // See if we can fetch and parse the manifest.
         var manifestContext = await TryFetchManifest(manifestUrl, logger, cancelToken);
-
-        // Run the validations on the manifest.
-        var manifestValidationResult = TryValidateManifest(manifestContext, logger, cancelToken);
-        return manifestValidationResult;
+        return manifestContext;
     }
 
     private async Task<Uri?> TryGetManifestUrlFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)

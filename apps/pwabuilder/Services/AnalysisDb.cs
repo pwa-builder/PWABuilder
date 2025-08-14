@@ -28,6 +28,7 @@ public class AnalysisDb
     {
         try
         {
+            analysis.LastModifiedAt = DateTime.UtcNow;
             var analysisJson = System.Text.Json.JsonSerializer.Serialize(analysis);
             await this.redis.StringSetAsync(analysis.Id, analysisJson, expiry: analysisExpiration);
         }

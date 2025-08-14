@@ -2,6 +2,7 @@ import { Validation } from '@pwabuilder/manifest-validation';
 import { env } from '../utils/environment';
 import { getHeaders } from '../utils/platformTrackingHeaders';
 import { TestResult } from '../utils/interfaces';
+import { showToast } from '../services/toasts';
 
 export type ReportAudit = {
   manifestValidations: Validation[],
@@ -51,6 +52,7 @@ export type Analysis = {
 	id: string,
 	url: string,
 	createdAt: string,
+	lastModifiedAt: string;
 	duration: string | null,
 	status: "Queued" | "Processing" | "Completed" | "Failed",
 	error: string | null,
@@ -58,6 +60,7 @@ export type Analysis = {
 	serviceWorker: ServiceWorkerDetection | null,
 	lighthouseReport: LighthouseReport | null,
 	logs: string[],
+	canPackage: boolean;
 }
 
 export type ManifestDetection = {
@@ -128,17 +131,23 @@ export async function Report(
  * @param site The site URL to analyze.
  * @returns The ID of the queued analysis job.
  */
-export async function queueAnalysis(site: string): Promise<string> {
+export async function enqueueAnalysis(site: string): Promise<string> {
 	const absoluteUrl = `${env.api}/analyses/enqueue?url=${encodeURIComponent(site)}`;
-	const enqueueResult = await fetch(absoluteUrl, {
-		method: "POST"
-	});
-	if (!enqueueResult.ok) {
-		throw new Error(`Unable to enqueue analysis job for site. Status ${enqueueResult.status} ${enqueueResult.statusText}`);
-	}
 	
-	const analysisId = await enqueueResult.text();
-	return analysisId;
+	try {
+		const enqueueResult = await fetch(absoluteUrl, {
+			method: "POST"
+		});
+		if (!enqueueResult.ok) {
+			throw new Error(`Unable to enqueue analysis job for site. Status ${enqueueResult.status} ${enqueueResult.statusText}`);
+		}
+		
+		const analysisId = await enqueueResult.text();
+		return analysisId;
+	} catch (error) {
+		showToast("Unable to analyze your web app", `${error}`.substring(0, 100), "danger", "exclamation-octagon");
+		throw error;
+	}
 }
 
 /**
@@ -148,18 +157,23 @@ export async function queueAnalysis(site: string): Promise<string> {
  */
 export async function getAnalysis(id: string): Promise<Analysis | null> {
 	const absoluteUrl = `${env.api}/analyses?id=${encodeURIComponent(id)}`;
-	const fetchResult = await fetch(absoluteUrl);
-	if (!fetchResult.ok) {
-		throw new Error(`Unable to fetch analysis with ID ${id}. Status ${fetchResult.status} ${fetchResult.statusText}`);
-	}
+	try {
+		const fetchResult = await fetch(absoluteUrl);
+		if (!fetchResult.ok) {
+			throw new Error(`Unable to fetch analysis with ID ${id}. Status ${fetchResult.status} ${fetchResult.statusText}`);
+		}
 
-	// If the status is 204, it means we couldn't find the Analysis.
-	if (fetchResult.status === 204) {
-		return null;
-	}
+		// If the status is 204, it means we couldn't find the Analysis.
+		if (fetchResult.status === 204) {
+			return null;
+		}
 
-	const jsonResult = await fetchResult.json();
-	return jsonResult;
+		const jsonResult = await fetchResult.json();
+		return jsonResult;
+	} catch (error) {
+		showToast("Unable to check the status of your web app's PWA features", `${error}`.substring(0, 100), "danger", "exclamation-octagon");
+		throw error;
+	}
 }
 
 export async function FindWebManifest(

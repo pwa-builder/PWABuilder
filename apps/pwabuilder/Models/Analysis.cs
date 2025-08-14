@@ -25,6 +25,11 @@ public class Analysis
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
+    /// Gets the date and time the analysis was last modified.
+    /// </summary>
+    public DateTimeOffset LastModifiedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    /// <summary>
     /// How long the analysis took to complete.
     /// </summary>
     public TimeSpan? Duration { get; set; }
@@ -61,6 +66,11 @@ public class Analysis
     public List<string> Logs { get; init; } = [];
 
     /// <summary>
+    /// Indicates whether the app can be packaged for app stores.
+    /// </summary>
+    public bool? CanPackage => this.MeetsRequirementsForStorePackaging();
+
+    /// <summary>
     /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.
     /// </summary>
     /// <param name="uri">The URI of the analysis to generate an ID for.</param>
@@ -73,5 +83,21 @@ public class Analysis
         // Grab the last 6 characters of this hash code and use that to generate a unique ID.
         var lastSixChars = hashStr[^Math.Min(6, hashStr.Length)..];
         return $"analysis:{uri.Host}:{lastSixChars}";
+    }
+
+    public bool MeetsRequirementsForStorePackaging()
+    {
+        // We must have a manifest.
+        if (this.WebManifest == null)
+        {
+            return false;
+        }
+
+        // All required fields must be valid.
+        var allRequiredFieldsValid = this.WebManifest.Validations
+            .Where(v => v.Category == "required")
+            .All(v => v.Valid == true);
+
+        return allRequiredFieldsValid;
     }
 }

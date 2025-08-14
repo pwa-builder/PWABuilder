@@ -4,45 +4,38 @@ import { maniTests as Tests } from "./mani-tests.js"
 
 export const maniTests: Array<Validation> = Tests;
 
-export async function loopThroughKeys(manifest: Manifest, requiredOnly = false, includeMissedTests = false): Promise<Array<Validation>> {
-    return new Promise((resolve) => {
-        let data: Array<Validation> = [];
+export function loopThroughKeys(manifest: Manifest, requiredOnly = false, includeMissedTests = false): Array<Validation> {
 
-        const maniFields = Object.keys(manifest);
+    let data: Array<Validation> = [];
 
-        maniTests.forEach((test) => {
-            if (requiredOnly && test.category !== "required") {
-                return;
+    const maniFields = Object.keys(manifest);
+
+    maniTests.forEach((test) => {
+        if (requiredOnly && test.category !== "required") {
+            return;
+        }
+        const tested = maniFields.some((field) => {
+            if (test.member === field && test.test) {
+                const testResult = test.test(manifest[field]);
+
+                test.valid = testResult? true: false;
+                data.push(test);
+
+                return true;
             }
-            const tested = maniFields.some((field) => {
-                if (test.member === field && test.test) {
-                    const testResult = test.test(manifest[field]);
-
-                    test.valid = testResult? true: false;
-                    data.push(test);
-
-                    return true;
-                }
-                return false;
-            });
-            if (!tested && includeMissedTests) {
-                test.test && test.test(undefined);
-                data.push({...test, valid: false});
-            }
-        })
-
-        resolve(data);
+            return false;
+        });
+        if (!tested && includeMissedTests) {
+            test.test && test.test(undefined);
+            data.push({...test, valid: false});
+        }
     })
+
+    return data;
 }
 
-export async function loopThroughRequiredKeys(manifest: Manifest, includeMissedTests = false): Promise<Array<Validation>> {
-    return new Promise((resolve, reject) => {
-        loopThroughKeys(manifest, true, includeMissedTests).then((data) => {
-            resolve(data);
-        }).catch((err: unknown) => {
-            console.error(err);
-            reject(err);
-        })
+export function loopThroughRequiredKeys(manifest: Manifest, includeMissedTests = false): Array<Validation> {
+    return loopThroughKeys(manifest, true, includeMissedTests);
 
 
         // let data: Array<Validation> = [];
@@ -66,7 +59,7 @@ export async function loopThroughRequiredKeys(manifest: Manifest, includeMissedT
         // })
 
         // resolve(data);
-    })
+    //})
 }
 
 export async function findSingleField(field: string, value: any): Promise<singleFieldValidation> {

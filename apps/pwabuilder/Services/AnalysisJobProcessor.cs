@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
+using PWABuilder.Validations.Models;
+using PWABuilder.Validations.Services;
 
 namespace PWABuilder.Services;
 
@@ -19,23 +21,26 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ServiceWorkerDetector serviceWorkerDetector;
     private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
     private readonly ILighthouseService lighthouse;
+    private readonly IImageValidationService imageValidator;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
     public AnalysisJobProcessor(
         AnalysisJobQueue queue, 
         AnalysisDb db, 
-        ManifestDetector manifestDetectionService,
-        ServiceWorkerDetector serviceWorkerDetectionService,
+        ManifestDetector manifestDetector,
+        ServiceWorkerDetector serviceWorkerDetector,
         IServiceWorkerAnalyzer serviceWorkerAnalyzer,
         ILighthouseService lighthouse, 
+        IImageValidationService imageValidator,
         ILogger<AnalysisJobProcessor> logger)
     {
         this.queue = queue;
         this.db = db;
         this.lighthouse = lighthouse;
-        this.manifestDetector = manifestDetectionService;
-        this.serviceWorkerDetector = serviceWorkerDetectionService;
+        this.manifestDetector = manifestDetector;
+        this.serviceWorkerDetector = serviceWorkerDetector;
         this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
+        this.imageValidator = imageValidator;
         this.logger = logger;
     }
 
@@ -111,8 +116,9 @@ public class AnalysisJobProcessor : IHostedService
             // Kick off all jobs simultaneously so the end result is faster.
             var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysis, analysisLogger, cancelToken);
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => serviceWorkerDetector.TryAnalyze(d.Result!.Url, job.Url, logger, cancelToken), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => TryAnalyzeServiceWorker(d.Result, job, cancelToken)).Unwrap();
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
+            var manifestImagesValidation = manifestDetectionTask.ContinueWith(m => TryValidateManifestImages(m.Result, job, cancelToken)).Unwrap();
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
@@ -129,7 +135,14 @@ public class AnalysisJobProcessor : IHostedService
                 await db.SaveAsync(analysis);
             }
 
-            // Step 4, if we have a manifest or service worker, run Lighthouse PWA analysis.
+            // Step 4, validate the images within the manifest.
+            if (analysis.WebManifest != null)
+            {
+                var manifestImageValidations = await manifestImagesValidation;
+                analysis.WebManifest.Validations.AddRange(manifestImageValidations);
+            }
+
+            // Step 5, if we have a manifest or service worker, run Lighthouse PWA analysis.
             if (analysis.WebManifest != null || analysis.ServiceWorker != null)
             {
                 analysis.LighthouseReport = await lighthouseAnalysisTask;
@@ -141,7 +154,7 @@ public class AnalysisJobProcessor : IHostedService
                 analysisLogger.LogInformation("No manifest or service worker detected for {url}. Skipping Lighthouse analysis.", job.Url);
             }
 
-            // Step 5, if we have a Lighthouse report and a ServiceWorker, add an Offline check.
+            // Step 6, if we have a Lighthouse report and a ServiceWorker, add an Offline check.
             if (analysis.LighthouseReport != null && analysis.ServiceWorker != null)
             {
                 analysis.ServiceWorker.Validations.Add(analysis.LighthouseReport.GetOfflineTestResult());
@@ -170,6 +183,39 @@ public class AnalysisJobProcessor : IHostedService
         {
             logger.LogError(error, "Error running Lighthouse audit for {url}", job.Url);
             return null;
+        }
+    }
+
+    private async Task<List<TestResult>> TryAnalyzeServiceWorker(ServiceWorkerDetection? detection, AnalysisJob job, CancellationToken cancelToken)
+    {
+        if (detection == null)
+        {
+            return [];
+        }
+
+        return await serviceWorkerDetector.TryAnalyze(detection.Url, job.Url, logger, cancelToken);
+    }
+
+    private async Task<List<Validation>> TryValidateManifestImages(ManifestDetection? manifest, AnalysisJob job, CancellationToken cancelToken)
+    {
+        if (manifest == null || manifest.Json == null)
+        {
+            return [];
+        }
+
+        // Kick off both icon and screenshot validation tasks.
+        var iconValidationTask = imageValidator.ValidateIconsMetadataAsync(manifest.Json, manifest.Url, cancelToken);
+        var screenshotValidationTask = imageValidator.ValidateScreenshotsMetadataAsync(manifest.Json, manifest.Url, cancelToken);
+        try
+        {
+            var iconValidation = await iconValidationTask;
+            var screenshotValidation = await screenshotValidationTask;
+            return [iconValidation, screenshotValidation];
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error validating manifest images for {url}", job.Url);
+            return [];
         }
     }
 

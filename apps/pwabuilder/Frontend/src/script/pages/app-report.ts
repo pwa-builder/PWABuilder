@@ -1,4 +1,5 @@
 import { LitElement, TemplateResult, html } from 'lit';
+import { repeat } from "lit/directives/repeat.js";
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, setManifestContext } from '../services/app-info';
 import { validateManifest, Validation, Manifest, reportMissing, required_fields, recommended_fields, optional_fields } from '@pwabuilder/manifest-validation';
@@ -44,11 +45,13 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import { processImages, processManifest, processSecurity, processServiceWorker } from './app-report.helper';
-import { Report, ReportAudit, FindWebManifest, FindServiceWorker, AuditServiceWorker } from './app-report.api';
+import { processImages, processManifest } from './app-report.helper';
+import { ReportAudit, enqueueAnalysis, Analysis, getAnalysis } from './app-report.api';
 import { findBestAppIcon } from '../utils/icons';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { appReportStyles } from './app-report.styles';
+import { AnalysisTodo } from '../models/analysis-todo';
+import { display } from 'colorjs.io/fn';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -97,6 +100,10 @@ export class AppReport extends LitElement {
   @state() canPackageList: boolean[] = [false, false, false];
   @state() canPackage: boolean = false;
   @state() manifestEditorOpened: boolean = false;
+  @state() analysisId: string | null = null;
+  @state() analysis: Analysis | null = null;
+  analysisStatusCheckHandle = 0;
+  analysisStatusCheckInterval = 2000;
 
   @state() swSelectorOpen: boolean = false;
 
@@ -119,7 +126,7 @@ export class AppReport extends LitElement {
   @state() focusOnME: string = "";
   @state() proxyLoadingImage: boolean = false;
 
-  @state() serviceWorkerResults: any[] = [];
+  @state() serviceWorkerResults: TestResult[] = [];
   @state() swTotalScore: number = 0;
   @state() swValidCounter: number = 0;
   @state() swRequiredCounter: number = 0;
@@ -140,21 +147,21 @@ export class AppReport extends LitElement {
 
   @state() enhancementTotalScore: number = 0;
 
-  @state() requiredMissingFields: any[] = [];
-  @state() recMissingFields: any[] = [];
-  @state() optMissingFields: any[] = [];
+  @state() requiredMissingFields: string[] = [];
+  @state() recommendedMissingFields: string[] = [];
+  @state() optionalMissingFields: string[] = [];
 
   // Confirm Retest stuff
   @state() showConfirmationModal: boolean = false;
   @state() thingToAdd: string = "";
   @state() retestConfirmed: boolean = false;
-  @state() readdDenied: boolean = false;
+  @state() readDenied: boolean = false;
 
   @state() createdManifest: boolean = false;
   @state() manifestContext: ManifestContext | undefined;
 
-  @state() allTodoItems: any[] = [];
-  @state() filteredTodoItems: any[] = [];
+  @state() allTodoItems: AnalysisTodo[] = [];
+  @state() filteredTodoItems: AnalysisTodo[] = [];
   @state() filterList: any[] = [];
   @state() openTooltips: SlDropdown[] = [];
   @state() stopShowingNotificationTooltip: boolean = false;
@@ -418,117 +425,189 @@ export class AppReport extends LitElement {
     await this.populateAppCard(this.manifestContext, manifestUrl);
   }
 
+  private async checkAnalysisStatus(): Promise<void> {
+    if (this.analysisId) {
+      const analysis = await getAnalysis(this.analysisId);
+      if (analysis) {
+        await this.analysisUpdated(analysis);
+      } else {
+        console.warn("Queued up analysis but didn't find it on the server.", this.analysisId);
+      }
+
+      // If the analysis failed, show an error.
+      if (analysis && analysis.status === "Failed") {
+        this.analysisFailed();
+      }
+
+      // If the analysis is completed, clear the timeout.
+      if (analysis && analysis.status === "Completed") {
+        this.analysisCompleted();
+      }
+
+      // If the analysis is still running, set a timeout to check again.
+      const isAnalysisCompleted = analysis && (analysis.status === "Completed" || analysis.status === "Failed");
+      if (!isAnalysisCompleted || !analysis) {
+        this.analysisStatusCheckHandle = window.setTimeout(() => this.checkAnalysisStatus(), this.analysisStatusCheckInterval);
+      }
+    }
+  }
+
+  analysisCompleted(): void {
+    this.runningTests = false;
+  }
+
+  analysisFailed(): void {
+    this.runningTests = false;
+    this.canPackage = false;
+  }
+
+  async analysisUpdated(analysis: Analysis): Promise<void> {
+    const unchanged = this.analysis?.lastModifiedAt === analysis.lastModifiedAt;
+    if (unchanged) {
+      return;
+    }
+
+    // The analysis has been updated since we last saw it.
+    this.analysis = analysis;
+
+    // Clear all the existing TODOs.
+    const todos: AnalysisTodo[] = [];
+    
+    // Apply the manifest and manifest todos
+    if (analysis.webManifest?.raw) {
+      this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.raw || "");
+      const manifestTodos = this.testManifest(analysis.webManifest.validations);
+      todos.push(...manifestTodos);
+    } 
+
+    // Add service worker todos
+    if (analysis.serviceWorker) {
+      todos.push(...this.createServiceWorkerResults(analysis.serviceWorker.validations));
+    }
+
+    // // TODO: move installability score to different place
+    // this.allTodoItems.push(...await this.createServiceWorkerResults(this.reportAudit?.serviceWorkerValidations ?? []));
+    //this.allTodoItems.push(...await this.createSecurityResults(this.reportAudit?.securityValidations ?? []));
+    //this.allTodoItems.push(...await this.createTestsImagesResults(processImages(this.reportAudit?.audits)));
+
+    this.allTodoItems = todos;
+    this.filteredTodoItems = this.allTodoItems;
+    this.canPackage = analysis.canPackage; // this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2] && this.canPackageList[3];
+  }
+
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
   async runAllTests(url: string) {
     this.runningTests = true;
     this.isAppCardInfoLoading = true;
 
+    this.analysisId = await enqueueAnalysis(url);
+    this.analysisStatusCheckHandle = window.setTimeout(() => this.checkAnalysisStatus(), this.analysisStatusCheckInterval);
     
 
-    let findersResults = {
-      manifest: {} as {url?: string, raw?: string, json?: unknown},
-      serviceWorker: {} as {url?: string, raw?: string},
-      manifestTodos: [] as unknown[],
-      workerTodos: [] as unknown[]
-    }
-    this.reportAudit = undefined;
+    // let findersResults = {
+    //   manifest: {} as {url?: string, raw?: string, json?: unknown},
+    //   serviceWorker: {} as {url?: string, raw?: string},
+    //   manifestTodos: [] as unknown[],
+    //   workerTodos: [] as unknown[]
+    // }
+    // this.reportAudit = undefined;
 
-    // Take only good results, ignore errors.
-    FindWebManifest(url).then( async (result) => {
-      if (result?.content?.raw && !this.reportAudit?.artifacts?.webAppManifestDetails?.raw) {
-        // TODO: can use json instead of raw
-        findersResults.manifest = result.content;
-        await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
-        findersResults.manifestTodos = await this.testManifest(result.content.validations);
-        this.allTodoItems.push(...findersResults.manifestTodos);
-        this.requestUpdate();
-      }
-    });
+    // // Take only good results, ignore errors.
+    // FindWebManifest(url).then( async (result) => {
+    //   if (result?.content?.raw && !this.reportAudit?.artifacts?.webAppManifestDetails?.raw) {
+    //     // TODO: can use json instead of raw
+    //     findersResults.manifest = result.content;
+    //     await this.applyManifestContext(url, result?.content?.url || undefined, result?.content?.raw);
+    //     findersResults.manifestTodos = await this.testManifest(result.content.validations);
+    //     this.allTodoItems.push(...findersResults.manifestTodos);
+    //     this.requestUpdate();
+    //   }
+    // });
 
-    setTimeout(() => this.closeOpenTooltips = false, 20000);
+    // setTimeout(() => this.closeOpenTooltips = false, 20000);
 
-    this.filteredTodoItems = this.allTodoItems;
+    // this.filteredTodoItems = this.allTodoItems;
 
-    FindServiceWorker(url).then( async (result) => {
-        if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker) {
-          await AuditServiceWorker(result.content.url).then( async (result) => {
-            console.log("content:", result.validations);
-            findersResults.workerTodos = await this.createServiceWorkerResults(result.validations);
-            this.allTodoItems.push(...findersResults.workerTodos);
-            this.requestUpdate();
-          });
-          findersResults.serviceWorker = result.content;
-        }
-      }
-    );
+    // FindServiceWorker(url).then(async (result) => {
+    //     if (result?.content?.url && !this.reportAudit?.audits?.serviceWorker) {
+    //       await AuditServiceWorker(result.content.url).then( async (result) => {
+    //         console.log("content:", result.validations);
+    //         findersResults.workerTodos = await this.createServiceWorkerResults(result.validations);
+    //         this.allTodoItems.push(...findersResults.workerTodos);
+    //         this.requestUpdate();
+    //       });
+    //       findersResults.serviceWorker = result.content;
+    //     }
+    //   }
+    // );
 
-    this.filteredTodoItems = this.allTodoItems;
+    // this.filteredTodoItems = this.allTodoItems;
 
-    try {
-      this.reportAudit = await Report(url);
-    } catch (e) {
-      console.error(e);
-      this.allTodoItems.push(...await this.createSecurityResults(processSecurity()));
-      if (!findersResults.manifest?.raw) {
-        await this.applyManifestContext(url, undefined, undefined);
-        this.allTodoItems.push(...await this.testManifest());
-      }
-      if (!findersResults.serviceWorker?.raw) {
-        this.allTodoItems.push(...await this.createServiceWorkerResults(processServiceWorker({score: false, details: {}})));
-      }
+    // try {
+    //   this.reportAudit = await Report(url);
+    // } catch (e) {
+    //   console.error(e);
+    //   this.allTodoItems.push(...await this.createSecurityResults(processSecurity()));
+    //   if (!findersResults.manifest?.raw) {
+    //     await this.applyManifestContext(url, undefined, undefined);
+    //     this.allTodoItems.push(...await this.testManifest());
+    //   }
+    //   if (!findersResults.serviceWorker?.raw) {
+    //     this.allTodoItems.push(...await this.createServiceWorkerResults(processServiceWorker({score: false, details: {}})));
+    //   }
 
-      this.filteredTodoItems = this.allTodoItems;
+    //   this.filteredTodoItems = this.allTodoItems;
 
-      this.runningTests = false;
-      this.requestUpdate();
-      return;
-    }
+    //   this.runningTests = false;
+    //   this.requestUpdate();
+    //   return;
+    // }
 
-    this.filteredTodoItems = this.allTodoItems;
-    console.log(this.reportAudit);
+    // this.filteredTodoItems = this.allTodoItems;
+    // console.log(this.reportAudit);
 
-    // Check for previously successfull FindMani
-    if (this.reportAudit?.artifacts?.webAppManifestDetails?.raw) {
-      if (!findersResults.manifest.raw || this.reportAudit?.artifacts.webAppManifestDetails.raw != findersResults.manifest.raw) {
-        await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifestDetails?.url, this.reportAudit?.artifacts?.webAppManifestDetails?.raw);
-        findersResults.manifestTodos = [];
-      }
-    } else {
-      if (!findersResults.manifest?.raw) {
-        await this.applyManifestContext(url, undefined, undefined);
-      }
-    }
+    // // Check for previously successfull FindMani
+    // if (this.reportAudit?.artifacts?.webAppManifestDetails?.raw) {
+    //   if (!findersResults.manifest.raw || this.reportAudit?.artifacts.webAppManifestDetails.raw != findersResults.manifest.raw) {
+    //     await this.applyManifestContext(url, this.reportAudit?.artifacts?.webAppManifestDetails?.url, this.reportAudit?.artifacts?.webAppManifestDetails?.raw);
+    //     findersResults.manifestTodos = [];
+    //   }
+    // } else {
+    //   if (!findersResults.manifest?.raw) {
+    //     await this.applyManifestContext(url, undefined, undefined);
+    //   }
+    // }
 
-    // Reapply mani todos from FindMani
-    this.allTodoItems = [];
-    if (findersResults.manifestTodos.length){
-      this.allTodoItems.push(...findersResults.manifestTodos)
-    }
-    else {
-      this.allTodoItems.push(...await this.testManifest());
-    }
+    // // Reapply mani todos from FindMani
+    // this.allTodoItems = [];
+    // if (findersResults.manifestTodos.length){
+    //   this.allTodoItems.push(...findersResults.manifestTodos)
+    // }
+    // else {
+    //   this.allTodoItems.push(...await this.testManifest());
+    // }
 
-    // TODO: move installability score to different place
-    this.allTodoItems.push(...await this.createServiceWorkerResults(this.reportAudit?.serviceWorkerValidations ?? [])),
-    this.allTodoItems.push(...await this.createSecurityResults(this.reportAudit?.securityValidations ?? []));
-    this.allTodoItems.push(...await this.createTestsImagesResults(processImages(this.reportAudit?.audits)));
+    // // TODO: move installability score to different place
+    // this.allTodoItems.push(...await this.createServiceWorkerResults(this.reportAudit?.serviceWorkerValidations ?? [])),
+    // this.allTodoItems.push(...await this.createSecurityResults(this.reportAudit?.securityValidations ?? []));
+    // this.allTodoItems.push(...await this.createTestsImagesResults(processImages(this.reportAudit?.audits)));
 
-    this.filteredTodoItems = this.allTodoItems;
-    this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2] && this.canPackageList[3];
+    // this.filteredTodoItems = this.allTodoItems;
+    // this.canPackage = this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2] && this.canPackageList[3];
 
-    this.runningTests = false;
-    this.requestUpdate();
+    // this.runningTests = false;
+    // this.requestUpdate();
   }
 
   // Tests the Manifest and populates the manifest card detail dropdown
-  async testManifest(validationResults: Validation[] = []) {
+  testManifest(validationResults: Validation[] = []): AnalysisTodo[] {
     //add manifest validation logic
     // note: wrap in try catch (can fail if invalid json)
     this.manifestDataLoading = true;
     let manifest;
-    let todos: unknown[] = [];
+    let todos: AnalysisTodo[] = [];
 
-    if(this.createdManifest){
+    if(this.createdManifest) {
       manifest = {};
       todos.push({"card": "mani-details", "field": "Open Manifest Modal", "fix": "Edit and download your created manifest (Manifest not found before detection tests timed out)", "status": "missing"});
     }
@@ -537,12 +616,11 @@ export class AppReport extends LitElement {
     if (validationResults.length > 0){
       this.validationResults = validationResults;
     } else {
-      this.validationResults = await validateManifest(manifest, true);
+      this.validationResults = validateManifest(manifest, true);
     }
 
     const icon = findBestAppIcon(manifest.icons);
     this.validationResults.push({infoString: "Icons are used to create packages for different stores and must meet certain formatting requirements.", displayString: "Manifest has suitable icons", category: 'required', member: 'suitable-icons', valid: !!icon, errorString: "Can't find a suitable icon to use for the package stores. Ensure your manifest has a square, large (512x512 or better) PNG icon; Check if the proposed any or maskable is set. And if the format of the image matches the mimetype.", testRequired: true, quickFix: true});
-
 
     //  This just makes it so that the valid things are first
     // and the invalid things show after.
@@ -552,7 +630,7 @@ export class AppReport extends LitElement {
       } else if(b.valid && !a.valid){
         return -1;
       } else {
-        return a.member.localeCompare(b.member);
+        return 0; // a.member.localeCompare(b.member);
       }
     });
     this.manifestTotalScore = this.validationResults.length;
@@ -607,9 +685,9 @@ export class AppReport extends LitElement {
   }
 
   // Tests the SW and populates the SW card detail dropdown
-  async createServiceWorkerResults(serviceWorkerResults: TestResult[]) {
+  createServiceWorkerResults(serviceWorkerResults: TestResult[]): AnalysisTodo[] {
 
-    let todos: unknown[] = [];
+    let todos: AnalysisTodo[] = [];
 
     const prevServiceWorkerResults = this.serviceWorkerResults;
     if (prevServiceWorkerResults && prevServiceWorkerResults.length > 0) {
@@ -691,10 +769,10 @@ export class AppReport extends LitElement {
   }
 
   // Tests the Security and populates the Security card detail dropdown
-  async createSecurityResults(securityAudit: TestResult[]) {
+  async createSecurityResults(securityAudit: TestResult[]): Promise<AnalysisTodo[]> {
 
     //Call security tests
-    let todos: unknown[] = [];
+    let todos: AnalysisTodo[] = [];
 
     const securityTests = securityAudit;
 
@@ -719,8 +797,8 @@ export class AppReport extends LitElement {
     return todos;
   }
 
-  async createTestsImagesResults(imagesValidation: Validation[]) {
-    let todos: unknown[] = [];
+  createTestsImagesResults(imagesValidation: Validation[]): AnalysisTodo[] {
+    let todos: AnalysisTodo[] = [];
 
     imagesValidation.forEach((result: Validation) => {
       if (!result.valid) {
@@ -745,7 +823,7 @@ export class AppReport extends LitElement {
   async handleMissingFields(manifest: Manifest){
     let missing = await reportMissing(manifest);
     let todos: unknown[] = [];
-    this.requiredMissingFields, this.recMissingFields, this.optMissingFields = [];
+    this.requiredMissingFields, this.recommendedMissingFields, this.optionalMissingFields = [];
 
     missing.forEach((field: string) => {
 
@@ -756,11 +834,11 @@ export class AppReport extends LitElement {
         this.manifestRequiredCounter++;
         todos.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, status: "required"})
       } else if(recommended_fields.includes(field)){
-        this.recMissingFields.push(field);
+        this.recommendedMissingFields.push(field);
         this.manifestRecCounter++;
         isRecommended = true;
       } else if(optional_fields.includes(field)){
-        this.optMissingFields.push(field)
+        this.optionalMissingFields.push(field)
       }
       if(!this.createdManifest && !required_fields.includes(field)){
         todos.push({"card": "mani-details", "field": field, "fix": `Add ${field} to your manifest`, "status": isRecommended ? "recommended" : "optional"})
@@ -814,8 +892,8 @@ export class AppReport extends LitElement {
 
     // reset missing lists
     this.requiredMissingFields = [];
-    this.recMissingFields = [];
-    this.optMissingFields = [];
+    this.recommendedMissingFields = [];
+    this.optionalMissingFields = [];
 
     // reset results
     this.validationResults = [];
@@ -979,7 +1057,7 @@ export class AppReport extends LitElement {
     }
   }
 
-  formatSWStrings(member: string){
+  formatSWStrings(member: string): string {
     const words = member.split('_');
     // Capitalize first letter of each word (handles single characters correctly)
     const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
@@ -988,7 +1066,7 @@ export class AppReport extends LitElement {
   }
 
   // Scrolls and Shakes the respective item from a click of an action item
-  async animateItem(e: CustomEvent){
+  async animateItem(e: CustomEvent) {
     e.preventDefault;
     recordPWABuilderProcessStep("todo_item_clicked", AnalyticsBehavior.ProcessCheckpoint);
 
@@ -1093,7 +1171,7 @@ export class AppReport extends LitElement {
   // Sorts the action items list with the required stuff first
   // -1 = a wins
   // 1 = b wins
-  sortTodos(){
+  sortTodos(): AnalysisTodo[] {
     let rank: { [key: string]: number } = {
       "retest": 0,
       "missing": 1,
@@ -1132,7 +1210,7 @@ export class AppReport extends LitElement {
   }
 
   // Pages the action items
-  paginate() {
+  paginateTodos(): AnalysisTodo[] {
     let array = this.sortTodos();
     let itemsOnPage = array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
 
@@ -1166,7 +1244,7 @@ export class AppReport extends LitElement {
   }
 
   // Returns a list that represents the number of dots need for pagination
-  getDots(){
+  getPaginationDots(): string[] {
     let dots: any[] = [];
 
     let totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize);
@@ -1178,7 +1256,7 @@ export class AppReport extends LitElement {
   }
 
   // Renders the indicators for each action item
-  renderIndicators(){
+  renderTodoIndicators(): TemplateResult {
     let yellow = 0;
     let purple = 0;
     let red = 0;
@@ -1219,8 +1297,8 @@ export class AppReport extends LitElement {
         }
       </div>`
     }
-    return null;
 
+    return html``;
   }
 
   // filter todos by severity
@@ -1299,12 +1377,12 @@ export class AppReport extends LitElement {
     }
   }
 
-  renderReaddDialog() {
+  renderReadDialog(): TemplateResult {
     var dialogContent = html`
       <p>Have you added your new ${this.thingToAdd} to your site?</p>
       <div id="confirmationButtons">
         <sl-button @click=${() => this.retest(true)}> Yes </sl-button>
-        <sl-button @click=${() => this.readdDenied = true}> No </sl-button>
+        <sl-button @click=${() => this.readDenied = true}> No </sl-button>
       </div>
     `
 
@@ -1313,7 +1391,7 @@ export class AppReport extends LitElement {
         <p>Retesting your site now!</p>
       `;
     }
-    else if (this.readdDenied) {
+    else if (this.readDenied) {
       dialogContent = html`
         <p>Add your new ${this.thingToAdd}, and then we can retest your site. </p>
       `;
@@ -1322,19 +1400,14 @@ export class AppReport extends LitElement {
     return dialogContent;
   }
 
-  render() {
-    return html`
-      <app-header .page=${"report"}></app-header>
-      <div id="report-wrapper">
-        <div id="content-holder">
-          <div id="header-row">
-          ${this.isAppCardInfoLoading ?
-          html`
-            <div id="app-card" class="flex-col skeleton-effects">
-              <div id="app-card-header" class="skeleton">
-                <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
-                <div id="card-info" class="flex-col">
-                  <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+  renderAppCardInfo(): TemplateResult {
+    if (this.isAppCardInfoLoading) {
+      return html`
+        <div id="app-card" class="flex-col skeleton-effects">
+          <div id="app-card-header" class="skeleton">
+            <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
+            <div id="card-info" class="flex-col">
+              <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                   <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
                 </div>
                 <!-- <sl-skeleton class="app-info-skeleton skeleton-desc" effect="pulse"></sl-skeleton> -->
@@ -1342,573 +1415,493 @@ export class AppReport extends LitElement {
               <div id="app-card-footer">
                 <sl-skeleton class="app-info-skeleton-half" effect="pulse"></sl-skeleton>
               </div>
-            </div>`
-            :
-            html`
-            <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#757575' }) : styleMap(this.CardStyles)}>
-              <div id="app-card-header">
-                <div id="app-card-header-col">
-                  <div id="pwa-image-holder">
-                    ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
-                  </div>
-                  <div id="card-info" class="flex-row">
-                    <h1 id="site-name">
-                      ${this.appCard.siteName}
-                      <span class="visually-hidden" aria-live="polite">Report card page for ${this.appCard.siteName}</span>
-                    </h1>
-                    <p id="site-url">${this.appCard.siteUrl}</p>
-                    <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
-                  </div>
-                  <div id="app-card-share-cta">
-                    <button type="button" id="share-button-desktop" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                    ${this.runningTests ?
-                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-                    } Share score
-                    </button>
-                  </div>
-                </div>
-                <div id="app-card-desc-mobile">
-                  <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
-                  <button type="button" id="share-button-mobile" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                    ${this.runningTests ?
-                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-                      html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-                    } Share score
-                    </button>
+            </div>
+        `;
+    }
 
-                </div>
+    return html`
+      <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#757575' }) : styleMap(this.CardStyles)}>
+          <div id="app-card-header">
+            <div id="app-card-header-col">
+              <div id="pwa-image-holder">
+                ${this.proxyLoadingImage || this.appCard.iconURL.length === 0 ? html`<span class="proxy-loader"></span>` : html`<img src=${this.appCard.iconURL} alt=${this.appCard.iconAlt} />`}
               </div>
-              <div id="app-card-footer">
-                ${this.runningTests ? html`
-                    <div id="test" class="in-progress">
-                      <span>testing in progress</span>
-                      <div class="loader-round"></div>
-                    </div>
-                `:
-                  html`
-                  <div id="test" style=${styleMap(this.CardStyles)}>
-                    <button
-                      type="button"
-                      id="retest"
-                      @click=${() => {
-                        this.retest(false);
-                      }}>
-                      <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
-
-                      <img
-                        src=${`/assets/new/retest-icon${this.darkMode ? "_light" : ""}.svg`}
-                        alt="retest site"
-                      />
-                    </button>
-                  </div>`
-                }
+              <div id="card-info" class="flex-row">
+                <h1 id="site-name">
+                  ${this.appCard.siteName}
+                  <span class="visually-hidden" aria-live="polite">Report card page for ${this.appCard.siteName}</span>
+                </h1>
+                <p id="site-url">${this.appCard.siteUrl}</p>
+                <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
               </div>
+              <div id="app-card-share-cta">
+                <button type="button" id="share-button-desktop" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                ${this.runningTests ?
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                } Share score
+                </button>
+              </div>
+            </div>
+            <div id="app-card-desc-mobile">
+              <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
+              <button type="button" id="share-button-mobile" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
+                ${this.runningTests ?
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
+                  html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
+                } Share score
+                </button>
 
-            </div>`}
+            </div>
+          </div>
+          <div id="app-card-footer">
+            ${this.renderFooter()}
+          </div>
+        </div>
+    `;
+  }
+
+  renderFooter(): TemplateResult {
+    if (this.runningTests) {
+      return html`
+        <div id="test" class="in-progress">
+            <span>testing in progress</span>
+            <div class="loader-round"></div>
+          </div>
+      `;
+    }
+    
+    return html`
+      <div id="test" style=${styleMap(this.CardStyles)}>
+        <button type="button" id="retest" @click="${() => this.retest(false)}">
+            <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>${this.lastTested}</p>
+          <img src=${this.getThemedIcon('/assets/new/retest-icon.svg')} alt="retest site" />
+        </button>
+      </div>
+    `;
+  }
+
+  renderPackageForStores(): TemplateResult {
+    if (this.canPackage) {
+      return html`
+        <button type="button" id="pfs" @click=${() => this.openPublishModal()}>
+            Package For Stores
+        </button>
+      `;
+    }
+    
+    return html`
+      <sl-tooltip class="mani-tooltip">
+        ${this.runningTests ?
+          html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
+          html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
+            <button
+              type="button"
+              id="pfs-disabled"
+              aria-disabled="true">
+                ${this.renderPackageSpinner()}
+                Package For Stores
+            </button>
+      </sl-tooltip>
+    `;
+  }
+
+  private renderSecurityErrorBanner(): TemplateResult {
+    if (!this.showSecurityErrorBanner) {
+      return html``;
+    }
+
+    return html`
+      <div class="feedback-holder type-error">
+        <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">You do not have a secure HTTPS server</p>
+          <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+          <div class="error-actions">
+            <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderSecurityWarningBanner(): TemplateResult {
+    if (!this.showSecurityWarningBanner || this.showSecurityErrorBanner) {
+      return html``;
+    }
+
+    return html`
+      <div class="feedback-holder type-warning">
+        <img src="/assets/new/yield.svg" alt="warning result icon" />
+        <div class="error-info">
+          <p class="error-title">Mixed content is loading on your PWA</p>
+          <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified that you are delivering mixed resources when your PWA is loading. Check out the documentation linked below to learn more.</p>
+          <div class="error-actions">
+            <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content" target="_blank" rel="noopener">Mixed Content Documentation</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderServiceWorkerWarningBanner(): TemplateResult {
+    if (!this.showServiceWorkerWarningBanner) {
+      return html``;
+    }
+
+    return html`
+      <div class="feedback-holder type-warning">
+        <img src="/assets/new/yield.svg" alt="warning result icon" />
+        <div class="error-info">
+          <p class="error-title">Service worker registration timeout</p>
+          <p class="error-desc">We detected a link to your service worker however, our tests timed out waiting for it to be registered. This can happen for a number of reasons and may even be intentional. To learn more about site load times and when you should be registering your service worker, follow the link below.</p>
+          <div class="error-actions">
+            <a href="https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration" target="_blank" rel="noopener">Service Worker Registration Documentation</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderIconErrorBanner(): TemplateResult {
+    if (!this.showIconsErrorBanner) {
+      return html``;
+    }
+
+    return html`
+      <div class="feedback-holder type-error">
+      <img src="/assets/new/stop.svg" alt="invalid result icon" />
+        <div class="error-info">
+          <p class="error-title">Manifest icons could not be fetched</p>
+          <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
+          <div class="error-actions">
+            <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/03" target="_blank" rel="noopener">Manifest Documentation</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderTodoTooltip(): TemplateResult {
+    return html`
+      <sl-tooltip class="mani-tooltip" id="notifications" ?open=${this.closeOpenTooltips}>
+        <div slot="content" class="mani-tooltip-content">
+          <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
+          <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
+        </div>
+        ${this.renderTodoIndicators()}
+      </sl-tooltip>
+    `;
+  }
+
+  private renderTodos(): TemplateResult {
+    const indicatorOrTooltip = this.stopShowingNotificationTooltip ? 
+      this.renderTodoIndicators() 
+      : this.renderTodoTooltip();
+    const indicatorOrTooltipOrEmpty = this.allTodoItems.length === 0 ? html`` : indicatorOrTooltip;
+    
+    return html`    
+     <div id="todo">
+        <div id="todo-detail">
+          <div id="todo-summary">
+            <div id="todo-summary-left">
+              <h2>Action Items</h2>
+            </div>
+            <div id="todo-indicators">
+                ${indicatorOrTooltipOrEmpty}
+            </div>
+          </div>
+          <div class="todo-items-holder">
+            ${this.renderFilteredTodoItems()}
+          </div>
+          ${this.renderTodoPagination()}
+          <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderTodoPagination(): TemplateResult {
+    if (this.filteredTodoItems.length <= this.pageSize) {
+      return html``;
+    }
+
+    return html`
+      <div id="pagination-actions">
+        <button class="pagination-buttons" name="action-items-previous-page-button" aria-label="Previous page button for action items list" type="button" @click=${() => this.switchPage(false)}>
+          <sl-icon class="pageToggles" name="chevron-left"></sl-icon>
+        </button>
+        ${this.renderTodoPaginationDots()}
+        <button class="pagination-buttons" name="action-items-next-page-button" aria-label="Next page button for action items list" aria-live="polite" type="button" @click=${() => this.switchPage(true)}>
+          <sl-icon class="pageToggles" name="chevron-right"></sl-icon>
+        </button>
+      </div>
+    `;
+  }
+
+  private renderTodoPaginationDots(): TemplateResult {
+    const paginationDots = this.getPaginationDots();
+    return html`
+      <div id="dots">
+        ${repeat(paginationDots, (_, index) => this.renderTodoPaginationDot(index))}
+      </div>
+    `;
+  }
+
+  private renderTodoPaginationDot(index: number): TemplateResult {
+    if (this.pageNumber === (index + 1)) {
+      return html`<img src="/assets/new/active_dot.svg" alt="active dot" />`;
+    }
+
+    return html`<img src="/assets/new/inactive_dot.svg" alt="inactive dot" />`;
+  }
+
+  private renderManifestSection(): TemplateResult {
+    return html`
+      <div id="manifest" class="flex-col">
+        <div id="manifest-header">
+          <div id="mh-content">
+            <div id="mh-text" class="flex-col">
+              <h2 class="card-header">Manifest</h2>
+              ${this.renderManifestScore()}
+            </div>
+          </div>
+
+          <div id="mh-right">
+            ${this.renderManifestScoreRing()}
+          </div>
+          <div id="mh-actions" class="flex-col">
+            ${this.renderEditManifestButton()}
+          </div>
+        </div>
+        
+        ${this.renderManifestDetails()}
+      </div>
+    `;
+  }
+
+  renderManifestDetails(): TemplateResult {
+    return html`
+      <sl-details id="mani-details" class="details" ?disabled=${this.manifestDataLoading} @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)} @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}>
+        ${this.renderManifestDetailsChecklist()}
+      </sl-details>
+    `;
+  }
+
+  renderManifestDetailsChecklist(): TemplateResult {
+    if (this.manifestDataLoading) {
+      return html`
+        <div slot="summary">
+          <sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton>
+        </div>
+      `;
+    } 
+
+    const requiredValidations = this.validationResults.filter(v => v.category === "required" || (v.testRequired && !v.valid));
+    const recommendedValidations = this.validationResults.filter(v => v.category === "recommended"  && ((v.testRequired && v.valid) || !v.testRequired));
+    const optionalValidations = this.validationResults.filter(v => v.category === "optional" && ((v.testRequired && v.valid) || !v.testRequired));
+    return html`
+      <div class="details-summary" slot="summary">
+        <p>View Details</p>
+        <img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+      </div>
+      <div id="manifest-detail-grid">
+        <div class="detail-list">
+          <p class="detail-list-header">Required</p>
+          ${this.renderManifestMissingFields(this.requiredMissingFields, "required")}
+          ${this.renderManifestValidations(requiredValidations, "required")}
+        </div>
+        <div class="detail-list">
+          <p class="detail-list-header">Recommended</p>
+          ${this.renderManifestMissingFields(this.recommendedMissingFields, "recommended")}
+          ${this.renderManifestValidations(recommendedValidations, "recommended")}
+        </div>
+        <div class="detail-list">
+          <p class="detail-list-header">Optional</p>
+          ${this.renderManifestMissingFields(this.optionalMissingFields, "optional")}
+          ${this.renderManifestValidations(optionalValidations, "optional")}
+        </div>
+      </div>
+    `;
+  }
+
+  private renderManifestMissingFields(missingFields: string[], category: "required" | "recommended" | "optional"): TemplateResult {
+    return html`
+      ${repeat(missingFields, field => this.renderManifestFieldCheck(field, field, category, `${field} is missing from your manifest.`, "missing"))}
+    `;
+  }
+
+  private renderManifestValidations(validations: Validation[], category: "required" | "recommended" | "optional"): TemplateResult {
+    return html`
+      ${repeat(validations, v => this.renderManifestFieldCheck(v.member, v.displayString || "", category, v.errorString || "", v.valid ? "valid" : "invalid"))}
+    `;
+  }
+
+  private renderManifestFieldCheck(field: string, displayName: string, category: "required" | "recommended" | "optional", tooltipText: string, status: "missing" | "invalid" | "valid"): TemplateResult {
+    const iconUrl = status === "valid" ? valid_src : 
+      category === "required" ? stop_src : 
+      yield_src;
+    const icon = html`<img src=${iconUrl} alt=""/>`;
+    const label = status === "missing" ? `Manifeste includes ${field}` : displayName;
+
+    if (tooltipText) {
+      return html`
+        <div class="test-result" data-field=${field}>
+          <sl-tooltip content=${tooltipText} placement="top">
+            ${icon}
+            <p>${label}</p>
+          </sl-tooltip>
+        </div>
+      `;
+    }
+        
+    return html`
+      <div class="test-result" data-field=${field}>
+        ${icon}
+        <p>${label}</p>
+      </div>
+    `;
+  }
+
+  private renderEditManifestButton(): TemplateResult {
+    if(this.manifestDataLoading) {
+      return html`
+        <div class="flex-col gap">
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+        </div>
+      `;
+    }
+    
+    const manifestDocsLink = html`
+      <a class="arrow_anchor" href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests" rel="noopener"target="_blank" @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+        <p class="arrow_link">Manifest Documentation</p>
+        <img src="/assets/new/arrow.svg" alt="arrow" />
+      </a>
+    `;
+
+    if (this.createdManifest) {
+      return html`
+        <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
+          <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
+          <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+        </sl-tooltip>
+        ${manifestDocsLink}
+      `;
+    }
+
+    return html`
+      <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+      ${manifestDocsLink}
+    `;
+  }
+
+  private renderManifestScore(): TemplateResult {
+    if (this.manifestDataLoading) {
+      return html`
+        <div class="flex-col gap">
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+        </div>
+      `;
+    }
+
+    return html`
+      <p class="card-desc">
+        ${this.decideMessage(this.manifestValidCounter, this.manifestTotalScore, "manifest")}
+      </p>
+    `;
+  }
+
+  private renderManifestScoreRing(): TemplateResult {
+    if (this.manifestDataLoading) {
+      return html`<div class="loader-round large"></div>`;
+    }
+
+    const manifestChecksPassedOrError = this.createdManifest ? 
+      html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` :
+      html`<div>${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`;  
+    return html`
+      <sl-progress-ring
+        id="manifestProgressRing"
+        class=${classMap(this.decideColor("manifest"))}
+        value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}">
+          ${manifestChecksPassedOrError}
+      </sl-progress-ring>
+    `;
+  }
+
+  private renderFilteredTodoItems(): TemplateResult {
+    if (this.filteredTodoItems.length === 0) {
+      return html`<span class="loader"></span>`;
+    }
+
+    const todosForCurrentPage = this.paginateTodos();
+    return html`
+      ${repeat(todosForCurrentPage, t => t.displayString, t => this.renderTodo(t))}
+    `;
+  }
+
+  private renderTodo(todo: AnalysisTodo): TemplateResult {
+    return html`
+      <todo-item
+        .status=${todo.status}
+        .field=${todo.field}
+        .fix=${todo.fix}
+        .card=${todo.card}
+        .displayString=${todo.displayString || ""}
+        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
+        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
+        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field)}></todo-item>
+    `;
+  }
+
+  private getThemedIcon(url: string): string {
+    return this.darkMode ? url.replace('.svg', '_light.svg') : url;
+  }
+
+  render(): TemplateResult {
+    return html`
+      <app-header .page=${"report"}></app-header>
+      <div id="report-wrapper">
+        <div id="content-holder">
+          <div id="header-row">
+            ${this.renderAppCardInfo()}
             <div id="app-actions" class="flex-col">
               <div id="package" class="flex-col-center">
-                  ${this.canPackage ?
-                    html`
-                    <button
-                      type="button"
-                      id="pfs"
-                      @click=${() => this.openPublishModal()}
-                    >
-                      Package For Stores
-                    </button>
-                    ` :
-                    html`
-                    <sl-tooltip class="mani-tooltip">
-                    ${this.runningTests ?
-                      html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
-                      html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
-                        <button
-                          type="button"
-                          id="pfs-disabled"
-                          aria-disabled="true"
-                        >
-                          ${this.renderPackageSpinner()}
-                          Package For Stores
-                        </button>
-                    </sl-tooltip>
-                    `}
+                  ${this.renderPackageForStores()}
                 <button type="button" id="test-download" @click=${() => this.openTestPublishModal()} ?disabled=${!this.canPackage || this.createdManifest}>
                   <p class="arrow_link">Download Test Package</p>
                 </button>
               </div>
               <div id="actions-footer" class="flex-center">
                 <p>Available stores:</p>
-                <img
-                  title="Windows"
-                  src=${`/assets/windows_icon${this.darkMode ? "_light" : ""}.svg`}
-                  alt="Windows"
-                />
-                <img
-                  title="iOS"
-                  src=${`/assets/apple_icon${this.darkMode ? "_light" : ""}.svg`}
-                  alt="iOS" />
-                <img
-                  title="Android"
-                  src=${`/assets/android_icon_full${this.darkMode ? "_light" : ""}.svg`}
-                  alt="Android"
-                />
-                <img
-                  title="Meta Quest"
-                  src=${`/assets/meta_icon${this.darkMode ? "_light" : ""}.svg`}
-                  alt="Meta Quest"
-                />
+                <img title="Windows" src="${this.getThemedIcon('/assets/windows_icon.svg')}" alt="Windows" />
+                <img title="iOS" src="${this.getThemedIcon('/assets/apple_icon.svg')}" alt="iOS" />
+                <img title="Android" src="${this.getThemedIcon('/assets/android_icon_full.svg')}" alt="Android" />
+                <img title="Meta Quest" src="${this.getThemedIcon('/assets/meta_icon.svg')}" alt="Meta Quest" />
               </div>
             </div>
           </div>
 
-          ${this.showSecurityErrorBanner ?
-            html`
-              <div class="feedback-holder type-error">
-                <img src="/assets/new/stop.svg" alt="invalid result icon" />
-                <div class="error-info">
-                  <p class="error-title">You do not have a secure HTTPS server</p>
-                  <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
-                  <div class="error-actions">
-                    <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04" target="_blank" rel="noopener">Security Documentation</a>
-                  </div>
-                </div>
-              </div>
-            ` :
-            null
-          }
-
-          ${this.showSecurityWarningBanner && !this.showSecurityErrorBanner ?
-            html`
-              <div class="feedback-holder type-warning">
-                <img src="/assets/new/yield.svg" alt="warning result icon" />
-                <div class="error-info">
-                  <p class="error-title">Mixed content is loading on your PWA</p>
-                  <p class="error-desc">PWABuilder has done a basic analysis of your HTTPS setup and has identified that you are delivering mixed resources when your PWA is loading. Check out the documentation linked below to learn more.</p>
-                  <div class="error-actions">
-                    <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content" target="_blank" rel="noopener">Mixed Content Documentation</a>
-                  </div>
-                </div>
-              </div>
-            ` :
-            null
-          }
-
-          ${this.showServiceWorkerWarningBanner ?
-            html`
-              <div class="feedback-holder type-warning">
-                <img src="/assets/new/yield.svg" alt="warning result icon" />
-                <div class="error-info">
-                  <p class="error-title">Service worker registration timeout</p>
-                  <p class="error-desc">We detected a link to your service worker however, our tests timed out waiting for it to be registered. This can happen for a number of reasons and may even be intentional. To learn more about site load times and when you should be registering your service worker, follow the link below.</p>
-                  <div class="error-actions">
-                    <a href="https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration" target="_blank" rel="noopener">Service Worker Registration Documentation</a>
-                  </div>
-                </div>
-              </div>
-            ` :
-            null
-          }
-
-              ${this.showIconsErrorBanner ?
-            html`
-                  <div class="feedback-holder type-error">
-                  <img src="/assets/new/stop.svg" alt="invalid result icon" />
-                    <div class="error-info">
-                      <p class="error-title">Manifest icons could not be fetched</p>
-                      <p class="error-desc">PWABuilder has done a basic analysis of the manifest images and has identified required actions before you can package. Check out the documentation linked below to learn more.</p>
-                      <div class="error-actions">
-                        <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/03" target="_blank" rel="noopener">Manifest Documentation</a>
-                      </div>
-                    </div>
-                  </div>
-                ` :
-            null
-          }
-
-          <div id="todo">
-            <div
-              id="todo-detail"
-              >
-              <div id="todo-summary">
-                <div id="todo-summary-left">
-                  <h2>Action Items</h2>
-                </div>
-                <div id="todo-indicators">
-                    ${this.allTodoItems.length > 0 ?
-                      this.stopShowingNotificationTooltip ?
-                        // if they interact with the inicators, we no longer need to show the tooltip
-                        this.renderIndicators() :
-
-                        // showing tooltip until they click an indicator which will remove the tooltip
-                        html`
-                          <sl-tooltip class="mani-tooltip" id="notifications" ?open=${this.closeOpenTooltips}>
-                            <div slot="content" class="mani-tooltip-content">
-                              <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
-                              <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
-                            </div>
-                            ${this.renderIndicators()}
-                          </sl-tooltip>
-                        `
-                      :
-                      null}
-                </div>
-              </div>
-              <div class="todo-items-holder">
-                ${this.filteredTodoItems.length > 0 ? this.paginate().map((todo: any) =>
-                    html`
-                      <todo-item
-                        .status=${todo.status}
-                        .field=${todo.field}
-                        .fix=${todo.fix}
-                        .card=${todo.card}
-                        .displayString=${todo.displayString}
-                        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
-                        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-                        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field)}
-                      >
-
-                      </todo-item>`
-                  ) : html`<span class="loader"></span>`}
-              </div>
-            ${(this.filteredTodoItems.length > this.pageSize) ?
-              html`
-              <div id="pagination-actions">
-                <button
-                  class="pagination-buttons"
-                  name="action-items-previous-page-button"
-                  aria-label="Previous page button for action items list"
-                  type="button"
-                  @click=${() => this.switchPage(false)}
-                  ><sl-icon class="pageToggles" name="chevron-left"></sl-icon>
-                </button>
-                <div id="dots">
-                  ${this.getDots().map((_dot: any, index: number) =>
-                    this.pageNumber == index + 1 ?
-                      html`
-                        <img src="/assets/new/active_dot.svg" alt="active dot" />
-                      ` :
-                      html`
-                        <img src="/assets/new/inactive_dot.svg" alt="inactive dot" />
-                      `)}
-                </div>
-                <button
-                  class="pagination-buttons"
-                  name="action-items-next-page-button"
-                  aria-label="Next page button for action items list"
-                  aria-live="polite"
-                  type="button"
-                  @click=${() => this.switchPage(true)}><sl-icon class="pageToggles" name="chevron-right"></sl-icon>
-                </button>
-              </div>` : null}
-              <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
-            </div>
-          </div>
-
-          <div id="manifest" class="flex-col">
-            <div id="manifest-header">
-              <div id="mh-content">
-                <div id="mh-text" class="flex-col">
-                  <h2 class="card-header">Manifest</h2>
-                  ${this.manifestDataLoading ?
-                    html`
-                      <div class="flex-col gap">
-                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                      </div>
-                    ` :
-                    html`
-                    <p class="card-desc">
-                      ${this.decideMessage(this.manifestValidCounter, this.manifestTotalScore, "manifest")}
-                    </p>
-                  `}
-                </div>
-              </div>
-
-              <div id="mh-right">
-                ${this.manifestDataLoading ?
-                    html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring
-                            id="manifestProgressRing"
-                            class=${classMap(this.decideColor("manifest"))}
-                            value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}"
-                          >${this.createdManifest ? html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` : html`<div>${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`}</sl-progress-ring>`
-                }
-              </div>
-              <div id="mh-actions" class="flex-col">
-                ${this.manifestDataLoading ?
-                  html`
-                    <div class="flex-col gap">
-                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                    </div>
-                  ` :
-                  html`
-                    ${this.createdManifest ?
-                    html`
-                        <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
-                          <div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-                          <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
-                        </sl-tooltip>` :
-                    html`<button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>`
-                    }
-
-                    <a
-                      class="arrow_anchor"
-                      href="https://docs.pwabuilder.com/#/home/pwa-intro?id=web-app-manifests"
-                      rel="noopener"
-                      target="_blank"
-                      @click=${() => recordPWABuilderProcessStep("manifest_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}
-                    >
-                      <p class="arrow_link">Manifest Documentation</p>
-                      <img
-                        src="/assets/new/arrow.svg"
-                        alt="arrow"
-                      />
-                    </a>
-                `}
-
-                </div>
-            </div>
-            <sl-details
-              id="mani-details"
-              class="details"
-              ?disabled=${this.manifestDataLoading}
-              @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)}
-              @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}
-              >
-              ${this.manifestDataLoading ? html`
-              <div slot="summary"><sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton></div>` :
-              html`<div class="details-summary" slot="summary"><p>View Details</p><img class="dropdown_icon" data-card="mani-details" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/></div>
-              <div id="manifest-detail-grid">
-                <div class="detail-list">
-                  <p class="detail-list-header">Required</p>
-
-                  ${this.requiredMissingFields.length > 0 ?
-                  html`
-                    ${this.requiredMissingFields.map((field: string) =>
-                    html`<div class="test-result" data-field=${field}>
-                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
-                            <img src=${stop_src} alt="invalid result icon"/>
-                          </sl-tooltip>
-                      <p>Manifest includes ${field} field</p>
-                    </div>`
-                    )}
-                  ` :
-                  null}
-
-                  ${this.validationResults.map((result: Validation) => result.category === "required" || (result.testRequired && !result.valid) ?
-                  html`
-                    <div class="test-result" data-field=${result.member}>
-                      ${result.valid ?
-                        html`<img src=${valid_src} alt="passing result icon"/>` :
-                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
-                                <img src=${stop_src} alt="invalid result icon"/>
-                              </sl-tooltip>`
-                      }
-                      <p>${result.displayString}</p>
-                    </div>
-                  ` :
-                  null)}
-                </div>
-                <div class="detail-list">
-                  <p class="detail-list-header">Recommended</p>
-                  ${this.recMissingFields.length > 0 ?
-                  html`
-                    ${this.recMissingFields.map((field: string) =>
-                    html`<div class="test-result" data-field=${field}>
-                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
-                            <img src=${yield_src} alt="yield result icon"/>
-                          </sl-tooltip>
-                      <p>Manifest includes ${field} field</p>
-                    </div>`
-                    )}
-                  ` :
-                  null}
-                  ${this.validationResults.map((result: Validation) => result.category === "recommended"  && ((result.testRequired && result.valid) || !result.testRequired) ?
-                  html`
-                    <div class="test-result" data-field=${result.member}>
-                      ${result.valid ?
-                        html`<img src=${valid_src} alt="passing result icon"/>` :
-                        html`<sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
-                                <img src=${yield_src} alt="yield result icon"/>
-                              </sl-tooltip>
-                        `}
-                      <p>${result.displayString}</p>
-                    </div>
-                  ` : null)}
-                </div>
-                <div class="detail-list">
-                  <p class="detail-list-header">Optional</p>
-                  ${this.optMissingFields.length > 0 ?
-                  html`
-                    ${this.optMissingFields.map((field: string) =>
-                    html`
-                        <div class="test-result" data-field=${field}>
-                          <sl-tooltip content=${field + " is missing from your manifest."} placement="right">
-                            <img src=${yield_src} alt="yield result icon"/>
-                          </sl-tooltip>
-                          <p>Manifest includes ${field} field</p>
-                        </div>`
-                    )}
-                  ` :
-                  null}
-
-                  ${this.validationResults.map((result: Validation) => result.category === "optional" && ((result.testRequired && result.valid) || !result.testRequired) ?
-                  html`
-                    <div class="test-result" data-field=${result.member}>
-                      ${result.valid ?
-                        html`<img src=${valid_src} alt="passing result icon"/>` :
-                        html`
-                          <sl-tooltip content=${result.errorString ? result.errorString : ""} placement="right">
-                            <img src=${yield_src} alt="yield result icon"/>
-                          </sl-tooltip>
-                        `}
-                      <p>${result.displayString}</p>
-                    </div>
-                  ` : null)}
-                </div>
-              </div>`}
-            </sl-details>
-          </div>
+          ${this.renderSecurityErrorBanner()}
+          ${this.renderSecurityWarningBanner()}
+          ${this.renderServiceWorkerWarningBanner()}
+          ${this.renderIconErrorBanner()}          
+          ${this.renderTodos()}
+          ${this.renderManifestSection()}
 
           <div id="two-cell-row">
-            <div id="sw" class="half-width-cards">
-              <div id="sw-header" class="flex-col">
-                <div id="swh-top">
-                  <div id="swh-text" class="flex-col">
-                    <h2 class="card-header">Service Worker</h2>
-                    ${this.swDataLoading ?
-                      html`
-                        <div class="flex-col gap">
-                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                        </div>
-                      ` :
-                      html`
-                        <p class="card-desc">
-                          ${this.decideMessage(this.swValidCounter, this.swTotalScore, "sw")}
-                        </p>
-                      `
-                        }
-                  </div>
-                  ${this.swDataLoading ?
-                    html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring
-                      id="swProgressRing"
-                      class="counterRing"
-                      value="${this.swValidCounter > 0 ? 100 : 0}"
-                      >+${this.swValidCounter}
-                    </sl-progress-ring>
-                    `
-                  }
-                </div>
-                  <div class="icons-holder sw">
-                    ${this.serviceWorkerResults.map((result: any) =>
-                      html`
-                        <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", result.member)}>
-                          <sw-info-card .field=${result.member}>
-                            <div class="circle-icon" tabindex="0" role="button" slot="trigger">
-                              <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${this.formatSWStrings(result.member) + ' icon'}" />
-                              ${result.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
-                            </div>
-                          </sw-info-card>
-                          <p>${this.formatSWStrings(result.member)}</p>
-                        </div>
-                      `
-                      )
-                    }
-                  </div>
-                <div id="sw-actions" class="flex-col">
-                  ${this.swDataLoading ?
-                  html`
-                    <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                  ` :
-                  html`
-                    <button type="button" class="alternate" @click=${() => this.openSWSelectorModal()}>
-                      Generate Service Worker
-                    </button>
-                  `}
-
-                  ${this.swDataLoading ?
-                    html`
-                      <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                    ` :
-                    html`
-                      <a
-                        class="arrow_anchor"
-                        rel="noopener"
-                        target="_blank"
-                        href="https://docs.pwabuilder.com/#/home/sw-intro"
-                        @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
-                        <p class="arrow_link">Service Worker Documentation</p>
-                        <img
-                          src="/assets/new/arrow.svg"
-                          alt="arrow"
-                        />
-                      </a>
-                    `
-                  }
-
-                </div>
-              </div>
-
-            </div>
-            <div id="security" class="half-width-cards">
-              <div id="sec-header" class="flex-col">
-                <div id="sec-top">
-                  <div id="sec-text" class="flex-col">
-                    <h2 class="card-header">App Capabilities</h2>
-                    ${this.manifestDataLoading ?
-                      html`
-                        <div class="flex-col gap">
-                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-                        </div>
-                      ` :
-                      html`
-                        <p class="card-desc">
-                          PWABuilder has analyzed your PWA and has identified some app capabilities that could enhance your PWA
-                        </p>
-                      `
-                        }
-                  </div>
-                  ${this.manifestDataLoading ?
-                    html`<div class="loader-round large"></div>` :
-                    html`<sl-progress-ring class="counterRing" value="${this.enhancementTotalScore > 0 ? 100 : 0}">+${this.enhancementTotalScore}</sl-progress-ring>
-                    `
-                  }
-
-                </div>
-                <div class="icons-holder">
-                  ${this.validationResults.map((result: Validation) => result.category === "enhancement" ?
-                    html`
-                      <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", result.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-                        <manifest-info-card .field=${result.member} .placement=${"bottom"}>
-                          <div class="circle-icon" tabindex="0" role="button" slot="trigger">
-                            <img class="circle-icon-img" src="${"/assets/new/" + result.member + '_icon.svg'}" alt="${this.formatSWStrings(result.member) + ' icon'}" />
-                            ${result.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
-                          </div>
-                        </manifest-info-card>
-                        <p>${this.formatSWStrings(result.member)}</p>
-                    </div>
-                    `
-                    : null )
-                  }
-                </div>
-                ${this.manifestDataLoading ?
-                  html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
-                  html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
-                }
-              </div>
-            </div>
+            ${this.renderServiceWorkerFeaturesSection()}
+            ${this.renderAppCapabilitiesSection()}
           </div>
         </div>
       </div>
 
 
-      <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => {this.showConfirmationModal = false; this.readdDenied = false;}} noHeader>
-        ${this.renderReaddDialog()}
+      <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => {this.showConfirmationModal = false; this.readDenied = false;}} noHeader>
+        ${this.renderReadDialog()}
       </sl-dialog>
 
       <share-card
@@ -1920,9 +1913,167 @@ export class AppReport extends LitElement {
 
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
-      ${this.manifestDataLoading ? null : html`<manifest-editor-frame .isGenerated=${this.createdManifest} .startingTab=${this.startingManifestEditorTab} .focusOn=${this.focusOnME} @readyForRetest=${() => this.addRetestTodo("Manifest")}></manifest-editor-frame>`}
+      ${this.renderManifestEditorPane()}
       <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
 
+    `;
+  }
+
+  renderServiceWorkerFeaturesSection(): TemplateResult {
+    return html`
+      <div id="sw" class="half-width-cards">
+        <div id="sw-header" class="flex-col">
+          <div id="swh-top">
+            <div id="swh-text" class="flex-col">
+              <h2 class="card-header">Service Worker</h2>
+              ${this.renderServiceWorkerFeaturesHeader()}
+            </div>
+            ${this.renderServiceWorkerFeaturesRing()}
+          </div>
+            <div class="icons-holder sw">
+              ${repeat(this.serviceWorkerResults, r => r.member || r.infoString, r => this.renderServiceWorkerFeatures(r))}
+            </div>
+          <div id="sw-actions" class="flex-col">
+            ${this.renderServiceWorkerActions()}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderServiceWorkerFeaturesHeader(): TemplateResult {
+    if(this.swDataLoading) {
+      return html`
+        <div class="flex-col gap">
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+        </div>
+      `;
+    } 
+    
+    return html`
+      <p class="card-desc">
+        ${this.decideMessage(this.swValidCounter, this.swTotalScore, "sw")}
+      </p>
+    `;
+  }
+
+  renderServiceWorkerFeaturesRing(): TemplateResult {
+    if(this.swDataLoading) {
+      return html`<div class="loader-round large"></div>`;
+    }
+
+    return html`
+      <sl-progress-ring
+        id="swProgressRing"
+        class="counterRing"
+        value="${this.swValidCounter > 0 ? 100 : 0}"
+        >+${this.swValidCounter}
+      </sl-progress-ring>
+    `;
+  }
+
+  renderServiceWorkerActions(): TemplateResult {
+    if (this.swDataLoading) {
+      return html`
+        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+      `;
+    }
+
+    return html`
+      <button type="button" class="alternate" @click=${() => this.openSWSelectorModal()}>
+        Generate Service Worker
+      </button>
+      <a class="arrow_anchor" rel="noopener" target="_blank" href="https://docs.pwabuilder.com/#/home/sw-intro" @click=${() => recordPWABuilderProcessStep("sw_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+        <p class="arrow_link">Service Worker Documentation</p>
+        <img src="/assets/new/arrow.svg" alt="" />
+      </a>
+    `;
+  }
+
+  renderServiceWorkerFeatures(testResult: TestResult): TemplateResult {
+    return html`
+      <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", testResult.member || "")}>
+        <sw-info-card .field=${testResult.member || ""}>
+          <div class="circle-icon" tabindex="0" role="button" slot="trigger">
+            <img class="circle-icon-img" src="${"/assets/new/" + testResult.member + '_icon.svg'}" alt="${this.formatSWStrings(testResult.member || "") + ' icon'}" />
+            ${testResult.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+          </div>
+        </sw-info-card>
+        <p>${this.formatSWStrings(testResult.member || "")}</p>
+      </div>
+      `;
+      
+  }
+
+  renderAppCapabilitiesSection(): TemplateResult {
+    return html`
+      <div id="security" class="half-width-cards">
+        <div id="sec-header" class="flex-col">
+          <div id="sec-top">
+            <div id="sec-text" class="flex-col">
+              <h2 class="card-header">App Capabilities</h2>
+              ${this.renderAppCapabilitiesHeader()}
+            </div>
+            ${this.renderAppCapabilitiesRing()}
+          </div>
+          <div class="icons-holder">
+            ${this.renderAppCapabilitiesCards()}
+          </div>
+          ${this.manifestDataLoading ?
+            html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
+            html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  renderAppCapabilitiesHeader(): TemplateResult {
+    if (this.manifestDataLoading) {
+      return html`
+        <div class="flex-col gap">
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+        </div>
+      `;
+    }
+
+    return html`
+      <p class="card-desc">
+        PWABuilder has analyzed your PWA and has identified some app capabilities that could enhance your PWA
+      </p>
+    `;
+  }
+
+  renderAppCapabilitiesRing(): TemplateResult {
+    if (this.manifestDataLoading) {
+      return html`<div class="loader-round large"></div>`;
+    }
+
+    return html`<sl-progress-ring class="counterRing" value="${this.enhancementTotalScore > 0 ? 100 : 0}">+${this.enhancementTotalScore}</sl-progress-ring>`;
+  }
+
+  renderAppCapabilitiesCards(): TemplateResult {
+    const enhancements = this.validationResults.filter(v => v.category === "enhancement");
+    return html`
+      ${repeat(enhancements, v => this.renderAppCapabilityCard(v))}
+    `;
+  }
+
+  renderAppCapabilityCard(v: Validation): TemplateResult {
+    const validIcon = v.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null
+    return html`
+    <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+        <manifest-info-card .field=${v.member} .placement=${"bottom"}>
+          <div class="circle-icon" tabindex="0" role="button" slot="trigger">
+            <img class="circle-icon-img" src="${"/assets/new/" + v.member + '_icon.svg'}" alt="${this.formatSWStrings(v.member) + ' icon'}" />
+            ${validIcon}
+          </div>
+        </manifest-info-card>
+        <p>${this.formatSWStrings(v.member)}</p>
+      </div>
     `;
   }
 
@@ -1932,5 +2083,19 @@ export class AppReport extends LitElement {
       <sl-spinner class="${visibleClass}"></sl-spinner>
     `;
   }
-}
 
+  renderManifestEditorPane(): TemplateResult {
+    if (this.manifestDataLoading) {
+      return html``;
+    } 
+    
+    return html`
+      <manifest-editor-frame 
+        .isGenerated=${this.createdManifest} 
+        .startingTab=${this.startingManifestEditorTab} 
+        .focusOn=${this.focusOnME} 
+        @readyForRetest=${() => this.addRetestTodo("Manifest")}>
+      </manifest-editor-frame>
+    `;
+  }
+}

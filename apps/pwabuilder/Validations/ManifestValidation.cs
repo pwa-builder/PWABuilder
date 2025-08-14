@@ -8,11 +8,10 @@ namespace PWABuilder.Validations
 {
     public static class ManifestValidations
     {
-        public static List<ManifestSingleField> GetValidations()
+        public static List<ManifestSingleFieldValidation> GetValidations()
         {
-            var manifestValidations = new List<ManifestSingleField>();
-
-            var nameValidation = new ManifestSingleField
+            var manifestValidations = new List<ManifestSingleFieldValidation>();
+            var nameValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
@@ -20,7 +19,7 @@ namespace PWABuilder.Validations
                 Category = "required",
                 Member = "name",
                 DefaultValue = "cool PWA",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=name-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=name-string"),
                 ErrorString = "",
                 QuickFix = true,
             };
@@ -36,11 +35,11 @@ namespace PWABuilder.Validations
                     return false;
                 }
                 var strValue = jsonElement.GetString();
-                return strValue.Equals(strValue.Trim());
+                return strValue != null && strValue.Equals(strValue.Trim());
             };
             manifestValidations.Add(nameValidation);
 
-            var backGroundColorValidation = new ManifestSingleField
+            var backGroundColorValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
@@ -48,8 +47,7 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "background_color",
                 DefaultValue = "#000000",
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=background_color-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
                 TestRequired = false,
@@ -75,7 +73,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(backGroundColorValidation);
 
-            var shortcutsValidation = new ManifestSingleField
+            var shortcutsValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
@@ -83,7 +81,7 @@ namespace PWABuilder.Validations
                 Category = "enhancement",
                 Member = "shortcuts",
                 DefaultValue = new List<object>(),
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -135,7 +133,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(shortcutsValidation);
 
-            var categoryValidation = new ManifestSingleField
+            var categoryValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The categories member is an array of strings that represent the categories of the web application.",
@@ -143,7 +141,7 @@ namespace PWABuilder.Validations
                 Category = "optional",
                 Member = "categories",
                 DefaultValue = new List<string>(),
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=categories-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=categories-array"),
                 ErrorString = string.Empty,
                 QuickFix = true,
                 TestRequired = false,
@@ -167,7 +165,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(categoryValidation);
 
-            var descriptionValidation = new ManifestSingleField
+            var descriptionValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The description member is a string that represents the description of your PWA.",
@@ -175,7 +173,7 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "description",
                 DefaultValue = string.Empty,
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=description-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=description-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -194,7 +192,7 @@ namespace PWABuilder.Validations
 
                 var strValue = jsonElement.GetString();
 
-                if (!strValue.Equals(strValue.Trim()))
+                if (strValue != null && !strValue.Equals(strValue.Trim()))
                 {
                     descriptionValidation.ErrorString =
                         "description should not have any leading or trailing whitespace";
@@ -206,7 +204,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(descriptionValidation);
 
-            var fileHandlerValidation = new ManifestSingleField
+            var fileHandlerValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The file_handlers member specifies an array of objects representing the types of files an installed PWA can handle",
@@ -214,7 +212,7 @@ namespace PWABuilder.Validations
                 Category = "enhancement",
                 Member = "file_handlers",
                 DefaultValue = new List<object>(),
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=file_handlers-array"),
                 ErrorString =
                     "file_handlers array should have objects with action and accept fields",
                 QuickFix = true,
@@ -235,7 +233,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(fileHandlerValidation);
 
-            var launchHandlerValidation = new ManifestSingleField
+            var launchHandlerValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
@@ -243,8 +241,7 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "launch_handler",
                 DefaultValue = string.Empty,
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array"),
                 ErrorString = string.Empty,
                 QuickFix = false,
             };
@@ -270,7 +267,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(launchHandlerValidation);
 
-            var preferRelatedAppsValidation = new ManifestSingleField
+            var preferRelatedAppsValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The prefer_related_applications member is a boolean value that specifies that applications listed in related_applications should be preferred over the web application. If the prefer_related_applications member is set to true, the user agent might suggest installing one of the related applications instead of this web app.",
@@ -278,8 +275,7 @@ namespace PWABuilder.Validations
                 Category = "optional",
                 Member = "prefer_related_applications",
                 DefaultValue = false,
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=prefer_related_applications-boolean"),
                 ErrorString = string.Empty,
                 QuickFix = false,
                 TestRequired = false,
@@ -304,7 +300,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(preferRelatedAppsValidation);
 
-            var protocolHandlersValidation = new ManifestSingleField
+            var protocolHandlersValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
@@ -312,8 +308,7 @@ namespace PWABuilder.Validations
                 Category = "enhancement",
                 Member = "protocol_handlers",
                 DefaultValue = Array.Empty<object>(),
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=protocol_handlers-array"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -383,7 +378,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(protocolHandlersValidation);
 
-            var relatedApplicationsValidation = new ManifestSingleField
+            var relatedApplicationsValidation = new ManifestSingleFieldValidation
             {
                 Member = "related_applications",
                 DisplayString = "Manifest has related_applications field",
@@ -391,8 +386,7 @@ namespace PWABuilder.Validations
                     "The related_applications field is an array of objects specifying native applications that are installable by, or accessible to, the underlying platform — for example, a platform-specific (native) Windows application.",
                 Category = "optional",
                 DefaultValue = Array.Empty<object>(),
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=related_applications-array"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -440,7 +434,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(relatedApplicationsValidation);
 
-            var screenshotsValidation = new ManifestSingleField
+            var screenshotsValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The screenshots member defines an array of screenshots intended to showcase the application.",
@@ -473,7 +467,7 @@ namespace PWABuilder.Validations
                         },
                     }
                 ),
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=screenshots",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=screenshots"),
                 ErrorString = "Screenshots must be an array of screenshot objects",
                 QuickFix = true,
                 TestRequired = false,
@@ -495,7 +489,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(screenshotsValidation);
 
-            var shareTargetValidation = new ManifestSingleField
+            var shareTargetValidation = new ManifestSingleFieldValidation
             {
                 Member = "share_target",
                 DisplayString = "Manifest has share_target field",
@@ -514,7 +508,7 @@ namespace PWABuilder.Validations
                         },
                     }
                 ),
-                DocsLink = "https://docs.pwabuilder.com/#/home/native-features?id=web-share-api",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/home/native-features?id=web-share-api"),
                 ErrorString = "share_target must be an object",
                 QuickFix = true,
             };
@@ -534,7 +528,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(shareTargetValidation);
 
-            var themeColorValidation = new ManifestSingleField
+            var themeColorValidation = new ManifestSingleFieldValidation
             {
                 Member = "theme_color",
                 DisplayString = "Manifest has hex encoded theme_color",
@@ -542,7 +536,7 @@ namespace PWABuilder.Validations
                     "The theme_color member is a string that defines the default theme color for the application.",
                 Category = "recommended",
                 DefaultValue = "#000000",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=theme_color-string"),
                 ErrorString = "theme_color should be a valid hex color",
                 QuickFix = true,
                 TestRequired = false,
@@ -569,11 +563,11 @@ namespace PWABuilder.Validations
                 }
 
                 var hexRegex = new Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
-                return hexRegex.IsMatch(jsonElement.GetString());
+                return hexRegex.IsMatch(jsonElement.GetString() ?? string.Empty);
             };
             manifestValidations.Add(themeColorValidation);
 
-            var iarcRatingIdValidation = new ManifestSingleField
+            var iarcRatingIdValidation = new ManifestSingleFieldValidation
             {
                 Member = "iarc_rating_id",
                 DisplayString = "Manifest has iarc_rating_id field",
@@ -581,8 +575,7 @@ namespace PWABuilder.Validations
                     "The iarc_rating_id member is a string that represents the International Age Rating Coalition (IARC) certification code of the web application. It is intended to be used to determine which ages the web application is appropriate for.",
                 Category = "optional",
                 DefaultValue = string.Empty,
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"),
                 ErrorString = "iarc_rating_id must be a string with a length > 0",
                 QuickFix = true,
             };
@@ -604,15 +597,14 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(iarcRatingIdValidation);
 
-            var widgetValidation = new ManifestSingleField
+            var widgetValidation = new ManifestSingleFieldValidation
             {
                 InfoString = "Enable Windows 11 widgets board support",
                 DisplayString = "Manifest has widgets field",
                 Category = "enhancement",
                 Member = "widgets",
                 DefaultValue = new List<object>(),
-                DocsLink =
-                    "https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets",
+                DocsLink = new Uri("https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets"),
                 QuickFix = true,
                 ErrorString = "widgets should be an array of valid objects",
                 Test = (value) =>
@@ -630,7 +622,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(widgetValidation);
 
-            var iconsValidation = new ManifestSingleField
+            var iconsValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
@@ -656,7 +648,7 @@ namespace PWABuilder.Validations
                         },
                     }
                 ),
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -707,7 +699,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(iconsValidation);
 
-            var iconsPurposeAnyValidation = new ManifestSingleField
+            var iconsPurposeAnyValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
@@ -715,7 +707,7 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "icons",
                 DefaultValue = iconsValidation.DefaultValue,
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=icons",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
                 ErrorString = "Need at least one icon with purpose set to any",
                 QuickFix = true,
             };
@@ -741,7 +733,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(iconsPurposeAnyValidation);
 
-            var edgeSidePanelValidation = new ManifestSingleField
+            var edgeSidePanelValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The edge_side_panel member specifies if your app supports the side panel in the Edge browser.",
@@ -749,8 +741,7 @@ namespace PWABuilder.Validations
                 Category = "enhancement",
                 Member = "edge_side_panel",
                 DefaultValue = string.Empty,
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object"),
                 ErrorString = string.Empty,
                 QuickFix = false,
             };
@@ -779,7 +770,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(edgeSidePanelValidation);
 
-            var displayOverrideValidation = new ManifestSingleField
+            var displayOverrideValidation = new ManifestSingleFieldValidation
             {
                 Member = "display_override",
                 DisplayString = "Manifest has display_override field",
@@ -787,8 +778,7 @@ namespace PWABuilder.Validations
                     "Its value is an array of display modes that are considered in-order, and the first supported display mode is applied.",
                 Category = "enhancement",
                 DefaultValue = Array.Empty<string>(),
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=display_override-array"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -829,7 +819,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(displayOverrideValidation);
 
-            var handleLinksValidation = new ManifestSingleField
+            var handleLinksValidation = new ManifestSingleFieldValidation
             {
                 Member = "handle_links",
                 DisplayString = "Manifest has handle_links field",
@@ -837,7 +827,7 @@ namespace PWABuilder.Validations
                     "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
                 Category = "enhancement",
                 DefaultValue = "auto",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -863,7 +853,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(handleLinksValidation);
 
-            var scopeValidation = new ManifestSingleField
+            var scopeValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
@@ -871,7 +861,7 @@ namespace PWABuilder.Validations
                 Category = "optional",
                 Member = "scope",
                 DefaultValue = "/",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=scope-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=scope-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -891,7 +881,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(scopeValidation);
 
-            var shortNameValidation = new ManifestSingleField
+            var shortNameValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
@@ -899,7 +889,7 @@ namespace PWABuilder.Validations
                 Category = "required",
                 Member = "short_name",
                 DefaultValue = "placeholder",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=short_name-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -935,7 +925,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(shortNameValidation);
 
-            var startUrlValidation = new ManifestSingleField
+            var startUrlValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
@@ -943,7 +933,7 @@ namespace PWABuilder.Validations
                 Category = "required",
                 Member = "start_url",
                 DefaultValue = "/",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -972,7 +962,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(startUrlValidation);
 
-            var displayValidation = new ManifestSingleField
+            var displayValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
@@ -980,7 +970,7 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "display",
                 DefaultValue = "standalone",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=display-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=display-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -1009,7 +999,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(displayValidation);
 
-            var orientationValidation = new ManifestSingleField
+            var orientationValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The orientation mode changes the default orientation of the app. For example, if set to 'portrait', the app will be displayed in landscape mode by default.",
@@ -1017,7 +1007,7 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "orientation",
                 DefaultValue = "any",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -1057,7 +1047,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(orientationValidation);
 
-            var langValidation = new ManifestSingleField
+            var langValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The lang member is a string that represents the default language of your PWA.",
@@ -1065,7 +1055,7 @@ namespace PWABuilder.Validations
                 Category = "optional",
                 Member = "lang",
                 DefaultValue = "en",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=lang-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=lang-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -1091,7 +1081,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(langValidation);
 
-            var dirValidation = new ManifestSingleField
+            var dirValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "The dir member is a string that represents the default text direction of your PWA.",
@@ -1099,7 +1089,7 @@ namespace PWABuilder.Validations
                 Category = "optional",
                 Member = "dir",
                 DefaultValue = "ltr",
-                DocsLink = "https://docs.pwabuilder.com/#/builder/manifest?id=dir-string",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -1130,7 +1120,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(dirValidation);
 
-            var scopeExtensionsValidation = new ManifestSingleField
+            var scopeExtensionsValidation = new ManifestSingleFieldValidation
             {
                 InfoString =
                     "Allow PWA that control multiple subdomains and top level domains to behave as one contiguous app. E.g. a site may span example.com, example.co.uk and support.example.com",
@@ -1138,8 +1128,7 @@ namespace PWABuilder.Validations
                 Category = "optional",
                 Member = "scope_extensions",
                 DefaultValue = new List<object>(),
-                DocsLink =
-                    "https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -1173,7 +1162,7 @@ namespace PWABuilder.Validations
             };
             manifestValidations.Add(scopeExtensionsValidation);
 
-            var idValidation = new ManifestSingleField
+            var idValidation = new ManifestSingleFieldValidation
             {
                 Member = "id",
                 DisplayString = "Manifest has an app ID",
@@ -1181,7 +1170,7 @@ namespace PWABuilder.Validations
                     "The id member is a string that represents the unique identifier of your PWA to the browser.",
                 Category = "recommended",
                 DefaultValue = "/",
-                DocsLink = "https://developer.chrome.com/blog/pwa-manifest-id",
+                DocsLink = new Uri("https://developer.chrome.com/blog/pwa-manifest-id"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
@@ -1214,7 +1203,7 @@ namespace PWABuilder.Validations
                     .FindAll(v => v.Member.Equals(field))
                     .Select(r =>
                     {
-                        var testResult = r.Test(value);
+                        var testResult = r.Test != null && r.Test(value);
                         return new { Valid = testResult, Error = r.ErrorString };
                     });
 
@@ -1222,7 +1211,7 @@ namespace PWABuilder.Validations
                 {
                     Valid = fieldTests.All(r => r.Valid),
                     Exists = true,
-                    Errors = fieldTests.Select(r => r.Error),
+                    Errors = fieldTests.Select(r => r.Error ?? string.Empty).Where(e => !string.IsNullOrEmpty(e)),
                 };
             }
 
@@ -1248,7 +1237,7 @@ namespace PWABuilder.Validations
                     r.Member,
                     out JsonElement value
                 );
-                var testResult = r.Test(value);
+                var testResult = r.Test != null && r.Test(value);
                 return new Validation
                 {
                     Member = r.Member,
