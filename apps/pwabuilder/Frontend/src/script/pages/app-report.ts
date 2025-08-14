@@ -694,7 +694,7 @@ export class AppReport extends LitElement {
       //Compare processed service worker results with the new ones
 
       const reducerServiceWorkerResult: Record<string, TestResult> = prevServiceWorkerResults.reduce((acc, curr) => {
-        return {...acc, [curr.member]: curr}
+        return {...acc, [curr.member as any]: curr}
       },{});
 
       this.serviceWorkerResults = serviceWorkerResults.map((value) => {
