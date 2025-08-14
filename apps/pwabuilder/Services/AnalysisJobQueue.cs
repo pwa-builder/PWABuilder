@@ -17,7 +17,16 @@ public class AnalysisJobQueue
         this.logger = logger;
         var credential = new Azure.Storage.StorageSharedKeyCredential(settings.Value.AzureStorageAccountName, settings.Value.AzureStorageAccessKey);
         var queueUri = new Uri($"https://{settings.Value.AzureStorageAccountName}.queue.core.windows.net/{settings.Value.AzureAnalysesQueueName}");
-        this.queue = new QueueClient(queueUri, credential);
+        var queueOptions = new QueueClientOptions
+        {
+            Retry =
+            {
+                MaxRetries = 5,
+                Delay = TimeSpan.FromSeconds(2),
+                Mode = Azure.Core.RetryMode.Exponential
+            }
+        };
+        this.queue = new QueueClient(queueUri, credential, queueOptions);
     }
 
     /// <summary>
