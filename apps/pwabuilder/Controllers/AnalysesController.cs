@@ -14,9 +14,9 @@ public class AnalysesController : ControllerBase
 {
     private readonly ILogger<AnalysesController> logger;
     private readonly AnalysisDb analysisDb;
-    private readonly AnalysisJobQueue analysisJobQueue;
+    private readonly IAnalysisJobQueue analysisJobQueue;
 
-    public AnalysesController(AnalysisDb analysisDb, AnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
+    public AnalysesController(AnalysisDb analysisDb, IAnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
     {
         this.analysisDb = analysisDb;
         this.analysisJobQueue = analysisJobQueue;

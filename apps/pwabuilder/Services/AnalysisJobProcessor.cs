@@ -13,7 +13,7 @@ namespace PWABuilder.Services;
 public class AnalysisJobProcessor : IHostedService
 {
     private const int MaxRetryCount = 3;
-    private readonly AnalysisJobQueue queue;
+    private readonly IAnalysisJobQueue queue;
     private readonly AnalysisDb db;
     private CancellationTokenSource? abortToken;
     private Task? jobProcessorTask;
@@ -25,7 +25,7 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ILogger<AnalysisJobProcessor> logger;
 
     public AnalysisJobProcessor(
-        AnalysisJobQueue queue, 
+        IAnalysisJobQueue queue, 
         AnalysisDb db, 
         ManifestDetector manifestDetector,
         ServiceWorkerDetector serviceWorkerDetector,

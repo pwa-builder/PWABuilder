@@ -6,6 +6,7 @@
     <UserSecretsId>8c239d4f-255c-44bb-add6-d027783831f5</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.15.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.23.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />

@@ -11,6 +11,7 @@ using PWABuilder.Services;
 using PWABuilder.Utils;
 using PWABuilder.Validations.Services;
 using StackExchange.Redis;
+using System.Drawing.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,16 @@ builder.Services.AddTransient<TempDirectory>();
 builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
 builder.Services.AddSingleton<AnalysisDb>();
-builder.Services.AddSingleton<AnalysisJobQueue>();
+if (builder.Environment.IsDevelopment())
+{
+    // In development, we use an in-memory queue for analysis jobs. This prevents issues around Azure Managed Identity authentication, which has issues when running locally.
+    builder.Services.AddSingleton<IAnalysisJobQueue, InMemoryAnalysisJobQueue>();
+}
+else
+{
+    // In production, we use an Azure Queue with Managed Identity authentication.
+    builder.Services.AddSingleton<IAnalysisJobQueue, AnalysisJobQueue>();
+}
 builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
 builder.Services.AddSingleton<ManifestDetector>();

@@ -1,22 +1,58 @@
+using Azure.Identity;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
+using System.Collections.Concurrent;
 
 namespace PWABuilder.Services;
 
 /// <summary>
-/// The Azure Queue that stores AnalysisJob objects for processing.
+/// Manages the queue of AnalysisJobs to process. In development env, it uses <see cref="InMemoryAnalysisJobQueue"/>. Otherwise, it uses an Azure Queue with Managed Identity auth.
 /// </summary>
-public class AnalysisJobQueue
+public interface IAnalysisJobQueue
+{
+    Task<AnalysisJob?> DequeueAsync(CancellationToken cancellationToken);
+    Task EnqueueAsync(AnalysisJob job);
+}
+
+/// <summary>
+/// AnalysisJob queue that uses an in-memory queue. Useful for local development and testing.
+/// </summary>
+public class InMemoryAnalysisJobQueue : IAnalysisJobQueue
+{
+    private readonly ConcurrentQueue<AnalysisJob> queue = new();
+
+    public Task<AnalysisJob?> DequeueAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (queue.TryDequeue(out var job))
+        {
+            return Task.FromResult<AnalysisJob?>(job);
+        }
+
+        return Task.FromResult<AnalysisJob?>(null);
+    }
+
+    public Task EnqueueAsync(AnalysisJob job)
+    {
+        queue.Enqueue(job);
+        return Task.CompletedTask;
+    }
+}
+
+/// <summary>
+/// The queue for managing AnalysisJobs. The backing store is an Azure Storage Queue with Managed Identity authentication.
+/// </summary>
+public class AnalysisJobQueue : IAnalysisJobQueue
 {
     private readonly QueueClient queue;
     private readonly ILogger<AnalysisJobQueue> logger;
 
     public AnalysisJobQueue(IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
     {
-        this.logger = logger;
-        var credential = new Azure.Storage.StorageSharedKeyCredential(settings.Value.AzureStorageAccountName, settings.Value.AzureStorageAccessKey);
         var queueUri = new Uri($"https://{settings.Value.AzureStorageAccountName}.queue.core.windows.net/{settings.Value.AzureAnalysesQueueName}");
+        var credential = new ManagedIdentityCredential(clientId: settings.Value.AzureManagedIdentityApplicationId);
         var queueOptions = new QueueClientOptions
         {
             Retry =
@@ -27,6 +63,7 @@ public class AnalysisJobQueue
             }
         };
         this.queue = new QueueClient(queueUri, credential, queueOptions);
+        this.logger = logger;
     }
 
     /// <summary>
