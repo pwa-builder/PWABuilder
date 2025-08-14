@@ -45,13 +45,13 @@ import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analyti
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import { processImages, processManifest } from './app-report.helper';
+import { processManifest } from './app-report.helper';
 import { ReportAudit, enqueueAnalysis, Analysis, getAnalysis } from './app-report.api';
 import { findBestAppIcon } from '../utils/icons';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { appReportStyles } from './app-report.styles';
 import { AnalysisTodo } from '../models/analysis-todo';
-import { display } from 'colorjs.io/fn';
+// import { display } from 'colorjs.io/fn';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -797,27 +797,27 @@ export class AppReport extends LitElement {
     return todos;
   }
 
-  createTestsImagesResults(imagesValidation: Validation[]): AnalysisTodo[] {
-    let todos: AnalysisTodo[] = [];
+  // createTestsImagesResults(imagesValidation: Validation[]): AnalysisTodo[] {
+  //   let todos: AnalysisTodo[] = [];
 
-    imagesValidation.forEach((result: Validation) => {
-      if (!result.valid) {
-        if (result.member === "icons") {
-          this.showIconsErrorBanner = true;
-        } else if (result.member === "screenshots" || result.category === "required") {
-          this.showScreenshotsErrorBanner = true;
-        }
-        todos.push({ "card": "mani-details", "field": result.member, "fix": result.errorString, "status": "required" });
-      }
-    });
+  //   imagesValidation.forEach((result: Validation) => {
+  //     if (!result.valid) {
+  //       if (result.member === "icons") {
+  //         this.showIconsErrorBanner = true;
+  //       } else if (result.member === "screenshots" || result.category === "required") {
+  //         this.showScreenshotsErrorBanner = true;
+  //       }
+  //       todos.push({ "card": "mani-details", "field": result.member, "fix": result.errorString, "status": "required" });
+  //     }
+  //   });
 
-    this.canPackageList[3] = !(this.showSecurityErrorBanner);
+  //   this.canPackageList[3] = !(this.showSecurityErrorBanner);
 
-    //save security tests in session storage
-    sessionStorage.setItem('image_tests', JSON.stringify(imagesValidation));
-    this.requestUpdate();
-    return todos;
-  }
+  //   //save security tests in session storage
+  //   sessionStorage.setItem('image_tests', JSON.stringify(imagesValidation));
+  //   this.requestUpdate();
+  //   return todos;
+  // }
 
   // If some manifest fields are missing it adds it to the drop down and returns the number that were missing
   async handleMissingFields(manifest: Manifest){
