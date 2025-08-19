@@ -1233,13 +1233,14 @@ namespace PWABuilder.Validations
             };
             idValidation.Test = (value) =>
             {
-                if (
-                    value is not JsonElement jsonElement
-                    || jsonElement.ValueKind != JsonValueKind.String
-                    || string.IsNullOrWhiteSpace(jsonElement.GetString())
-                )
+                if (value is not JsonElement jsonElement || jsonElement.ValueKind == JsonValueKind.Undefined || jsonElement.ValueKind == JsonValueKind.Null)
                 {
-                    idValidation.ErrorString = "id must be a string with a length > 0";
+                    idValidation.ErrorString = "Your manifest should have an id member";
+                    return false;
+                }
+                if (jsonElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(jsonElement.GetString()))
+                {
+                    idValidation.ErrorString = "Your manifest's ID must be a string with at least one character";
                     return false;
                 }
 

@@ -111,8 +111,8 @@ export class AppReport extends LitElement {
   @state() lastTested: string = "Last tested seconds ago";
 
   @state() todoWindow: any[] = [];
-  private pageNumber: number = 1;
-  private pageSize: number = 5;
+  private todoPageNumber: number = 1;
+  private todoPageSize: number = 5;
 
   // validation
   @state() validationResults: Validation[] = [];
@@ -921,7 +921,7 @@ export class AppReport extends LitElement {
     this.retestConfirmed = false;
 
     // reset action items page;
-    this.pageNumber = 1;
+    this.todoPageNumber = 1;
   }
 
   // Opens share card modal and tracks analytics
@@ -1212,10 +1212,10 @@ export class AppReport extends LitElement {
   // Pages the action items
   paginateTodos(): AnalysisTodo[] {
     let array = this.sortTodos();
-    let itemsOnPage = array.slice((this.pageNumber - 1) * this.pageSize, this.pageNumber * this.pageSize);
+    let itemsOnPage = array.slice((this.todoPageNumber - 1) * this.todoPageSize, this.todoPageNumber * this.todoPageSize);
 
     let holder = (this.shadowRoot?.querySelector(".todo-items-holder") as HTMLElement);
-    if(itemsOnPage.length < this.pageSize && this.pageNumber == 1){
+    if(itemsOnPage.length < this.todoPageSize && this.todoPageNumber == 1){
       holder.style.display = 'flex';
       holder.style.flexDirection = 'column';
       holder.style.gridTemplateRows = 'unset';
@@ -1230,15 +1230,15 @@ export class AppReport extends LitElement {
 
   // Moves to the next window in the action items list
   switchPage(up: boolean){
-    if(up && this.pageNumber * this.pageSize < this.filteredTodoItems.length){
-      this.pageNumber++;
-    } else if(!up && this.pageNumber != 1){
-      this.pageNumber--;
+    if(up && this.todoPageNumber * this.todoPageSize < this.filteredTodoItems.length){
+      this.todoPageNumber++;
+    } else if(!up && this.todoPageNumber != 1){
+      this.todoPageNumber--;
     }
 
     const pageStatus = this.shadowRoot!.getElementById('pageStatus')!;
-    const totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize) // Calculate total pages
-    pageStatus.textContent = `Action Items Page ${this.pageNumber} of ${totalPages}`;
+    const totalPages = Math.ceil(this.filteredTodoItems.length / this.todoPageSize) // Calculate total pages
+    pageStatus.textContent = `Action Items Page ${this.todoPageNumber} of ${totalPages}`;
 
     this.requestUpdate();
   }
@@ -1247,7 +1247,7 @@ export class AppReport extends LitElement {
   getPaginationDots(): string[] {
     let dots: any[] = [];
 
-    let totalPages = Math.ceil(this.filteredTodoItems.length / this.pageSize);
+    let totalPages = Math.ceil(this.filteredTodoItems.length / this.todoPageSize);
 
     for(let i = 0; i < totalPages; i++){
       dots.push("dot");
@@ -1311,7 +1311,7 @@ export class AppReport extends LitElement {
 
     recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
-    this.pageNumber = 1;
+    this.todoPageNumber = 1;
 
     this.stopShowingNotificationTooltip = true;
     // if its in the list, remove it, else add it
@@ -1623,7 +1623,7 @@ export class AppReport extends LitElement {
   }
 
   private renderTodoPagination(): TemplateResult {
-    if (this.filteredTodoItems.length <= this.pageSize) {
+    if (this.filteredTodoItems.length <= this.todoPageSize) {
       return html``;
     }
 
@@ -1650,7 +1650,7 @@ export class AppReport extends LitElement {
   }
 
   private renderTodoPaginationDot(index: number): TemplateResult {
-    if (this.pageNumber === (index + 1)) {
+    if (this.todoPageNumber === (index + 1)) {
       return html`<img src="/assets/new/active_dot.svg" alt="active dot" />`;
     }
 
@@ -1835,7 +1835,7 @@ export class AppReport extends LitElement {
   private renderFilteredTodoItems(): TemplateResult {
     if (this.filteredTodoItems.length === 0) {
       return html`<span class="loader"></span>`;
-    }
+    } 
 
     const todosForCurrentPage = this.paginateTodos();
     return html`
