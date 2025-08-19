@@ -241,9 +241,9 @@ namespace PWABuilder.Validations
                 Category = "recommended",
                 Member = "launch_handler",
                 DefaultValue = string.Empty,
-                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array"),
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=launch_handler-object"),
                 ErrorString = string.Empty,
-                QuickFix = false,
+                QuickFix = false
             };
             launchHandlerValidation.Test = (value) =>
             {
@@ -821,35 +821,92 @@ namespace PWABuilder.Validations
 
             var handleLinksValidation = new ManifestSingleFieldValidation
             {
-                Member = "handle_links",
-                DisplayString = "Manifest has handle_links field",
+                Member = "launch_handler",
+                DisplayString = "Manifest has launch_handler field",
                 InfoString =
-                    "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
+                    "The launch_handler field specifies how links to your app are opened. It must be an object (or array of objects) with a client_mode value indicating how to handle navigations.",
                 Category = "enhancement",
-                DefaultValue = "auto",
-                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string"),
+                DefaultValue = "{ client_mode: 'auto' }",
+                DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=launch_handler-object"),
                 ErrorString = string.Empty,
                 QuickFix = true,
             };
             handleLinksValidation.Test = (value) =>
             {
-                if (value is not string strValue)
+                static bool HasValidClientMode(JsonElement clientModeEl)
                 {
-                    handleLinksValidation.ErrorString =
-                        "handle_links should be either auto, preferred or not-preferred";
+                    var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        "auto",
+                        "navigate-new",
+                        "navigate-existing",
+                        "focus-existing"
+                    };
+
+                    if (clientModeEl.ValueKind == JsonValueKind.String)
+                    {
+                        var s = clientModeEl.GetString();
+                        return s is not null && allowed.Contains(s);
+                    }
+
+                    if (clientModeEl.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var item in clientModeEl.EnumerateArray())
+                        {
+                            if (item.ValueKind == JsonValueKind.String)
+                            {
+                                var s = item.GetString();
+                                if (s is not null && allowed.Contains(s))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }
+
                     return false;
                 }
 
-                var allowedValues = new[] { "auto", "preferred", "not-preferred" };
-                if (!allowedValues.Contains(strValue))
+                if (value is not JsonElement json)
                 {
                     handleLinksValidation.ErrorString =
-                        "handle_links should be either auto, preferred or not-preferred";
+                        " must be an object containing 'client_mode'.";
                     return false;
                 }
 
-                handleLinksValidation.ErrorString = string.Empty;
-                return true;
+                if (json.ValueKind == JsonValueKind.Object)
+                {
+                    if (!json.TryGetProperty("client_mode", out var clientMode) || !HasValidClientMode(clientMode))
+                    {
+                        handleLinksValidation.ErrorString =
+                            "launch_handler.client_mode must be a string or array containing one of: auto, navigate-new, navigate-existing, focus-existing.";
+                        return false;
+                    }
+
+                    handleLinksValidation.ErrorString = string.Empty;
+                    return true;
+                }
+
+                if (json.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var el in json.EnumerateArray())
+                    {
+                        if (el.ValueKind == JsonValueKind.Object && el.TryGetProperty("client_mode", out var cm) && HasValidClientMode(cm))
+                        {
+                            handleLinksValidation.ErrorString = string.Empty;
+                            return true;
+                        }
+                    }
+
+                    handleLinksValidation.ErrorString =
+                        "launch_handler must have client_mode as a string or array of strings containing one of: auto, navigate-new, navigate-existing, focus-existing.";
+                    return false;
+                }
+
+                handleLinksValidation.ErrorString =
+                    "launch_handler must be an object containing 'client_mode'.";
+                return false;
             };
             manifestValidations.Add(handleLinksValidation);
 

@@ -275,13 +275,13 @@ namespace PWABuilder.Services
                 }
 
                 if (
-                    ManifestValidations.ValidateSingleField("handle_links", manifestJsonElement) is
-                    { Exists: true } handleLinks
+                    ManifestValidations.ValidateSingleField("launch_handler", manifestJsonElement) is
+                    { Exists: true } launchHandlerExists
                 )
                 {
                     enrichAnalyticsInfoProperties.Add(
-                        "hasHandleLinks",
-                        handleLinks.Valid.ToString()
+                        "hasLaunchHandler",
+                        launchHandlerExists.Valid.ToString()
                     );
                 }
             }

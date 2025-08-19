@@ -196,10 +196,10 @@ export class AppReport extends LitElement {
   private specialManifestTodos: {[id: string]: string} = {
     "shortcuts": "Add contextual shortcuts to specific parts of your app",
     "display_override": "Extend your app into the titlebar for a more native look and feel with display_override and window-controls-overlay",
-    "share_target": "Be a share_target for your users",
-    "file_handlers": "Be a default handler for certain filetypes with file_handlers",
-    "handle_links": "Open links as an app with handle_links",
-    "protocol_handlers": "Create a custom protocol_handler",
+    "share_target": "Let users share content to your app",
+    "file_handlers": "Let users open files with your app",
+    "launch_handler": "Configure whether your app is single-instance.",
+    "protocol_handlers": "Register your app as a handler of custom URL protocols, such as web+myapp://",
     "edge_side_panel": "Increase reach by participating in the edge_side_panel",
     "widgets": "Increase reach with widgets"
   }
