@@ -30,6 +30,11 @@ export class TodoItem extends LitElement {
   static get styles() {
     return [
       css`
+      :host {
+        display: block;
+        width: 100%;
+      }
+
       .iwrapper {
         display: flex;
         column-gap: .5em;

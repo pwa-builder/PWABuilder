@@ -742,6 +742,23 @@ sl-spinner {
     font-weight: bold;
 }
 
+.todos-carousel {
+    max-height: 275px;
+
+    &::part(base) {
+        gap: 0;
+    }
+
+    &::part(pagination-item--active) {
+        background-color: rgb(80 64 185);
+    }
+
+    sl-carousel-item {
+        justify-content: normal; 
+        align-items: start;
+    }
+}
+
 /* Action Items Card */
 #todo {
     width: 100%;

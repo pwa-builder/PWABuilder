@@ -28,6 +28,8 @@ import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
+import '@shoelace-style/shoelace/dist/components/carousel/carousel.js';
+import '@shoelace-style/shoelace/dist/components/carousel-item/carousel-item.js';
 
 import {
   Icon,
@@ -51,7 +53,6 @@ import { findBestAppIcon } from '../utils/icons';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { appReportStyles } from './app-report.styles';
 import { AnalysisTodo } from '../models/analysis-todo';
-// import { display } from 'colorjs.io/fn';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -1209,25 +1210,6 @@ export class AppReport extends LitElement {
     return this.filteredTodoItems;
   }
 
-  // Pages the action items
-  paginateTodos(): AnalysisTodo[] {
-    let array = this.sortTodos();
-    let itemsOnPage = array.slice((this.todoPageNumber - 1) * this.todoPageSize, this.todoPageNumber * this.todoPageSize);
-
-    let holder = (this.shadowRoot?.querySelector(".todo-items-holder") as HTMLElement);
-    if(itemsOnPage.length < this.todoPageSize && this.todoPageNumber == 1){
-      holder.style.display = 'flex';
-      holder.style.flexDirection = 'column';
-      holder.style.gridTemplateRows = 'unset';
-    } else {
-      holder.style.height = '280px;'
-      holder.style.display = 'grid';
-      holder.style.gridTemplateRows = 'repeat(5, 1fr)';
-      holder.style.flexDirection = 'unset';
-    }
-    return itemsOnPage;
-  }
-
   // Moves to the next window in the action items list
   switchPage(up: boolean){
     if(up && this.todoPageNumber * this.todoPageSize < this.filteredTodoItems.length){
@@ -1241,18 +1223,6 @@ export class AppReport extends LitElement {
     pageStatus.textContent = `Action Items Page ${this.todoPageNumber} of ${totalPages}`;
 
     this.requestUpdate();
-  }
-
-  // Returns a list that represents the number of dots need for pagination
-  getPaginationDots(): string[] {
-    let dots: any[] = [];
-
-    let totalPages = Math.ceil(this.filteredTodoItems.length / this.todoPageSize);
-
-    for(let i = 0; i < totalPages; i++){
-      dots.push("dot");
-    }
-    return dots;
   }
 
   // Renders the indicators for each action item
@@ -1614,47 +1584,11 @@ export class AppReport extends LitElement {
           <div class="todo-items-holder">
             ${this.renderFilteredTodoItems()}
           </div>
-          ${this.renderTodoPagination()}
           <div id="pageStatus" aria-live="polite" aria-atomic="true"></div>
           </div>
         </div>
       </div>
     `;
-  }
-
-  private renderTodoPagination(): TemplateResult {
-    if (this.filteredTodoItems.length <= this.todoPageSize) {
-      return html``;
-    }
-
-    return html`
-      <div id="pagination-actions">
-        <button class="pagination-buttons" name="action-items-previous-page-button" aria-label="Previous page button for action items list" type="button" @click=${() => this.switchPage(false)}>
-          <sl-icon class="pageToggles" name="chevron-left"></sl-icon>
-        </button>
-        ${this.renderTodoPaginationDots()}
-        <button class="pagination-buttons" name="action-items-next-page-button" aria-label="Next page button for action items list" aria-live="polite" type="button" @click=${() => this.switchPage(true)}>
-          <sl-icon class="pageToggles" name="chevron-right"></sl-icon>
-        </button>
-      </div>
-    `;
-  }
-
-  private renderTodoPaginationDots(): TemplateResult {
-    const paginationDots = this.getPaginationDots();
-    return html`
-      <div id="dots">
-        ${repeat(paginationDots, (_, index) => this.renderTodoPaginationDot(index))}
-      </div>
-    `;
-  }
-
-  private renderTodoPaginationDot(index: number): TemplateResult {
-    if (this.todoPageNumber === (index + 1)) {
-      return html`<img src="/assets/new/active_dot.svg" alt="active dot" />`;
-    }
-
-    return html`<img src="/assets/new/inactive_dot.svg" alt="inactive dot" />`;
   }
 
   private renderManifestSection(): TemplateResult {
@@ -1833,13 +1767,30 @@ export class AppReport extends LitElement {
   }
 
   private renderFilteredTodoItems(): TemplateResult {
-    if (this.filteredTodoItems.length === 0) {
+    if (this.filteredTodoItems.length === 0 && this.runningTests) {
       return html`<span class="loader"></span>`;
     } 
 
-    const todosForCurrentPage = this.paginateTodos();
+    this.sortTodos();
+    const numberOfPages = Math.ceil(this.filteredTodoItems.length / this.todoPageSize);
+    const carouselPages = Array.from({ length: numberOfPages }, (_, i) => {
+      return {
+        pageIndex: i,
+        todos: this.filteredTodoItems.slice(i * this.todoPageSize, (i + 1) * this.todoPageSize)
+      }
+    });
     return html`
-      ${repeat(todosForCurrentPage, t => t.displayString, t => this.renderTodo(t))}
+      <sl-carousel class="todos-carousel" pagination>
+        ${repeat(carouselPages, p => this.renderTodoCarouselPage(p.todos))}
+      </sl-carousel>
+    `;
+  }
+
+  private renderTodoCarouselPage(todos: AnalysisTodo[]): TemplateResult {
+    return html`
+      <sl-carousel-item>
+          ${repeat(todos, t => t.displayString, t => this.renderTodo(t))}
+      </sl-carousel-item>
     `;
   }
 
