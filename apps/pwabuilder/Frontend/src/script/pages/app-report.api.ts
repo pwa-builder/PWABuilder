@@ -61,6 +61,21 @@ export type Analysis = {
 	lighthouseReport: LighthouseReport | null,
 	logs: string[],
 	canPackage: boolean;
+	capabilities: PwaCapability[];
+}
+
+export type PwaCapability = {
+	level: "required" | "recommended" | "optional" | "feature";
+	category: "serviceWorker" | "webAppManifest" | "https";
+	id: "hasManifest" | "name" | "description" | "backgroundColor" | "shortcuts" | "categories" | "icons" | "screenshots" | "iconsAreFetchable" | "screenshotsAreFetchable"
+	featureName: string | null;
+	featureIcon: string | null;
+	description: string;
+	todoAction: string;
+	learnMoreUrl: string | null;
+	imageUrl: string | null;
+	status: "inProgress" | "skipped" | "passed" | "failed";
+	errorMessage: string | null;
 }
 
 export type ManifestDetection = {

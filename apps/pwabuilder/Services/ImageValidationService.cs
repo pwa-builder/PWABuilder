@@ -4,6 +4,23 @@ using PWABuilder.Validations.Models;
 
 namespace PWABuilder.Validations.Services;
 
+/// <summary>
+/// Validates the icons and screenshots within a manifest by ensuring they exist.
+/// </summary>
+public interface IImageValidationService
+{
+    /// <summary>
+    /// Checks if the image exists. Returns true if it exists, otherwise false.
+    /// </summary>
+    /// <param name="imageUri">The URI of the image to check.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
+    /// <returns>True if the image exists, otherwise false.</returns>
+    Task<bool> TryImageExistsAsync(Uri imageUri, CancellationToken cancelToken);
+}
+
+/// <summary>
+/// A service that validates the icons and screenshots within a manifest. It checks that the images actually exist.
+/// </summary>
 public class ImageValidationService : IImageValidationService
 {
     private readonly HttpClient httpClient;
@@ -85,7 +102,7 @@ public class ImageValidationService : IImageValidationService
 
             var results = await Task.WhenAll(
                 iconsData.Select(async icon =>
-                {                    
+                {
                     return new
                     {
                         icon.src,
@@ -249,7 +266,7 @@ public class ImageValidationService : IImageValidationService
     /// </summary>
     /// <param name="imageUrl"></param>
     /// <returns></returns>
-    private async Task<bool> TryImageExistsAsync(Uri imageUrl, CancellationToken cancelToken)
+    public async Task<bool> TryImageExistsAsync(Uri imageUrl, CancellationToken cancelToken)
     {
         // First try HEAD which is cheap and quick.
         try

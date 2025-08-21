@@ -41,12 +41,10 @@ public class ManifestDetector
             return null;
         }
 
-        // Run the validations on the manifest.
-        var manifestValidationResult = TryValidateManifest(webManifest, logger, cancelToken);
-        return manifestValidationResult;
+        return webManifest;
     }
 
-    private async Task<ManifestContext?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestDetection?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Spin up a headless browser to find the manifest link.
         var manifestUrl = await TryGetManifestUrlFromPuppeteer(appUrl, logger, cancelToken);
@@ -56,7 +54,7 @@ public class ManifestDetector
         return manifestContext;
     }
 
-    private async Task<ManifestContext?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestDetection?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Fetch the HTML of the page.
         var htmlString = await TryGetHtmlPage(appUrl, logger, cancelToken);
@@ -98,33 +96,7 @@ public class ManifestDetector
             return null;
         }
     }
-
-    private ManifestDetection? TryValidateManifest(ManifestContext? manifestContext, ILogger logger, CancellationToken cancelToken)
-    {
-        if (manifestContext == null)
-        {
-            return null;
-        }
-
-        try
-        {
-            var validations = ManifestValidations.ValidateManifest(manifestContext.Manifest);
-            return new ManifestDetection
-            {
-                Url = manifestContext.Uri,
-                Json = manifestContext.Manifest,
-                Raw = manifestContext.ManifestJson,
-                Validations = validations.ToList()
-            };
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error validating manifest from {manifestUrl}.", manifestContext.Uri);
-            return null;
-        }
-    }
-
-    private async Task<ManifestContext?> TryFetchManifest(Uri? manifestUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ManifestDetection?> TryFetchManifest(Uri? manifestUrl, ILogger logger, CancellationToken cancelToken)
     {
         if (manifestUrl == null)
         {
@@ -134,24 +106,26 @@ public class ManifestDetector
         try
         {
             var manifestJson = await http.GetStringAsync(manifestUrl, Constants.ManifestMimeTypes, 1024 * 1024 * 5, cancelToken);
-            if (manifestJson == null)
+            if (string.IsNullOrWhiteSpace(manifestJson))
             {
-                logger.LogWarning("Manifest at {manifestUrl} returned null content.", manifestUrl);
+                logger.LogWarning("Manifest at {manifestUrl} returned empty content.", manifestUrl);
                 return null;
             }
 
-            var manifest = JsonSerializer.Deserialize<object>(manifestJson);
-            if (manifest == null)
+            // We can't have more than 2.5m characters in the manifest (roughly 10MB)
+            // This is to prevent very large manifests that encode the entire images inside the manifest.
+            if (manifestJson.Length > 2_500_000)
             {
-                logger.LogWarning("Manifest at {manifestUrl} deserialization returned null.", manifestUrl);
+                logger.LogWarning("Manifest at {manifestUrl} is too large at {length} characters).", manifestUrl, manifestJson.Length);
                 return null;
             }
 
-            return new ManifestContext
+            var manifest = JsonSerializer.Deserialize<JsonElement>(manifestJson);
+            return new ManifestDetection
             {
-                Uri = manifestUrl,
-                ManifestJson = manifestJson,
-                Manifest = manifest
+                Url = manifestUrl,
+                Manifest = manifest,
+                ManifestRaw = manifestJson
             };
         }
         catch (Exception ex)
