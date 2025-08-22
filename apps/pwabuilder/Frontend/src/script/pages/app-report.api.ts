@@ -65,24 +65,32 @@ export type Analysis = {
 }
 
 export type PwaCapability = {
-	level: "required" | "recommended" | "optional" | "feature";
-	category: "serviceWorker" | "webAppManifest" | "https";
-	id: "hasManifest" | "name" | "description" | "backgroundColor" | "shortcuts" | "categories" | "icons" | "screenshots" | "iconsAreFetchable" | "screenshotsAreFetchable"
+	level: PwaCapabilityLevel;
+	category: PwaCapabilityCategory;
+	id: PwaCapabilityId,
 	featureName: string | null;
 	featureIcon: string | null;
 	description: string;
 	todoAction: string;
+	field: string | null;
 	learnMoreUrl: string | null;
 	imageUrl: string | null;
-	status: "inProgress" | "skipped" | "passed" | "failed";
+	status: PwaCapbilityStatus;
 	errorMessage: string | null;
 }
 
+export type PwaCapabilityLevel = "Required" | "Recommended" | "Optional" | "Feature";
+
+export type PwaCapabilityCategory = "ServiceWorker" | "WebAppManifest" | "Https";
+
+export type PwaCapabilityId = "HasManifest" | "Name" | "Description" | "BackgroundColor" | "Shortcuts" | "Categories" | "Icons" | "Screenshots" | "IconsAreFetchable" | "ScreenshotsAreFetchable";
+
+export type PwaCapbilityStatus = "InProgress" | "Skipped" | "Passed" | "Failed";
+
 export type ManifestDetection = {
 	url: string,
-	validations: Validation[],
-	json: object | null,
-	raw: string | null
+	manifest: object,
+	manifestRaw: string | null
 }
 
 export type ServiceWorkerDetection = {

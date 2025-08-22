@@ -12,6 +12,8 @@ using PWABuilder.Utils;
 using PWABuilder.Validations.Services;
 using StackExchange.Redis;
 using System.Drawing.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +69,6 @@ builder.Services.AddSingleton(services =>
     return PuppeteerService.CreateBrowserAsync(env);
 });
 builder.Services.AddControllersWithViews();
-
 // An HTTP client with the PWABuilderHttpAgent string appended. 
 builder.Services.AddHttpClient(Constants.PwaBuilderAgentHttpClient, client =>
 {

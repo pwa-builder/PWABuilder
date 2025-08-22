@@ -48,7 +48,7 @@ import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { processManifest } from './app-report.helper';
-import { ReportAudit, enqueueAnalysis, Analysis, getAnalysis, PwaCapability } from './app-report.api';
+import { ReportAudit, enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapbilityStatus, PwaCapabilityLevel } from './app-report.api';
 import { findBestAppIcon } from '../utils/icons';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { appReportStyles } from './app-report.styles';
@@ -114,9 +114,6 @@ export class AppReport extends LitElement {
   @state() todoWindow: any[] = [];
   private todoPageNumber: number = 1;
   private todoPageSize: number = 5;
-
-  // new validation
-  @state() actionItems: PwaCapability[] = [];
 
   // validation
   @state() validationResults: Validation[] = [];
@@ -481,10 +478,10 @@ export class AppReport extends LitElement {
     const todos: AnalysisTodo[] = [];
 
     // Apply the manifest and manifest todos
-    if (analysis.webManifest?.raw) {
-      this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.raw || "");
-      const manifestTodos = this.testManifest(analysis.webManifest.validations);
-      todos.push(...manifestTodos);
+    if (analysis.webManifest?.manifestRaw) {
+      this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.manifestRaw || "");
+      //const manifestTodos = this.testManifest(analysis.webManifest.validations);
+      //todos.push(...manifestTodos);
     }
 
     // Add service worker todos
@@ -1622,15 +1619,18 @@ export class AppReport extends LitElement {
   }
 
   renderManifestDetails(): TemplateResult {
+    const isLoading = !this.analysis || this.analysis.capabilities.filter(c => c.category === "WebAppManifest").some(c => c.status === "InProgress");
     return html`
-      <sl-details id="mani-details" class="details" ?disabled=${this.manifestDataLoading} @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)} @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}>
+      <sl-details id="mani-details" class="details" ?disabled=${isLoading} @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)} @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}>
         ${this.renderManifestDetailsChecklist()}
       </sl-details>
     `;
   }
 
   renderManifestDetailsChecklist(): TemplateResult {
-    if (this.manifestDataLoading) {
+    const capabilities = this.analysis?.capabilities.filter(c => c.category === "WebAppManifest") || [];
+    const isLoading = !this.analysis || capabilities.some(c => c.status === "InProgress");
+    if (isLoading) {
       return html`
         <div slot="summary">
           <sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton>
@@ -1638,9 +1638,10 @@ export class AppReport extends LitElement {
       `;
     }
 
-    const requiredValidations = this.validationResults.filter(v => v.category === "required" || (v.testRequired && !v.valid));
-    const recommendedValidations = this.validationResults.filter(v => v.category === "recommended" && ((v.testRequired && v.valid) || !v.testRequired));
-    const optionalValidations = this.validationResults.filter(v => v.category === "optional" && ((v.testRequired && v.valid) || !v.testRequired));
+    const fieldValidations = capabilities.filter(c => !!c.field);
+    const requiredValidations = fieldValidations.filter(c => c.level === "Required");
+    const recommendedValidations = fieldValidations.filter(c => c.level === "Recommended");
+    const optionalValidations = fieldValidations.filter(c => (c.level === "Optional" || c.level === "Feature"));
     return html`
       <div class="details-summary" slot="summary">
         <p>View Details</p>
@@ -1649,41 +1650,32 @@ export class AppReport extends LitElement {
       <div id="manifest-detail-grid">
         <div class="detail-list">
           <p class="detail-list-header">Required</p>
-          ${this.renderManifestMissingFields(this.requiredMissingFields, "required")}
-          ${this.renderManifestValidations(requiredValidations, "required")}
+          ${this.renderManifestValidations(requiredValidations, "Required")}
         </div>
         <div class="detail-list">
           <p class="detail-list-header">Recommended</p>
-          ${this.renderManifestMissingFields(this.recommendedMissingFields, "recommended")}
-          ${this.renderManifestValidations(recommendedValidations, "recommended")}
+          ${this.renderManifestValidations(recommendedValidations, "Recommended")}
         </div>
         <div class="detail-list">
           <p class="detail-list-header">Optional</p>
-          ${this.renderManifestMissingFields(this.optionalMissingFields, "optional")}
-          ${this.renderManifestValidations(optionalValidations, "optional")}
+          ${this.renderManifestValidations(optionalValidations, "Optional")}
         </div>
       </div>
     `;
   }
 
-  private renderManifestMissingFields(missingFields: string[], category: "required" | "recommended" | "optional"): TemplateResult {
+  private renderManifestValidations(capability: PwaCapability[], category: PwaCapabilityLevel): TemplateResult {
     return html`
-      ${repeat(missingFields, field => this.renderManifestFieldCheck(field, field, category, `${field} is missing from your manifest.`, "missing"))}
+      ${repeat(capability, v => this.renderManifestFieldCheck(v.field || "", category, v.errorMessage || "", v.status))}
     `;
   }
 
-  private renderManifestValidations(validations: Validation[], category: "required" | "recommended" | "optional"): TemplateResult {
-    return html`
-      ${repeat(validations, v => this.renderManifestFieldCheck(v.member, v.displayString || "", category, v.errorString || "", v.valid ? "valid" : "invalid"))}
-    `;
-  }
-
-  private renderManifestFieldCheck(field: string, displayName: string, category: "required" | "recommended" | "optional", tooltipText: string, status: "missing" | "invalid" | "valid"): TemplateResult {
-    const iconUrl = status === "valid" ? valid_src :
-      category === "required" ? stop_src :
+  private renderManifestFieldCheck(field: string, category: PwaCapabilityLevel, tooltipText: string, status: PwaCapbilityStatus): TemplateResult {
+    const iconUrl = status === "Passed" ? valid_src :
+      category === "Required" ? stop_src :
         yield_src;
     const icon = html`<img src=${iconUrl} alt=""/>`;
-    const label = status === "missing" ? `Manifeste includes ${field}` : displayName;
+    const label = `Manifest has ${field}`;
 
     if (tooltipText) {
       return html`
@@ -1705,7 +1697,9 @@ export class AppReport extends LitElement {
   }
 
   private renderEditManifestButton(): TemplateResult {
-    if (this.manifestDataLoading) {
+    const manifestCapabilities = this.analysis?.capabilities.filter(c => c.category === "WebAppManifest") || [];
+    const isLoading = !this.analysis || manifestCapabilities.some(c => c.status === "InProgress");
+    if (isLoading) {
       return html`
         <div class="flex-col gap">
           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
@@ -1738,7 +1732,9 @@ export class AppReport extends LitElement {
   }
 
   private renderManifestScore(): TemplateResult {
-    if (this.manifestDataLoading) {
+    const manifestCapabilities = this.analysis?.capabilities.filter(c => c.category === "WebAppManifest") || [];
+    const isLoading = !this.analysis || manifestCapabilities.some(c => c.status === "InProgress");
+    if (isLoading) {
       return html`
         <div class="flex-col gap">
           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
@@ -1747,70 +1743,64 @@ export class AppReport extends LitElement {
       `;
     }
 
+    const validScore = manifestCapabilities.filter(c => c.status === "Passed").length;
     return html`
       <p class="card-desc">
-        ${this.decideMessage(this.manifestValidCounter, this.manifestTotalScore, "manifest")}
+        ${this.decideMessage(validScore, manifestCapabilities.length, "manifest")}
       </p>
     `;
   }
 
   private renderManifestScoreRing(): TemplateResult {
-    if (this.manifestDataLoading) {
+    const manifestCapabilities = this.analysis?.capabilities.filter(c => c.category === "WebAppManifest") || [];
+    const isManifestLoading = !this.analysis || manifestCapabilities.some(c => c.status === "InProgress");
+    if (isManifestLoading) {
       return html`<div class="loader-round large"></div>`;
     }
 
+    const validCount = manifestCapabilities.filter(c => c.status === "Passed").length;
     const manifestChecksPassedOrError = this.createdManifest ?
       html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` :
-      html`<div>${this.manifestValidCounter} / ${this.manifestTotalScore}</div>`;
+      html`<div>${validCount} / ${manifestCapabilities.length}</div>`;
     return html`
       <sl-progress-ring
         id="manifestProgressRing"
         class=${classMap(this.decideColor("manifest"))}
-        value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(this.manifestValidCounter)) / this.manifestTotalScore) * 100}">
+        value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(validCount)) / manifestCapabilities.length) * 100}">
           ${manifestChecksPassedOrError}
       </sl-progress-ring>
     `;
   }
 
   private renderFilteredTodoItems(): TemplateResult {
-    if (this.filteredTodoItems.length === 0 && this.runningTests) {
+    // Action items are any PwaCapabilities that are failed.
+    const actionItems = (this.analysis?.capabilities || []).filter(c => c.status === "Failed");
+    if (actionItems.length === 0 && this.runningTests) {
       return html`<span class="loader"></span>`;
     }
 
-    this.sortTodos();
-    const numberOfPages = Math.ceil(this.filteredTodoItems.length / this.todoPageSize);
-    const carouselPages = Array.from({ length: numberOfPages }, (_, i) => {
-      return {
-        pageIndex: i,
-        todos: this.filteredTodoItems.slice(i * this.todoPageSize, (i + 1) * this.todoPageSize)
-      }
+    actionItems.sort((a, b) => {
+      const levelValue = (level: PwaCapabilityLevel) => level === "Required" ? 0 : level === "Recommended" ? 1 : level === "Optional" ? 2 : 3;
+      return levelValue(a.level) - levelValue(b.level);
     });
     return html`
-      <sl-carousel class="todos-carousel" pagination>
-        ${repeat(carouselPages, p => this.renderTodoCarouselPage(p.todos))}
-      </sl-carousel>
+        ${repeat(actionItems, t => t.id, t => this.renderTodo(t))}
     `;
   }
 
-  private renderTodoCarouselPage(todos: AnalysisTodo[]): TemplateResult {
-    return html`
-      <sl-carousel-item>
-          ${repeat(todos, t => t.displayString, t => this.renderTodo(t))}
-      </sl-carousel-item>
-    `;
-  }
-
-  private renderTodo(todo: AnalysisTodo): TemplateResult {
+  private renderTodo(todo: PwaCapability): TemplateResult {
     return html`
       <todo-item
-        .status=${todo.status}
-        .field=${todo.field}
-        .fix=${todo.fix}
-        .card=${todo.card}
-        .displayString=${todo.displayString || ""}
+        .status=${todo.level}
+        .field=${todo.field || ""}
+        .fix=${todo.todoAction}
+        .card=${todo.category}
+        .displayString=${todo.description || ""}
+        .docsLink=${todo.learnMoreUrl}
+        .previewImage=${todo.imageUrl}
         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field)}></todo-item>
+        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field || "")}></todo-item>
     `;
   }
 
@@ -1965,6 +1955,7 @@ export class AppReport extends LitElement {
   }
 
   renderAppCapabilitiesSection(): TemplateResult {
+    const isLoading = !this.analysis || this.analysis.capabilities.some(v => v.category === "WebAppManifest" && v.level === "Feature" && v.status === "InProgress");
     return html`
       <div id="security" class="half-width-cards">
         <div id="sec-header" class="flex-col">
@@ -1978,17 +1969,18 @@ export class AppReport extends LitElement {
           <div class="icons-holder">
             ${this.renderAppCapabilitiesCards()}
           </div>
-          ${this.manifestDataLoading ?
-        html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
-        html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
-      }
+          ${isLoading ?
+            html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
+            html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
+          }
         </div>
       </div>
     `;
   }
 
   renderAppCapabilitiesHeader(): TemplateResult {
-    if (this.manifestDataLoading) {
+    const isLoading = !this.analysis || this.analysis.capabilities.some(v => v.category === "WebAppManifest" && v.level === "Feature" && v.status === "InProgress");
+    if (isLoading) {
       return html`
         <div class="flex-col gap">
           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
@@ -2005,31 +1997,36 @@ export class AppReport extends LitElement {
   }
 
   renderAppCapabilitiesRing(): TemplateResult {
-    if (this.manifestDataLoading) {
+    const features = this.analysis?.capabilities.filter(v => v.category === "WebAppManifest" && v.level === "Feature") || [];
+    const isLoading = !this.analysis || features.some(v => v.status === "InProgress");
+    if (isLoading) {
       return html`<div class="loader-round large"></div>`;
     }
 
-    return html`<sl-progress-ring class="counterRing" value="${this.enhancementTotalScore > 0 ? 100 : 0}">+${this.enhancementTotalScore}</sl-progress-ring>`;
+    const featureScore = features.reduce((acc, v) => acc + (v.status === "Passed" ? 1 : 0), 0);
+    return html`<sl-progress-ring class="counterRing" value="${featureScore > 0 ? 100 : 0}">+${featureScore}</sl-progress-ring>`;
   }
 
   renderAppCapabilitiesCards(): TemplateResult {
-    const enhancements = this.validationResults.filter(v => v.category === "enhancement");
+    const features = this.analysis?.capabilities.filter(v => v.level === "Feature") || [];
     return html`
-      ${repeat(enhancements, v => this.renderAppCapabilityCard(v))}
+      ${repeat(features, f => this.renderAppCapabilityCard(f))}
     `;
   }
 
-  renderAppCapabilityCard(v: Validation): TemplateResult {
-    const validIcon = v.valid ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null
+  renderAppCapabilityCard(v: PwaCapability): TemplateResult {
+    const validIcon = v.status === "Passed" 
+      ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` 
+      : null
     return html`
-    <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.member)} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-        <manifest-info-card .field=${v.member} .placement=${"bottom"}>
+    <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.field || "")} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+        <manifest-info-card .field=${v.field || ""} .placement=${"bottom"}>
           <div class="circle-icon" tabindex="0" role="button" slot="trigger">
-            <img class="circle-icon-img" src="${"/assets/new/" + v.member + '_icon.svg'}" alt="${this.formatSWStrings(v.member) + ' icon'}" />
+            <img class="circle-icon-img" src="${"/assets/new/" + v.field + '_icon.svg'}" alt="${this.formatSWStrings(v.field || "") + ' icon'}" />
             ${validIcon}
           </div>
         </manifest-info-card>
-        <p>${this.formatSWStrings(v.member)}</p>
+        <p>${this.formatSWStrings(v.field || "")}</p>
       </div>
     `;
   }
