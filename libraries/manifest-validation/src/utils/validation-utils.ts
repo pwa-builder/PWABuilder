@@ -209,7 +209,7 @@ export const enhancement_fields = [
   "shortcuts", 
   "edge_side_panel",
   "widgets",
-  "handle_links",
+  "launch_handler",
   "file_handlers",
   "protocol_handlers"
 ];

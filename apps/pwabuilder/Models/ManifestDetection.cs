@@ -1,3 +1,4 @@
+using System.Text.Json;
 using PWABuilder.Validations.Models;
 
 namespace PWABuilder.Models;
@@ -13,17 +14,12 @@ public class ManifestDetection
     public required Uri Url { get; set; }
 
     /// <summary>
-    /// A list of validation results run on the manifest. For example, whether the manifest 
-    /// </summary>
-    public List<Validation> Validations { get; set; } = [];
-
-    /// <summary>
     /// The parsed manifest object.
     /// </summary>
-    public object? Json { get; set; }
+    public JsonElement Manifest { get; set; }
 
     /// <summary>
-    /// The raw JSON of the manifest.
+    /// The raw JSON string of the manifest.
     /// </summary>
-    public string? Raw { get; set; }
+    public string? ManifestRaw { get; set; }
 }

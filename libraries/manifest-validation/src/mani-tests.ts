@@ -853,7 +853,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
         category: "recommended",
         defaultValue: "",
-        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handler-object",
         errorString: "",
         quickFix: false,
         test: function (value: any) {

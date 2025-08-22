@@ -18,6 +18,7 @@ public class AnalysisJobProcessor : IHostedService
     private CancellationTokenSource? abortToken;
     private Task? jobProcessorTask;
     private readonly ManifestDetector manifestDetector;
+    private readonly ManifestAnalyzer manifestAnalyzer;
     private readonly ServiceWorkerDetector serviceWorkerDetector;
     private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
     private readonly ILighthouseService lighthouse;
@@ -28,6 +29,7 @@ public class AnalysisJobProcessor : IHostedService
         IAnalysisJobQueue queue, 
         AnalysisDb db, 
         ManifestDetector manifestDetector,
+        ManifestAnalyzer manifestAnalyzer,
         ServiceWorkerDetector serviceWorkerDetector,
         IServiceWorkerAnalyzer serviceWorkerAnalyzer,
         ILighthouseService lighthouse, 
@@ -38,6 +40,7 @@ public class AnalysisJobProcessor : IHostedService
         this.db = db;
         this.lighthouse = lighthouse;
         this.manifestDetector = manifestDetector;
+        this.manifestAnalyzer = manifestAnalyzer;
         this.serviceWorkerDetector = serviceWorkerDetector;
         this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
         this.imageValidator = imageValidator;
@@ -118,10 +121,14 @@ public class AnalysisJobProcessor : IHostedService
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
             var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => TryAnalyzeServiceWorker(d.Result, job, cancelToken)).Unwrap();
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestImagesValidation = manifestDetectionTask.ContinueWith(m => TryValidateManifestImages(m.Result, job, cancelToken)).Unwrap();
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(m => manifestAnalyzer.TryRunManifestChecksAsync(analysis, analysisLogger, cancelToken)).Unwrap();
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
+            await db.SaveAsync(analysis);
+
+            // Step 2: analyze the manifest for validity and capabilities.
+            
             await db.SaveAsync(analysis);
 
             // Step 2: find the service worker info.
@@ -133,13 +140,6 @@ public class AnalysisJobProcessor : IHostedService
             {
                 analysis.ServiceWorker.Validations = await serviceWorkerAnalysisTask;
                 await db.SaveAsync(analysis);
-            }
-
-            // Step 4, validate the images within the manifest.
-            if (analysis.WebManifest != null)
-            {
-                var manifestImageValidations = await manifestImagesValidation;
-                analysis.WebManifest.Validations.AddRange(manifestImageValidations);
             }
 
             // Step 5, if we have a manifest or service worker, run Lighthouse PWA analysis.
@@ -194,29 +194,6 @@ public class AnalysisJobProcessor : IHostedService
         }
 
         return await serviceWorkerDetector.TryAnalyze(detection.Url, job.Url, logger, cancelToken);
-    }
-
-    private async Task<List<Validation>> TryValidateManifestImages(ManifestDetection? manifest, AnalysisJob job, CancellationToken cancelToken)
-    {
-        if (manifest == null || manifest.Json == null)
-        {
-            return [];
-        }
-
-        // Kick off both icon and screenshot validation tasks.
-        var iconValidationTask = imageValidator.ValidateIconsMetadataAsync(manifest.Json, manifest.Url, cancelToken);
-        var screenshotValidationTask = imageValidator.ValidateScreenshotsMetadataAsync(manifest.Json, manifest.Url, cancelToken);
-        try
-        {
-            var iconValidation = await iconValidationTask;
-            var screenshotValidation = await screenshotValidationTask;
-            return [iconValidation, screenshotValidation];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error validating manifest images for {url}", job.Url);
-            return [];
-        }
     }
 
     private async Task RetryJobOrFail(AnalysisJob job, Exception error)

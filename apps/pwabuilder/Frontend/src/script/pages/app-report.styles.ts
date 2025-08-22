@@ -742,6 +742,12 @@ sl-spinner {
     font-weight: bold;
 }
 
+.todo-items-holder {
+    max-height: 185px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
 /* Action Items Card */
 #todo {
     width: 100%;

@@ -1,3 +1,4 @@
+using PWABuilder.Services;
 using PWABuilder.Validations.Models;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
@@ -68,13 +69,18 @@ public class Analysis
     /// <summary>
     /// Indicates whether the app can be packaged for app stores.
     /// </summary>
-    public bool? CanPackage => this.MeetsRequirementsForStorePackaging();
+    public bool CanPackage => this.MeetsRequirementsForStorePackaging();
+
+    /// <summary>
+    /// The capability checks of the PWA.
+    /// </summary>
+    public List<PwaCapability> Capabilities { get; init; } = PwaCapability.CreateManifestCapabilities();
 
     /// <summary>
     /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.
     /// </summary>
     /// <param name="uri">The URI of the analysis to generate an ID for.</param>
-    /// <returns>A Redis-cache compatible ID to be used as the key for the object in Redis.</returns>
+    /// <returns>A Redis cache-compatible ID to be used as the key for the object in Redis.</returns>
     public static string GetId(Uri uri)
     {
         var hash = uri.GetHashCode() + DateTime.UtcNow.GetHashCode();
@@ -94,9 +100,10 @@ public class Analysis
         }
 
         // All required fields must be valid.
-        var allRequiredFieldsValid = this.WebManifest.Validations
-            .Where(v => v.Category == "required")
-            .All(v => v.Valid == true);
+        var allRequiredFieldsValid = this.Capabilities.Count > 0
+            && this.Capabilities
+            .Where(v => v.Level == PwaCapabilityLevel.Required)
+            .All(v => v.Status == PwaCapabilityCheckStatus.Passed);
 
         return allRequiredFieldsValid;
     }
