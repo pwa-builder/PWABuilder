@@ -28,8 +28,10 @@ public enum PwaCapabilityId
     ProtocolHandlers,
     ShareTarget,
     IarcRatingId,
+    DisplayOverride,
     WindowControlsOverlay,
     TabbedDisplay,
+    NoteTaking,
     StartUrl,
 
 

@@ -13,14 +13,14 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
-  @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
+  @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
   @state() currentlyHovering: boolean = false;
   @state() currentlyOpen: boolean = false;
   @state() hoverTimer: any;
 
   static get styles() {
     return [
-    css`
+      css`
     
       .mic-wrapper {
         display: flex;
@@ -170,11 +170,7 @@ export class ManifestInfoCard extends LitElement {
     super();
   }
 
-  firstUpdated(){
-
-  }
-
-  openME(){
+  openME() {
     // general counter
     recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     // specific counter
@@ -184,8 +180,8 @@ export class ManifestInfoCard extends LitElement {
     let tab: string = manifest_fields[this.field].location!;
     let event: CustomEvent = new CustomEvent('open-manifest-editor', {
       detail: {
-          field: this.field,
-          tab: tab
+        field: this.field,
+        tab: tab
       },
       bubbles: true,
       composed: true
@@ -193,7 +189,7 @@ export class ManifestInfoCard extends LitElement {
     this.dispatchEvent(event);
   }
 
-  trackLearnMoreAnalytics(){
+  trackLearnMoreAnalytics() {
     // general counter
     recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
     //specific field counter
@@ -202,7 +198,7 @@ export class ManifestInfoCard extends LitElement {
 
 
   // opens tooltip
-  handleHover(entering: boolean){
+  handleHover(entering: boolean) {
     this.currentlyHovering = entering;
     let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
     let myEvent = new CustomEvent('trigger-hover',
@@ -214,23 +210,23 @@ export class ManifestInfoCard extends LitElement {
         bubbles: true,
         composed: true
       });
-    if(!entering){
+    if (!entering) {
       setTimeout(() => { this.closeTooltip(myEvent) }, 250)
     } else {
       this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
     }
   }
 
-  handleClick(){
+  handleClick() {
     let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown);
-    if(!tooltip.open){
+    if (!tooltip.open) {
       tooltip.show();
     }
     this.currentlyOpen = tooltip.open;
   }
 
-  closeTooltip(e: CustomEvent){
-    if(!this.currentlyHovering){
+  closeTooltip(e: CustomEvent) {
+    if (!this.currentlyHovering) {
       clearTimeout(this.hoverTimer);
       this.dispatchEvent(e);
     }
@@ -238,7 +234,7 @@ export class ManifestInfoCard extends LitElement {
 
   // hacky work around for clicking links with keyboard that are nested in menu items
   // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
-  handleClickingLink(linkTag: string){
+  handleClickingLink(linkTag: string) {
     const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
     anchor.click();
     this.trackLearnMoreAnalytics();
@@ -260,14 +256,14 @@ export class ManifestInfoCard extends LitElement {
             ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
             ${manifest_fields[this.field].image ?
 
-              html`
+            html`
                 <div class="image-section">
                   <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
                 </div>
               ` :
-              null
+            null
 
-            }
+          }
             
           </div>
           <sl-menu>
@@ -287,14 +283,14 @@ export class ManifestInfoCard extends LitElement {
             ${manifest_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
             ${manifest_fields[this.field].image ?
 
-              html`
+            html`
                 <div class="image-section">
                   <img src="${manifest_fields[this.field].image!}" alt=${`example of ${this.field} in use.`} />
                 </div>
               ` :
-              null
+            null
 
-            }
+          }
             >
             <sl-menu>
             <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${manifest_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>

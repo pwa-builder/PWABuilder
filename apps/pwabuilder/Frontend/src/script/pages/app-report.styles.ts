@@ -768,6 +768,22 @@ sl-spinner {
     width: 100%;
 }
 
+.action-item-filter-btns {
+    img {
+        width: 16px;
+        height: 16px;
+    }
+
+    sl-button::part(label) {
+        font-size: 0.8em;
+    }
+
+    sl-menu-item::part(label),
+    sl-badge { 
+        font-size: 0.6em;
+    }
+}
+
 .details-summary {
     height: 60px;
     color: var(--primary-color);
@@ -861,7 +877,7 @@ sl-spinner {
     border: none;
 }
 
-.indicator p {
+.indicator span {
     line-height: 20px;
     margin: 0;
     font-size: 20px;
@@ -874,14 +890,14 @@ sl-spinner {
 }
 
 .indicator.selected {
-    background-color: var(--primary-color)
+    background-color: #8c76fc67;
 }
 
 .indicator.selected:focus {
     outline: 2px solid #000000;
 }
 
-.indicator.selected p {
+.indicator.selected span {
     color: #ffffff;
 }
 

@@ -183,8 +183,10 @@ public class ManifestAnalyzer
             PwaCapabilityId.IarcRatingId => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "iarc_rating_id", 36)),
             PwaCapabilityId.Widgets => new PwaManifestCapabilityCheck(capability, CheckWidgets),
             PwaCapabilityId.EdgeSidePanel => new PwaManifestCapabilityCheck(capability, CheckEdgeSidePanel),
+            PwaCapabilityId.DisplayOverride => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringArrayField(m, "display_override", 1)),
             PwaCapabilityId.WindowControlsOverlay => new PwaManifestCapabilityCheck(capability, CheckWindowControlsOverlay),
             PwaCapabilityId.TabbedDisplay => new PwaManifestCapabilityCheck(capability, CheckTabbedDisplay),
+            PwaCapabilityId.NoteTaking => new PwaManifestCapabilityCheck(capability, CheckNoteTaking),
             PwaCapabilityId.Scope => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "scope", 1)),
             PwaCapabilityId.ShortName => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "short_name", 1)),
             PwaCapabilityId.StartUrl => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "start_url", 1)),
@@ -414,6 +416,14 @@ public class ManifestAnalyzer
         var hasTabStrip = manifest.TryGetProperty("tab_strip", out var tabStrip)
             && tabStrip.ValueKind == JsonValueKind.Object;
         return hasTabbedDisplayOverride && hasTabStrip;
+    }
+
+    private static bool CheckNoteTaking(JsonElement manifest)
+    {
+        return manifest.TryGetProperty("note_taking", out var noteTaking)
+            && noteTaking.ValueKind == JsonValueKind.Object
+            && noteTaking.TryGetProperty("new_note_url", out var newNoteUrl)
+            && newNoteUrl.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(newNoteUrl.GetString());
     }
 
     private static bool CheckScopeExtensions(JsonElement manifest)

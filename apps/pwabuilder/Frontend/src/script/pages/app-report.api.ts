@@ -73,9 +73,10 @@ export type PwaCapability = {
 	description: string;
 	todoAction: string;
 	field: string | null;
+	isFieldExistenceCheck: boolean;
 	learnMoreUrl: string | null;
 	imageUrl: string | null;
-	status: PwaCapbilityStatus;
+	status: PwaCapabilityStatus;
 	errorMessage: string | null;
 }
 
@@ -85,7 +86,7 @@ export type PwaCapabilityCategory = "ServiceWorker" | "WebAppManifest" | "Https"
 
 export type PwaCapabilityId = "HasManifest" | "Name" | "Description" | "BackgroundColor" | "Shortcuts" | "Categories" | "Icons" | "Screenshots" | "IconsAreFetchable" | "ScreenshotsAreFetchable";
 
-export type PwaCapbilityStatus = "InProgress" | "Skipped" | "Passed" | "Failed";
+export type PwaCapabilityStatus = "InProgress" | "Skipped" | "Passed" | "Failed";
 
 export type ManifestDetection = {
 	url: string,
