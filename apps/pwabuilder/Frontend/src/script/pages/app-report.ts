@@ -1693,14 +1693,13 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
       category === "Required" ? stop_src :
         yield_src;
     const icon = html`<img src=${iconUrl} alt=""/>`;
-    const label = `Manifest has ${field}`;
 
     if (tooltipText) {
       return html`
         <div class="test-result" data-field=${field}>
           <sl-tooltip content=${tooltipText} placement="top">
             ${icon}
-            <p>${label}</p>
+            <p>${field}</p>
           </sl-tooltip>
         </div>
       `;
@@ -1709,7 +1708,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     return html`
       <div class="test-result" data-field=${field}>
         ${icon}
-        <p>${label}</p>
+        <p>${field}</p>
       </div>
     `;
   }
@@ -1811,13 +1810,13 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     return html`
       <todo-item
         class="${hiddenClass}"
-        .status=${todo.level}
-        .field=${todo.field || ""}
-        .fix=${todo.todoAction}
-        .card=${todo.category}
-        .displayString=${todo.description || ""}
-        .docsLink=${todo.learnMoreUrl}
-        .previewImage=${todo.imageUrl}
+        status=${todo.level}
+        field=${todo.field || ""}
+        fix=${todo.todoAction}
+        card=${todo.category}
+        description=${todo.description || ""}
+        docsUrl=${todo.learnMoreUrl || ""}
+        imageUrl=${todo.imageUrl || ""}
         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field || "")}></todo-item>
@@ -2040,7 +2039,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
       : null
     return html`
     <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.field || "")} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-        <manifest-info-card .field=${v.field || ""} .placement=${"bottom"}>
+        <manifest-info-card field="${v.field || ""}" placement="bottom" description="${v.description || ""}" docsUrl="${v.learnMoreUrl || ""}" imageUrl="${v.imageUrl || ""}">
           <div class="circle-icon" tabindex="0" role="button" slot="trigger">
             <img class="circle-icon-img" src="${"/assets/new/" + v.field + '_icon.svg'}" alt="${this.formatSWStrings(v.field || "") + ' icon'}" />
             ${validIcon}

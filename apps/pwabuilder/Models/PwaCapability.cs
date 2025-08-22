@@ -219,7 +219,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.FileHandlers,
                 Description = "The file_handlers member specifies an array of objects representing the types of files an installed PWA can open.",
-                TodoAction = "Enable your PWA to open files by adding file_handlers to your manifest.",
+                TodoAction = "Let users open files with your PWA by adding file_handlers to your manifest.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "File Handlers",
                 FeatureIcon = new Uri("/assets/new/file_handlers_icon.svg", UriKind.Relative),
@@ -421,7 +421,7 @@ public class PwaCapability
                 Field = "edge_side_panel",
                 IsFieldExistenceCheck = true,
                 LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=edge_side_panel-object"),
-                ImageUrl = new Uri("/assets/manifest_examples/windows11-widgets.webp", UriKind.Relative),
+                ImageUrl = new Uri("/assets/manifest_examples/edge-sidepanel-example.webp", UriKind.Relative),
                 Category = PwaCapabilityCategory.WebAppManifest,
                 Status = PwaCapabilityCheckStatus.InProgress
             },
