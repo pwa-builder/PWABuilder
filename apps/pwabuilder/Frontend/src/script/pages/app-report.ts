@@ -1234,15 +1234,17 @@ export class AppReport extends LitElement {
     let purple = 0;
     let red = 0;
 
-    this.allTodoItems.forEach((todo: any) => {
-      if (todo.status == "required") {
-        red++;
-      } else if (todo.status == "enhancement") {
-        purple++;
-      } else if (todo.status === "optional" || todo.status === "recommended") {
-        yellow++;
-      }
-    })
+    (this.analysis?.capabilities || [])
+      .filter(c => c.status === "Failed")
+      .forEach(todo => {
+        if (todo.level === "Required") {
+          red++;
+        } else if (todo.level === "Feature") {
+          purple++;
+        } else if (todo.level === "Optional" || todo.level === "Recommended") {
+          yellow++;
+        }
+      });
 
     if (yellow + purple + red != 0) {
 
