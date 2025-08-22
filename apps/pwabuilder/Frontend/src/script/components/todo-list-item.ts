@@ -82,12 +82,13 @@ export class TodoItem extends LitElement {
   decideIcon() {
     switch (this.status) {
       case "Required":
-        return html`<img src=${stop_src} alt="yield result icon"/>`
+        return html`<img src=${stop_src} alt=""/>`
       case "Recommended":
-        return html`<img src=${recommended_src} alt="recommended icon"/>`
+        return html`<img src=${yield_src} alt=""/>`
       case "Feature":
-        return html`<img src=${enhancement_src} alt="app capability result icon"/>`
-
+        return html`<img src=${enhancement_src} alt=""/>`
+      case "Optional":
+        return html`<img src=${info_src} alt=""/>`
       case "Retest":
         return html`<img src=${this.darkMode ? retest_src_light : retest_src} style="color: black" alt="retest site icon"/>`
     }
@@ -142,6 +143,6 @@ export class TodoItem extends LitElement {
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const enhancement_src = "/assets/new/enhancement.svg";
-const recommended_src = "/assets/new/recommended.png";
+const info_src = "/assets/new/info-circle.png";
 const retest_src = "/assets/new/retest-icon.svg";
 const retest_src_light = "/assets/new/retest-icon_light.svg";
