@@ -83,8 +83,9 @@ export class TodoItem extends LitElement {
     switch (this.status) {
       case "Required":
         return html`<img src=${stop_src} alt="yield result icon"/>`
-      case "Feature":
       case "Recommended":
+        return html`<img src=${recommended_src} alt="recommended icon"/>`
+      case "Feature":
         return html`<img src=${enhancement_src} alt="app capability result icon"/>`
 
       case "Retest":
@@ -141,5 +142,6 @@ export class TodoItem extends LitElement {
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const enhancement_src = "/assets/new/enhancement.svg";
+const recommended_src = "/assets/new/recommended.png";
 const retest_src = "/assets/new/retest-icon.svg";
 const retest_src_light = "/assets/new/retest-icon_light.svg";

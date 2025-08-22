@@ -201,7 +201,7 @@ public class ManifestAnalyzer
     private static bool CheckManifestImageArray(JsonElement manifest, string fieldName)
     {
         return manifest.TryGetProperty(fieldName, out var images)
-            && images.ValueKind != JsonValueKind.Array
+            && images.ValueKind == JsonValueKind.Array
             && images.GetArrayLength() > 0
             && images.EnumerateArray().Any(i => i.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString()));
     }
@@ -209,7 +209,7 @@ public class ManifestAnalyzer
     private static bool CheckSquareIconOfMinSizeAndTypeAnyPurpose(JsonElement manifest, int minSize, string imageType)
     {
         var hasIcons = manifest.TryGetProperty("icons", out var icons)
-            && icons.ValueKind != JsonValueKind.Array
+            && icons.ValueKind == JsonValueKind.Array
             && icons.GetArrayLength() > 0;
         if (hasIcons)
         {
@@ -260,7 +260,7 @@ public class ManifestAnalyzer
     {
         var manifest = manifestContext.Manifest;
         var hasImagesField = manifestContext.Manifest.TryGetProperty(fieldName, out var images)
-            && images.ValueKind != JsonValueKind.Array;
+            && images.ValueKind == JsonValueKind.Array;
         if (!hasImagesField)
         {
             return false;
