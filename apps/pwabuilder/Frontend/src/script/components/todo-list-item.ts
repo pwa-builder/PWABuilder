@@ -13,9 +13,9 @@ export class TodoItem extends LitElement {
   @property({ type: String }) card: "ServiceWorker" | "WebAppManifest" | "Https" | "" = "";
   @property({ type: String }) fix: string = "";
   @property({ type: String }) status: "Required" | "Recommended" | "Optional" | "Feature" | "Retest" | "" = "";
-  @property({ type: String }) displayString: string = "";
-  @property({ type: String }) docsLink: string | null = null;
-  @property({ type: String }) previewImage: string | null = null;
+  @property({ type: String }) description: string = "";
+  @property({ type: String }) docsUrl: string | null = null;
+  @property({ type: String }) imageUrl: string | null = null;
 
   @state() clickable: boolean = false;
   @state() isOpen: boolean = false;
@@ -60,7 +60,7 @@ export class TodoItem extends LitElement {
         field: this.field,
         card: this.card,
         fix: this.fix,
-        displayString: this.displayString,
+        displayString: this.description,
         errorString: this.fix
       }
     });
@@ -117,7 +117,7 @@ export class TodoItem extends LitElement {
     }
 
     return html`
-      <manifest-info-card .field=${this.field} .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
+      <manifest-info-card field=${this.field} placement="left" description="${this.description || ""}" docsUrl="${this.docsUrl || ""}" imageUrl="${this.imageUrl || ""}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
         <button slot="trigger" type="button" class="right">
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>

@@ -21,6 +21,7 @@ import '../components/sw-info-card'
 import '../components/arrow-link'
 
 import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/button-group/button-group.js';
 import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
@@ -28,8 +29,7 @@ import '@shoelace-style/shoelace/dist/components/details/details.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
-import '@shoelace-style/shoelace/dist/components/carousel/carousel.js';
-import '@shoelace-style/shoelace/dist/components/carousel-item/carousel-item.js';
+import '@shoelace-style/shoelace/dist/components/badge/badge.js';
 
 import {
   Icon,
@@ -48,7 +48,7 @@ import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { processManifest } from './app-report.helper';
-import { ReportAudit, enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapbilityStatus, PwaCapabilityLevel } from './app-report.api';
+import { ReportAudit, enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapabilityStatus, PwaCapabilityLevel } from './app-report.api';
 import { findBestAppIcon } from '../utils/icons';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { appReportStyles } from './app-report.styles';
@@ -58,6 +58,7 @@ const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
 const stop_src = "/assets/new/stop.svg";
 const enhancement_src = "/assets/new/enhancement.svg";
+const info_src = "/assets/new/info-circle.png";
 
 const yield_white_src = "/assets/new/yield_white.svg";
 const stop_white_src = "/assets/new/stop_white.svg";
@@ -163,7 +164,7 @@ export class AppReport extends LitElement {
 
   @state() allTodoItems: AnalysisTodo[] = [];
   @state() filteredTodoItems: AnalysisTodo[] = [];
-  @state() filterList: any[] = [];
+  @state() todoFilters: PwaCapabilityLevel[] = ["Required", "Recommended", "Optional", "Feature"];
   @state() openTooltips: SlDropdown[] = [];
   @state() stopShowingNotificationTooltip: boolean = false;
   @state() closeOpenTooltips: boolean = true;
@@ -1229,89 +1230,101 @@ export class AppReport extends LitElement {
   }
 
   // Renders the indicators for each action item
-  renderTodoIndicators(): TemplateResult {
-    let yellow = 0;
-    let purple = 0;
-    let red = 0;
+  renderTodoFilters(): TemplateResult {
+    const isLoading = !this.analysis || this.analysis.capabilities.every(c => c.status === "InProgress");
+    if (isLoading) {
+      return html``;
+    }
+
+    let recommended = 0;
+    let features = 0;
+    let required = 0;
+    let optional = 0;
 
     (this.analysis?.capabilities || [])
       .filter(c => c.status === "Failed")
       .forEach(todo => {
         if (todo.level === "Required") {
-          red++;
+          required++;
         } else if (todo.level === "Feature") {
-          purple++;
-        } else if (todo.level === "Optional" || todo.level === "Recommended") {
-          yellow++;
+          features++;
+        } else if (todo.level === "Recommended") {
+          recommended++;
+        } else if (todo.level === "Optional") {
+          optional++;
         }
       });
 
-    if (yellow + purple + red != 0) {
-
-      let redSelected = this.filterList.includes("required");
-      let yellowSelected = this.filterList.includes("recommended");
-      let purpleSelected = this.filterList.includes("enhancement");
-
-      let redClassMap = classMap({ 'indicator': true, 'selected': redSelected });
-      let yellowClassMap = classMap({ 'indicator': true, 'selected': yellowSelected });
-      let purpleClassMap = classMap({ 'indicator': true, 'selected': purpleSelected });
-
-      return html`
+    return html`
       <div id="indicators-holder">
-        ${red != 0 ?
-          html`<button type="button" class=${redClassMap} data-indicator="required" aria-pressed="${redSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("required", e)}><img src=${redSelected ? stop_white_src : stop_src} alt="invalid result icon"/><p>${red}</p></button>`
-          : null
-        }
-        ${yellow != 0 ?
-          html`<button type="button" class=${yellowClassMap} data-indicator="yellow" aria-pressed="${yellowSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("yellow", e)}><img src=${yellowSelected ? yield_white_src : yield_src} alt="yield result icon"/><p>${yellow}</p></button>`
-          : null
-        }
-        ${purple != 0 ?
-          html`<button type="button" class=${purpleClassMap} data-indicator="enhancement" aria-pressed="${purpleSelected}" tabindex="0" @click=${(e: Event) => this.filterTodoItems("enhancement", e)}><img src=${purpleSelected ? enhancement_white_src : enhancement_src} alt="enhancement result icon"/><p>${purple}</p></button>`
-          : null
-        }
-      </div>`
-    }
+        ${this.renderTodoFilterBtn("Required", required)}
+        ${this.renderTodoFilterBtn("Recommended", recommended)}
+        ${this.renderTodoFilterBtn("Optional", optional)}
+        ${this.renderTodoFilterBtn("Feature", features)}
+      </div>
+    `;
 
-    return html``;
+    // const allLevels: PwaCapabilityLevel[] = ["Required", "Recommended", "Feature", "Optional"];
+    // const getLevelCount = (level: PwaCapabilityLevel) => level === "Required" ? required : level === "Recommended" ? recommended : level === "Feature" ? features : optional;
+    // return html`
+    //   <sl-dropdown class="action-item-filter-btns">
+    //     <sl-button size="small" slot="trigger" caret>Filter</sl-button>
+    //     <sl-menu>
+    //       ${repeat(allLevels, l => l, (level) => this.renderTodoFilterMenuItem(level, getLevelCount(level)))}
+    //     </sl-menu>
+    //   </sl-dropdown>
+    // `;
   }
+
+renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
+    const isSelected = this.todoFilters.includes(level);
+    const img = level === "Required" ? stop_src : level === "Recommended" ? yield_src : level === "Feature" ? enhancement_src : info_src;
+    const pressedAttr = isSelected ? "true" : "false";
+    const selectedClass = isSelected ? "selected" : "";
+    return html`
+      <button type="button" class="indicator ${selectedClass}" aria-pressed="${pressedAttr}" @click="${() => this.toggleTodoFilter(level)}">
+        <img src="${img}" alt="" />
+        <span>${count}</span>
+      </button>
+    `;
+  };
 
   // filter todos by severity
-  filterTodoItems(filter: string, e: Event) {
-    e.stopPropagation();
+  // filterTodoItems(filter: string, e: Event) {
+  //   e.stopPropagation();
 
-    /* let button = this.shadowRoot!.querySelector('[data-indicator="' + filter + '"]');
-    let isPressed = button!.getAttribute("aria-pressed") === "true";
-    button!.setAttribute("aria-pressed", isPressed ? "false" : "true"); */
+  //   /* let button = this.shadowRoot!.querySelector('[data-indicator="' + filter + '"]');
+  //   let isPressed = button!.getAttribute("aria-pressed") === "true";
+  //   button!.setAttribute("aria-pressed", isPressed ? "false" : "true"); */
 
-    recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+  //   recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
-    this.todoPageNumber = 1;
+  //   this.todoPageNumber = 1;
 
-    this.stopShowingNotificationTooltip = true;
-    // if its in the list, remove it, else add it
-    // yellow means optional and recommended
-    if (filter === "yellow") {
-      if (this.filterList.includes("optional")) {
-        this.filterList = this.filterList.filter((x: string) => (x !== "optional") && (x !== "recommended"))
-      } else {
-        this.filterList.push("optional")
-        this.filterList.push("recommended")
-      }
-    } else if (this.filterList.includes(filter)) {
-      this.filterList = this.filterList.filter((x: string) => x !== filter)
-    } else {
-      this.filterList.push(filter)
-    }
-    // if filter list is empty, show everything
-    if (this.filterList.length === 0) {
-      this.filteredTodoItems = this.allTodoItems;
-      return;
-    }
+  //   this.stopShowingNotificationTooltip = true;
+  //   // if its in the list, remove it, else add it
+  //   // yellow means optional and recommended
+  //   if (filter === "yellow") {
+  //     if (this.filterList.includes("optional")) {
+  //       this.filterList = this.filterList.filter((x: string) => (x !== "optional") && (x !== "recommended"))
+  //     } else {
+  //       this.filterList.push("optional")
+  //       this.filterList.push("recommended")
+  //     }
+  //   } else if (this.filterList.includes(filter)) {
+  //     this.filterList = this.filterList.filter((x: string) => x !== filter)
+  //   } else {
+  //     this.filterList.push(filter)
+  //   }
+  //   // if filter list is empty, show everything
+  //   if (this.filterList.length === 0) {
+  //     this.filteredTodoItems = this.allTodoItems;
+  //     return;
+  //   }
 
 
-    this.filteredTodoItems = this.allTodoItems.filter((x: any) => this.filterList.includes(x.status));
-  }
+  //   this.filteredTodoItems = this.allTodoItems.filter((x: any) => this.filterList.includes(x.status));
+  // }
 
   //truncate app card discription
   truncateString(str: String) {
@@ -1564,23 +1577,26 @@ export class AppReport extends LitElement {
           <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
           <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
         </div>
-        ${this.renderTodoIndicators()}
+        ${this.renderTodoFilters()}
       </sl-tooltip>
     `;
   }
 
   private renderTodos(): TemplateResult {
     const indicatorOrTooltip = this.stopShowingNotificationTooltip ?
-      this.renderTodoIndicators()
+      this.renderTodoFilters()
       : this.renderTodoTooltip();
     const indicatorOrTooltipOrEmpty = this.allTodoItems.length === 0 ? html`` : indicatorOrTooltip;
 
+    const isLoading = !this.analysis || this.analysis.capabilities.some(c => c.status === "InProgress");
+    const spinnerClass = isLoading ? "" : "d-none";
     return html`    
      <div id="todo">
         <div id="todo-detail">
           <div id="todo-summary">
             <div id="todo-summary-left">
               <h2>Action Items</h2>
+              <sl-spinner class="${spinnerClass}"></sl-spinner>
             </div>
             <div id="todo-indicators">
                 ${indicatorOrTooltipOrEmpty}
@@ -1630,8 +1646,8 @@ export class AppReport extends LitElement {
   }
 
   renderManifestDetailsChecklist(): TemplateResult {
-    const capabilities = this.analysis?.capabilities.filter(c => c.category === "WebAppManifest") || [];
-    const isLoading = !this.analysis || capabilities.some(c => c.status === "InProgress");
+    const manifestFieldChecks = this.analysis?.capabilities.filter(c => c.category === "WebAppManifest" && !!c.field && c.isFieldExistenceCheck) || [];
+    const isLoading = !this.analysis || manifestFieldChecks.some(c => c.status === "InProgress");
     if (isLoading) {
       return html`
         <div slot="summary">
@@ -1640,10 +1656,10 @@ export class AppReport extends LitElement {
       `;
     }
 
-    const fieldValidations = capabilities.filter(c => !!c.field);
-    const requiredValidations = fieldValidations.filter(c => c.level === "Required");
-    const recommendedValidations = fieldValidations.filter(c => c.level === "Recommended");
-    const optionalValidations = fieldValidations.filter(c => (c.level === "Optional" || c.level === "Feature"));
+    const passedSorter = (a: PwaCapability, b: PwaCapability) => a.status === "Passed" ? -1 : b.status === "Passed" ? 1 : 0;
+    const requiredValidations = manifestFieldChecks.filter(c => c.level === "Required").sort(passedSorter);
+    const recommendedValidations = manifestFieldChecks.filter(c => c.level === "Recommended").sort(passedSorter);
+    const optionalValidations = manifestFieldChecks.filter(c => (c.level === "Optional" || c.level === "Feature")).sort(passedSorter);
     return html`
       <div class="details-summary" slot="summary">
         <p>View Details</p>
@@ -1672,19 +1688,18 @@ export class AppReport extends LitElement {
     `;
   }
 
-  private renderManifestFieldCheck(field: string, category: PwaCapabilityLevel, tooltipText: string, status: PwaCapbilityStatus): TemplateResult {
+  private renderManifestFieldCheck(field: string, category: PwaCapabilityLevel, tooltipText: string, status: PwaCapabilityStatus): TemplateResult {
     const iconUrl = status === "Passed" ? valid_src :
       category === "Required" ? stop_src :
         yield_src;
     const icon = html`<img src=${iconUrl} alt=""/>`;
-    const label = `Manifest has ${field}`;
 
     if (tooltipText) {
       return html`
         <div class="test-result" data-field=${field}>
           <sl-tooltip content=${tooltipText} placement="top">
             ${icon}
-            <p>${label}</p>
+            <p>${field}</p>
           </sl-tooltip>
         </div>
       `;
@@ -1693,7 +1708,7 @@ export class AppReport extends LitElement {
     return html`
       <div class="test-result" data-field=${field}>
         ${icon}
-        <p>${label}</p>
+        <p>${field}</p>
       </div>
     `;
   }
@@ -1791,15 +1806,17 @@ export class AppReport extends LitElement {
   }
 
   private renderTodo(todo: PwaCapability): TemplateResult {
+    const hiddenClass = this.todoFilters.includes(todo.level) ? "" : "d-none";
     return html`
       <todo-item
-        .status=${todo.level}
-        .field=${todo.field || ""}
-        .fix=${todo.todoAction}
-        .card=${todo.category}
-        .displayString=${todo.description || ""}
-        .docsLink=${todo.learnMoreUrl}
-        .previewImage=${todo.imageUrl}
+        class="${hiddenClass}"
+        status=${todo.level}
+        field=${todo.field || ""}
+        fix=${todo.todoAction}
+        card=${todo.category}
+        description=${todo.description || ""}
+        docsUrl=${todo.learnMoreUrl || ""}
+        imageUrl=${todo.imageUrl || ""}
         @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
         @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field || "")}></todo-item>
@@ -2022,7 +2039,7 @@ export class AppReport extends LitElement {
       : null
     return html`
     <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.field || "")} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-        <manifest-info-card .field=${v.field || ""} .placement=${"bottom"}>
+        <manifest-info-card field="${v.field || ""}" placement="bottom" description="${v.description || ""}" docsUrl="${v.learnMoreUrl || ""}" imageUrl="${v.imageUrl || ""}">
           <div class="circle-icon" tabindex="0" role="button" slot="trigger">
             <img class="circle-icon-img" src="${"/assets/new/" + v.field + '_icon.svg'}" alt="${this.formatSWStrings(v.field || "") + ' icon'}" />
             ${validIcon}
@@ -2053,5 +2070,15 @@ export class AppReport extends LitElement {
         @readyForRetest=${() => this.addRetestTodo("Manifest")}>
       </manifest-editor-frame>
     `;
+  }
+
+  toggleTodoFilter(level: PwaCapabilityLevel) {
+    this.stopShowingNotificationTooltip = true;
+    const isFilterEnabled = this.todoFilters.includes(level);
+    if (isFilterEnabled) {
+      this.todoFilters = this.todoFilters.filter(f => f !== level);
+    } else {
+      this.todoFilters = [level, ...this.todoFilters];
+    }
   }
 }
