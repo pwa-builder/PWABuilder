@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, css, html } from 'lit';
+import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { manifest_fields, service_worker_fields } from '@pwabuilder/manifest-information';

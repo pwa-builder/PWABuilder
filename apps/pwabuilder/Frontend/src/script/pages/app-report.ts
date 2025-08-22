@@ -60,10 +60,6 @@ const stop_src = "/assets/new/stop.svg";
 const enhancement_src = "/assets/new/enhancement.svg";
 const info_src = "/assets/new/info-circle.png";
 
-const yield_white_src = "/assets/new/yield_white.svg";
-const stop_white_src = "/assets/new/stop_white.svg";
-const enhancement_white_src = "/assets/new/enhancement_white.svg";
-
 @customElement('app-report')
 export class AppReport extends LitElement {
   @property({ type: Object }) resultOfTest: RawTestResult | undefined;
@@ -1974,7 +1970,6 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
   }
 
   renderAppCapabilitiesSection(): TemplateResult {
-    const isLoading = !this.analysis || this.analysis.capabilities.some(v => v.category === "WebAppManifest" && v.level === "Feature" && v.status === "InProgress");
     return html`
       <div id="security" class="half-width-cards">
         <div id="sec-header" class="flex-col">
@@ -1988,10 +1983,10 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
           <div class="icons-holder">
             ${this.renderAppCapabilitiesCards()}
           </div>
-          ${isLoading ?
-            html`<sl-skeleton class="desc-skeleton half" effect="pulse"></sl-skeleton>` :
-            html`<arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>`
-          }
+          <div class="app-capabilities-links">
+            <arrow-link .link=${"https://docs.pwabuilder.com/#/builder/manifest"} .text=${"App Capabilities documentation"}></arrow-link>
+            <arrow-link .link=${"https://whatpwacando.today/"} .text=${"WhatPwaCanDo.today"}></arrow-link>
+          </div>
         </div>
       </div>
     `;
@@ -2045,7 +2040,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
             ${validIcon}
           </div>
         </manifest-info-card>
-        <p>${this.formatSWStrings(v.field || "")}</p>
+        <p>${this.formatSWStrings(v.featureName || v.field || "")}</p>
       </div>
     `;
   }

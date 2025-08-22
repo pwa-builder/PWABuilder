@@ -1282,6 +1282,11 @@ sl-tooltip::part(base){
     --sl-tooltip-font-size: 14px;
 }
 
+.app-capabilities-links {
+    display: flex;
+    justify-content: space-between;
+}
+
 .animate{
     animation-delay: 1s;
     animation: shake 1s cubic-bezier(.36,.07,.19,.97) both;
