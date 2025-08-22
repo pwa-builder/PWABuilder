@@ -364,7 +364,7 @@ public class PwaCapability
                 FeatureIcon = null,
                 Field = "iarc_rating_id",
                 LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=iarc_rating_id-string"),
-                ImageUrl = null,
+                ImageUrl = new Uri("/assets/manifest_examples/iarc_example_image.jpg", UriKind.Relative),
                 Category = PwaCapabilityCategory.WebAppManifest,
                 Status = PwaCapabilityCheckStatus.InProgress
             },
