@@ -357,7 +357,7 @@ public class PwaCapability
                 TodoAction = "Make your app appear in the OS share tray by adding share_target to your manifest.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Share Target",
-                FeatureIcon = new Uri("/assets/manifest_examples/share_target_example_image.jpg", UriKind.Relative),
+                FeatureIcon = new Uri("/assets/new/share_target_icon.svg", UriKind.Relative),
                 Field = "share_target",
                 IsFieldExistenceCheck = true,
                 LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/screenshots#form_factor"),
