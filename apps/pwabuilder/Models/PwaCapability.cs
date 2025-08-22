@@ -430,7 +430,7 @@ public class PwaCapability
                 Id = PwaCapabilityId.DisplayOverride,
                 Description = "The display_override lets the developer provide a sequence of display modes that the browser will consider before using the display member.",
                 TodoAction = "Control how your app is displayed by adding display_override to your manifest.",
-                Level = PwaCapabilityLevel.Feature,
+                Level = PwaCapabilityLevel.Optional,
                 FeatureName = null,
                 FeatureIcon = null,
                 Field = "display_override",
