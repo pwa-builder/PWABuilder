@@ -1285,6 +1285,12 @@ sl-tooltip::part(base){
 .app-capabilities-links {
     display: flex;
     justify-content: space-between;
+    margin-top: 20px;
+
+    @media (max-width: 576px) {
+        flex-direction: column;
+        row-gap: 12px;
+    }
 }
 
 .animate{
