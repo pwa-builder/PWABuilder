@@ -6,6 +6,7 @@ public enum PwaCapabilityId
 
     // Manifest fields
     Name,
+    Id,
     ShortName,
     Description,
     BackgroundColor,
@@ -14,6 +15,11 @@ public enum PwaCapabilityId
     Icons,
     ThemeColor,
     Scope,
+    ScopeExtensions,
+    Display,
+    Orientation,
+    Language,
+    Direction,
     Screenshots,
     FileHandlers,
     LaunchHandler,
@@ -24,6 +30,7 @@ public enum PwaCapabilityId
     IarcRatingId,
     WindowControlsOverlay,
     TabbedDisplay,
+    StartUrl,
 
 
     // Other manifest checks

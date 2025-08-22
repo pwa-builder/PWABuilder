@@ -451,276 +451,105 @@ public class PwaCapability
                 ImageUrl = null,
                 Category = PwaCapabilityCategory.WebAppManifest,
                 Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.StartUrl,
+                Description = "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application.",
+                TodoAction = "Add a start_url to your manifest.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "start_url",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.Display,
+                Description = "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
+                TodoAction = "Add a display to your manifest.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "display",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=display-string"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.Orientation,
+                Description = "The orientation member is a string that determines the developers' preferred orientation for their PWA. The orientation can be any of the following: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary.",
+                TodoAction = "Add an orientation to your manifest.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "orientation",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.Language,
+                Description = "The lang member is a string that represents the default language of your PWA.",
+                TodoAction = "Define the primary language for your app by adding lang to your manifest.",
+                Level = PwaCapabilityLevel.Optional,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "lang",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=lang-string"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.Direction,
+                Description = "The dir member is a string that represents the default text direction of your PWA's language. For example, ltr for left-to-right languages like English, or rtl for right-to-left languages like Hebrew and Arabic.",
+                TodoAction = "Define the language direction of your PWA by adding dir to your manifest.",
+                Level = PwaCapabilityLevel.Optional,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "dir",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ScopeExtensions,
+                Description = "Scope extensions allow your PWA to define additional URL domains that are considered in-scope for your app. For example, for a PWA hosted on example.com, you may add auth.example.com and en.example.com to your scope extensions. Without scope extensions, any navigation outside of your PWA's domain may show a browser address bar inside your PWA.",
+                TodoAction = "Enable your PWA to navigate to additional domains or subdomains by adding scope_extensions to your manifest.",
+                Level = PwaCapabilityLevel.Optional,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "scope_extensions",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.Id,
+                Description = "The id member is a string that represents the unique identifier of your PWA to the browser. If you don't supply one, your start_url is used as your ID. This can be problematic if your start_url changes in the future; browsers will see your PWA at the new URL as a different app. Supplying a stable and unchanging ID helps browsers and operating systems uniquely identify your app.",
+                TodoAction = "Help browsers and OSes identify your app, even if your URL changes, by adding an id to your manifest.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = "id",
+                LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/id"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
             }
         ];
-
-        /**
-
-        var startUrlValidation = new ManifestSingleFieldValidation
-        {
-            InfoString =
-                "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
-            DisplayString = "Manifest has start_url field",
-            Category = "required",
-            Member = "start_url",
-            DefaultValue = "/",
-            DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=start_url-string"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        startUrlValidation.Test = (value) =>
-        {
-            if (
-                value is not JsonElement jsonElement
-                || jsonElement.ValueKind != JsonValueKind.String
-            )
-            {
-                startUrlValidation.ErrorString =
-                    "start_url is required and must be a string with a length > 0";
-                return false;
-            }
-
-            var url = jsonElement.GetString();
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                startUrlValidation.ErrorString =
-                    "start_url is required and must be a string with a length > 0";
-                return false;
-            }
-
-            // TODO: Add relative URL validation against scope if needed
-            return true;
-        };
-        manifestValidations.Add(startUrlValidation);
-
-        var displayValidation = new ManifestSingleFieldValidation
-        {
-            InfoString =
-                "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
-            DisplayString = "Manifest has display field",
-            Category = "recommended",
-            Member = "display",
-            DefaultValue = "standalone",
-            DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=display-string"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        displayValidation.Test = (value) =>
-        {
-            if (
-                value is not JsonElement jsonElement
-                || jsonElement.ValueKind != JsonValueKind.String
-            )
-            {
-                displayValidation.ErrorString = "display must be a string";
-                return false;
-            }
-
-            var allowedValues = new[] { "fullscreen", "standalone", "minimal-ui", "browser" };
-            var str = jsonElement.GetString();
-
-            if (!allowedValues.Contains(str))
-            {
-                displayValidation.ErrorString =
-                    "display must be one of the following strings: fullscreen, standalone, minimal-ui, browser";
-                return false;
-            }
-
-            return true;
-        };
-        manifestValidations.Add(displayValidation);
-
-        var orientationValidation = new ManifestSingleFieldValidation
-        {
-            InfoString =
-                "The orientation mode changes the default orientation of the app. For example, if set to 'portrait', the app will be displayed in landscape mode by default.",
-            DisplayString = "Manifest has orientation field",
-            Category = "recommended",
-            Member = "orientation",
-            DefaultValue = "any",
-            DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=orientation-string"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        orientationValidation.Test = (value) =>
-        {
-            if (
-                value is not JsonElement jsonElement
-                || jsonElement.ValueKind != JsonValueKind.String
-            )
-            {
-                orientationValidation.ErrorString =
-                    "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary";
-                return false;
-            }
-
-            var str = jsonElement.GetString();
-            var validOptions = new[]
-            {
-                "any",
-                "natural",
-                "landscape",
-                "landscape-primary",
-                "landscape-secondary",
-                "portrait",
-                "portrait-primary",
-                "portrait-secondary",
-            };
-
-            var isValid = validOptions.Contains(str);
-            if (!isValid)
-            {
-                orientationValidation.ErrorString =
-                    "orientation must be one of the following strings: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary";
-            }
-
-            return isValid;
-        };
-        manifestValidations.Add(orientationValidation);
-
-        var langValidation = new ManifestSingleFieldValidation
-        {
-            InfoString =
-                "The lang member is a string that represents the default language of your PWA.",
-            DisplayString = "Manifest specifies a language",
-            Category = "optional",
-            Member = "lang",
-            DefaultValue = "en",
-            DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=lang-string"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        langValidation.Test = (value) =>
-        {
-            if (
-                value is not JsonElement jsonElement
-                || jsonElement.ValueKind != JsonValueKind.String
-            )
-            {
-                langValidation.ErrorString = "lang should be set to a valid language code";
-                return false;
-            }
-
-            var str = jsonElement.GetString();
-            if (string.IsNullOrWhiteSpace(str) || !Languages.IsValidLanguageCode(str))
-            {
-                langValidation.ErrorString = "lang should be set to a valid language code";
-                return false;
-            }
-
-            return true;
-        };
-        manifestValidations.Add(langValidation);
-
-        var dirValidation = new ManifestSingleFieldValidation
-        {
-            InfoString =
-                "The dir member is a string that represents the default text direction of your PWA.",
-            DisplayString = "Manifest specifies a default direction of text",
-            Category = "optional",
-            Member = "dir",
-            DefaultValue = "ltr",
-            DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=dir-string"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        dirValidation.Test = (value) =>
-        {
-            if (
-                value is not JsonElement jsonElement
-                || jsonElement.ValueKind != JsonValueKind.String
-            )
-            {
-                dirValidation.ErrorString =
-                    "dir must be one of the following strings: ltr, rtl, or auto";
-                return false;
-            }
-
-            var dirValue = jsonElement.GetString();
-            var validValues = new[] { "ltr", "rtl", "auto" };
-            var isValid =
-                !string.IsNullOrWhiteSpace(dirValue) && validValues.Contains(dirValue);
-
-            if (!isValid)
-            {
-                dirValidation.ErrorString =
-                    "dir must be one of the following strings: ltr, rtl, or auto";
-            }
-
-            return isValid;
-        };
-        manifestValidations.Add(dirValidation);
-
-        var scopeExtensionsValidation = new ManifestSingleFieldValidation
-        {
-            InfoString =
-                "Allow PWA that control multiple subdomains and top level domains to behave as one contiguous app. E.g. a site may span example.com, example.co.uk and support.example.com",
-            DisplayString = "Manifest has scope_extensions field",
-            Category = "optional",
-            Member = "scope_extensions",
-            DefaultValue = new List<object>(),
-            DocsLink = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=scope_extensions-array"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        scopeExtensionsValidation.Test = (value) =>
-        {
-            if (
-                value is not JsonElement jsonElement
-                || jsonElement.ValueKind != JsonValueKind.Array
-            )
-            {
-                scopeExtensionsValidation.ErrorString =
-                    "scope_extensions should be a valid array with origin";
-                return false;
-            }
-
-            var allValid = jsonElement
-                .EnumerateArray()
-                .All(extension =>
-                    extension.ValueKind == JsonValueKind.Object
-                    && extension.TryGetProperty("origin", out JsonElement originElement)
-                    && originElement.ValueKind == JsonValueKind.String
-                );
-
-            if (!allValid)
-            {
-                scopeExtensionsValidation.ErrorString =
-                    "scope_extensions should be a valid array with origin";
-            }
-
-            return allValid;
-        };
-        manifestValidations.Add(scopeExtensionsValidation);
-
-        var idValidation = new ManifestSingleFieldValidation
-        {
-            Member = "id",
-            DisplayString = "Manifest has an app ID",
-            InfoString =
-                "The id member is a string that represents the unique identifier of your PWA to the browser.",
-            Category = "recommended",
-            DefaultValue = "/",
-            DocsLink = new Uri("https://developer.chrome.com/blog/pwa-manifest-id"),
-            ErrorString = string.Empty,
-            QuickFix = true,
-        };
-        idValidation.Test = (value) =>
-        {
-            if (value is not JsonElement jsonElement || jsonElement.ValueKind == JsonValueKind.Undefined || jsonElement.ValueKind == JsonValueKind.Null)
-            {
-                idValidation.ErrorString = "Your manifest should have an id member";
-                return false;
-            }
-            if (jsonElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(jsonElement.GetString()))
-            {
-                idValidation.ErrorString = "Your manifest's ID must be a string with at least one character";
-                return false;
-            }
-
-            return true;
-        };
-        manifestValidations.Add(idValidation);
-        */
     }
 }

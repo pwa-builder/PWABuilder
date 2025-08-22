@@ -187,7 +187,13 @@ public class ManifestAnalyzer
             PwaCapabilityId.TabbedDisplay => new PwaManifestCapabilityCheck(capability, CheckTabbedDisplay),
             PwaCapabilityId.Scope => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "scope", 1)),
             PwaCapabilityId.ShortName => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "short_name", 1)),
-
+            PwaCapabilityId.StartUrl => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "start_url", 1)),
+            PwaCapabilityId.Display => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "display", 1, ["fullscreen", "standalone", "minimal-ui", "browser", "tabbed", "window-controls-overlay"])),
+            PwaCapabilityId.Orientation => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "orientation", 1, ["any", "natural", "landscape", "landscape-primary", "landscape-secondary", "portrait", "portrait-primary", "portrait-secondary"])),
+            PwaCapabilityId.Language => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "lang", 2)),
+            PwaCapabilityId.Direction => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "dir", 3, ["ltr", "rtl", "auto"])),
+            PwaCapabilityId.ScopeExtensions => new PwaManifestCapabilityCheck(capability, CheckScopeExtensions),
+            PwaCapabilityId.Id => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "id", 1)),
         };
         #pragma warning restore CS8524 
     }
@@ -280,11 +286,12 @@ public class ManifestAnalyzer
         return imageExistChecks.All(a => a);
     }
 
-    private static bool CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1)
+    private static bool CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
     {
         var matches = manifest.TryGetProperty(fieldName, out var fieldValue)
             && fieldValue.ValueKind == JsonValueKind.String
-            && fieldValue.GetString()?.Length >= minLength;
+            && fieldValue.GetString()?.Length >= minLength
+            && (allowedValues == null || allowedValues.Length == 0 || allowedValues.Contains(fieldValue.GetString()));
         return matches;
     }
 
@@ -407,6 +414,17 @@ public class ManifestAnalyzer
         var hasTabStrip = manifest.TryGetProperty("tab_strip", out var tabStrip)
             && tabStrip.ValueKind == JsonValueKind.Object;
         return hasTabbedDisplayOverride && hasTabStrip;
+    }
+
+    private static bool CheckScopeExtensions(JsonElement manifest)
+    {
+        return manifest.TryGetProperty("scope_extensions", out var scopeExtensions)
+            && scopeExtensions.ValueKind == JsonValueKind.Array
+            && scopeExtensions.GetArrayLength() > 0
+            // each extension needs a "type" string. 
+            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("scope", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
+            // each extension needs a "origin" string which must be a valid URL.
+            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("origin", out var extensionOrigin) && extensionOrigin.ValueKind == JsonValueKind.String && Uri.TryCreate(extensionOrigin.GetString(), UriKind.Absolute, out _));
     }
 
     internal class PwaManifestCapabilityCheck
