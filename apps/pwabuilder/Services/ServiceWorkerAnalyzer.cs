@@ -8,13 +8,7 @@ namespace PWABuilder.Services
     public class ServiceWorkerAnalyzer : IServiceWorkerAnalyzer
     {
         private readonly WebStringCache webCache;
-
-        public ServiceWorkerAnalyzer(WebStringCache webCache)
-        {
-            this.webCache = webCache;
-        }
-
-        private readonly Regex[] PushRegexes =
+        private readonly Regex[] PushNotificationRegexes =
         [
             new Regex(@"[.|\n\s*]addEventListener\s*\(\s*['""]push['""]", RegexOptions.Multiline),
             new Regex(@"[.|\n\s*]onpush\s*=", RegexOptions.Multiline),
@@ -33,7 +27,7 @@ namespace PWABuilder.Services
             new Regex(@"[.|\n\s*]onsync\s*=", RegexOptions.Multiline),
             new Regex(@"BackgroundSyncPlugin", RegexOptions.Multiline),
         ];
-        private readonly Regex[] ServiceWorkerRegexes =
+        private readonly Regex[] ServiceWorkerLogicRegexes =
         [
             new Regex(@"importScripts|self\.|^self", RegexOptions.Multiline),
             new Regex(@"[.|\n\s*]addAll", RegexOptions.Multiline),
@@ -51,70 +45,106 @@ namespace PWABuilder.Services
             ),
         ];
 
-        public async Task<ServiceWorkerFeatures?> AnalyzeServiceWorkerAsync(Uri serviceWorkerUrl, Uri appUrl, ILogger logger, CancellationToken cancelToken)
+        public ServiceWorkerAnalyzer(WebStringCache webCache)
         {
-            string? serviceWorkerJs = null;
-            var separateContent = new List<string>();            
-            try
+            this.webCache = webCache;
+        }
+
+        /// <inheritdoc />
+        public async Task TryAnalyzeServiceWorkerAsync(Analysis analysis, ILogger logger, CancellationToken cancelToken)
+        {
+            if (analysis.ServiceWorker == null || string.IsNullOrWhiteSpace(analysis.ServiceWorker.Raw))
             {
-                serviceWorkerJs = await webCache.Get(serviceWorkerUrl, Constants.JavascriptMimeTypes, cancelToken);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Service worker analyzer failed to fetch content from {url}", serviceWorkerUrl);
-                return null;
+                HandleNoServiceWorker(analysis, logger);
+                return;
             }
 
-            if (string.IsNullOrWhiteSpace(serviceWorkerJs))
+            var serviceWorkerJs = analysis.ServiceWorker.Raw;
+            var separateContent = new List<string>
             {
-                logger.LogWarning("Service worker analyzer found no content at {url}", serviceWorkerUrl);
-                return new ServiceWorkerFeatures
-                {
-                    Empty = true
-                };
-            }
-
-            
-            separateContent.Add(serviceWorkerJs);
+                analysis.ServiceWorker.Raw
+            };
             try
             {
-                var scriptsContent = await FindAndFetchImportScriptsAsync(serviceWorkerJs, appUrl, logger, cancelToken);
+                var scriptsContent = await TryFindAndFetchImportScriptsAsync(analysis.ServiceWorker.Raw, analysis.Url, logger, cancelToken);
                 foreach (var scriptContent in scriptsContent)
                 {
                     serviceWorkerJs += scriptContent;
                     separateContent.Add(scriptContent);
                 }
             }
-            catch { }
-            double swSize = System.Text.Encoding.UTF8.GetByteCount(serviceWorkerJs) / 1024.0;
-            string compactContent = Regex.Replace(serviceWorkerJs, @"\n+|\s+|\r", "");
-
-            return new ServiceWorkerFeatures
+            catch (Exception importScriptError)
             {
-                BackgroundSync = Array.Exists(
-                    BackgroundSyncRegexes,
-                    reg => reg.IsMatch(compactContent)
-                ),
-                PeriodicBackgroundSync = Array.Exists(
-                    PeriodicSyncRegexes,
-                    reg => reg.IsMatch(compactContent)
-                ),
-                PushRegistration = Array.Exists(
-                    PushRegexes,
-                    reg => reg.IsMatch(compactContent)
-                ),
-                SignsOfLogic = Array.Exists(
-                    ServiceWorkerRegexes,
-                    reg => reg.IsMatch(compactContent)
-                ),
-                Empty =
-                    Array.Exists(EmptyRegexes, reg => reg.IsMatch(compactContent))
-                    || swSize < 0.2,
-                Offline = null // This is not determined by this analyzer, but by the Lighthouse audit.
+                logger.LogWarning(importScriptError, "Unable to load service worker import script due to an error.");
+            }
+
+            var compactContent = Regex.Replace(serviceWorkerJs, @"\n+|\s+|\r", "");
+            var swCapabilities = analysis.Capabilities.Where(c => c.Category == PwaCapabilityCategory.ServiceWorker);
+            foreach (var swCapability in swCapabilities)
+            {
+                swCapability.Status = RunCapabilityCheck(swCapability, analysis, compactContent);
+            }
+        }
+
+        private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, Analysis analysis, string swScripts)
+        {
+            return swCapability.Id switch
+            {
+                PwaCapabilityId.HasServiceWorker => analysis.ServiceWorker?.Url != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed,
+                PwaCapabilityId.OfflineSupport => PwaCapabilityCheckStatus.InProgress, // Offline support can't be detected from code analysis alone. Instead, we use Lighthouse for this. See LighthouseService.cs.
+                PwaCapabilityId.ServiceWorkerIsNotEmpty => CheckServiceWorkerNotEmpty(swScripts),
+                PwaCapabilityId.BackgroundSync => CheckBackgroundSync(swScripts),
+                PwaCapabilityId.PeriodicSync => CheckPeriodicSync(swScripts),
+                PwaCapabilityId.PushNotifications => CheckPushNotifications(swScripts),
+                _ => throw new NotSupportedException("Unknown service worker capability check: " + swCapability.Id)
             };
         }
 
-        private async Task<List<string>> FindAndFetchImportScriptsAsync(string code, Uri appUrl, ILogger logger, CancellationToken cancelToken)
+        private PwaCapabilityCheckStatus CheckServiceWorkerNotEmpty(string swScripts)
+        {
+            var swSizeInKb = System.Text.Encoding.UTF8.GetByteCount(swScripts) / 1024.0;
+            var isEmpty = swSizeInKb < 0.2 ||
+                Array.Exists(EmptyRegexes, reg => reg.IsMatch(swScripts)) ||
+                !Array.Exists(ServiceWorkerLogicRegexes, reg => reg.IsMatch(swScripts));
+            return isEmpty ? PwaCapabilityCheckStatus.Failed : PwaCapabilityCheckStatus.Passed;
+        }
+
+        private PwaCapabilityCheckStatus CheckBackgroundSync(string swScripts)
+        {
+            return BackgroundSyncRegexes.Any(r => r.IsMatch(swScripts)) ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+        }
+
+        private PwaCapabilityCheckStatus CheckPeriodicSync(string swScripts)
+        {
+            return PeriodicSyncRegexes.Any(r => r.IsMatch(swScripts)) ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+        }
+
+        private PwaCapabilityCheckStatus CheckPushNotifications(string swScripts)
+        {
+            return PushNotificationRegexes.Any(r => r.IsMatch(swScripts)) ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+        }
+
+        private static void HandleNoServiceWorker(Analysis analysis, ILogger logger)
+        {
+            // Mark the "has service worker" capability as failed.
+            // And mark the rest of the service worker capabilities as skipped.
+            var serviceWorkerCaps = analysis.Capabilities.Where(c => c.Category == PwaCapabilityCategory.ServiceWorker);
+            foreach (var cap in serviceWorkerCaps)
+            {
+                if (cap.Id == PwaCapabilityId.HasServiceWorker)
+                {
+                    cap.Status = PwaCapabilityCheckStatus.Failed;
+                }
+                else
+                {
+                    cap.Status = PwaCapabilityCheckStatus.Skipped;
+                }
+            }
+
+            logger.LogInformation("Couldn't find service worker for analysis. Skipping remaining service worker capability checks.");
+        }
+
+        private async Task<List<string>> TryFindAndFetchImportScriptsAsync(string code, Uri appUrl, ILogger logger, CancellationToken cancelToken)
         {
             // Find all importScripts statements
             var importScripts = Regex.Matches(code, @"importScripts\s*\((.+?)\)");

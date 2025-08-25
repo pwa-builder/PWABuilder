@@ -622,4 +622,101 @@ public class PwaCapability
             }
         ];
     }
+
+    public static List<PwaCapability> CreateServiceWorkerCapabilities()
+    {
+        return
+        [
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.HasServiceWorker,
+                Description = "Service Workers sit between your web app and the network. They are intended to enable the creation of effective offline experiences, intercept network requests, and take appropriate action based on whether the network is available. They also allow access to push notifications and background sync APIs.",
+                TodoAction = "Make your app faster and more reliable by adding a service worker to your web app.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = "Has Service Worker",
+                FeatureIcon = new Uri("/assets/new/has_service_worker_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/home/sw-intro"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ServiceWorkerIsNotEmpty,
+                Description = "Your service worker should not be empty or contain no caching logic. Instead, your service worker should add support for caching resources -- for example, your app's HTML, CSS, and JS -- and serve from the cache when the network is unavailable.",
+                TodoAction = "Improve your app's performance by adding caching logic to your service worker.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/home/sw-intro"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.PeriodicSync,
+                Description = "Periodic Sync can fetch your web app's data in the background at regular intervals. For example, a weather app might fetch the local weather forecast each morning so that when the app is launched, the forecast is instantly shown to the user even if a network connection isn't available.",
+                TodoAction = "Show data to your users instantly by adding periodic background sync to your service worker.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "Periodic Sync",
+                FeatureIcon = new Uri("/assets/new/periodic_sync_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/home/native-features?id=periodic-background-sync-overview"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.BackgroundSync,
+                Description = "The Background Sync API enables a web app to defer tasks so that they can be run in a service worker once the user has a stable network connection.",
+                TodoAction = "Make your app resilient to poor network connections by adding Background Sync to your service worker.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "Background Sync",
+                FeatureIcon = new Uri("/assets/new/background_sync_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/home/native-features?id=background-sync-overview"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.PushNotifications,
+                Description = "The Web Push Notifications API allows you to send a pop up notification that displays to your users, regardless of whether your app is running.",
+                TodoAction = "Re-engage users with timely notifications by adding push notifications to your service worker.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "Push Notifications",
+                FeatureIcon = new Uri("/assets/new/push_notifications_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/home/native-features?id=push-notifications"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.OfflineSupport,
+                Description = "Offline support enables your PWA to function without a network connection via a service worker with caches to serve from while the app is offline.",
+                TodoAction = "Enable your PWA to work offline by caching your app's assets in your service worker and serving them from the cache when offline.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "Offline Support",
+                FeatureIcon = new Uri("/assets/new/offline_support_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Tutorials/js13kGames/Offline_Service_workers"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            }
+        ];
+    }
 }

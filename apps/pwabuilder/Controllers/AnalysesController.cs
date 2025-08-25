@@ -35,7 +35,7 @@ public class AnalysesController : ControllerBase
         var analysis = new Analysis
         {
             Id = Analysis.GetId(url),
-            Url = url.ToString(),
+            Url = url,
             Status = AnalysisStatus.Queued
         };
         var job = new AnalysisJob

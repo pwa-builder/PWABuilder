@@ -119,28 +119,25 @@ public class AnalysisJobProcessor : IHostedService
             // Kick off all jobs simultaneously so the end result is faster.
             var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysis, analysisLogger, cancelToken);
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => TryAnalyzeServiceWorker(d.Result, job, cancelToken)).Unwrap();
+            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(analysis, analysisLogger, cancelToken)).Unwrap();
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(m => manifestAnalyzer.TryRunManifestChecksAsync(analysis, analysisLogger, cancelToken)).Unwrap();
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(m => manifestAnalyzer.TryAnalyzeManifestAsync(analysis, analysisLogger, cancelToken)).Unwrap();
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
             await db.SaveAsync(analysis);
 
             // Step 2: analyze the manifest for validity and capabilities.
-            
+            await manifestAnalysisTask;
             await db.SaveAsync(analysis);
 
-            // Step 2: find the service worker info.
+            // Step 3: find the service worker.
             analysis.ServiceWorker = await serviceWorkerDetectionTask;
             await db.SaveAsync(analysis);
 
-            // Step 3: analyze the service worker to determine features like push notifications, background sync, etc.
-            if (analysis.ServiceWorker != null)
-            {
-                analysis.ServiceWorker.Validations = await serviceWorkerAnalysisTask;
-                await db.SaveAsync(analysis);
-            }
+            // Step 4: analyze the service worker to determine capabilities like push notifications, background sync, etc.
+            await serviceWorkerAnalysisTask; // This will update Analysis.Capabilities
+            await db.SaveAsync(analysis);
 
             // Step 5, if we have a manifest or service worker, run Lighthouse PWA analysis.
             if (analysis.WebManifest != null || analysis.ServiceWorker != null)
@@ -154,10 +151,11 @@ public class AnalysisJobProcessor : IHostedService
                 analysisLogger.LogInformation("No manifest or service worker detected for {url}. Skipping Lighthouse analysis.", job.Url);
             }
 
-            // Step 6, if we have a Lighthouse report and a ServiceWorker, add an Offline check.
+            // Step 6, see if we support offline capability.
             if (analysis.LighthouseReport != null && analysis.ServiceWorker != null)
             {
-                analysis.ServiceWorker.Validations.Add(analysis.LighthouseReport.GetOfflineTestResult());
+                var offlineCapability = analysis.Capabilities.First(c => c.Id == PwaCapabilityId.OfflineSupport);
+                offlineCapability.Status = analysis.LighthouseReport.GetOfflineCapability();
                 await db.SaveAsync(analysis);
             }
 
@@ -184,16 +182,6 @@ public class AnalysisJobProcessor : IHostedService
             logger.LogError(error, "Error running Lighthouse audit for {url}", job.Url);
             return null;
         }
-    }
-
-    private async Task<List<TestResult>> TryAnalyzeServiceWorker(ServiceWorkerDetection? detection, AnalysisJob job, CancellationToken cancelToken)
-    {
-        if (detection == null)
-        {
-            return [];
-        }
-
-        return await serviceWorkerDetector.TryAnalyze(detection.Url, job.Url, logger, cancelToken);
     }
 
     private async Task RetryJobOrFail(AnalysisJob job, Exception error)

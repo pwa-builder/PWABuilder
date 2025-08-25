@@ -8,26 +8,17 @@ using System.Text.RegularExpressions;
 namespace PWABuilder.Services;
 
 /// <summary>
-/// Detects service worker registrations given a URL.
+/// Detects service worker registrations given a web app URL.
 /// </summary>
 public class ServiceWorkerDetector
 {
-    private readonly HttpClient http;
     private readonly WebStringCache webStringCache;
     private readonly IPuppeteerService puppeteer;
-    private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
 
-    public ServiceWorkerDetector(
-        WebStringCache htmlFetchCache,
-        IHttpClientFactory httpClientFactory,
-        IPuppeteerService puppeteer,
-        IServiceWorkerAnalyzer serviceWorkerAnalyzer
-    )
+    public ServiceWorkerDetector(WebStringCache webStringCache, IPuppeteerService puppeteer)
     {
-        http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
-        this.webStringCache = htmlFetchCache;
+        this.webStringCache = webStringCache;
         this.puppeteer = puppeteer;
-        this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
     }
 
     /// <summary>
@@ -58,29 +49,6 @@ public class ServiceWorkerDetector
         return serviceWorker;
     }
 
-    /// <summary>
-    /// Analyzes an existing service worker and determines what features are used in it, such as push notifications, background sync, etc.
-    /// If there was an error during the analysis, the error is logged and null is returned.
-    /// </summary>
-    /// <param name="serviceWorkerUrl">The URL of the service worker.</param>
-    /// <param name="appUrl">The URL of the app hosting the service worker.</param>
-    /// <param name="logger">The logger.</param>
-    /// <param name="cancelToken">The cancellation token.</param>
-    /// <returns>The features detected within the service worker, or null if the service worker couldn't be analyzed.</returns>
-    public async Task<List<TestResult>> TryAnalyze(Uri serviceWorkerUrl, Uri appUrl, ILogger logger, CancellationToken cancelToken)
-    {
-        try
-        {
-            var features = await serviceWorkerAnalyzer.AnalyzeServiceWorkerAsync(serviceWorkerUrl, appUrl, logger, cancelToken);
-            return FeaturesToValidationTests(features);
-        }
-        catch (Exception featureDetectionError)
-        {
-            logger.LogError(featureDetectionError, "Unable to detect service worker features of {url} due to an error", serviceWorkerUrl);
-            return [];
-        }
-    }
-
     private async Task<ServiceWorkerDetection?> TryFetchServiceWorkerWithPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         using var page = await puppeteer.Navigate(appUrl);
@@ -107,7 +75,7 @@ public class ServiceWorkerDetector
 
         try
         {
-            var serviceWorkerJs = await http.GetStringAsync(serviceWorkerUrl, ["application/javascript", "text/javascript"], maxSizeInBytes: 1024 * 1024 * 1, cancelToken);
+            var serviceWorkerJs = await webStringCache.Get(serviceWorkerUrl, Constants.JavascriptMimeTypes, cancelToken, maxSizeInBytes: 1024 * 1024 * 1);
             if (serviceWorkerJs == null)
             {
                 logger.LogWarning("Service worker at {serviceWorkerUrl} returned null content.", serviceWorkerUrl);
@@ -127,7 +95,7 @@ public class ServiceWorkerDetector
         }
     }
 
-    private Uri? TryGetServiceWorkerUrlFromHtml(string? appHtml, Uri appUrl, ILogger logger)
+    private static Uri? TryGetServiceWorkerUrlFromHtml(string? appHtml, Uri appUrl, ILogger logger)
     {
         if (appHtml == null)
         {
@@ -169,50 +137,5 @@ public class ServiceWorkerDetector
             logger.LogWarning(htmlFetchError, "Unable to fetch HTML of {url} while fetching service worker.", appUrl);
             return null;
         }
-    }
-
-    private List<TestResult> FeaturesToValidationTests(ServiceWorkerFeatures? features)
-    {
-        return new List<TestResult>
-        {
-            new()
-            {
-                Result = true,
-                InfoString = features != null
-                    ? "Has a Service Worker"
-                    : "Does not have a Service Worker",
-                Category = "highly recommended",
-                Member = "has_service_worker",
-            },
-            new()
-            {
-                Result = features?.PeriodicBackgroundSync == true,
-                InfoString = features?.PeriodicBackgroundSync == true
-                        ? "Uses Periodic Sync for a rich offline experience"
-                        : "Does not use Periodic Sync for a rich offline experience",
-                Category = "optional",
-                Member = "periodic_sync",
-            },
-            new()
-            {
-                Result = features?.BackgroundSync == true,
-                InfoString =
-                    features?.BackgroundSync == true
-                        ? "Uses Background Sync for a rich offline experience"
-                        : "Does not use Background Sync for a rich offline experience",
-                Category = "optional",
-                Member = "background_sync",
-            },
-            new()
-            {
-                Result = features?.PushRegistration == true,
-                InfoString =
-                    features?.PushRegistration == true
-                        ? "Uses Push Notifications"
-                        : "Does not use Push Notifications",
-                Category = "optional",
-                Member = "push_notifications",
-            }
-        };
     }
 }

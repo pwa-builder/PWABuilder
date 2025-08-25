@@ -15,10 +15,5 @@ public class ServiceWorkerDetection
     /// <summary>
     /// The raw string content of the service worker. This will be null if the service worker could not be fetched.
     /// </summary>
-    public string? Raw { get; set; }
-
-    /// <summary>
-    /// The list of validation results for the service worker. This will be empty if no validations were run or if the service worker could not be fetched.
-    /// </summary>
-    public List<TestResult> Validations { get; set; } = [];
+    public required string Raw { get; set; }
 }

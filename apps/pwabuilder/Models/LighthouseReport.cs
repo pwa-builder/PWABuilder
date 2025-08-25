@@ -56,21 +56,17 @@ public sealed class LighthouseReport
     public LighthouseAudit? OfflineAudit => GetAuditByName("offline-audit");
 
     /// <summary>
-    /// Creates a new TestResult containing the test result for offline support.
+    /// Gets whether the Lighthouse report's determination of the PWA's offline capability.
     /// </summary>
-    /// <returns></returns>
-    public TestResult GetOfflineTestResult()
+    /// <returns><see cref="PwaCapabilityCheckStatus.Skipped"/> if the Ligthouse report failed to test for offline capability, otherwise Passed or Failed.</returns>
+    public PwaCapabilityCheckStatus GetOfflineCapability()
     {
-        var supportsOffline = this.OfflineAudit?.Score == 0;
-        return new TestResult
+        if (this.OfflineAudit == null)
         {
-            Result = supportsOffline,
-            InfoString = supportsOffline
-                ? "Has offline support"
-                : "Does not have offline support",
-            Category = "optional",
-            Member = "offline_support",
-        };
+            return PwaCapabilityCheckStatus.Skipped;
+        }
+
+        return this.OfflineAudit.Score > 0 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
     private LighthouseAudit? GetAuditByName(string name)

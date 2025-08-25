@@ -60,7 +60,7 @@ namespace PWABuilder.Services
         {
             var appInsightProps =
                 analyticsInfo.Properties ?? new Dictionary<string, string>();
-            appInsightProps.Add("analysisUrl", analysis.Url);
+            appInsightProps.Add("analysisUrl", analysis.Url.ToString());
             appInsightProps.Add("analysisDuration", analysis.Duration?.ToString() ?? string.Empty);
             appInsightProps.Add("analysisCanPackage", analysis.CanPackage.ToString());
             appInsightProps.Add("analysisManifestUrl", analysis.WebManifest?.Url.ToString() ?? string.Empty);

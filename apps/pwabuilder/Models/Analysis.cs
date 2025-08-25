@@ -18,7 +18,7 @@ public class Analysis
     /// <summary>
     /// The URL that was analyzed.
     /// </summary>
-    public required string Url { get; init; }
+    public required Uri Url { get; init; }
 
     /// <summary>
     /// The date the URL was analyzed.

@@ -33,15 +33,22 @@ public enum PwaCapabilityId
     TabbedDisplay,
     NoteTaking,
     StartUrl,
+    Widgets,
+    EdgeSidePanel,
 
-
-    // Other manifest checks
+    // other manifest checks
     IconsAreFetchable,
     HasSquare192x192PngAnyPurposeIcon,
     HasSquare512x512PngAnyPurposeIcon,
     ScreenshotsAreFetchable,
     HasWideScreenshot,
     HasNarrowScreenshot,
-    Widgets,
-    EdgeSidePanel
+
+    // service worker capabilities
+    HasServiceWorker,
+    ServiceWorkerIsNotEmpty,
+    PeriodicSync,
+    BackgroundSync,
+    PushNotifications,
+    OfflineSupport
 }

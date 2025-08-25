@@ -24,74 +24,13 @@ public class ManifestAnalyzer
         this.manifestChecks = CreateManifestChecks();
     }
 
-    // public static ValidationsResult ValidateSingleField(string field, JsonElement webManifest)
-    // {
-    //     var maniTests = GetValidations();
-
-    //     if (webManifest.TryGetProperty(field, out JsonElement value))
-    //     {
-    //         var fieldTests = maniTests
-    //             .FindAll(v => v.Member.Equals(field))
-    //             .Select(r =>
-    //             {
-    //                 var testResult = r.Test != null && r.Test(value);
-    //                 return new { Valid = testResult, Error = r.ErrorString };
-    //             });
-
-    //         return new ValidationsResult
-    //         {
-    //             Valid = fieldTests.All(r => r.Valid),
-    //             Exists = true,
-    //             Errors = fieldTests.Select(r => r.Error ?? string.Empty).Where(e => !string.IsNullOrEmpty(e)),
-    //         };
-    //     }
-
-    //     return new ValidationsResult
-    //     {
-    //         Valid = true,
-    //         Exists = false,
-    //         Errors = ["Field not found"],
-    //     };
-    // }
-
-    // public static IEnumerable<Validation> ValidateManifest(object? webManifest)
-    // {
-    //     if (webManifest is not JsonElement webManifestJson)
-    //     {
-    //         return [];
-    //     }
-
-    //     var maniTests = GetValidations();
-    //     return maniTests.Select(r =>
-    //     {
-    //         var propertyExist = webManifestJson.TryGetProperty(
-    //             r.Member,
-    //             out JsonElement value
-    //         );
-    //         var testResult = r.Test != null && r.Test(value);
-    //         return new Validation
-    //         {
-    //             Member = r.Member,
-    //             DisplayString = r.DisplayString,
-    //             InfoString = r.InfoString,
-    //             Category = r.Category,
-    //             DefaultValue = r.DefaultValue,
-    //             DocsLink = r.DocsLink,
-    //             ErrorString = r.ErrorString,
-    //             QuickFix = r.QuickFix,
-    //             TestRequired = r.TestRequired,
-    //             Valid = testResult && propertyExist,
-    //         };
-    //     });
-    // }
-
     /// <summary>
     /// Goes through all the manifest-specific capabilities of the specified <paramref name="analysis"/> and checks if the manifest passes.
     /// </summary>
     /// <param name="analysis"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public async Task TryRunManifestChecksAsync(Analysis analysis, ILogger logger, CancellationToken cancelToken)
+    public async Task TryAnalyzeManifestAsync(Analysis analysis, ILogger logger, CancellationToken cancelToken)
     {
         var manifestCapabilities = analysis.Capabilities
             .Where(c => c.Category == PwaCapabilityCategory.WebAppManifest);
@@ -150,7 +89,6 @@ public class ManifestAnalyzer
         return PwaCapability.CreateManifestCapabilities().ToDictionary(c => c.Id, CreateCheckForCapability);
     }
 
-
     private PwaManifestCapabilityCheck CreateCheckForCapability(PwaCapability capability)
     {
         // Ignore the warning about the switch expression not handling unnamed enum values, e.g. casting a random integer to PwaCapabilityId. We don't care about that.
@@ -196,6 +134,14 @@ public class ManifestAnalyzer
             PwaCapabilityId.Direction => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "dir", 3, ["ltr", "rtl", "auto"])),
             PwaCapabilityId.ScopeExtensions => new PwaManifestCapabilityCheck(capability, CheckScopeExtensions),
             PwaCapabilityId.Id => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "id", 1)),
+
+            // Service worker capabilities are handled elsewhere, in ServiceWorkerAnalyzer.
+            PwaCapabilityId.HasServiceWorker => throw new NotImplementedException(),
+            PwaCapabilityId.ServiceWorkerIsNotEmpty => throw new NotImplementedException(),
+            PwaCapabilityId.PeriodicSync => throw new NotImplementedException(),
+            PwaCapabilityId.BackgroundSync => throw new NotImplementedException(),
+            PwaCapabilityId.PushNotifications => throw new NotImplementedException(),
+            PwaCapabilityId.OfflineSupport => throw new NotImplementedException()
         };
         #pragma warning restore CS8524 
     }
