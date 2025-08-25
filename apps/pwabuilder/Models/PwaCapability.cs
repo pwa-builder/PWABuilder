@@ -481,7 +481,7 @@ public class PwaCapability
                 Field = "note_taking",
                 IsFieldExistenceCheck = true,
                 LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/note_taking"),
-                ImageUrl = new Uri("/assets/manifest_examples/note-taking.webp", UriKind.Relative),
+                ImageUrl = null,
                 Category = PwaCapabilityCategory.WebAppManifest,
                 Status = PwaCapabilityCheckStatus.InProgress
             },
@@ -623,6 +623,10 @@ public class PwaCapability
         ];
     }
 
+    /// <summary>
+    /// Creates the list of service worker capability checks.
+    /// </summary>
+    /// <returns>A new list containing the service worker capability checks.</returns>
     public static List<PwaCapability> CreateServiceWorkerCapabilities()
     {
         return
@@ -648,8 +652,8 @@ public class PwaCapability
                 Description = "Your service worker should not be empty or contain no caching logic. Instead, your service worker should add support for caching resources -- for example, your app's HTML, CSS, and JS -- and serve from the cache when the network is unavailable.",
                 TodoAction = "Improve your app's performance by adding caching logic to your service worker.",
                 Level = PwaCapabilityLevel.Recommended,
-                FeatureName = null,
-                FeatureIcon = null,
+                FeatureName = "Has Logic",
+                FeatureIcon = new Uri("/assets/new/service_worker_has_logic.png", UriKind.Relative),
                 Field = null,
                 IsFieldExistenceCheck = false,
                 LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/home/sw-intro"),
@@ -715,6 +719,43 @@ public class PwaCapability
                 LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Tutorials/js13kGames/Offline_Service_workers"),
                 ImageUrl = null,
                 Category = PwaCapabilityCategory.ServiceWorker,
+                Status = PwaCapabilityCheckStatus.InProgress
+            }
+        ];
+    }
+
+    public static List<PwaCapability> CreateHttpsCapabilities()
+    {
+        return
+        [
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.HasHttps,
+                Description = "Your web app must be protected with HTTPS, even if it doesn't handle sensitive data.",
+                TodoAction = "Add HTTPS to your web app to enable powerful PWA features like service worker, offline capability, install, and more.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/core-concepts/04"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.Https,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.NoMixedContent,
+                Description = "Your PWA should not served both HTTP and HTTPS content. All resources should be served over HTTPS.",
+                TodoAction = "Fix mixed content issues by ensuring all resources are loaded over HTTPS.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://web.dev/articles/what-is-mixed-content"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.Https,
                 Status = PwaCapabilityCheckStatus.InProgress
             }
         ];

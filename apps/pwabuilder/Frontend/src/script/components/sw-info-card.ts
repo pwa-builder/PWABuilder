@@ -1,7 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { service_worker_fields } from '@pwabuilder/manifest-information';
 import {
   smallBreakPoint,
 } from '../utils/css/breakpoints';
@@ -13,6 +12,9 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 @customElement('sw-info-card')
 export class ServiceWorkerInfoCard extends LitElement {
   @property({ type: String }) field: string = "";
+  @property({ type: String }) capabilityId: string = "";
+  @property({ type: String }) description = "";
+  @property({ type: String }) docsUrl = "";
   @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
   @state() currentlyHovering: boolean = false;
   @state() hoverTimer: any;
@@ -153,7 +155,7 @@ export class ServiceWorkerInfoCard extends LitElement {
     recordPWABuilderProcessStep(`service_worker.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
     //specific field counter
-    recordPWABuilderProcessStep(`service_worker.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    recordPWABuilderProcessStep(`service_worker.${this.capabilityId}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
   }
 
   // opens tooltip
@@ -204,10 +206,10 @@ export class ServiceWorkerInfoCard extends LitElement {
         >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
-            ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
+            <p class="info-blurb">${this.description}</p>
           </div>
           <sl-menu>
-            <sl-menu-item @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+            <sl-menu-item @click=${() => this.handleClickingLink(this.capabilityId)}><a class="learn-more" data-tag=${this.capabilityId} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
           </sl-menu>
         </sl-dropdown>
         ` :
@@ -219,10 +221,12 @@ export class ServiceWorkerInfoCard extends LitElement {
           >
           <slot name="trigger" slot="trigger"></slot>
           <div class="info-box">
-            ${service_worker_fields[this.field].description.map((line: String) => html`<p class="info-blurb">${line}</p>`)}
+            <p class="info-blurb">${this.description}</p>
           </div>
           <sl-menu>
-            <sl-menu-item @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${service_worker_fields[this.field].docs_link ?? "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+            <sl-menu-item @click=${() => this.handleClickingLink(this.capabilityId)}>
+              <a class="learn-more" data-tag=${this.capabilityId} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a>
+            </sl-menu-item>
           </sl-menu>
         </sl-dropdown>
         `

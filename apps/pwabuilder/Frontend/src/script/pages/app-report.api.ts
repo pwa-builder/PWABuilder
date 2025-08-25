@@ -91,13 +91,12 @@ export type PwaCapabilityStatus = "InProgress" | "Skipped" | "Passed" | "Failed"
 export type ManifestDetection = {
 	url: string,
 	manifest: object,
-	manifestRaw: string | null
+	manifestRaw: string
 }
 
 export type ServiceWorkerDetection = {
 	url: string,
-	raw: string | null,
-	validations: TestResult[]
+	raw: string | null
 }
 
 export type LighthouseReport = {

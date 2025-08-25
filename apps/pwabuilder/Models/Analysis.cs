@@ -74,7 +74,12 @@ public class Analysis
     /// <summary>
     /// The capability checks of the PWA.
     /// </summary>
-    public List<PwaCapability> Capabilities { get; init; } = PwaCapability.CreateManifestCapabilities();
+    public List<PwaCapability> Capabilities { get; init; } =
+        [
+            .. PwaCapability.CreateManifestCapabilities(),
+            .. PwaCapability.CreateServiceWorkerCapabilities(),
+            .. PwaCapability.CreateHttpsCapabilities()
+        ];
 
     /// <summary>
     /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.
@@ -102,9 +107,47 @@ public class Analysis
         // All required fields must be valid.
         var allRequiredFieldsValid = this.Capabilities.Count > 0
             && this.Capabilities
-            .Where(v => v.Level == PwaCapabilityLevel.Required)
+            .Where(v => v.Level == PwaCapabilityLevel.Required && v.Category != PwaCapabilityCategory.Https) // Skip HTTPS check here because Lighthouse takes too long.
             .All(v => v.Status == PwaCapabilityCheckStatus.Passed);
 
         return allRequiredFieldsValid;
+    }
+
+    /// <summary>
+    /// Updates this analysis's capabilities based on the Lighthouse report.
+    /// </summary>
+    /// <param name="lighthouseReport"></param>
+    public void ProcessLighthouseReport(LighthouseReport? lighthouseReport, ILogger logger)
+    {
+        var offlineCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.OfflineSupport);
+        var httpsCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasHttps);
+        var noMixedContentCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.NoMixedContent);
+
+        // No lighthouse report? Mark these as skipped.
+        if (lighthouseReport == null)
+        {
+            offlineCapability.Status = PwaCapabilityCheckStatus.Skipped;
+            httpsCapability.Status = PwaCapabilityCheckStatus.Skipped;
+            noMixedContentCapability.Status = PwaCapabilityCheckStatus.Skipped;
+            logger.LogWarning("Skipped checks offline support, HTTPS, and mixed content due to missing Lighthouse report.");
+            return;
+        }
+
+        offlineCapability.Status = lighthouseReport.GetOfflineCapability();
+        httpsCapability.Status = lighthouseReport.GetHttpsCapability();
+        noMixedContentCapability.Status = lighthouseReport.GetNoMixedContentCapability();
+    }
+
+    /// <summary>
+    /// Update this analysis's capabilities based on the provided list.
+    /// </summary>
+    /// <param name="capabilities">A list of PwaCapability objects containing <see cref="PwaCapability.Status"/> updates.</param>
+    public void ProcessCapabilities(List<PwaCapability> capabilities)
+    {
+        foreach (var capability in capabilities)
+        {
+            var existingCapability = this.Capabilities.First(c => c.Id == capability.Id);
+            existingCapability.Status = capability.Status;
+        }
     }
 }

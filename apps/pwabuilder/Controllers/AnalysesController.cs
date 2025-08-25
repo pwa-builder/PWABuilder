@@ -31,6 +31,11 @@ public class AnalysesController : ControllerBase
     [HttpPost("enqueue")]
     public async Task<ActionResult<string>> Enqueue(Uri url)
     {
+        if (!url.IsAbsoluteUri)
+        {
+            url = new Uri($"https://{url}", UriKind.Absolute);
+        }
+
         // Create a new Analysis object in the database and enqueue an AnalysisJob.
         var analysis = new Analysis
         {

@@ -27,18 +27,17 @@ public class ManifestAnalyzer
     /// <summary>
     /// Goes through all the manifest-specific capabilities of the specified <paramref name="analysis"/> and checks if the manifest passes.
     /// </summary>
-    /// <param name="analysis"></param>
-    /// <param name="logger"></param>
-    /// <returns></returns>
-    public async Task TryAnalyzeManifestAsync(Analysis analysis, ILogger logger, CancellationToken cancelToken)
+    /// <param name="manifestDetection">The web app manifest detection results. This can be null if no web app manifest was detect.</param>
+    /// <param name="logger">The logger to log data to.</param>
+    /// <returns>A list of PWA capabilities and their statuses.</returns>
+    public async Task<List<PwaCapability>> TryAnalyzeManifestAsync(ManifestDetection? manifestDetection, ILogger logger, CancellationToken cancelToken)
     {
-        var manifestCapabilities = analysis.Capabilities
-            .Where(c => c.Category == PwaCapabilityCategory.WebAppManifest);
+        var manifestCapabilities = PwaCapability.CreateManifestCapabilities();
 
         // No manifest? Mark all the manifest capabilities as skipped.
-        if (analysis.WebManifest == null)
+        if (manifestDetection == null)
         {
-            logger.LogInformation("No manifest to analyze. Skipping manifest checks.");
+            logger.LogInformation("No manifest to analyze. Skipping manifest capability checks.");
 
             // Mark the "manifest exists" capability as failed.
             var manifestExistsCapability = manifestCapabilities.First(c => c.Id == PwaCapabilityId.HasManifest);
@@ -50,7 +49,7 @@ public class ManifestAnalyzer
                 .ToList()
                 .ForEach(c => c.Status = PwaCapabilityCheckStatus.Skipped);
 
-            return;
+            return manifestCapabilities;
         }
 
         // We have a manifest. Run each check.
@@ -59,13 +58,13 @@ public class ManifestAnalyzer
             if (cancelToken.IsCancellationRequested)
             {
                 logger.LogInformation("Manifest analysis cancelled.");
-                return;
+                return manifestCapabilities;
             }
 
             try
             {
                 var manifestCheck = this.manifestChecks[capability.Id];
-                var hasCheckPassed = await manifestCheck.Check(analysis.WebManifest, cancelToken);
+                var hasCheckPassed = await manifestCheck.Check(manifestDetection, cancelToken);
                 capability.Status = hasCheckPassed ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
             }
             catch (Exception ex)
@@ -82,6 +81,8 @@ public class ManifestAnalyzer
                 continue;
             }
         }
+
+        return manifestCapabilities;
     }
 
     private Dictionary<PwaCapabilityId, PwaManifestCapabilityCheck> CreateManifestChecks()
@@ -141,7 +142,11 @@ public class ManifestAnalyzer
             PwaCapabilityId.PeriodicSync => throw new NotImplementedException(),
             PwaCapabilityId.BackgroundSync => throw new NotImplementedException(),
             PwaCapabilityId.PushNotifications => throw new NotImplementedException(),
-            PwaCapabilityId.OfflineSupport => throw new NotImplementedException()
+            PwaCapabilityId.OfflineSupport => throw new NotImplementedException(),
+
+            // HTTPS capabilities are handled elsewhere.
+            PwaCapabilityId.HasHttps => throw new NotImplementedException(),
+            PwaCapabilityId.NoMixedContent => throw new NotImplementedException(),
         };
         #pragma warning restore CS8524 
     }

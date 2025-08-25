@@ -471,29 +471,10 @@ export class AppReport extends LitElement {
     // The analysis has been updated since we last saw it.
     this.analysis = analysis;
 
-    // Clear all the existing TODOs.
-    const todos: AnalysisTodo[] = [];
-
     // Apply the manifest and manifest todos
-    if (analysis.webManifest?.manifestRaw) {
-      this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.manifestRaw || "");
-      //const manifestTodos = this.testManifest(analysis.webManifest.validations);
-      //todos.push(...manifestTodos);
-    }
+    this.applyManifestContext(analysis.url, analysis.webManifest?.url, analysis.webManifest?.manifestRaw);
 
-    // Add service worker todos
-    if (analysis.serviceWorker) {
-      todos.push(...this.createServiceWorkerResults(analysis.serviceWorker.validations));
-    }
-
-    // // TODO: move installability score to different place
-    // this.allTodoItems.push(...await this.createServiceWorkerResults(this.reportAudit?.serviceWorkerValidations ?? []));
-    //this.allTodoItems.push(...await this.createSecurityResults(this.reportAudit?.securityValidations ?? []));
-    //this.allTodoItems.push(...await this.createTestsImagesResults(processImages(this.reportAudit?.audits)));
-
-    this.allTodoItems = todos;
-    this.filteredTodoItems = this.allTodoItems;
-    this.canPackage = analysis.canPackage; // this.canPackageList[0] && this.canPackageList[1] && this.canPackageList[2] && this.canPackageList[3];
+    this.canPackage = analysis.canPackage;
   }
 
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
@@ -1893,7 +1874,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
             ${this.renderServiceWorkerFeaturesRing()}
           </div>
             <div class="icons-holder sw">
-              ${repeat(this.serviceWorkerResults, r => r.member || r.infoString, r => this.renderServiceWorkerFeatures(r))}
+              ${this.renderServiceWorkerCapabilities()}
             </div>
           <div id="sw-actions" class="flex-col">
             ${this.renderServiceWorkerActions()}
@@ -1904,7 +1885,8 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
   }
 
   renderServiceWorkerFeaturesHeader(): TemplateResult {
-    if (this.swDataLoading) {
+    const showLoading = !this.analysis || this.analysis.capabilities.filter(c => c.category === "ServiceWorker").every(c => c.status === "InProgress");
+    if (showLoading) {
       return html`
         <div class="flex-col gap">
           <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
@@ -1921,17 +1903,31 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
   }
 
   renderServiceWorkerFeaturesRing(): TemplateResult {
-    if (this.swDataLoading) {
+    const swCaps = this.analysis?.capabilities.filter(c => c.category === "ServiceWorker") || [];
+    const showLoading = !this.analysis || swCaps.every(c => c.status === "InProgress");
+    if (showLoading) {
       return html`<div class="loader-round large"></div>`;
     }
 
+    const passedCount = swCaps.filter(c => c.status === "Passed").length;
     return html`
       <sl-progress-ring
         id="swProgressRing"
         class="counterRing"
-        value="${this.swValidCounter > 0 ? 100 : 0}"
-        >+${this.swValidCounter}
+        value="${passedCount > 0 ? 100 : 0}"
+        >+${passedCount}
       </sl-progress-ring>
+    `;
+  }
+
+  renderServiceWorkerCapabilities(): TemplateResult {
+    if (!this.analysis) {
+      return html``;
+    }
+
+    const swCaps = this.analysis.capabilities.filter(c => c.category === "ServiceWorker");
+    return html`
+      ${repeat(swCaps, c => c.id, c => this.renderServiceWorkerCapability(c))}
     `;
   }
 
@@ -1954,16 +1950,21 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     `;
   }
 
-  renderServiceWorkerFeatures(testResult: TestResult): TemplateResult {
+  renderServiceWorkerCapability(capability: PwaCapability): TemplateResult {
+    const passedCheckIcon = capability.status === "Passed" 
+      ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` 
+      : capability.status === "InProgress" 
+        ? html`<sl-spinner class="in-progress-marker"></sl-spinner>`
+      : null;
     return html`
-      <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", testResult.member || "")}>
-        <sw-info-card .field=${testResult.member || ""}>
+      <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", capability.id || "")}>
+        <sw-info-card capabilityId="${capability.id}" description="${capability.description || ""}" docsUrl="${capability.learnMoreUrl || ""}">
           <div class="circle-icon" tabindex="0" role="button" slot="trigger">
-            <img class="circle-icon-img" src="${"/assets/new/" + testResult.member + '_icon.svg'}" alt="${this.formatSWStrings(testResult.member || "") + ' icon'}" />
-            ${testResult.result ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />` : null}
+            <img class="circle-icon-img" src="${capability.featureIcon || ""}" alt="" />
+            ${passedCheckIcon}
           </div>
         </sw-info-card>
-        <p>${this.formatSWStrings(testResult.member || "")}</p>
+        <p>${capability.featureName}</p>
       </div>
       `;
 
@@ -2022,7 +2023,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
   }
 
   renderAppCapabilitiesCards(): TemplateResult {
-    const features = this.analysis?.capabilities.filter(v => v.level === "Feature") || [];
+    const features = this.analysis?.capabilities.filter(v => v.level === "Feature" && v.category === "WebAppManifest") || [];
     return html`
       ${repeat(features, f => this.renderAppCapabilityCard(f))}
     `;

@@ -1,4 +1,3 @@
-using System.Security.Policy;
 using System.Text.RegularExpressions;
 using PWABuilder.Common;
 using PWABuilder.Models;
@@ -51,26 +50,22 @@ namespace PWABuilder.Services
         }
 
         /// <inheritdoc />
-        public async Task TryAnalyzeServiceWorkerAsync(Analysis analysis, ILogger logger, CancellationToken cancelToken)
+        public async Task<List<PwaCapability>> TryAnalyzeServiceWorkerAsync(ServiceWorkerDetection? swDetection, Uri appUrl, ILogger logger, CancellationToken cancelToken)
         {
-            if (analysis.ServiceWorker == null || string.IsNullOrWhiteSpace(analysis.ServiceWorker.Raw))
+            var swCaps = PwaCapability.CreateServiceWorkerCapabilities();
+            if (swDetection == null)
             {
-                HandleNoServiceWorker(analysis, logger);
-                return;
+                HandleNoServiceWorker(swCaps, logger);
+                return swCaps;
             }
 
-            var serviceWorkerJs = analysis.ServiceWorker.Raw;
-            var separateContent = new List<string>
-            {
-                analysis.ServiceWorker.Raw
-            };
+            var serviceWorkerJs = swDetection.Raw;
             try
             {
-                var scriptsContent = await TryFindAndFetchImportScriptsAsync(analysis.ServiceWorker.Raw, analysis.Url, logger, cancelToken);
+                var scriptsContent = await TryFindAndFetchImportScriptsAsync(swDetection.Raw, appUrl, logger, cancelToken);
                 foreach (var scriptContent in scriptsContent)
                 {
                     serviceWorkerJs += scriptContent;
-                    separateContent.Add(scriptContent);
                 }
             }
             catch (Exception importScriptError)
@@ -79,18 +74,19 @@ namespace PWABuilder.Services
             }
 
             var compactContent = Regex.Replace(serviceWorkerJs, @"\n+|\s+|\r", "");
-            var swCapabilities = analysis.Capabilities.Where(c => c.Category == PwaCapabilityCategory.ServiceWorker);
-            foreach (var swCapability in swCapabilities)
+            foreach (var swCapability in swCaps)
             {
-                swCapability.Status = RunCapabilityCheck(swCapability, analysis, compactContent);
+                swCapability.Status = RunCapabilityCheck(swCapability, swDetection, compactContent);
             }
+
+            return swCaps;
         }
 
-        private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, Analysis analysis, string swScripts)
+        private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, ServiceWorkerDetection swDetection, string swScripts)
         {
             return swCapability.Id switch
             {
-                PwaCapabilityId.HasServiceWorker => analysis.ServiceWorker?.Url != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed,
+                PwaCapabilityId.HasServiceWorker => swDetection != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed,
                 PwaCapabilityId.OfflineSupport => PwaCapabilityCheckStatus.InProgress, // Offline support can't be detected from code analysis alone. Instead, we use Lighthouse for this. See LighthouseService.cs.
                 PwaCapabilityId.ServiceWorkerIsNotEmpty => CheckServiceWorkerNotEmpty(swScripts),
                 PwaCapabilityId.BackgroundSync => CheckBackgroundSync(swScripts),
@@ -124,11 +120,10 @@ namespace PWABuilder.Services
             return PushNotificationRegexes.Any(r => r.IsMatch(swScripts)) ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
         }
 
-        private static void HandleNoServiceWorker(Analysis analysis, ILogger logger)
+        private static void HandleNoServiceWorker(List<PwaCapability> serviceWorkerCaps, ILogger logger)
         {
             // Mark the "has service worker" capability as failed.
             // And mark the rest of the service worker capabilities as skipped.
-            var serviceWorkerCaps = analysis.Capabilities.Where(c => c.Category == PwaCapabilityCategory.ServiceWorker);
             foreach (var cap in serviceWorkerCaps)
             {
                 if (cap.Id == PwaCapabilityId.HasServiceWorker)

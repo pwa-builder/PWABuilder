@@ -61,12 +61,41 @@ public sealed class LighthouseReport
     /// <returns><see cref="PwaCapabilityCheckStatus.Skipped"/> if the Ligthouse report failed to test for offline capability, otherwise Passed or Failed.</returns>
     public PwaCapabilityCheckStatus GetOfflineCapability()
     {
-        if (this.OfflineAudit == null)
+        if (this.OfflineAudit == null || this.ServiceWorkerAudit == null || this.ServiceWorkerAudit.Score != 1)
         {
             return PwaCapabilityCheckStatus.Skipped;
         }
 
-        return this.OfflineAudit.Score > 0 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+        return this.OfflineAudit.Score == 1 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+    }
+
+    /// <summary>
+    /// Gets a status indicating whether the Lighthouse report has indicated whether the analyzed PWA is served over HTTPS.
+    /// </summary>
+    /// <returns></returns>
+    public PwaCapabilityCheckStatus GetHttpsCapability()
+    {
+        if (this.HttpsAudit == null)
+        {
+            return PwaCapabilityCheckStatus.Skipped;
+        }
+
+        return this.HttpsAudit.Score == 1 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+    }
+
+    /// <summary>
+    /// Gets a status indicating whether the Lighthouse report has indicated whether the analyzed PWA is served over HTTPS.
+    /// </summary>
+    /// <returns></returns>
+    public PwaCapabilityCheckStatus GetNoMixedContentCapability()
+    {
+        // Skip this if there is not HTTPS audit in the report, or if the web app wasn't served over HTTPS at all.
+        if (this.IsOnHttpsAudit == null || this.GetHttpsCapability() == PwaCapabilityCheckStatus.Failed)
+        {
+            return PwaCapabilityCheckStatus.Skipped;
+        }
+
+        return this.IsOnHttpsAudit.Score == 1 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
     private LighthouseAudit? GetAuditByName(string name)

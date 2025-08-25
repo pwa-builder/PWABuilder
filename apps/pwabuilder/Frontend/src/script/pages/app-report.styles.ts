@@ -1232,6 +1232,13 @@ arrow-link {
     border: 2px solid #8976FF;
 }
 
+.in-progress-marker {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 0.7em;
+}
+
 .valid-marker {
     height: 13px;
     width: 13px;

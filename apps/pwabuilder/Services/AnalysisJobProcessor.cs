@@ -116,19 +116,20 @@ public class AnalysisJobProcessor : IHostedService
             analysis.Status = AnalysisStatus.Processing;
             await db.SaveAsync(analysis);
 
-            // Kick off all jobs simultaneously so the end result is faster.
+            // Kick off the independent jobs simultaneously so that our analysis completes faster.
             var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysis, analysisLogger, cancelToken);
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(d => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(analysis, analysisLogger, cancelToken)).Unwrap();
+            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelToken)).Unwrap(); // This will update analysis.Capabilities.
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(m => manifestAnalyzer.TryAnalyzeManifestAsync(analysis, analysisLogger, cancelToken)).Unwrap();
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, logger, cancelToken)).Unwrap();
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
             await db.SaveAsync(analysis);
 
             // Step 2: analyze the manifest for validity and capabilities.
-            await manifestAnalysisTask;
+            var manifestCapabilities = await manifestAnalysisTask;
+            analysis.ProcessCapabilities(manifestCapabilities);
             await db.SaveAsync(analysis);
 
             // Step 3: find the service worker.
@@ -136,28 +137,15 @@ public class AnalysisJobProcessor : IHostedService
             await db.SaveAsync(analysis);
 
             // Step 4: analyze the service worker to determine capabilities like push notifications, background sync, etc.
-            await serviceWorkerAnalysisTask; // This will update Analysis.Capabilities
+            var swCapabilities = await serviceWorkerAnalysisTask;
+            analysis.ProcessCapabilities(swCapabilities);
             await db.SaveAsync(analysis);
 
-            // Step 5, if we have a manifest or service worker, run Lighthouse PWA analysis.
-            if (analysis.WebManifest != null || analysis.ServiceWorker != null)
-            {
-                analysis.LighthouseReport = await lighthouseAnalysisTask;
-                await db.SaveAsync(analysis);
-            }
-            else
-            {
-                // We don't have a manifest or service worker. Skip Lighthouse analysis and log a message.
-                analysisLogger.LogInformation("No manifest or service worker detected for {url}. Skipping Lighthouse analysis.", job.Url);
-            }
-
-            // Step 6, see if we support offline capability.
-            if (analysis.LighthouseReport != null && analysis.ServiceWorker != null)
-            {
-                var offlineCapability = analysis.Capabilities.First(c => c.Id == PwaCapabilityId.OfflineSupport);
-                offlineCapability.Status = analysis.LighthouseReport.GetOfflineCapability();
-                await db.SaveAsync(analysis);
-            }
+            // Step 5, run Lighthouse analysis. This is used for offline detection, HTTPS detection, and mixed content detection.
+            var lighthouseReport = await lighthouseAnalysisTask;
+            analysis.LighthouseReport = lighthouseReport;
+            analysis.ProcessLighthouseReport(lighthouseReport, analysisLogger);
+            await db.SaveAsync(analysis);
 
             // All done! Mark the analysis as completed.
             analysis.Status = AnalysisStatus.Completed;

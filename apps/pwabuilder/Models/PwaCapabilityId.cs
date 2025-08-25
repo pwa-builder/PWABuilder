@@ -50,5 +50,9 @@ public enum PwaCapabilityId
     PeriodicSync,
     BackgroundSync,
     PushNotifications,
-    OfflineSupport
+    OfflineSupport,
+
+    // Https capabilities
+    HasHttps,
+    NoMixedContent
 }
