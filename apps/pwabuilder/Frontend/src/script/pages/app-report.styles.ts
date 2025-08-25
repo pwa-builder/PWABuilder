@@ -338,8 +338,12 @@ sl-progress-ring::part(base) {
 }
 
 #app-card-desc {
-    overflow-y:hidden;
-    text-overflow:ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
     font-size: 14px;
     font-weight: 500;
     line-height: 18px;

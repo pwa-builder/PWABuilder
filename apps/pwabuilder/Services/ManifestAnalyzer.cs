@@ -64,8 +64,7 @@ public class ManifestAnalyzer
             try
             {
                 var manifestCheck = this.manifestChecks[capability.Id];
-                var hasCheckPassed = await manifestCheck.Check(manifestDetection, cancelToken);
-                capability.Status = hasCheckPassed ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+                capability.Status = await manifestCheck.Check(manifestDetection, cancelToken);
             }
             catch (Exception ex)
             {
@@ -98,7 +97,7 @@ public class ManifestAnalyzer
 
         return capability.Id switch
         {
-            PwaCapabilityId.HasManifest => new PwaManifestCapabilityCheck(capability, m => m != null),
+            PwaCapabilityId.HasManifest => new PwaManifestCapabilityCheck(capability, m => m != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed),
             PwaCapabilityId.Name => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "name")),
             PwaCapabilityId.Description => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "description")),
             PwaCapabilityId.ThemeColor => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "theme_color", 3)),
@@ -151,15 +150,16 @@ public class ManifestAnalyzer
         #pragma warning restore CS8524 
     }
 
-    private static bool CheckManifestImageArray(JsonElement manifest, string fieldName)
+    private static PwaCapabilityCheckStatus CheckManifestImageArray(JsonElement manifest, string fieldName)
     {
-        return manifest.TryGetProperty(fieldName, out var images)
+        var hasImages = manifest.TryGetProperty(fieldName, out var images)
             && images.ValueKind == JsonValueKind.Array
             && images.GetArrayLength() > 0
             && images.EnumerateArray().Any(i => i.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString()));
+        return hasImages ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckSquareIconOfMinSizeAndTypeAnyPurpose(JsonElement manifest, int minSize, string imageType)
+    private static PwaCapabilityCheckStatus CheckSquareIconOfMinSizeAndTypeAnyPurpose(JsonElement manifest, int minSize, string imageType)
     {
         var hasIcons = manifest.TryGetProperty("icons", out var icons)
             && icons.ValueKind == JsonValueKind.Array
@@ -188,7 +188,7 @@ public class ManifestAnalyzer
                                 var isLargeEnough = width >= minSize;
                                 if (isSquare && isLargeEnough)
                                 {
-                                    return true;
+                                    return PwaCapabilityCheckStatus.Passed;
                                 }
                             }
                         }
@@ -197,26 +197,34 @@ public class ManifestAnalyzer
             }
         }
 
-        return false;
+        return PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckScreenshotFormFactor(JsonElement manifest, string desiredFormFactor)
+    private static PwaCapabilityCheckStatus CheckScreenshotFormFactor(JsonElement manifest, string desiredFormFactor)
     {
         // Check if the manifest has a screenshots property and if it contains a screenshot with the specified form factor.
-        return manifest.TryGetProperty("screenshots", out var screenshots)
+        var hasScreenshots = manifest.TryGetProperty("screenshots", out var screenshots)
             && screenshots.ValueKind == JsonValueKind.Array
-            && screenshots.GetArrayLength() > 0
-            && screenshots.EnumerateArray().Any(s => s.TryGetProperty("form_factor", out var formFactor) && formFactor.ValueKind == JsonValueKind.String && formFactor.GetString() == desiredFormFactor);
+            && screenshots.GetArrayLength() > 0;
+
+        if (!hasScreenshots)
+        {
+            return PwaCapabilityCheckStatus.Skipped;
+        }
+
+        var hasDesiredFormFactor = screenshots.EnumerateArray()
+            .Any(s => s.TryGetProperty("form_factor", out var formFactor) && formFactor.ValueKind == JsonValueKind.String && formFactor.GetString() == desiredFormFactor);
+        return hasDesiredFormFactor ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private async Task<bool> CheckImagesAreFetchable(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    private async Task<PwaCapabilityCheckStatus> CheckImagesAreFetchable(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
     {
         var manifest = manifestContext.Manifest;
         var hasImagesField = manifestContext.Manifest.TryGetProperty(fieldName, out var images)
             && images.ValueKind == JsonValueKind.Array;
         if (!hasImagesField)
         {
-            return false;
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
         }
 
         // Grab the icon values. They should look like: 
@@ -236,54 +244,56 @@ public class ManifestAnalyzer
             .Select(src => new Uri(manifestContext.Url, src));
         var iconFetchTasks = iconUris.Select(uri => this.imageValidator.TryImageExistsAsync(uri, cancelToken));
         var imageExistChecks = await Task.WhenAll(iconFetchTasks);
-        return imageExistChecks.All(a => a);
+        var allImagesExist = imageExistChecks.All(a => a);
+        return allImagesExist ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
+    private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
     {
         var matches = manifest.TryGetProperty(fieldName, out var fieldValue)
             && fieldValue.ValueKind == JsonValueKind.String
             && fieldValue.GetString()?.Length >= minLength
             && (allowedValues == null || allowedValues.Length == 0 || allowedValues.Contains(fieldValue.GetString()));
-        return matches;
+        return matches ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckManifestBooleanField(JsonElement manifest, string fieldName)
+    private static PwaCapabilityCheckStatus CheckManifestBooleanField(JsonElement manifest, string fieldName)
     {
-        return manifest.TryGetProperty(fieldName, out var fieldValue)
+        var hasBooleanField = manifest.TryGetProperty(fieldName, out var fieldValue)
             && (fieldValue.ValueKind == JsonValueKind.True || fieldValue.ValueKind == JsonValueKind.False);
+        return hasBooleanField ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckManifestStringArrayField(JsonElement manifest, string fieldName, int minItemCount = 1)
+    private static PwaCapabilityCheckStatus CheckManifestStringArrayField(JsonElement manifest, string fieldName, int minItemCount = 1)
     {
         var matches = manifest.TryGetProperty(fieldName, out var fieldValue)
             && fieldValue.ValueKind == JsonValueKind.Array
             && fieldValue.GetArrayLength() >= minItemCount
             && fieldValue.EnumerateArray().Any(s => s.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(s.GetString()));
-        return matches;
+        return matches ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckShortcuts(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckShortcuts(JsonElement manifest)
     {
         var hasValidShortcuts = manifest.TryGetProperty("shortcuts", out var shortcuts)
             && shortcuts.ValueKind == JsonValueKind.Array
             && shortcuts.GetArrayLength() > 0
             && shortcuts.EnumerateArray().Any(s => s.TryGetProperty("name", out var shortcutName) && shortcutName.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(shortcutName.GetString()))
             && shortcuts.EnumerateArray().Any(s => s.TryGetProperty("url", out var shortcutUrl) && shortcutUrl.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(shortcutUrl.GetString()));
-        return hasValidShortcuts;
+        return hasValidShortcuts ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckFileHandlers(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckFileHandlers(JsonElement manifest)
     {
         var hasValidFileHandler = manifest.TryGetProperty("file_handlers", out var fileHandlers)
             && fileHandlers.ValueKind == JsonValueKind.Array
             && fileHandlers.GetArrayLength() > 0
             && fileHandlers.EnumerateArray().Any(h => h.TryGetProperty("action", out var fileHandlerAction) && fileHandlerAction.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(fileHandlerAction.GetString()))
             && fileHandlers.EnumerateArray().Any(h => h.TryGetProperty("accept", out var fileHandlerAccept) && fileHandlerAccept.ValueKind == JsonValueKind.Object);
-        return hasValidFileHandler;
+        return hasValidFileHandler ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckLaunchHandler(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckLaunchHandler(JsonElement manifest)
     {
         var hasValidFileHandler = manifest.TryGetProperty("launch_handler", out var launchHandler) && launchHandler.ValueKind == JsonValueKind.Object;
         if (hasValidFileHandler)
@@ -293,27 +303,30 @@ public class ManifestAnalyzer
             if (clientMode.ValueKind == JsonValueKind.String)
             {
                 // Client mode is a string, it should not be empty.
-                return !string.IsNullOrWhiteSpace(clientMode.GetString());
+                var hasClientModeString = !string.IsNullOrWhiteSpace(clientMode.GetString());
+                return hasClientModeString ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
             }
             else if (clientMode.ValueKind == JsonValueKind.Array)
             {
-                return clientMode.EnumerateArray().Any(c => c.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(c.GetString()));
+                var hasClientModeArray = clientMode.EnumerateArray().Any(c => c.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(c.GetString()));
+                return hasClientModeArray ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
             }
         }
 
-        return false;
+        return PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckProtocolHandlers(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckProtocolHandlers(JsonElement manifest)
     {
-        return manifest.TryGetProperty("protocol_handlers", out var protocolHandlers)
+        var hasProtocolHandlers = manifest.TryGetProperty("protocol_handlers", out var protocolHandlers)
             && protocolHandlers.ValueKind == JsonValueKind.Array
             && protocolHandlers.GetArrayLength() > 0
             && protocolHandlers.EnumerateArray().Any(h => h.TryGetProperty("protocol", out var protocol) && protocol.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(protocol.GetString()))
             && protocolHandlers.EnumerateArray().Any(h => h.TryGetProperty("url", out var url) && url.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(url.GetString()));
+        return hasProtocolHandlers ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckRelatedApplications(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckRelatedApplications(JsonElement manifest)
     {
         var hasRelatedApps = manifest.TryGetProperty("related_applications", out var relatedApps)
             && relatedApps.ValueKind == JsonValueKind.Array
@@ -321,97 +334,104 @@ public class ManifestAnalyzer
         if (hasRelatedApps)
         {
             // Each app must include platform, and either url or id
-            return relatedApps.EnumerateArray().All(app =>
+            var hasValidRelatedApps = relatedApps.EnumerateArray().All(app =>
                 app.TryGetProperty("platform", out var platform) && platform.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(platform.GetString())
                 && (app.TryGetProperty("url", out var appUrl) && appUrl.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(appUrl.GetString())
                     || app.TryGetProperty("id", out var appId) && appId.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(appId.GetString())));
+            return hasValidRelatedApps ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
         }
 
-        return false;
+        return PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckShareTarget(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckShareTarget(JsonElement manifest)
     {
-        return manifest.TryGetProperty("share_target", out var shareTarget)
+        var hasShareTarget = manifest.TryGetProperty("share_target", out var shareTarget)
             && shareTarget.ValueKind == JsonValueKind.Object
             && shareTarget.TryGetProperty("action", out var action) && action.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(action.GetString());
+        return hasShareTarget ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckWidgets(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckWidgets(JsonElement manifest)
     {
-        return manifest.TryGetProperty("widgets", out var widgets)
+        var hasWidgets = manifest.TryGetProperty("widgets", out var widgets)
             && widgets.ValueKind == JsonValueKind.Array
             && WidgetsSchema.ValidateWidgetSchema(widgets.GetRawText());
+        return hasWidgets ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckEdgeSidePanel(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckEdgeSidePanel(JsonElement manifest)
     {
-        return manifest.TryGetProperty("edge_side_panel", out var sidePanel)
+        var hasEdgeSidePanel = manifest.TryGetProperty("edge_side_panel", out var sidePanel)
             && sidePanel.ValueKind == JsonValueKind.Object
             && sidePanel.TryGetProperty("preferred_width", out var preferredWidth)
             && preferredWidth.ValueKind == JsonValueKind.Number;
+        return hasEdgeSidePanel ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckWindowControlsOverlay(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckWindowControlsOverlay(JsonElement manifest)
     {
-        return manifest.TryGetProperty("display_override", out var displayOverride)
+        var hasWindowControlsOverlay = manifest.TryGetProperty("display_override", out var displayOverride)
             && displayOverride.ValueKind == JsonValueKind.Array
             && displayOverride.EnumerateArray().Any(o => o.ValueKind == JsonValueKind.String && o.GetString() == "window-controls-overlay");
+        return hasWindowControlsOverlay ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckTabbedDisplay(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckTabbedDisplay(JsonElement manifest)
     {
         var hasTabbedDisplayOverride = manifest.TryGetProperty("display_override", out var displayOverride)
             && displayOverride.ValueKind == JsonValueKind.Array
             && displayOverride.EnumerateArray().Any(o => o.ValueKind == JsonValueKind.String && o.GetString() == "tabbed");
         var hasTabStrip = manifest.TryGetProperty("tab_strip", out var tabStrip)
             && tabStrip.ValueKind == JsonValueKind.Object;
-        return hasTabbedDisplayOverride && hasTabStrip;
+        return hasTabbedDisplayOverride && hasTabStrip ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckNoteTaking(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckNoteTaking(JsonElement manifest)
     {
-        return manifest.TryGetProperty("note_taking", out var noteTaking)
+        var hasNoteTaking = manifest.TryGetProperty("note_taking", out var noteTaking)
             && noteTaking.ValueKind == JsonValueKind.Object
             && noteTaking.TryGetProperty("new_note_url", out var newNoteUrl)
             && newNoteUrl.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(newNoteUrl.GetString());
+        return hasNoteTaking ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static bool CheckScopeExtensions(JsonElement manifest)
+    private static PwaCapabilityCheckStatus CheckScopeExtensions(JsonElement manifest)
     {
-        return manifest.TryGetProperty("scope_extensions", out var scopeExtensions)
+        var hasScopeExtensions = manifest.TryGetProperty("scope_extensions", out var scopeExtensions)
             && scopeExtensions.ValueKind == JsonValueKind.Array
             && scopeExtensions.GetArrayLength() > 0
             // each extension needs a "type" string. 
             && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("scope", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
             // each extension needs a "origin" string which must be a valid URL.
             && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("origin", out var extensionOrigin) && extensionOrigin.ValueKind == JsonValueKind.String && Uri.TryCreate(extensionOrigin.GetString(), UriKind.Absolute, out _));
+        return hasScopeExtensions ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
     internal class PwaManifestCapabilityCheck
     {
-        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, CancellationToken, Task<bool>> check)
+        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, CancellationToken, Task<PwaCapabilityCheckStatus>> check)
         {
             Id = capability.Id;
             Check = check;
         }
 
-        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, Task<bool>> check)
+        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, Task<PwaCapabilityCheckStatus>> check)
             : this(capability, (manifestContext, _) => check(manifestContext))
         {
         }
 
-        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, bool> check)
+        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, PwaCapabilityCheckStatus> check)
             : this(capability, (manifestContext, _) => Task.FromResult(check(manifestContext)))
         {
         }
 
-        public PwaManifestCapabilityCheck(PwaCapability capability, Func<JsonElement, bool> check)
+        public PwaManifestCapabilityCheck(PwaCapability capability, Func<JsonElement, PwaCapabilityCheckStatus> check)
             : this(capability, (manifestContext, _) => Task.FromResult(check(manifestContext.Manifest)))
         {
         }
 
         public PwaCapabilityId Id { get; init; }
-        public Func<ManifestDetection, CancellationToken, Task<bool>> Check { get; set; }
+        public Func<ManifestDetection, CancellationToken, Task<PwaCapabilityCheckStatus>> Check { get; set; }
     }
 }

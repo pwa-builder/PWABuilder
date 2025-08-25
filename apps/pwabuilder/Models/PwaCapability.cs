@@ -233,7 +233,7 @@ public class PwaCapability
             new PwaCapability
             {
                 Id = PwaCapabilityId.LaunchHandler,
-                Description = "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
+                Description = "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc. For example, yo ucan specify when navigation should focus an existing instance of your app (single-instance app), navigate in an existing instance, or open a new instance of your app.",
                 TodoAction = "Take control over how your app is launched -- single instance? focus existing? navigate in new window? -- by adding launch_handler to your manifest.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Launch Handler",
@@ -309,7 +309,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.ScreenshotsAreFetchable,
                 Description = "The screenshots in your web manifest must be fetchable on the network.",
-                TodoAction = "Fix the links to your screenshots..",
+                TodoAction = "Fix the links to your screenshots.",
                 Level = PwaCapabilityLevel.Recommended,
                 FeatureName = null,
                 FeatureIcon = null,
@@ -489,7 +489,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.Scope,
                 Description = "The scope member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon).",
-                TodoAction = "Define the scope of your PWA by adding a scope field to your manifest.",
+                TodoAction = "Provide a top-level URL path of your PWA by adding a scope field to your manifest.",
                 Level = PwaCapabilityLevel.Optional,
                 FeatureName = null,
                 FeatureIcon = null,

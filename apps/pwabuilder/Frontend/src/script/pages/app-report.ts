@@ -158,7 +158,6 @@ export class AppReport extends LitElement {
   @state() createdManifest: boolean = false;
   @state() manifestContext: ManifestContext | undefined;
 
-  @state() allTodoItems: AnalysisTodo[] = [];
   @state() filteredTodoItems: AnalysisTodo[] = [];
   @state() todoFilters: PwaCapabilityLevel[] = ["Required", "Recommended", "Optional", "Feature"];
   @state() openTooltips: SlDropdown[] = [];
@@ -301,6 +300,11 @@ export class AppReport extends LitElement {
   // Populates the "App Card" from the manifest.
   // Uses the URL for loading the image.
   async populateAppCard(manifestContext: ManifestContext, url?: string) {
+    // If we already have an app card with non-default icon, we can skip this.
+    if (this.appCard && this.appCard.iconURL !== '/assets/new/icon_placeholder.png') {
+      return;
+    }
+    
     let cleanURL = url?.replace(/(^\w+:|^)\/\//, '') || '';
 
     if (manifestContext && !this.createdManifest) {
@@ -354,7 +358,7 @@ export class AppReport extends LitElement {
           : (parsedManifestContext.manifest.name ? parsedManifestContext.manifest.name : 'Untitled App'),
         siteUrl: cleanURL,
         iconURL: iconUrl,
-        iconAlt: "Your sites logo",
+        iconAlt: "Your app logo",
         description: parsedManifestContext.manifest.description
           ? parsedManifestContext.manifest.description
           : 'Add an app description to your manifest',
@@ -365,7 +369,7 @@ export class AppReport extends LitElement {
         siteUrl: cleanURL,
         description: "Your manifest description is missing.",
         iconURL: "/assets/new/icon_placeholder.png",
-        iconAlt: "A placeholder for you sites icon"
+        iconAlt: "A placeholder for your site's icon"
       };
     }
   }
@@ -472,7 +476,9 @@ export class AppReport extends LitElement {
     this.analysis = analysis;
 
     // Apply the manifest and manifest todos
-    this.applyManifestContext(analysis.url, analysis.webManifest?.url, analysis.webManifest?.manifestRaw);
+    if (analysis.webManifest) {
+      this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.manifestRaw);
+    }
 
     this.canPackage = analysis.canPackage;
   }
@@ -869,9 +875,6 @@ export class AppReport extends LitElement {
     this.swRequiredCounter = 0;
     this.enhancementTotalScore = 0;
 
-    // reset todo lsit
-    this.allTodoItems = [];
-
     // reset missing lists
     this.requiredMissingFields = [];
     this.recommendedMissingFields = [];
@@ -1076,26 +1079,6 @@ export class AppReport extends LitElement {
     return;
   }
 
-  // Function to add a special to do to the action items list that tells the user to retest their site.
-  addRetestTodo(toAdd: string) {
-    if (!this.hasItemBeenAdded(toAdd)) {
-      this.allTodoItems.push({ "card": "retest", "field": toAdd, "fix": `We've noticed you've updated your ${toAdd}. Make sure to add your new ${toAdd} to your server and retest your site!`, "status": "retest", "displayString": toAdd });
-      this.requestUpdate();
-    }
-  }
-
-  // function to validate whether or not an retest item has already been added to the ToDo list
-  hasItemBeenAdded(toAdd: string): boolean {
-    var isItemPresent = false;
-    for (var toDoItem of this.allTodoItems) {
-      if (toDoItem.field == toAdd) {
-        isItemPresent = true;
-        break;
-      }
-    }
-    return isItemPresent;
-  }
-
   // Rotates the icon on each details drop down to 0 degrees
   rotateZero(card: string, e?: Event) {
     recordPWABuilderProcessStep(card + "_details_expanded", AnalyticsBehavior.ProcessCheckpoint);
@@ -1240,17 +1223,6 @@ export class AppReport extends LitElement {
         ${this.renderTodoFilterBtn("Feature", features)}
       </div>
     `;
-
-    // const allLevels: PwaCapabilityLevel[] = ["Required", "Recommended", "Feature", "Optional"];
-    // const getLevelCount = (level: PwaCapabilityLevel) => level === "Required" ? required : level === "Recommended" ? recommended : level === "Feature" ? features : optional;
-    // return html`
-    //   <sl-dropdown class="action-item-filter-btns">
-    //     <sl-button size="small" slot="trigger" caret>Filter</sl-button>
-    //     <sl-menu>
-    //       ${repeat(allLevels, l => l, (level) => this.renderTodoFilterMenuItem(level, getLevelCount(level)))}
-    //     </sl-menu>
-    //   </sl-dropdown>
-    // `;
   }
 
 renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
@@ -1259,58 +1231,12 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     const pressedAttr = isSelected ? "true" : "false";
     const selectedClass = isSelected ? "selected" : "";
     return html`
-      <button type="button" class="indicator ${selectedClass}" aria-pressed="${pressedAttr}" @click="${() => this.toggleTodoFilter(level)}">
+      <button type="button" class="indicator ${selectedClass}" aria-pressed="${pressedAttr}" @click="${() => this.toggleTodoFilter(level)}" title="${level}">
         <img src="${img}" alt="" />
         <span>${count}</span>
       </button>
     `;
   };
-
-  // filter todos by severity
-  // filterTodoItems(filter: string, e: Event) {
-  //   e.stopPropagation();
-
-  //   /* let button = this.shadowRoot!.querySelector('[data-indicator="' + filter + '"]');
-  //   let isPressed = button!.getAttribute("aria-pressed") === "true";
-  //   button!.setAttribute("aria-pressed", isPressed ? "false" : "true"); */
-
-  //   recordPWABuilderProcessStep(`${filter}_indicator_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
-  //   this.todoPageNumber = 1;
-
-  //   this.stopShowingNotificationTooltip = true;
-  //   // if its in the list, remove it, else add it
-  //   // yellow means optional and recommended
-  //   if (filter === "yellow") {
-  //     if (this.filterList.includes("optional")) {
-  //       this.filterList = this.filterList.filter((x: string) => (x !== "optional") && (x !== "recommended"))
-  //     } else {
-  //       this.filterList.push("optional")
-  //       this.filterList.push("recommended")
-  //     }
-  //   } else if (this.filterList.includes(filter)) {
-  //     this.filterList = this.filterList.filter((x: string) => x !== filter)
-  //   } else {
-  //     this.filterList.push(filter)
-  //   }
-  //   // if filter list is empty, show everything
-  //   if (this.filterList.length === 0) {
-  //     this.filteredTodoItems = this.allTodoItems;
-  //     return;
-  //   }
-
-
-  //   this.filteredTodoItems = this.allTodoItems.filter((x: any) => this.filterList.includes(x.status));
-  // }
-
-  //truncate app card discription
-  truncateString(str: String) {
-    if (str.length > 125) {
-      return str.substring(0, 125) + "...";
-    } else {
-      return str;
-    }
-  }
 
   handleShowingTooltip(e: CustomEvent, origin: string, field: string) {
     // general counter
@@ -1384,6 +1310,10 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
         `;
     }
 
+    const isRunningTests = !this.analysis || this.analysis.status === "Processing" || this.analysis.status === "Queued";
+    const shareIcon = isRunningTests 
+      ? html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` 
+      : html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
     return html`
       <div id="app-card" class="flex-col" style=${this.createdManifest ? styleMap({ backgroundColor: '#ffffff', color: '#757575' }) : styleMap(this.CardStyles)}>
           <div id="app-card-header">
@@ -1397,26 +1327,19 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
                   <span class="visually-hidden" aria-live="polite">Report card page for ${this.appCard.siteName}</span>
                 </h1>
                 <p id="site-url">${this.appCard.siteUrl}</p>
-                <p id="app-card-desc" class="app-card-desc-desktop">${this.truncateString(this.appCard.description)}</p>
+                <p id="app-card-desc" class="app-card-desc-desktop">${this.appCard.description}</p>
               </div>
               <div id="app-card-share-cta">
                 <button type="button" id="share-button-desktop" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                ${this.runningTests ?
-        html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-        html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-      } Share score
+                ${shareIcon} Share score
                 </button>
               </div>
             </div>
             <div id="app-card-desc-mobile">
-              <p id="app-card-desc">${this.truncateString(this.appCard.description)}</p>
+              <p id="app-card-desc">${this.appCard.description}</p>
               <button type="button" id="share-button-mobile" class="share-banner-buttons" @click=${() => this.openShareCardModal()} ?disabled=${this.runningTests}>
-                ${this.runningTests ?
-        html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon_disabled.svg" role="presentation"/>` :
-        html`<img id="share-icon" class="banner-button-icons" src="/assets/share_icon.svg" role="presentation"/>`
-      } Share score
+                ${shareIcon} Share score
                 </button>
-
             </div>
           </div>
           <div id="app-card-footer">
@@ -1459,7 +1382,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
       <sl-tooltip class="mani-tooltip">
         ${this.runningTests ?
         html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
-        html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check your To-do-list and handle all required items!</p></div>`}
+        html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check Action Items below and fix the missing requirements.</p></div>`}
             <button
               type="button"
               id="pfs-disabled"
@@ -1563,7 +1486,8 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     const indicatorOrTooltip = this.stopShowingNotificationTooltip ?
       this.renderTodoFilters()
       : this.renderTodoTooltip();
-    const indicatorOrTooltipOrEmpty = this.allTodoItems.length === 0 ? html`` : indicatorOrTooltip;
+    const indicatorOrTooltipOrEmpty = (this.analysis?.capabilities || []).filter(c => c.status === "Failed").length === 0
+      ? html`` : indicatorOrTooltip;
 
     const isLoading = !this.analysis || this.analysis.capabilities.some(c => c.status === "InProgress");
     const spinnerClass = isLoading ? "" : "d-none";
@@ -1842,23 +1766,41 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
         </div>
       </div>
 
-
       <sl-dialog class="dialog" ?open=${this.showConfirmationModal} @sl-hide=${() => { this.showConfirmationModal = false; this.readDenied = false; }} noHeader>
         ${this.renderReadDialog()}
       </sl-dialog>
 
-      <share-card
-        .manifestData=${`${this.manifestValidCounter}/${this.manifestTotalScore}/${this.getRingColor("manifest")}/Manifest`}
-        .swData=${`${this.swValidCounter}/purple/Service Worker`}
-        .enhancementsData=${`${this.enhancementTotalScore}/purple/App Capabilities`}
-        .siteName=${this.appCard.siteName}
-      > </share-card>
+      ${this.renderShareScore()}
 
       <publish-pane></publish-pane>
       <test-publish-pane></test-publish-pane>
       ${this.renderManifestEditorPane()}
-      <sw-selector @readyForRetest=${() => this.addRetestTodo("Service Worker")}></sw-selector>
+      <sw-selector></sw-selector>
 
+    `;
+  }
+
+  renderShareScore(): TemplateResult {
+    if (!this.analysis) {
+      return html``;
+    }
+
+    const caps = this.analysis.capabilities;
+    const manifestCaps = caps.filter(c => c.category === "WebAppManifest");
+    const manifestPassCount = manifestCaps.filter(c => c.status === "Passed").length;
+    const manifestTotalCount = manifestCaps.length;
+    const manifestStr = `${manifestPassCount}/${manifestTotalCount}/${this.getRingColor("manifest")}/Manifest`;
+    const swCaps = caps.filter(c => c.category === "ServiceWorker");
+    const swPassCount = swCaps.filter(c => c.status === "Passed").length;
+    const features = caps.filter(c => !!c.featureName && c.category !== "ServiceWorker" && c.status === "Passed"); // We skip service worker features here because they're counted in the Service Worker section.
+
+    return html`
+      <share-card
+        .manifestData=${manifestStr}
+        .swData=${`${swPassCount}/purple/Service Worker`}
+        .enhancementsData=${`${features.length}/purple/App Capabilities`}
+        .siteName=${this.appCard.siteName}>
+      </share-card>
     `;
   }
 
@@ -2058,13 +2000,12 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
       return html``;
     }
 
-    return html`
+    // @readyForRetest=${() => this.addRetestTodo("Manifest")}
+    return html`      
       <manifest-editor-frame 
         .isGenerated=${this.createdManifest} 
         .startingTab=${this.startingManifestEditorTab} 
-        .focusOn=${this.focusOnME} 
-        @readyForRetest=${() => this.addRetestTodo("Manifest")}>
-      </manifest-editor-frame>
+        .focusOn=${this.focusOnME}></manifest-editor-frame>
     `;
   }
 
