@@ -171,11 +171,6 @@ public class AnalysisJobProcessor : IHostedService
         }
     }
 
-    private async Task<List<PwaCapability>> TryRunManfestAnalyzerAfterLighthouseReport(ManifestDetection? webManifest)
-    {
-        throw new NotImplementedException();
-    }
-
     private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, Analysis analysis, AnalysisLogger logger, CancellationToken cancelToken)
     {
         try
