@@ -30,7 +30,7 @@ if (import.meta.env.PROD) {
   env.imageGeneratorUrl =
     'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
-    'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
+    '/api/images/getSafeImageForAnalysis';
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
@@ -50,7 +50,7 @@ if (import.meta.env.PROD) {
   env.imageGeneratorUrl =
     'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
-    'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
+    '/api/images/getSafeImageForAnalysis';
   env.webPackageGeneratorFormUrl =
     'https://pwabuilder-web-platform.azurewebsites.net/form';
   env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
