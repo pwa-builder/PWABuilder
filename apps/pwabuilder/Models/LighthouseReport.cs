@@ -98,6 +98,22 @@ public sealed class LighthouseReport
         return this.IsOnHttpsAudit.Score == 1 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
+    /// <summary>
+    /// Gets a status indicating whether the Lighthouse report has detected a valid web app manifest.
+    /// </summary>
+    /// <returns></returns>
+    public PwaCapabilityCheckStatus GetHasManifestCapability()
+    {
+        var manifestUrl = this.WebAppManifestAudit?.Details?.ManifestUrl;
+        var manifestRaw = this.WebAppManifestAudit?.Details?.ManifestRaw;
+        if (manifestUrl != null && manifestRaw != null)
+        {
+            return PwaCapabilityCheckStatus.Passed;
+        }
+
+        return PwaCapabilityCheckStatus.Failed;
+    }
+
     private LighthouseAudit? GetAuditByName(string name)
     {
         if (this.Audits?.TryGetValue(name, out var audit) == true)

@@ -28,22 +28,24 @@ public class ManifestAnalyzer
     /// Goes through all the manifest-specific capabilities of the specified <paramref name="analysis"/> and checks if the manifest passes.
     /// </summary>
     /// <param name="manifestDetection">The web app manifest detection results. This can be null if no web app manifest was detect.</param>
+    /// <param name="noManifestStatus">The status to assign to the "has manifest" capability if no manifest was detected.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
     /// <param name="logger">The logger to log data to.</param>
     /// <returns>A list of PWA capabilities and their statuses.</returns>
-    public async Task<List<PwaCapability>> TryAnalyzeManifestAsync(ManifestDetection? manifestDetection, ILogger logger, CancellationToken cancelToken)
+    public async Task<List<PwaCapability>> TryAnalyzeManifestAsync(ManifestDetection? manifestDetection, PwaCapabilityCheckStatus noManifestStatus, ILogger logger, CancellationToken cancelToken)
     {
         var manifestCapabilities = PwaCapability.CreateManifestCapabilities();
 
-        // No manifest? Mark all the manifest capabilities as skipped.
+        // No manifest? Mark all the manifest capabilities as skipped for now.
         if (manifestDetection == null)
         {
             logger.LogInformation("No manifest to analyze. Skipping manifest capability checks.");
 
-            // Mark the "manifest exists" capability as failed.
+            // Mark the "manifest exists" capability with the desired status..
             var manifestExistsCapability = manifestCapabilities.First(c => c.Id == PwaCapabilityId.HasManifest);
-            manifestExistsCapability.Status = PwaCapabilityCheckStatus.Failed;
+            manifestExistsCapability.Status = noManifestStatus;
 
-            // Mark all other manifest capabilities as skipped.
+            // Mark all other manifest capabilities as skipped for now.
             manifestCapabilities
                 .Except([manifestExistsCapability])
                 .ToList()
@@ -97,7 +99,7 @@ public class ManifestAnalyzer
 
         return capability.Id switch
         {
-            PwaCapabilityId.HasManifest => new PwaManifestCapabilityCheck(capability, m => m != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed),
+            PwaCapabilityId.HasManifest => new PwaManifestCapabilityCheck(capability, m => m != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.InProgress), // If we don't have a manifest, mark only as In Progress. The Lighthouse report will have the final say of whether there's a manifest. 
             PwaCapabilityId.Name => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "name")),
             PwaCapabilityId.Description => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "description")),
             PwaCapabilityId.ThemeColor => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "theme_color", 3)),
@@ -169,6 +171,24 @@ public class ManifestAnalyzer
             foreach (var icon in icons.EnumerateArray())
             {
                 var isDesiredType = icon.TryGetProperty("type", out var iconType) && iconType.ValueKind == JsonValueKind.String && string.Equals(iconType.GetString(), imageType, StringComparison.OrdinalIgnoreCase);
+
+                // If there was no type defined, see if we can sus it out using the file extension.
+                if (!isDesiredType && !icon.TryGetProperty("type", out _))
+                {
+                    var hasSrcProp = icon.TryGetProperty("src", out var src);
+                    if (hasSrcProp && src.ValueKind == JsonValueKind.String)
+                    {
+                        var fileExtension = Path.GetExtension(src.GetString());
+                        isDesiredType = fileExtension switch
+                        {
+                            ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
+                            ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
+                            ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
+                            _ => false
+                        };
+                    }
+                }
+
                 if (isDesiredType)
                 {
                     var hasSizeProp = icon.TryGetProperty("sizes", out var sizes)

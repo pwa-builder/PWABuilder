@@ -73,7 +73,8 @@ export class ManifestInfoCard extends LitElement {
 
       .image-section img {
         padding: 10px 20px;
-        width: 300px;
+        max-width: 300px;
+        max-height: 400px;
         height: auto;
       }
 

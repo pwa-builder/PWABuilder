@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Headers;
-using static System.Net.WebRequestMethods;
+﻿using System.Net.Http.Headers;
 
 namespace PWABuilder.Common
 {

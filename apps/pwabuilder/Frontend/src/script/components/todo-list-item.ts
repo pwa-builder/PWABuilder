@@ -126,12 +126,12 @@ export class TodoItem extends LitElement {
   }
 
   renderServiceWorkerInfoCard(): TemplateResult {
-    if (this.card !== "ServiceWorker") {
+    if (this.card !== "ServiceWorker" && this.card !== "Https") {
       return html``;
     }
 
     return html`
-      <sw-info-card .field=${this.field} .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
+      <sw-info-card capabilityId="${this.field}" description="${this.description || ""}" docsUrl="${this.docsUrl || ""}" .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
         <button slot="trigger" type="button" class="right">
           <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
         </button>

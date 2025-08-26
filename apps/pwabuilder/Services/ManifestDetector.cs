@@ -1,6 +1,5 @@
 using PWABuilder.Common;
 using PWABuilder.Models;
-using PWABuilder.Validations;
 using System.Text.Json;
 
 namespace PWABuilder.Services;
@@ -8,13 +7,11 @@ namespace PWABuilder.Services;
 public class ManifestDetector
 {
     private readonly WebStringCache webStringCache;
-    private readonly HttpClient http;
     private readonly IPuppeteerService puppeteer;
 
-    public ManifestDetector(WebStringCache webStringCache, IHttpClientFactory httpClientFactory, IPuppeteerService puppeteer)
+    public ManifestDetector(WebStringCache webStringCache, IPuppeteerService puppeteer)
     {
         this.webStringCache = webStringCache;
-        http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
         this.puppeteer = puppeteer;
     }
 
@@ -40,6 +37,43 @@ public class ManifestDetector
             logger.LogInformation("No manifest detected for {appUrl} in either HTML parsing or Puppeteer.", appUrl);
             return null;
         }
+
+        return webManifest;
+    }
+
+    /// <summary>
+    /// Inspects a LighthouseReport and sees if it's possible to generate a ManifestDetection from it.
+    /// </summary>
+    /// <param name="report">The Lighthouse report.</param>
+    /// <param name="logger">The logger.</param>
+    /// <returns>A <see cref="ManifestDetection"/> if the Lighthouse report found a valid manifest, otherwise null.</returns>
+    public ManifestDetection? TryDetectFromLighthouse(LighthouseReport? report, ILogger logger)
+    {
+        var manifestUrl = report?.WebAppManifestAudit?.Details?.ManifestUrl;
+        var manifestRaw = report?.WebAppManifestAudit?.Details?.ManifestRaw;
+        if (manifestUrl == null || manifestRaw == null || !Uri.TryCreate(manifestUrl, UriKind.Absolute, out var manifestUri))
+        {
+            return null;
+        }
+
+        JsonElement manifest;
+        try
+        {
+            manifest = JsonSerializer.Deserialize<JsonElement>(manifestRaw);
+        }
+        catch (Exception jsonParsingError)
+        {
+            logger.LogWarning(jsonParsingError, "Lighthouse report contained invalid JSON for the manifest at {manifestUrl}.", manifestUrl);
+            return null;
+        }
+
+        // Create a new ManifestDetection from the LighthouseReport
+        var webManifest = new ManifestDetection
+        {
+            Url = manifestUri,
+            ManifestRaw = manifestRaw,
+            Manifest = manifest
+        };
 
         return webManifest;
     }
@@ -105,7 +139,7 @@ public class ManifestDetector
 
         try
         {
-            var manifestJson = await http.GetStringAsync(manifestUrl, Constants.ManifestMimeTypes, 1024 * 1024 * 5, cancelToken);
+            var manifestJson = await webStringCache.Get(manifestUrl, Constants.ManifestMimeTypes, cancelToken, 1024 * 1024 * 5);
             if (string.IsNullOrWhiteSpace(manifestJson))
             {
                 logger.LogWarning("Manifest at {manifestUrl} returned empty content.", manifestUrl);

@@ -368,11 +368,20 @@ sl-progress-ring::part(base) {
 #last-edited {
     white-space: nowrap;
     margin: 0;
+
+    .view-log-btn::part(label) {
+        padding: 2px 0 0 0;
+        font-size: 0.7em;
+    }
 }
 
 #test, #last-edited {
     font-size: 12px;
     line-height: 18px;
+}
+
+#test {
+    display: flex;
 }
 
 
@@ -1433,19 +1442,39 @@ sl-tooltip::part(base){
     clip-path: none;
 }
 
+.analysis-logs-dialog {
+    &::part(title) {
+        padding-bottom: 0;
+    }
+
+    &::part(body) {
+        padding-top: 0;
+    }
+
+    h3 {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    sl-textarea::part(textarea) {
+        font-size: 0.7em;
+        overflow: auto;
+    }
+}
+
 @keyframes rotate {
     100%   {transform: rotate(360deg)}
 }
 
 @keyframes pulse {
     0% {
-    opacity: 1;
+        opacity: 1;
     }
     50% {
-    opacity: 0.4;
+        opacity: 0.4;
     }
     100% {
-    opacity: 1;
+        opacity: 1;
     }
 }
 
@@ -1459,46 +1488,46 @@ sl-tooltip::part(base){
 
 @media(max-width: 900px){
     #header-row {
-    flex-direction: column-reverse;
-    row-gap: 1em;
+        flex-direction: column-reverse;
+        row-gap: 1em;
     }
 
     #app-card{
-    width: 100%;
+        width: 100%;
     }
     #app-actions {
-    width: 100%;
+        width: 100%;
     }
 
     #two-cell-row {
-    flex-direction: column;
-    row-gap: 1em;
+        flex-direction: column;
+        row-gap: 1em;
     }
     #two-cell-row > * {
-    width: 100%;
-    height: unset;
+        width: 100%;
+        height: unset;
     }
     #sw-header {
-    min-height: unset;
+        min-height: unset;
     }
     #sec-header {
-    min-height: unset;
+        min-height: unset;
     }
     #manifest-header {
-    grid-template-columns: 4fr 4fr 1fr;
-    grid-template-rows: min-content 1fr;
+        grid-template-columns: 4fr 4fr 1fr;
+        grid-template-rows: min-content 1fr;
     }
     #mh-content {
-    grid-area: 1 / 1 / 2 / 3;
+        grid-area: 1 / 1 / 2 / 3;
     }
     #mh-actions {
-    align-items: unset;
+        align-items: unset;
     }
     #sw-actions {
-    width: 42%
+        width: 42%
     }
     #sw-actions button {
-    width: 100%;
+        width: 100%;
     }
 }
 
@@ -1507,246 +1536,246 @@ sl-tooltip::part(base){
 } */
 @media(max-width: 376px){
     #pwa-image-holder {
-    width: 61px !important;
+        width: 61px !important;
     }
     #pwa-image-holder img {
-    width: 55px !important;
+        width: 55px !important;
     }
 }
 
 
 @media(max-width: 600px){
     #app-card-header-col {
-    gap: 10px;
+        gap: 10px;
     }
     #pwa-image-holder {
-    width: 90px;
-    height: auto;
+        width: 90px;
+        height: auto;
     }
     #pwa-image-holder img {
-    width: 84px;
-    height: auto;
+        width: 84px;
+        height: auto;
     }
     #card-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     #app-card-desc {
-    max-width: 100%;
+        max-width: 100%;
     }
     #share-button-desktop {
-    display: none;
+        display: none;
     }
     #share-button-mobile {
-    display: flex;
+        display: flex;
     }
     #app-card-desc-mobile {
-    display: flex;
-    flex-direction: column;
+        display: flex;
+        flex-direction: column;
     }
     .app-card-desc-desktop {
-    display: none;
+        display: none;
     }
     #site-name {
-    font-size: 20px;
+        font-size: 20px;
     }
     #site-url {
-    margin-bottom: 8px !important;
+        margin-bottom: 8px !important;
     }
 
     #site-name, #site-url{
-    /* 84 is app icon size, 4em is padding, 20px is gap */
-    max-width: calc((100cqi - 84px) - 4em - 20px);
-}
+        /* 84 is app icon size, 4em is padding, 20px is gap */
+        max-width: calc((100cqi - 84px) - 4em - 20px);
+    }
 
     #app-card-share-cta {
-    justify-content: start;
+        justify-content: start;
     }
     #app-card-share-cta #share-button-mobile {
-    width: 100px;
+        width: 100px;
     }
     #app-card-desc, .skeleton-desc {
-    grid-column: 1 / 3;
+        grid-column: 1 / 3;
     }
 
     #sw-actions {
-    width: 100%;
+        width: 100%;
     }
     #sw-actions button {
-    margin-top: 20px;
-    width: 100%;
+        margin-top: 20px;
+        width: 100%;
     }
 
     #mh-actions {
-    grid-area: 2/1/3/4;
+        grid-area: 2/1/3/4;
     }
     #mh-actions button {
-    width: 100%;
+        width: 100%;
     }
 }
 
 ${mediumBreakPoint(css`
     #mh-content {
-    flex-direction: column;
+        flex-direction: column;
     }
 
     #mh-text {
-    width: 100%;
+        width: 100%;
     }
 
     #manifest-detail-grid{
-    display: flex;
-    flex-direction: column;
+        display: flex;
+        flex-direction: column;
     }
 
     sl-progress-ring {
-    --size: 75px;
-    --track-width: 4px;
-    --subheader-font-size: 14px;
+        --size: 75px;
+        --track-width: 4px;
+        --subheader-font-size: 14px;
     }
     .progressRingSkeleton::part(base), .loader-round.large  {
-    width: 75px;
-    height: 75px;
+        width: 75px;
+        height: 75px;
     }
 
     #share-card {
-    flex-direction: column-reverse;
+        flex-direction: column-reverse;
     }
 
     #share-card-content {
-    flex-direction: column-reverse;
+        flex-direction: column-reverse;
     }
 
     #share-card-text {
-    margin-left: 0;
-    margin-bottom: 0;
-    text-align: center;
+        margin-left: 0;
+        margin-bottom: 0;
+        text-align: center;
     }
 
     #share-card-mani {
-    position: unset;
+        position: unset;
     }
 `)}
 
 ${smallBreakPoint(css`
     sl-progress-ring {
-    --size: 75px;
-    --track-width: 4px;
-    --indicator-width: 6px;
-    font-size: 14px;
+        --size: 75px;
+        --track-width: 4px;
+        --indicator-width: 6px;
+        font-size: 14px;
     }
 
     .progressRingSkeleton::part(base), .loader-round.large {
-    width: 75px;
-    height: 75px;
+        width: 75px;
+        height: 75px;
     }
 
     #header-row {
-    flex-direction: column-reverse;
-    row-gap: 1.5em;
+        flex-direction: column-reverse;
+        row-gap: 1.5em;
     }
 
     #app-card{
-    width: 100%;
+        width: 100%;
     }
 
     #app-actions {
-    width: 100%;
+        width: 100%;
     }
 
     #app-actions .arrow_link {
-    font-size: 12px;
+        font-size: 12px;
     }
 
     #retest img {
-    height: 14px;
+        height: 14px;
     }
 
     #package{
-    width: 50%;
-    row-gap: .75em;
+        width: 50%;
+        row-gap: .75em;
     }
 
     #test-download {
-    font-size: 10px;
+        font-size: 10px;
     }
 
     #mh-content {
-    flex-direction: column;
+        flex-direction: column;
     }
 
     #mh-text {
-    width: 100%;
+        width: 100%;
     }
     #mh-actions {
-    align-items: flex-start;
+        align-items: flex-start;
     }
 
     #manifest-detail-grid{
-    display: flex;
-    flex-direction: column;
+        display: flex;
+        flex-direction: column;
     }
 
     #report-wrapper .alternate {
-    font-size: 16px;
+        font-size: 16px;
     }
 
     .half-width-cards {
-    width: 100%;
+        width: 100%;
     }
 
     #actions-footer p {
-    font-size: 14px;
+        font-size: 14px;
     }
 
     #actions-footer img {
-    height: 18px;
-    width: auto;
+        height: 18px;
+        width: auto;
     }
     #last-edited {
-    font-size: 14px;
+        font-size: 14px;
     }
     #manifest-header, #sw-header, #sec-header {
-    padding-bottom: 2.5em;
+        padding-bottom: 2.5em;
     }
     #manifest-header {
-    gap: 0;
-    row-gap: 20px;
+        gap: 0;
+        row-gap: 20px;
     }
     #mh-actions, #sw-actions, #sec-header {
-    row-gap: 1.5em;
+        row-gap: 1.5em;
     }
 
     #share-card {
-    flex-direction: column-reverse;
+        flex-direction: column-reverse;
     }
 
     #share-card-content {
-    flex-direction: column-reverse;
+        flex-direction: column-reverse;
     }
 
     #share-card-text {
-    margin-left: 0;
-    margin-bottom: 0;
-    text-align: center;
+        margin-left: 0;
+        margin-bottom: 0;
+        text-align: center;
     }
 
     #share-card-mani {
-    position: unset;
+        position: unset;
     }
 
     .icons-holder {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    place-content: center;
-    gap: 25px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        place-content: center;
+        gap: 25px;
     }
 
     .icons-holder.sw {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
     }
 `)}
 `;

@@ -1,4 +1,5 @@
 
+using System.Text.Json;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
@@ -121,7 +122,7 @@ public class AnalysisJobProcessor : IHostedService
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
             var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelToken)).Unwrap(); // This will update analysis.Capabilities.
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, logger, cancelToken)).Unwrap();
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, PwaCapabilityCheckStatus.InProgress, logger, cancelToken)).Unwrap();
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
@@ -147,6 +148,17 @@ public class AnalysisJobProcessor : IHostedService
             analysis.ProcessLighthouseReport(lighthouseReport, analysisLogger);
             await db.SaveAsync(analysis);
 
+            // Step 6, if we didn't find a manifest but Lighthouse found one,
+            // create a new ManifestDetection and rerun the manifest analyzer.
+            // This is needed for some edge cases where the manifest isn't picked up by our manifest detection service, but is picked up by Lighthouse. Example edge case: https://www.instagram.com/?utm_source=pwa_homescreen&__pwa=1
+            if (analysis.WebManifest == null)
+            {
+                analysis.WebManifest = manifestDetector.TryDetectFromLighthouse(lighthouseReport, analysisLogger);
+                var updatedManifestCapabilities = await manifestAnalyzer.TryAnalyzeManifestAsync(analysis.WebManifest, PwaCapabilityCheckStatus.Failed, analysisLogger, cancelToken);
+                analysis.ProcessCapabilities(updatedManifestCapabilities);
+                await db.SaveAsync(analysis);
+            }            
+
             // All done! Mark the analysis as completed.
             analysis.Status = AnalysisStatus.Completed;
             analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
@@ -157,6 +169,11 @@ public class AnalysisJobProcessor : IHostedService
         {
             await RetryJobOrFail(job, error);
         }
+    }
+
+    private async Task<List<PwaCapability>> TryRunManfestAnalyzerAfterLighthouseReport(ManifestDetection? webManifest)
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, Analysis analysis, AnalysisLogger logger, CancellationToken cancelToken)

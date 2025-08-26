@@ -88,7 +88,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.HasManifest,
                 Description = "A web manifest is a JSON text file that provides information about a web app.",
-                TodoAction = "Create a web manifest for your web app.",
+                TodoAction = "Create a web app manifest.",
                 Level = PwaCapabilityLevel.Required,
                 FeatureName = null,
                 FeatureIcon = null,
@@ -233,8 +233,8 @@ public class PwaCapability
             new PwaCapability
             {
                 Id = PwaCapabilityId.LaunchHandler,
-                Description = "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc. For example, yo ucan specify when navigation should focus an existing instance of your app (single-instance app), navigate in an existing instance, or open a new instance of your app.",
-                TodoAction = "Take control over how your app is launched -- single instance? focus existing? navigate in new window? -- by adding launch_handler to your manifest.",
+                Description = "The launch_handler member specifies how your app will launch when navigated. For example, you can specify that navigations to your PWA domain should focus an existing instance of your app (single-instance app), navigate in an existing instance, or open a new instance of your app.",
+                TodoAction = "Take control over how your app is launched -- single instance, focus existing, or navigate in new window -- by adding launch_handler to your manifest.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Launch Handler",
                 FeatureIcon = new Uri("/assets/new/launch_handler_icon.png", UriKind.Relative),
@@ -549,7 +549,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.Orientation,
                 Description = "The orientation member is a string that determines the developers' preferred orientation for their PWA. The orientation can be any of the following: any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary.",
-                TodoAction = "Add an orientation to your manifest.",
+                TodoAction = "Specify your app's preferred device orientation by adding orientation to your manifest.",
                 Level = PwaCapabilityLevel.Recommended,
                 FeatureName = null,
                 FeatureIcon = null,
@@ -635,7 +635,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.HasServiceWorker,
                 Description = "Service Workers sit between your web app and the network. They are intended to enable the creation of effective offline experiences, intercept network requests, and take appropriate action based on whether the network is available. They also allow access to push notifications and background sync APIs.",
-                TodoAction = "Make your app faster and more reliable by adding a service worker to your web app.",
+                TodoAction = "Make your app faster and more reliable by adding a service worker.",
                 Level = PwaCapabilityLevel.Recommended,
                 FeatureName = "Has Service Worker",
                 FeatureIcon = new Uri("/assets/new/has_service_worker_icon.svg", UriKind.Relative),

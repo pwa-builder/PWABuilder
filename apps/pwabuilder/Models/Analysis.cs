@@ -122,6 +122,7 @@ public class Analysis
         var offlineCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.OfflineSupport);
         var httpsCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasHttps);
         var noMixedContentCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.NoMixedContent);
+        var hasManifestCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasManifest);
 
         // No lighthouse report? Mark these as skipped.
         if (lighthouseReport == null)
@@ -136,6 +137,12 @@ public class Analysis
         offlineCapability.Status = lighthouseReport.GetOfflineCapability();
         httpsCapability.Status = lighthouseReport.GetHttpsCapability();
         noMixedContentCapability.Status = lighthouseReport.GetNoMixedContentCapability();
+
+        // If the "has manifest" capability is still processing, update it based on the Lighthouse report.
+        if (hasManifestCapability.Status == PwaCapabilityCheckStatus.InProgress)
+        {
+            hasManifestCapability.Status = lighthouseReport.GetHasManifestCapability();
+        }
     }
 
     /// <summary>
