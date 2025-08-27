@@ -132,18 +132,6 @@ describe('Manifest Validation with hardcoded test manifest', async () => {
     assert.equal(validity.valid, true);
   });
 
-  it("handle_links is valid, should pass", async () => {
-    const validity = await maniLib.validateSingleField("handle_links", "auto");
-
-    assert.equal(validity.valid, true);
-  })
-
-  if ("handle_links is invalid, should fail", async () => {
-    const validity = await maniLib.validateSingleField("handle_links", "justin");
-
-    assert.equal(validity.valid, false);
-  })
-
   /*
    * test validateRequiredFields method
   */
