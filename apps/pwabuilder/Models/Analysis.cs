@@ -124,13 +124,16 @@ public class Analysis
         var noMixedContentCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.NoMixedContent);
         var hasManifestCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasManifest);
 
-        // No lighthouse report? Mark these as skipped.
+        // No lighthouse report? Mark these as skipped, and mark the "has manifest" capability as failed if we're still waiting for it.
         if (lighthouseReport == null)
         {
             offlineCapability.Status = PwaCapabilityCheckStatus.Skipped;
             httpsCapability.Status = PwaCapabilityCheckStatus.Skipped;
             noMixedContentCapability.Status = PwaCapabilityCheckStatus.Skipped;
-            logger.LogWarning("Skipped checks offline support, HTTPS, and mixed content due to missing Lighthouse report.");
+            if (hasManifestCapability.Status == PwaCapabilityCheckStatus.InProgress)
+            {
+                hasManifestCapability.Status = PwaCapabilityCheckStatus.Failed;
+            }
             return;
         }
 
