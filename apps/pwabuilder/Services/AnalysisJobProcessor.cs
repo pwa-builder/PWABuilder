@@ -211,6 +211,10 @@ public class AnalysisJobProcessor : IHostedService
             {
                 analysis.Status = AnalysisStatus.Failed;
                 analysis.Error = error.ToString();
+                analysis.Capabilities
+                    .Where(capability => capability.Status == PwaCapabilityCheckStatus.InProgress)
+                    .ToList()
+                    .ForEach(capability => capability.Status = PwaCapabilityCheckStatus.Skipped);
                 await db.SaveAsync(analysis);
             }
             else
