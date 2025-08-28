@@ -197,7 +197,7 @@ public class ManifestDetector
             doc.LoadHtml(html);
             var manifestHref = doc.DocumentNode?
                 .SelectNodes("//link[@rel='manifest']")
-                .Where(n => !string.IsNullOrWhiteSpace(n.Attributes["href"]?.Value))
+                .Where(n => n != null && n.Attributes != null && !string.IsNullOrWhiteSpace(n.Attributes["href"]?.Value))
                 .Select(n => n.Attributes["href"].Value)
                 .Where(v => !string.IsNullOrEmpty(v))
                 .FirstOrDefault();

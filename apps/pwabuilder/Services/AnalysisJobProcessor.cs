@@ -116,12 +116,6 @@ public class AnalysisJobProcessor : IHostedService
             // Mark the analysis as processing.
             analysis.Status = AnalysisStatus.Processing;
             await db.SaveAsync(analysis);
-            
-            if (analysis.Url.ToString().Contains("cnn.com"))
-            {
-                await this.MarkAnalysisAsFailedAsync(analysis.Id, new Exception("Analysis of cnn.com is blocked."));
-                return;
-            }
 
             // Kick off the independent jobs simultaneously so that our analysis completes faster.
             var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysisLogger, cancelToken);
@@ -194,7 +188,7 @@ public class AnalysisJobProcessor : IHostedService
     {
         if (job.RetryCount < MaxRetryCount)
         {
-            logger.LogWarning(error, "Error processing AnalysisJob {id} during attempt {number} of {max}. Retrying...", job.Id, job.RetryCount + 1, MaxRetryCount);
+            logger.LogWarning(error, "Error processing AnalysisJob {id} for {url} during attempt {number} of {max}. Retrying...", job.Id, job.AnalysisId, job.RetryCount + 1, MaxRetryCount);
             job.RetryCount++;
             await queue.EnqueueAsync(job);
             logger.LogInformation("Re-enqueued AnalysisJob with ID {JobId} for retry.", job.Id);

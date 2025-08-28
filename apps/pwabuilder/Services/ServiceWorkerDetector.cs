@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Validations.Models;
@@ -43,27 +45,89 @@ public class ServiceWorkerDetector
         // Couldn't find the service worker? See if we can via Puppeteer.
         if (serviceWorker == null)
         {
-            serviceWorker = await TryFetchServiceWorkerWithPuppeteer(appUrl, logger, cancelToken);
+            serviceWorker = await TryFetchServiceWorkerWithPuppeteer(appUrl, retryOnFailure: true, logger, cancelToken);
         }
 
         return serviceWorker;
     }
 
-    private async Task<ServiceWorkerDetection?> TryFetchServiceWorkerWithPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<ServiceWorkerDetection?> TryFetchServiceWorkerWithPuppeteer(Uri appUrl, bool retryOnFailure, ILogger logger, CancellationToken cancelToken)
     {
-        using var page = await puppeteer.Navigate(appUrl);
-        var jsGetServiceWorker =
-            @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting?.scriptURL : null ) : Promise.resolve(null))";
-        var serviceWorkerUrl = await page.EvaluateExpressionAsync<string>(jsGetServiceWorker);
-        if (serviceWorkerUrl == null)
+        try
         {
-            logger.LogWarning("Service worker not found in Puppeteer for {appUrl}", appUrl);
+            using var page = await puppeteer.Navigate(appUrl);
+            var serviceWorkerUrl = await TryGetServiceWorkerUrlFromPuppeteer(page, logger);
+            if (string.IsNullOrWhiteSpace(serviceWorkerUrl))
+            {
+                logger.LogWarning("Service worker not found in Puppeteer for {appUrl}", appUrl);
+                return null;
+            }
+
+            // Cool. Can we grab the script contents? That'd be fabulous and we can skip fetching it from C#.
+            var serviceWorkerUri = new Uri(appUrl, serviceWorkerUrl);
+            var serviceWorkerContent = await TryGetServiceWorkerContentsFromPuppeteer(page, logger);
+            if (!string.IsNullOrWhiteSpace(serviceWorkerContent))
+            {
+                return new ServiceWorkerDetection
+                {
+                    Raw = serviceWorkerContent,
+                    Url = serviceWorkerUri,
+                };
+            }
+
+            // We couldn't grab the service worker contents from Puppeteer. 
+            // See if we can grab it from the network ourselves.
+            var serviceWorker = await TryFetchServiceWorker(serviceWorkerUri, logger, cancelToken);
+            return serviceWorker;
+        }
+        catch (Exception error)
+        {
+            if (retryOnFailure)
+            {
+                return await TryFetchServiceWorkerWithPuppeteer(appUrl, retryOnFailure: false, logger, cancelToken);
+            }
+            else
+            {
+                logger.LogWarning(error, "Failed to detect service worker via Puppeteer for {appUrl}.", appUrl);
+                return null;
+            }
+        }
+    }
+
+    private static async Task<string?> TryGetServiceWorkerUrlFromPuppeteer(IPage puppeteerPage, ILogger logger)
+    {
+        try
+        {
+            var jsGetServiceWorker = @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting?.scriptURL : null ) : Promise.resolve(null))";
+            var serviceWorkerUrl = await puppeteerPage.EvaluateExpressionAsync<string?>(jsGetServiceWorker);
+            return serviceWorkerUrl;
+        }
+        catch (Exception evalError)
+        {
+            logger.LogError(evalError, "Error evaluating script to find service worker URL in Puppeteer.");
             return null;
         }
+    }
 
-        var serviceWorkerUri = new Uri(appUrl, serviceWorkerUrl);
-        var serviceWorker = await TryFetchServiceWorker(serviceWorkerUri, logger, cancelToken);
-        return serviceWorker;
+    private static async Task<string?> TryGetServiceWorkerContentsFromPuppeteer(IPage puppeteerPage, ILogger logger)
+    {
+        try
+        {
+            var jsGetServiceWorkerContent = @"
+                navigator.serviceWorker.getRegistration().then(registration => {
+                    if (!registration || !registration.active) return null;
+                    return fetch(registration.active.scriptURL)
+                        .then(response => response.text())
+                        .catch(() => null);
+                })";
+            var serviceWorkerContent = await puppeteerPage.EvaluateExpressionAsync<string?>(jsGetServiceWorkerContent);
+            return serviceWorkerContent;
+        }
+        catch (Exception evalError)
+        {
+            logger.LogWarning(evalError, "Error evaluating script to get service worker content in Puppeteer.");
+            return null;
+        }
     }
 
     private async Task<ServiceWorkerDetection?> TryFetchServiceWorker(Uri? serviceWorkerUrl, ILogger logger, CancellationToken cancelToken)

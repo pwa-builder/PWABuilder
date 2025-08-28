@@ -25,17 +25,23 @@ public static class HttpClientExtensions
         }
 
         // Send it.
-        var htmlFetch = await client.SendAsync(htmlFetchRequest, cancelToken);
+        var htmlFetch = await client.SendAsync(htmlFetchRequest, HttpCompletionOption.ResponseHeadersRead, cancelToken);
+
+        // We have a max size, so we need to check the content length.
+        // First, ensure we've got success.
+        htmlFetch.EnsureSuccessStatusCode();
+
+        // Is it one of the types we expected? If not, punt.
+        if (htmlFetch.Content.Headers.ContentType != null && !accepts.Contains(htmlFetch.Content.Headers.ContentType.MediaType))
+        {
+            throw new Exception($"Attempted to fetch {requestUri} and it returned success, however, response content-type header {htmlFetch.Content.Headers.ContentType.MediaType} is not one of our expected types {string.Join(", ", accepts)}. {htmlFetch.Content.Headers.ContentType}");
+        }
 
         // If we didn't specify max size, just return the content.
         if (maxSizeInBytes == null)
         {
             return await htmlFetch.Content.ReadAsStringAsync(cancelToken);
         }
-
-        // We have a max size, so we need to check the content length.
-        // First, ensure we've got success.
-        htmlFetch.EnsureSuccessStatusCode();
 
         // See if we have a Content-Length header
         var contentLength = htmlFetch.Content.Headers.ContentLength;

@@ -50,6 +50,7 @@ namespace PWABuilder.Services
         {
             var browser = await this.reusableBrowser;
             var page = await browser.NewPageAsync();
+
             await page.SetUserAgentAsync(Constants.DesktopUserAgent);
             await page.GoToAsync(
                 site.ToString(),

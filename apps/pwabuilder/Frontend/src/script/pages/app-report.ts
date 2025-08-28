@@ -324,12 +324,21 @@ export class AppReport extends LitElement {
   }
 
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test
-  async runAllTests(url: string) {
+  async runAllTests(url: string, retryOnFailure = true) {
     this.runningTests = true;
     this.isAppCardInfoLoading = true;
 
-    this.analysisId = await enqueueAnalysis(url);
-    this.analysisStatusCheckHandle = window.setTimeout(() => this.checkAnalysisStatus(), this.analysisStatusCheckInterval);
+    try {
+      this.analysisId = await enqueueAnalysis(url);
+      this.analysisStatusCheckHandle = window.setTimeout(() => this.checkAnalysisStatus(), this.analysisStatusCheckInterval);
+    } catch (error) {
+      console.error("Unable to enqueue analysis due to error. Trying again...");
+      if (retryOnFailure) {
+        setTimeout(() => this.runAllTests(url, false), 2000);
+      } else {
+        this.analysisFailed();
+      }
+    }
   }
 
   /**
