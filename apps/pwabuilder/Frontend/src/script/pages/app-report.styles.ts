@@ -1462,6 +1462,31 @@ sl-tooltip::part(base){
     }
 }
 
+.analysis-error-dialog {
+    &::part(panel) {
+        /** Without this, the dialog top would have no border radius due to the header's background image. */
+        overflow: hidden;
+    }
+
+    &::part(header) {
+        background-image: url('/assets/new/mani-dead.webp');
+        background-size: contain;
+        background-repeat: no-repeat;
+
+        @media (max-width: 535px) {
+            background-position-x: center;
+            background-size: cover;
+        }
+    }
+
+    pre {
+        background-color: whitesmoke;
+        padding: 20px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+}
+
 @keyframes rotate {
     100%   {transform: rotate(360deg)}
 }

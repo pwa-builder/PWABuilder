@@ -116,9 +116,15 @@ public class AnalysisJobProcessor : IHostedService
             // Mark the analysis as processing.
             analysis.Status = AnalysisStatus.Processing;
             await db.SaveAsync(analysis);
+            
+            if (analysis.Url.ToString().Contains("cnn.com"))
+            {
+                await this.MarkAnalysisAsFailedAsync(analysis.Id, new Exception("Analysis of cnn.com is blocked."));
+                return;
+            }
 
             // Kick off the independent jobs simultaneously so that our analysis completes faster.
-            var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysis, analysisLogger, cancelToken);
+            var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysisLogger, cancelToken);
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
             var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelToken)).Unwrap(); // This will update analysis.Capabilities.
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
@@ -145,7 +151,7 @@ public class AnalysisJobProcessor : IHostedService
             // Step 5, run Lighthouse analysis. This is used for offline detection, HTTPS detection, and mixed content detection.
             var lighthouseReport = await lighthouseAnalysisTask;
             analysis.LighthouseReport = lighthouseReport;
-            analysis.ProcessLighthouseReport(lighthouseReport, analysisLogger);
+            analysis.ProcessLighthouseReport(lighthouseReport);
             await db.SaveAsync(analysis);
 
             // Step 6, if we didn't find a manifest but Lighthouse found one,
@@ -171,11 +177,11 @@ public class AnalysisJobProcessor : IHostedService
         }
     }
 
-    private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, Analysis analysis, AnalysisLogger logger, CancellationToken cancelToken)
+    private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, AnalysisLogger logger, CancellationToken cancelToken)
     {
         try
         {
-            return await lighthouse.RunAuditAsync(job.Url, BrowserFormFactor.Desktop);
+            return await lighthouse.RunAuditAsync(job.Url, BrowserFormFactor.Desktop, logger, cancelToken);
         }
         catch (Exception error)
         {

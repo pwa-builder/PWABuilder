@@ -19,7 +19,7 @@ if (import.meta.env.PROD) {
   env.isProduction = true;
   env.api = '/api';
   env.manifestCreatorUrl =
-    'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
+    '/api/manifests/create';
   env.windowsPackageGeneratorUrl =
     'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
   env.androidPackageGeneratorUrl =
@@ -39,7 +39,7 @@ if (import.meta.env.PROD) {
 } else {
   env.api = '/api';
   env.manifestCreatorUrl =
-    'https://pwabuilder-manifest-creator.azurewebsites.net/api/create';
+    '/api/manifests/create';
   env.windowsPackageGeneratorUrl =
     'https://localhost:5001/msix/generatezip';
   env.androidPackageGeneratorUrl =

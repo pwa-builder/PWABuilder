@@ -17,12 +17,6 @@ public class ImagesController : ControllerBase
         this.http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
     }
 
-    [HttpGet("foo")]
-    public string Foo()
-    {
-        return "foo";
-    }
-
     /// <summary>
     /// Proxy an image for the specified analysis. This creates a temporary URL for the image with the specified image URL; it will expire when the analysis is deleted.
     /// </summary>

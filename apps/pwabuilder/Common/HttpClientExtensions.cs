@@ -45,14 +45,14 @@ public static class HttpClientExtensions
         }
 
         // Read in a string as a stream to ensure we don't exceed the max size.
-        using var stream = await htmlFetch.Content.ReadAsStreamAsync();
+        using var stream = await htmlFetch.Content.ReadAsStreamAsync(cancelToken);
         using var memoryStream = new MemoryStream();
 
         var buffer = new byte[8192];
         int bytesRead;
         int totalBytes = 0;
 
-        while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+        while ((bytesRead = await stream.ReadAsync(buffer, cancelToken)) > 0)
         {
             totalBytes += bytesRead;
 
@@ -94,11 +94,11 @@ public static class HttpClientExtensions
         var contentLength = imageFetch.Content.Headers.ContentLength;
         if (contentLength.HasValue && contentLength.Value > maxSizeInBytes)
         {
-            throw new InvalidOperationException($"Attempted to fetch {requestUri}, but response content-length header says the response size ({contentLength.Value}) exceeds the maximum allowed size ({maxSizeInBytes.Value}).");
+            throw new InvalidOperationException($"Attempted to fetch {requestUri}, but response content-length header says the response size ({contentLength.Value}) exceeds the maximum allowed size ({maxSizeInBytes}).");
         }
 
         // Read in a string as a stream to ensure we don't exceed the max size.
-        var stream = await imageFetch.Content.ReadAsStreamAsync();
+        var stream = await imageFetch.Content.ReadAsStreamAsync(cancelToken);
         return new LimitedReadStreamWithMediaType(stream, maxSizeInBytes, imageFetch.Content.Headers.ContentType?.MediaType);
     }
 

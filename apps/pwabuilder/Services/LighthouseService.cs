@@ -60,7 +60,7 @@ public class LighthouseService : ILighthouseService
     }
 
     /// <inheritDoc />
-    public async Task<LighthouseReport> RunAuditAsync(Uri url, BrowserFormFactor formFactor)
+    public async Task<LighthouseReport> RunAuditAsync(Uri url, BrowserFormFactor formFactor, ILogger logger, CancellationToken cancelToken)
     {
         int headlessChromePort = GetAvailablePort();
         using var browser = await this.CreatePuppeteerBrowserWithRemoteDebugging(url, formFactor, headlessChromePort);
@@ -83,9 +83,9 @@ public class LighthouseService : ILighthouseService
         };
 
         // Puppeteer valve trigger timeout
-        using var ctsValve = new CancellationTokenSource();
+        using var cancelTokenSrc = new CancellationTokenSource();
         var valveTriggered = false;
-        var valveTask = Task.Delay(lhTimeoutMilliseconds * 2, ctsValve.Token)
+        var valveTask = Task.Delay(lhTimeoutMilliseconds * 2, cancelTokenSrc.Token)
             .ContinueWith(async t =>
             {
                 valveTriggered = true;
@@ -103,7 +103,7 @@ public class LighthouseService : ILighthouseService
             url.ToString(),
             new NavigationOptions
             {
-                Timeout = 30000,
+                Timeout = 15000,
                 WaitUntil = [WaitUntilNavigation.DOMContentLoaded],
             }
         );
@@ -113,8 +113,8 @@ public class LighthouseService : ILighthouseService
 
         // Lighthouse Timeout
         using var ctsLighthouse = new CancellationTokenSource(lhTimeoutMilliseconds);
-        var lhOutputTask = lhProcess.StandardOutput.ReadToEndAsync();
-        var lhErrorTask = lhProcess.StandardError.ReadToEndAsync();
+        var lhOutputTask = lhProcess.StandardOutput.ReadToEndAsync(cancelToken);
+        var lhErrorTask = lhProcess.StandardError.ReadToEndAsync(cancelToken);
         var lhWaitTask = lhProcess.WaitForExitAsync(ctsLighthouse.Token);
         try
         {
@@ -129,7 +129,10 @@ public class LighthouseService : ILighthouseService
                     lhProcess.Kill(entireProcessTree: true);
                 }
             }
-            catch { }
+            catch (Exception error)
+            {
+                logger.LogWarning(error, "Unable to kill the Lighthouse process after timeout.");
+            }
             throw new TimeoutException("Lighthouse process timed out.");
         }
 
@@ -157,7 +160,7 @@ public class LighthouseService : ILighthouseService
         }
 
         // Cancel Puppeteer timeout and close browser
-        ctsValve.Cancel();
+        cancelTokenSrc.Cancel();
         await browser.CloseAsync();
         return lighthouseReport;
     }

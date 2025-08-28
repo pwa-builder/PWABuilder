@@ -12,7 +12,9 @@ namespace PWABuilder.Services
         /// </summary>
         /// <param name="url">The URL to run the audit for.</param>
         /// <param name="formFactor">The form factor to emulate during the audit.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="cancelToken">The cancellation token.</param>
         /// <returns>The Lighthouse report.</returns>
-        Task<LighthouseReport> RunAuditAsync(Uri url, BrowserFormFactor formFactor);
+        Task<LighthouseReport> RunAuditAsync(Uri url, BrowserFormFactor formFactor, ILogger logger, CancellationToken cancelToken);
     }
 }

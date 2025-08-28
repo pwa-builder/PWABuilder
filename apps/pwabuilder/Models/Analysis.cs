@@ -116,8 +116,7 @@ public class Analysis
     /// <summary>
     /// Updates this analysis's capabilities based on the Lighthouse report.
     /// </summary>
-    /// <param name="lighthouseReport"></param>
-    public void ProcessLighthouseReport(LighthouseReport? lighthouseReport, ILogger logger)
+    public void ProcessLighthouseReport(LighthouseReport? lighthouseReport)
     {
         var offlineCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.OfflineSupport);
         var httpsCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasHttps);

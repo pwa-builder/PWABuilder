@@ -11,9 +11,6 @@ using PWABuilder.Services;
 using PWABuilder.Utils;
 using PWABuilder.Validations.Services;
 using StackExchange.Redis;
-using System.Drawing.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +47,7 @@ builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
 builder.Services.AddSingleton<ManifestDetector>();
 builder.Services.AddSingleton<ServiceWorkerDetector>();
+builder.Services.AddSingleton<ManifestCreator>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();

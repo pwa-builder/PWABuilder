@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, html } from 'lit';
 import { repeat } from "lit/directives/repeat.js";
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { getManifestContext, setManifestContext } from '../services/app-info';
 import { Manifest } from '@pwabuilder/manifest-validation';
 
@@ -29,27 +29,20 @@ import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js'
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
 import '@shoelace-style/shoelace/dist/components/copy-button/copy-button.js';
+import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
+import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
+import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
-import {
-  Icon,
-  ManifestContext
-} from '../utils/interfaces';
-
+import { Icon, ManifestContext } from '../utils/interfaces';
 // import { fetchOrCreateManifest, createManifestContextFromEmpty } from '../services/manifest';
 import { resolveUrl } from '../utils/url';
-
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
 import { manifest_fields } from '@pwabuilder/manifest-information';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { processManifest } from './app-report.helper';
 import { enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapabilityStatus, PwaCapabilityLevel } from './app-report.api';
-
-import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { appReportStyles } from './app-report.styles';
-import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -58,18 +51,7 @@ const enhancement_src = "/assets/new/enhancement.svg";
 const info_src = "/assets/new/info-circle.png";
 
 @customElement('app-report')
-export class AppReport extends LitElement {
-  @property({ type: Object }) appCard = {
-    siteName: 'Site Name',
-    description: "Your site's description",
-    siteUrl: 'Site URL',
-    iconURL: '/assets/new/icon_placeholder.png',
-    iconAlt: 'Your sites logo'
-  };
-  @property({ type: Object }) CardStyles = { backgroundColor: '#ffffff', color: '#292c3a' };
-  @property({ type: Object }) BorderStyles = { borderTop: '1px solid #00000033' };
-  @property({ type: Object }) LastEditedStyles = { color: '#000000b3' };
-  
+export class AppReport extends LitElement {  
   @state() siteURL = '';
   @state() errorMessage: string | undefined = undefined;
   @state() isAppCardInfoLoading: boolean = false;
@@ -92,11 +74,21 @@ export class AppReport extends LitElement {
   @state() stopShowingNotificationTooltip: boolean = false;
   @state() closeOpenTooltips: boolean = true;
   @state() darkMode: boolean = false;
+  @state() appCard = {
+    siteName: 'Site Name',
+    description: "Your site's description",
+    siteUrl: 'Site URL',
+    iconURL: '/assets/new/icon_placeholder.png',
+    iconAlt: 'Your sites logo'
+  };
 
   analysisStatusCheckHandle = 0;
-  analysisStatusCheckInterval = 2000;
+  readonly analysisStatusCheckInterval = 2000;
+  readonly CardStyles = { backgroundColor: '#ffffff', color: '#292c3a' };
+  readonly BorderStyles = { borderTop: '1px solid #00000033' };
+  readonly LastEditedStyles = { color: '#000000b3' };
 
-  private possible_messages = [
+  private readonly possible_messages = [
     {
       "messages": {
         "green": "PWABuilder has analyzed your Web Manifest and your manifest is ready for packaging! Great job you have a perfect score!",
@@ -124,11 +116,6 @@ export class AppReport extends LitElement {
   ];
 
   static styles = [appReportStyles];
-
-  /* Legacy code, scared to remove. IDK the application of this code */
-  constructor() {
-    super();
-  }
 
   // Runs when the page loads.
   // Responsible for setting running the initial tests
@@ -197,49 +184,6 @@ export class AppReport extends LitElement {
       const parsedManifestContext = manifestContext;
       let iconUrl = this.analysis?.webManifest?.appIcon || "/assets/icons/icon_512.png";
 
-      // let icons = parsedManifestContext.manifest.icons;
-      // let chosenIcon: any;
-
-      // if (icons) {
-      //   let maxSize = 0;
-      //   for (let i = 0; i < icons.length; i++) {
-      //     let icon = icons[i];
-      //     const sizes = icon.sizes?.split("x") || [];
-      //     let width = sizes[0];
-      //     let height = sizes[1];
-      //     if (width === '512') {
-      //       chosenIcon = icon;
-      //       break;
-      //     } else {
-      //       if (parseInt(width!) > maxSize) {
-      //         maxSize = parseInt(width!);
-      //         chosenIcon = icon;
-      //       }
-      //     }
-      //   }
-      // }
-
-      // let iconUrl: string;
-      // if (chosenIcon) {
-      //   iconUrl = this.iconSrcListParse(chosenIcon);
-      // } else {
-      //   iconUrl = "/assets/icons/icon_512.png"
-      // }
-
-
-      // this.proxyLoadingImage = true;
-      // await this.testImage(iconUrl).then(
-      //   function fulfilled(_img) {
-      //     //console.log('That image is found and loaded', img);
-      //   },
-
-      //   function rejected() {
-      //     //console.log('That image was not found');
-      //     iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconUrl}`;
-      //   }
-      // );
-      // this.proxyLoadingImage = false;
-
       this.appCard = {
         siteName: parsedManifestContext.manifest.short_name
           ? parsedManifestContext.manifest.short_name
@@ -252,14 +196,18 @@ export class AppReport extends LitElement {
           : 'Add an app description to your manifest',
       };
     } else {
-      this.appCard = {
+      this.appCard = this.createMissingAppCard(cleanURL);
+    }
+  }
+
+  createMissingAppCard(url: string) {
+    return {
         siteName: "Missing Name",
-        siteUrl: cleanURL,
+        siteUrl: url,
         description: "Your manifest description is missing.",
         iconURL: "/assets/new/icon_placeholder.png",
         iconAlt: "A placeholder for your site's icon"
       };
-    }
   }
 
   // Tests if an image will load
@@ -338,8 +286,8 @@ export class AppReport extends LitElement {
       }
 
       // If the analysis is still running, set a timeout to check again.
-      const isAnalysisCompleted = analysis && (analysis.status === "Completed" || analysis.status === "Failed");
-      if (!isAnalysisCompleted || !analysis) {
+      const isAnalysisDone = analysis && (analysis.status === "Completed" || analysis.status === "Failed");
+      if (!isAnalysisDone || !analysis) {
         this.analysisStatusCheckHandle = window.setTimeout(() => this.checkAnalysisStatus(), this.analysisStatusCheckInterval);
       }
     }
@@ -354,6 +302,10 @@ export class AppReport extends LitElement {
 
   analysisFailed(): void {
     this.runningTests = false;
+    this.appCard = this.createMissingAppCard(this.analysis?.url || "");
+    this.isAppCardInfoLoading = false;
+
+    this.showAnalysisErrorDialog();
   }
 
   async analysisUpdated(analysis: Analysis): Promise<void> {
@@ -789,7 +741,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
             </div>
           </div>
           <div id="app-card-footer">
-            ${this.renderFooter()}
+            ${this.renderAppCardFooter()}
           </div>
         </div>
     `;
@@ -814,7 +766,7 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     `;
   }
 
-  renderFooter(): TemplateResult {
+  renderAppCardFooter(): TemplateResult {
     if (this.runningTests) {
       return html`
         <div id="test" class="in-progress">
@@ -1184,7 +1136,8 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
       <test-publish-pane></test-publish-pane>
       ${this.renderManifestEditorPane()}
       <sw-selector></sw-selector>
-      ${this.renderAnalysisLog()}
+      ${this.renderAnalysisInfoDialog()}
+      ${this.renderAnalysisErrorDialog()}
     `;
   }
 
@@ -1421,8 +1374,8 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
     `;
   }
 
-  renderAnalysisLog(): TemplateResult {
-    if (!this.analysis || this.analysis.status !== "Completed") {
+  renderAnalysisInfoDialog(): TemplateResult {
+    if (!this.analysis || this.analysis.status === "Processing" || this.analysis.status === "Queued") {
       return html``;
     }
 
@@ -1443,6 +1396,42 @@ renderTodoFilterBtn(level: PwaCapabilityLevel, count: number) {
         <sl-textarea id="logs-json" rows="4" readonly value="${JSON.stringify(this.analysis, null, 2)}"></sl-textarea>
       </sl-dialog>
     `;
+  }
+
+  renderAnalysisErrorDialog(): TemplateResult {
+    if (!this.analysis || this.analysis.status !== "Failed") {
+      return html``;
+    }
+
+    const errorInfo = `${this.analysis.url} failed due to an internal error.\r\n\r\n${this.analysis.error}\r\n\r\nId: ${this.analysis.id}\r\n\r\nLogs:\r\n${this.analysis.logs.join("\r\n")}`;
+    const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(errorInfo.substring(0, 1000))}`;
+    return html`
+      <sl-dialog label="Error" class="analysis-error-dialog">
+        <p>
+          😵 Oh no, PWABuilder was unable to analyze your web app due to an error.
+        </p>
+        <details>
+          <summary>Error details</summary>
+          <pre>${errorInfo}</pre>
+        </details>
+        
+        <div slot="footer">
+          <sl-button variant="primary" size="small" @click="${() => this.retest(false)}">
+            <sl-icon slot="prefix" name="arrow-repeat"></sl-icon>
+            <span>Try again</span>
+          </sl-button>
+          <sl-button variant="default" size="small" href="${bugLink}" target="_blank">
+            <sl-icon slot="prefix" name="github"></sl-icon>
+            <span>File a bug</span>
+          </sl-button>
+        </div>        
+      </sl-dialog>
+    `;
+  }
+
+  showAnalysisErrorDialog(): void {
+    const dialog = this.shadowRoot?.querySelector(".analysis-error-dialog") as SlDialog | null;
+    dialog?.show();
   }
 
   toggleTodoFilter(level: PwaCapabilityLevel) {
