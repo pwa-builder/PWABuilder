@@ -75,11 +75,11 @@ public class Analysis
     /// The capability checks of the PWA.
     /// </summary>
     public List<PwaCapability> Capabilities { get; init; } =
-        [
-            .. PwaCapability.CreateManifestCapabilities(),
-            .. PwaCapability.CreateServiceWorkerCapabilities(),
-            .. PwaCapability.CreateHttpsCapabilities()
-        ];
+    [
+        .. PwaCapability.CreateManifestCapabilities(),
+        .. PwaCapability.CreateServiceWorkerCapabilities(),
+        .. PwaCapability.CreateHttpsCapabilities()
+    ];
 
     /// <summary>
     /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.
