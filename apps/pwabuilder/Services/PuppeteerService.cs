@@ -1,3 +1,4 @@
+using Azure;
 using PuppeteerSharp;
 using PWABuilder.Common;
 
@@ -55,7 +56,7 @@ namespace PWABuilder.Services
                 new NavigationOptions
                 {
                     Timeout = 30000,
-                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded],
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, WaitUntilNavigation.Networkidle2],
                 }
             );
 
