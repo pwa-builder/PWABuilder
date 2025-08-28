@@ -40,7 +40,7 @@ export class AppHome extends LitElement {
     // Resetting for a new url, keep referrer value
     const referrer = sessionStorage.getItem('ref');
     sessionStorage.clear();
-    if( referrer ) {
+    if (referrer) {
       sessionStorage.setItem('ref', referrer);
     }
     resetInitialManifest();
@@ -82,25 +82,30 @@ export class AppHome extends LitElement {
   }
 
   async analyzeSite() {
-    if(this.siteURL !== demoURL){
+    if (this.siteURL !== demoURL) {
       sessionStorage.setItem('demoURL', JSON.stringify(false));
     }
 
+    let isValidUrl = false;
     if (this.siteURL) {
       this.gettingManifest = true;
-      this.siteURL = cleanUrl(this.siteURL);
-      const isValidUrl = isValidURL(this.siteURL);
+      try {
+        this.siteURL = cleanUrl(this.siteURL);
+        isValidUrl = isValidURL(this.siteURL);
+      } catch (error) {
+        isValidUrl = false;
+      }
 
       recordPWABuilderProcessStep('top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
-      {
-        url: this.siteURL,
-        valid: isValidUrl
-      });
+        {
+          url: this.siteURL,
+          valid: isValidUrl
+        });
 
       if (isValidUrl) {
         // ensures we get a new unique id everytime we enter a new url
         // for platform tracking purposes
-        if(sessionStorage.getItem('uid')){
+        if (sessionStorage.getItem('uid')) {
           sessionStorage.removeItem('uid');
         }
         Router.go(`/reportcard?site=${this.siteURL}`);
@@ -129,7 +134,7 @@ export class AppHome extends LitElement {
     }
   }
 
-  placeDemoURL(){
+  placeDemoURL() {
     sessionStorage.setItem('demoURL', JSON.stringify(true));
     recordPWABuilderProcessStep("top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
     this.siteURL = demoURL;
@@ -187,8 +192,8 @@ export class AppHome extends LitElement {
                     </sl-input>
 
                     ${this.errorMessage && this.errorMessage.length > 0
-                      ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-                      : null}
+        ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+        : null}
                   </div>
 
                   <sl-button
