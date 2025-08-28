@@ -1,3 +1,4 @@
+using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using System.Text.Json;
@@ -81,11 +82,35 @@ public class ManifestDetector
     private async Task<ManifestDetection?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Spin up a headless browser to find the manifest link.
-        var manifestUrl = await TryGetManifestUrlFromPuppeteer(appUrl, logger, cancelToken);
+        using var page = await puppeteer.Navigate(appUrl);
+        var manifestUrl = await TryGetManifestUrlFromPuppeteer(page, appUrl, logger, cancelToken);
+
+        // See if we can get the manifest contents from Puppeteer.
+        if (manifestUrl != null)
+        {
+            var manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
+            if (!string.IsNullOrWhiteSpace(manifestContents))
+            {
+                return this.CreateManifestDetection(manifestUrl, manifestContents, logger);
+            }
+        }
 
         // See if we can fetch and parse the manifest.
         var manifestContext = await TryFetchManifest(manifestUrl, logger, cancelToken);
         return manifestContext;
+    }
+
+    private static async Task<string?> TryGetWebManifestContentsFromPuppeteer(IPage page, Uri manifestUrl, ILogger logger, CancellationToken cancelToken)
+    {
+        try
+        {
+            return await page.EvaluateExpressionAsync<string?>($"fetch('{manifestUrl}').then(response => response.text())");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving manifest contents via Puppeteer.");
+            return null;
+        }
     }
 
     private async Task<ManifestDetection?> TryGetManifestFromHtmlParsing(Uri appUrl, ILogger logger, CancellationToken cancelToken)
@@ -101,17 +126,14 @@ public class ManifestDetector
         return manifestContext;
     }
 
-    private async Task<Uri?> TryGetManifestUrlFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private async Task<Uri?> TryGetManifestUrlFromPuppeteer(IPage puppeteerPage, Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         try
         {
-            // Spin up a headless browser
-            using var page = await puppeteer.Navigate(appUrl);
-
             // Execute JS in the browser to find the manifest.
             var jsSelectAllManifestLink =
                 @"Array.from(document.querySelectorAll('link[rel*=manifest]')).map(a => a.href);";
-            var manifestUrls = await page.EvaluateExpressionAsync<string[]>(jsSelectAllManifestLink);
+            var manifestUrls = await puppeteerPage.EvaluateExpressionAsync<string[]>(jsSelectAllManifestLink);
 
             // No manifest links? OK, punt.
             var manifestUrl = manifestUrls.LastOrDefault();
@@ -146,27 +168,32 @@ public class ManifestDetector
                 return null;
             }
 
-            // We can't have more than 2.5m characters in the manifest (roughly 10MB)
-            // This is to prevent very large manifests that encode the entire images inside the manifest.
-            if (manifestJson.Length > 2_500_000)
-            {
-                logger.LogWarning("Manifest at {manifestUrl} is too large at {length} characters).", manifestUrl, manifestJson.Length);
-                return null;
-            }
-
-            var manifest = JsonSerializer.Deserialize<JsonElement>(manifestJson);
-            return new ManifestDetection
-            {
-                Url = manifestUrl,
-                Manifest = manifest,
-                ManifestRaw = manifestJson
-            };
+            return this.CreateManifestDetection(manifestUrl, manifestJson, logger);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error fetching and parsing manifest from {manifestUrl}.", manifestUrl);
             return null;
         }
+    }
+
+    private ManifestDetection? CreateManifestDetection(Uri manifestUrl, string manifestJson, ILogger logger)
+    {
+        // We can't have more than 2.5m characters in the manifest (roughly 10MB)
+        // This is to prevent very large manifests that encode the entire images inside the manifest.
+        if (manifestJson.Length > 2_500_000)
+        {
+            logger.LogWarning("Manifest at {manifestUrl} is too large at {length} characters).", manifestUrl, manifestJson.Length);
+            return null;
+        }
+
+        var manifest = JsonSerializer.Deserialize<JsonElement>(manifestJson);
+        return new ManifestDetection
+        {
+            Url = manifestUrl,
+            Manifest = manifest,
+            ManifestRaw = manifestJson
+        };
     }
 
     private async Task<string?> TryGetHtmlPage(Uri appUrl, ILogger logger, CancellationToken cancelToken)
