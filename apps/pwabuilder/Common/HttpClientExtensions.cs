@@ -41,7 +41,7 @@ public static class HttpClientExtensions
         var contentLength = htmlFetch.Content.Headers.ContentLength;
         if (contentLength.HasValue && contentLength.Value > maxSizeInBytes)
         {
-            throw new InvalidOperationException("Response content-length header says the response exceeds the maximum allowed size.");
+            throw new InvalidOperationException($"Attempted to fetch {requestUri}, but response content-length header says the response size ({contentLength.Value}) exceeds the maximum allowed size ({maxSizeInBytes.Value}).");
         }
 
         // Read in a string as a stream to ensure we don't exceed the max size.
@@ -58,7 +58,7 @@ public static class HttpClientExtensions
 
             if (totalBytes > maxSizeInBytes)
             {
-                throw new InvalidOperationException("Response exceeded the maximum allowed size during streaming.");
+                throw new InvalidOperationException($"Attempted to fetch {requestUri}, but response size ({totalBytes}) exceeded the maximum allowed size ({maxSizeInBytes.Value}) during streaming.");
             }
 
             memoryStream.Write(buffer, 0, bytesRead);
@@ -94,7 +94,7 @@ public static class HttpClientExtensions
         var contentLength = imageFetch.Content.Headers.ContentLength;
         if (contentLength.HasValue && contentLength.Value > maxSizeInBytes)
         {
-            throw new InvalidOperationException("Response content-length header says the response exceeds the maximum allowed size.");
+            throw new InvalidOperationException($"Attempted to fetch {requestUri}, but response content-length header says the response size ({contentLength.Value}) exceeds the maximum allowed size ({maxSizeInBytes.Value}).");
         }
 
         // Read in a string as a stream to ensure we don't exceed the max size.
@@ -125,7 +125,7 @@ public static class HttpClientExtensions
         {
             if (totalReadBytes >= maxBytes)
             {
-                throw new IOException("Stream exceeds maximum allowed size.");
+                throw new IOException($"Stream exceeds maximum allowed size ({maxBytes}).");
             }
 
             var toRead = (int)Math.Min(count, maxBytes - totalReadBytes);
