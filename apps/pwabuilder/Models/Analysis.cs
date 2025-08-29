@@ -76,6 +76,7 @@ public class Analysis
     /// </summary>
     public List<PwaCapability> Capabilities { get; init; } =
     [
+        .. PwaCapability.CreateGeneralCapabilities(),
         .. PwaCapability.CreateManifestCapabilities(),
         .. PwaCapability.CreateServiceWorkerCapabilities(),
         .. PwaCapability.CreateHttpsCapabilities()

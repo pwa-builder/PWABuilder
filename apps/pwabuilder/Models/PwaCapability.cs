@@ -760,4 +760,30 @@ public class PwaCapability
             }
         ];
     }
+
+    /// <summary>
+    /// Creates a list of general web app capabilities.
+    /// </summary>
+    /// <returns>A list of general web app capabilities.</returns>
+    public static List<PwaCapability> CreateGeneralCapabilities()
+    {
+        return
+        [
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ServesHtml,
+                Description = "Your web app must serve content of type text/html. We analyzed your site's URL and found that it serves {0}.",
+                TodoAction = "Update your web app to serve text/html content.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Configuring_server_MIME_types"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.General,
+                Status = PwaCapabilityCheckStatus.InProgress
+            }
+        ];
+    }
 }

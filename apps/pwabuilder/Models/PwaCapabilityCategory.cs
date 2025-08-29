@@ -18,5 +18,10 @@ public enum PwaCapabilityCategory
     /// <summary>
     /// The analysis check was on HTTPS status.
     /// </summary>
-    Https
+    Https,
+    
+    /// <summary>
+    /// The analysis check was on general web app capabilities, unrelated to web app manifest, service worker, or HTTPS.
+    /// </summary>
+    General,
 }

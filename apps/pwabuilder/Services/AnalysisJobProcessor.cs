@@ -1,5 +1,6 @@
 
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
@@ -23,7 +24,7 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ServiceWorkerDetector serviceWorkerDetector;
     private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
     private readonly ILighthouseService lighthouse;
-    private readonly IImageValidationService imageValidator;
+    private readonly GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
     public AnalysisJobProcessor(
@@ -33,8 +34,8 @@ public class AnalysisJobProcessor : IHostedService
         ManifestAnalyzer manifestAnalyzer,
         ServiceWorkerDetector serviceWorkerDetector,
         IServiceWorkerAnalyzer serviceWorkerAnalyzer,
-        ILighthouseService lighthouse, 
-        IImageValidationService imageValidator,
+        GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector,
+        ILighthouseService lighthouse,
         ILogger<AnalysisJobProcessor> logger)
     {
         this.queue = queue;
@@ -44,7 +45,7 @@ public class AnalysisJobProcessor : IHostedService
         this.manifestAnalyzer = manifestAnalyzer;
         this.serviceWorkerDetector = serviceWorkerDetector;
         this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
-        this.imageValidator = imageValidator;
+        this.generalWebAppCapabilityDetector = generalWebAppCapabilityDetector;
         this.logger = logger;
     }
 
@@ -117,44 +118,60 @@ public class AnalysisJobProcessor : IHostedService
             analysis.Status = AnalysisStatus.Processing;
             await db.SaveAsync(analysis);
 
-            // Kick off the independent jobs simultaneously so that our analysis completes faster.
-            var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysisLogger, cancelToken);
-            var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelToken), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
-            var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, PwaCapabilityCheckStatus.InProgress, logger, cancelToken), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+            // Create our own cancellation token source so that we can manually cancel this.
+            // Link it to the parent cancellation token to monitor that as well.
+            var cancelTokenSrc = CancellationTokenSource.CreateLinkedTokenSource(cancelToken);
 
-            // Step 1: find the manifest.
+            // Kick off the independent jobs simultaneously so that our analysis completes faster.
+            var generalCapDetectionTask = generalWebAppCapabilityDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+            var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysisLogger, cancelTokenSrc.Token);
+            var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
+            var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, PwaCapabilityCheckStatus.InProgress, logger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+
+            // Step 1: run the general capabilities, such as whether the URL serves HTML.
+            // We also use this to check if the URL serves HTML, and if not, to fail fast.
+            var generalCapabilities = await generalCapDetectionTask;
+            analysis.ProcessCapabilities(generalCapabilities);
+            var servesHtmlStatus = FailIfNotServedHtml(analysis, cancelTokenSrc);
+            await db.SaveAsync(analysis);
+            if (servesHtmlStatus == PwaCapabilityCheckStatus.Failed)
+            {
+                return;
+            }
+
+            // Step 2: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
             await db.SaveAsync(analysis);
 
-            // Step 2: analyze the manifest for validity and capabilities.
+            // Step 3: analyze the manifest for validity and capabilities.
             var manifestCapabilities = await manifestAnalysisTask;
             analysis.ProcessCapabilities(manifestCapabilities);
             await db.SaveAsync(analysis);
 
-            // Step 3: find the service worker.
+            // Step 4: find the service worker.
             analysis.ServiceWorker = await serviceWorkerDetectionTask;
             await db.SaveAsync(analysis);
 
-            // Step 4: analyze the service worker to determine capabilities like push notifications, background sync, etc.
+            // Step 5: analyze the service worker to determine capabilities like push notifications, background sync, etc.
             var swCapabilities = await serviceWorkerAnalysisTask;
             analysis.ProcessCapabilities(swCapabilities);
             await db.SaveAsync(analysis);
 
-            // Step 5, run Lighthouse analysis. This is used for offline detection, HTTPS detection, and mixed content detection.
+            // Step 6, run Lighthouse analysis. This is used for offline detection, HTTPS detection, and mixed content detection.
             var lighthouseReport = await lighthouseAnalysisTask;
             analysis.LighthouseReport = lighthouseReport;
             analysis.ProcessLighthouseReport(lighthouseReport);
             await db.SaveAsync(analysis);
 
-            // Step 6, if we didn't find a manifest but Lighthouse found one,
+            // Step 7, if we didn't find a manifest but Lighthouse found one,
             // create a new ManifestDetection and rerun the manifest analyzer.
             // This is needed for some edge cases where the manifest isn't picked up by our manifest detection service, but is picked up by Lighthouse. Example edge case: https://www.instagram.com/?utm_source=pwa_homescreen&__pwa=1
             if (analysis.WebManifest == null)
             {
                 analysis.WebManifest = manifestDetector.TryDetectFromLighthouse(lighthouseReport, analysisLogger);
-                var updatedManifestCapabilities = await manifestAnalyzer.TryAnalyzeManifestAsync(analysis.WebManifest, PwaCapabilityCheckStatus.Failed, analysisLogger, cancelToken);
+                var updatedManifestCapabilities = await manifestAnalyzer.TryAnalyzeManifestAsync(analysis.WebManifest, PwaCapabilityCheckStatus.Failed, analysisLogger, cancelTokenSrc.Token);
                 analysis.ProcessCapabilities(updatedManifestCapabilities);
                 await db.SaveAsync(analysis);
             }            
@@ -169,6 +186,29 @@ public class AnalysisJobProcessor : IHostedService
         {
             await RetryJobOrFail(job, error);
         }
+    }
+
+    /// <summary>
+    /// Checks if the "URL serves HTML" check failed. If so, the analysis is marked as failed, the cancellation token is triggered, and any remaining tests are skipped.
+    /// </summary>
+    /// <param name="analysis">The analysis.</param>
+    /// <param name="cancelTokenSrc">The cancellation token source.</param>
+    /// <returns>The status of the "URL serves HTML" check.</returns>
+    private static PwaCapabilityCheckStatus FailIfNotServedHtml(Analysis analysis, CancellationTokenSource cancelTokenSrc)
+    {
+        var servedHtmlCapability = analysis.Capabilities.First(c => c.Id == PwaCapabilityId.ServesHtml);
+        if (servedHtmlCapability.Status != PwaCapabilityCheckStatus.Passed)
+        {
+            cancelTokenSrc.Cancel();
+            analysis.Status = AnalysisStatus.Completed;
+            analysis.Error = "The provided URL does not appear to serve HTML content.";
+            analysis.Capabilities
+                .Where(capability => capability.Status == PwaCapabilityCheckStatus.InProgress)
+                .ToList()
+                .ForEach(capability => capability.Status = PwaCapabilityCheckStatus.Skipped);
+        }
+
+        return servedHtmlCapability.Status;
     }
 
     private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, AnalysisLogger logger, CancellationToken cancelToken)
@@ -206,7 +246,7 @@ public class AnalysisJobProcessor : IHostedService
     {
         try
         {
-            var analysis = await db.GetByIdAsync(analysisId);
+            var analysis = await db.GetByIdAsync(analysisId);            
             if (analysis != null)
             {
                 analysis.Status = AnalysisStatus.Failed;

@@ -54,5 +54,8 @@ public enum PwaCapabilityId
 
     // Https capabilities
     HasHttps,
-    NoMixedContent
+    NoMixedContent,
+
+    // General capabilities
+    ServesHtml
 }

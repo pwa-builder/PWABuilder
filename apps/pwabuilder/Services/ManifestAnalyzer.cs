@@ -148,6 +148,9 @@ public class ManifestAnalyzer
             // HTTPS capabilities are handled elsewhere.
             PwaCapabilityId.HasHttps => throw new NotImplementedException(),
             PwaCapabilityId.NoMixedContent => throw new NotImplementedException(),
+
+            // General capabilities are handled elsewhere.
+            PwaCapabilityId.ServesHtml => throw new NotImplementedException()
         };
         #pragma warning restore CS8524 
     }
