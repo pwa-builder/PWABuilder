@@ -151,7 +151,7 @@ public class ManifestCreator
 
         var manifestIcons = imageSources
             .Select(async source => await CreateManifestIconFromImageSource(siteUri, source));
-        return (await Task.WhenAll(manifestIcons)).ToList();
+        return [.. await Task.WhenAll(manifestIcons)];
     }
 
     private async Task<Result<ImageSource>> CheckFavIconExistence(Uri siteUri)
@@ -195,7 +195,7 @@ public class ManifestCreator
         {
             Sizes = string.IsNullOrEmpty(sizes) ? null : sizes,
             Type = string.IsNullOrEmpty(mimeType) ? null : mimeType,
-            Src = source.Url
+            Src = new Uri(siteUri, source.Url).ToString()
         };
     }
 

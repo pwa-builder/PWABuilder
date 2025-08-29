@@ -232,7 +232,6 @@ export async function createManifestContextFromEmpty(url: string): Promise<Manif
     );
   }
 
-  console.log("created manifest", createdManifest)
   const createdManifestResult = wrapManifestInDetectionResult(
     createdManifest,
     url,

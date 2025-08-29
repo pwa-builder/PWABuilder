@@ -91,7 +91,7 @@ public class ManifestDetector
             var manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
             if (!string.IsNullOrWhiteSpace(manifestContents))
             {
-                return this.CreateManifestDetection(manifestUrl, manifestContents, logger);
+                return CreateManifestDetection(manifestUrl, manifestContents, logger);
             }
         }
 
@@ -126,7 +126,7 @@ public class ManifestDetector
         return manifestContext;
     }
 
-    private async Task<Uri?> TryGetManifestUrlFromPuppeteer(IPage puppeteerPage, Uri appUrl, ILogger logger, CancellationToken cancelToken)
+    private static async Task<Uri?> TryGetManifestUrlFromPuppeteer(IPage puppeteerPage, Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         try
         {
@@ -168,7 +168,7 @@ public class ManifestDetector
                 return null;
             }
 
-            return this.CreateManifestDetection(manifestUrl, manifestJson, logger);
+            return CreateManifestDetection(manifestUrl, manifestJson, logger);
         }
         catch (Exception ex)
         {
@@ -177,7 +177,7 @@ public class ManifestDetector
         }
     }
 
-    private ManifestDetection? CreateManifestDetection(Uri manifestUrl, string manifestJson, ILogger logger)
+    private static ManifestDetection? CreateManifestDetection(Uri manifestUrl, string manifestJson, ILogger logger)
     {
         // We can't have more than 2.5m characters in the manifest (roughly 10MB)
         // This is to prevent very large manifests that encode the entire images inside the manifest.
