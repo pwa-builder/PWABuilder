@@ -33,7 +33,47 @@ namespace PWABuilder.Services
             var launchOptions = customLaunchOptions ?? new LaunchOptions
             {
                 Headless = true, // = false for testing
-                Args = ["--no-sandbox", "--disable-setuid-sandbox"],
+                Args = [
+                    // Security (required for containerized environments)
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    
+                    // Performance & Speed
+                    "--disable-gpu",                          // No GPU needed for your use case
+                    "--disable-dev-shm-usage",               // Prevents memory issues in containers
+                    "--disable-background-timer-throttling",  // Faster JS execution
+                    "--disable-backgrounding-occluded-windows",
+                    "--disable-renderer-backgrounding",
+                    "--disable-features=TranslateUI",        // Disable translate popup
+                    "--disable-ipc-flooding-protection",     // Faster IPC
+                    
+                    // Reduce resource usage
+                    "--no-first-run",                        // Skip first-run setup
+                    "--no-default-browser-check",            // Skip browser check
+                    "--disable-default-apps",                // Don't load default apps
+                    "--disable-extensions",                  // No extensions needed
+                    "--disable-plugins",                     // No plugins needed
+                    "--disable-sync",                        // No sync needed
+                    
+                    // Network & Loading optimizations
+                    "--aggressive-cache-discard",            // Free memory faster
+                    "--memory-pressure-off",                 // Disable memory pressure checks
+                    "--max_old_space_size=4096",            // Limit memory usage
+                    
+                    // Resilience (choose one approach)
+                    "--disable-features=VizDisplayCompositor", // Can help with frame detachment
+                    // OR if you still get frame detachment issues:
+                    // "--disable-features=site-per-process",  // Last resort for frame issues
+                    
+                    // Additional stability
+                    "--disable-background-networking",       // Reduce background activity
+                    "--disable-breakpad",                    // Disable crash reporting
+                    "--disable-component-extensions-with-background-pages",
+                    "--disable-features=MediaRouter",        // Disable casting features
+                    "--disable-hang-monitor",               // Faster shutdown
+                    "--disable-prompt-on-repost",           // Auto-handle form reposts
+                    "--run-all-compositor-stages-before-draw"
+                ],
             };
             launchOptions.ExecutablePath = chromePath;
 
