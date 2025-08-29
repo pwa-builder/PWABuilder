@@ -120,9 +120,9 @@ public class AnalysisJobProcessor : IHostedService
             // Kick off the independent jobs simultaneously so that our analysis completes faster.
             var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysisLogger, cancelToken);
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelToken)).Unwrap(); // This will update analysis.Capabilities.
+            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelToken), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelToken);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, PwaCapabilityCheckStatus.InProgress, logger, cancelToken)).Unwrap();
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, PwaCapabilityCheckStatus.InProgress, logger, cancelToken), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
 
             // Step 1: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;

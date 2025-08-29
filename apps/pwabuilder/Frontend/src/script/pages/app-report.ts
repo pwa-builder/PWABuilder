@@ -1436,8 +1436,8 @@ renderAnalysisErrorDialog(): TemplateResult {
     return html``;
   }
 
-  const errorInfo = `${this.analysis.url} failed due to an internal error.\r\n\r\n${this.analysis.error}\r\n\r\nId: ${this.analysis.id}\r\n\r\nLogs:\r\n${this.analysis.logs.join("\r\n")}`;
-  const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(errorInfo.substring(0, 1000))}`;
+  const errorInfo = `${this.analysis.url} failed due to an internal error.\r\n\r\n> ${this.analysis.error}\r\n\r\nId: ${this.analysis.id}\r\n\r\nLogs:\r\n> ${this.analysis.logs.join("\r\n")}`;
+  const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(errorInfo.substring(0, 4000))}`;
   return html`
       <sl-dialog label="Error" class="analysis-error-dialog">
         <p>
