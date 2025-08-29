@@ -980,7 +980,7 @@ renderManifestDetailsChecklist(): TemplateResult {
 
   private renderManifestValidations(capability: PwaCapability[], category: PwaCapabilityLevel): TemplateResult {
   return html`
-      ${repeat(capability, v => this.renderManifestFieldCheck(v.field || "", category, v.errorMessage || "", v.status))}
+      ${repeat(capability, v => this.renderManifestFieldCheck(v.field || "", category, v.errorMessage || v.description || "", v.status))}
     `;
 }
 
