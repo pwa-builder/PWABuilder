@@ -53,7 +53,7 @@ public readonly struct Result<T>
         var val = selector(this.Value);
         return new Result<TOther>(val);
     }
-        
+
     public T ValueOr(Func<T> creator)
     {
         return this.Value ?? creator();
@@ -61,4 +61,12 @@ public readonly struct Result<T>
 
     public static implicit operator Result<T>(T result) => new Result<T>(result);
     public static implicit operator Result<T>(Exception error) => new Result<T>(default, error);
+}
+
+public static class Result
+{
+    public static Result<T> From<T>(T val)
+    {
+        return new Result<T>(val);
+    }
 }

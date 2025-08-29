@@ -1,4 +1,5 @@
 ﻿using PuppeteerSharp;
+using PWABuilder.Models;
 
 namespace PWABuilder.Services;
 
@@ -13,4 +14,11 @@ public interface IPuppeteerService : IAsyncDisposable
     /// <param name="url">The URL to navigate to.</param>
     /// <returns>The new page navigated to the specified URL.</returns>
     Task<IPage> Navigate(Uri url);
+
+    /// <summary>
+    /// Attempts to navigate a new page in the reusable browser instance and navigates to it.
+    /// </summary>
+    /// <param name="url">The URL to navigate to.</param>
+    /// <returns></returns>
+    Task<IPage?> TryNavigate(Uri url, ILogger logger);
 }

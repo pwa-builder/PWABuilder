@@ -1,6 +1,7 @@
 using Azure;
 using PuppeteerSharp;
 using PWABuilder.Common;
+using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
@@ -102,6 +103,19 @@ namespace PWABuilder.Services
             );
 
             return page;
+        }
+
+        public async Task<IPage?> TryNavigate(Uri site, ILogger logger)
+        {
+            try
+            {
+                return await Navigate(site);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Error navigating to {site}.", site);
+                return null;
+            }
         }
 
         public async ValueTask DisposeAsync()

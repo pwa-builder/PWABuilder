@@ -82,7 +82,13 @@ public class ManifestDetector
     private async Task<ManifestDetection?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Spin up a headless browser to find the manifest link.
-        using var page = await puppeteer.Navigate(appUrl);
+        using var page = await puppeteer.TryNavigate(appUrl, logger);
+        if (page == null)
+        {
+            logger.LogError("Unable to get manifest of {appUrl} using Puppeteer due to a page nav error.", appUrl);
+            return null;
+        }
+
         var manifestUrl = await TryGetManifestUrlFromPuppeteer(page, appUrl, logger, cancelToken);
 
         // See if we can get the manifest contents from Puppeteer.
