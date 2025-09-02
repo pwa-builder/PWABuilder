@@ -12,10 +12,10 @@ namespace PWABuilder.Controllers;
 public class AnalysesController : ControllerBase
 {
     private readonly ILogger<AnalysesController> logger;
-    private readonly AnalysisDb analysisDb;
+    private readonly IAnalysisDb analysisDb;
     private readonly IAnalysisJobQueue analysisJobQueue;
 
-    public AnalysesController(AnalysisDb analysisDb, IAnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
+    public AnalysesController(IAnalysisDb analysisDb, IAnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
     {
         this.analysisDb = analysisDb;
         this.analysisJobQueue = analysisJobQueue;
