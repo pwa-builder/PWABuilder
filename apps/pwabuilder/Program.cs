@@ -32,16 +32,21 @@ builder.Services.AddSingleton<IPuppeteerService, PuppeteerService>();
 builder.Services.AddTransient<TempDirectory>();
 builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
-builder.Services.AddSingleton<AnalysisDb>();
 if (builder.Environment.IsDevelopment())
 {
     // In development, we use an in-memory queue for analysis jobs. This prevents issues around using Azure Managed Identity authentication locally.
     builder.Services.AddSingleton<IAnalysisJobQueue, InMemoryAnalysisJobQueue>();
+
+    // In development, we use an in-memory database for Analysis objects. This makes local development and testing simpler, as we don't need to connect to Redis.
+    builder.Services.AddSingleton<IAnalysisDb, InMemoryAnalysisDb>();
 }
 else
 {
     // In production, we use an Azure Queue with Managed Identity authentication.
     builder.Services.AddSingleton<IAnalysisJobQueue, AnalysisJobQueue>();
+
+    // In production, we use AnalysisDb, which uses Redis as a backing store.
+    builder.Services.AddSingleton<IAnalysisDb, AnalysisDb>();
 }
 builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
