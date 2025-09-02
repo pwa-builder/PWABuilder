@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Razor.Infrastructure;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using Microsoft.PWABuilder.Microsoft.Store.Common;
+using Microsoft.PWABuilder.Microsoft.Store.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace Microsoft.PWABuilder.Microsoft.Store.Services
 {
     /// <summary>
     /// Creates a Windows app package that runs a PWA using the old Spartan (EdgeHTML)-based engine.

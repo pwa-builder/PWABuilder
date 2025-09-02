@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace Microsoft.PWABuilder.Microsoft.Store.Models
 {
     /// <summary>
     /// Publisher information for a Windows app package.

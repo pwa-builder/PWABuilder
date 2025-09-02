@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace Microsoft.PWABuilder.Microsoft.Store.Models
 {
     /// <summary>
     /// Options for creating the Windows package that runs on older versions of Windows (prior to 10.0.19041, May 2020 Update).

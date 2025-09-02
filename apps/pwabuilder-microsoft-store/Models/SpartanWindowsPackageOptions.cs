@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace Microsoft.PWABuilder.Microsoft.Store.Models
 {
     /// <summary>
     /// Options for generating the legacy EdgeHTML ("Spartan") based PWA app package.

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using Microsoft.PWABuilder.Microsoft.Store.Common;
+using Microsoft.PWABuilder.Microsoft.Store.Models;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace Microsoft.PWABuilder.Microsoft.Store.Services
 {
     /// <summary>
     /// Generates a Windows app package.

@@ -1,11 +1,11 @@
-﻿using Microsoft.PWABuilder.Windows.Chromium.Common;
+﻿using Microsoft.PWABuilder.Microsoft.Store.Common;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace Microsoft.PWABuilder.Microsoft.Store.Models
 {
     public sealed class ImageGeneratorServiceZipFile : IDisposable
     {

@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
-using Microsoft.PWABuilder.Windows.Chromium.Services;
+using Microsoft.PWABuilder.Microsoft.Store.Models;
+using Microsoft.PWABuilder.Microsoft.Store.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Controllers
+namespace Microsoft.PWABuilder.Microsoft.Store.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]

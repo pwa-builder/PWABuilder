@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace Microsoft.PWABuilder.Microsoft.Store.Services
 {
     /// <summary>
     /// Kills a process after a specified period of time.

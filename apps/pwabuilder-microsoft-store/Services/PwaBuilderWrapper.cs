@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using Microsoft.PWABuilder.Microsoft.Store.Common;
+using Microsoft.PWABuilder.Microsoft.Store.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace Microsoft.PWABuilder.Microsoft.Store.Services
 {
     /// <summary>
     /// Service for invoking the pwa_builder.exe command line tool.
@@ -60,7 +60,7 @@ namespace Microsoft.PWABuilder.Windows.Chromium.Services
             {
                 try {
                     // Check if it's a URL
-                    if (Uri.TryCreate(options.WebActionManifestFile, UriKind.Absolute, out Uri manifestUri) && 
+                    if (Uri.TryCreate(options.WebActionManifestFile, UriKind.Absolute, out var manifestUri) && 
                         (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
                     {
                         // It's a URL, download it
@@ -164,7 +164,7 @@ namespace Microsoft.PWABuilder.Windows.Chromium.Services
                 }
                 var localFilePath = tempDirectory.CreateFile(fileExtension);
                 File.WriteAllText(localFilePath, manifestContent);
-                
+                File.SetAttributes(localFilePath, FileAttributes.Temporary);
                 logger.LogInformation("Wrote web action manifest content to {localPath}", localFilePath);
                 return localFilePath;
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace Microsoft.PWABuilder.Microsoft.Store.Models
 {
     /// <summary>
     /// Common formats for web manifest icons.

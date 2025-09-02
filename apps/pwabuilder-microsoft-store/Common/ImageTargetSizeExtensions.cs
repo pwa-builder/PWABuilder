@@ -1,10 +1,10 @@
-﻿using Microsoft.PWABuilder.Windows.Chromium.Models;
+﻿using Microsoft.PWABuilder.Microsoft.Store.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Common
+namespace Microsoft.PWABuilder.Microsoft.Store.Common
 {
     public static class ImageTargetSizeExtensions
     {
