@@ -222,3 +222,21 @@ Issue an HTTP POST to `/msix/createFromLoose` with a form containing:
 | LooseFileLayoutZip      | `File` \| `Blob`  | A zip file containing the loose file layout of the app. Loose file layouts should contain files like AppxManifest.xml, resources.pri, etc. See [details here](https://docs.microsoft.com/en-us/windows/uwp/debug-test-perf/loose-file-registration#what-is-a-loose-file-layout). |
 
 The result will be a .msixbundle or .appxbundle file.
+
+
+### pwa_builder.exe tool
+
+The pwa_builder.exe tool is an internal command-line tool built by the Microsoft Edge team to generate Hosted App web packages that rely on Edge and can be uploaded to Partner Center and published as apps in the Microsoft Store.
+
+This tool is not publicly available. 
+
+The tool is injected into Resources\cli\pwa\pwabuilder folder at build time by GitHub Actions build pipeline.
+
+To upgrade to the latest pwa_builder.exe tool:
+
+1. Go to [Edge's Nuget feed](https://dev.azure.com/microsoft/Edge/_artifacts/feed/edge)
+2. Filter by "pwa"
+3. Choose the `pwa_builder` feed.
+4. Click `Download` to download the latest Nuget package containing the pwa_builder.exe tool.
+5. Rename the file to `pwa__builder.zip`
+6. Upload to the `pwabuildercommon` Azure Storage account, inside the `resources` directory, overwriting the existing `pwa_builder.zip` file.
