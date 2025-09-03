@@ -44,6 +44,7 @@ export class WindowsForm extends AppPackageFormBase {
   @state() userBackgroundColor: string = "";
   @state() showUploadActionsFile: boolean = false;
   @state() actionsFileError: string | null = null;
+  @state() supportCustomEntity: boolean = false;
 
   static get styles() {
     return [
@@ -226,6 +227,130 @@ export class WindowsForm extends AppPackageFormBase {
           font-size: var(--font-size);
         }
 
+        .actions-nested-content {
+          margin-left: 1.5em;
+          margin-top: 0.5em;
+        }
+
+        .actions-nested-content .form-check {
+          margin-top: 1em;
+        }
+
+        .actions-nested-content #actions-file-picker {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 2em !important;
+        }
+
+        .actions-file-upload-zone {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          padding: 6px;
+          border: 2px dashed #c5c5c5;
+          border-radius: var(--input-border-radius);
+          background-color: #fafafa;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-align: center;
+          width: fit-content;
+        }
+
+        .actions-file-upload-zone:hover {
+          border-color: #4F3FB6;
+          background-color: #f0f8ff;
+        }
+
+        .actions-file-upload-zone.has-file {
+          border-color: #28a745;
+          background-color: #f8fff9;
+        }
+
+        .upload-icon {
+          font-size: 24px;
+          margin-right: 8px;
+        }
+
+        .upload-text {
+          color: #4F3FB6;
+          font-size: 14px;
+          font-weight: 500;
+          margin-right: 4px;
+        }
+
+        .actions-file-upload-zone:hover .upload-text {
+          color: #3730a3;
+        }
+
+        .custom-entity-uploads {
+          margin-top: 1em;
+          margin-left: 1em;
+          padding: 1em;
+          border: 1px solid #e0e0e0;
+          border-radius: var(--input-border-radius);
+          background-color: #f9f9f9;
+          font-size: 14px;
+        }
+
+        .custom-entity-uploads .form-group {
+          margin-bottom: 1em;
+        }
+
+        .custom-entity-uploads .form-group:last-child {
+          margin-bottom: 1em;
+        }
+
+        .custom-entity-uploads label {
+          display: block;
+          margin-bottom: 0.5em;
+          font-weight: normal;
+          font-size: 16px;
+        }
+
+        .custom-entity-uploads input[type="file"] {
+          border: 1px solid #c5c5c5;
+          border-radius: var(--input-border-radius);
+          background-color: #ffffff;
+          font-size: 12px;
+        }
+
+        .folder-picker-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .file-picker-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .folder-picker-button,
+        .file-picker-button {
+          padding: 10px 18px;
+          background-color: #ffffff;
+          border: 1px solid #c5c5c5;
+          border-radius: var(--input-border-radius);
+          font-size: 12px;
+          cursor: pointer;
+          color: #333;
+        }
+
+        .folder-picker-button:hover,
+        .file-picker-button:hover {
+          background-color: #f5f5f5;
+          border-color: #999;
+        }
+
+        .folder-picker-text,
+        .file-picker-text {
+          font-size: 12px;
+          color: #666;
+          font-style: italic;
+        }
+
     `
     ];
   }
@@ -313,6 +438,7 @@ export class WindowsForm extends AppPackageFormBase {
     if (!checked) {
       delete this.packageOptions.webActionManifestFile;
       actionsSchemaValidation = null;
+      this.supportCustomEntity = false;
     } else {
       try {
         const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
@@ -328,6 +454,84 @@ export class WindowsForm extends AppPackageFormBase {
       } catch (err) {
         this.actionsFileError = "Schema setup failed.";
       }
+    }
+  }
+
+  updateCustomEntitySelection(checked: boolean) {
+    this.supportCustomEntity = checked;
+  }
+
+  customEntitiesFileChanged(e: Event) {
+    if (!e) return;
+
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    // Update the display text
+    const customEntitiesText = this.shadowRoot?.querySelector('#custom-entities-picker-text');
+    if (customEntitiesText) {
+      customEntitiesText.textContent = file ? file.name : 'No file chosen';
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const text: string = reader.result as string;
+          const parsed = JSON.parse(text);
+          
+          // Store the custom entities file content
+          // You can add validation here if needed
+          console.log('Custom entities file loaded:', parsed);
+          
+        } catch (err) {
+          console.error('Invalid custom entities file:', err);
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  localizedEntitiesFolderChanged(e: Event) {
+    if (!e) return;
+
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+
+    if (files && files.length > 0) {
+      console.log('Localized entities folder selected:', files.length, 'files');
+      
+      // Update the display text
+      const folderText = this.shadowRoot?.querySelector('#folder-picker-text');
+      if (folderText) {
+        folderText.textContent = `${files.length} files selected`;
+      }
+      
+      // Process the folder contents here
+      Array.from(files).forEach(file => {
+        console.log('File:', file.name, file.webkitRelativePath);
+      });
+    }
+  }
+
+  openFolderPicker() {
+    const folderInput = this.shadowRoot?.querySelector('#localized-entities-folder-picker') as HTMLInputElement;
+    if (folderInput) {
+      folderInput.click();
+    }
+  }
+
+  openActionsPicker() {
+    const actionsInput = this.shadowRoot?.querySelector('#actions-file-picker') as HTMLInputElement;
+    if (actionsInput) {
+      actionsInput.click();
+    }
+  }
+
+  openCustomEntitiesPicker() {
+    const customEntitiesInput = this.shadowRoot?.querySelector('#custom-entities-file-picker') as HTMLInputElement;
+    if (customEntitiesInput) {
+      customEntitiesInput.click();
     }
   }
 
@@ -352,6 +556,12 @@ export class WindowsForm extends AppPackageFormBase {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
     const reader = new FileReader();
+
+    // Update the display text
+    const actionsText = this.shadowRoot?.querySelector('#actions-picker-text');
+    if (actionsText) {
+      actionsText.textContent = file ? file.name : 'No file chosen';
+    }
 
     if (file) {
       reader.onload = () => {
@@ -754,8 +964,52 @@ export class WindowsForm extends AppPackageFormBase {
                 </div>
                 ${this.showUploadActionsFile ?
                   html`
-                    <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
-                    ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
+                    <div class="actions-nested-content">
+                      <div class="actions-file-upload-zone" @click=${this.openActionsPicker}>
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Click to upload ActionsManifest.json</div>
+                        <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)} style="display: none;"/>
+                      </div>
+                      ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
+                      <div class="form-check">
+                        ${this.renderFormInput({
+                          label: 'Support Custom Entity',
+                          value: 'CustomEntity',
+                          tooltip:
+                            'Enables support for custom entities in your Actions manifest.',
+                          tooltipLink:
+                            'https://aka.ms/pwa-winaction',
+                          inputId: 'custom-entity-checkbox',
+                          type: 'checkbox',
+                          checked: this.supportCustomEntity,
+                          inputHandler: (_val: string, checked: boolean) =>
+                            (this.updateCustomEntitySelection(checked)),
+                        })}
+                      </div>
+                      ${this.supportCustomEntity ?
+                        html`
+                          <div class="custom-entity-uploads">
+                            <div class="form-group">
+                              <label for="custom-entities-file-picker">Upload JSON file for CustomEntities:</label>
+                              <div class="file-picker-wrapper">
+                                <button type="button" class="file-picker-button" @click=${this.openCustomEntitiesPicker}>Choose File</button>
+                                <input id="custom-entities-file-picker" type="file" accept=".json" @change=${(e: Event) => this.customEntitiesFileChanged(e)} style="display: none;"/>
+                                <span class="file-picker-text" id="custom-entities-picker-text">No file chosen</span>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="localized-entities-folder-picker">Upload localized custom entities files (optional):</label>
+                              <div class="folder-picker-wrapper">
+                                <button type="button" class="folder-picker-button" @click=${this.openFolderPicker}>Select Folder</button>
+                                <input id="localized-entities-folder-picker" type="file" webkitdirectory multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
+                                <span class="folder-picker-text" id="folder-picker-text">No folder selected</span>
+                              </div>
+                            </div>
+                          </div>
+                        ` :
+                        null
+                      }
+                    </div>
                   ` :
                   null
                 }
