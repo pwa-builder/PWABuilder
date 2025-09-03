@@ -127,14 +127,14 @@ namespace PWABuilder.MicrosoftStore.Models
         public bool? EnableWebAppWidgets { get; set; } = false;
 
         /// <summary>
-        /// Path to a Windows Actions manifest file for Windows AI App Actions. See 
+        /// Options related to Windows Actions, which surface app actions to the OS level. For example, an app can declare that it can remove background from images. Users can, for example, right-click an image in Windows Explore and remove the background of an image using your app.
         /// </summary>
         /// <remarks>
         /// For more information about App Actions, see https://learn.microsoft.com/en-us/windows/ai/app-actions/actions-get-started
-        /// For more information about App Actions for PWAs, see https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps/how-to/app-actions
+        /// For more information about App Actions for PWAs, see https://blogs.windows.com/msedgedev/2025/05/30/bring-your-pwa-closer-to-users-with-app-actions-on-windows/
         /// To test out a PWA with App Actions, see the App Actions Testing Playground https://apps.microsoft.com/detail/9plswv2gr8b4
         /// </remarks>
-        public string? WindowsActionsManifest { get; set; }
+        public WindowsActionsOptions? WindowsActions { get; set; }
 
         public List<string> GetValidationErrors(AppSettings appSettings)
         {

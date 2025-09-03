@@ -40,22 +40,22 @@ public class WindowsActionsService
     public async Task<string?> GetActionsManifestFile(WindowsAppPackageOptions options)
     {
         // Process web action manifest file - could be a URL or direct JSON content
-        if (string.IsNullOrWhiteSpace(options.WindowsActionsManifest))
+        if (string.IsNullOrWhiteSpace(options.WindowsActions?.Manifest))
         {
             return null;
         }
         
         try
         {
-            var actionsManifestContent = options.WindowsActionsManifest;
+            var actionsManifestContent = options.WindowsActions.Manifest;
             
             // Check if it's a URL
-            if (Uri.TryCreate(options.WindowsActionsManifest, UriKind.Absolute, out var manifestUri) &&
+            if (Uri.TryCreate(options.WindowsActions.Manifest, UriKind.Absolute, out var manifestUri) &&
                 (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
             {
                 // It's a URL, download it
                 actionsManifestContent = await DownloadWindowsActionsManifestFile(manifestUri);
-                logger.LogInformation("Downloaded windows actions manifest from URL: {url}", options.WindowsActionsManifest);
+                logger.LogInformation("Downloaded windows actions manifest from URL: {url}", options.WindowsActions.Manifest);
             }
 
             // Validate JSON content before processing
