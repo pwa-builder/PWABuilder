@@ -2,14 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Microsoft.Store.Models;
+using PWABuilder.MicrosoftStore.Models;
 using PWABuilder.MicrosoftStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PWABuilder.MicrosoftStore.Services;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Controllers
+namespace PWABuilder.MicrosoftStore.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]

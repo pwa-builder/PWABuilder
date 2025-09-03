@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Microsoft.Store.Models;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Diagnostics;
 using System.IO;

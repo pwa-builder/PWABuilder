@@ -1,10 +1,10 @@
-﻿using Microsoft.PWABuilder.Microsoft.Store.Models;
+﻿using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Common
+namespace PWABuilder.MicrosoftStore.Common
 {
     public static class ImageTargetSizeExtensions
     {

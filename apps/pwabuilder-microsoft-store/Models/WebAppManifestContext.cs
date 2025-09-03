@@ -1,10 +1,10 @@
-﻿using Microsoft.PWABuilder.Microsoft.Store.Common;
+﻿using PWABuilder.MicrosoftStore.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Contains a web app manifest and the URL where the manifest was located.

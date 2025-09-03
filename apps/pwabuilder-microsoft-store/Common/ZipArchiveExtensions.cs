@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Common
+namespace PWABuilder.MicrosoftStore.Common
 {
     public static class ZipArchiveExtensions
     {

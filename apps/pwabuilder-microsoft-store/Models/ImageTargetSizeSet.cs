@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Contains an image of a particular dimension (e.g. 16x16), along with an optional Windows light themed image of the same dimensions.

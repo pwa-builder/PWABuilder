@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Microsoft.Store.Common;
-using Microsoft.PWABuilder.Microsoft.Store.Models;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

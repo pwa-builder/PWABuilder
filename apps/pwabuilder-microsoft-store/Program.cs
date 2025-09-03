@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.PWABuilder.Microsoft.Store
+namespace PWABuilder.MicrosoftStore
 {
     public class Program
     {

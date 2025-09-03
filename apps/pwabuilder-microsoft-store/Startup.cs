@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.PWABuilder.Microsoft.Store.Common;
-using Microsoft.PWABuilder.Microsoft.Store.Models;
-using PWABuilder.MicrosoftStore;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
+using PWABuilder.MicrosoftStore.Services;
 
-namespace Microsoft.PWABuilder.Microsoft.Store
+namespace PWABuilder.MicrosoftStore
 {
     public class Startup
     {

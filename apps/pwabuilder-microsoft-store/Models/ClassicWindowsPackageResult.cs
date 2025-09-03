@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Result of an app package generation for a PWA powered by Microsoft Edge that works on versions of Windows prior to May 2020 update.

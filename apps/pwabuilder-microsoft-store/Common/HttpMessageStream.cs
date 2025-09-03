@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Common
+namespace PWABuilder.MicrosoftStore.Common
 {
     /// <summary>
     /// A readable stream opened from an <see cref="HttpResponseMessage"/>. Upon disposal, both the stream and the message are disposed.

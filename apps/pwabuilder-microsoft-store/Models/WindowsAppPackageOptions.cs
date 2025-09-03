@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Configuration options for generating the Windows app package.

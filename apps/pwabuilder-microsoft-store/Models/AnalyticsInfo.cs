@@ -1,4 +1,4 @@
-﻿namespace Microsoft.PWABuilder.Microsoft.Store.Models
+﻿namespace PWABuilder.MicrosoftStore.Models
 {
     public class AnalyticsInfo
     {

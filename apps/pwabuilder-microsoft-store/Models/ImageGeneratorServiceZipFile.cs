@@ -1,11 +1,11 @@
-﻿using Microsoft.PWABuilder.Microsoft.Store.Common;
+﻿using PWABuilder.MicrosoftStore.Common;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     public sealed class ImageGeneratorServiceZipFile : IDisposable
     {
