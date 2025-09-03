@@ -105,11 +105,11 @@ function updateJsonWithFile() {
         
         if (webActionManifestContent) {
             // If we have file content, add it to the JSON
-            currentJson.webActionManifestFile = webActionManifestContent;
+            currentJson.windowsActionsManifestFile = webActionManifestContent;
         } else {
             // If no file content, remove the property if it exists
-            if (currentJson.webActionManifestFile && !currentJson.webActionManifestFile.startsWith("http")) {
-                delete currentJson.webActionManifestFile;
+            if (currentJson.windowsActionsManifestFile && !currentJson.windowsActionsManifestFile.startsWith("http")) {
+                delete currentJson.windowsActionsManifestFile;
             }
         }
         
@@ -136,7 +136,7 @@ function getSimpleMsix() {
 
 function getActionsMsix() {
     const options = getSimpleMsix();
-    options.webActionManifestFile = "https://thankful-brass-constellation.glitch.me/well-known/actions.json";
+    options.windowsActionsManifestFile = "https://thankful-brass-constellation.glitch.me/well-known/actions.json";
     return options;
 }
 
@@ -359,7 +359,7 @@ async function submit() {
         const options = JSON.parse(codeArea.value);
         
         // If we have file content stored in memory, use that directly
-        if (webActionManifestContent && options.webActionManifestFile === webActionManifestContent) {
+        if (webActionManifestContent && options.windowsActionsManifestFile === webActionManifestContent) {
             // The content is already in the JSON, so we can proceed
         }
         

@@ -54,23 +54,23 @@ public class WindowsActionsService
                 (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
             {
                 // It's a URL, download it
-                actionsManifestContent = await DownloadWebActionManifestFile(manifestUri);
-                logger.LogInformation("Downloaded web action manifest from URL: {url}", options.WindowsActionsManifest);
-            }            
+                actionsManifestContent = await DownloadWindowsActionsManifestFile(manifestUri);
+                logger.LogInformation("Downloaded windows actions manifest from URL: {url}", options.WindowsActionsManifest);
+            }
 
             // Validate JSON content before processing
             if (!IsValidJson(actionsManifestContent))
             {
-                throw new ArgumentException("The provided web action manifest content is not valid JSON.");
+                throw new ArgumentException("The provided windows actions manifest content is not valid JSON.");
             }
 
             var actionsManifestFilePath = await WriteActionManifestContentAsync(actionsManifestContent);
-            logger.LogInformation("Created web action manifest from provided JSON content for {url}", options.Url);
+            logger.LogInformation("Created windows actions manifest from provided JSON content for {url}", options.Url);
             return actionsManifestFilePath;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error processing web action manifest for {url}", options.Url);
+            logger.LogError(ex, "Error processing windows actions manifest for {url}", options.Url);
             throw;
         }
     }
@@ -78,7 +78,7 @@ public class WindowsActionsService
     /// <summary>
     /// Downloads a web action manifest file from a URL. Returns the contents of the file.
     /// </summary>
-    private async Task<string> DownloadWebActionManifestFile(Uri manifestUri)
+    private async Task<string> DownloadWindowsActionsManifestFile(Uri manifestUri)
     {
         try
         {
