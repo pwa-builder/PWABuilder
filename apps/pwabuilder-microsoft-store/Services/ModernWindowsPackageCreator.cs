@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore.Services
@@ -43,17 +44,16 @@ namespace PWABuilder.MicrosoftStore.Services
         /// <param name="options"></param>
         /// <param name="outputDirectory"></param>
         /// <returns></returns>
-        public async Task<ModernWindowsPackageResult> Create(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory)
+        public async Task<ModernWindowsPackageResult> Create(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, CancellationToken cancelToken)
         {
-
             // 1. Build the Store package. If widgets are present, build multiple.
-            var storeBuilderResult = await BuildStoreReadyPackage(options, appImages, webManifest, outputDirectory);
+            var storeBuilderResult = await BuildStoreReadyPackage(options, appImages, webManifest, outputDirectory, cancelToken);
 
             // 2. Bundle the Store package.
             var storeBundleFilePath = options.EnableWebAppWidgets != true ? await makeAppx.Bundle(storeBuilderResult.MsixFile, new Version(options.Version).WithZeroRevision()) : await makeAppx.BundlePlatforms(storeBuilderResult.MsixPlatformFiles, outputDirectory, new Version(options.Version).WithZeroRevision());
 
             // 3. Build the side load package.
-            var sideLoadMsixFilePath = await BuildSideloadPackage(options, storeBuilderResult, appImages, webManifest, outputDirectory);
+            var sideLoadMsixFilePath = await BuildSideloadPackage(options, storeBuilderResult, appImages, webManifest, outputDirectory, cancelToken);
 
             // 4. Read the generated package info.
             var packageInfo = ReadPackageInfo(storeBuilderResult.AppxManifest);
@@ -64,20 +64,21 @@ namespace PWABuilder.MicrosoftStore.Services
         private async Task<PwaBuilderCommandLineResult> BuildStoreReadyPackage(WindowsAppPackageOptions options,
             ImageGeneratorResult appImages,
             WebAppManifestContext webManifest,
-            string outputDirectory)
+            string outputDirectory,
+            CancellationToken cancelToken)
         {
             if (options.EnableWebAppWidgets != true)
             {
-                return await BuildStorePackage(options, appImages, webManifest, outputDirectory);
+                return await BuildStorePackage(options, appImages, webManifest, outputDirectory, string.Empty, cancelToken);
             }
             
             PwaBuilderCommandLineResult result = new();
             Task<PwaBuilderCommandLineResult>[] partialResultTasks = new Task<PwaBuilderCommandLineResult>[3];
-            var processors = new string[]{ "x64", "x86", "arm64"};
-            for(int i=0;i<processors.Length;i++)
+            var architectures = new string[] { "x64", "x86", "arm64"};
+            for(int i=0;i<architectures.Length;i++)
             {
-                var subDirectory = Directory.CreateDirectory(Path.Combine(outputDirectory, processors[i])).FullName;
-                partialResultTasks[i] =  BuildStorePackage(options, appImages, webManifest, subDirectory, processors[i]);
+                var subDirectory = Directory.CreateDirectory(Path.Combine(outputDirectory, architectures[i])).FullName;
+                partialResultTasks[i] =  BuildStorePackage(options, appImages, webManifest, subDirectory, architectures[i], cancelToken);
 
             }
 
@@ -98,15 +99,16 @@ namespace PWABuilder.MicrosoftStore.Services
             ImageGeneratorResult appImages,
             WebAppManifestContext webManifest,
             string outputDirectory,
-            string processor = "")
+            string processor,
+            CancellationToken cancelToken)
         {
             // Run pwabuilder command line to generate the package.
             
             var appxResult = options.UsePWABuilderWithCustomManifest switch
             {
                 //If offline manifest is provided, run PWABuilder and pass the manifest filepath. If not, the manifest would have been downloaded from the source so use that as a fallback in case pwa_builder.exe can't fetch the manifest on its own"
-                true => await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, "", true),
-                _ => await RunPwaBuilderWithOfflineManifestFallback(options, appImages, webManifest, outputDirectory, processor)
+                true => await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, "", true, cancelToken),
+                _ => await RunPwaBuilderWithOfflineManifestFallback(options, appImages, webManifest, outputDirectory, processor, cancelToken)
             };
 
             // Generate a real resources.pri for the project.
@@ -120,7 +122,8 @@ namespace PWABuilder.MicrosoftStore.Services
             PwaBuilderCommandLineResult storePackageResult,
             ImageGeneratorResult appImages,
             WebAppManifestContext webManifest,
-            string outputDirectory)
+            string outputDirectory,
+            CancellationToken cancelToken)
         {
             // The sideload package must have AllowSigning = false.
             // This is required for sideloading the package via /Resources/cli/pwainstaller/pwainstaller.exe
@@ -136,7 +139,7 @@ namespace PWABuilder.MicrosoftStore.Services
             Directory.CreateDirectory(sideLoadDirectory);
             var sideLoadOptions = options.Clone();
             sideLoadOptions.AllowSigning = false;
-            var sideLoadBuilderResult = await RunPwaBuilderWithOfflineManifestFallback(sideLoadOptions, appImages, webManifest, sideLoadDirectory);
+            var sideLoadBuilderResult = await RunPwaBuilderWithOfflineManifestFallback(sideLoadOptions, appImages, webManifest, sideLoadDirectory, string.Empty, cancelToken);
             return await UpdateMsixWithLegitResources(sideLoadBuilderResult, sideLoadDirectory);
         }
 
@@ -190,7 +193,8 @@ namespace PWABuilder.MicrosoftStore.Services
             ImageGeneratorResult appImages,
             WebAppManifestContext webManifest,
             string outputDirectory,
-            string processor = "")
+            string processor,
+            CancellationToken cancelToken)
         {
             var manifestFetchErrorMessages = new[]
             {
@@ -203,21 +207,21 @@ namespace PWABuilder.MicrosoftStore.Services
                 //If custom manifest is provided 
                 if (options.UsePWABuilderWithCustomManifest == true)
                 {
-                    var customManifestResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, true);
+                    var customManifestResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, true, cancelToken);
                     logger.LogInformation("Packaged using custom manifest");
                     return customManifestResult;
                 }
-                return await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, false);
+                return await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, false, cancelToken);
             }
             catch (ProcessException procError)
-            when (manifestFetchErrorMessages.Any(m => procError.StandardError?.Contains(m, StringComparison.OrdinalIgnoreCase) == true)) // yes, "retreive" is misspelled. That's the error we're looking for.
+            when (manifestFetchErrorMessages.Any(m => procError.StandardError?.Contains(m, StringComparison.OrdinalIgnoreCase) == true))
             {
                 // OK, pwa_builder.exe failed to fetch the manifest.
                 // Try passing the manifest file already fetched
                 if (options.Manifest != null)
                 {
                     logger.LogWarning("pwa_builder.exe was unable to fetch the manifest for {url}. Attempting offline manifest fallback", options.Url);
-                    var fallbackResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, true);
+                    var fallbackResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, true, cancelToken);
                     if (fallbackResult != null)
                     {
                         logger.LogInformation("Offline manifest  fallback succeeded.");

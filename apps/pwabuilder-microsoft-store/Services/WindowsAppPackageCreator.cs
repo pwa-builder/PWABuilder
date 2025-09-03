@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore.Services
@@ -62,7 +63,7 @@ namespace PWABuilder.MicrosoftStore.Services
         /// Creates the Windows app package.
         /// </summary>
         /// <returns></returns>
-        public async Task<WindowsAppPackageResult> CreateAppPackage(WindowsAppPackageOptions options, AnalyticsInfo analyticsInfo)
+        public async Task<WindowsAppPackageResult> CreateAppPackageAsync(WindowsAppPackageOptions options, AnalyticsInfo analyticsInfo, CancellationToken cancelToken)
         {
             ValidateOptions(options);
 
@@ -78,7 +79,7 @@ namespace PWABuilder.MicrosoftStore.Services
                 WindowsPackageType.DeveloperPackage : WindowsPackageType.StorePackage;
             try
             {
-                var zipResult = await GenerateZip(options);
+                var zipResult = await GenerateZipAsync(options, cancelToken);
                 analytics.Record(options.Url, true, packageType, analyticsInfo, options.PackageId, options.Publisher?.CommonName, options.Publisher?.DisplayName, null);
                 return zipResult;
             }
@@ -98,12 +99,12 @@ namespace PWABuilder.MicrosoftStore.Services
         /// Creates only the MSIX modern app package.
         /// </summary>
         /// <returns></returns>
-        public async Task<MsixResult> CreateMsix(WindowsAppPackageOptions options)
+        public async Task<MsixResult> CreateMsixAsync(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
             ValidateOptions(options);
             try
             {
-                return await GenerateMsix(options);
+                return await GenerateMsix(options, cancelToken);
             }
             catch (Exception error)
             {
@@ -154,11 +155,11 @@ namespace PWABuilder.MicrosoftStore.Services
             return null;
         }
 
-        private async Task<MsixResult> GenerateMsix(WindowsAppPackageOptions options)
+        private async Task<MsixResult> GenerateMsix(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
             var manifest = await manifestFinder.Find(options);
             var appImages = await GenerateImages(options, manifest);
-            var package = await this.CreateModernWindowsPackage(options, appImages, manifest);
+            var package = await this.CreateModernWindowsPackage(options, appImages, manifest, cancelToken);
             if (package == null)
             {
                 throw new InvalidOperationException("Attempted to generate MSIX file, but passed in options to skip generating the modern package.");
@@ -168,12 +169,12 @@ namespace PWABuilder.MicrosoftStore.Services
             return new MsixResult(package, msixBytes);
         }
 
-        private async Task<WindowsAppPackageResult> GenerateZip(WindowsAppPackageOptions options)
+        private async Task<WindowsAppPackageResult> GenerateZipAsync(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
             var manifest = await manifestFinder.Find(options);
             var appImages = await GenerateImages(options, manifest);
             //Todo: instead of adding filepath to the options, pass it to the filepath directly
-            var modernPackage = await this.CreateModernWindowsPackage(options, appImages, manifest);
+            var modernPackage = await this.CreateModernWindowsPackage(options, appImages, manifest, cancelToken);
             var classicPackage = await CreateClassicWindowsPackage(options, manifest, appImages, modernPackage?.PackageInfo.GetAppId());
             var spartanPackage = await CreateSpartanWindowsPackage(options, manifest, appImages);
             var zipFilePath = await CreateZipPackage(options, modernPackage, classicPackage, spartanPackage);
@@ -181,12 +182,12 @@ namespace PWABuilder.MicrosoftStore.Services
             return new WindowsAppPackageResult(modernPackage, classicPackage, spartanPackage, zipBytes);
         }
 
-        private async Task<ModernWindowsPackageResult?> CreateModernWindowsPackage(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest)
+        private async Task<ModernWindowsPackageResult?> CreateModernWindowsPackage(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, CancellationToken cancelToken)
         {
             if (options.GenerateModernPackage)
             {
                 var outputDirectory = temp.CreateDirectory("modernpackage-" + Guid.NewGuid());
-                return await this.modernPackageCreator.Create(options, appImages, webManifest, outputDirectory);
+                return await this.modernPackageCreator.Create(options, appImages, webManifest, outputDirectory, cancelToken);
             }
 
             return null;

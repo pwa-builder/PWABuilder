@@ -12,6 +12,7 @@ public class WindowsActionsCustomEntityLocalization
 
     /// <summary>
     /// The JSON contents of the localization file. Example contents: { "english phrase one": { "welcome": "howdy, friends" } }
+    /// Alternately, this can be an absolute URL to a localization JSON file.
     /// </summary>
     public required string Contents { get; set; }
 }

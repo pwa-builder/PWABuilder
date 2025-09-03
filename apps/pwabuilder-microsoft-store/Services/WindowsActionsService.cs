@@ -2,9 +2,11 @@
 using PWABuilder.MicrosoftStore.Common;
 using PWABuilder.MicrosoftStore.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore.Services;
@@ -32,14 +34,15 @@ public class WindowsActionsService
     }
 
     /// <summary>
-    /// Creates a Windows Actions manifest file on disk from the provided options. The result is a temporary file on disk that contains the Windows Actions manifest.
+    /// Creates temporary files on disk for the Windows Actions options.
     /// If <see cref="WindowsAppPackageOptions.WindowsActionsManifest"/> is not specified, this will return null.
     /// </summary>
     /// <param name="options">The Windows app package options.</param>
+    /// <param name="outputDirectory">The directory where the pwabuilder.exe output will be stored. For this method, any localization files will be placed in a new LocalizedCustomEntities folder within the output directory.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>The path to the file containing the Windows Actions manifest file, or null if none was created.</returns>
-    public async Task<string?> GetActionsManifestFile(WindowsAppPackageOptions options)
+    public async Task<WindowsActionsFiles?> GetWindowsActionsFilesAsync(WindowsAppPackageOptions options, string outputDirectory, CancellationToken cancelToken)
     {
-        // Process web action manifest file - could be a URL or direct JSON content
         if (string.IsNullOrWhiteSpace(options.WindowsActions?.Manifest))
         {
             return null;
@@ -47,60 +50,75 @@ public class WindowsActionsService
         
         try
         {
-            var actionsManifestContent = options.WindowsActions.Manifest;
-            
-            // Check if it's a URL
-            if (Uri.TryCreate(options.WindowsActions.Manifest, UriKind.Absolute, out var manifestUri) &&
-                (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
+            // Get the Actions manifest.
+            var actionsManifestJson = await GetOrFetchJsonAsync(options.WindowsActions.Manifest, cancelToken);
+            var actionsManifestFilePath = await WriteJsonTempFile(actionsManifestJson);
+            EnsureValidJson(actionsManifestJson);
+
+            // Grab the optional custom entities file.
+            var customEntitiesJson = default(string);
+            var customEntitiesFilePath = default(FilePath?);
+            if (!string.IsNullOrWhiteSpace(options.WindowsActions.CustomEntities))
             {
-                // It's a URL, download it
-                actionsManifestContent = await DownloadWindowsActionsManifestFile(manifestUri);
-                logger.LogInformation("Downloaded windows actions manifest from URL: {url}", options.WindowsActions.Manifest);
+                customEntitiesJson = await GetOrFetchJsonAsync(options.WindowsActions.CustomEntities, cancelToken);
+                customEntitiesFilePath = await WriteJsonTempFile(actionsManifestJson);
+                EnsureValidJson(customEntitiesJson);
             }
 
-            // Validate JSON content before processing
-            if (!IsValidJson(actionsManifestContent))
+            // Grab any translation files for the custom entities file.
+            var localizedCustomEntitiesPath = default(FilePath?);
+            if (options.WindowsActions.CustomEntitiesLocalizations != null)
             {
-                throw new ArgumentException("The provided windows actions manifest content is not valid JSON.");
+                // Create the LocalizedCustomEntities directory within the output directory.
+                localizedCustomEntitiesPath = tempDirectory.CreateSubdirectory(outputDirectory, "LocalizedCustomEntities");
+                foreach (var localization in options.WindowsActions.CustomEntitiesLocalizations)
+                {
+                    var localizationJson = await GetOrFetchJsonAsync(localization.Contents, cancelToken);
+                    var localizationFilePath = Path.Combine(localizedCustomEntitiesPath, localization.FileName);
+                    await File.WriteAllTextAsync(localizationFilePath, localizationJson, cancelToken);
+                    EnsureValidJson(localizationJson);
+                }
             }
-
-            var actionsManifestFilePath = await WriteActionManifestContentAsync(actionsManifestContent);
+                        
             logger.LogInformation("Created windows actions manifest from provided JSON content for {url}", options.Url);
-            return actionsManifestFilePath;
+            return new WindowsActionsFiles
+            {
+                ManifestFilePath = actionsManifestJson,
+                CustomEntitiesFilePath = customEntitiesFilePath,
+                CustomEntitiesLocalizationDirectoryPath = localizedCustomEntitiesPath
+            };
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error processing windows actions manifest for {url}", options.Url);
+            logger.LogError(ex, "Error processing Windows Actions for {url} with actions contents {contents}", options.Url, options.WindowsActions?.Manifest);
             throw;
         }
     }
 
-    /// <summary>
-    /// Downloads a web action manifest file from a URL. Returns the contents of the file.
-    /// </summary>
-    private async Task<string> DownloadWindowsActionsManifestFile(Uri manifestUri)
+    private async Task<string> GetOrFetchJsonAsync(string jsonOrUrl, CancellationToken cancelToken)
+    {
+        // If it's a URL, download it.
+        if (Uri.TryCreate(jsonOrUrl, UriKind.Absolute, out var manifestUri) &&
+            (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
+        {
+            logger.LogInformation("Downloading Windows Actions JSON content from {url}", jsonOrUrl);
+            return await DownloadJsonAsync(manifestUri, cancelToken);
+        }
+        
+        return jsonOrUrl;
+    }
+
+    private async Task<string> DownloadJsonAsync(Uri url, CancellationToken cancelToken)
     {
         try
         {
-            using var manifestFetchMessage = new HttpRequestMessage(HttpMethod.Get, manifestUri);
-            manifestFetchMessage.Version = new Version(2, 0);
-            manifestFetchMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            using var manifestResponse = await this.http.SendAsync(manifestFetchMessage);
-            manifestResponse.EnsureSuccessStatusCode();
-
-            var manifestContent = await manifestResponse.Content.ReadAsStringAsync();
-
-            // Validate downloaded content is valid JSON
-            if (!IsValidJson(manifestContent))
-            {
-                throw new InvalidOperationException("The downloaded web action manifest is not valid JSON.");
-            }
-
-            return manifestContent;
+            var jsonContent = await http.GetStringAsync(url, ["application/json"], 2 * 1024 * 1024, cancelToken);
+            logger.LogInformation("Downloaded JSON content from {url}", url);
+            return jsonContent;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to download Windows Action manifest from {url}", manifestUri);
+            logger.LogError(ex, "Failed to download Windows Actions JSON file from {url}", url);
             throw;
         }
     }
@@ -108,12 +126,13 @@ public class WindowsActionsService
     /// <summary>
     /// Writes web action manifest content to a temporary file
     /// </summary>
-    private async Task<string> WriteActionManifestContentAsync(string manifestContent)
+    /// <returns>A file path to the temporary file.</returns>
+    private async Task<FilePath> WriteJsonTempFile(string json)
     {
         try
         {
-            var localFilePath = await tempDirectory.WriteAllTextAsync(manifestContent, ".json");
-            logger.LogInformation("Wrote Windows Action Manifest content to {localPath}", localFilePath);
+            var localFilePath = await tempDirectory.WriteAllTextAsync(json, ".json");
+            logger.LogInformation("Wrote Windows Action JSON content to {localPath}", localFilePath);
             return localFilePath;
         }
         catch (Exception ex)
@@ -124,22 +143,22 @@ public class WindowsActionsService
     }
 
     /// <summary>
-    /// Validates if a string is valid JSON
+    /// Ensures the specified JSON content is valid JSON. Throws an exception if it is not.
     /// </summary>
-    private bool IsValidJson(string jsonContent)
+    private void EnsureValidJson(string? jsonContent)
     {
+        if (string.IsNullOrWhiteSpace(jsonContent))
+        {
+            throw new ArgumentException("The Windows Actions JSON content is null or empty.");
+        }
         try
         {
-            // Attempt to parse as JSON document
-            using (JsonDocument.Parse(jsonContent))
-            {
-                return true;
-            }
+            using var doc = JsonDocument.Parse(jsonContent);
         }
         catch (JsonException ex)
         {
-            logger.LogWarning(ex, "Invalid JSON provided for web action manifest");
-            return false;
+            logger.LogError(ex, "The provided JSON content is not valid JSON: {json}", jsonContent);
+            throw new ArgumentException("The provided JSON content is not valid JSON.", ex);
         }
     }
 }

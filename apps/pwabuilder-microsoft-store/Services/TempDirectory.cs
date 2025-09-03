@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PWABuilder.MicrosoftStore.Common;
 using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,20 @@ namespace PWABuilder.MicrosoftStore
             return outputFolder;
         }
 
+        /// <summary>
+        /// Creates a subdirectory within the specified directory and tracks it for cleanup.
+        /// </summary>
+        /// <param name="directory">The parent directory.</param>
+        /// <param name="subDirectoryName">The subdirectory name.</param>
+        /// <returns>The path to the new subdirectory.</returns>
+        public FilePath CreateSubdirectory(FilePath directory, string subDirectoryName)
+        {
+            var subDir = Path.Combine(directory.Path, subDirectoryName);
+            Directory.CreateDirectory(subDir);
+            directoriesToCleanUp.Add(subDir);
+            return subDir;
+        }
+
         public string CreateFile(string? fileExtension = ".tmp")
         {
             // Make sure the output directory exists
@@ -61,7 +76,7 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="textContent">The text content to write to the file.</param>
         /// <param name="fileExtension">The optional extension for the file name.</param>
         /// <returns>The path to the temporary file.</returns>
-        public async Task<string> WriteAllTextAsync(string textContent, string fileExtension = ".tmp")
+        public async Task<FilePath> WriteAllTextAsync(string textContent, string fileExtension = ".tmp")
         {
             var expandedOutputDir = Environment.ExpandEnvironmentVariables(settings.OutputDirectory);
             Directory.CreateDirectory(expandedOutputDir);
