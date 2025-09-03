@@ -65,12 +65,12 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Models
         public string? Extensions { get; set; }
 
         /// <summary>
-        /// Whether to generate the modern app package, a PWA powered by Chromium-based Edge using the new Hosted App Model. This app will work on versions of Windows >= May 2020 Update.
+        /// Whether to generate the modern app package, a PWA powered by Microsoft Edge using the new Hosted App Model. This app will work on versions of Windows >= May 2020 Update.
         /// </summary>
         public bool GenerateModernPackage { get; set; } = true;
 
         /// <summary>
-        /// Options for generating the classic Windows package, a PWA package powered by Chromium-based edge that runs on older Windows versions prior to May 2020 update.
+        /// Options for generating the classic Windows package, a PWA package powered by Microsoft Edge that runs on older Windows versions prior to May 2020 update.
         /// </summary>
         public ClassicWindowsPackageOptions? ClassicPackage { get; set; }
 
@@ -127,14 +127,14 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Models
         public bool? EnableWebAppWidgets { get; set; } = false;
 
         /// <summary>
-        /// Path to a web action manifest file for Windows AI actions
+        /// Path to a Windows Actions manifest file for Windows AI App Actions. See 
         /// </summary>
-        public string? WebActionManifestFile { get; set; }
-
-        /// <summary>
-        /// Local file path to the downloaded web action manifest file (internal use)
-        /// </summary>
-        public string? WebActionManifestFilePath { get; set; }
+        /// <remarks>
+        /// For more information about App Actions, see https://learn.microsoft.com/en-us/windows/ai/app-actions/actions-get-started
+        /// For more information about App Actions for PWAs, see https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps/how-to/app-actions
+        /// To test out a PWA with App Actions, see the App Actions Testing Playground https://apps.microsoft.com/detail/9plswv2gr8b4
+        /// </remarks>
+        public string? WindowsActionsManifest { get; set; }
 
         public List<string> GetValidationErrors(AppSettings appSettings)
         {

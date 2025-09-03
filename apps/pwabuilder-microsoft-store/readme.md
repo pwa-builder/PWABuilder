@@ -4,19 +4,21 @@ This project contains the source code for the PWABuilder Microsoft Store packagi
 
 This is implemented as a web API that takes a URL and generates an .msix app package. This .msix package can be installed on Windows devices and can optionally be uploaded to Partner Center for listing in the Microsoft Store.
 
-## Running this locally
+## Running locally
 
-To run this locally, your dev machine should be Windows 10 version 2004 (May 2020 Update, Build 10.0.19041) or later.
+To run this project locally requires Windows 10 version 2004 (May 2020 Update, Build 10.0.19041) or later.
 
 You'll also need Windows SDK 10.0.19041.0 or later installed. appsettings.development.json has a WindowsSdkDirectory setting - you should modify this to point to your installed Windows SDK.
 
-## Modern, classic, and Spartan packages.
+## Modern, Classic, and Spartan packages
 
 This project can generate 3 types of packages for the Microsoft Store.
 
 - Modern packages (via ModernWindowsPackageCreator.cs). These are packages that use the [Hosted App model](https://blogs.windows.com/windowsdeveloper/2020/03/19/hosted-app-model/) on versions of Windows May 2020 update and later. These packages use Microsoft Edge as the host. These packages are built using Edge's pwa_builder.exe internal tool.
 - Classic packages (via ClassicWindowsPackageCreator.cs). These packages are meant for use on versions of Windows prior to Windows 10 May 2020 Update. These packages use the legacy EdgeHTML engine as the host. These packages are built using the MakeAppx.exe tool that comes with the Windows SDK.
-- Spartan packages (via SpartanWindowsPackageCreator.cs)
+- Spartan packages (via SpartanWindowsPackageCreator.cs). These packages are meant for use on the now-obsolete version of Edge based on EdgeHTML, also known as Spartan. This is not used today and may be removed in the future.
+
+PWABuilder.com today calls the `/msix/generateZip` endpoint, which creates a modern package and a classic package, and bundles them into a .zip file. Both packages can be uploaded to Partner Center. When a user installs your app from the Microsoft Store, the Store will install the appropriate package based on the version of Windows they are using.
 
 ## The API
 

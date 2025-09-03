@@ -9,7 +9,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Service for generating a Windows package that works on Windows version >= 10.0.19041 ("Vibranium", also known as Windows 10 version 2004 May 2020 Update).

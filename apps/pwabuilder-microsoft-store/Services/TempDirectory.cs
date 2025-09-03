@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates and tracks temporary files and directories and deletes them when CleanUp() is called.
@@ -50,6 +50,26 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
             // Create a zero-byte file.
             File.WriteAllBytes(tempFileName, []);
 
+            File.SetAttributes(tempFileName, FileAttributes.Temporary);
+
+            return tempFileName;
+        }
+
+        /// <summary>
+        /// Creates a temporary text file with the specified content and returns the file path.
+        /// </summary>
+        /// <param name="textContent">The text content to write to the file.</param>
+        /// <param name="fileExtension">The optional extension for the file name.</param>
+        /// <returns>The path to the temporary file.</returns>
+        public async Task<string> WriteAllTextAsync(string textContent, string fileExtension = ".tmp")
+        {
+            var expandedOutputDir = Environment.ExpandEnvironmentVariables(settings.OutputDirectory);
+            Directory.CreateDirectory(expandedOutputDir);
+
+            var tempFileName = Path.Combine(expandedOutputDir, Guid.NewGuid().ToString() + fileExtension);
+            this.filesToCleanUp.Add(tempFileName);
+
+            await File.WriteAllTextAsync(tempFileName, textContent);
             File.SetAttributes(tempFileName, FileAttributes.Temporary);
 
             return tempFileName;

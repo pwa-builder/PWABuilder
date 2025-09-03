@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates a Chromium Edge-based app package that works on Windows versions < 10.0.19041 ("Vibranium", also known as Windows 10 version 2004 May 2020 Update).

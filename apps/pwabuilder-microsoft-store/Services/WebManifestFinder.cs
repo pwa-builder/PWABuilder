@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Finds a web manifest for a PWA. Uses PWABuilder's web manifest detection service.

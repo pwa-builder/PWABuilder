@@ -9,10 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore.Services
 {
     /// <summary>
     /// Service for invoking the pwa_builder.exe command line tool.
@@ -27,6 +26,7 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
         protected readonly ProcessRunner procRunner;
         protected readonly HttpClient httpClient;
         protected readonly TempDirectory tempDirectory;
+        protected readonly WindowsActionsService windowsActionService;
 
         public PwaBuilderWrapper(
             IOptions<AppSettings> settings, 
@@ -34,7 +34,8 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
             IWebHostEnvironment host, 
             ILogger<PwaBuilderWrapper> logger,
             IHttpClientFactory httpClientFactory,
-            TempDirectory tempDirectory)
+            TempDirectory tempDirectory,
+            WindowsActionsService windowsActionService)
         {
             this.logger = logger;
             this.procRunner = procRunner;
@@ -43,8 +44,19 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
             this.httpClient = httpClientFactory.CreateClient();
             this.httpClient.AddLatestEdgeUserAgent();
             this.tempDirectory = tempDirectory;
+            this.windowsActionService = windowsActionService;
         }
 
+        /// <summary>
+        /// Executes the pwa_builder.exe command line tool with the specified options.
+        /// </summary>
+        /// <param name="options">Windows package options.</param>
+        /// <param name="appImages">Any app images to use for the package.</param>
+        /// <param name="webManifest">The web manifest of the PWA.</param>
+        /// <param name="outputDirectory">The output directory to store the artifacts in.</param>
+        /// <param name="processor"></param>
+        /// <param name="fallback"></param>
+        /// <returns></returns>
         public async Task<PwaBuilderCommandLineResult> Run(
             WindowsAppPackageOptions options, 
             ImageGeneratorResult appImages, 
@@ -55,44 +67,12 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
         {
             var pwaBuilderFilePath = Path.Combine(host.ContentRootPath, PwaBuilderPath);
 
-            // Process web action manifest file - could be a URL or direct JSON content
-            if (!string.IsNullOrEmpty(options.WebActionManifestFile))
-            {
-                try {
-                    // Check if it's a URL
-                    if (Uri.TryCreate(options.WebActionManifestFile, UriKind.Absolute, out var manifestUri) && 
-                        (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
-                    {
-                        // It's a URL, download it
-                        var webActionManifestFilePath = await DownloadWebActionManifestFile(manifestUri);
-                        options.WebActionManifestFilePath = webActionManifestFilePath;
-                        logger.LogInformation("Downloaded web action manifest from URL: {url}", options.WebActionManifestFile);
-                    }
-                    else
-                    {
-                        // Validate JSON content before processing
-                        if (!IsValidJson(options.WebActionManifestFile))
-                        {
-                            throw new ArgumentException("The provided web action manifest content is not valid JSON.");
-                        }
-                        
-                        var webActionManifestFilePath = WriteWebActionManifestContent(options.WebActionManifestFile);
-                        options.WebActionManifestFilePath = webActionManifestFilePath;
-                        logger.LogInformation("Created web action manifest from provided JSON content");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Error processing web action manifest: {error}", ex.Message);
-                    throw new ArgumentException($"Failed to process web action manifest: {ex.Message}", ex);
-                }
-            }
-
-            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, outputDirectory, processor, fallback);
-            return await RunPwabuilderExe(options, appImages, webManifest, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);         
+            var actionsManifestFilePath = await windowsActionService.GetActionsManifestFile(options);
+            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsManifestFilePath, outputDirectory, processor, fallback);
+            return await RunPwabuilderExe(options, appImages, webManifest, actionsManifestFilePath, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
         }
 
-        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
+        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string? actionsManifestFilePath, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
         {
             ProcessResult procResult;
             try
@@ -104,7 +84,7 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
             {
                 var stdOut = (error as ProcessException)?.StandardOutput;
                 var stdErr = (error as ProcessException)?.StandardError;
-                throw CreatePwaBuilderCliError(error, error.Message, outputDirectory, options, stdOut, stdErr, appImages, webManifest);
+                throw CreatePwaBuilderCliError(error, error.Message, actionsManifestFilePath, outputDirectory, options, stdOut, stdErr, appImages, webManifest);
             }
 
             // Get the generated files.
@@ -120,66 +100,11 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
             };
         }
 
-        /// <summary>
-        /// Downloads a web action manifest file from a URL
-        /// </summary>
-        private async Task<string> DownloadWebActionManifestFile(Uri manifestUri)
-        {
-            try
-            {
-                using var manifestFetchMessage = new HttpRequestMessage(HttpMethod.Get, manifestUri);
-                manifestFetchMessage.Version = new Version(2, 0);
-                using var manifestResponse = await this.httpClient.SendAsync(manifestFetchMessage);
-                manifestResponse.EnsureSuccessStatusCode();
-                
-                var manifestContent = await manifestResponse.Content.ReadAsStringAsync();
-                
-                // Validate downloaded content is valid JSON
-                if (!IsValidJson(manifestContent))
-                {
-                    throw new InvalidOperationException("The downloaded web action manifest is not valid JSON.");
-                }
-                
-                return WriteWebActionManifestContent(manifestContent, Path.GetFileName(manifestUri.LocalPath));
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to download web action manifest from {url}", manifestUri);
-                throw new InvalidOperationException($"Failed to download web action manifest: {ex.Message}", ex);
-            }
-        }
-
-        /// <summary>
-        /// Writes web action manifest content to a temporary file
-        /// </summary>
-        private string WriteWebActionManifestContent(string manifestContent, string suggestedFileName = "webactions.json")
-        {
-            try
-            {
-                // Create a temp file that will be cleaned up automatically
-                var fileExtension = Path.GetExtension(suggestedFileName);
-                if (string.IsNullOrEmpty(fileExtension))
-                {
-                    fileExtension = ".json";
-                }
-                var localFilePath = tempDirectory.CreateFile(fileExtension);
-                File.WriteAllText(localFilePath, manifestContent);
-                File.SetAttributes(localFilePath, FileAttributes.Temporary);
-                logger.LogInformation("Wrote web action manifest content to {localPath}", localFilePath);
-                return localFilePath;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to write web action manifest content to file");
-                throw new InvalidOperationException($"Failed to write web action manifest: {ex.Message}", ex);
-            }
-        }
-
         protected virtual string PwaBuilderPath => settings.PwaBuilderPath;
 
-        private ProcessException CreatePwaBuilderCliError(Exception innerException, string message, string outputDirectory, WindowsAppPackageOptions options, string? standardOutput, string? standardErrorOutput, ImageGeneratorResult appImages, WebAppManifestContext webManifest)
+        private ProcessException CreatePwaBuilderCliError(Exception innerException, string message, string? actionsManifestFilePath, string outputDirectory, WindowsAppPackageOptions options, string? standardOutput, string? standardErrorOutput, ImageGeneratorResult appImages, WebAppManifestContext webManifest)
         {
-            var msixOptionsStr = CreateCommandLineArgs(options, appImages, webManifest, outputDirectory);
+            var msixOptionsStr = CreateCommandLineArgs(options, appImages, webManifest, actionsManifestFilePath, outputDirectory);
             var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}");
             var toolFailedError = new ProcessException(formattedMessage, innerException, standardOutput, standardErrorOutput);
             toolFailedError.Data.Add("StandardOutput", standardOutput);
@@ -210,7 +135,7 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
         /// Creates command line arguments for the pwa_builder.exe command line tool from the specified options.
         /// </summary>
         /// <returns></returns>
-        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, string processor = "", bool fallback = false)
+        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string? actionsManifestFilePath, string outputDirectory, string processor = "", bool fallback = false)
         {
             // pwa_builder.exe expects the full version 'x.x.x.x', where the last section (revision) is zero.
             // The store requires the revision to be zero, as it's reserved for store use.
@@ -240,7 +165,7 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
                 { "start-url", absoluteStartUrl?.ToString() },
                 { "display-mode", webManifest.GetDisplayModeOrNull() ?? "standalone" },
                 { "application-id", options.ApplicationId },
-                { "web-action-manifest-file", options.WebActionManifestFilePath }
+                { "web-action-manifest-file", actionsManifestFilePath }
             };
 
             if (fallback && options.ManifestFilePath != null)
@@ -316,26 +241,6 @@ namespace Microsoft.PWABuilder.Microsoft.Store.Services
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(l => l.ToUpperInvariant().Trim());
             return string.Join(';', individualLangs);
-        }
-
-        /// <summary>
-        /// Validates if a string is valid JSON
-        /// </summary>
-        private bool IsValidJson(string jsonContent)
-        {
-            try
-            {
-                // Attempt to parse as JSON document
-                using (JsonDocument.Parse(jsonContent))
-                {
-                    return true;
-                }
-            }
-            catch (JsonException ex)
-            {
-                logger.LogWarning(ex, "Invalid JSON provided for web action manifest");
-                return false;
-            }
         }
     }
 }

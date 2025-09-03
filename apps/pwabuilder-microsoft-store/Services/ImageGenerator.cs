@@ -12,7 +12,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates the recommended Windows package images using images from the <see cref="WindowsAppPackageOptions"/>, images from the PWA's web app manifest, and images generated on behalf of the user from the PWABuilder app image generator service.

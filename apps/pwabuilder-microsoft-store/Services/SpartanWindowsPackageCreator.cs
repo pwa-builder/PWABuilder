@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates a Windows app package that runs a PWA using the old Spartan (EdgeHTML)-based engine.

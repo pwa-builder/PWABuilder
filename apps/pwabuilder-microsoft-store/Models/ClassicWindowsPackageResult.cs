@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Microsoft.PWABuilder.Microsoft.Store.Models
 {
     /// <summary>
-    /// Result of an app package generation for a PWA powered by Chromium-based Edge that works on versions of Windows prior to May 2020 update.
+    /// Result of an app package generation for a PWA powered by Microsoft Edge that works on versions of Windows prior to May 2020 update.
     /// </summary>
     public class ClassicWindowsPackageResult
     {

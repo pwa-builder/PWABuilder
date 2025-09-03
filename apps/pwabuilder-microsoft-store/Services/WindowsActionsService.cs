@@ -1,0 +1,145 @@
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.PWABuilder.Microsoft.Store.Common;
+using Microsoft.PWABuilder.Microsoft.Store.Models;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace PWABuilder.MicrosoftStore.Services;
+
+/// <summary>
+/// Provides helpers to enable Windows App Actions. 
+/// </summary>
+/// <remarks>
+/// For more information App Actions on Windows, see https://learn.microsoft.com/en-us/windows/ai/app-actions/actions-get-started
+/// For more information about App Actions for PWAs, see https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps/how-to/app-actions
+/// To test out a PWA with App Actions, see the App Actions Testing Playground https://apps.microsoft.com/detail/9plswv2gr8b4
+/// </remarks>
+public class WindowsActionsService
+{
+    private readonly ILogger<WindowsActionsService> logger;
+    private readonly TempDirectory tempDirectory;
+    private readonly HttpClient http;
+
+    public WindowsActionsService(TempDirectory tempDirectory, IHttpClientFactory httpClientFactory, ILogger<WindowsActionsService> logger)
+    {
+        this.tempDirectory = tempDirectory;
+        this.http = httpClientFactory.CreateClient();
+        this.http.AddLatestEdgeUserAgent();
+        this.logger = logger;
+    }
+
+    /// <summary>
+    /// Creates a Windows Actions manifest file on disk from the provided options. The result is a temporary file on disk that contains the Windows Actions manifest.
+    /// If <see cref="WindowsAppPackageOptions.WindowsActionsManifest"/> is not specified, this will return null.
+    /// </summary>
+    /// <param name="options">The Windows app package options.</param>
+    /// <returns>The path to the file containing the Windows Actions manifest file, or null if none was created.</returns>
+    public async Task<string?> GetActionsManifestFile(WindowsAppPackageOptions options)
+    {
+        // Process web action manifest file - could be a URL or direct JSON content
+        if (string.IsNullOrWhiteSpace(options.WindowsActionsManifest))
+        {
+            return null;
+        }
+        
+        try
+        {
+            var actionsManifestContent = options.WindowsActionsManifest;
+            
+            // Check if it's a URL
+            if (Uri.TryCreate(options.WindowsActionsManifest, UriKind.Absolute, out var manifestUri) &&
+                (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
+            {
+                // It's a URL, download it
+                actionsManifestContent = await DownloadWebActionManifestFile(manifestUri);
+                logger.LogInformation("Downloaded web action manifest from URL: {url}", options.WindowsActionsManifest);
+            }            
+
+            // Validate JSON content before processing
+            if (!IsValidJson(actionsManifestContent))
+            {
+                throw new ArgumentException("The provided web action manifest content is not valid JSON.");
+            }
+
+            var actionsManifestFilePath = await WriteActionManifestContentAsync(actionsManifestContent);
+            logger.LogInformation("Created web action manifest from provided JSON content for {url}", options.Url);
+            return actionsManifestFilePath;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error processing web action manifest for {url}", options.Url);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Downloads a web action manifest file from a URL. Returns the contents of the file.
+    /// </summary>
+    private async Task<string> DownloadWebActionManifestFile(Uri manifestUri)
+    {
+        try
+        {
+            using var manifestFetchMessage = new HttpRequestMessage(HttpMethod.Get, manifestUri);
+            manifestFetchMessage.Version = new Version(2, 0);
+            manifestFetchMessage.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            using var manifestResponse = await this.http.SendAsync(manifestFetchMessage);
+            manifestResponse.EnsureSuccessStatusCode();
+
+            var manifestContent = await manifestResponse.Content.ReadAsStringAsync();
+
+            // Validate downloaded content is valid JSON
+            if (!IsValidJson(manifestContent))
+            {
+                throw new InvalidOperationException("The downloaded web action manifest is not valid JSON.");
+            }
+
+            return manifestContent;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to download Windows Action manifest from {url}", manifestUri);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Writes web action manifest content to a temporary file
+    /// </summary>
+    private async Task<string> WriteActionManifestContentAsync(string manifestContent)
+    {
+        try
+        {
+            var localFilePath = await tempDirectory.WriteAllTextAsync(manifestContent, ".json");
+            logger.LogInformation("Wrote Windows Action Manifest content to {localPath}", localFilePath);
+            return localFilePath;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to write Windows Action Manifest content to file due to an error.");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Validates if a string is valid JSON
+    /// </summary>
+    private bool IsValidJson(string jsonContent)
+    {
+        try
+        {
+            // Attempt to parse as JSON document
+            using (JsonDocument.Parse(jsonContent))
+            {
+                return true;
+            }
+        }
+        catch (JsonException ex)
+        {
+            logger.LogWarning(ex, "Invalid JSON provided for web action manifest");
+            return false;
+        }
+    }
+}

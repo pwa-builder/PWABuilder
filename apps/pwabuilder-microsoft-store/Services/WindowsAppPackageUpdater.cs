@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Microsoft.PWABuilder.Microsoft.Store.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Services that takes an existing Windows App Package (.msix, .appx, .msixbundle, or .appxbundle) 

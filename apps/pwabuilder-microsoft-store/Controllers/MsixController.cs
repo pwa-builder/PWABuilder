@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.PWABuilder.Microsoft.Store.Models;
-using Microsoft.PWABuilder.Microsoft.Store.Services;
+using PWABuilder.MicrosoftStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;

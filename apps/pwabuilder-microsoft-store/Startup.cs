@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.PWABuilder.Microsoft.Store.Common;
 using Microsoft.PWABuilder.Microsoft.Store.Models;
-using Microsoft.PWABuilder.Microsoft.Store.Services;
+using PWABuilder.MicrosoftStore;
 
 namespace Microsoft.PWABuilder.Microsoft.Store
 {
