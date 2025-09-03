@@ -1,23 +1,31 @@
 # Microsoft.PWABuilder.Windows.Chromium
 
-Generates a Microsoft Store package from a PWA URL.
+This project contains the source code for the PWABuilder Microsoft Store packaging service, which generates Store-ready .msix packages for Progressive Web Apps (PWAs). These packages can then be uploaded to [Microsoft Partner Center](https://partner.microsoft.com) for listing in the Microsoft Store.
 
-This is implemented as a web API that takes a URL and generates an .msix app package. This .msix package can be installed on Windows devices and can optionally be submitted the Microsoft Store.
+This is implemented as a web API that takes a URL and generates an .msix app package. This .msix package can be installed on Windows devices and can optionally be uploaded to Partner Center for listing in the Microsoft Store.
 
-The package is published to: https://pwabuilder-winserver.centralus.cloudapp.azure.com
+## Running locally
 
-## Running this locally
-
-To run this locally, your dev machine should be Windows 10 version 2004 (May 2020 Update, Build 10.0.19041) or later.
+To run this project locally requires Windows 10 version 2004 (May 2020 Update, Build 10.0.19041) or later.
 
 You'll also need Windows SDK 10.0.19041.0 or later installed. appsettings.development.json has a WindowsSdkDirectory setting - you should modify this to point to your installed Windows SDK.
+
+## Modern, Classic, and Spartan packages
+
+This project can generate 3 types of packages for the Microsoft Store.
+
+- Modern packages (via ModernWindowsPackageCreator.cs). These are packages that use the [Hosted App model](https://blogs.windows.com/windowsdeveloper/2020/03/19/hosted-app-model/) on versions of Windows May 2020 update and later. These packages use Microsoft Edge as the host. These packages are built using Edge's pwa_builder.exe internal tool.
+- Classic packages (via ClassicWindowsPackageCreator.cs). These packages are meant for use on versions of Windows prior to Windows 10 May 2020 Update. These packages use the legacy EdgeHTML engine as the host. These packages are built using the MakeAppx.exe tool that comes with the Windows SDK.
+- Spartan packages (via SpartanWindowsPackageCreator.cs). These packages are meant for use on the now-obsolete version of Edge based on EdgeHTML, also known as Spartan. This is not used today and may be removed in the future.
+
+PWABuilder.com today calls the `/msix/generateZip` endpoint, which creates a modern package and a classic package, and bundles them into a .zip file. Both packages can be uploaded to Partner Center. When a user installs your app from the Microsoft Store, the Store will install the appropriate package based on the version of Windows they are using.
 
 ## The API
 
 The web API exposes 6 endpoints:
 
+- `/msix/generateZip` - generates a zip file containing the .msixbundle file that runs on newer versions of Windows, a classic .appx package that runs on older versions of Windows, and a .sideload.msix package that can run locally on a developer's machine. This is the API called by pwabuilder.com's frontend.
 - `/msix/generate` - generates a single .msix package
-- `/msix/generateZip` - generates a zip file containing the .msixbundle file that runs on newer versions of Windows, a classic .appx package that runs on older versions of Windows, and a .sideload.msix package that can run locally on a developer's machine.'
 - `/msix/isPwaPackage` - checks whether the specific file is a PWA app package.
 - `/msix/updatePackage` - updates the Package ID, Publisher ID, and Publisher Display Name of an existing PWA app package.
 - `/msix/bundle` - accepts a .appx or .msix and creates a bundle file from it.
@@ -222,3 +230,20 @@ Issue an HTTP POST to `/msix/createFromLoose` with a form containing:
 | LooseFileLayoutZip      | `File` \| `Blob`  | A zip file containing the loose file layout of the app. Loose file layouts should contain files like AppxManifest.xml, resources.pri, etc. See [details here](https://docs.microsoft.com/en-us/windows/uwp/debug-test-perf/loose-file-registration#what-is-a-loose-file-layout). |
 
 The result will be a .msixbundle or .appxbundle file.
+
+## The pwa_builder.exe tool
+
+The pwa_builder.exe tool is an internal command-line tool built by the Microsoft Edge team to generate Hosted App web packages that rely on Edge and can be uploaded to Partner Center and published as apps in the Microsoft Store.
+
+This tool is not publicly available. 
+
+The tool is injected into Resources\cli\pwa\pwabuilder folder at build time by GitHub Actions build pipeline.
+
+To upgrade to the latest pwa_builder.exe tool:
+
+1. Go to [Edge's Nuget feed](https://dev.azure.com/microsoft/Edge/_artifacts/feed/edge)
+2. Filter by "pwa"
+3. Choose the `pwa_builder` feed.
+4. Click `Download` to download the latest Nuget package containing the pwa_builder.exe tool.
+5. Rename the file to `pwa__builder.zip`
+6. Upload to the `pwabuildercommon` Azure Storage account, inside the `resources` directory, overwriting the existing `pwa_builder.zip` file.

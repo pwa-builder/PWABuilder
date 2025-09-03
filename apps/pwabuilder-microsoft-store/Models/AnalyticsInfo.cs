@@ -1,4 +1,4 @@
-﻿namespace Microsoft.PWABuilder.Windows.Chromium.Models
+﻿namespace PWABuilder.MicrosoftStore.Models
 {
     public class AnalyticsInfo
     {

@@ -228,8 +228,16 @@ public class ManifestDetector
             // Use HtmlAgilityPack to parse the HTML and find any <link rel="manifest" href="..."/> tags.
             var doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(html);
-            var manifestHref = doc.DocumentNode?
-                .SelectNodes("//link[@rel='manifest']")
+            var manifestNodesOrNull = doc.DocumentNode?
+                .SelectNodes("//link[@rel='manifest']");
+
+            if (manifestNodesOrNull == null)
+            {
+                logger.LogInformation("During manifest detection, no manifest nodes could be found in HTML.");
+                return null;
+            }
+
+            var manifestHref = manifestNodesOrNull
                 .Where(n => n != null && n.Attributes != null && n.Attributes.Contains("href") && !string.IsNullOrWhiteSpace(n.Attributes["href"]?.Value))
                 .Select(n => n.Attributes["href"].Value)
                 .Where(v => !string.IsNullOrEmpty(v))

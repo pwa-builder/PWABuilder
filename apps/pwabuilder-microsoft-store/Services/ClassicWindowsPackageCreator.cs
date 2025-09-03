@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates a Chromium Edge-based app package that works on Windows versions < 10.0.19041 ("Vibranium", also known as Windows 10 version 2004 May 2020 Update).

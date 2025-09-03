@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// The result of an app package generation for a PWA powered by legacy EdgeHTML ("Spartan")-based version of Edge.

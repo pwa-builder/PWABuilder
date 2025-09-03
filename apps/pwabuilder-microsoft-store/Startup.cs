@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
-using Microsoft.PWABuilder.Windows.Chromium.Services;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
+using PWABuilder.MicrosoftStore.Services;
 
-namespace Microsoft.PWABuilder.Windows.Chromium
+namespace PWABuilder.MicrosoftStore
 {
     public class Startup
     {

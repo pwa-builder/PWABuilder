@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +12,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates the recommended Windows package images using images from the <see cref="WindowsAppPackageOptions"/>, images from the PWA's web app manifest, and images generated on behalf of the user from the PWABuilder app image generator service.

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Controllers
+namespace PWABuilder.MicrosoftStore.Controllers
 {
     /// <summary>
     /// Returns a file in the response stream. When completed, the file will be deleted.

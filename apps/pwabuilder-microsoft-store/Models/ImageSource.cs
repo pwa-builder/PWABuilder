@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
+using PWABuilder.MicrosoftStore.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// An image source used for the app package. Contains 3 potential sources of an image:

@@ -105,11 +105,11 @@ function updateJsonWithFile() {
         
         if (webActionManifestContent) {
             // If we have file content, add it to the JSON
-            currentJson.webActionManifestFile = webActionManifestContent;
+            currentJson.windowsActions = { manifestFile: webActionManifestContent };
         } else {
             // If no file content, remove the property if it exists
-            if (currentJson.webActionManifestFile && !currentJson.webActionManifestFile.startsWith("http")) {
-                delete currentJson.webActionManifestFile;
+            if (currentJson.windowsActions?.manifestFile && !currentJson.windowsActions.manifestFile.startsWith("http")) {
+                delete currentJson.windowsActions.manifestFile;
             }
         }
         
@@ -136,7 +136,7 @@ function getSimpleMsix() {
 
 function getActionsMsix() {
     const options = getSimpleMsix();
-    options.webActionManifestFile = "https://thankful-brass-constellation.glitch.me/well-known/actions.json";
+    options.windowsActions= { manifest: "https://gist.githubusercontent.com/JudahGabriel/6aa27a8cd9cd95d71ea679c73f11a89c/raw/0a5662ef3cd438a5047c7039c3d3f9836d8f7c08/ActionsManifest.json" };
     return options;
 }
 
@@ -359,7 +359,7 @@ async function submit() {
         const options = JSON.parse(codeArea.value);
         
         // If we have file content stored in memory, use that directly
-        if (webActionManifestContent && options.webActionManifestFile === webActionManifestContent) {
+        if (webActionManifestContent && options.windowsActions?.manifest === webActionManifestContent) {
             // The content is already in the JSON, so we can proceed
         }
         

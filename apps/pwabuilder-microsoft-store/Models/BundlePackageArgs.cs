@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Arguments for bundling an app package.

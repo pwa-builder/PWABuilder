@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
 	/// <summary>
 	/// The serialized result from an .msix.xml package.

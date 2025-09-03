@@ -8,10 +8,10 @@ namespace PWABuilder.Controllers;
 [Route("api/[controller]")]
 public class ImagesController : ControllerBase
 {
-    private readonly AnalysisDb analysisDb;
+    private readonly IAnalysisDb analysisDb;
     private readonly HttpClient http;
 
-    public ImagesController(AnalysisDb analysisDb, IHttpClientFactory httpClientFactory)
+    public ImagesController(IAnalysisDb analysisDb, IHttpClientFactory httpClientFactory)
     {
         this.analysisDb = analysisDb;
         this.http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);

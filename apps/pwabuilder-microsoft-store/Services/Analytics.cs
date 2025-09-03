@@ -1,14 +1,14 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Communicates with PWABuilder's backend analytics. Records when a user packages for Windows platform.

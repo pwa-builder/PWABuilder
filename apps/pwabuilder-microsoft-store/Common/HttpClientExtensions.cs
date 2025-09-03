@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Common
+namespace PWABuilder.MicrosoftStore.Common
 {
     public static class HttpClientExtensions
     {

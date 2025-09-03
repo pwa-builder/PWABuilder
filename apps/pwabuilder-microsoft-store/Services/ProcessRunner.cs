@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Models;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Runs a command-line process with proper error handling and zombie process cleanup.

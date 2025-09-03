@@ -1,10 +1,10 @@
-﻿using Microsoft.PWABuilder.Windows.Chromium.Common;
+﻿using PWABuilder.MicrosoftStore.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Contains a web app manifest and the URL where the manifest was located.

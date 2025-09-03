@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +9,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore.Services
 {
     /// <summary>
     /// Service for generating a Windows package that works on Windows version >= 10.0.19041 ("Vibranium", also known as Windows 10 version 2004 May 2020 Update).

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PWABuilder.Windows.Chromium.Common;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Service that bundles a .msix or .appx file into a .msixbundle or .appxbundle.

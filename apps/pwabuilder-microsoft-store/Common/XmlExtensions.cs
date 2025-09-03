@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Common
+namespace PWABuilder.MicrosoftStore.Common
 {
     /// <summary>
     /// Extensions for working with XML documents.

@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.PWABuilder.Windows.Chromium.Models;
+using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Services
+namespace PWABuilder.MicrosoftStore
 {
     /// <summary>
     /// Creates and tracks temporary files and directories and deletes them when CleanUp() is called.
@@ -48,7 +48,29 @@ namespace Microsoft.PWABuilder.Windows.Chromium.Services
             this.filesToCleanUp.Add(tempFileName);
 
             // Create a zero-byte file.
-            File.WriteAllBytes(tempFileName, new byte[0]);
+            File.WriteAllBytes(tempFileName, []);
+
+            File.SetAttributes(tempFileName, FileAttributes.Temporary);
+
+            return tempFileName;
+        }
+
+        /// <summary>
+        /// Creates a temporary text file with the specified content and returns the file path.
+        /// </summary>
+        /// <param name="textContent">The text content to write to the file.</param>
+        /// <param name="fileExtension">The optional extension for the file name.</param>
+        /// <returns>The path to the temporary file.</returns>
+        public async Task<string> WriteAllTextAsync(string textContent, string fileExtension = ".tmp")
+        {
+            var expandedOutputDir = Environment.ExpandEnvironmentVariables(settings.OutputDirectory);
+            Directory.CreateDirectory(expandedOutputDir);
+
+            var tempFileName = Path.Combine(expandedOutputDir, Guid.NewGuid().ToString() + fileExtension);
+            this.filesToCleanUp.Add(tempFileName);
+
+            await File.WriteAllTextAsync(tempFileName, textContent);
+            File.SetAttributes(tempFileName, FileAttributes.Temporary);
 
             return tempFileName;
         }

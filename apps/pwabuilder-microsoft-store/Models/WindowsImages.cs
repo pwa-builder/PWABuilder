@@ -1,10 +1,10 @@
-﻿using Microsoft.PWABuilder.Windows.Chromium.Common;
+﻿using PWABuilder.MicrosoftStore.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Models
+namespace PWABuilder.MicrosoftStore.Models
 {
     /// <summary>
     /// Contains images for a Windows app package.

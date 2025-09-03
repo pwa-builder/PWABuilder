@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.PWABuilder.Windows.Chromium.Controllers
+namespace PWABuilder.MicrosoftStore.Controllers
 {
     public class HomeController : ControllerBase
     {
