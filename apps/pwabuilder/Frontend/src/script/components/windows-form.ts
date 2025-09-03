@@ -311,7 +311,7 @@ export class WindowsForm extends AppPackageFormBase {
     this.showUploadActionsFile = checked;
 
     if (!checked) {
-      delete this.packageOptions.windowsActionsManifestFile;
+      delete this.packageOptions.windowsActions;
       actionsSchemaValidation = null;
     } else {
       try {
@@ -367,7 +367,7 @@ export class WindowsForm extends AppPackageFormBase {
           }
 
           const stringified: string = JSON.stringify(parsed, null, 2);
-          this.packageOptions.windowsActionsManifestFile = stringified;
+          this.packageOptions.windowsActions = stringified;
           this.actionsFileError = null;
         } catch (err) {
           console.error('Invalid Actions Manifest file:', err);

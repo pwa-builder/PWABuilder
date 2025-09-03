@@ -47,7 +47,44 @@ export interface WindowsPackageOptions  extends PackageOptions {
   resourceLanguage?: string | string[];
   targetDeviceFamilies?: string[];
   enableWebAppWidgets?: boolean;
-  windowsActionsManifestFile?: string;
+
+  /**
+   * Optional Windows Actions declaration. Windows Actions are ways for apps to naturally integrate into Windows and Copilot. 
+   * For example, a user could right-click an image in Windows and your app would show up as "Remove background with My PWA".
+   * For more info, see https://blogs.windows.com/msedgedev/2025/05/30/bring-your-pwa-closer-to-users-with-app-actions-on-windows/
+   */
+  windowsActions?: WindowsActionsOptions | null;
+}
+
+type WindowsActionsOptions = {
+  /**
+   * The contents of the ActionsManifest.json file that describes the app's actions.
+   */
+  manifest: string;
+
+  /**
+   * The contents of the  optional customEntities.json file.
+   */
+  customEntities: string | null;
+
+  /**
+   * An array containing localizations for the custom entities file.
+   */
+  customEntitiesLocalizations: WindowsActionsCustomEntityLocalization[] | null;
+}
+
+type WindowsActionsCustomEntityLocalization = {
+  /**
+   * The name of the file. File name is needed as it includes language tag information consistent with resource management system. See https://learn.microsoft.com/en-us/windows/uwp/app-resources/how-rms-matches-lang-tags
+   * Example fileNames: "ExampleLocalizedCustomEntity.json", "ExampleLocalizedCustomEntity.language-en.json"
+   */
+  fileName: string;
+
+  /**
+   * The contents of the file.
+   * @example { "english phrase one": { "welcome": "howdy, friends" } }
+   */
+  contents: string;
 }
 
 type WindowsPackageValidationError = {
