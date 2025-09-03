@@ -4,6 +4,7 @@ using PWABuilder.MicrosoftStore.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -53,7 +54,7 @@ public class WindowsActionsService
             // Get the Actions manifest.
             var actionsManifestJson = await GetOrFetchJsonAsync(options.WindowsActions.Manifest, cancelToken);
             var actionsManifestFilePath = await WriteJsonTempFile(actionsManifestJson);
-            EnsureValidJson(actionsManifestJson);
+            EnsureValidActionsManifest(actionsManifestJson);
 
             // Grab the optional custom entities file.
             var customEntitiesJson = default(string);
@@ -62,7 +63,7 @@ public class WindowsActionsService
             {
                 customEntitiesJson = await GetOrFetchJsonAsync(options.WindowsActions.CustomEntities, cancelToken);
                 customEntitiesFilePath = await WriteJsonTempFile(actionsManifestJson);
-                EnsureValidJson(customEntitiesJson);
+                EnsureValidCustomEntities(customEntitiesJson);
             }
 
             // Grab any translation files for the custom entities file.
@@ -142,9 +143,124 @@ public class WindowsActionsService
         }
     }
 
-    /// <summary>
-    /// Ensures the specified JSON content is valid JSON. Throws an exception if it is not.
-    /// </summary>
+    // TODO: consider moving this to proper schema validation: https://github.com/microsoft/App-Actions-On-Windows-Samples/blob/main/schema/ActionsSchema.json
+    private void EnsureValidActionsManifest(string? jsonContent)
+    {
+        if (string.IsNullOrWhiteSpace(jsonContent))
+        {
+            throw new ArgumentException("The Windows Actions JSON content is null or empty.");
+        }
+
+        try
+        {
+            using var doc = JsonDocument.Parse(jsonContent);
+            if (!doc.RootElement.TryGetProperty("version", out var versionElement) || versionElement.ValueKind != JsonValueKind.Number)
+            {
+                throw new ArgumentException("The Windows Actions manifest must contain a 'version' number property.");
+            }
+            if (!doc.RootElement.TryGetProperty("actions", out var actionsElement) || actionsElement.ValueKind != JsonValueKind.Array)
+            {
+                throw new ArgumentException("The Windows Actions manifest must contain an 'actions' array.");
+            }
+            if (actionsElement.GetArrayLength() == 0)
+            {
+                throw new ArgumentException("The Windows Actions manifest must contain at least one action in the 'actions' array.");
+            }
+
+            // Each action must have an id, description, invocation, inputs, and outputs.
+            var actions = actionsElement.EnumerateArray();
+            foreach (var action in actions)
+            {
+                // Validate id.
+                if (!action.TryGetProperty("id", out var idElement) || idElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(idElement.GetString()))
+                {
+                    throw new ArgumentException("Each action in the Windows Actions manifest must contain a non-empty 'id' string property.");
+                }
+
+                // Validate description.
+                if (!action.TryGetProperty("description", out var descriptionElement) || descriptionElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(descriptionElement.GetString()))
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a non-empty 'description' string property.");
+                }
+
+                // Validate invocation.
+                if (!action.TryGetProperty("invocation", out var invocationElement) || invocationElement.ValueKind != JsonValueKind.Object)
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain an 'invocation' object property.");
+                }
+                if (!invocationElement.TryGetProperty("type", out var typeElement) || typeElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(typeElement.GetString()))
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a non-empty 'type' string property within the 'invocation' object.");
+                }
+                if (!invocationElement.TryGetProperty("uri", out var uriElement) || uriElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(uriElement.GetString()))
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a non-empty 'uri' string property within the 'invocation' object.");
+                }
+
+                // Valid inputs.
+                if (!action.TryGetProperty("inputs", out var inputsElement) || inputsElement.ValueKind != JsonValueKind.Array)
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain an 'inputs' array.");
+                }
+                if (!inputsElement.TryGetProperty("name", out var inputNameElement) || inputNameElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(inputNameElement.GetString()))
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a 'name' string property within the 'inputs' array.");
+                }
+
+                if (!action.TryGetProperty("outputs", out var outputsElement) || outputsElement.ValueKind != JsonValueKind.Array)
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain an 'outputs' array.");
+                }
+                if (!outputsElement.TryGetProperty("name", out var outputNameElement) || outputNameElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(outputNameElement.GetString()))
+                {
+                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a 'name' string property within the 'outputs' array.");
+                }
+            }
+        }
+        catch (JsonException ex)
+        {
+            logger.LogError(ex, "The provided JSON content is not valid JSON: {json}", jsonContent);
+            throw new ArgumentException("The provided JSON content is not valid JSON.", ex);
+        }
+    }
+
+    private void EnsureValidCustomEntities(string? jsonContent)
+    {
+        if (string.IsNullOrWhiteSpace(jsonContent))
+        {
+            throw new ArgumentException("The Windows Actions JSON content is null or empty.");
+        }
+
+        try
+        {
+            using var doc = JsonDocument.Parse(jsonContent);
+            
+            // Validate version.
+            if (!doc.RootElement.TryGetProperty("version", out var versionElement) || versionElement.ValueKind != JsonValueKind.Number)
+            {
+                throw new ArgumentException("The Windows Actions custom entities file must contain a 'version' number property.");
+            }
+
+            // Validate entityDefinitions.
+            if (!doc.RootElement.TryGetProperty("entityDefinitions", out var entityDefinitionsElement) || entityDefinitionsElement.ValueKind != JsonValueKind.Object)
+            {                 
+                throw new ArgumentException("The Windows Actions custom entities file must contain an 'entityDefinitions' object property.");
+            }
+
+            // Entity definitions must have at least one object.
+            var entityDefinitions = entityDefinitionsElement.EnumerateObject();
+            if (!entityDefinitions.Any())
+            {
+                throw new ArgumentException("The Windows Actions custom entities file must contain at least one entity definition within the 'entityDefinitions' object.");
+            }
+        }
+        catch (JsonException ex)
+        {
+            logger.LogError(ex, "The provided Custom Entities JSON content is invalid: {json}", jsonContent);
+            throw new ArgumentException("The provided Custom Entities JSON content is invalid.", ex);
+        }
+    }
+
     private void EnsureValidJson(string? jsonContent)
     {
         if (string.IsNullOrWhiteSpace(jsonContent))
