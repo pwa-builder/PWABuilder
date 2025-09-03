@@ -293,6 +293,21 @@ export class WindowsForm extends AppPackageFormBase {
           background-color: #f1fff4;
         }
 
+        .actions-file-upload-zone.has-error {
+          border-color: #dc3545;
+          background-color: #fff5f5;
+        }
+
+        .actions-file-upload-zone.has-error .upload-text {
+          color: #dc3545;
+          font-weight: 500;
+        }
+
+        .actions-file-upload-zone.has-error:hover {
+          border-color: #c82333;
+          background-color: #ffeaea;
+        }
+
         .custom-entity-uploads {
           margin-top: 1em;
           margin-left: 1em;
@@ -580,6 +595,7 @@ export class WindowsForm extends AppPackageFormBase {
       
       if (uploadZone && uploadText) {
         uploadZone.classList.add('has-file');
+        uploadZone.classList.remove('has-error'); // Clear any previous error state
         uploadText.textContent = file.name;
       }
 
@@ -600,12 +616,23 @@ export class WindowsForm extends AppPackageFormBase {
           const stringified: string = JSON.stringify(parsed, null, 2);
           this.packageOptions.windowsActions = { manifest: stringified };
           this.actionsFileError = null;
+          
+          // Clear any error state and show success state
+          if (uploadZone) {
+            uploadZone.classList.remove('has-error');
+            uploadZone.classList.add('has-file');
+          }
+          
+          console.log('Actions manifest validated and stored successfully');
         } catch (err) {
           console.error('Invalid Actions Manifest file:', err);
           this.actionsFileError = (err as Error).message;
           
-          // Reset the upload zone display on validation error
-          this.resetActionsUploadZone();
+          // Keep the filename displayed but add error styling
+          if (uploadZone) {
+            uploadZone.classList.remove('has-file');
+            uploadZone.classList.add('has-error');
+          }
         }
       };
 
@@ -613,8 +640,11 @@ export class WindowsForm extends AppPackageFormBase {
         this.actionsFileError = 'Failed to read the file. Please try again.';
         console.error('File read error');
         
-        // Reset the upload zone display on read error
-        this.resetActionsUploadZone();
+        // Keep the filename displayed but add error styling
+        if (uploadZone) {
+          uploadZone.classList.remove('has-file');
+          uploadZone.classList.add('has-error');
+        }
       };
 
       reader.readAsText(file);
