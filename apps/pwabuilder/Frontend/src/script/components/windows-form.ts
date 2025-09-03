@@ -283,6 +283,16 @@ export class WindowsForm extends AppPackageFormBase {
           color: #3730a3;
         }
 
+        .actions-file-upload-zone.has-file .upload-text {
+          color: #28a745;
+          font-weight: 500;
+        }
+
+        .actions-file-upload-zone.has-file:hover {
+          border-color: #218838;
+          background-color: #f1fff4;
+        }
+
         .custom-entity-uploads {
           margin-top: 1em;
           margin-left: 1em;
@@ -443,9 +453,16 @@ export class WindowsForm extends AppPackageFormBase {
       try {
         const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
         const SCHEMA_URL = "https://raw.githubusercontent.com/microsoft/App-Actions-On-Windows-Samples/refs/heads/main/schema/ActionsSchema.json";
+        
         if (!ajv.getSchema(SCHEMA_ID)) {
           const response = await fetch(SCHEMA_URL);
           const actionsSchema = await response.json();
+          
+          // Modify the schema to allow additional properties in Input
+          if (actionsSchema.$defs && actionsSchema.$defs.Input) {
+            actionsSchema.$defs.Input.additionalProperties = true;
+          }
+          
           ajv.addSchema(actionsSchema, SCHEMA_ID);
         }
 
@@ -545,26 +562,30 @@ export class WindowsForm extends AppPackageFormBase {
     return bytes.buffer;
   }
 
-  async actionsFileChanged(e: Event) {
+  async actionsFileChanged(e: Event): Promise<void> {
     if (!e) return;
 
     if (!actionsSchemaValidation) {
-      this.actionsFileError = "Please enter the decryption key first.";
+      this.actionsFileError = "Schema validation not available. Please try again.";
       return;
     }
 
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
-    const reader = new FileReader();
-
-    // Update the display text
-    const actionsText = this.shadowRoot?.querySelector('#actions-picker-text');
-    if (actionsText) {
-      actionsText.textContent = file ? file.name : 'No file chosen';
-    }
 
     if (file) {
-      reader.onload = () => {
+      // Update the upload zone to show the selected file name
+      const uploadZone = this.shadowRoot?.querySelector('.actions-file-upload-zone') as HTMLElement;
+      const uploadText = uploadZone?.querySelector('.upload-text') as HTMLElement;
+      
+      if (uploadZone && uploadText) {
+        uploadZone.classList.add('has-file');
+        uploadText.textContent = file.name;
+      }
+
+      const reader = new FileReader();
+      
+      reader.onload = (): void => {
         try {
           const text: string = reader.result as string;
           const parsed = JSON.parse(text);
@@ -582,10 +603,38 @@ export class WindowsForm extends AppPackageFormBase {
         } catch (err) {
           console.error('Invalid Actions Manifest file:', err);
           this.actionsFileError = (err as Error).message;
+          
+          // Reset the upload zone display on validation error
+          this.resetActionsUploadZone();
         }
       };
 
+      reader.onerror = (): void => {
+        this.actionsFileError = 'Failed to read the file. Please try again.';
+        console.error('File read error');
+        
+        // Reset the upload zone display on read error
+        this.resetActionsUploadZone();
+      };
+
       reader.readAsText(file);
+    } else {
+      // No file selected - reset the display
+      this.resetActionsUploadZone();
+      this.actionsFileError = null;
+    }
+  }
+
+  /**
+   * Resets the actions upload zone to its default state
+   */
+  private resetActionsUploadZone(): void {
+    const uploadZone = this.shadowRoot?.querySelector('.actions-file-upload-zone') as HTMLElement;
+    const uploadText = uploadZone?.querySelector('.upload-text') as HTMLElement;
+    
+    if (uploadZone && uploadText) {
+      uploadZone.classList.remove('has-file');
+      uploadText.textContent = 'Click to upload ActionsManifest.json';
     }
   }
 
