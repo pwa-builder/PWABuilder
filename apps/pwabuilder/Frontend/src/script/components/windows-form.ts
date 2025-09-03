@@ -367,7 +367,7 @@ export class WindowsForm extends AppPackageFormBase {
           }
 
           const stringified: string = JSON.stringify(parsed, null, 2);
-          this.packageOptions.windowsActions = stringified;
+          this.packageOptions.windowsActions = { manifest: stringified };
           this.actionsFileError = null;
         } catch (err) {
           console.error('Invalid Actions Manifest file:', err);

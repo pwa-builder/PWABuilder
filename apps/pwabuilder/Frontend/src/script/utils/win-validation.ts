@@ -65,12 +65,12 @@ type WindowsActionsOptions = {
   /**
    * The contents of the  optional customEntities.json file.
    */
-  customEntities: string | null;
+  customEntities?: string | null;
 
   /**
    * An array containing localizations for the custom entities file.
    */
-  customEntitiesLocalizations: WindowsActionsCustomEntityLocalization[] | null;
+  customEntitiesLocalizations?: WindowsActionsCustomEntityLocalization[] | null;
 }
 
 type WindowsActionsCustomEntityLocalization = {
