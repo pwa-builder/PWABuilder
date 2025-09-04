@@ -12,11 +12,8 @@
     <None Include="wwwroot\index.js" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0-beta3" />
-    <PackageReference
-      Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets"
-      Version="1.10.9"
-    />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Resources\ClassicWindowsAppPackage.appx">

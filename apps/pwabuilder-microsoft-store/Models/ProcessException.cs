@@ -7,24 +7,29 @@ namespace PWABuilder.MicrosoftStore.Models
 {
 
     [Serializable]
-    public class ProcessException : Exception
+    public sealed class ProcessException : Exception
     {
-        public ProcessException() { }
-        public ProcessException(string message, string? standardOutput, string? standardError) : base(message) 
-        {
-            this.StandardOutput = standardOutput;
-            this.StandardError = standardError;
-        }
-        public ProcessException(string message, Exception inner, string? standardOutput, string? standardError) : base(message, inner) 
-        {
-            this.StandardOutput = standardOutput;
-            this.StandardError = standardError;
-        }
-        protected ProcessException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        /// <inheritdoc/>
+        public string? StandardOutput { get; set; }
 
-        public string? StandardOutput { get;set; }
+        /// <inheritdoc/>
         public string? StandardError { get; set; }
+
+        /// <inheritdoc/>
+        public ProcessException() { }
+
+        /// <inheritdoc/>
+        public ProcessException(string message, string? standardOutput, string? standardError) : base(message)
+        {
+            StandardOutput = standardOutput;
+            StandardError = standardError;
+        }
+
+        /// <inheritdoc/>
+        public ProcessException(string message, Exception inner, string? standardOutput, string? standardError) : base(message, inner)
+        {
+            StandardOutput = standardOutput;
+            StandardError = standardError;
+        }
     }
 }

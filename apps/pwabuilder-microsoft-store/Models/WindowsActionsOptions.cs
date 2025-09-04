@@ -14,11 +14,13 @@ public class WindowsActionsOptions
 {
     /// <summary>
     /// The text contents of the ActionsManifest.json file that defines the Windows Actions for the PWA.
+    /// Alternately, this can be an absolute URL to an actions manifest JSON file.
     /// </summary>
     public required string Manifest { get; set; }
 
     /// <summary>
     /// Optional. The text contents of the CustomEntities.json file that defines any custom entities used by the Windows Actions for the PWA.
+    /// Alternately, this can be an absolute URL to a custom entities JSON file.
     /// </summary>
     public string? CustomEntities { get; set; }
 

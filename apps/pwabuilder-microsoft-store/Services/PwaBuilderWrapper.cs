@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore.Services
@@ -62,17 +63,18 @@ namespace PWABuilder.MicrosoftStore.Services
             ImageGeneratorResult appImages, 
             WebAppManifestContext webManifest, 
             string outputDirectory,
-            string processor = "",
-            bool fallback = false)
+            string processor,
+            bool fallback, 
+            CancellationToken cancelToken)
         {
             var pwaBuilderFilePath = Path.Combine(host.ContentRootPath, PwaBuilderPath);
 
-            var actionsManifestFilePath = await windowsActionService.GetActionsManifestFile(options);
-            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsManifestFilePath, outputDirectory, processor, fallback);
-            return await RunPwabuilderExe(options, appImages, webManifest, actionsManifestFilePath, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
+            var actionsFiles = await windowsActionService.GetWindowsActionsFilesAsync(options, outputDirectory, cancelToken);
+            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsFiles, outputDirectory, processor, fallback);
+            return await RunPwabuilderExe(options, appImages, webManifest, actionsFiles, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
         }
 
-        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string? actionsManifestFilePath, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
+        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
         {
             ProcessResult procResult;
             try
@@ -84,7 +86,7 @@ namespace PWABuilder.MicrosoftStore.Services
             {
                 var stdOut = (error as ProcessException)?.StandardOutput;
                 var stdErr = (error as ProcessException)?.StandardError;
-                throw CreatePwaBuilderCliError(error, error.Message, actionsManifestFilePath, outputDirectory, options, stdOut, stdErr, appImages, webManifest);
+                throw CreatePwaBuilderCliError(error, error.Message, actionsFiles, outputDirectory, options, stdOut, stdErr, appImages, webManifest);
             }
 
             // Get the generated files.
@@ -102,9 +104,9 @@ namespace PWABuilder.MicrosoftStore.Services
 
         protected virtual string PwaBuilderPath => settings.PwaBuilderPath;
 
-        private ProcessException CreatePwaBuilderCliError(Exception innerException, string message, string? actionsManifestFilePath, string outputDirectory, WindowsAppPackageOptions options, string? standardOutput, string? standardErrorOutput, ImageGeneratorResult appImages, WebAppManifestContext webManifest)
+        private ProcessException CreatePwaBuilderCliError(Exception innerException, string message, WindowsActionsFiles? actionFiles, string outputDirectory, WindowsAppPackageOptions options, string? standardOutput, string? standardErrorOutput, ImageGeneratorResult appImages, WebAppManifestContext webManifest)
         {
-            var msixOptionsStr = CreateCommandLineArgs(options, appImages, webManifest, actionsManifestFilePath, outputDirectory);
+            var msixOptionsStr = CreateCommandLineArgs(options, appImages, webManifest, actionFiles, outputDirectory);
             var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}");
             var toolFailedError = new ProcessException(formattedMessage, innerException, standardOutput, standardErrorOutput);
             toolFailedError.Data.Add("StandardOutput", standardOutput);
@@ -135,7 +137,7 @@ namespace PWABuilder.MicrosoftStore.Services
         /// Creates command line arguments for the pwa_builder.exe command line tool from the specified options.
         /// </summary>
         /// <returns></returns>
-        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string? actionsManifestFilePath, string outputDirectory, string processor = "", bool fallback = false)
+        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string processor = "", bool fallback = false)
         {
             // pwa_builder.exe expects the full version 'x.x.x.x', where the last section (revision) is zero.
             // The store requires the revision to be zero, as it's reserved for store use.
@@ -165,7 +167,9 @@ namespace PWABuilder.MicrosoftStore.Services
                 { "start-url", absoluteStartUrl?.ToString() },
                 { "display-mode", webManifest.GetDisplayModeOrNull() ?? "standalone" },
                 { "application-id", options.ApplicationId },
-                { "web-action-manifest-file", actionsManifestFilePath }
+                { "web-action-manifest-file", actionsFiles?.ManifestFilePath?.Path },
+                { "web-action-custom-entities-file", actionsFiles?.CustomEntitiesFilePath?.Path },
+                { "web-action-localized-custom-entities-files", actionsFiles?.CustomEntitiesLocalizationDirectoryPath?.Path },
             };
 
             if (fallback && options.ManifestFilePath != null)

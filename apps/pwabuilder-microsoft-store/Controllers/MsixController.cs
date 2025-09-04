@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PWABuilder.MicrosoftStore.Services;
+using System.Threading;
 
 namespace PWABuilder.MicrosoftStore.Controllers
 {
@@ -45,9 +46,9 @@ namespace PWABuilder.MicrosoftStore.Controllers
         /// <param name="options">The package creation options.</param>
         /// <returns></returns>
         [HttpPost] // for backward compat
-        public Task<IActionResult> GenerateZip(WindowsAppPackageOptions options)
+        public Task<IActionResult> GenerateZip(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
-            return CreateAppPackage(options, HttpContext);
+            return CreateAppPackageAsync(options, HttpContext, cancelToken);
         }
 
         /// <summary>
@@ -56,9 +57,9 @@ namespace PWABuilder.MicrosoftStore.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpPost] // for backward compat
-        public Task<IActionResult> Generate(WindowsAppPackageOptions options)
+        public Task<IActionResult> Generate(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
-            return CreateMsix(options);
+            return CreateMsix(options, cancelToken);
         }
 
         /// <summary>
@@ -139,7 +140,7 @@ namespace PWABuilder.MicrosoftStore.Controllers
             return File(responseStream, "application/octet-stream", $"{downloadName}.msix");
         }
 
-        private async Task<IActionResult> CreateAppPackage(WindowsAppPackageOptions options, HttpContext? httpContext)
+        private async Task<IActionResult> CreateAppPackageAsync(WindowsAppPackageOptions options, HttpContext? httpContext, CancellationToken cancelToken)
         {
             logger.LogInformation("Generating app package for {url} using {options}", options.Url, options);
             AnalyticsInfo analyticsInfo = new();
@@ -151,7 +152,7 @@ namespace PWABuilder.MicrosoftStore.Controllers
                 analyticsInfo.referrer = HttpContext.Request.Query.TryGetValue("ref", out var referrer) ? referrer.ToString() : null;
             }
 
-            var appPackage = await packageCreator.CreateAppPackage(options, analyticsInfo);
+            var appPackage = await packageCreator.CreateAppPackageAsync(options, analyticsInfo, cancelToken);
             logger.LogInformation("Successfully generated app package for {url}", options.Url);
             var mimeType = "application/zip";
             var fileName = GetFileResponseName(options, appPackage.ModernAppPackage) + ".zip";
@@ -162,11 +163,11 @@ namespace PWABuilder.MicrosoftStore.Controllers
             return File(appPackage.PackageBytes, mimeType, fileName);
         }
 
-        private async Task<IActionResult> CreateMsix(WindowsAppPackageOptions options)
+        private async Task<IActionResult> CreateMsix(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
             logger.LogInformation("Generating MSIX for {url} using {options}", options.Url, options);
 
-            var msixResult = await packageCreator.CreateMsix(options);
+            var msixResult = await packageCreator.CreateMsixAsync(options, cancelToken);
             logger.LogInformation("Successfully generated MSIX for {url}", options.Url);
             var mimeType = "application/msix";
             var fileName = GetFileResponseName(options, msixResult.Package) + ".msix";
@@ -177,8 +178,8 @@ namespace PWABuilder.MicrosoftStore.Controllers
         // WinGet package manager uses these response headers to get detailed information about the publisher and app name.
         private void AppendResponseHeaders(ModernWindowsPackageResult app)
         {
-            Response.Headers.Add("pwabuilder-package-publisher", app.PackageInfo.Identity?.Publisher ?? string.Empty);
-            Response.Headers.Add("pwabuilder-package-name", app.PackageInfo.Identity?.Name ?? string.Empty);
+            Response.Headers.Append("pwabuilder-package-publisher", app.PackageInfo.Identity?.Publisher ?? string.Empty);
+            Response.Headers.Append("pwabuilder-package-name", app.PackageInfo.Identity?.Name ?? string.Empty);
         }
 
         private string GetFileResponseName(WindowsAppPackageOptions options, ModernWindowsPackageResult? package)

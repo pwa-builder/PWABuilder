@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://aka.ms/appactions.schema.json",
+  "title": "App Actions schema",
+  "description": "Root schema for App Actions",
+  "type": "object",
+  "properties": {
+    "actions": {
+      "type": "array",
+      "description": "List of actions",
+      "items": { "$ref": "#/$defs/Action" },
+      "default": []
+    },
+    "version": {
+      "type": "integer",
+      "description": "Schema version",
+      "default": 1
+    }
+  },
+  "required": ["actions", "version"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "version": {
+            "type": "integer",
+            "minimum": 2
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "required": [ "usesGenerativeAI" ],
+              "properties": {
+                "inputs": {
+                  "type": "array",
+                  "items": {
+                    "required": [ "kind" ],
+                    "allOf": [
+                      {
+                        "not": {
+                          "required": [ "type" ]
+                        }
+                      },
+                      {
+                      "not": {
+                        "required": [ "required" ]
+                      }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Action": {
+      "type": "object",
+      "description": "An individual action definition",
+      "properties": {
+        "id":             { "type": "string", "pattern": "^[A-Za-z0-9._-]+$", "description": "identifier" },
+        "description":    { "type": "string", "description": "Action description" },
+        "schemaVersion":  { "type": "integer", "description": "Internal schema version", "default": 1, "minimum": 1 },
+        "isAvailable":    { "type": "boolean", "description": "Availability flag", "default": true },
+        "type":           { "type": "string",  "description": "EntityKind enum value of verion 1, will be removed at a future date" },
+        "kind":           { "type": "string", "description": "Action kind enum" },
+        "icon":           { "type": "string", "description": "URI or path to icon" },
+        "inputs":         {
+           "type": "array",
+           "description": "input definitions",
+           "items": { "$ref": "#/$defs/Input" }
+         },
+        "displaysUI":          { "type": "boolean", "description": "May display UI", "default": true },
+        "hasFeedbackHandler":  { "type": "boolean", "description": "Implements COM feedback handler", "default": false },
+        "usesGenerativeAI":    { "type": "boolean", "description": "Uses generative AI flag", "default": false },
+        "positiveFeedbackUri": { "type": "string", "format": "uri", "description": "URI for positive feedback" },
+        "negativeFeedbackUri": { "type": "string", "format": "uri", "description": "URI for negative feedback" },
+        "inputCombinations":   {
+          "type": "array",
+          "description": "Current instantiation combinations",
+          "items": { "$ref": "#/$defs/Instantiation" }
+        },
+        "instantiationDescription": {
+          "type": "string",
+          "description": "Description of instantiation"
+        },
+        "allowedAppInvokers": {
+          "type": "array",
+          "description": "List of App User Model IDs of apps that are allowed invoke this action",
+          "items": { "type" : "string" }
+        },
+        "outputs": {
+          "type": "array",
+          "description": "Current output definitions",
+          "items": { "$ref": "#/$defs/Output" }
+        },
+        "invocation": {
+          "$ref": "#/$defs/Invocation",
+          "description": "How to invoke this action"
+        },
+        "contentAgeRating": {
+          "type": "string",
+          "description": "Content age rating",
+          "enum": [ "Child", "Minor", "Adult" ],
+          "default": "Child"
+        }
+      },
+      "required": ["id", "description", "invocation", "inputs", "outputs"],
+      "additionalProperties": false
+    },
+    "Input": {
+      "type": "object",
+      "description": "One input parameter definition",
+      "properties": {
+        "name":     { "type": "string",  "pattern": "^[A-Za-z_][A-Za-z0-9_]*$", "description": "Input entity name" },
+        "type":     { "type": "string",  "description": "EntityKind enum value, will be removed at a future date" },
+        "kind":     { "type": "string",  "description": "EntityKind enum value"},
+        "required": { "type": "boolean", "description": "Indicates if this input is required", "default": true }
+      },
+      "required": ["name"],
+      "allOf": [
+        {
+          "oneOf": [
+            { "required": [ "type" ] },
+            { "required": [ "kind" ] }
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "Output": {
+      "type": "object",
+      "description": "One output parameter definition",
+      "properties": {
+        "name": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$", "description": "Output entity name" },
+        "type": { "type": "string", "description": "EntityKind enum value" },
+        "kind": { "type": "string", "description": "EntityKind (alias)" }
+      },
+      "required": ["name"],
+      "allOf": [
+        {
+          "oneOf": [
+            { "required": [ "type" ] },
+            { "required": [ "kind" ] }
+          ]
+        }
+      ],
+      "additionalProperties": false
+    },
+    "Invocation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Uri invocation details",
+          "properties": {
+            "type": { "pattern": "^([Uu][Rr][Ii])$" },
+            "inputData": {
+              "type": "object",
+              "description": "input data passed to action provider",
+              "additionalProperties": true
+            },
+            "uri": { "type": "string", "description": "URI template to launch when invoking the action" }
+          },
+          "required": ["type", "uri" ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "COM invocation details",
+          "properties": {
+            "type": { "pattern": "^([Cc][Oo][Mm])$" },
+            "clsid": {
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+              "description": "CLSID of the action's IActionProvider out-of-proc COM server"
+            }
+          },
+          "required": ["type", "clsid"],
+          "additionalProperties": false
+        }
+      ]  
+    },
+    "Instantiation": {
+      "type": "object",
+      "description": "An object describing a valid combination of inputs for the action",
+      "properties": {
+        "description": { "type": "string", "description": "Optional description" },
+        "inputs": {
+          "type": "array",
+          "description": "input names",
+          "items": { "type": "string" }
+        },
+        "where": {
+          "type": "array",
+          "description": "Set of conditions that must be true for the action to be applicable. For more information on the syntax for where clauses, see https://aka.ms/windows-app-actions-where-clauses",
+          "items": { "type": "string" },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
