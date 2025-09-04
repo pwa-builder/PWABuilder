@@ -34,6 +34,10 @@ public class AnalysesController : ControllerBase
         {
             url = new Uri($"https://{url}", UriKind.Absolute);
         }
+        if (url.IsLoopback)
+        {
+            return BadRequest("Loopback URLs are not allowed.");
+        }
 
         // Create a new Analysis object in the database and enqueue an AnalysisJob.
         var analysis = new Analysis
