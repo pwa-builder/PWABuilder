@@ -26,9 +26,45 @@ import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
 import { classMap } from 'lit/directives/class-map.js';
+
 const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
 let actionsSchemaValidation: any = null;
+let customEntitySchemaValidation: any = null;
+
+const CUSTOM_ENTITY_SCHEMA_ID = "https://pwa-builder.com/schemas/custom-entities.json";
+const CUSTOM_ENTITY_SCHEMA = {
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "number",
+      "const": 1
+    },
+    "entityDefinitions": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^ms-resource://.+"
+          },
+          {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": ["version", "entityDefinitions"]
+};
 
 @customElement('windows-form')
 
@@ -44,6 +80,9 @@ export class WindowsForm extends AppPackageFormBase {
   @state() userBackgroundColor: string = "";
   @state() showUploadActionsFile: boolean = false;
   @state() actionsFileError: string | null = null;
+  @state() supportCustomEntity: boolean = false;
+  @state() customEntitiesFileError: string | null = null;
+  @state() localizedEntitiesErrors: string[] = [];
 
   static get styles() {
     return [
@@ -226,6 +265,216 @@ export class WindowsForm extends AppPackageFormBase {
           font-size: var(--font-size);
         }
 
+        .custom-entities-error-message {
+          color: #eb5757;
+          margin: 5px 0;
+          font-size: 14px;
+        }
+
+        .actions-nested-content {
+          margin-left: 1.5em;
+          margin-top: 0.5em;
+        }
+
+        .actions-nested-content .form-check {
+          margin-top: 1em;
+        }
+
+        .actions-nested-content #actions-file-picker {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 2em !important;
+        }
+
+        .actions-file-upload-zone {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          padding: 6px;
+          border: 2px dashed #c5c5c5;
+          border-radius: var(--input-border-radius);
+          background-color: #fafafa;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-align: center;
+          width: fit-content;
+        }
+
+        .actions-file-upload-zone:hover {
+          border-color: #4F3FB6;
+          background-color: #f0f8ff;
+        }
+
+        .actions-file-upload-zone.has-file {
+          border-color: #28a745;
+          background-color: #f8fff9;
+        }
+
+        .upload-icon {
+          font-size: 24px;
+          margin-right: 8px;
+        }
+
+        .upload-text {
+          color: #4F3FB6;
+          font-size: 14px;
+          font-weight: 500;
+          margin-right: 4px;
+        }
+
+        .actions-file-upload-zone:hover .upload-text {
+          color: #3730a3;
+        }
+
+        .actions-file-upload-zone.has-file .upload-text {
+          color: #28a745;
+          font-weight: 500;
+        }
+
+        .actions-file-upload-zone.has-file:hover {
+          border-color: #218838;
+          background-color: #f1fff4;
+        }
+
+        .actions-file-upload-zone.has-error {
+          border-color: #dc3545;
+          background-color: #fff5f5;
+        }
+
+        .actions-file-upload-zone.has-error .upload-text {
+          color: #dc3545;
+          font-weight: 500;
+        }
+
+        .actions-file-upload-zone.has-error:hover {
+          border-color: #c82333;
+          background-color: #ffeaea;
+        }
+
+        .custom-entity-uploads {
+          margin-top: 1em;
+          margin-left: 1em;
+          padding: 1em;
+          border: 1px solid #e0e0e0;
+          border-radius: var(--input-border-radius);
+          background-color: #f9f9f9;
+          font-size: 14px;
+        }
+
+        .custom-entity-uploads .form-group {
+          margin-bottom: 1em;
+        }
+
+        .custom-entity-uploads .form-group:last-child {
+          margin-bottom: 1em;
+        }
+
+        .custom-entity-uploads label {
+          display: block;
+          margin-bottom: 0.5em;
+          font-weight: normal;
+          font-size: 16px;
+        }
+
+        .custom-entity-uploads input[type="file"] {
+          border: 1px solid #c5c5c5;
+          border-radius: var(--input-border-radius);
+          background-color: #ffffff;
+          font-size: 12px;
+        }
+
+        .folder-picker-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .file-picker-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .file-picker-wrapper.has-file .file-picker-text {
+          color: #28a745;
+          font-weight: 500;
+        }
+
+        .file-picker-wrapper.has-error .file-picker-text {
+          color: #dc3545;
+          font-weight: 500;
+        }
+
+        .folder-picker-button,
+        .file-picker-button {
+          padding: 10px 18px;
+          background-color: #ffffff;
+          border: 1px solid #c5c5c5;
+          border-radius: var(--input-border-radius);
+          font-size: 12px;
+          cursor: pointer;
+          color: #333;
+        }
+
+        .folder-picker-button:hover,
+        .file-picker-button:hover {
+          background-color: #f5f5f5;
+          border-color: #999;
+        }
+
+        .folder-picker-text,
+        .file-picker-text {
+          font-size: 12px;
+          color: #666;
+          font-style: italic;
+        }
+
+        .localized-entities-errors {
+          margin-top: 1em;
+          padding: 1em;
+          background-color: #fff5f5;
+          border: 1px solid #dc3545;
+          border-radius: var(--input-border-radius);
+          max-height: 300px;
+          overflow-y: auto;
+        }
+
+        .localized-entities-errors h4 {
+          margin: 0 0 0.5em 0;
+          color: #dc3545;
+          font-size: 14px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+        }
+
+        .localized-entities-errors h4::before {
+          content: "⚠️";
+          font-size: 16px;
+        }
+
+        .localized-entities-errors ul {
+          margin: 0;
+          padding-left: 1.2em;
+        }
+
+        .localized-entities-errors li {
+          color: #dc3545;
+          font-size: 12px;
+          margin-bottom: 0.5em;
+          line-height: 1.4;
+          background-color: #fff;
+          padding: 0.5em;
+          border-radius: 4px;
+          border: 1px solid #dc3545;
+        }
+
+        .localized-entities-errors li::marker {
+          color: #dc3545;
+        }
+
     `
     ];
   }
@@ -313,13 +562,21 @@ export class WindowsForm extends AppPackageFormBase {
     if (!checked) {
       delete this.packageOptions.windowsActions;
       actionsSchemaValidation = null;
+      this.supportCustomEntity = false;
     } else {
       try {
         const SCHEMA_ID = "https://aka.ms/appactions.schema.json";
         const SCHEMA_URL = "https://raw.githubusercontent.com/microsoft/App-Actions-On-Windows-Samples/refs/heads/main/schema/ActionsSchema.json";
+        
         if (!ajv.getSchema(SCHEMA_ID)) {
           const response = await fetch(SCHEMA_URL);
           const actionsSchema = await response.json();
+          
+          // Modify the schema to allow additional properties in Input
+          if (actionsSchema.$defs && actionsSchema.$defs.Input) {
+            actionsSchema.$defs.Input.additionalProperties = true;
+          }
+          
           ajv.addSchema(actionsSchema, SCHEMA_ID);
         }
 
@@ -328,6 +585,215 @@ export class WindowsForm extends AppPackageFormBase {
       } catch (err) {
         this.actionsFileError = "Schema setup failed.";
       }
+    }
+  }
+
+  async updateCustomEntitySelection(checked: boolean) {
+    this.supportCustomEntity = checked;
+
+    if (!checked) {
+      if (this.packageOptions.windowsActions) {
+        delete this.packageOptions.windowsActions.customEntities;
+        delete this.packageOptions.windowsActions.customEntitiesLocalizations;
+      }
+      customEntitySchemaValidation = null;
+      this.customEntitiesFileError = null;
+      this.localizedEntitiesErrors = [];
+    } else {
+      try {
+        if (!ajv.getSchema(CUSTOM_ENTITY_SCHEMA_ID)) {
+          ajv.addSchema(CUSTOM_ENTITY_SCHEMA, CUSTOM_ENTITY_SCHEMA_ID);
+        }
+
+        customEntitySchemaValidation = ajv.getSchema(CUSTOM_ENTITY_SCHEMA_ID);
+        this.customEntitiesFileError = null;
+
+      } catch (err) {
+        this.customEntitiesFileError = "Custom Entity schema setup failed.";
+      }
+    }
+  }
+
+  async customEntitiesFileChanged(e: Event): Promise<void> {
+    if (!e) return;
+
+    if (!customEntitySchemaValidation) {
+      this.customEntitiesFileError = "Custom Entity schema validation not available. Please try again.";
+      return;
+    }
+
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (file) {
+      // Update the display text to show the selected file name
+      const customEntitiesText = this.shadowRoot?.querySelector('#custom-entities-picker-text');
+      const customEntitiesButton = this.shadowRoot?.querySelector('#custom-entities-file-picker')?.parentElement;
+      
+      if (customEntitiesText) {
+        customEntitiesText.textContent = file.name;
+      }
+      
+      // Clear any previous states
+      if (customEntitiesButton) {
+        customEntitiesButton.classList.remove('has-file', 'has-error');
+        customEntitiesButton.classList.add('has-file');
+      }
+
+      const reader = new FileReader();
+      
+      reader.onload = (): void => {
+        try {
+          const text: string = reader.result as string;
+          const parsed = JSON.parse(text);
+
+          const isValid = customEntitySchemaValidation(parsed);
+          if (!isValid) {
+            const errorDetails = ajv.errorsText(customEntitySchemaValidation.errors, { separator: '\n' });
+            throw new Error(`Custom Entity schema validation failed:\n${errorDetails}`);
+          }
+
+          // Store the valid custom entities content
+          const stringified: string = JSON.stringify(parsed, null, 2);
+          if (!this.packageOptions.windowsActions) {
+            this.packageOptions.windowsActions = { manifest: "" };
+          }
+          this.packageOptions.windowsActions.customEntities = stringified;
+          this.customEntitiesFileError = null;
+          
+          // Show success state
+          if (customEntitiesButton) {
+            customEntitiesButton.classList.remove('has-error');
+            customEntitiesButton.classList.add('has-file');
+          }
+          
+        } catch (err) {
+          this.customEntitiesFileError = (err as Error).message;
+          
+          // Show error state but keep filename
+          if (customEntitiesButton) {
+            customEntitiesButton.classList.remove('has-file');
+            customEntitiesButton.classList.add('has-error');
+          }
+        }
+      };
+
+      reader.onerror = (): void => {
+        this.customEntitiesFileError = 'Failed to read the file. Please try again.';
+        
+        // Show error state but keep filename
+        if (customEntitiesButton) {
+          customEntitiesButton.classList.remove('has-file');
+          customEntitiesButton.classList.add('has-error');
+        }
+      };
+
+      reader.readAsText(file);
+    } else {
+      // No file selected - reset the display
+      const customEntitiesText = this.shadowRoot?.querySelector('#custom-entities-picker-text');
+      const customEntitiesButton = this.shadowRoot?.querySelector('#custom-entities-file-picker')?.parentElement;
+      
+      if (customEntitiesText) {
+        customEntitiesText.textContent = 'No file chosen';
+      }
+      
+      if (customEntitiesButton) {
+        customEntitiesButton.classList.remove('has-file', 'has-error');
+      }
+      
+      this.customEntitiesFileError = null;
+    }
+  }
+
+  async localizedEntitiesFolderChanged(e: Event) {
+    if (!e) return;
+
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+    const folderText = this.shadowRoot?.querySelector('#folder-picker-text');
+    const folderWrapper = this.shadowRoot?.querySelector('#localized-entities-folder-picker')?.parentElement;
+
+    if (files && files.length > 0) {
+      // Reset any previous error states and clear errors
+      this.localizedEntitiesErrors = [];
+      if (folderWrapper) {
+        folderWrapper.classList.remove('has-file', 'has-error');
+      }
+      
+      // Update the display text to show validation in progress
+      if (folderText) {
+        folderText.textContent = `${files.length} files selected - validating...`;
+      }
+      
+      // Start immediate pre-validation
+      const validationResults = await this.validateLocalizedEntitiesFiles(files);
+      
+      if (validationResults.isValid) {
+        // All files are valid
+        if (folderText) {
+          folderText.textContent = `✅ All ${files.length} files are valid`;
+        }
+        if (folderWrapper) {
+          folderWrapper.classList.add('has-file');
+        }
+        
+        // Store the valid files in packageOptions
+        if (!this.packageOptions.windowsActions) {
+          this.packageOptions.windowsActions = { manifest: "" };
+        }
+        this.packageOptions.windowsActions.customEntitiesLocalizations = validationResults.validFiles.map(file => ({
+          fileName: file.name,
+          contents: file.content
+        }));
+      } else {
+        // Some files failed validation
+        const validCount = validationResults.validFiles.length;
+        const totalCount = files.length;
+        const failedCount = totalCount - validCount;
+        
+        if (folderText) {
+          folderText.textContent = `❌ ${failedCount} of ${totalCount} files failed validation`;
+        }
+        if (folderWrapper) {
+          folderWrapper.classList.add('has-error');
+        }
+        
+        // Display validation errors immediately
+        this.displayLocalizedEntitiesErrors(validationResults.errors);
+      }
+    } else {
+      // No files selected - reset the display
+      if (folderText) {
+        folderText.textContent = 'No folder selected';
+      }
+      if (folderWrapper) {
+        folderWrapper.classList.remove('has-file', 'has-error');
+      }
+      
+      // Clear any stored errors
+      this.localizedEntitiesErrors = [];
+    }
+  }
+
+  openFolderPicker() {
+    const folderInput = this.shadowRoot?.querySelector('#localized-entities-folder-picker') as HTMLInputElement;
+    if (folderInput) {
+      folderInput.click();
+    }
+  }
+
+  openActionsPicker() {
+    const actionsInput = this.shadowRoot?.querySelector('#actions-file-picker') as HTMLInputElement;
+    if (actionsInput) {
+      actionsInput.click();
+    }
+  }
+
+  openCustomEntitiesPicker() {
+    const customEntitiesInput = this.shadowRoot?.querySelector('#custom-entities-file-picker') as HTMLInputElement;
+    if (customEntitiesInput) {
+      customEntitiesInput.click();
     }
   }
 
@@ -341,20 +807,31 @@ export class WindowsForm extends AppPackageFormBase {
     return bytes.buffer;
   }
 
-  async actionsFileChanged(e: Event) {
+  async actionsFileChanged(e: Event): Promise<void> {
     if (!e) return;
 
     if (!actionsSchemaValidation) {
-      this.actionsFileError = "Please enter the decryption key first.";
+      this.actionsFileError = "Schema validation not available. Please try again.";
       return;
     }
 
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
-    const reader = new FileReader();
 
     if (file) {
-      reader.onload = () => {
+      // Update the upload zone to show the selected file name
+      const uploadZone = this.shadowRoot?.querySelector('.actions-file-upload-zone') as HTMLElement;
+      const uploadText = uploadZone?.querySelector('.upload-text') as HTMLElement;
+      
+      if (uploadZone && uploadText) {
+        uploadZone.classList.add('has-file');
+        uploadZone.classList.remove('has-error'); // Clear any previous error state
+        uploadText.textContent = file.name;
+      }
+
+      const reader = new FileReader();
+      
+      reader.onload = (): void => {
         try {
           const text: string = reader.result as string;
           const parsed = JSON.parse(text);
@@ -369,14 +846,230 @@ export class WindowsForm extends AppPackageFormBase {
           const stringified: string = JSON.stringify(parsed, null, 2);
           this.packageOptions.windowsActions = { manifest: stringified };
           this.actionsFileError = null;
+          
+          // Clear any error state and show success state
+          if (uploadZone) {
+            uploadZone.classList.remove('has-error');
+            uploadZone.classList.add('has-file');
+          }
+          
         } catch (err) {
-          console.error('Invalid Actions Manifest file:', err);
           this.actionsFileError = (err as Error).message;
+          
+          // Keep the filename displayed but add error styling
+          if (uploadZone) {
+            uploadZone.classList.remove('has-file');
+            uploadZone.classList.add('has-error');
+          }
+        }
+      };
+
+      reader.onerror = (): void => {
+        this.actionsFileError = 'Failed to read the file. Please try again.';
+        
+        // Keep the filename displayed but add error styling
+        if (uploadZone) {
+          uploadZone.classList.remove('has-file');
+          uploadZone.classList.add('has-error');
         }
       };
 
       reader.readAsText(file);
+    } else {
+      // No file selected - reset the display
+      this.resetActionsUploadZone();
+      this.actionsFileError = null;
     }
+  }
+
+  /**
+   * Resets the actions upload zone to its default state
+   */
+  private resetActionsUploadZone(): void {
+    const uploadZone = this.shadowRoot?.querySelector('.actions-file-upload-zone') as HTMLElement;
+    const uploadText = uploadZone?.querySelector('.upload-text') as HTMLElement;
+    
+    if (uploadZone && uploadText) {
+      uploadZone.classList.remove('has-file');
+      uploadText.textContent = 'Click to upload ActionsManifest.json';
+    }
+  }
+
+  /**
+   * Validates localized entities files for JSON format and proper naming conventions
+   */
+  private async validateLocalizedEntitiesFiles(files: FileList): Promise<{
+    isValid: boolean;
+    validFiles: Array<{ name: string; content: string; languageTag: string }>;
+    errors: string[];
+  }> {
+    const validFiles: Array<{ name: string; content: string; languageTag: string }> = [];
+    const errors: string[] = [];
+
+    // Filename pattern for localized custom entities
+    // Pattern 1: {basename}.json (for default/base files)
+    // Pattern 2: {basename}.language-{language-tag}.json (for localized files)
+    const baseFilePattern = /^(.+)\.json$/;
+    const localizedFilePattern = /^(.+)\.language-([a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2}|[0-9]{3})?)\.json$/i;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileName = file.name;
+
+      try {
+        // Step 1: Check if filename follows either valid pattern
+        const baseMatch = baseFilePattern.exec(fileName);
+        const localizedMatch = localizedFilePattern.exec(fileName);
+        
+        if (!baseMatch && !localizedMatch) {
+          const error = `"${fileName}" - Invalid filename format. Expected format: "ExampleFile.json" or "ExampleFile.language-{language-tag}.json" (e.g., "CustomEntity.json" or "CustomEntity.language-en.json")`;
+          errors.push(error);
+          continue;
+        }
+
+        // Step 2: Extract and validate language tag if it's a localized file
+        let languageTag = 'default'; // Default for base files without language tag
+        
+        if (localizedMatch) {
+          // This is a localized file with language tag
+          languageTag = localizedMatch[2]; // The language tag part after "language-"
+          
+          // Validate that it's a proper BCP-47 format
+          if (!this.isValidLanguageTag(languageTag)) {
+            const error = `"${fileName}" - Invalid language tag "${languageTag}". Must be valid BCP-47 format like "en", "en-US", "fr-CA", or "zh-Hans-CN"`;
+            errors.push(error);
+            continue;
+          }
+        } else if (baseMatch) {
+          // This is a base file - check it doesn't look like it should be a localized file
+          const suspiciousPattern = /^(.+)\.[a-z]{2}(-[A-Z]{2})?\.json$/i;
+          if (suspiciousPattern.test(fileName)) {
+            const error = `"${fileName}" - This looks like a localized file but is missing the "language-" prefix. Did you mean "${fileName.replace(/\.([a-z]{2}(-[A-Z]{2})?)\.json$/i, '.language-$1.json')}"?`;
+            errors.push(error);
+            continue;
+          }
+        }
+
+        // Step 3: Read and validate JSON content
+        let content: string;
+        try {
+          content = await this.readFileAsText(file);
+        } catch (readError) {
+          const error = `"${fileName}" - Failed to read file: ${(readError as Error).message}`;
+          errors.push(error);
+          continue;
+        }
+        
+        // Step 4: Validate JSON structure
+        try {
+          JSON.parse(content); // Just validate it's proper JSON
+          
+          // File is valid
+          validFiles.push({
+            name: fileName,
+            content: content,
+            languageTag: languageTag
+          });
+
+        } catch (jsonError) {
+          const error = `"${fileName}" - Invalid JSON format: ${(jsonError as Error).message}`;
+          errors.push(error);
+        }
+
+      } catch (unexpectedError) {
+        const error = `"${fileName}" - Unexpected error during validation: ${(unexpectedError as Error).message}`;
+        errors.push(error);
+      }
+    }
+
+    const result = {
+      isValid: errors.length === 0,
+      validFiles,
+      errors
+    };
+
+    return result;
+  }
+
+  /**
+   * Validates if a string is a proper BCP-47 language tag
+   */
+  private isValidLanguageTag(tag: string): boolean {
+    // BCP-47 language tag validation
+    // Format: language[-script][-region]
+    // language: 2-3 lowercase letters (required)
+    // script (optional): 4 letters, first uppercase, rest lowercase
+    // region (optional): 2 uppercase letters OR 3 digits
+    
+    const parts = tag.split('-');
+    
+    if (parts.length === 0 || parts.length > 3) {
+      return false;
+    }
+
+    // Validate language subtag (required)
+    const language = parts[0];
+    if (!/^[a-z]{2,3}$/.test(language)) {
+      return false;
+    }
+
+    // If there are more parts, validate script and/or region
+    if (parts.length >= 2) {
+      const secondPart = parts[1];
+      
+      // Check if second part is script (4 letters, first uppercase)
+      const isScript = /^[A-Z][a-z]{3}$/.test(secondPart);
+      
+      // Check if second part is region (2 uppercase letters or 3 digits)
+      const isRegion = /^([A-Z]{2}|[0-9]{3})$/.test(secondPart);
+      
+      if (!isScript && !isRegion) {
+        return false;
+      }
+      
+      // If there's a third part, validate it
+      if (parts.length === 3) {
+        const thirdPart = parts[2];
+        
+        // Third part should be region if second was script
+        if (isScript) {
+          if (!/^([A-Z]{2}|[0-9]{3})$/.test(thirdPart)) {
+            return false;
+          }
+        } else {
+          // If second part was region, third part is not expected in our basic validation
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Reads a file as text asynchronously
+   */
+  private readFileAsText(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      
+      reader.onerror = () => {
+        reject(new Error('Failed to read file'));
+      };
+      
+      reader.readAsText(file);
+    });
+  }
+
+  /**
+   * Displays localized entities validation errors in the UI
+   */
+  private displayLocalizedEntitiesErrors(errors: string[]): void {
+    this.localizedEntitiesErrors = errors;
   }
 
   rotateZero(){
@@ -412,7 +1105,6 @@ export class WindowsForm extends AppPackageFormBase {
             placeholder="Select one or more languages"
             @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
             value=${this.packageOptions.resourceLanguage!}
-            ?stayopenonselect=${true}
             multiple
             .maxOptionsVisible=${5}
             size="small"
@@ -754,8 +1446,64 @@ export class WindowsForm extends AppPackageFormBase {
                 </div>
                 ${this.showUploadActionsFile ?
                   html`
-                    <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)}/>
-                    ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
+                    <div class="actions-nested-content">
+                      <div class="actions-file-upload-zone" @click=${this.openActionsPicker}>
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Click to upload ActionsManifest.json</div>
+                        <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)} style="display: none;"/>
+                      </div>
+                      ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
+                      <div class="form-check">
+                        ${this.renderFormInput({
+                          label: 'Support Custom Entity',
+                          value: 'CustomEntity',
+                          tooltip:
+                            'Enables support for custom entities in your Actions manifest.',
+                          tooltipLink:
+                            'https://aka.ms/pwa-winaction',
+                          inputId: 'custom-entity-checkbox',
+                          type: 'checkbox',
+                          checked: this.supportCustomEntity,
+                          inputHandler: (_val: string, checked: boolean) =>
+                            (this.updateCustomEntitySelection(checked)),
+                        })}
+                      </div>
+                      ${this.supportCustomEntity ?
+                        html`
+                          <div class="custom-entity-uploads">
+                            <div class="form-group">
+                              <label for="custom-entities-file-picker">Upload JSON file for CustomEntities:</label>
+                              <div class="file-picker-wrapper">
+                                <button type="button" class="file-picker-button" @click=${this.openCustomEntitiesPicker}>Choose File</button>
+                                <input id="custom-entities-file-picker" type="file" accept=".json" @change=${(e: Event) => this.customEntitiesFileChanged(e)} style="display: none;"/>
+                                <span class="file-picker-text" id="custom-entities-picker-text">No file chosen</span>
+                              </div>
+                              ${this.customEntitiesFileError ? html`<div class="custom-entities-error-message">${this.customEntitiesFileError}</div>` : ''}
+                            </div>
+                            <div class="form-group">
+                              <label for="localized-entities-folder-picker">Upload localized custom entities files (optional):</label>
+                              <div class="folder-picker-wrapper">
+                                <button type="button" class="folder-picker-button" @click=${this.openFolderPicker}>Select Folder</button>
+                                <input id="localized-entities-folder-picker" type="file" .webkitdirectory=${true} multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
+                                <span class="folder-picker-text" id="folder-picker-text">No folder selected</span>
+                              </div>
+                              ${this.localizedEntitiesErrors.length > 0 ? 
+                                html`
+                                  <div class="localized-entities-errors">
+                                    <h4>File Validation Errors:</h4>
+                                    <ul>
+                                      ${this.localizedEntitiesErrors.map(error => html`<li>${error}</li>`)}
+                                    </ul>
+                                  </div>
+                                ` : 
+                                ''
+                              }
+                            </div>
+                          </div>
+                        ` :
+                        null
+                      }
+                    </div>
                   ` :
                   null
                 }
