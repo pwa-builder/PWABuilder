@@ -13,7 +13,7 @@ env:
   # Web App Configuration
   WEB_APP_NAME: pwabuilder
   WEB_APP_RESOURCE_GROUP: pwabuilder-prod  # Replace with your Web App's resource group
-  WEB_APP_SLOT: staging  # Deployment slot name
+  WEB_APP_SLOT: preview  # Deployment slot name
 
 jobs:
   build-and-deploy:
