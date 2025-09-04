@@ -13,6 +13,7 @@ env:
   # Web App Configuration
   WEB_APP_NAME: pwabuilder
   WEB_APP_RESOURCE_GROUP: pwabuilder-prod  # Replace with your Web App's resource group
+  WEB_APP_SLOT: staging  # Deployment slot name
 
 jobs:
   build-and-deploy:
@@ -44,17 +45,18 @@ jobs:
     - name: Docker push
       run: docker push pwabuilder.azurecr.io/pwabuilder:production
       
-    - name: Restart Azure Web App
+    - name: Restart Azure Web App Staging Slot
       run: |
-        echo "🔄 Restarting Azure Web App to pull latest container..."
+        echo "🔄 Restarting Azure Web App staging slot to pull latest container..."
         
-        # Force Web App to pull latest container image
+        # Force Web App staging slot to pull latest container image
         az webapp config container set \
           --name ${{ env.WEB_APP_NAME }} \
           --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} \
+          --slot ${{ env.WEB_APP_SLOT }} \
           --docker-custom-image-name pwabuilder.azurecr.io/pwabuilder:production
         
-        # Restart the Web App
-        az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }}
+        # Restart the Web App staging slot
+        az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} --slot ${{ env.WEB_APP_SLOT }}
         
-        echo "✅ Web App restart completed"
+        echo "✅ Web App staging slot restart completed"
