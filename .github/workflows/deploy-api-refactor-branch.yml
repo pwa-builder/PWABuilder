@@ -10,15 +10,9 @@ env:
   ACR_RESOURCE_GROUP: pwabuilder-registry
   ACR_NAME: pwabuilder
   
-  # Container Apps Configuration  
-  CONTAINER_APP_RESOURCE_GROUP: pwabuilder-pre
-  AZURE_LOCATION: westus
-  CONTAINER_APP_NAME: pwabuilder-api-refactor-app
-  CONTAINER_APP_ENV: pwabuilder-api-refactor-env
-  
   # Web App Configuration
-  WEB_APP_NAME: pwabuilder-summer25-consolidation
-  WEB_APP_RESOURCE_GROUP: pwabuilder-pre  # Replace with your Web App's resource group
+  WEB_APP_NAME: pwabuilder
+  WEB_APP_RESOURCE_GROUP: pwabuilder-prod  # Replace with your Web App's resource group
 
 jobs:
   build-and-deploy:
