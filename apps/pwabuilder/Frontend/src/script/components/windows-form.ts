@@ -629,7 +629,6 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   async customEntitiesFileChanged(e: Event): Promise<void> {
-    console.log("CustomEntitiesFileChanged hit");
     if (!e) return;
 
     if (!customEntitySchemaValidation) {
@@ -683,7 +682,6 @@ export class WindowsForm extends AppPackageFormBase {
             customEntitiesButton.classList.add('has-file');
           }
           
-          console.log('Custom entities file validated and stored successfully');
         } catch (err) {
           console.error('Invalid Custom Entities file:', err);
           this.customEntitiesFileError = (err as Error).message;
@@ -872,7 +870,6 @@ export class WindowsForm extends AppPackageFormBase {
             uploadZone.classList.add('has-file');
           }
           
-          console.log('Actions manifest validated and stored successfully');
         } catch (err) {
           console.error('Invalid Actions Manifest file:', err);
           this.actionsFileError = (err as Error).message;
