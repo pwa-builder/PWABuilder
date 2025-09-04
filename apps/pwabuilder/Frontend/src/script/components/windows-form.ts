@@ -29,6 +29,7 @@ import { classMap } from 'lit/directives/class-map.js';
 const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
 let actionsSchemaValidation: any = null;
+let customEntitySchemaValidation: any = null;
 
 @customElement('windows-form')
 
@@ -45,6 +46,8 @@ export class WindowsForm extends AppPackageFormBase {
   @state() showUploadActionsFile: boolean = false;
   @state() actionsFileError: string | null = null;
   @state() supportCustomEntity: boolean = false;
+  @state() customEntitiesFileError: string | null = null;
+  @state() localizedEntitiesErrors: string[] = [];
 
   static get styles() {
     return [
@@ -227,6 +230,12 @@ export class WindowsForm extends AppPackageFormBase {
           font-size: var(--font-size);
         }
 
+        .custom-entities-error-message {
+          color: #eb5757;
+          margin: 5px 0;
+          font-size: 14px;
+        }
+
         .actions-nested-content {
           margin-left: 1.5em;
           margin-top: 0.5em;
@@ -352,6 +361,16 @@ export class WindowsForm extends AppPackageFormBase {
           gap: 12px;
         }
 
+        .file-picker-wrapper.has-file .file-picker-text {
+          color: #28a745;
+          font-weight: 500;
+        }
+
+        .file-picker-wrapper.has-error .file-picker-text {
+          color: #dc3545;
+          font-weight: 500;
+        }
+
         .folder-picker-button,
         .file-picker-button {
           padding: 10px 18px;
@@ -374,6 +393,51 @@ export class WindowsForm extends AppPackageFormBase {
           font-size: 12px;
           color: #666;
           font-style: italic;
+        }
+
+        .localized-entities-errors {
+          margin-top: 1em;
+          padding: 1em;
+          background-color: #fff5f5;
+          border: 1px solid #dc3545;
+          border-radius: var(--input-border-radius);
+          max-height: 300px;
+          overflow-y: auto;
+        }
+
+        .localized-entities-errors h4 {
+          margin: 0 0 0.5em 0;
+          color: #dc3545;
+          font-size: 14px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+        }
+
+        .localized-entities-errors h4::before {
+          content: "⚠️";
+          font-size: 16px;
+        }
+
+        .localized-entities-errors ul {
+          margin: 0;
+          padding-left: 1.2em;
+        }
+
+        .localized-entities-errors li {
+          color: #dc3545;
+          font-size: 12px;
+          margin-bottom: 0.5em;
+          line-height: 1.4;
+          background-color: #fff;
+          padding: 0.5em;
+          border-radius: 4px;
+          border: 1px solid #dc3545;
+        }
+
+        .localized-entities-errors li::marker {
+          color: #dc3545;
         }
 
     `
@@ -489,60 +553,251 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
-  updateCustomEntitySelection(checked: boolean) {
+  async updateCustomEntitySelection(checked: boolean) {
     this.supportCustomEntity = checked;
+
+    if (!checked) {
+      customEntitySchemaValidation = null;
+      this.customEntitiesFileError = null;
+    } else {
+      try {
+        const CUSTOM_ENTITY_SCHEMA_ID = "https://aka.ms/customentity.schema.json";
+        
+        if (!ajv.getSchema(CUSTOM_ENTITY_SCHEMA_ID)) {
+          // Create the Custom Entity schema inline based on the specification
+          const customEntitySchema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": "https://aka.ms/customentity.schema.json",
+            "title": "Custom Entity schema",
+            "description": "Schema for Custom Entity definitions used in Windows App Actions",
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "integer",
+                "description": "Used for future versioning",
+                "default": 1
+              },
+              "entityDefinitions": {
+                "type": "object",
+                "description": "Root element for definitions",
+                "patternProperties": {
+                  "^[a-zA-Z][a-zA-Z0-9_]*$": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "description": "Custom Text Entity Kind definition with key phrases",
+                        "patternProperties": {
+                          "^.+$": {
+                            "type": "object",
+                            "description": "A Key Phrase belonging to the defined Custom Text Entity Kind",
+                            "patternProperties": {
+                              "^.+$": {
+                                "type": "string",
+                                "description": "String property value"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^ms-resource://.*$",
+                        "description": "Reference to a localized Custom Text Entity Kind resource"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+              }
+            },
+            "required": ["version", "entityDefinitions"],
+            "additionalProperties": false
+          };
+          
+          ajv.addSchema(customEntitySchema, CUSTOM_ENTITY_SCHEMA_ID);
+        }
+
+        customEntitySchemaValidation = ajv.getSchema(CUSTOM_ENTITY_SCHEMA_ID);
+        this.customEntitiesFileError = null;
+      } catch (err) {
+        this.customEntitiesFileError = "Custom Entity schema setup failed.";
+      }
+    }
   }
 
-  customEntitiesFileChanged(e: Event) {
+  async customEntitiesFileChanged(e: Event): Promise<void> {
+    console.log("CustomEntitiesFileChanged hit");
     if (!e) return;
+
+    if (!customEntitySchemaValidation) {
+      this.customEntitiesFileError = "Custom Entity schema validation not available. Please try again.";
+      return;
+    }
 
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
 
-    // Update the display text
-    const customEntitiesText = this.shadowRoot?.querySelector('#custom-entities-picker-text');
-    if (customEntitiesText) {
-      customEntitiesText.textContent = file ? file.name : 'No file chosen';
-    }
-
     if (file) {
+      // Update the display text to show the selected file name
+      const customEntitiesText = this.shadowRoot?.querySelector('#custom-entities-picker-text');
+      const customEntitiesButton = this.shadowRoot?.querySelector('#custom-entities-file-picker')?.parentElement;
+      
+      if (customEntitiesText) {
+        customEntitiesText.textContent = file.name;
+      }
+      
+      // Clear any previous states
+      if (customEntitiesButton) {
+        customEntitiesButton.classList.remove('has-file', 'has-error');
+        customEntitiesButton.classList.add('has-file');
+      }
+
       const reader = new FileReader();
-      reader.onload = () => {
+      
+      reader.onload = (): void => {
         try {
           const text: string = reader.result as string;
           const parsed = JSON.parse(text);
+
+          const isValid = customEntitySchemaValidation(parsed);
+
+          if (!isValid) {
+            const errorDetails = ajv.errorsText(customEntitySchemaValidation.errors, { separator: '\n' });
+            throw new Error(`Custom Entity schema validation failed:\n${errorDetails}`);
+          }
+
+          // Store the valid custom entities content
+          const stringified: string = JSON.stringify(parsed, null, 2);
+          if (!this.packageOptions.windowsActions) {
+            this.packageOptions.windowsActions = { manifest: "" };
+          }
+          this.packageOptions.windowsActions.customEntities = stringified;
+          this.customEntitiesFileError = null;
           
-          // Store the custom entities file content
-          // You can add validation here if needed
-          console.log('Custom entities file loaded:', parsed);
+          // Show success state
+          if (customEntitiesButton) {
+            customEntitiesButton.classList.remove('has-error');
+            customEntitiesButton.classList.add('has-file');
+          }
           
+          console.log('Custom entities file validated and stored successfully');
         } catch (err) {
-          console.error('Invalid custom entities file:', err);
+          console.error('Invalid Custom Entities file:', err);
+          this.customEntitiesFileError = (err as Error).message;
+          
+          // Show error state but keep filename
+          if (customEntitiesButton) {
+            customEntitiesButton.classList.remove('has-file');
+            customEntitiesButton.classList.add('has-error');
+          }
         }
       };
+
+      reader.onerror = (): void => {
+        this.customEntitiesFileError = 'Failed to read the file. Please try again.';
+        console.error('File read error');
+        
+        // Show error state but keep filename
+        if (customEntitiesButton) {
+          customEntitiesButton.classList.remove('has-file');
+          customEntitiesButton.classList.add('has-error');
+        }
+      };
+
       reader.readAsText(file);
+    } else {
+      // No file selected - reset the display
+      const customEntitiesText = this.shadowRoot?.querySelector('#custom-entities-picker-text');
+      const customEntitiesButton = this.shadowRoot?.querySelector('#custom-entities-file-picker')?.parentElement;
+      
+      if (customEntitiesText) {
+        customEntitiesText.textContent = 'No file chosen';
+      }
+      
+      if (customEntitiesButton) {
+        customEntitiesButton.classList.remove('has-file', 'has-error');
+      }
+      
+      this.customEntitiesFileError = null;
     }
   }
 
-  localizedEntitiesFolderChanged(e: Event) {
+  async localizedEntitiesFolderChanged(e: Event) {
     if (!e) return;
 
     const input = e.target as HTMLInputElement;
     const files = input.files;
+    const folderText = this.shadowRoot?.querySelector('#folder-picker-text');
+    const folderWrapper = this.shadowRoot?.querySelector('#localized-entities-folder-picker')?.parentElement;
 
     if (files && files.length > 0) {
       console.log('Localized entities folder selected:', files.length, 'files');
       
-      // Update the display text
-      const folderText = this.shadowRoot?.querySelector('#folder-picker-text');
-      if (folderText) {
-        folderText.textContent = `${files.length} files selected`;
+      // Reset any previous error states and clear errors
+      this.localizedEntitiesErrors = [];
+      if (folderWrapper) {
+        folderWrapper.classList.remove('has-file', 'has-error');
       }
       
-      // Process the folder contents here
-      Array.from(files).forEach(file => {
-        console.log('File:', file.name, file.webkitRelativePath);
-      });
+      // Update the display text to show validation in progress
+      if (folderText) {
+        folderText.textContent = `${files.length} files selected - validating...`;
+      }
+      
+      // Start immediate pre-validation
+      const validationResults = await this.validateLocalizedEntitiesFiles(files);
+      
+      if (validationResults.isValid) {
+        // All files are valid
+        if (folderText) {
+          folderText.textContent = `✅ All ${files.length} files are valid`;
+        }
+        if (folderWrapper) {
+          folderWrapper.classList.add('has-file');
+        }
+        
+        // Store the valid files in packageOptions
+        if (!this.packageOptions.windowsActions) {
+          this.packageOptions.windowsActions = { manifest: "" };
+        }
+        this.packageOptions.windowsActions.customEntitiesLocalizations = validationResults.validFiles.map(file => ({
+          fileName: file.name,
+          contents: file.content
+        }));
+        
+        console.log('All localized entities files validated successfully');
+      } else {
+        // Some files failed validation
+        const validCount = validationResults.validFiles.length;
+        const totalCount = files.length;
+        const failedCount = totalCount - validCount;
+        
+        if (folderText) {
+          folderText.textContent = `❌ ${failedCount} of ${totalCount} files failed validation`;
+        }
+        if (folderWrapper) {
+          folderWrapper.classList.add('has-error');
+        }
+        
+        // Display validation errors immediately
+        this.displayLocalizedEntitiesErrors(validationResults.errors);
+        
+        console.log(`Validation failed for ${failedCount} files:`, validationResults.errors);
+      }
+    } else {
+      // No files selected - reset the display
+      if (folderText) {
+        folderText.textContent = 'No folder selected';
+      }
+      if (folderWrapper) {
+        folderWrapper.classList.remove('has-file', 'has-error');
+      }
+      
+      // Clear any stored errors
+      this.localizedEntitiesErrors = [];
     }
   }
 
@@ -668,6 +923,195 @@ export class WindowsForm extends AppPackageFormBase {
     }
   }
 
+  /**
+   * Validates localized entities files for JSON format and proper naming conventions
+   */
+  private async validateLocalizedEntitiesFiles(files: FileList): Promise<{
+    isValid: boolean;
+    validFiles: Array<{ name: string; content: string; languageTag: string }>;
+    errors: string[];
+  }> {
+    const validFiles: Array<{ name: string; content: string; languageTag: string }> = [];
+    const errors: string[] = [];
+
+    // Filename pattern for localized custom entities
+    // Pattern 1: {basename}.json (for default/base files)
+    // Pattern 2: {basename}.language-{language-tag}.json (for localized files)
+    const baseFilePattern = /^(.+)\.json$/;
+    const localizedFilePattern = /^(.+)\.language-([a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2}|[0-9]{3})?)\.json$/i;
+
+    console.log(`Starting validation of ${files.length} files...`);
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileName = file.name;
+      
+      console.log(`Validating file ${i + 1}/${files.length}: ${fileName}`);
+
+      try {
+        // Step 1: Check if filename follows either valid pattern
+        const baseMatch = baseFilePattern.exec(fileName);
+        const localizedMatch = localizedFilePattern.exec(fileName);
+        
+        if (!baseMatch && !localizedMatch) {
+          const error = `"${fileName}" - Invalid filename format. Expected format: "ExampleFile.json" or "ExampleFile.language-{language-tag}.json" (e.g., "CustomEntity.json" or "CustomEntity.language-en.json")`;
+          errors.push(error);
+          console.log(`❌ Filename validation failed: ${error}`);
+          continue;
+        }
+
+        // Step 2: Extract and validate language tag if it's a localized file
+        let languageTag = 'default'; // Default for base files without language tag
+        
+        if (localizedMatch) {
+          // This is a localized file with language tag
+          languageTag = localizedMatch[2]; // The language tag part after "language-"
+          
+          // Validate that it's a proper BCP-47 format
+          if (!this.isValidLanguageTag(languageTag)) {
+            const error = `"${fileName}" - Invalid language tag "${languageTag}". Must be valid BCP-47 format like "en", "en-US", "fr-CA", or "zh-Hans-CN"`;
+            errors.push(error);
+            console.log(`❌ Language tag validation failed: ${error}`);
+            continue;
+          }
+        } else if (baseMatch) {
+          // This is a base file - check it doesn't look like it should be a localized file
+          const suspiciousPattern = /^(.+)\.[a-z]{2}(-[A-Z]{2})?\.json$/i;
+          if (suspiciousPattern.test(fileName)) {
+            const error = `"${fileName}" - This looks like a localized file but is missing the "language-" prefix. Did you mean "${fileName.replace(/\.([a-z]{2}(-[A-Z]{2})?)\.json$/i, '.language-$1.json')}"?`;
+            errors.push(error);
+            console.log(`❌ Suspicious filename pattern: ${error}`);
+            continue;
+          }
+        }
+
+        // Step 3: Read and validate JSON content
+        let content: string;
+        try {
+          content = await this.readFileAsText(file);
+        } catch (readError) {
+          const error = `"${fileName}" - Failed to read file: ${(readError as Error).message}`;
+          errors.push(error);
+          console.log(`❌ File read failed: ${error}`);
+          continue;
+        }
+        
+        // Step 4: Validate JSON structure
+        try {
+          JSON.parse(content); // Just validate it's proper JSON
+          console.log(`✅ File "${fileName}" passed all validations`);
+          
+          // File is valid
+          validFiles.push({
+            name: fileName,
+            content: content,
+            languageTag: languageTag
+          });
+
+        } catch (jsonError) {
+          const error = `"${fileName}" - Invalid JSON format: ${(jsonError as Error).message}`;
+          errors.push(error);
+          console.log(`❌ JSON validation failed: ${error}`);
+        }
+
+      } catch (unexpectedError) {
+        const error = `"${fileName}" - Unexpected error during validation: ${(unexpectedError as Error).message}`;
+        errors.push(error);
+        console.log(`❌ Unexpected error: ${error}`);
+      }
+    }
+
+    const result = {
+      isValid: errors.length === 0,
+      validFiles,
+      errors
+    };
+
+    console.log(`Validation complete: ${validFiles.length}/${files.length} files valid, ${errors.length} errors`);
+    return result;
+  }
+
+  /**
+   * Validates if a string is a proper BCP-47 language tag
+   */
+  private isValidLanguageTag(tag: string): boolean {
+    // BCP-47 language tag validation
+    // Format: language[-script][-region]
+    // language: 2-3 lowercase letters (required)
+    // script (optional): 4 letters, first uppercase, rest lowercase
+    // region (optional): 2 uppercase letters OR 3 digits
+    
+    const parts = tag.split('-');
+    
+    if (parts.length === 0 || parts.length > 3) {
+      return false;
+    }
+
+    // Validate language subtag (required)
+    const language = parts[0];
+    if (!/^[a-z]{2,3}$/.test(language)) {
+      return false;
+    }
+
+    // If there are more parts, validate script and/or region
+    if (parts.length >= 2) {
+      const secondPart = parts[1];
+      
+      // Check if second part is script (4 letters, first uppercase)
+      const isScript = /^[A-Z][a-z]{3}$/.test(secondPart);
+      
+      // Check if second part is region (2 uppercase letters or 3 digits)
+      const isRegion = /^([A-Z]{2}|[0-9]{3})$/.test(secondPart);
+      
+      if (!isScript && !isRegion) {
+        return false;
+      }
+      
+      // If there's a third part, validate it
+      if (parts.length === 3) {
+        const thirdPart = parts[2];
+        
+        // Third part should be region if second was script
+        if (isScript) {
+          if (!/^([A-Z]{2}|[0-9]{3})$/.test(thirdPart)) {
+            return false;
+          }
+        } else {
+          // If second part was region, third part is not expected in our basic validation
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Reads a file as text asynchronously
+   */
+  private readFileAsText(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      
+      reader.onerror = () => {
+        reject(new Error('Failed to read file'));
+      };
+      
+      reader.readAsText(file);
+    });
+  }
+
+  /**
+   * Displays localized entities validation errors in the UI
+   */
+  private displayLocalizedEntitiesErrors(errors: string[]): void {
+    this.localizedEntitiesErrors = errors;
+  }
+
   rotateZero(){
     recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
     let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
@@ -701,7 +1145,6 @@ export class WindowsForm extends AppPackageFormBase {
             placeholder="Select one or more languages"
             @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
             value=${this.packageOptions.resourceLanguage!}
-            ?stayopenonselect=${true}
             multiple
             .maxOptionsVisible=${5}
             size="small"
@@ -1047,7 +1490,7 @@ export class WindowsForm extends AppPackageFormBase {
                       <div class="actions-file-upload-zone" @click=${this.openActionsPicker}>
                         <div class="upload-icon">📄</div>
                         <div class="upload-text">Click to upload ActionsManifest.json</div>
-                        <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" label="actions-manifest-input" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)} style="display: none;"/>
+                        <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)} style="display: none;"/>
                       </div>
                       ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
                       <div class="form-check">
@@ -1075,14 +1518,26 @@ export class WindowsForm extends AppPackageFormBase {
                                 <input id="custom-entities-file-picker" type="file" accept=".json" @change=${(e: Event) => this.customEntitiesFileChanged(e)} style="display: none;"/>
                                 <span class="file-picker-text" id="custom-entities-picker-text">No file chosen</span>
                               </div>
+                              ${this.customEntitiesFileError ? html`<div class="custom-entities-error-message">${this.customEntitiesFileError}</div>` : ''}
                             </div>
                             <div class="form-group">
                               <label for="localized-entities-folder-picker">Upload localized custom entities files (optional):</label>
                               <div class="folder-picker-wrapper">
                                 <button type="button" class="folder-picker-button" @click=${this.openFolderPicker}>Select Folder</button>
-                                <input id="localized-entities-folder-picker" type="file" webkitdirectory multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
+                                <input id="localized-entities-folder-picker" type="file" .webkitdirectory=${true} multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
                                 <span class="folder-picker-text" id="folder-picker-text">No folder selected</span>
                               </div>
+                              ${this.localizedEntitiesErrors.length > 0 ? 
+                                html`
+                                  <div class="localized-entities-errors">
+                                    <h4>File Validation Errors:</h4>
+                                    <ul>
+                                      ${this.localizedEntitiesErrors.map(error => html`<li>${error}</li>`)}
+                                    </ul>
+                                  </div>
+                                ` : 
+                                ''
+                              }
                             </div>
                           </div>
                         ` :
