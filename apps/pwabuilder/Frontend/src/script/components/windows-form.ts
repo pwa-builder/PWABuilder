@@ -26,10 +26,45 @@ import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
 import { classMap } from 'lit/directives/class-map.js';
+
 const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
 let actionsSchemaValidation: any = null;
 let customEntitySchemaValidation: any = null;
+
+const CUSTOM_ENTITY_SCHEMA_ID = "https://pwa-builder.com/schemas/custom-entities.json";
+const CUSTOM_ENTITY_SCHEMA = {
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "number",
+      "const": 1
+    },
+    "entityDefinitions": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^ms-resource://.+"
+          },
+          {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": ["version", "entityDefinitions"]
+};
 
 @customElement('windows-form')
 
@@ -557,71 +592,22 @@ export class WindowsForm extends AppPackageFormBase {
     this.supportCustomEntity = checked;
 
     if (!checked) {
+      if (this.packageOptions.windowsActions) {
+        delete this.packageOptions.windowsActions.customEntities;
+        delete this.packageOptions.windowsActions.customEntitiesLocalizations;
+      }
       customEntitySchemaValidation = null;
       this.customEntitiesFileError = null;
+      this.localizedEntitiesErrors = [];
     } else {
       try {
-        const CUSTOM_ENTITY_SCHEMA_ID = "https://aka.ms/customentity.schema.json";
-        
         if (!ajv.getSchema(CUSTOM_ENTITY_SCHEMA_ID)) {
-          // Create the Custom Entity schema inline based on the specification
-          const customEntitySchema = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": "https://aka.ms/customentity.schema.json",
-            "title": "Custom Entity schema",
-            "description": "Schema for Custom Entity definitions used in Windows App Actions",
-            "type": "object",
-            "properties": {
-              "version": {
-                "type": "integer",
-                "description": "Used for future versioning",
-                "default": 1
-              },
-              "entityDefinitions": {
-                "type": "object",
-                "description": "Root element for definitions",
-                "patternProperties": {
-                  "^[a-zA-Z][a-zA-Z0-9_]*$": {
-                    "oneOf": [
-                      {
-                        "type": "object",
-                        "description": "Custom Text Entity Kind definition with key phrases",
-                        "patternProperties": {
-                          "^.+$": {
-                            "type": "object",
-                            "description": "A Key Phrase belonging to the defined Custom Text Entity Kind",
-                            "patternProperties": {
-                              "^.+$": {
-                                "type": "string",
-                                "description": "String property value"
-                              }
-                            },
-                            "additionalProperties": false
-                          }
-                        },
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "string",
-                        "pattern": "^ms-resource://.*$",
-                        "description": "Reference to a localized Custom Text Entity Kind resource"
-                      }
-                    ]
-                  }
-                },
-                "additionalProperties": false,
-                "minProperties": 1
-              }
-            },
-            "required": ["version", "entityDefinitions"],
-            "additionalProperties": false
-          };
-          
-          ajv.addSchema(customEntitySchema, CUSTOM_ENTITY_SCHEMA_ID);
+          ajv.addSchema(CUSTOM_ENTITY_SCHEMA, CUSTOM_ENTITY_SCHEMA_ID);
         }
 
         customEntitySchemaValidation = ajv.getSchema(CUSTOM_ENTITY_SCHEMA_ID);
         this.customEntitiesFileError = null;
+
       } catch (err) {
         this.customEntitiesFileError = "Custom Entity schema setup failed.";
       }
@@ -662,7 +648,6 @@ export class WindowsForm extends AppPackageFormBase {
           const parsed = JSON.parse(text);
 
           const isValid = customEntitySchemaValidation(parsed);
-
           if (!isValid) {
             const errorDetails = ajv.errorsText(customEntitySchemaValidation.errors, { separator: '\n' });
             throw new Error(`Custom Entity schema validation failed:\n${errorDetails}`);
