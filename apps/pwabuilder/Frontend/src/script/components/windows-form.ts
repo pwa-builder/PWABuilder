@@ -734,8 +734,6 @@ export class WindowsForm extends AppPackageFormBase {
     const folderWrapper = this.shadowRoot?.querySelector('#localized-entities-folder-picker')?.parentElement;
 
     if (files && files.length > 0) {
-      console.log('Localized entities folder selected:', files.length, 'files');
-      
       // Reset any previous error states and clear errors
       this.localizedEntitiesErrors = [];
       if (folderWrapper) {
@@ -767,8 +765,6 @@ export class WindowsForm extends AppPackageFormBase {
           fileName: file.name,
           contents: file.content
         }));
-        
-        console.log('All localized entities files validated successfully');
       } else {
         // Some files failed validation
         const validCount = validationResults.validFiles.length;
@@ -784,8 +780,6 @@ export class WindowsForm extends AppPackageFormBase {
         
         // Display validation errors immediately
         this.displayLocalizedEntitiesErrors(validationResults.errors);
-        
-        console.log(`Validation failed for ${failedCount} files:`, validationResults.errors);
       }
     } else {
       // No files selected - reset the display
@@ -940,13 +934,9 @@ export class WindowsForm extends AppPackageFormBase {
     const baseFilePattern = /^(.+)\.json$/;
     const localizedFilePattern = /^(.+)\.language-([a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2}|[0-9]{3})?)\.json$/i;
 
-    console.log(`Starting validation of ${files.length} files...`);
-
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const fileName = file.name;
-      
-      console.log(`Validating file ${i + 1}/${files.length}: ${fileName}`);
 
       try {
         // Step 1: Check if filename follows either valid pattern
@@ -956,7 +946,6 @@ export class WindowsForm extends AppPackageFormBase {
         if (!baseMatch && !localizedMatch) {
           const error = `"${fileName}" - Invalid filename format. Expected format: "ExampleFile.json" or "ExampleFile.language-{language-tag}.json" (e.g., "CustomEntity.json" or "CustomEntity.language-en.json")`;
           errors.push(error);
-          console.log(`❌ Filename validation failed: ${error}`);
           continue;
         }
 
@@ -971,7 +960,6 @@ export class WindowsForm extends AppPackageFormBase {
           if (!this.isValidLanguageTag(languageTag)) {
             const error = `"${fileName}" - Invalid language tag "${languageTag}". Must be valid BCP-47 format like "en", "en-US", "fr-CA", or "zh-Hans-CN"`;
             errors.push(error);
-            console.log(`❌ Language tag validation failed: ${error}`);
             continue;
           }
         } else if (baseMatch) {
@@ -980,7 +968,6 @@ export class WindowsForm extends AppPackageFormBase {
           if (suspiciousPattern.test(fileName)) {
             const error = `"${fileName}" - This looks like a localized file but is missing the "language-" prefix. Did you mean "${fileName.replace(/\.([a-z]{2}(-[A-Z]{2})?)\.json$/i, '.language-$1.json')}"?`;
             errors.push(error);
-            console.log(`❌ Suspicious filename pattern: ${error}`);
             continue;
           }
         }
@@ -992,14 +979,12 @@ export class WindowsForm extends AppPackageFormBase {
         } catch (readError) {
           const error = `"${fileName}" - Failed to read file: ${(readError as Error).message}`;
           errors.push(error);
-          console.log(`❌ File read failed: ${error}`);
           continue;
         }
         
         // Step 4: Validate JSON structure
         try {
           JSON.parse(content); // Just validate it's proper JSON
-          console.log(`✅ File "${fileName}" passed all validations`);
           
           // File is valid
           validFiles.push({
@@ -1011,13 +996,11 @@ export class WindowsForm extends AppPackageFormBase {
         } catch (jsonError) {
           const error = `"${fileName}" - Invalid JSON format: ${(jsonError as Error).message}`;
           errors.push(error);
-          console.log(`❌ JSON validation failed: ${error}`);
         }
 
       } catch (unexpectedError) {
         const error = `"${fileName}" - Unexpected error during validation: ${(unexpectedError as Error).message}`;
         errors.push(error);
-        console.log(`❌ Unexpected error: ${error}`);
       }
     }
 
@@ -1027,7 +1010,6 @@ export class WindowsForm extends AppPackageFormBase {
       errors
     };
 
-    console.log(`Validation complete: ${validFiles.length}/${files.length} files valid, ${errors.length} errors`);
     return result;
   }
 
