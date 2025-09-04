@@ -683,7 +683,6 @@ export class WindowsForm extends AppPackageFormBase {
           }
           
         } catch (err) {
-          console.error('Invalid Custom Entities file:', err);
           this.customEntitiesFileError = (err as Error).message;
           
           // Show error state but keep filename
@@ -696,7 +695,6 @@ export class WindowsForm extends AppPackageFormBase {
 
       reader.onerror = (): void => {
         this.customEntitiesFileError = 'Failed to read the file. Please try again.';
-        console.error('File read error');
         
         // Show error state but keep filename
         if (customEntitiesButton) {
@@ -871,7 +869,6 @@ export class WindowsForm extends AppPackageFormBase {
           }
           
         } catch (err) {
-          console.error('Invalid Actions Manifest file:', err);
           this.actionsFileError = (err as Error).message;
           
           // Keep the filename displayed but add error styling
@@ -884,7 +881,6 @@ export class WindowsForm extends AppPackageFormBase {
 
       reader.onerror = (): void => {
         this.actionsFileError = 'Failed to read the file. Please try again.';
-        console.error('File read error');
         
         // Keep the filename displayed but add error styling
         if (uploadZone) {
