@@ -40,7 +40,8 @@
     "rimraf": "^5.0.1",
     "tmp": "^0.2.1",
     "unzip2": "^0.2.5",
-    "escape-html": "^1.0.3"
+    "escape-html": "^1.0.3",
+    "express-rate-limit": "^8.1.0"
   },
   "devDependencies": {
     "@types/archiver": "^3.0.0",
