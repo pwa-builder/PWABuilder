@@ -7,7 +7,7 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
-  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "glass", "tiktok",  "twitter"];
+  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "glass", "tiktok",  "x"];
   @state() paused: boolean = false;
   
   static get styles() {
