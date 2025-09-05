@@ -10,7 +10,7 @@
     "lighthouse": "lighthouse"
   },
   "dependencies": {
-    "lighthouse": "11.1.0",
+    "lighthouse": "11.7.1",
     "puppeteer": "^23.5.0"
   },
   "devDependencies": {
