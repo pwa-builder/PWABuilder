@@ -184,29 +184,6 @@ export class AppIndex extends LitElement {
             },
           },
           {
-
-            path: '/congratulations/:token/:appurl/:appname/:appicon/:username/:email',
-            component: 'token-congratulations',
-            action: async () => {
-              await import('./script/pages/qualification/token-congratulations.js');
-            }
-          },
-          {
-
-            path: '/congratulations/:token/:username/:email',
-            component: 'token-congratulations',
-            action: async () => {
-              await import('./script/pages/qualification/token-congratulations.js');
-            }
-          },
-          {
-            path: '/freeToken', // token giveaway page
-            component: 'app-token',
-            action: async () => {
-              await import('./script/pages/qualification/app-token.js');
-            }
-          },
-          {
             path: '(.*)', // Match any other route not defined above
             redirect: '/', // Redirect to the home page or another valid route
           },
