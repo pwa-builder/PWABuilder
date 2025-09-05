@@ -1,5 +1,6 @@
 import express, { response } from 'express';
 import escape from 'escape-html';
+import rateLimit from 'express-rate-limit';
 import { BubbleWrapper } from '../packaging/bubbleWrapper.js';
 import { AndroidPackageOptions as AndroidPackageOptions } from '../packaging/androidPackageOptions.js';
 import { join } from 'path';
@@ -21,6 +22,16 @@ import { AnalyticsInfo, trackEvent } from '../packaging/analytics.js';
 
 const router = express.Router();
 
+// Apply rate limiting to resource-intensive app package generation route
+// You may want to adjust windowMs and max according to operational requirements
+const rateLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute window
+  max: 5, // limit each IP to 5 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the RateLimit-* headers
+  legacyHeaders: false, // Disable the X-RateLimit-* headers
+  message: 'Too many requests for app package generation. Please try again later.',
+});
+
 const tempFileRemovalTimeoutMs = 1000 * 60 * 5; // 5 minutes
 tmp.setGracefulCleanup(); // remove any tmp file artifacts on process exit
 
@@ -30,6 +41,7 @@ tmp.setGracefulCleanup(); // remove any tmp file artifacts on process exit
  */
 router.post(
   ['/generateAppPackage', '/generateApkZip'],
+  rateLimiter,
   async function (request: express.Request, response: express.Response) {
     const apkRequest = validateApkRequest(request);
     const platformId = request.headers['platform-identifier'];
