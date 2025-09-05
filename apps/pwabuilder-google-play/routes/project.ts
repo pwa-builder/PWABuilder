@@ -95,7 +95,7 @@ router.post(
       trackEvent(analyticsInfo, errorString, false);
       response
         .status(500)
-        .send('Error generating app package: \r\n' + errorString);
+        .send('Error generating app package: \r\n' + escape(errorString));
     }
   }
 );
