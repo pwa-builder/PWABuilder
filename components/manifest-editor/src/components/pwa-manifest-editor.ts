@@ -54,14 +54,13 @@ export class PWAManifestEditor extends LitElement {
   }
 
   @property({type: Object}) get initialManifest() { return this._initialManifest; }
-
   @property({type: String}) manifestURL: string = '';
-
   @property({type: String}) baseURL: string = '';
-
   @property({type: String}) startingTab: string = "info";
-
   @property({type: String}) focusOn: string = "";
+  @property({type: String}) analysisId: string = "";
+  @property({type: String}) imageProxyUrl: string = "";
+
 
   @state() manifest: Manifest = {};
   @state() selectedTab: string = "info";
@@ -97,7 +96,7 @@ export class PWAManifestEditor extends LitElement {
       sl-tab-panel::part(base){
         overflow-y: auto;
         overflow-x: hidden;
-        height: 500px;
+        /* height: 500px; */
         padding: 1em .5em .5em .5em;
       }
 
@@ -312,7 +311,9 @@ export class PWAManifestEditor extends LitElement {
         <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-info-form></sl-tab-panel>
         <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-settings-form></sl-tab-panel>
         <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-platform-form></sl-tab-panel>
-        <sl-tab-panel name="icons"><manifest-icons-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)}></manifest-icons-form></sl-tab-panel>
+        <sl-tab-panel name="icons">
+          <manifest-icons-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)} imageProxyUrl=${this.imageProxyUrl} analysisId=${this.analysisId}></manifest-icons-form>
+        </sl-tab-panel>
         <sl-tab-panel name="screenshots"><manifest-screenshots-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form></sl-tab-panel>
         <sl-tab-panel name="share"><manifest-share-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)}</manifest-share-form></sl-tab-panel>
         <sl-tab-panel name="code"><manifest-code-form .manifest=${this.manifest}></manifest-code-form></sl-tab-panel>

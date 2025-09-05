@@ -1,0 +1,19 @@
+{
+  "name": "node-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "lighthouse": "lighthouse"
+  },
+  "dependencies": {
+    "lighthouse": "11.1.0",
+    "puppeteer": "^23.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.2"
+  }
+}

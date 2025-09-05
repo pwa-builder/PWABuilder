@@ -1,0 +1,27 @@
+﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5777",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LIGHTHOUSE_WORKDIR": "./node-scripts",
+        "NODE_BIN": "C:/Program Files/nodejs/node.exe"
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7217;http://localhost:5777",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LIGHTHOUSE_WORKDIR": "./node-scripts",
+        "NODE_BIN": "C:/Program Files/nodejs/node.exe"
+      }
+    }
+  }
+}

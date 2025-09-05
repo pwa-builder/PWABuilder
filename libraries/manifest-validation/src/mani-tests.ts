@@ -51,29 +51,6 @@ export const maniTests: Array<Validation> = [
     //     }
     // },
     {
-        infoString: "The handle_links field specifies how links to your app are opened, either in your app itself or in the users browser",
-        displayString: "Manifest has handle_links field",
-        category: "enhancement",
-        member: "handle_links",
-        defaultValue: "auto",
-        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
-        errorString: "handle_links should be either auto, preferred or not-preferred",
-        quickFix: true,
-        test: (value: string) => {
-            if (value && typeof value === "string") {
-                if (value === "auto" || "preferred" || "not-preferred") {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    },
-    {
         infoString: "share_target enables your app to get shared content from other apps",
         displayString: "Manifest has share_target field",
         category: "enhancement",
@@ -853,7 +830,7 @@ export const maniTests: Array<Validation> = [
         infoString: "The launch_handler member specifies how your app will launch when navigated to via URL, share_target etc.",
         category: "recommended",
         defaultValue: "",
-        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array",
+        docsLink: "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handler-object",
         errorString: "",
         quickFix: false,
         test: function (value: any) {

@@ -153,7 +153,7 @@ export function isValidURL(str: string) {
   // from https://stackoverflow.com/a/14582229 but removed the ip address section
   var pattern = new RegExp(
     '^((https?:)?\\/\\/)?' + // protocol
-    '(?:\\S+(?::\\S*)?@)?(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}' + // domain name
+    '(?:\\S+(?::\\S*)?@)?([a-z\\d](?:[a-z\\d-]*[a-z\\d])?\\.)+[a-z]{2,}' + // domain name
     '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
     '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
     '(\\\\#[-a-z\\\\d_]*)?', // fragment locator
@@ -209,7 +209,7 @@ export const enhancement_fields = [
   "shortcuts", 
   "edge_side_panel",
   "widgets",
-  "handle_links",
+  "launch_handler",
   "file_handlers",
   "protocol_handlers"
 ];

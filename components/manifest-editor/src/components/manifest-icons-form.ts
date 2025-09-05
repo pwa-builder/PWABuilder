@@ -1,5 +1,6 @@
 import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
+import { repeat } from "lit/directives/repeat.js";
 import { customElement, property, state } from 'lit/decorators.js';
 import { errorInTab, insertAfter } from '../utils/helpers';
 import {
@@ -48,6 +49,8 @@ export class ManifestIconsForm extends LitElement {
 
   @property({type: String}) manifestURL: string = "";
   @property({type: String}) focusOn: string = "";
+  @property({type: String}) analysisId: string = "";
+  @property({type: String}) imageProxyUrl: string = "";
 
   // Icon state vars
   @state() uploadSelectedImageFile: Lazy<File>;
@@ -57,7 +60,7 @@ export class ManifestIconsForm extends LitElement {
   @state() uploadImageObjectUrl: string = '';
   @state() errored: boolean = false;
   @state() selectedPlatforms: PlatformInformation[] = [...platformsData];
-  @state() srcList: any = [];
+  @state() srcList: Icon[] = [];
   private shouldValidateAllFields: boolean = true;
   private validationPromise: Promise<void> | undefined;
   private errorCount: number = 0;
@@ -405,27 +408,33 @@ export class ManifestIconsForm extends LitElement {
       return;
     }
 
-    let srcList: any[] = [];
-
-    for(let i = 0; i < this.manifest!.icons!.length; i++){
-      let icon = this.manifest!.icons![i];
-      let iconURL: string = this.handleImageUrl(icon) || '';
-
-      await this.testImage(iconURL).then(
-        function fulfilled(_img) {
-        },
-
-        function rejected() {
-          iconURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconURL}`;
+    this.srcList = (this.manifest.icons || [])
+      .map(i => {
+        return {
+          src: this.handleImageUrl(i) || "",
+          sizes: i.sizes
         }
-      );
+      });
 
-      if(iconURL){
-        srcList.push({src: (iconURL as string), size: icon.sizes});
-      }
-    }
+    // let srcList: any[] = [];
+    // for(let i = 0; i < this.manifest!.icons!.length; i++){
+    //   let icon = this.manifest!.icons![i];
+    //   let iconURL: string = this.handleImageUrl(icon) || '';
 
-    this.srcList = srcList;
+    //   await this.testImage(iconURL).then(
+    //     function fulfilled(_img) {
+    //     },
+
+    //     function rejected() {
+    //       iconURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconURL}`;
+    //     }
+    //   );
+
+      // if(iconURL){
+      //   srcList.push({src: (iconURL as string), size: icon.sizes});
+      // }
+    //}
+    // this.srcList = srcList;
   }
 
   testImage(url: string) {
@@ -454,7 +463,7 @@ export class ManifestIconsForm extends LitElement {
     return imgPromise;
   }
 
-  handleImageUrl(icon: Icon) {
+  handleImageUrl(icon: Icon): string | undefined {
     if (icon.src.indexOf('data:') === 0 && icon.src.indexOf('base64') !== -1) {
       return icon.src;
     }
@@ -566,13 +575,7 @@ export class ManifestIconsForm extends LitElement {
           </div>
           <p>Below are the current Icons in your apps Manifest</p>
           <div class="icon-gallery">
-            ${this.srcList.length > 0 ? 
-              this.srcList.map((img: any) => 
-                html`
-                  <div class="icon-box"><img class="icon" src=${img.src}  alt="your app icon size ${img.size}" decoding="async" loading="lazy" /> <p>${img.size}</p></div>
-                `
-                ) : 
-              html`<div class="center_text"><sl-icon name="card-image"></sl-icon> There are no icons in your manifest</div>`}
+            ${this.renderIcons()}
           </div>
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
@@ -602,6 +605,32 @@ export class ManifestIconsForm extends LitElement {
             }
           </div>` : html``}
         </div>
+      </div>
+    `;
+  }
+
+  renderIcons(): TemplateResult {
+    if (this.srcList.length === 0) {
+      return html`
+        <div class="center_text"><sl-icon name="card-image"></sl-icon> There are no icons in your manifest</div>
+      `;
+    }
+
+    return html`
+      ${repeat(this.srcList, i => i.src, i => this.renderIcon(i))}
+    `;
+  }
+
+  renderIcon(i: Icon): TemplateResult {
+    const crossDomainFallbackUrl = `${this.imageProxyUrl}?url=${encodeURIComponent(i.src)}&analysisId=${this.analysisId}`;
+    return html`
+      <div class="icon-box">
+        <img class="icon" src=${i.src} 
+          alt="your app icon size ${i.sizes}" 
+          decoding="async" 
+          loading="lazy"
+          onerror="this.onerror = null; this.src='${crossDomainFallbackUrl}';" />
+        <p>${i.sizes}</p>
       </div>
     `;
   }

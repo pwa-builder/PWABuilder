@@ -1,36 +1,91 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "npm run dev-task",
-            "type": "npm",
-            "script": "dev-task",
-            "isBackground": true,
-            "problemMatcher": {
-                "owner": "custom",
-                "pattern": {
-                    "regexp": "^$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": ".*",
-                    "endsPattern": "ready in .+"
-                }
-            },
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "tasks.build-backend",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "build",
+        // Ask dotnet build to generate full paths for file names.
+        "/property:GenerateFullPaths=true",
+        // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+
+    {
+      "label": "tasks.npm-install",
+      "detail": "npm run install",
+      "type": "npm",
+      "path": "Frontend",
+      "script": "install",
+      "isBackground": true
+    },
+
+    {
+      "label": "tasks.launch-vite",
+      "detail": "npm run dev",
+      "type": "npm",
+      "path": "Frontend",
+      "script": "dev",
+      "isBackground": true,
+      "dependsOn": "tasks.npm-install",
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5,
+          "code": 6
         },
-        {
-            "label": "postdebugKill",
-            "command": "echo ${input:terminate}",
-            "type": "shell",
-            "problemMatcher": []
-        },
-    ],
-    "inputs": [
-        {
-            "id": "terminate",
-            "type": "command",
-            "command": "workbench.action.tasks.terminate",
-            "args": "npm run dev-task"
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "vite",
+          "endsPattern": "ready in"
         }
-    ]
+      }
+    },
+
+    {
+      "label": "tasks.stop-debugging",
+      "dependsOn": [
+        "tasks.npm-run-stop",
+        "tasks.terminate-all",
+        "tasks.debug-stop"
+      ],
+      "dependsOrder": "parallel"
+    },
+
+    {
+      "label": "tasks.npm-run-stop",
+      "type": "npm",
+      "script": "stop",
+      "path": "Frontend",
+      "presentation": {
+        "close": true
+      },
+      "isBackground": true,
+      "detail": "Executes npm run stop command. See package.json for details."
+    },
+
+    {
+      "label": "tasks.debug-stop",
+      "command": "${command:workbench.action.debug.stop}"
+    },
+    
+    {
+      "label": "tasks.terminate-all",
+      "command": "echo ${input:terminate}",
+      "type": "shell",
+      "problemMatcher": []
+    }
+  ]
 }

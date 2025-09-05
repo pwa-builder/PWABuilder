@@ -363,7 +363,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
   },
   launch_handler: {
     description: [
-      `launch_handlers is an optional member that controls the launch behavior of a web application.`,
+      `launch_handler is an optional member that controls the launch behavior of a web application.`,
     ],
     purpose: null,
     example: null,
@@ -373,19 +373,7 @@ export const manifest_fields: { [field: string]: infoPanel } = {
     // location: "handlers",
     required: false,
     docs_link:
-      "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handlers-string-array",
-  },
-  handle_links: {
-    description: [
-      `handle_links is an optional member that specifies the default link handling for the web application.`,
-    ],
-    purpose: null,
-    example: null,
-    code: `"handle_links": "preferred"`,
-    // location: "handlers",
-    required: false,
-    docs_link:
-      "https://docs.pwabuilder.com/#/builder/manifest?id=handle_links-string",
+      "https://docs.pwabuilder.com/#/builder/manifest?id=launch_handler-object",
   },
   scope_extensions: {
     description: [

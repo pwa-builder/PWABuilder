@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.36105.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PWABuilder", "apps\pwabuilder\PWABuilder.csproj", "{125875F1-4E50-4C3C-8F94-229A4D3D19E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PWABuilder.MicrosoftStore", "apps\pwabuilder-microsoft-store\PWABuilder.MicrosoftStore.csproj", "{8A41886D-B91B-4378-A71E-2B5035A911AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{125875F1-4E50-4C3C-8F94-229A4D3D19E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{125875F1-4E50-4C3C-8F94-229A4D3D19E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{125875F1-4E50-4C3C-8F94-229A4D3D19E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{125875F1-4E50-4C3C-8F94-229A4D3D19E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A41886D-B91B-4378-A71E-2B5035A911AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A41886D-B91B-4378-A71E-2B5035A911AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A41886D-B91B-4378-A71E-2B5035A911AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A41886D-B91B-4378-A71E-2B5035A911AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B62B1E3F-0100-4B2C-BDAF-B46D252E8C04}
+	EndGlobalSection
+EndGlobal

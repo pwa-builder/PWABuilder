@@ -1,29 +1,29 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "pwa-msedge",
-            "request": "launch",
-            "name": "Run PWA",
-            "webRoot": "${workspaceFolder}/",
-            "runtimeArgs": [
-                "--app=http://localhost:3000"
-            ],
-            "sourceMapPathOverrides": {
-                "../../src": "${workspaceFolder}/src",
-                "../../src/*": "${workspaceFolder}/src/*"
-            },
-            "preLaunchTask": "npm run dev-task",
-            "postDebugTask": "postdebugKill"
-        },
-        {
-            "name": "Launch Microsoft Edge and open the Edge DevTools",
-            "request": "launch",
-            "type": "vscode-edge-devtools.debug",
-            "url": "" // Provide your project's url to finish configuring
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "launch.backend",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "tasks.build-backend",
+      "postDebugTask": "tasks.stop-debugging",
+      "program": "${workspaceFolder}/bin/Debug/net9.0/PWABuilder.dll",
+      "serverReadyAction": {
+        "action": "startDebugging",
+        "name": "launch.edge",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      }
+    },
+    {
+      "name": "launch.edge",
+      "url": "https://localhost:7217",
+      "request": "launch",
+      "type": "msedge",
+      "webRoot": "${workspaceFolder}/frontend",
+      "sourceMaps": true,
+      "trace": true,
+      "preLaunchTask": "tasks.launch-vite",
+      "postDebugTask": "tasks.stop-debugging"
+    }
+  ]
 }

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  pwabuilder:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - "5000:80"
+      - "5001:443"
+      - "7217:7217"  # For development server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ..:/workspaces/pwabuilder:cached
+    working_dir: /workspaces/pwabuilder
+    command: sleep infinity  # Keep container running for development

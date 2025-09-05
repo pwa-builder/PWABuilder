@@ -6,19 +6,18 @@ import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } 
 
 export let currentManifest: Manifest | undefined;
 
-export async function validateManifest(manifest: Manifest, includeMissedTests?: boolean): Promise<Validation[]> {
-    return new Promise(async(resolve, reject) => {
-        const validJSON = isValidJSON(manifest);
+export function validateManifest(manifest: Manifest, includeMissedTests?: boolean): Validation[] {
+    
+    const validJSON = isValidJSON(manifest);
 
-        if (validJSON === false) {
-            reject('Manifest is not valid JSON');
-        }
+    if (validJSON === false) {
+        throw new Error('Manifest is not valid JSON');
+    }
 
-        currentManifest = manifest;
-        let data = await loopThroughKeys(manifest, false, includeMissedTests);
+    currentManifest = manifest;
+    let data = loopThroughKeys(manifest, false, includeMissedTests);
 
-        resolve(data);
-    });
+    return data;
 }
 
 export async function validateSingleField(field: string, value: any): Promise<singleFieldValidation> {
@@ -96,7 +95,7 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
 }
 
 function isValidRelativeURL(str: string){
-    var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+    var pattern = new RegExp('^(?!www\\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
     return !!pattern.test(str);
 }
   

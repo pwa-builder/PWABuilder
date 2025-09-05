@@ -24,7 +24,7 @@ tags:
 ---
 
 
-To increase discoverability and education surrounding the features that developers can take advantage of to make their apps feel more native, the [PWABuilder](https://www.pwabuilder.com/) team is introducing the brand new “App Capabilities” card. From customizing the physical appearance of the installed PWA with `display_override` to telling the PWA how to handle incoming files and links with `file_handlers` and `handle_links` respectively, implementing these capabilities can help a PWA embrace the “progressive” part of its name.
+To increase discoverability and education surrounding the features that developers can take advantage of to make their apps feel more native, the [PWABuilder](https://www.pwabuilder.com/) team is introducing the brand new “App Capabilities” card. From customizing the physical appearance of the installed PWA with `display_override` to telling the PWA how to handle incoming files and links with `file_handlers` and `launch_handler` respectively, implementing these capabilities can help a PWA embrace the “progressive” part of its name.
 
 <img src="/posts/announcing-app-capabilities/ac-cards.png" alt="The new App Capabilities and Service Worker cards on the report card page."></img>
 

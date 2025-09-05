@@ -14,7 +14,6 @@
   "background_color": "#FFFFFF",
   "related_applications": [],
   "prefer_related_applications": false,
-  "handle_links": "preferred",
   "screenshots": [
     {
       "src": "assets/screen.png"

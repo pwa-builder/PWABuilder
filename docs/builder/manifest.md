@@ -448,39 +448,29 @@ The `file_handlers` member is an array of `file_handler` objects, which can cont
 ]
 ```
 
-### launch_handler: `string` | `Array`
+### launch_handler: `object`
 
-`launch_handler` is an optional member that controls the launch of a web application. It has a single value, `client_mode`, that can take on the following values:
-
-* `auto`: The user agent makes the decision based on the context.
-* `focus-existing`: If the web app is already open, it is brought into focus without navigating to the launch target URL.
-* `navigate-existing`: If the web app is already open, it is brought into focus and navigates to the URL made available by `Window.launchQueue`
-* `navigate-new`: A new instance of the web app is opened and it navigates to the URL made available by `Window.launchQueue`
-
-In the second example below, if `navigate-existing` is unavailable it will fallback to the next value in the list.
+`launch_handler` is an optional member that specifies whether your app should be a single-instance app. For example,
 
 ```json
 "launch_handler": {
-    "client_mode": "navigate-existing"
-}
-
-"launch_handler": {
-    "client_mode": ["navigate-existing", "auto"]
+    "client_mode": "focus-existing"
 }
 ```
 
-?> In any instance where the app is not already running, `navigate-new` will be used instead.
+`client_mode` must be one of the following:
 
-### handle_links: `string`
+* `auto`:  The behaviour is up to the user agent to decide what works best for the platform. This reflects the status quo of user agent implementations prior to this proposal: mobile agents typically navigate an existing client, while desktop agents typically create a new one and avoid clobbering state.
+* `navigate-new`: A new browsing context is created in a web app window to load the launch's target URL.
+* `navigate-existing`: The most recently interacted with browsing context in a web app window is navigated to the launch's target URL.
+* `focus-existing`: The most recently interacted with browsing context in a web app window is chosen to handle the launch. A new LaunchParams with its targetURL set to the launch URL will be enqueued in the document's window.launchQueue.
 
-`handle_links` is an optional member that specifies the default link handling for the web app. It can take on the following values:
-
-* `auto`: The user agent should select the appropriate behavior for the platform (Default if not otherwise specified).
-* `preferred`: the user agent should open in-scope links within the installed application.
-* `not-preferred`: The user agent should not open links within the installed application.
+`client_mode` can alternately be set to a list of values, with the first valid value being used. This enables backwards compatibility should new values be introduced in the future. For example,
 
 ```json
-"handle_links": "preferred"
+"launch_handler": {
+    "client_mode": ["some-new-future-value", "focus-existing", "auto"] 
+}
 ```
 
 ### scope_extensions: `Array`
@@ -507,4 +497,4 @@ In order to allow for your app to intercept links, you must specify `web-app-ori
 }
 ```
 
-?> The combination of `handle_links` and `scope_extensions` is intended to be a replacement for the `url_handlers` member.
+?> The combination of `launch_handler` and `scope_extensions` is intended to be a replacement for the `url_handlers` member.

@@ -1,0 +1,141 @@
+/*
+  for more info on font-display
+  https://web.dev/optimize-webfont-loading/#customize-the-text-rendering-delay
+*/
+@font-face {
+  font-family: 'Hind';
+  src: url('/assets/fonts/Hind-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hind';
+  src: url('/assets/fonts/Hind-Bold.ttf');
+  font-weight: 700;
+  font-style: bold;
+  font-display: swap;
+}
+
+/* Platform fonts used for the manifest previewer */
+@font-face {
+  font-family: 'Segoe';
+  src: url('/assets/fonts/SegoeUI.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/assets/fonts/Roboto-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Text */
+  --font-family: Hind;
+  --font-color: #292c3a;
+  --font-bold: bold;
+  --secondary-font-color: #717171;
+
+  --font-size: 14px;
+  --title-font-size: 44px;
+  --header-font-size: 36px;
+  --subheader-font-size: 20px;
+  --body-font-size: 16px;
+  --card-body-font-size: 14px;
+  --interactions-font-size: 14px;
+  --footer-font-size: 12px;
+
+  /* General Colors */
+  --primary-background-color: white;
+  --primary-color: #4f3fb6;
+  --secondary-color: #ffffff;
+
+  --error-background-color: #fff5f5;
+
+  /* Progress Colors */
+  --warning-color: #ebc157;
+  --error-color: #eb5757;
+  --success-color:  #3ba372;
+
+  --warning-accent-color: #FFFAED;
+  --error-accent-color: #FFF3F3;
+  --success-accent-color:  #E3FFF2;
+
+  /* Inputs */
+  --input-border-radius: 8px;
+
+  /* Buttons */
+  --button-font-size: 16px;
+  --button-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  --button-border-radius: 50px;
+  --button-padding: 12px 46px;
+
+  --mobile-button-radius: 61px;
+  --mobile-button-height: 64px;
+  --mobile-button-fontsize: 22px;
+  --desktop-button-height: 40px;
+
+  /* Cards */
+  --card-padding: 1em;
+  --card-border-radius: 10px;
+
+  /* Links */
+  --link-color: var(--primary-purple);
+  --arrow-link-font-size: 14px;
+  --mobile-link-color: #0683f9;
+
+  /* Other */
+  --placeholder-color: #a9a9a9;
+
+  font-variant-ligatures: no-common-ligatures;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-size: min(max(1rem, 4vw), 22px);
+  font-family: var(--font-family), sans-serif;
+  line-height: 1.5;
+  color: var(--font-color);
+  background: var(--primary-background-color);
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling at high zoom */
+}
+
+/* Ensure all text wraps properly */
+* {
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Better scaling for very small screens (400% zoom) */
+@media (max-width: 320px) {
+  html,
+  body {
+    font-size: min(max(0.875rem, 5vw), 18px);
+  }
+  
+  :root {
+    --title-font-size: 28px;
+    --header-font-size: 24px;
+    --subheader-font-size: 18px;
+    --body-font-size: 14px;
+    --card-body-font-size: 12px;
+    --interactions-font-size: 12px;
+    --footer-font-size: 10px;
+  }
+}
+
+#pageTitle {
+  display: none;
+}

@@ -1,0 +1,14 @@
+{ 
+    "watch": [
+        "routes/*.ts", 
+        "build/*.ts", 
+        "./*.ts"
+    ], 
+    "ignore": [
+        "routes/*.js",
+        "build/*.js",
+        "./*.js"
+    ], 
+    "exec": "npm start",
+    "ext": "ts"
+}

@@ -1,28 +1,165 @@
 {
     "version": "2.0.0",
     "tasks": [
-      {
-        "label": "npm: debug",
-        "type": "npm",
-        "script": "debug",
-        "isBackground": true,
-        "problemMatcher": [
-            {
-                "pattern": [
-                  {
-                    "regexp": ".",
+        {
+            "label": "tasks.build-backend",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/pwabuilder"
+            },
+        },
+        {
+            "label": "tasks.build-microsoft-package-generator",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store"
+            }
+        },
+        {
+            "label": "tasks.npm-install",
+            "detail": "npm run install",
+            "type": "npm",
+            "path": "apps/pwabuilder/Frontend",
+            "script": "install",
+            "isBackground": true
+        },
+        {
+            "label": "tasks.node-scripts-npm-install",
+            "detail": "npm install in node-scripts",
+            "type": "npm",
+            "path": "apps/pwabuilder/node-scripts",
+            "script": "install",
+            "dependsOn": "tasks.npm-install",
+            "isBackground": true
+        },
+        {
+            "label": "tasks.node-scripts-npm-build",
+            "detail": "npm run build (tsc) in node-scripts",
+            "type": "npm",
+            "path": "apps/pwabuilder/node-scripts",
+            "script": "build",
+            "dependsOn": "tasks.node-scripts-npm-install",
+            "isBackground": true
+        },
+        {
+            "label": "tasks.launch-vite",
+            "detail": "npm run dev",
+            "type": "npm",
+            "path": "apps/pwabuilder/Frontend",
+            "script": "dev",
+            "isBackground": true,
+            "dependsOn": "tasks.node-scripts-npm-build",
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s+\\[(.*)\\]$",
                     "file": 1,
-                    "location": 2,
-                    "message": 3
-                  }
-                ],
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5,
+                    "code": 6
+                },
                 "background": {
-                  "activeOnStart": true,
-                  "beginsPattern": ".",
-                  "endsPattern": "Web Dev Server started"
+                    "activeOnStart": true,
+                    "beginsPattern": "vite",
+                    "endsPattern": "ready in"
                 }
-              }
-        ]
-      }
+            }
+        },
+        {
+            "label": "tasks.stop-debugging",
+            "dependsOn": [
+                "tasks.npm-run-stop",
+                "tasks.terminate-all",
+                "tasks.debug-stop"
+            ],
+            "dependsOrder": "parallel"
+        },
+        {
+            "label": "tasks.npm-run-stop",
+            "type": "npm",
+            "script": "stop",
+            "path": "apps/pwabuilder/Frontend",
+            "presentation": {
+                "close": true
+            },
+            "isBackground": true,
+            "detail": "Executes npm run stop command. See package.json for details."
+        },
+        {
+            "label": "tasks.debug-stop",
+            "command": "${command:workbench.action.debug.stop}"
+        },
+        {
+            "label": "tasks.terminate-all",
+            "command": "echo ${input:terminate}",
+            "type": "shell",
+            "problemMatcher": []
+        },
+        {
+            "label": "tasks.pwabuilder-google-play:run",
+            "type": "shell",
+            "command": "npm run docker:build && npm run docker:run",
+            "options": {
+                "cwd": "${workspaceFolder}/apps/pwabuilder-google-play"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "tasks.google-play:install",
+            "type": "npm",
+            "path": "apps/pwabuilder-google-play",
+            "script": "install",
+            "isBackground": true,
+            "detail": "npm install for pwabuilder-google-play"
+        },
+        {
+            "label": "tasks.google-play:dev",
+            "type": "npm",
+            "path": "apps/pwabuilder-google-play",
+            "script": "dev",
+            "dependsOn": "tasks.google-play:install",
+            "isBackground": true,
+            "detail": "npm run dev for pwabuilder-google-play",
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "NODE_ENV": "test"
+                }
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "terminate",
+            "type": "command",
+            "command": "workbench.action.tasks.terminate",
+            "args": "terminateAll"
+        }
     ]
-  }
+}
