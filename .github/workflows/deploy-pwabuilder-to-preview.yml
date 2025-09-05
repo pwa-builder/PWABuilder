@@ -2,7 +2,7 @@ name: Deploy to Azure Container Apps
 
 on:
   push:
-    branches: [ feature/api-consolidation-refactor ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:

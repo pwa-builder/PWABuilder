@@ -18,7 +18,7 @@ If you haven't already, you need to add Google Play's production fingerprint to 
 
 Login to the [Google Play Console](https://developer.android.com/distribute/console), select your app, then choose `Setup` -> `App integrity`, then copy your `SHA-256 fingerprint`:
 
-<img src="/static/google-play-signing.png" width="600px" />
+<img src="/static/google-play-signing.png" width="600px" alt="Google Play Signing" />
 
 Paste that fingerprint into your `assetlinks.json` file:
 
@@ -48,8 +48,8 @@ To fix this, we'll check what Android believes is the asset links for your PWA, 
 
 1. Install your app on an Android device or Android emulator
 2. Install the [Asset Links Tool](https://play.google.com/store/apps/details?id=dev.conn.assetlinkstool) from the Google Play Store.
-3. Run the Asset Links Tool and search for your PWA's package ID (e.g. `com.myawesomepwa`): <br /> <img src="/static/asset-links-package-id.png" width="300px" />
-4. Tap your PWA's package ID to view its asset links, then tap `Copy Signature` <br /> <img src="/static/asset-links-details.png" width="300px" />
+3. Run the Asset Links Tool and search for your PWA's package ID (e.g. `com.myawesomepwa`): <br /> <img src="/static/asset-links-package-id.png" width="300px" alt="Asset Links Package ID" />
+4. Tap your PWA's package ID to view its asset links, then tap `Copy Signature` <br /> <img src="/static/asset-links-details.png" width="300px" alt="Viewing the asset links of a package" />
 5. Open your `assetlinks.json` file and find the `sha256_cert_fingerprints` array member. Paste the copied signature into the `sha256_cert_fingerprints`. Your `assetlinks.json` file should look something like this, with 2 fingerprints separated by a comma as shown below:
 ```json
 [{
