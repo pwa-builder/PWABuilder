@@ -1,4 +1,5 @@
 import express, { response } from 'express';
+import escape from 'escape-html';
 import { BubbleWrapper } from '../packaging/bubbleWrapper.js';
 import { AndroidPackageOptions as AndroidPackageOptions } from '../packaging/androidPackageOptions.js';
 import { join } from 'path';
@@ -130,7 +131,7 @@ router.get(
     } catch (fetchError) {
       response
         .status(500)
-        .send(`Unable to initiate fetch for ${url}. Error: ${fetchError}`);
+        .send(`Unable to initiate fetch for ${escape(url)}. Error: ${escape(String(fetchError))}`);
       return;
     }
 
@@ -138,7 +139,7 @@ router.get(
       response
         .status(fetchResult.status)
         .send(
-          `Unable to fetch ${url}. Status: ${fetchResult.status}, ${fetchResult.statusText}`
+          `Unable to fetch ${escape(url)}. Status: ${fetchResult.status}, ${escape(String(fetchResult.statusText))}`
         );
       return;
     }
@@ -168,7 +169,7 @@ router.get(
       response
         .status(500)
         .send(
-          `Unable to fetch result from ${url} using type ${type}. Error: ${getResultError}`
+          `Unable to fetch result from ${escape(url)} using type ${escape(type)}. Error: ${escape(String(getResultError))}`
         );
     }
   }
