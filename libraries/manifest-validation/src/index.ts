@@ -95,7 +95,7 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
 }
 
 function isValidRelativeURL(str: string){
-    var pattern = new RegExp('^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
+    var pattern = new RegExp('^(?!www\\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
     return !!pattern.test(str);
 }
   
