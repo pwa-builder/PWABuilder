@@ -67,7 +67,7 @@ router.post(
         errorMessage
       );
       trackEvent(analyticsInfo, errorMessage, false);
-      response.status(500).send(errorMessage);
+      response.status(500).send(escape(errorMessage));
       return;
     }
 
