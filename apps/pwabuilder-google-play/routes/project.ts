@@ -5,6 +5,7 @@ import { BubbleWrapper } from '../packaging/bubbleWrapper.js';
 import { AndroidPackageOptions as AndroidPackageOptions } from '../packaging/androidPackageOptions.js';
 import { join } from 'path';
 import tmp, { dir } from 'tmp';
+import net from 'net';
 import archiver from 'archiver';
 import fs from 'fs-extra';
 import {
@@ -134,6 +135,58 @@ router.get(
       type = request.query.type;
     } else {
       type = 'text';
+    }
+
+    // SSRF PREVENTION: validate the URL before fetching!
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch (parseError) {
+      response.status(400).send('Invalid URL');
+      return;
+    }
+
+    // Only support http and https
+    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+      response.status(400).send('Only HTTP/HTTPS URLs are allowed');
+      return;
+    }
+
+    // Block localhost and private/internal address ranges
+    const forbiddenHostnames = [
+      'localhost',
+      '127.0.0.1',
+      '0.0.0.0',
+      '::1',
+      '[::1]'
+    ];
+    const hostname = parsedUrl.hostname.toLowerCase();
+    if (forbiddenHostnames.includes(hostname)) {
+      response.status(403).send('Access to localhost is forbidden');
+      return;
+    }
+    // Prevent IP addresses in private address ranges
+    function isPrivateIp(ip: string) {
+      if (net.isIP(ip)) {
+        // IPv4
+        if (ip.startsWith('10.')) return true;
+        if (ip.startsWith('192.168.')) return true;
+        if (ip.startsWith('172.')) {
+          const second = Number(ip.split('.')[1]);
+          if (second >= 16 && second <= 31) return true;
+        }
+        if (ip === '127.0.0.1' || ip === '0.0.0.0') return true;
+      }
+      // IPv6
+      if (ip === '::1') return true;
+      if (ip.startsWith('fc') || ip.startsWith('fd')) return true; // Unique local address
+      return false;
+    }
+
+    // If hostname is an IP, check if it's private
+    if (net.isIP(hostname) && isPrivateIp(hostname)) {
+      response.status(403).send('Access to private IP ranges is forbidden');
+      return;
     }
 
     let fetchResult: Response;
