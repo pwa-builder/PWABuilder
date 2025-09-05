@@ -20,6 +20,7 @@ import fetch, { Response } from 'node-fetch';
 import { logUrlResult } from '../packaging/urlLogger.js';
 import { errorToString } from '../packaging/utils.js';
 import { AnalyticsInfo, trackEvent } from '../packaging/analytics.js';
+import { validateUrl, validateResponseType } from '../utils/urlSanitizer.js';
 
 const router = express.Router();
 
@@ -126,66 +127,14 @@ router.get(
       return;
     }
 
-    let type;
-    if (
-      request.query.type !== null &&
-      typeof request.query.type === 'string' &&
-      ['blob', 'json', 'text'].includes(request.query.type)
-    ) {
-      type = request.query.type;
-    } else {
-      type = 'text';
-    }
+    // Validate response type
+    const type = validateResponseType(request.query.type);
 
     // SSRF PREVENTION: validate the URL before fetching!
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(url);
-    } catch (parseError) {
-      response.status(400).send('Invalid URL');
-      return;
-    }
-
-    // Only support http and https
-    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-      response.status(400).send('Only HTTP/HTTPS URLs are allowed');
-      return;
-    }
-
-    // Block localhost and private/internal address ranges
-    const forbiddenHostnames = [
-      'localhost',
-      '127.0.0.1',
-      '0.0.0.0',
-      '::1',
-      '[::1]'
-    ];
-    const hostname = parsedUrl.hostname.toLowerCase();
-    if (forbiddenHostnames.includes(hostname)) {
-      response.status(403).send('Access to localhost is forbidden');
-      return;
-    }
-    // Prevent IP addresses in private address ranges
-    function isPrivateIp(ip: string) {
-      if (net.isIP(ip)) {
-        // IPv4
-        if (ip.startsWith('10.')) return true;
-        if (ip.startsWith('192.168.')) return true;
-        if (ip.startsWith('172.')) {
-          const second = Number(ip.split('.')[1]);
-          if (second >= 16 && second <= 31) return true;
-        }
-        if (ip === '127.0.0.1' || ip === '0.0.0.0') return true;
-      }
-      // IPv6
-      if (ip === '::1') return true;
-      if (ip.startsWith('fc') || ip.startsWith('fd')) return true; // Unique local address
-      return false;
-    }
-
-    // If hostname is an IP, check if it's private
-    if (net.isIP(hostname) && isPrivateIp(hostname)) {
-      response.status(403).send('Access to private IP ranges is forbidden');
+    const urlValidation = validateUrl(url);
+    if (!urlValidation.isValid) {
+      response.status(urlValidation.error?.includes('forbidden') ? 403 : 400)
+        .send(urlValidation.error);
       return;
     }
 
@@ -476,7 +425,7 @@ async function createLocalSigninKeyInfo(
     }
 
     const fileBuffer = base64ToBuffer(apkSettings.signing.file);
-    await fs.promises.writeFile(keyFilePath, fileBuffer);
+    await fs.writeFile(keyFilePath, fileBuffer);
   }
 
   function base64ToBuffer(base64: string): Buffer {
