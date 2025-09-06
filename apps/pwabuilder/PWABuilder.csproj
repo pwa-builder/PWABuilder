@@ -15,8 +15,8 @@
     <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
     <PackageReference Include="PuppeteerSharp" Version="20.2.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.9.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />
