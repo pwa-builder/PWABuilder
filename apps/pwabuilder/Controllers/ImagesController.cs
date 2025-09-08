@@ -24,13 +24,14 @@ public class ImagesController : ControllerBase
     /// <param name="imageUrl">The URL of the image to proxy.</param>
     /// <returns></returns>
     [HttpGet("getSafeImageForAnalysis")]
-    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, CancellationToken cancelToken)
+    public async Task<IActionResult> GetSafeImageForAnalysis(/*[FromQuery] string analysisId, */ [FromQuery] Uri imageUrl, CancellationToken cancelToken)
     {
-        var analysis = await analysisDb.GetByIdAsync(analysisId);
-        if (analysis == null)
-        {
-            return NotFound($"No analysis found with ID {analysisId}");
-        }
+        // TODO: uncomment this once all our endpoints are passing in analysisId
+        // var analysis = await analysisDb.GetByIdAsync(analysisId);
+        // if (analysis == null)
+        // {
+        //     return NotFound($"No analysis found with ID {analysisId}");
+        // }
 
         var maxSize = 1024 * 1024 * 5; // 5mb
         var imageStream = await http.GetImageAsync(imageUrl, maxSize, cancelToken);
