@@ -8,7 +8,6 @@ import {
   Status,
 } from '../utils/interfaces';
 import { runManifestChecks } from '../utils/manifest-validation';
-import { getSetSWCounter } from './service_worker';
 
 
 let site_url: string | undefined;
@@ -138,49 +137,49 @@ export function getResults(): RawTestResult | undefined {
   }
 }
 
-export async function baseOrPublish(): Promise<'base' | 'publish'> {
+// export async function baseOrPublish(): Promise<'base' | 'publish'> {
   
-  // This counter != 0 if the user has selected a custom SW.
-  const setSWCounter = getSetSWCounter();
+//   // This counter != 0 if the user has selected a custom SW.
+//   const setSWCounter = getSetSWCounter();
 
-  const maniContext = getManifestContext();
+//   const maniContext = getManifestContext();
 
-  // is the manifest one we generated
-  // or is it from the developer?
-  const generatedFlag = maniContext.isGenerated;
-  // has the manifest been edited by
-  // the user?
-  const editedFlag = maniContext.isEdited;
+//   // is the manifest one we generated
+//   // or is it from the developer?
+//   const generatedFlag = maniContext.isGenerated;
+//   // has the manifest been edited by
+//   // the user?
+//   const editedFlag = maniContext.isEdited;
 
-  // choseSW is never undefined now bc we set a default
-  if (generatedFlag === true || setSWCounter !== 0 || editedFlag === true) {
-    // User has chosen a custom service worker
-    // or we have generated a manifest for them
-    // send to basepackage to download.
-    // to-do: Users who edit their manifest will be sent here too
-    return 'base';
-  }
+//   // choseSW is never undefined now bc we set a default
+//   if (generatedFlag === true || setSWCounter !== 0 || editedFlag === true) {
+//     // User has chosen a custom service worker
+//     // or we have generated a manifest for them
+//     // send to basepackage to download.
+//     // to-do: Users who edit their manifest will be sent here too
+//     return 'base';
+//   }
 
-  // double check manifest
-  const doubleCheckResults = await doubleCheckManifest(maniContext);
-  if (
-    generatedFlag === false &&
-    editedFlag === false &&
-    doubleCheckResults.icon &&
-    (doubleCheckResults.name || doubleCheckResults.shortName) &&
-    doubleCheckResults.startURL
-  ) {
-    // User already has a manifest
-    // and as not edited it
-    // send to publish page
-    return 'publish';
-  }
+//   // double check manifest
+//   const doubleCheckResults = await doubleCheckManifest(maniContext);
+//   if (
+//     generatedFlag === false &&
+//     editedFlag === false &&
+//     doubleCheckResults.icon &&
+//     (doubleCheckResults.name || doubleCheckResults.shortName) &&
+//     doubleCheckResults.startURL
+//   ) {
+//     // User already has a manifest
+//     // and as not edited it
+//     // send to publish page
+//     return 'publish';
+//   }
 
-  // user does not have a manifest and has not chosen an SW
-  // They will go to the base package page and will need to download
-  // The generated manifest and default SW
-  return 'base';
-}
+//   // user does not have a manifest and has not chosen an SW
+//   // They will go to the base package page and will need to download
+//   // The generated manifest and default SW
+//   return 'base';
+// }
 
 /**
  * Gets contextual information about the current manifest.
