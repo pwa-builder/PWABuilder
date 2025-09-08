@@ -5,7 +5,7 @@ const lighthouseSettings = {
 	settings: { ...customSettings },
 	artifacts: [
 		{ id: 'DevtoolsLog', gatherer: 'devtools-log' },
-		{ id: 'InstallabilityErrors', gatherer: 'installability-errors' },
+		{ id: 'InstallabilityErrors', gatherer: 'installability' },
 		{ id: 'InspectorIssues', gatherer: 'inspector-issues' },
 		{
 			id: 'ServiceWorkerGatherer',
