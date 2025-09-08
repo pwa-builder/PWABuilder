@@ -156,7 +156,7 @@ export class ShortcutsScreen extends ScreenTemplate {
     // Use first icon by default
     const iconUrl = iconSet[0]!.src;
     const absoluteUrl = new URL(iconUrl, this.manifestUrl).href;
-    return `https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=${absoluteUrl}`;
+    return `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(absoluteUrl)}`;
   }
 
   renderWindows() {

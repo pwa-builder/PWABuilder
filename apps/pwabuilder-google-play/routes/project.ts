@@ -366,7 +366,7 @@ async function createAppPackageWith403Fallback(
   //
   // When this happens, we can swap out the APK url items with a safe proxy server that doesn't have the same issues.
   // For example, if the icon is https://foo.com/img.png, we change this to
-  // https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=https://foo.com/img/png
+  // https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=https://foo.com/img/png
   const http1Fetch = 'node-fetch';
   const http2Fetch = 'fetch-h2';
   try {
@@ -615,10 +615,8 @@ function getAndroidOptionsWithSafeUrls(
     const url = newOptions[prop];
     if (url && typeof url === 'string') {
       const safeUrlFetcherEndpoint =
-        'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
-      const safeUrl = `${safeUrlFetcherEndpoint}?url=${encodeURIComponent(
-        url
-      )}`;
+        'https://pwabuilder.com/api/images/getSafeImageForAnalysis';
+      const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(url)}`;
       (newOptions[prop] as any) = safeUrl;
     }
   }

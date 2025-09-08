@@ -301,7 +301,7 @@ export class ManifestPreviewer extends LitElement {
     const suitableIcon = getSuitableIcon(this.manifest?.icons || []);
     if (suitableIcon) {
       const absoluteUrl = new URL(suitableIcon.src, this.manifestUrl).href;
-      this.iconUrl = `https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=${encodeURIComponent(absoluteUrl)}`;
+      this.iconUrl = `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(absoluteUrl)}`;
     } else {
       this.iconUrl = '';
     }

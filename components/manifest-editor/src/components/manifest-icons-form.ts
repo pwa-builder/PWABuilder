@@ -415,26 +415,6 @@ export class ManifestIconsForm extends LitElement {
           sizes: i.sizes
         }
       });
-
-    // let srcList: any[] = [];
-    // for(let i = 0; i < this.manifest!.icons!.length; i++){
-    //   let icon = this.manifest!.icons![i];
-    //   let iconURL: string = this.handleImageUrl(icon) || '';
-
-    //   await this.testImage(iconURL).then(
-    //     function fulfilled(_img) {
-    //     },
-
-    //     function rejected() {
-    //       iconURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${iconURL}`;
-    //     }
-    //   );
-
-      // if(iconURL){
-      //   srcList.push({src: (iconURL as string), size: icon.sizes});
-      // }
-    //}
-    // this.srcList = srcList;
   }
 
   testImage(url: string) {

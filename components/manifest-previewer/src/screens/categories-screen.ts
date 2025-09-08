@@ -216,7 +216,7 @@ export class CategoriesScreen extends ScreenTemplate {
   private getImageUrl(src: string) {
     // Use first icon by default
     const absoluteUrl = new URL(src, this.manifestUrl).href;
-    return `https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=${absoluteUrl}`;
+    return `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(absoluteUrl)}`;
   }
 
   renderWindows() {

@@ -316,7 +316,7 @@ export class ManifestScreenshotsForm extends LitElement {
         },
 
         function rejected() {
-          scURL = `https://pwabuilder-safe-url.azurewebsites.net/api/getSafeUrl?url=${scURL}`;
+          scURL = `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(scURL)}`;
         }
       );
 
