@@ -42,43 +42,6 @@ public class ManifestDetector
         return webManifest;
     }
 
-    /// <summary>
-    /// Inspects a LighthouseReport and sees if it's possible to generate a ManifestDetection from it.
-    /// </summary>
-    /// <param name="report">The Lighthouse report.</param>
-    /// <param name="logger">The logger.</param>
-    /// <returns>A <see cref="ManifestDetection"/> if the Lighthouse report found a valid manifest, otherwise null.</returns>
-    public ManifestDetection? TryDetectFromLighthouse(LighthouseReport? report, ILogger logger)
-    {
-        var manifestUrl = report?.WebAppManifestAudit?.Details?.ManifestUrl;
-        var manifestRaw = report?.WebAppManifestAudit?.Details?.ManifestRaw;
-        if (manifestUrl == null || manifestRaw == null || !Uri.TryCreate(manifestUrl, UriKind.Absolute, out var manifestUri))
-        {
-            return null;
-        }
-
-        JsonElement manifest;
-        try
-        {
-            manifest = JsonSerializer.Deserialize<JsonElement>(manifestRaw);
-        }
-        catch (Exception jsonParsingError)
-        {
-            logger.LogWarning(jsonParsingError, "Lighthouse report contained invalid JSON for the manifest at {manifestUrl}.", manifestUrl);
-            return null;
-        }
-
-        // Create a new ManifestDetection from the LighthouseReport
-        var webManifest = new ManifestDetection
-        {
-            Url = manifestUri,
-            ManifestRaw = manifestRaw,
-            Manifest = manifest
-        };
-
-        return webManifest;
-    }
-
     private async Task<ManifestDetection?> TryGetManifestFromPuppeteer(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
         // Spin up a headless browser to find the manifest link.

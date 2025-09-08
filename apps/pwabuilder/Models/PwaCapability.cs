@@ -742,21 +742,6 @@ public class PwaCapability
                 ImageUrl = null,
                 Category = PwaCapabilityCategory.Https,
                 Status = PwaCapabilityCheckStatus.InProgress
-            },
-            new PwaCapability
-            {
-                Id = PwaCapabilityId.NoMixedContent,
-                Description = "Your PWA should not served both HTTP and HTTPS content. All resources should be served over HTTPS.",
-                TodoAction = "Fix mixed content issues by ensuring all resources are loaded over HTTPS.",
-                Level = PwaCapabilityLevel.Recommended,
-                FeatureName = null,
-                FeatureIcon = null,
-                Field = null,
-                IsFieldExistenceCheck = false,
-                LearnMoreUrl = new Uri("https://web.dev/articles/what-is-mixed-content"),
-                ImageUrl = null,
-                Category = PwaCapabilityCategory.Https,
-                Status = PwaCapabilityCheckStatus.InProgress
             }
         ];
     }

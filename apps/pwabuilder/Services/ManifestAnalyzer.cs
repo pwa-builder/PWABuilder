@@ -28,24 +28,23 @@ public class ManifestAnalyzer
     /// Goes through all the manifest-specific capabilities of the specified <paramref name="analysis"/> and checks if the manifest passes.
     /// </summary>
     /// <param name="manifestDetection">The web app manifest detection results. This can be null if no web app manifest was detect.</param>
-    /// <param name="noManifestStatus">The status to assign to the "has manifest" capability if no manifest was detected.</param>
     /// <param name="cancelToken">The cancellation token.</param>
     /// <param name="logger">The logger to log data to.</param>
     /// <returns>A list of PWA capabilities and their statuses.</returns>
-    public async Task<List<PwaCapability>> TryAnalyzeManifestAsync(ManifestDetection? manifestDetection, PwaCapabilityCheckStatus noManifestStatus, ILogger logger, CancellationToken cancelToken)
+    public async Task<List<PwaCapability>> TryAnalyzeManifestAsync(ManifestDetection? manifestDetection, ILogger logger, CancellationToken cancelToken)
     {
         var manifestCapabilities = PwaCapability.CreateManifestCapabilities();
 
-        // No manifest? Mark all the manifest capabilities as skipped for now.
+        // No manifest? Mark all the manifest capabilities as skipped.
         if (manifestDetection == null)
         {
             logger.LogInformation("No manifest to analyze. Skipping manifest capability checks.");
 
-            // Mark the "manifest exists" capability with the desired status..
+            // Mark the "manifest exists" capability as failed.
             var manifestExistsCapability = manifestCapabilities.First(c => c.Id == PwaCapabilityId.HasManifest);
-            manifestExistsCapability.Status = noManifestStatus;
+            manifestExistsCapability.Status = PwaCapabilityCheckStatus.Failed;
 
-            // Mark all other manifest capabilities as skipped for now.
+            // Mark all other manifest capabilities as skipped.
             manifestCapabilities
                 .Except([manifestExistsCapability])
                 .ToList()
@@ -147,7 +146,6 @@ public class ManifestAnalyzer
 
             // HTTPS capabilities are handled elsewhere.
             PwaCapabilityId.HasHttps => throw new NotImplementedException(),
-            PwaCapabilityId.NoMixedContent => throw new NotImplementedException(),
 
             // General capabilities are handled elsewhere.
             PwaCapabilityId.ServesHtml => throw new NotImplementedException()

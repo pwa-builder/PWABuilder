@@ -75,12 +75,12 @@ public sealed class LighthouseReport
     /// <returns></returns>
     public PwaCapabilityCheckStatus GetHttpsCapability()
     {
-        if (this.HttpsAudit == null)
+        if (this.IsOnHttpsAudit == null)
         {
             return PwaCapabilityCheckStatus.Skipped;
         }
 
-        return this.HttpsAudit.Score == 1 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+        return this.IsOnHttpsAudit.Score == 1 ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
     /// <summary>

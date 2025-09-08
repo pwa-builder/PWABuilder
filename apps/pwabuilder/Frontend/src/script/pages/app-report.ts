@@ -285,11 +285,11 @@ export class AppReport extends LitElement {
   }
 
 analysisCompleted(): void {
-  this.runningTests = false;
-  if(this.analysis && !this.analysis.webManifest) {
-  this.applyManifestContext(this.analysis.url, undefined, undefined);
-}
+   this.runningTests = false;
+   if(this.analysis) {
+    this.applyManifestContext(this.analysis.url, this.analysis.webManifest?.url, this.analysis?.webManifest?.manifestRaw);
   }
+}
 
 analysisFailed(): void {
   this.runningTests = false;

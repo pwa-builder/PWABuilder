@@ -87,7 +87,7 @@ namespace PWABuilder.Services
             return swCapability.Id switch
             {
                 PwaCapabilityId.HasServiceWorker => swDetection != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed,
-                PwaCapabilityId.OfflineSupport => PwaCapabilityCheckStatus.InProgress, // Offline support can't be detected from code analysis alone. Instead, we use Lighthouse for this. See LighthouseService.cs.
+                PwaCapabilityId.OfflineSupport => PwaCapabilityCheckStatus.Failed, // TODO: implement offline check. We used to test this using Lighthouse, but they removed offline audit check as of Lighthouse v12.
                 PwaCapabilityId.ServiceWorkerIsNotEmpty => CheckServiceWorkerNotEmpty(swScripts),
                 PwaCapabilityId.BackgroundSync => CheckBackgroundSync(swScripts),
                 PwaCapabilityId.PeriodicSync => CheckPeriodicSync(swScripts),

@@ -115,40 +115,6 @@ public class Analysis
     }
 
     /// <summary>
-    /// Updates this analysis's capabilities based on the Lighthouse report.
-    /// </summary>
-    public void ProcessLighthouseReport(LighthouseReport? lighthouseReport)
-    {
-        var offlineCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.OfflineSupport);
-        var httpsCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasHttps);
-        var noMixedContentCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.NoMixedContent);
-        var hasManifestCapability = this.Capabilities.First(c => c.Id == PwaCapabilityId.HasManifest);
-
-        // No lighthouse report? Mark these as skipped, and mark the "has manifest" capability as failed if we're still waiting for it.
-        if (lighthouseReport == null)
-        {
-            offlineCapability.Status = PwaCapabilityCheckStatus.Skipped;
-            httpsCapability.Status = PwaCapabilityCheckStatus.Skipped;
-            noMixedContentCapability.Status = PwaCapabilityCheckStatus.Skipped;
-            if (hasManifestCapability.Status == PwaCapabilityCheckStatus.InProgress)
-            {
-                hasManifestCapability.Status = PwaCapabilityCheckStatus.Failed;
-            }
-            return;
-        }
-
-        offlineCapability.Status = lighthouseReport.GetOfflineCapability();
-        httpsCapability.Status = lighthouseReport.GetHttpsCapability();
-        noMixedContentCapability.Status = lighthouseReport.GetNoMixedContentCapability();
-
-        // If the "has manifest" capability is still processing, update it based on the Lighthouse report.
-        if (hasManifestCapability.Status == PwaCapabilityCheckStatus.InProgress)
-        {
-            hasManifestCapability.Status = lighthouseReport.GetHasManifestCapability();
-        }
-    }
-
-    /// <summary>
     /// Update this analysis's capabilities based on the provided list.
     /// </summary>
     /// <param name="capabilities">A list of PwaCapability objects containing <see cref="PwaCapability.Status"/> updates.</param>

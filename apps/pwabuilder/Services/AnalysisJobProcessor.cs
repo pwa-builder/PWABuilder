@@ -124,14 +124,12 @@ public class AnalysisJobProcessor : IHostedService
 
             // Kick off the independent jobs simultaneously so that our analysis completes faster.
             var generalCapDetectionTask = generalWebAppCapabilityDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
-            var lighthouseAnalysisTask = TryRunLighthouseAudit(job, analysisLogger, cancelTokenSrc.Token);
             var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
             var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
             var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, PwaCapabilityCheckStatus.InProgress, logger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, logger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
 
-            // Step 1: run the general capabilities, such as whether the URL serves HTML.
-            // We also use this to check if the URL serves HTML, and if not, to fail fast.
+            // Step 1: run the general capabilities, such as whether the URL serves HTML. If not, we fail fast.
             var generalCapabilities = await generalCapDetectionTask;
             analysis.ProcessCapabilities(generalCapabilities);
             var servesHtmlStatus = FailIfNotServedHtml(analysis, cancelTokenSrc);
@@ -159,22 +157,10 @@ public class AnalysisJobProcessor : IHostedService
             analysis.ProcessCapabilities(swCapabilities);
             await db.SaveAsync(analysis);
 
-            // Step 6, run Lighthouse analysis. This is used for offline detection, HTTPS detection, and mixed content detection.
-            var lighthouseReport = await lighthouseAnalysisTask;
-            analysis.LighthouseReport = lighthouseReport;
-            analysis.ProcessLighthouseReport(lighthouseReport);
+            // Step 6, check for HTTPS.
+            var httpsCapabilities = TryCheckHttpsCapabilities(job.Url, analysis.WebManifest, analysis.ServiceWorker);
+            analysis.ProcessCapabilities(httpsCapabilities);
             await db.SaveAsync(analysis);
-
-            // Step 7, if we didn't find a manifest but Lighthouse found one,
-            // create a new ManifestDetection and rerun the manifest analyzer.
-            // This is needed for some edge cases where the manifest isn't picked up by our manifest detection service, but is picked up by Lighthouse. Example edge case: https://www.instagram.com/?utm_source=pwa_homescreen&__pwa=1
-            if (analysis.WebManifest == null)
-            {
-                analysis.WebManifest = manifestDetector.TryDetectFromLighthouse(lighthouseReport, analysisLogger);
-                var updatedManifestCapabilities = await manifestAnalyzer.TryAnalyzeManifestAsync(analysis.WebManifest, PwaCapabilityCheckStatus.Failed, analysisLogger, cancelTokenSrc.Token);
-                analysis.ProcessCapabilities(updatedManifestCapabilities);
-                await db.SaveAsync(analysis);
-            }            
 
             // All done! Mark the analysis as completed.
             analysis.Status = AnalysisStatus.Completed;
@@ -211,16 +197,51 @@ public class AnalysisJobProcessor : IHostedService
         return servedHtmlCapability.Status;
     }
 
-    private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, AnalysisLogger logger, CancellationToken cancelToken)
+    // private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, AnalysisLogger logger, CancellationToken cancelToken)
+    // {
+    //     try
+    //     {
+    //         return await lighthouse.RunAuditAsync(job.Url, BrowserFormFactor.Desktop, logger, cancelToken);
+    //     }
+    //     catch (Exception error)
+    //     {
+    //         logger.LogError(error, "Error running Lighthouse audit for {url}", job.Url);
+    //         return null;
+    //     }
+    // }
+
+    private List<PwaCapability> TryCheckHttpsCapabilities(Uri url, ManifestDetection? manifestDetection, ServiceWorkerDetection? swDetection)
     {
+        var httpsCapabilities = PwaCapability.CreateHttpsCapabilities(); // There's only one HTTPS capability right now: has HTTPS
         try
         {
-            return await lighthouse.RunAuditAsync(job.Url, BrowserFormFactor.Desktop, logger, cancelToken);
+            var hasHttps = httpsCapabilities.First(c => c.Id == PwaCapabilityId.HasHttps);
+            if (url.Scheme != Uri.UriSchemeHttps)
+            {
+                // Mark as failed.
+                hasHttps.Status = PwaCapabilityCheckStatus.Failed;
+            }
+
+            // If we have a manifest, check if it has any HTTP URLs.
+            if (manifestDetection?.Url != null && manifestDetection.Url.Scheme != Uri.UriSchemeHttps)
+            {
+                hasHttps.Status = PwaCapabilityCheckStatus.Failed;
+            }
+
+            // If we have a service worker, check if it was served over HTTPS.
+            if (swDetection?.Url != null && swDetection.Url.Scheme != Uri.UriSchemeHttps)
+            {
+                hasHttps.Status = PwaCapabilityCheckStatus.Failed;
+            }
+
+            hasHttps.Status = PwaCapabilityCheckStatus.Passed;
+            return httpsCapabilities;
         }
-        catch (Exception error)
+        catch (Exception ex)
         {
-            logger.LogError(error, "Error running Lighthouse audit for {url}", job.Url);
-            return null;
+            logger.LogError(ex, "Error detecting HTTPS capabilities for {url}", url);
+            httpsCapabilities.ForEach(c => c.Status = PwaCapabilityCheckStatus.Skipped);
+            return httpsCapabilities;
         }
     }
 
