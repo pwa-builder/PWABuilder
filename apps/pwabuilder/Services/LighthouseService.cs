@@ -242,7 +242,7 @@ public class LighthouseService : ILighthouseService
             + $"--output=json --output-path=stdout "
             + $"--port={headlessChromePort} "
             + $"--config-path=\"{lighthouseSettingsPath}\" "
-            + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit "
+            + $"--only-audits=is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit " // used to include installable-manifest, but removed August 2025 due to runtime failures running Lighthouse service
             + $"--form-factor={(formFactor == BrowserFormFactor.Desktop ? "desktop" : "mobile")} "
             + $"{(formFactor == BrowserFormFactor.Mobile ? "--screenEmulation.mobile " : string.Empty)}"
             + $"--screenEmulation.width={viewport.Width} "

@@ -9,8 +9,6 @@ export const env = {
   oculusPackageGeneratorUrl: '',
   imageGeneratorUrl: '',
   safeUrlFetcher: '',
-  webPackageGeneratorFormUrl: '',
-  zipCreatorUrl: '',
   validateGiveawayUrl: '',
   tokensCampaignRunning: false,
 };
@@ -33,9 +31,6 @@ if (import.meta.env.PROD) {
     'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
     '/api/images/getSafeImageForAnalysis';
-  env.webPackageGeneratorFormUrl =
-    'https://pwabuilder-web-platform.azurewebsites.net/form';
-  env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
   env.validateGiveawayUrl =
     'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 } else {
@@ -54,9 +49,6 @@ if (import.meta.env.PROD) {
     'https://appimagegenerator-prod-dev.azurewebsites.net';
   env.safeUrlFetcher =
     '/api/images/getSafeImageForAnalysis';
-  env.webPackageGeneratorFormUrl =
-    'https://pwabuilder-web-platform.azurewebsites.net/form';
-  env.zipCreatorUrl = 'https://azure-express-zip-creator.azurewebsites.net/api';
   env.validateGiveawayUrl =
     'https://pwabuilder-tokens-giveaway.azurewebsites.net/api';
 }
