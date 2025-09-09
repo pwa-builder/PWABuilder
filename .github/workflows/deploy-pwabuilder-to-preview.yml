@@ -1,4 +1,4 @@
-name: Deploy to Azure Container Apps
+name: Deploy PWABuilder web app to staging
 
 on:
   push:
