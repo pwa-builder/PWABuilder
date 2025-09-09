@@ -19,35 +19,29 @@ jobs:
           lfs: 'true'
       - uses: microsoft/variable-substitution@v1 
         with:
-          files: './apps/pwabuilder-microsoft-store/appsettings.Production.json'
+          files: './Web/appsettings.Production.json'
         env:
           AppSettings.ApplicationInsightsConnectionString: ${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
 
-      - name: Create destination directory for pwa_builder.exe
+      - name: Create destination directory
         run: mkdir -p Resources/cli/PWABuilder
 
-        # Login with Azure so that we can download the pwa_builder.exe internal tool from our Azure storage account.
-      - name: Login with Azure CLI with federated credentials 
+      - name: Download zipped pwa_builder internal tool from Azure Blob Storage
+        run: |
+          curl -L -o pwabuilder.zip "${{ secrets.PWA_BUILDER_EXE_URL }}"
+
+      - name: Extracting pwa_builder zip file
+        run: unzip -o pwabuilder.zip -d Web/resources/cli/pwabuilder
+
+      - name: Verify pwa_builder extraction
+        run: Get-ChildItem Web/Resources/cli/PWABuilder -Recurse | Format-List
+      
+      - name: Login with Azure CLI with federated credentials
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_APP_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Download zipped pwa_builder.exe internal tool from Azure Blob Storage
-        run: |
-          az storage blob download `
-            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} `
-            --container-name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_CONTAINER_NAME }} `
-            --name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_BLOB_NAME }} `
-            --file pwabuilder.zip `
-            --auth-mode login
-
-      - name: Extracting pwabuilder zip file
-        run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
-
-      - name: Verify pwabuilder extraction
-        run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
 
       - name: Log in to Azure docker registry (ACR)
         run: az acr login --name pwabuilder
@@ -56,7 +50,7 @@ jobs:
         run: docker info
 
       - name: Docker build
-        working-directory: ./apps/pwabuilder-microsoft-store
+        working-directory: ./Web
         run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-windows:production -m 2GB
 
       - name: Docker push

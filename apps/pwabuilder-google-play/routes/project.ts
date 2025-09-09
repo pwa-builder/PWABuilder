@@ -20,7 +20,6 @@ import fetch, { Response } from 'node-fetch';
 import { logUrlResult } from '../packaging/urlLogger.js';
 import { errorToString } from '../packaging/utils.js';
 import { AnalyticsInfo, trackEvent } from '../packaging/analytics.js';
-import { validateUrl, validateResponseType } from '../utils/urlSanitizer.js';
 
 const router = express.Router();
 
@@ -127,21 +126,73 @@ router.get(
       return;
     }
 
-    // Validate response type
-    const type = validateResponseType(request.query.type);
+    let type;
+    if (
+      request.query.type !== null &&
+      typeof request.query.type === 'string' &&
+      ['blob', 'json', 'text'].includes(request.query.type)
+    ) {
+      type = request.query.type;
+    } else {
+      type = 'text';
+    }
 
     // SSRF PREVENTION: validate the URL before fetching!
-    const urlValidation = validateUrl(url);
-    if (!urlValidation.isValid) {
-      response.status(urlValidation.error?.includes('forbidden') ? 403 : 400)
-        .send(urlValidation.error);
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch (parseError) {
+      response.status(400).send('Invalid URL');
+      return;
+    }
+
+    // Only support http and https
+    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+      response.status(400).send('Only HTTP/HTTPS URLs are allowed');
+      return;
+    }
+
+    // Block localhost and private/internal address ranges
+    const forbiddenHostnames = [
+      'localhost',
+      '127.0.0.1',
+      '0.0.0.0',
+      '::1',
+      '[::1]'
+    ];
+    const hostname = parsedUrl.hostname.toLowerCase();
+    if (forbiddenHostnames.includes(hostname)) {
+      response.status(403).send('Access to localhost is forbidden');
+      return;
+    }
+    // Prevent IP addresses in private address ranges
+    function isPrivateIp(ip: string) {
+      if (net.isIP(ip)) {
+        // IPv4
+        if (ip.startsWith('10.')) return true;
+        if (ip.startsWith('192.168.')) return true;
+        if (ip.startsWith('172.')) {
+          const second = Number(ip.split('.')[1]);
+          if (second >= 16 && second <= 31) return true;
+        }
+        if (ip === '127.0.0.1' || ip === '0.0.0.0') return true;
+      }
+      // IPv6
+      if (ip === '::1') return true;
+      if (ip.startsWith('fc') || ip.startsWith('fd')) return true; // Unique local address
+      return false;
+    }
+
+    // If hostname is an IP, check if it's private
+    if (net.isIP(hostname) && isPrivateIp(hostname)) {
+      response.status(403).send('Access to private IP ranges is forbidden');
       return;
     }
 
     let fetchResult: Response;
 
     try {
-      fetchResult = await fetch(url);
+      fetchResult = await fetch(parsedUrl);
     } catch (fetchError) {
       response
         .status(500)
@@ -366,7 +417,7 @@ async function createAppPackageWith403Fallback(
   //
   // When this happens, we can swap out the APK url items with a safe proxy server that doesn't have the same issues.
   // For example, if the icon is https://foo.com/img.png, we change this to
-  // https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=https://foo.com/img/png
+  // https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=https://foo.com/img/png
   const http1Fetch = 'node-fetch';
   const http2Fetch = 'fetch-h2';
   try {
@@ -425,7 +476,7 @@ async function createLocalSigninKeyInfo(
     }
 
     const fileBuffer = base64ToBuffer(apkSettings.signing.file);
-    await fs.writeFile(keyFilePath, fileBuffer);
+    await fs.promises.writeFile(keyFilePath, fileBuffer);
   }
 
   function base64ToBuffer(base64: string): Buffer {
@@ -615,8 +666,10 @@ function getAndroidOptionsWithSafeUrls(
     const url = newOptions[prop];
     if (url && typeof url === 'string') {
       const safeUrlFetcherEndpoint =
-        'https://pwabuilder.com/api/images/getSafeImageForAnalysis';
-      const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(url)}`;
+        'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
+      const safeUrl = `${safeUrlFetcherEndpoint}?url=${encodeURIComponent(
+        url
+      )}`;
       (newOptions[prop] as any) = safeUrl;
     }
   }

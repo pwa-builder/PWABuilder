@@ -5,21 +5,21 @@ const lighthouseSettings = {
 	settings: { ...customSettings },
 	artifacts: [
 		{ id: 'DevtoolsLog', gatherer: 'devtools-log' },
-		// { id: 'InstallabilityErrors', gatherer: 'installability' },
+		{ id: 'InstallabilityErrors', gatherer: 'installability-errors' },
 		{ id: 'InspectorIssues', gatherer: 'inspector-issues' },
-		// {
-		// 	id: 'ServiceWorkerGatherer',
-		// 	gatherer: 'custom-audits/service-worker/service-worker-gatherer',
-		// },
-		// { id: 'WebAppManifest', gatherer: 'web-app-manifest' },
-		// {
-		// 	id: 'OfflineGatherer',
-		// 	gatherer: 'custom-audits/offline/offline-gatherer',
-		// },
-		// {
-		// 	id: 'WebAppManifestRawGatherer',
-		// 	gatherer: 'custom-audits/web-app-manifest-raw/web-app-manifest-raw-gatherer',
-		// },
+		{
+			id: 'ServiceWorkerGatherer',
+			gatherer: 'custom-audits/service-worker/service-worker-gatherer',
+		},
+		{ id: 'WebAppManifest', gatherer: 'web-app-manifest' },
+		{
+			id: 'OfflineGatherer',
+			gatherer: 'custom-audits/offline/offline-gatherer',
+		},
+		{
+			id: 'WebAppManifestRawGatherer',
+			gatherer: 'custom-audits/web-app-manifest-raw/web-app-manifest-raw-gatherer',
+		},
 		{ id: 'devtoolsLogs', gatherer: 'devtools-log-compat' },
 	],
 
@@ -109,20 +109,20 @@ const lighthouseSettings = {
 			supportedModes: ['navigation', 'timespan', 'snapshot'],
 			auditRefs: [{ id: 'is-on-https', weight: 5, group: 'best-practices-trust-safety' }],
 		},
-		// pwa: {
-		// 	title: 'PWA',
-		// 	description:
-		// 		'These checks validate the aspects of a Progressive Web App. [Learn what makes a good Progressive Web App](https://web.dev/pwa-checklist/).',
-		// 	manualDescription:
-		// 		'These checks are required by the baseline [PWA Checklist](https://web.dev/pwa-checklist/) but are not automatically checked by Lighthouse.',
-		// 	supportedModes: ['navigation'],
-		// 	auditRefs: [
-		// 		{ id: 'installable-manifest', weight: 2, group: 'pwa-installable' },
-		// 		{ id: 'service-worker-audit', weight: 2, group: 'pwa-installable' },
-		// 		{ id: 'offline-audit', weight: 1, group: 'pwa-installable' },
-		// 		{ id: 'https-audit', weight: 1, group: 'pwa-installable' },
-		// 	],
-		// },
+		pwa: {
+			title: 'PWA',
+			description:
+				'These checks validate the aspects of a Progressive Web App. [Learn what makes a good Progressive Web App](https://web.dev/pwa-checklist/).',
+			manualDescription:
+				'These checks are required by the baseline [PWA Checklist](https://web.dev/pwa-checklist/) but are not automatically checked by Lighthouse.',
+			supportedModes: ['navigation'],
+			auditRefs: [
+				{ id: 'installable-manifest', weight: 2, group: 'pwa-installable' },
+				{ id: 'service-worker-audit', weight: 2, group: 'pwa-installable' },
+				{ id: 'offline-audit', weight: 1, group: 'pwa-installable' },
+				{ id: 'https-audit', weight: 1, group: 'pwa-installable' },
+			],
+		},
 	},
 };
 export default lighthouseSettings;
