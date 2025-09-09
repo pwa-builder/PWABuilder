@@ -80,7 +80,7 @@ namespace PWABuilder.MicrosoftStore.Services
             try
             {
                 procResult = await procRunner.Run(pwaBuilderFilePath, pwaBuilderArgs, TimeSpan.FromMinutes(10));
-                logger.LogWarning("raw args passed to pwa_builder {0}", pwaBuilderArgs);
+                logger.LogWarning("Raw args passed to pwa_builder {args}", pwaBuilderArgs);
             }
             catch (Exception error)
             {

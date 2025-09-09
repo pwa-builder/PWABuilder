@@ -62,7 +62,7 @@ public class WindowsActionsService
             if (!string.IsNullOrWhiteSpace(options.WindowsActions.CustomEntities))
             {
                 customEntitiesJson = await GetOrFetchJsonAsync(options.WindowsActions.CustomEntities, cancelToken);
-                customEntitiesFilePath = await WriteJsonTempFile(actionsManifestJson);
+                customEntitiesFilePath = await WriteJsonTempFile(customEntitiesJson);
                 EnsureValidCustomEntities(customEntitiesJson);
             }
 
@@ -84,7 +84,7 @@ public class WindowsActionsService
             logger.LogInformation("Created windows actions manifest from provided JSON content for {url}", options.Url);
             return new WindowsActionsFiles
             {
-                ManifestFilePath = actionsManifestJson,
+                ManifestFilePath = actionsManifestFilePath,
                 CustomEntitiesFilePath = customEntitiesFilePath,
                 CustomEntitiesLocalizationDirectoryPath = localizedCustomEntitiesPath
             };
