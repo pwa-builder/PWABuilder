@@ -19,22 +19,22 @@ jobs:
           lfs: 'true'
       - uses: microsoft/variable-substitution@v1 
         with:
-          files: './Web/appsettings.Production.json'
+          files: './apps/pwabuilder-microsoft-store/appsettings.Production.json'
         env:
           AppSettings.ApplicationInsightsConnectionString: ${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
 
       - name: Create destination directory
-        run: mkdir -p Resources/cli/PWABuilder
+        run: mkdir -p apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
 
       - name: Download zipped pwa_builder internal tool from Azure Blob Storage
         run: |
           curl -L -o pwabuilder.zip "${{ secrets.PWA_BUILDER_EXE_URL }}"
 
       - name: Extracting pwa_builder zip file
-        run: unzip -o pwabuilder.zip -d Web/resources/cli/pwabuilder
+        run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
 
       - name: Verify pwa_builder extraction
-        run: Get-ChildItem Web/Resources/cli/PWABuilder -Recurse | Format-List
+        run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
       
       - name: Login with Azure CLI with federated credentials
         uses: azure/login@v2
@@ -50,11 +50,11 @@ jobs:
         run: docker info
 
       - name: Docker build
-        working-directory: ./Web
+        working-directory: ./apps/pwabuilder-microsoft-store
         run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-windows:production -m 2GB
 
       - name: Docker push
-        working-directory: ./Web
+        working-directory: ./apps/pawabuilder-microsoft-store
         run: docker push pwabuilder.azurecr.io/pwa-windows:production
         
   deploy:
