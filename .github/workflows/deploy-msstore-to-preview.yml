@@ -2,7 +2,13 @@ name: Deploy Microsoft Store packager to staging
 
 on:
   push:
+    paths:
+      - "apps/pwabuilder-microsoft-store/**"
     branches: [ "main" ]
+  pull_request:
+    paths:
+      - "apps/pwabuilder-microsoft-store/**"
+    branches: [ main ]
   workflow_dispatch: 
 
 jobs:
