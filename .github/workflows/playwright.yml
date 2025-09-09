@@ -13,20 +13,19 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/pwabuilder
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: 20
+        node-version: 16
     - name: Install dependencies
       run: npm ci
-    - name: Install Playwright
-      run: npm install @playwright/test --save-dev
+    - name: Install Playwright Test Globally
+      run: npm install -g @playwright/test
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Install Playwright Test Locally
+      run: npm install @playwright/test --save-dev
     - name: Run Playwright tests
       run: npx playwright test tests/basic.spec.ts tests/packaging.spec.ts tests/report-card.spec.ts
     - uses: actions/upload-artifact@v4

@@ -62,7 +62,7 @@ public class WindowsActionsService
             if (!string.IsNullOrWhiteSpace(options.WindowsActions.CustomEntities))
             {
                 customEntitiesJson = await GetOrFetchJsonAsync(options.WindowsActions.CustomEntities, cancelToken);
-                customEntitiesFilePath = await WriteJsonTempFile(actionsManifestJson);
+                customEntitiesFilePath = await WriteJsonTempFile(customEntitiesJson);
                 EnsureValidCustomEntities(customEntitiesJson);
             }
 
@@ -84,7 +84,7 @@ public class WindowsActionsService
             logger.LogInformation("Created windows actions manifest from provided JSON content for {url}", options.Url);
             return new WindowsActionsFiles
             {
-                ManifestFilePath = actionsManifestJson,
+                ManifestFilePath = actionsManifestFilePath,
                 CustomEntitiesFilePath = customEntitiesFilePath,
                 CustomEntitiesLocalizationDirectoryPath = localizedCustomEntitiesPath
             };
@@ -202,18 +202,35 @@ public class WindowsActionsService
                 {
                     throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain an 'inputs' array.");
                 }
-                if (!inputsElement.TryGetProperty("name", out var inputNameElement) || inputNameElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(inputNameElement.GetString()))
+                foreach (var input in inputsElement.EnumerateArray())
                 {
-                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a 'name' string property within the 'inputs' array.");
+                    if (input.ValueKind != JsonValueKind.Object)
+                    {
+                        throw new ArgumentException($"Each item in the 'inputs' array for action '{idElement.GetString()}' in the Windows Actions manifest must be an object.");
+                    }
+
+                    if (!input.TryGetProperty("name", out var inputNameElement) || inputNameElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(inputNameElement.GetString()))
+                    {
+                        throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a 'name' string property within the 'inputs' array.");
+                    }
                 }
+                
 
                 if (!action.TryGetProperty("outputs", out var outputsElement) || outputsElement.ValueKind != JsonValueKind.Array)
                 {
                     throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain an 'outputs' array.");
                 }
-                if (!outputsElement.TryGetProperty("name", out var outputNameElement) || outputNameElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(outputNameElement.GetString()))
+                foreach (var output in outputsElement.EnumerateArray())
                 {
-                    throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a 'name' string property within the 'outputs' array.");
+                    if (output.ValueKind != JsonValueKind.Object)
+                    {
+                        throw new ArgumentException($"Each item in the 'outputs' array for action '{idElement.GetString()}' in the Windows Actions manifest must be an object.");
+                    }
+
+                    if (!output.TryGetProperty("name", out var outputNameElement) || outputNameElement.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(outputNameElement.GetString()))
+                    {
+                        throw new ArgumentException($"Action '{idElement.GetString()}' in the Windows Actions manifest must contain a 'name' string property within the 'outputs' array.");
+                    }
                 }
             }
         }

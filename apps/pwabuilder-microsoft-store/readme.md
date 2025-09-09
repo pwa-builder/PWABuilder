@@ -237,7 +237,7 @@ The pwa_builder.exe tool is an internal command-line tool built by the Microsoft
 
 This tool is not publicly available. 
 
-The tool is injected into Resources\cli\pwa\pwabuilder folder at build time by GitHub Actions build pipeline.
+The tool is injected into Resources\cli\pwa\pwabuilder folder at build time by GitHub Actions build pipeline. If you need access to it to run this solution locally, grab the file from the `pwabuildercommon` Azure Storage account, inside the `resources` directory.
 
 To upgrade to the latest pwa_builder.exe tool:
 

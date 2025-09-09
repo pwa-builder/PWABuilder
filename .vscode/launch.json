@@ -53,7 +53,7 @@
       "request": "launch",
       "preLaunchTask": "tasks.build-microsoft-package-generator",
       "postDebugTask": "tasks.stop-debugging",
-      "program": "${workspaceFolder}/apps/pwabuilder-microsoft-store/bin/Debug/net9.0/PWABuilderWindowsChromium.dll",
+      "program": "${workspaceFolder}/apps/pwabuilder-microsoft-store/bin/Debug/net9.0/PWABuilder.MicrosoftStore.dll",
       "args": [],
       "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store",
       "stopAtEntry": false,

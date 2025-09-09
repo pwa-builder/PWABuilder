@@ -7,7 +7,6 @@ using System.Text.Json;
 
 namespace PWABuilder.Services;
 
-[Obsolete("LighthouseService shouldn't be used because Lighthouse 12 removed PWA audits. See https://github.com/GoogleChrome/lighthouse/blob/main/changelog.md#pwa-category-removal")]
 public class LighthouseService : ILighthouseService
 {
     private readonly IHostEnvironment env;
@@ -243,7 +242,7 @@ public class LighthouseService : ILighthouseService
             + $"--output=json --output-path=stdout "
             + $"--port={headlessChromePort} "
             + $"--config-path=\"{lighthouseSettingsPath}\" "
-            + $"--only-audits=is-on-https " // Only check if the site is served over HTTPS
+            + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit " // To find a list of all audits supported by Lighthouse, run npx lighthouse --list-all-audits
             + $"--form-factor={(formFactor == BrowserFormFactor.Desktop ? "desktop" : "mobile")} "
             + $"{(formFactor == BrowserFormFactor.Mobile ? "--screenEmulation.mobile " : string.Empty)}"
             + $"--screenEmulation.width={viewport.Width} "

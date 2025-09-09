@@ -105,11 +105,11 @@ function updateJsonWithFile() {
         
         if (webActionManifestContent) {
             // If we have file content, add it to the JSON
-            currentJson.windowsActions = { manifestFile: webActionManifestContent };
+            currentJson.windowsActions = { manifest: webActionManifestContent };
         } else {
             // If no file content, remove the property if it exists
-            if (currentJson.windowsActions?.manifestFile && !currentJson.windowsActions.manifestFile.startsWith("http")) {
-                delete currentJson.windowsActions.manifestFile;
+            if (currentJson.windowsActions?.manifest && !currentJson.windowsActions.manifest.startsWith("http")) {
+                delete currentJson.windowsActions.manifest;
             }
         }
         
