@@ -19,11 +19,12 @@ RUN powershell -Command \
 RUN setx PATH "%PATH%;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64"
 
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 5000
 
-# Configure ASP.NET Core to listen on all interfaces
-ENV ASPNETCORE_URLS=http://0.0.0.0:8080
+# Configure ASP.NET Core for Azure Web Apps
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV WEBSITES_PORT=5000
 
 # Copy project file and restore dependencies
 COPY ["PWABuilder.MicrosoftStore.csproj", "."]
