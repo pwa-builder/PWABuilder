@@ -192,6 +192,7 @@ router.get(
     let fetchResult: Response;
 
     try {
+      // @sarif-suppress 195 Justification: while this URL is user-provided, we check it for SSRF above.
       fetchResult = await fetch(parsedUrl);
     } catch (fetchError) {
       response

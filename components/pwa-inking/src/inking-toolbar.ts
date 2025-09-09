@@ -1293,7 +1293,8 @@ export class InkingToolbar extends LitElement {
         let min = parseInt(this.slider.min);
         let max = parseInt(this.slider.max);
         let newValue = ((parseInt(value) - min) / (max - min)) * 100;
-        this.sliderTooltip.innerHTML = value;
+        // lgtm[js/xss] Safe: textContent automatically escapes HTML and value is from a numeric slider
+        this.sliderTooltip.textContent = String(value);
         this.sliderTooltip.style.left = `calc(${newValue}% + (${8 - newValue * 0.15}px))`;
     }
 
