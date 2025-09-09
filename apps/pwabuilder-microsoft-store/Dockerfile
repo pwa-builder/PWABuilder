@@ -9,14 +9,15 @@ RUN powershell -Command \
     Remove-Item 'dotnet-sdk-installer.exe'"
 
 # Install Windows SDK (needed for MSIX packaging tools)
+# Find latest SDK versions here: https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/
 RUN powershell -Command \
     "$ProgressPreference = 'SilentlyContinue'; \
-    Invoke-WebRequest -Uri 'https://go.microsoft.com/fwlink/?linkid=2196230' -OutFile 'winsdksetup.exe'; \
+    Invoke-WebRequest -Uri 'https://go.microsoft.com/fwlink/?linkid=2327008' -OutFile 'winsdksetup.exe'; \
     Start-Process -FilePath 'winsdksetup.exe' -ArgumentList '/quiet', '/features', 'OptionId.WindowsDesktopDebuggers', 'OptionId.WindowsDesktopSoftwareDevelopmentKit', 'OptionId.WindowsSoftwareLogoToolkit' -Wait; \
     Remove-Item 'winsdksetup.exe'"
 
 # Add Windows SDK tools to PATH
-RUN setx PATH "%PATH%;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64"
+RUN setx PATH "%PATH%;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.4654\\x64"
 
 WORKDIR /app
 EXPOSE 5000
