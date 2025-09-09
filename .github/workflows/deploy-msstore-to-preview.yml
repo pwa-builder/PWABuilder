@@ -26,16 +26,6 @@ jobs:
       - name: Create destination directory
         run: mkdir -p apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
 
-      - name: Download zipped pwa_builder internal tool from Azure Blob Storage
-        run: |
-          curl -L -o pwabuilder.zip "${{ secrets.PWA_BUILDER_EXE_URL }}"
-
-      - name: Extracting pwa_builder zip file
-        run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
-
-      - name: Verify pwa_builder extraction
-        run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
-      
       - name: Login with Azure CLI with federated credentials
         uses: azure/login@v2
         with:
@@ -43,6 +33,21 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Download zipped pwa_builder internal tool from Azure Blob Storage
+        run: |
+          az storage blob download `
+            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} `
+            --container-name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_CONTAINER_NAME }} `
+            --name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_BLOB_NAME }} `
+            --file pwabuilder.zip `
+            --auth-mode login
+
+      - name: Extracting pwa_builder zip file
+        run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
+
+      - name: Verify pwa_builder extraction
+        run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
+      
       - name: Log in to Azure docker registry (ACR)
         run: az acr login --name pwabuilder
 
