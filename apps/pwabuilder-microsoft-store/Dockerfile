@@ -11,8 +11,8 @@ RUN powershell -Command \
 # Install Windows SDK (needed for MSIX packaging tools)
 RUN powershell -Command \
     "$ProgressPreference = 'SilentlyContinue'; \
-    Invoke-WebRequest -Uri 'https://go.microsoft.com/fwlink/?linkid=2196127' -OutFile 'winsdksetup.exe'; \
-    Start-Process -FilePath 'winsdksetup.exe' -ArgumentList '/quiet', '/installpath', 'C:\\Program Files (x86)\\Windows Kits\\10' -Wait; \
+    Invoke-WebRequest -Uri 'https://go.microsoft.com/fwlink/?linkid=2196230' -OutFile 'winsdksetup.exe'; \
+    Start-Process -FilePath 'winsdksetup.exe' -ArgumentList '/quiet', '/features', 'OptionId.WindowsDesktopDebuggers', 'OptionId.WindowsDesktopSoftwareDevelopmentKit', 'OptionId.WindowsSoftwareLogoToolkit' -Wait; \
     Remove-Item 'winsdksetup.exe'"
 
 # Add Windows SDK tools to PATH
