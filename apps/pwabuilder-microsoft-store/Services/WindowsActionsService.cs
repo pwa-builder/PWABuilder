@@ -113,7 +113,7 @@ public class WindowsActionsService
     {
         try
         {
-            var jsonContent = await http.GetStringAsync(url, ["application/json"], 2 * 1024 * 1024, cancelToken);
+            var jsonContent = await http.GetStringAsync(url, ["application/json", "text/plain"], 2 * 1024 * 1024, cancelToken);
             logger.LogInformation("Downloaded JSON content from {url}", url);
             return jsonContent;
         }
