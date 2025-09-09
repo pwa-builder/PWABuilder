@@ -589,6 +589,19 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   async updateCustomEntitySelection(checked: boolean) {
+    // Check if actions file has been uploaded before allowing custom entity selection
+    if (checked && (!this.packageOptions.windowsActions?.manifest || this.packageOptions.windowsActions.manifest.trim() === "")) {
+      this.supportCustomEntity = false;
+      this.customEntitiesFileError = "Please upload an ActionsManifest.json file first before enabling Custom Entity support.";
+      
+      // Reset the checkbox to unchecked
+      const customEntityCheckbox = this.shadowRoot?.querySelector('#custom-entity-checkbox') as HTMLInputElement;
+      if (customEntityCheckbox) {
+        customEntityCheckbox.checked = false;
+      }
+      return;
+    }
+
     this.supportCustomEntity = checked;
 
     if (!checked) {
@@ -1464,6 +1477,8 @@ export class WindowsForm extends AppPackageFormBase {
                           inputId: 'custom-entity-checkbox',
                           type: 'checkbox',
                           checked: this.supportCustomEntity,
+                          disabled: !this.packageOptions.windowsActions?.manifest || this.packageOptions.windowsActions.manifest.trim() === "",
+                          disabledTooltipText: "You must upload an ActionsManifest.json file first before enabling Custom Entity support.",
                           inputHandler: (_val: string, checked: boolean) =>
                             (this.updateCustomEntitySelection(checked)),
                         })}
