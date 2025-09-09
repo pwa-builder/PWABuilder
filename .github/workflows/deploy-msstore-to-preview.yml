@@ -59,7 +59,7 @@ jobs:
         run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-windows:production -m 2GB
 
       - name: Docker push
-        working-directory: ./apps/pawabuilder-microsoft-store
+        working-directory: ./apps/pwabuilder-microsoft-store
         run: docker push pwabuilder.azurecr.io/pwa-windows:production
         
   deploy:
