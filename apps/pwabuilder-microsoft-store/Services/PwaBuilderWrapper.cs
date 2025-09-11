@@ -228,6 +228,9 @@ namespace PWABuilder.MicrosoftStore.Services
                 builder.Append($"--signed-app");
             }
 
+            // Append no-gpu flag because our Docker image may not have proper GPU support.
+            builder.Append(" --no-gpu");
+
             return builder.ToString();
         }
 
