@@ -60,12 +60,12 @@ type WindowsActionsOptions = {
   /**
    * The contents of the ActionsManifest.json file that describes the app's actions.
    */
-  manifest: string;
+  manifest: object;
 
   /**
    * The contents of the  optional customEntities.json file.
    */
-  customEntities?: string | null;
+  customEntities?: object | null;
 
   /**
    * An array containing localizations for the custom entities file.
@@ -84,7 +84,7 @@ type WindowsActionsCustomEntityLocalization = {
    * The contents of the file.
    * @example { "english phrase one": { "welcome": "howdy, friends" } }
    */
-  contents: string;
+  contents: object;
 }
 
 type WindowsPackageValidationError = {

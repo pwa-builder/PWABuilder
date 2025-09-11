@@ -590,7 +590,7 @@ export class WindowsForm extends AppPackageFormBase {
 
   async updateCustomEntitySelection(checked: boolean) {
     // Check if actions file has been uploaded before allowing custom entity selection
-    if (checked && (!this.packageOptions.windowsActions?.manifest || this.packageOptions.windowsActions.manifest.trim() === "")) {
+    if (checked && !this.packageOptions.windowsActions?.manifest) {
       this.supportCustomEntity = false;
       this.customEntitiesFileError = "Please upload an ActionsManifest.json file first before enabling Custom Entity support.";
       
@@ -667,11 +667,10 @@ export class WindowsForm extends AppPackageFormBase {
           }
 
           // Store the valid custom entities content
-          const stringified: string = JSON.stringify(parsed, null, 2);
           if (!this.packageOptions.windowsActions) {
-            this.packageOptions.windowsActions = { manifest: "" };
+            this.packageOptions.windowsActions = { manifest: {} };
           }
-          this.packageOptions.windowsActions.customEntities = stringified;
+          this.packageOptions.windowsActions.customEntities = parsed;
           this.customEntitiesFileError = null;
           
           // Show success state
@@ -753,11 +752,11 @@ export class WindowsForm extends AppPackageFormBase {
         
         // Store the valid files in packageOptions
         if (!this.packageOptions.windowsActions) {
-          this.packageOptions.windowsActions = { manifest: "" };
+          this.packageOptions.windowsActions = { manifest: {} };
         }
         this.packageOptions.windowsActions.customEntitiesLocalizations = validationResults.validFiles.map(file => ({
           fileName: file.name,
-          contents: file.content
+          contents: JSON.parse(file.content)
         }));
       } else {
         // Some files failed validation
@@ -856,8 +855,7 @@ export class WindowsForm extends AppPackageFormBase {
             throw new Error(`Schema validation failed:\n${errorDetails}`);
           }
 
-          const stringified: string = JSON.stringify(parsed, null, 2);
-          this.packageOptions.windowsActions = { manifest: stringified };
+          this.packageOptions.windowsActions = { manifest: parsed };
           this.actionsFileError = null;
           
           // Clear any error state and show success state
@@ -1477,7 +1475,7 @@ export class WindowsForm extends AppPackageFormBase {
                           inputId: 'custom-entity-checkbox',
                           type: 'checkbox',
                           checked: this.supportCustomEntity,
-                          disabled: !this.packageOptions.windowsActions?.manifest || this.packageOptions.windowsActions.manifest.trim() === "",
+                          disabled: !this.packageOptions.windowsActions?.manifest,
                           disabledTooltipText: "You must upload an ActionsManifest.json file first before enabling Custom Entity support.",
                           inputHandler: (_val: string, checked: boolean) =>
                             (this.updateCustomEntitySelection(checked)),
