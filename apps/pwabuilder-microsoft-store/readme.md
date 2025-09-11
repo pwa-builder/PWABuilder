@@ -247,3 +247,4 @@ To upgrade to the latest pwa_builder.exe tool:
 4. Click `Download` to download the latest Nuget package containing the pwa_builder.exe tool.
 5. Rename the file to `pwa__builder.zip`
 6. Upload to the `pwabuildercommon` Azure Storage account, inside the `resources` directory, overwriting the existing `pwa_builder.zip` file.
+7. Trigger a new build of this solution in GitHub Actions. The build pipeline will pick up the new pwa_builder.zip file and inject it into the Docker image.
