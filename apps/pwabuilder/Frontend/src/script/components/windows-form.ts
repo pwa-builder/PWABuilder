@@ -582,6 +582,10 @@ export class WindowsForm extends AppPackageFormBase {
 
         actionsSchemaValidation = ajv.getSchema(SCHEMA_ID);
         this.actionsFileError = null;
+        const customEntityCheckbox = this.shadowRoot?.querySelector<HTMLInputElement>('#custom-entity-checkbox');
+        if (customEntityCheckbox) {
+          customEntityCheckbox.disabled = false;
+        }
       } catch (err) {
         this.actionsFileError = "Schema setup failed.";
       }
@@ -1451,8 +1455,7 @@ export class WindowsForm extends AppPackageFormBase {
                     checked: this.showUploadActionsFile,
                     disabled: (!this.packageOptions.manifest?.share_target || !this.packageOptions.manifest?.protocol_handlers),
                     disabledTooltipText: "You must have both share_target and protocol_handlers set up in your web manifest to enable Actions.",
-                    inputHandler: (_val: string, checked: boolean) =>
-                      (this.updateActionsSelection(checked)),
+                    inputHandler: (_val: string, checked: boolean) => this.updateActionsSelection(checked),
                   })}
                 </div>
                 ${this.showUploadActionsFile ?

@@ -235,7 +235,7 @@ The result will be a .msixbundle or .appxbundle file.
 
 The pwa_builder.exe tool is an internal command-line tool built by the Microsoft Edge team to generate Hosted App web packages that rely on Edge and can be uploaded to Partner Center and published as apps in the Microsoft Store.
 
-This tool is not publicly available. 
+This tool is not publicly available.
 
 The tool is injected into Resources\cli\pwa\pwabuilder folder at build time by GitHub Actions build pipeline. If you need access to it to run this solution locally, grab the file from the `pwabuildercommon` Azure Storage account, inside the `resources` directory.
 
