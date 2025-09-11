@@ -29,23 +29,28 @@
             <button id="kitchenSinkBtn" class="btn btn-link">Kitchen sink</button>
         </div>
         <div class="card-body">
-            <textarea class="form-control" rows="15">
+            <textarea class="form-control" rows="15" style="white-space: nowrap; overflow-x: auto;">
         </textarea>
         </div>
         <div class="card-footer d-flex flex-column">
-            <div class="web-action-upload mb-3">
-                <label class="text-muted">Upload web action manifest file:</label>
-                <div class="input-group">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="actionManifestFile" accept=".json">
-                        <label class="custom-file-label" for="actionManifestFile">Choose file</label>
-                    </div>
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="clearFileBtn">Clear</button>
-                    </div>
+            
+                <label class="text-muted">Optional: Windows Actions files</label>
+            <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="actionManifestFile" accept=".json">
+                    <label class="custom-file-label" for="actionManifestFile">Choose ActionsManifest.json</label>
                 </div>
-                <small id="fileStatus" class="form-text text-muted">No file selected</small>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="actionCustomEntitiesFile" accept=".json">
+                    <label class="custom-file-label" for="actionCustomEntitiesFile">Choose CustomEntities.json</label>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="actionLocalizedCustomEntitiesFolder" webkitdirectory directory multiple>
+                    <label class="custom-file-label" for="actionLocalizedCustomEntitiesFolder">Choose localized entities folder</label>
+                </div>
             </div>
+            <small id="fileStatus" class="form-text text-muted">No file selected</small>
+            <hr />
             <button id="submitBtn" class="btn btn-primary btn-lg">
                 <div class="spinner-border d-none" role="status">
                     <span class="sr-only">Loading...</span>

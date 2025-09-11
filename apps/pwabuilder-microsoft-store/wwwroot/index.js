@@ -13,11 +13,9 @@ const spinner = document.querySelector(".spinner-border");
 
 // Action manifest file upload elements
 const actionManifestFile = document.querySelector("#actionManifestFile");
+const actionCustomEntityFile = document.querySelector("#actionCustomEntitiesFile");
+const actionLocalizedEntitiesFolder = document.querySelector("#actionLocalizedCustomEntitiesFolder");
 const fileStatus = document.querySelector("#fileStatus");
-const clearFileBtn = document.querySelector("#clearFileBtn");
-
-// Track the file content
-let webActionManifestContent = null;
 
 simpleBtn.addEventListener("click", () => setCode(getSimpleMsix()));
 actionsBtn.addEventListener("click", () => setCode(getActionsMsix()));
@@ -29,8 +27,9 @@ kitchenSinkBtn.addEventListener("click", () => setCode(getKitchenSinkMsix()));
 submitBtn.addEventListener("click", () => submit());
 
 // Handle file upload and clearing
-actionManifestFile.addEventListener("change", handleFileSelect);
-clearFileBtn.addEventListener("click", clearFileSelection);
+actionManifestFile.addEventListener("change", actionsManifestChosen);
+actionCustomEntityFile.addEventListener("change", actionsCustomEntitiesChosen);
+actionLocalizedEntitiesFolder.addEventListener("change", actionsLocalizedEntitiesChosen);
 
 setCode(getSimpleMsix());
 codeArea.scrollTop = 0;
@@ -42,15 +41,14 @@ function setCode(options) {
 }
 
 // Handle file selection for web action manifest
-function handleFileSelect(event) {
+function actionsManifestChosen(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 // Validate JSON content
-                JSON.parse(e.target.result);
-                webActionManifestContent = e.target.result;
+                const actionsManifest = JSON.parse(e.target.result);
                 fileStatus.textContent = `File loaded: ${file.name} (${formatFileSize(file.size)})`;
                 fileStatus.classList.remove("text-danger");
                 fileStatus.classList.add("text-success");
@@ -60,31 +58,71 @@ function handleFileSelect(event) {
                 fileLabel.textContent = file.name;
                 
                 // Update the current JSON in the textarea to include the file
-                updateJsonWithFile();
+                updateCodeWithJson("windowsActions.manifest", actionsManifest);
             } catch (error) {
                 fileStatus.textContent = "Error: Invalid JSON file";
                 fileStatus.classList.remove("text-success");
                 fileStatus.classList.add("text-danger");
-                webActionManifestContent = null;
             }
         };
         reader.readAsText(file);
     }
 }
 
-// Clear the selected file
-function clearFileSelection() {
-    actionManifestFile.value = "";
-    webActionManifestContent = null;
-    fileStatus.textContent = "No file selected";
-    fileStatus.classList.remove("text-success", "text-danger");
-    
-    // Reset the file input label
-    const fileLabel = document.querySelector(".custom-file-label");
-    fileLabel.textContent = "Choose file";
-    
-    // Update the JSON to remove the file reference
-    updateJsonWithFile();
+function actionsCustomEntitiesChosen(e) {
+    const file = e.target.files[0];
+    if (file) {
+        readFileAsync(file).then(fileContents => {
+            try {
+                // Validate JSON content
+                const customEntities = JSON.parse(fileContents);
+                fileStatus.textContent = `File loaded: ${file.name} (${formatFileSize(file.size)})`;
+                fileStatus.classList.remove("text-danger");
+                fileStatus.classList.add("text-success");
+                
+                // Update the file input label
+                const fileLabel = document.querySelector(".custom-file-label");
+                fileLabel.textContent = file.name;
+                
+                // Update the current JSON in the textarea to include the file
+                updateCodeWithJson("windowsActions.customEntities", customEntities);
+            } catch (error) {
+                fileStatus.textContent = "Error: Invalid JSON file";
+                fileStatus.classList.remove("text-success");
+                fileStatus.classList.add("text-danger");
+            }
+        })
+    }
+}
+
+function actionsLocalizedEntitiesChosen(e) {
+    const files = Array.from(e.target.files);
+    const fileReads = files.map(file => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = readerEvent => resolve({ fileName: file.name, contents: JSON.parse(readerEvent.target.result) });
+            reader.onerror = error => reject(error);
+        });
+    });
+
+    Promise.all(fileReads)
+        .then(
+            results => updateCodeWithJson("windowsActions.customEntitiesLocalizations", results), 
+            error => {
+                fileStatus.textContent = "Error reading files: " + error;
+                fileStatus.classList.remove("text-success");
+                fileStatus.classList.add("text-danger");
+            });
+}
+
+function readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsText(file);
+    });
 }
 
 // Format file size for display
@@ -99,19 +137,22 @@ function formatFileSize(bytes) {
 }
 
 // Update the current JSON with the selected file content
-function updateJsonWithFile() {
+function updateCodeWithJson(prop, val) {
     try {
         const currentJson = JSON.parse(codeArea.value);
         
-        if (webActionManifestContent) {
-            // If we have file content, add it to the JSON
-            currentJson.windowsActions = { manifest: webActionManifestContent };
-        } else {
-            // If no file content, remove the property if it exists
-            if (currentJson.windowsActions?.manifest && !currentJson.windowsActions.manifest.startsWith("http")) {
-                delete currentJson.windowsActions.manifest;
+        // Check if the property is nested, e.g. "windowsActions.manifest".
+        // If so, make sure we have the full object structure.
+        const props = prop.split(".");
+        let currentObj = currentJson;
+        props.forEach((p, index) => {
+            if (currentObj[p] === undefined || currentObj[p] === null) {
+                const isFinalProp = index === props.length - 1;
+                currentObj[p] = isFinalProp ? val : {};
             }
-        }
+
+            currentObj = currentObj[p];
+        }); 
         
         setCode(currentJson);
     } catch (error) {
@@ -136,8 +177,181 @@ function getSimpleMsix() {
 
 function getActionsMsix() {
     const options = getSimpleMsix();
-    options.windowsActions= { manifest: "https://gist.githubusercontent.com/JudahGabriel/6aa27a8cd9cd95d71ea679c73f11a89c/raw/0a5662ef3cd438a5047c7039c3d3f9836d8f7c08/ActionsManifest.json" };
+    options.name = "WAMI";
+    options.url = "https://microsoftedge.github.io/Demos/wami/";
+    options.packageId = "Edge.WAMI";
+    options.windowsActions= { 
+        manifest: getActionsManifest(),
+        customEntities: getActionsCustomEntities(),
+        customEntitiesLocalizations: getActionsLocalizedCustomEntities()
+    };
     return options;
+}
+
+function getActionsManifest() {
+    return {
+        "version": 1,
+        "actions": [
+            {
+                "id": "Wami.Resize.Width",
+                "description": "Resize the image to a specific width",
+                "kind": "Search",
+                "inputs": [
+                    {
+                        "name": "File",
+                        "kind": "Photo"
+                    }
+                ],
+                "outputs": [],
+                "invocation": {
+                    "type": "Uri",
+                    "uri": "web+wami://resize"
+                },
+                "inputCombinations": [
+                    {
+                    "inputs": [
+                        "File"
+                    ],
+                        "description": "Photo to be resized in Wami."
+                    }
+                ]
+            },
+            {
+                "id": "Wami.Blur",
+                "description": "Blur the image with a Gaussian operator",
+                "kind": "Search",
+                "inputs": [
+                    {
+                        "name": "File",
+                        "kind": "Photo"
+                    }
+                ],
+                "outputs": [],
+                "invocation": {
+                    "type": "Uri",
+                    "uri": "web+wami://blur"
+                },
+                "inputCombinations": [
+                    {
+                    "inputs": [
+                        "File"
+                    ],
+                        "description": "Photo to be blurred in Wami."
+                    }
+                ]
+            },
+            {
+                "id": "Wami.Rotate",
+                "description": "Rotate the image by 90 degrees",
+                "kind": "Search",
+                "inputs": [
+                    {
+                        "name": "File",
+                        "kind": "Photo"
+                    }
+                ],
+                "outputs": [],
+                "invocation": {
+                    "type": "Uri",
+                    "uri": "web+wami://rotate"
+                },
+                "inputCombinations": [
+                    {
+                        "inputs": [
+                            "File"
+                        ],
+                        "description": "Photo to be rotated in Wami."
+                    }
+                ]
+            },
+            {
+                "id": "Wami.Paint",
+                "description": "Convert the image to oil paint style",
+                "kind": "Search",
+                "inputs": [
+                    {
+                        "name": "File",
+                        "kind": "Photo"
+                    }
+                ],
+                "outputs": [],
+                "invocation": {
+                    "type": "Uri",
+                    "uri": "web+wami://paint"
+                },
+                "inputCombinations": [
+                    {
+                    "inputs": [
+                        "File"
+                    ],
+                    "description": "Photo to be converted to oil paint style."
+                    }
+                ]
+            },
+            
+            {
+                "id": "OpenAudioBook",
+                "description": "Open an audio book in the Sample PWA. This is a dummy action for testing out custom entity support. See https://gist.github.com/JudahGabriel/8f97c1b4f9f3bbd480aa1cc45062cec4",
+                "useGenerativeAI": false,
+                "inputs": [
+                    {
+                        "name": "AudioBookToOpen",
+                        "kind": "CustomText",
+                        "customTextKind": "audiobook"
+                    }
+                ],
+                "inputCombinations": [
+                    {
+                        "inputs": ["AudioBookToOpen"],
+                        "description": "Open `${AudioBookToOpen.KeyPhrase}` by ${AudioBookToOpen.author} in Sample PWA"
+                    }
+                ],
+                "outputs": [],
+                "invocation": {
+                    "type": "Uri",
+                    "uri": "web+wami://audiobook/${AudioBookToOpen.isbn}/"
+                }
+            }
+        ]
+    };
+}
+
+function getActionsCustomEntities() {
+    return {
+        "version": 1, 
+        "entityDefinitions": { 
+            "audiobook": "ms-resource://Files/Assets/AudioBookEntity.json" 
+        }
+    };
+}
+
+function getActionsLocalizedCustomEntities() {
+    return [
+        {
+            fileName: "AudioBookCustomEntity.json",
+            contents: {
+                "Atomic Habits": {
+                    "author": "James Clear",
+                    "isbn": "0735211299",
+                    "language": "English",
+                    "genre": "Self-help",
+                    "published": "October 16, 2018"
+                }
+            }
+        },
+        {
+            fileName: "AudioBookCustomEntity.language-es.json",
+            contents: {
+                    "Hábitos Atómicos": {
+                    "author": "James Clear",
+                    "isbn": "0735211299",
+                    "language": "Español",
+                    "genre": "Autoayuda",
+                    "published": "11 de junio de 2019"
+                }
+            }
+        }
+    ]
 }
 
 function getPublisherMsix() {
@@ -357,11 +571,6 @@ async function submit() {
     try {
         // Get the options from the textarea
         const options = JSON.parse(codeArea.value);
-        
-        // If we have file content stored in memory, use that directly
-        if (webActionManifestContent && options.windowsActions?.manifest === webActionManifestContent) {
-            // The content is already in the JSON, so we can proceed
-        }
         
         const response = await fetch("/msix/generatezip", {
             method: "POST",

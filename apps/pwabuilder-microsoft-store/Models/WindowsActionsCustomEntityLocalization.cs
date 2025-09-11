@@ -1,4 +1,6 @@
-﻿namespace PWABuilder.MicrosoftStore.Models;
+﻿using System.Text.Json;
+
+namespace PWABuilder.MicrosoftStore.Models;
 
 /// <summary>
 /// Localization file for a customEntities.json, used in Windows Actions.
@@ -11,8 +13,14 @@ public class WindowsActionsCustomEntityLocalization
     public required string FileName { get; set; }
 
     /// <summary>
-    /// The JSON contents of the localization file. Example contents: { "english phrase one": { "welcome": "howdy, friends" } }
-    /// Alternately, this can be an absolute URL to a localization JSON file.
+    /// The contents of the localization file. Example contents: 
+    /// 
+    /// { 
+    ///    "Atomic Habits": { 
+    ///       "author": "James Clear",
+    ///       "genre": "self-help"
+    ///    }
+    /// }
     /// </summary>
-    public required string Contents { get; set; }
+    public required JsonDocument Contents { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 
 namespace PWABuilder.MicrosoftStore.Models;
 
@@ -16,13 +17,13 @@ public class WindowsActionsOptions
     /// The text contents of the ActionsManifest.json file that defines the Windows Actions for the PWA.
     /// Alternately, this can be an absolute URL to an actions manifest JSON file.
     /// </summary>
-    public required string Manifest { get; set; }
+    public required JsonDocument Manifest { get; set; }
 
     /// <summary>
     /// Optional. The text contents of the CustomEntities.json file that defines any custom entities used by the Windows Actions for the PWA.
     /// Alternately, this can be an absolute URL to a custom entities JSON file.
     /// </summary>
-    public string? CustomEntities { get; set; }
+    public JsonDocument? CustomEntities { get; set; }
 
     /// <summary>
     /// Optional. The list of localizations for the custom entities defined in CustomEntities.json.

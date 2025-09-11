@@ -44,7 +44,7 @@ public class WindowsActionsService
     /// <returns>The path to the file containing the Windows Actions manifest file, or null if none was created.</returns>
     public async Task<WindowsActionsFiles?> GetWindowsActionsFilesAsync(WindowsAppPackageOptions options, string outputDirectory, CancellationToken cancelToken)
     {
-        if (string.IsNullOrWhiteSpace(options.WindowsActions?.Manifest))
+        if (options.WindowsActions?.Manifest == null)
         {
             return null;
         }
@@ -52,18 +52,15 @@ public class WindowsActionsService
         try
         {
             // Get the Actions manifest.
-            var actionsManifestJson = await GetOrFetchJsonAsync(options.WindowsActions.Manifest, cancelToken);
-            var actionsManifestFilePath = await WriteJsonTempFile(actionsManifestJson);
-            EnsureValidActionsManifest(actionsManifestJson);
+            EnsureValidActionsManifest(options.WindowsActions.Manifest);
+            var actionsManifestFilePath = await WriteJsonTempFile(options.WindowsActions.Manifest);
 
             // Grab the optional custom entities file.
-            var customEntitiesJson = default(string);
             var customEntitiesFilePath = default(FilePath?);
-            if (!string.IsNullOrWhiteSpace(options.WindowsActions.CustomEntities))
+            if (options.WindowsActions.CustomEntities != null)
             {
-                customEntitiesJson = await GetOrFetchJsonAsync(options.WindowsActions.CustomEntities, cancelToken);
-                customEntitiesFilePath = await WriteJsonTempFile(customEntitiesJson);
-                EnsureValidCustomEntities(customEntitiesJson);
+                EnsureValidCustomEntities(options.WindowsActions.CustomEntities);
+                customEntitiesFilePath = await WriteJsonTempFile(options.WindowsActions.CustomEntities);
             }
 
             // Grab any translation files for the custom entities file.
@@ -74,7 +71,7 @@ public class WindowsActionsService
                 localizedCustomEntitiesPath = tempDirectory.CreateSubdirectory(outputDirectory, "LocalizedCustomEntities");
                 foreach (var localization in options.WindowsActions.CustomEntitiesLocalizations)
                 {
-                    var localizationJson = await GetOrFetchJsonAsync(localization.Contents, cancelToken);
+                    var localizationJson = localization.Contents.RootElement.GetRawText();
                     var localizationFilePath = Path.Combine(localizedCustomEntitiesPath, localization.FileName);
                     await File.WriteAllTextAsync(localizationFilePath, localizationJson, cancelToken);
                     EnsureValidJson(localizationJson);
@@ -96,43 +93,15 @@ public class WindowsActionsService
         }
     }
 
-    private async Task<string> GetOrFetchJsonAsync(string jsonOrUrl, CancellationToken cancelToken)
-    {
-        // If it's a URL, download it.
-        if (Uri.TryCreate(jsonOrUrl, UriKind.Absolute, out var manifestUri) &&
-            (manifestUri.Scheme == "http" || manifestUri.Scheme == "https"))
-        {
-            logger.LogInformation("Downloading Windows Actions JSON content from {url}", jsonOrUrl);
-            return await DownloadJsonAsync(manifestUri, cancelToken);
-        }
-        
-        return jsonOrUrl;
-    }
-
-    private async Task<string> DownloadJsonAsync(Uri url, CancellationToken cancelToken)
-    {
-        try
-        {
-            var jsonContent = await http.GetStringAsync(url, ["application/json", "text/plain"], 2 * 1024 * 1024, cancelToken);
-            logger.LogInformation("Downloaded JSON content from {url}", url);
-            return jsonContent;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to download Windows Actions JSON file from {url}", url);
-            throw;
-        }
-    }
-
     /// <summary>
     /// Writes web action manifest content to a temporary file
     /// </summary>
     /// <returns>A file path to the temporary file.</returns>
-    private async Task<FilePath> WriteJsonTempFile(string json)
+    private async Task<FilePath> WriteJsonTempFile(JsonDocument json)
     {
         try
         {
-            var localFilePath = await tempDirectory.WriteAllTextAsync(json, ".json");
+            var localFilePath = await tempDirectory.WriteAllTextAsync(json.RootElement.GetRawText(), ".json");
             logger.LogInformation("Wrote Windows Action JSON content to {localPath}", localFilePath);
             return localFilePath;
         }
@@ -144,21 +113,20 @@ public class WindowsActionsService
     }
 
     // TODO: consider moving this to proper schema validation: https://github.com/microsoft/App-Actions-On-Windows-Samples/blob/main/schema/ActionsSchema.json
-    private void EnsureValidActionsManifest(string? jsonContent)
+    private void EnsureValidActionsManifest(JsonDocument actionsManifest)
     {
-        if (string.IsNullOrWhiteSpace(jsonContent))
+        if (actionsManifest == null)
         {
             throw new ArgumentException("The Windows Actions JSON content is null or empty.");
         }
 
         try
         {
-            using var doc = JsonDocument.Parse(jsonContent);
-            if (!doc.RootElement.TryGetProperty("version", out var versionElement) || versionElement.ValueKind != JsonValueKind.Number)
+            if (!actionsManifest.RootElement.TryGetProperty("version", out var versionElement) || versionElement.ValueKind != JsonValueKind.Number)
             {
                 throw new ArgumentException("The Windows Actions manifest must contain a 'version' number property.");
             }
-            if (!doc.RootElement.TryGetProperty("actions", out var actionsElement) || actionsElement.ValueKind != JsonValueKind.Array)
+            if (!actionsManifest.RootElement.TryGetProperty("actions", out var actionsElement) || actionsElement.ValueKind != JsonValueKind.Array)
             {
                 throw new ArgumentException("The Windows Actions manifest must contain an 'actions' array.");
             }
@@ -236,30 +204,23 @@ public class WindowsActionsService
         }
         catch (JsonException ex)
         {
-            logger.LogError(ex, "The provided JSON content is not valid JSON: {json}", jsonContent);
-            throw new ArgumentException("The provided JSON content is not valid JSON.", ex);
+            logger.LogError(ex, "The provided JSON content is not valid JSON: {json}", actionsManifest.RootElement.GetRawText());
+            throw;
         }
     }
 
-    private void EnsureValidCustomEntities(string? jsonContent)
+    private void EnsureValidCustomEntities(JsonDocument customEntities)
     {
-        if (string.IsNullOrWhiteSpace(jsonContent))
-        {
-            throw new ArgumentException("The Windows Actions JSON content is null or empty.");
-        }
-
         try
-        {
-            using var doc = JsonDocument.Parse(jsonContent);
-            
+        {            
             // Validate version.
-            if (!doc.RootElement.TryGetProperty("version", out var versionElement) || versionElement.ValueKind != JsonValueKind.Number)
+            if (!customEntities.RootElement.TryGetProperty("version", out var versionElement) || versionElement.ValueKind != JsonValueKind.Number)
             {
                 throw new ArgumentException("The Windows Actions custom entities file must contain a 'version' number property.");
             }
 
             // Validate entityDefinitions.
-            if (!doc.RootElement.TryGetProperty("entityDefinitions", out var entityDefinitionsElement) || entityDefinitionsElement.ValueKind != JsonValueKind.Object)
+            if (!customEntities.RootElement.TryGetProperty("entityDefinitions", out var entityDefinitionsElement) || entityDefinitionsElement.ValueKind != JsonValueKind.Object)
             {                 
                 throw new ArgumentException("The Windows Actions custom entities file must contain an 'entityDefinitions' object property.");
             }
@@ -273,8 +234,8 @@ public class WindowsActionsService
         }
         catch (JsonException ex)
         {
-            logger.LogError(ex, "The provided Custom Entities JSON content is invalid: {json}", jsonContent);
-            throw new ArgumentException("The provided Custom Entities JSON content is invalid.", ex);
+            logger.LogError(ex, "The provided Custom Entities JSON content is invalid: {json}", customEntities.RootElement.GetRawText());
+            throw;
         }
     }
 
