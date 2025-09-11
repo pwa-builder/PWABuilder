@@ -10,6 +10,15 @@ To run this project locally requires Windows 10 version 2004 (May 2020 Update, B
 
 You'll also need Windows SDK 10.0.19041.0 or later installed. appsettings.development.json has a WindowsSdkDirectory setting - you should modify this to point to your installed Windows SDK.
 
+To run locally:
+
+- For VSCode (preferred), open the root PWABuilder folder in VSCode, hit Debug -> Choose `launch.microsoft-package-generator` and hit F5.
+- For Visual Studio, open PWABuilder.MicrosoftStore.csproj and hit F5.
+
+## Production details
+
+In deployed staging and production environments, this project is a Windows-based docker image that has the necessary Windows SDK components to run the package generation process. The docker image is built using GitHub Actions and pushed to the PWABuilder container registry.
+
 ## Modern, Classic, and Spartan packages
 
 This project can generate 3 types of packages for the Microsoft Store.
