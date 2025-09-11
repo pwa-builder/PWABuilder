@@ -317,10 +317,10 @@ function getActionsManifest() {
 }
 
 function getActionsCustomEntities() {
-    return {
+    return { 
         "version": 1, 
         "entityDefinitions": { 
-            "audiobook": "ms-resource://Files/Assets/AudioBookEntity.json" 
+            "audiobook": "ms-resource://Files/LocalizedCustomEntities/AudioBookCustomEntity.json" 
         }
     };
 }
