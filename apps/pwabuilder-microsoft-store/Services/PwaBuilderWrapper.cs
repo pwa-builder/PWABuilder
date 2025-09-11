@@ -225,11 +225,11 @@ namespace PWABuilder.MicrosoftStore.Services
             // One non-string argument: signed-app
             if (options.AllowSigning)
             {
-                builder.Append("--signed-app");
+                builder.Append(" --signed-app");
             }
 
             // Append no-gpu flag because our Docker image may not have proper GPU support.
-            builder.Append("--no-gpu");
+            builder.Append(" --no-gpu");
 
             return builder.ToString();
         }
