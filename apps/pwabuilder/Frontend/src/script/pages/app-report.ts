@@ -300,18 +300,18 @@ analysisFailed(): void {
 }
 
   async analysisUpdated(analysis: Analysis): Promise < void> {
-  const unchanged = this.analysis?.lastModifiedAt === analysis.lastModifiedAt;
-  if(unchanged) {
-    return;
-  }
+    const unchanged = this.analysis?.lastModifiedAt === analysis.lastModifiedAt && analysis.status !== "Completed";
+    if(unchanged) {
+      return;
+    }
 
     // The analysis has been updated since we last saw it.
     this.analysis = analysis;
 
-  // Apply the manifest and manifest todos
-  if(analysis.webManifest) {
-  this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.manifestRaw);
-}
+    // Apply the manifest and manifest todos
+    if(analysis.webManifest) {
+      this.applyManifestContext(analysis.url, analysis.webManifest.url, analysis.webManifest.manifestRaw);
+    }
   }
 
   // Runs the Manifest, SW and SEC Tests. Sets "canPackage" to true or false depending on the results of each test

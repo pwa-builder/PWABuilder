@@ -1107,7 +1107,7 @@ export class PublishPane extends LitElement {
           const data = await getDataFromDB(this.objectStore, this.getFormKey());
           if (data) {
             (Array.from(form.elements) as HTMLInputElement[]).forEach(el => {
-              if (el.id && data.hasOwnProperty(el.id)) {
+              if (el.id && data.hasOwnProperty(el.id) && !el.classList.contains("no-form-data-restoration")) {
                 if (el.type === "checkbox" || el.type === "radio") {
                   el.checked = data[el.id];
                 } else {

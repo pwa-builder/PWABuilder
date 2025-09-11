@@ -88,6 +88,10 @@ export class WindowsForm extends AppPackageFormBase {
     return [
       ...super.styles,
       css`
+        .d-none {
+          display: none;
+        }
+
         #windows-options-form {
           width: 100%;
           height: 100%;
@@ -582,12 +586,10 @@ export class WindowsForm extends AppPackageFormBase {
 
         actionsSchemaValidation = ajv.getSchema(SCHEMA_ID);
         this.actionsFileError = null;
-        const customEntityCheckbox = this.shadowRoot?.querySelector<HTMLInputElement>('#custom-entity-checkbox');
-        if (customEntityCheckbox) {
-          customEntityCheckbox.disabled = false;
-        }
+        console.log("zanz setting has actions manifest to true");
       } catch (err) {
         this.actionsFileError = "Schema setup failed.";
+        console.log("zanz setting has actions manifest to false");
       }
     }
   }
@@ -824,7 +826,9 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   async actionsFileChanged(e: Event): Promise<void> {
-    if (!e) return;
+    if (!e) {
+      return;
+    }
 
     if (!actionsSchemaValidation) {
       this.actionsFileError = "Schema validation not available. Please try again.";
@@ -859,7 +863,10 @@ export class WindowsForm extends AppPackageFormBase {
             throw new Error(`Schema validation failed:\n${errorDetails}`);
           }
 
-          this.packageOptions.windowsActions = { manifest: parsed };
+          this.packageOptions = { 
+            ...this.packageOptions, 
+            windowsActions: { manifest: parsed } 
+          };
           this.actionsFileError = null;
           
           // Clear any error state and show success state
@@ -1181,6 +1188,7 @@ export class WindowsForm extends AppPackageFormBase {
   }
 
   render() {
+    const customEntitiesClass = `no-form-data-restoration ${this.packageOptions.windowsActions?.manifest ? "" : " d-none"}`;
     return html`
     <div id="form-holder">
       <form
@@ -1444,6 +1452,7 @@ export class WindowsForm extends AppPackageFormBase {
                 <label>Actions</label>
                 <div class="form-check">
                   ${this.renderFormInput({
+                    classes: "no-form-data-restoration",
                     label: 'Enable Actions',
                     value: 'Actions',
                     tooltip:
@@ -1463,22 +1472,21 @@ export class WindowsForm extends AppPackageFormBase {
                     <div class="actions-nested-content">
                       <div class="actions-file-upload-zone" @click=${this.openActionsPicker}>
                         <div class="upload-icon">📄</div>
-                        <div class="upload-text">Click to upload ActionsManifest.json</div>
-                        <input id="actions-file-picker" class=${classMap({ 'actions-error': this.actionsFileError !== null })} type="file" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)} style="display: none;"/>
+                        <div class="upload-text">Upload ActionsManifest.json</div>
+                        <input id="actions-file-picker" class="no-form-data-restoration ${classMap({ 'actions-error': this.actionsFileError !== null })}" type="file" accept=".json" @change=${(e: Event) => this.actionsFileChanged(e)} style="display: none;"/>
                       </div>
                       ${this.actionsFileError ? html`<div class="actions-error-message">${this.actionsFileError}</div>` : ''}
                       <div class="form-check">
                         ${this.renderFormInput({
-                          label: 'Support Custom Entity',
+                          classes: customEntitiesClass,
+                          label: this.packageOptions?.windowsActions?.manifest ? 'Support Custom Entity' : '',
                           value: 'CustomEntity',
-                          tooltip:
-                            'Enables support for custom entities in your Actions manifest.',
+                          tooltip: this.packageOptions?.windowsActions?.manifest ? 'Enables support for custom entities in your Actions manifest.' : '',
                           tooltipLink:
                             'https://aka.ms/pwa-winaction',
                           inputId: 'custom-entity-checkbox',
                           type: 'checkbox',
                           checked: this.supportCustomEntity,
-                          disabled: !this.packageOptions.windowsActions?.manifest,
                           disabledTooltipText: "You must upload an ActionsManifest.json file first before enabling Custom Entity support.",
                           inputHandler: (_val: string, checked: boolean) =>
                             (this.updateCustomEntitySelection(checked)),
@@ -1491,7 +1499,7 @@ export class WindowsForm extends AppPackageFormBase {
                               <label for="custom-entities-file-picker">Upload JSON file for CustomEntities:</label>
                               <div class="file-picker-wrapper">
                                 <button type="button" class="file-picker-button" @click=${this.openCustomEntitiesPicker}>Choose File</button>
-                                <input id="custom-entities-file-picker" type="file" accept=".json" @change=${(e: Event) => this.customEntitiesFileChanged(e)} style="display: none;"/>
+                                <input id="custom-entities-file-picker" class="no-form-data-restoration" type="file" accept=".json" @change=${(e: Event) => this.customEntitiesFileChanged(e)} style="display: none;"/>
                                 <span class="file-picker-text" id="custom-entities-picker-text">No file chosen</span>
                               </div>
                               ${this.customEntitiesFileError ? html`<div class="custom-entities-error-message">${this.customEntitiesFileError}</div>` : ''}
@@ -1500,7 +1508,7 @@ export class WindowsForm extends AppPackageFormBase {
                               <label for="localized-entities-folder-picker">Upload localized custom entities files (optional):</label>
                               <div class="folder-picker-wrapper">
                                 <button type="button" class="folder-picker-button" @click=${this.openFolderPicker}>Select Folder</button>
-                                <input id="localized-entities-folder-picker" type="file" .webkitdirectory=${true} multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
+                                <input id="localized-entities-folder-picker" class="no-form-data-restoration" type="file" webkitdirectory multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
                                 <span class="folder-picker-text" id="folder-picker-text">No folder selected</span>
                               </div>
                               ${this.localizedEntitiesErrors.length > 0 ? 

@@ -236,10 +236,11 @@ export class AppPackageFormBase extends LitElement {
   private renderFormInputTextbox(formInput: FormInput): TemplateResult {
     const inputType = formInput.type || 'text';
     const inputClass = formInput.type === 'radio' ? 'form-check-input' : 'form-control';
+    const allInputClasses = inputClass + (formInput.classes ? ` ${formInput.classes}` : '');
 
     const input = html`
       <input id="${formInput.inputId}"
-        class="${inputClass}"
+        class="${allInputClasses}"
         placeholder="${formInput.placeholder || ''}"
         value="${ifDefined(formInput.value)}"
         type="${inputType}"
@@ -408,6 +409,7 @@ export interface FormInput {
   validationErrorMessage?: string;
   checked?: boolean;
   disabled?: boolean;
+  classes?: string;
   disabledTooltipText?: string;
   inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
   changedHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
