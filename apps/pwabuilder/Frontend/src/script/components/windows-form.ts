@@ -400,12 +400,14 @@ export class WindowsForm extends AppPackageFormBase {
           gap: 12px;
         }
 
-        .file-picker-wrapper.has-file .file-picker-text {
+        .file-picker-wrapper.has-file .file-picker-text,
+        .folder-picker-wrapper.has-file .folder-picker-text {
           color: #28a745;
           font-weight: 500;
         }
 
-        .file-picker-wrapper.has-error .file-picker-text {
+        .file-picker-wrapper.has-error .file-picker-text,
+        .folder-picker-wrapper.has-error .folder-picker-text {
           color: #dc3545;
           font-weight: 500;
         }
