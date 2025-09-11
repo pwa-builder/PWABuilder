@@ -3,6 +3,8 @@ name: Deploy PWABuilder web app to staging
 on:
   push:
     branches: [ main ]
+    paths:
+      - "apps/pwabuilder/**"
   workflow_dispatch:
 
 env:
