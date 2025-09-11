@@ -136,6 +136,7 @@ public class AnalysisJobProcessor : IHostedService
             await db.SaveAsync(analysis);
             if (servesHtmlStatus == PwaCapabilityCheckStatus.Failed)
             {
+                logger.LogWarning("Completed analysis {id} for {url} in {duration} seconds. The URL does not appear to serve HTML content, so no further analysis was performed.", analysis.Id, job.Url, analysis.Duration?.TotalSeconds);
                 return;
             }
 
@@ -166,6 +167,7 @@ public class AnalysisJobProcessor : IHostedService
             analysis.Status = AnalysisStatus.Completed;
             analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
             analysisLogger.FlushLogs();
+            logger.LogInformation("Completed analysis {id} for {url} in {duration} seconds. Manifest result {manifest}, Service worker result {sw}, score {score}", analysis.Id, job.Url, analysis.Duration?.TotalSeconds, analysis.ManifestDetection?.Url, analysis.ServiceWorkerDetection?.Url, analysis.Capabilities.Count(c => c.Status == PwaCapabilityCheckStatus.Passed));
             await db.SaveAsync(analysis);
         }
         catch (Exception error)
