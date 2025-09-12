@@ -135,6 +135,13 @@ namespace PWABuilder.MicrosoftStore.Models
         /// To test out a PWA with App Actions, see the App Actions Testing Playground https://apps.microsoft.com/detail/9plswv2gr8b4
         /// </remarks>
         public WindowsActionsOptions? WindowsActions { get; set; }
+        
+        /// <summary>
+        /// A list of domains that the PWA handles URL redirection for. 
+        /// If empty, your PWA will not register as a handler for any links. 
+        /// If any URIs are specified, your PWA will register as a handler for those URIs. This means clicking a link in e.g. an email client will open the URL in your installed app, rather than in a new browser tab. Additionally, it will mean that if your web app calls navigator.getInstalledRelatedApps(), your installed PWA will be returned.
+        /// </summary>
+        public List<Uri> UriHandlers { get; set; } = [];
 
         public List<string> GetValidationErrors(AppSettings appSettings)
         {
@@ -155,7 +162,7 @@ namespace PWABuilder.MicrosoftStore.Models
                     errors.Add("Package ID must be at least 3 characters");
                 }
             }
-            
+
             if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
             {
                 errors.Add("URL must be a valid absolute URL");
@@ -200,7 +207,7 @@ namespace PWABuilder.MicrosoftStore.Models
                     errors.Add("Invalid classic package version. Must be a version in the 'x.x.x' format.");
                 }
                 else
-                { 
+                {
                     if (version != null && classicVersion >= version)
                     {
                         errors.Add("The classic app package version must be less than the modern app package version.");
@@ -265,13 +272,14 @@ namespace PWABuilder.MicrosoftStore.Models
             }
 
             //Checking if the Device families are valid
-            if(this.TargetDeviceFamilies != null)
+            if (this.TargetDeviceFamilies != null)
             {
-                var deviceFamilies = new[] { "holographic", "desktop", "team"};
+                var deviceFamilies = new[] { "holographic", "desktop", "team" };
                 this.TargetDeviceFamilies = this.TargetDeviceFamilies.Where(deviceFamily => deviceFamily != null && deviceFamily != "").Select(deviceFamily => deviceFamily.Trim()).Distinct().ToList<string>();
                 foreach (string family in this.TargetDeviceFamilies)
                 {
-                    if(!deviceFamilies.Any(c => c == family.ToLower())) {
+                    if (!deviceFamilies.Any(c => c == family.ToLower()))
+                    {
                         errors.Add("TargetDeviceFamilies must contain only the following " + string.Join(", ", deviceFamilies));
                     }
 

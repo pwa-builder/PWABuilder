@@ -164,8 +164,31 @@ namespace PWABuilder.MicrosoftStore.Services
 
             // Generate a legit resources.pri file.
             await makePri.Execute(msixUnpackedDirectory, Directory.CreateDirectory(Path.Combine(outputDirectory, "pri-config")).FullName);
+
             // Repackage the msix.
             var repackagedMsixOutputDir = Directory.CreateDirectory(Path.Combine(outputDirectory, "repackaged")).FullName;
+            return await makeAppx.Execute(msixUnpackedDirectory, repackagedMsixOutputDir);
+        }
+
+        private async Task<string> UpdateMsixWithUriHandlers(PwaBuilderCommandLineResult msixResult, List<Uri> uriHandlers, string outputDirectory)
+        {
+            // We need to crack open the msix and update its AppxManifest.xml to include the uri handlers.
+            // Otherwise, the app won't register as a handler for any links. See https://github.com/pwa-builder/PWABuilder/issues/5104
+
+            if (uriHandlers == null || uriHandlers.Count == 0)
+            {
+                // No URI handlers to add.
+                return msixResult.MsixFile;
+            }
+
+            // Crack open the msix.
+            var msixUnpackedDirectory = Directory.CreateDirectory(Path.Combine(outputDirectory, "unpacked-uri-handlers")).FullName;
+            ZipFile.ExtractToDirectory(msixResult.MsixFile, msixUnpackedDirectory);
+
+            // TODO: Update the AppxManifest.xml file with the URI handlers.            
+
+            // Repackage the msix.
+            var repackagedMsixOutputDir = Directory.CreateDirectory(Path.Combine(outputDirectory, "repackaged-uri-handlers")).FullName;
             return await makeAppx.Execute(msixUnpackedDirectory, repackagedMsixOutputDir);
         }
 
