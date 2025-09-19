@@ -1,10 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 using PWABuilder.Models;
-using PWABuilder.Validations.Models;
 using PWABuilder.Validations.Schema;
 using PWABuilder.Validations.Services;
 

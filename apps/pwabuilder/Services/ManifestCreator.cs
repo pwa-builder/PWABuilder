@@ -3,6 +3,7 @@ using System.Text;
 using HtmlAgilityPack;
 using PWABuilder.Common;
 using PWABuilder.Models;
+using PWABuilder.Models.W3C;
 
 namespace PWABuilder.Services;
 

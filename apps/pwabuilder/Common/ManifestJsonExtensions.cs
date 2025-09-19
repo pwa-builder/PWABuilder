@@ -1,11 +1,11 @@
 using System.Text.Json;
-using PWABuilder.Validations.Models;
+using PWABuilder.Models.W3C;
 
 namespace PwaBuilder.Common;
 
 public static class ManifestJsonExtensions
 {
-    public static IEnumerable<Icon> GetIcons(this JsonElement manifest)
+    public static IEnumerable<WebManifestIcon> GetIcons(this JsonElement manifest)
     {
         var hasIcons = manifest.TryGetProperty("icons", out var icons)
             && icons.ValueKind == JsonValueKind.Array
@@ -23,7 +23,7 @@ public static class ManifestJsonExtensions
     /// </summary>
     /// <param name="icons">The icons to sort.</param>
     /// <returns>A new sorted list, with the most suitable first.</returns>
-    public static IEnumerable<Icon> OrderBySuitableAppIcon(this IEnumerable<Icon> icons)
+    public static IEnumerable<WebManifestIcon> OrderBySuitableAppIcon(this IEnumerable<WebManifestIcon> icons)
     {
         return icons
             .OrderByDescending(icon => !string.IsNullOrWhiteSpace(icon.Src))
@@ -37,7 +37,7 @@ public static class ManifestJsonExtensions
             .ThenByDescending(i => i.Purpose == "any" || i.Purpose == "");
     }
     
-    private static Icon ParseIcon(JsonElement icon)
+    private static WebManifestIcon ParseIcon(JsonElement icon)
     {
         var hasSrc = icon.TryGetProperty("src", out var src)
             && src.ValueKind == JsonValueKind.String
@@ -57,7 +57,7 @@ public static class ManifestJsonExtensions
             && purpose.ValueKind == JsonValueKind.String;
         var purposeVal = hasPurpose ? purpose.GetString() ?? string.Empty : "any";
 
-        return new Icon
+        return new WebManifestIcon
         {
             Src = srcVal,
             Sizes = sizeVal,

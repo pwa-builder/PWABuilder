@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using PWABuilder.Models;
-using PWABuilder.Validations.Models;
-using PWABuilder.Validations.Services;
 
 namespace PWABuilder.Services;
 
@@ -167,7 +165,7 @@ public class AnalysisJobProcessor : IHostedService
             analysis.Status = AnalysisStatus.Completed;
             analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
             analysisLogger.FlushLogs();
-            logger.LogInformation("Completed analysis {id} for {url} in {duration} seconds. Manifest result {manifest}, Service worker result {sw}, score {score}", analysis.Id, job.Url, analysis.Duration?.TotalSeconds, analysis.ManifestDetection?.Url, analysis.ServiceWorkerDetection?.Url, analysis.Capabilities.Count(c => c.Status == PwaCapabilityCheckStatus.Passed));
+            logger.LogInformation("Completed analysis {id} for {url} in {duration} seconds. Manifest result {manifest}, Service worker result {sw}, score {score}", analysis.Id, job.Url, analysis.Duration?.TotalSeconds, analysis.WebManifest?.Url, analysis.ServiceWorker?.Url, analysis.Capabilities.Count(c => c.Status == PwaCapabilityCheckStatus.Passed));
             await db.SaveAsync(analysis);
         }
         catch (Exception error)

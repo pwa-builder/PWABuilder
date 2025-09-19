@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
 using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
-using PWABuilder.Validations.Models;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace PWABuilder.Services;

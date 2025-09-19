@@ -1,6 +1,4 @@
-﻿using PWABuilder.Validations.Models;
-
-namespace PWABuilder.Models;
+﻿namespace PWABuilder.Models;
 
 /// <summary>
 /// Result of a service worker detection for a web app.

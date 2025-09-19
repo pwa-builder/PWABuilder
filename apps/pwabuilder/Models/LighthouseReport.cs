@@ -1,4 +1,3 @@
-using PWABuilder.Validations.Models;
 using System.Text.Json.Serialization;
 
 namespace PWABuilder.Models;
