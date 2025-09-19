@@ -156,7 +156,25 @@ public class ManifestDetector
             return null;
         }
 
-        var manifest = JsonSerializer.Deserialize<JsonElement>(manifestJson);
+        // Make sure the JSON doesn't start with `<`, which indicates an HTML page (probably a 404). This tends to happen often with apps that
+        // have a manifest link but the link is broken. e.g. https://github.com/pwa-builder/PWABuilder/issues/5094
+        if (manifestJson.TrimStart().StartsWith('<'))
+        {
+            logger.LogWarning("Manifest at {manifestUrl} appears to be HTML, not JSON. {manifestJsonResponse}", manifestUrl, manifestJson);
+            return null;
+        }
+
+        JsonElement manifest;
+        try
+        {
+            manifest = JsonSerializer.Deserialize<JsonElement>(manifestJson);
+        }
+        catch (Exception jsonError)
+        {
+            logger.LogWarning(jsonError, "Error parsing manifest JSON at {manifestUrl}.", manifestUrl);
+            return null;
+        }
+        
         return new ManifestDetection
         {
             Url = manifestUrl,
