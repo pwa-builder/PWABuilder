@@ -1,0 +1,66 @@
+# This GitHub Action workflow runs on checkin to main branch.
+# It pushes the changes to the pwabuilder\cloudapk-prod repository in ACR.
+# It then deploys the container app to the Azure Web App's staging slot.
+
+name: Build and deploy container app to Azure Web App - pwabuilder-cloudapk
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/pwabuilder-google-play/**"
+  workflow_dispatch: null
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Login with Azure CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to Azure docker registry (ACR)
+        run: az acr login --name pwabuilder
+          
+      - name: Run docker build
+        run: |
+          docker build . -t pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
+          docker push pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    needs: build
+    environment:
+      name: staging
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Login with Azure CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: pwabuilder-cloudapk
+          slot-name: staging
+          images: pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
