@@ -2,7 +2,7 @@
 # It pushes the changes to the pwabuilder\cloudapk-prod repository in ACR.
 # It then deploys the container app to the Azure Web App's staging slot.
 
-name: Build and deploy container app to Azure Web App - pwabuilder-cloudapk
+name: Deploy Google Play packager to staging
 
 on:
   push:
