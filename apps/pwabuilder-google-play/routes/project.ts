@@ -477,7 +477,7 @@ async function createLocalSigninKeyInfo(
     }
 
     const fileBuffer = base64ToBuffer(apkSettings.signing.file);
-    await fs.promises.writeFile(keyFilePath, fileBuffer);
+    await fs.writeFile(keyFilePath, new Uint8Array(fileBuffer));
   }
 
   function base64ToBuffer(base64: string): Buffer {
@@ -666,11 +666,8 @@ function getAndroidOptionsWithSafeUrls(
   for (let prop of absoluteUrlProps) {
     const url = newOptions[prop];
     if (url && typeof url === 'string') {
-      const safeUrlFetcherEndpoint =
-        'https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl';
-      const safeUrl = `${safeUrlFetcherEndpoint}?url=${encodeURIComponent(
-        url
-      )}`;
+      const safeUrlFetcherEndpoint = 'https://pwabuilder.com/api/images/getsafeimageforanalysis';
+      const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(url)}`;
       (newOptions[prop] as any) = safeUrl;
     }
   }

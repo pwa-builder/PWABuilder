@@ -10,7 +10,7 @@ if (configResult.error) {
     console.info("Configured with environment file", configResult.parsed);
 }
 
-const port = process.env.PORT || 3333;
+const port = process.env.PORT || 5858;
 
 const jdk8Path = process.env.JDK8PATH;
 const androidDevToolsPath = process.env.ANDROIDTOOLSPATH;
