@@ -102,9 +102,9 @@ RUN npm ci --only=production
 # Copy built application
 COPY --from=builder /app .
 
-ENV PORT=5858
+ENV PORT=80
 EXPOSE $PORT
 
-CMD ["npm", "start"]
+CMD npm start
 
 
