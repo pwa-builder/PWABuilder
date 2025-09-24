@@ -93,13 +93,11 @@ RUN npm run build
 FROM builder AS app
 WORKDIR /app
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app .
 
 ENV PORT=5858
 EXPOSE $PORT
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
 
 
