@@ -90,9 +90,16 @@ ENV NODE_ENV=production
 RUN npm install
 RUN npm run build
 
-FROM builder AS app
+FROM node-final AS production
 WORKDIR /app
 
+# Copy package files first
+COPY --from=builder /app/package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production
+
+# Copy built application
 COPY --from=builder /app .
 
 ENV PORT=5858
