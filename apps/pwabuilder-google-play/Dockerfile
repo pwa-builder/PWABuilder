@@ -83,7 +83,7 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
 FROM node-final AS builder
 WORKDIR /app
 
-COPY package*.json tsconfig.json ./
+COPY package.json package-lock.json tsconfig.json ./
 COPY . .
 
 ENV NODE_ENV=development
@@ -100,5 +100,5 @@ COPY --from=builder /app .
 ENV PORT=5858
 EXPOSE 5858
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
 
