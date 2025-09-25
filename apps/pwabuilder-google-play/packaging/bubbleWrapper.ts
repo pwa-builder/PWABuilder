@@ -65,7 +65,10 @@ export class BubbleWrapper {
    */
   async generateAppPackage(): Promise<GeneratedAppPackage> {
     // Create an optimized APK.
+    console.info('Generating TWA project...');
     await this.generateTwaProject();
+
+    console.info('Building APK...');
     const apkPath = await this.buildApk();
 
     // Do we have a signing key?
@@ -79,11 +82,15 @@ export class BubbleWrapper {
         this.signingKeyInfo.storePassword = passToUse;
       }
 
+      console.log('Signing APK...');
       const signedApkPath = await this.signApk(apkPath, this.signingKeyInfo);
       const assetLinksPath = await this.tryGenerateAssetLinks(
         this.signingKeyInfo
       );
+
+      console.info('Building App Bundle...');
       const appBundlePath = await this.buildAppBundle(this.signingKeyInfo);
+      console.info("App bundle built successfully.");
       return {
         projectDirectory: this.projectDirectory,
         appBundleFilePath: appBundlePath,
@@ -187,6 +194,7 @@ export class BubbleWrapper {
       this.androidSdkTools,
       this.projectDirectory
     );
+    console.info("Building the APK with Gradle...");
     await gradleWrapper.assembleRelease();
     return `${this.projectDirectory}/app/build/outputs/apk/release/app-release-unsigned.apk`;
   }

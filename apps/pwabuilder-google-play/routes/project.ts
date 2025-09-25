@@ -378,10 +378,12 @@ async function createAppPackage(
   let projectDir: tmp.DirResult | null = null;
   try {
     // Create a temporary directory where we'll do all our work.
+    console.info("Creating temp directory...");
     projectDir = tmp.dirSync({ prefix: 'pwabuilder-cloudapk-' });
     const projectDirPath = projectDir.name;
 
     // Get the signing information.
+    console.info("Creating signing information...");
     const signing = await createLocalSigninKeyInfo(options, projectDirPath);
 
     // Generate the APK, keys, and digital asset links.
@@ -425,7 +427,7 @@ async function createAppPackageWith403Fallback(
     return await bubbleWrapper.generateAppPackage();
   } catch (error) {
     const errorMessage = (error as Error)?.message || '';
-    console.log('ERROR MESSAGE', errorMessage);
+    console.error('Unable to generate app package due to error. Checking if error is 403.', errorMessage);
     const is403Error =
       errorMessage.includes('403') ||
       errorMessage.includes('ECONNREFUSED') ||
