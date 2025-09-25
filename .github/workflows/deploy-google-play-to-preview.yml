@@ -33,11 +33,14 @@ jobs:
 
       - name: Log in to Azure docker registry (ACR)
         run: az acr login --name pwabuilder
-          
-      - name: Run docker build
-        run: |
-          docker build -f apps/pwabuilder-google-play/Dockerfile apps/pwabuilder-google-play -t pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
-          docker push pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
+
+      - name: Docker build
+        working-directory: ./apps/pwabuilder-google-play
+        run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest -m 2GB
+
+      - name: Docker push
+        working-directory: ./apps/pwabuilder-google-play
+        run: docker push pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
 
   deploy:
     runs-on: ubuntu-latest
