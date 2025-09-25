@@ -1,5 +1,5 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
-FROM ubuntu:20.04  AS ubuntu
+FROM --platform=linux/amd64 ubuntu:20.04  AS ubuntu
 
 ARG ANDROID_SDK_TOOLS_VERSION="11076708"
 ARG NODE_VERSION="20.x"
@@ -86,25 +86,19 @@ WORKDIR /app
 COPY package*.json tsconfig.json ./
 COPY . .
 
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 RUN npm install
-RUN npm run build
 
-FROM node-final AS production
+FROM builder AS app
 WORKDIR /app
 
-# Copy package files first
 COPY --from=builder /app/package*.json ./
+RUN npm install
 
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy built application
 COPY --from=builder /app .
 
-ENV PORT=80
-EXPOSE $PORT
+ENV PORT=5858
+EXPOSE 5858
 
-CMD npm start
-
+CMD ["node", "server.js"]
 
