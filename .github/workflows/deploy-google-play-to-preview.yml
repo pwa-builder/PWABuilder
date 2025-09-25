@@ -36,7 +36,7 @@ jobs:
           
       - name: Run docker build
         run: |
-          docker build . -t pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
+          docker build -f apps/pwabuilder-google-play/Dockerfile apps/pwabuilder-google-play -t pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
           docker push pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:latest
 
   deploy:
