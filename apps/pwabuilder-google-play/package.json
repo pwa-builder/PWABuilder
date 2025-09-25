@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/pwa-builder/pwabuilder-google-play/",
   "dependencies": {
-    "@bubblewrap/core": "^1.23.0",
+    "@bubblewrap/core": "^1.24.0",
     "@resvg/resvg-js": "^2.4.1",
     "archiver": "^5.3.1",
     "body-parser": "^1.20.2",
