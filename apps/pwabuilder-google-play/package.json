@@ -31,7 +31,6 @@
     "dotenv": "^16.0.3",
     "escape-html": "^1.0.3",
     "express": "^4.21.2",
-    "express-rate-limit": "^8.1.0",
     "fs-extra": "^11.1.0",
     "lodash": "^4.17.21",
     "multer": "2.0.2",
