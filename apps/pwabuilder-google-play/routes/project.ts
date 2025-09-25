@@ -32,6 +32,7 @@ tmp.setGracefulCleanup(); // remove any tmp file artifacts on process exit
 router.post(
   ['/generateAppPackage', '/generateApkZip'],
   async function (request: express.Request, response: express.Response) {
+    console.info("Received app package request");
     const apkRequest = validateApkRequest(request);
     const platformId = request.headers['platform-identifier'];
     const platformIdVersion = request.headers['platform-identifier-version'];
@@ -55,15 +56,18 @@ router.post(
         false,
         errorMessage
       );
+      console.error("Package request was invalid", errorMessage);
       trackEvent(analyticsInfo, errorMessage, false);
       response.status(500).send(escape(errorMessage));
       return;
     }
 
     try {
+      console.info("Generating app package...");
       const appPackage = await createAppPackage(apkRequest.options);
 
       // Create our zip file containing the APK, readme, and signing info.
+      console.info("Zipping app package...");
       const zipFile = await zipAppPackage(appPackage, apkRequest.options);
       response.sendFile(zipFile, {});
       logUrlResult(
@@ -72,7 +76,7 @@ router.post(
         null
       );
       trackEvent(analyticsInfo, null, true);
-      console.info('Process completed successfully.');
+      console.info('Package generation completed successfully.');
     } catch (err) {
       console.error('Error generating app package', err);
       const errorString = errorToString(err);
@@ -181,8 +185,10 @@ router.get(
 
     try {
       // @sarif-suppress 195 Justification: while this URL is user-provided, we check it for SSRF above.
+      console.info("Fetching URL", parsedUrl);
       fetchResult = await fetch(parsedUrl);
     } catch (fetchError) {
+      console.error("Unable to fetch URL", url, fetchError);
       response
         .status(500)
         .send(`Unable to initiate fetch for ${escape(url)}. Error: ${escape(String(fetchError))}`);

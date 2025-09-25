@@ -10,6 +10,15 @@ if (configResult.error) {
     console.info("Configured with environment file", configResult.parsed);
 }
 
+
+// Add global error handlers for diagnostics
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+});
+
 const port = process.env.PORT || 5858;
 
 const jdk8Path = process.env.JDK8PATH;
