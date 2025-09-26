@@ -12,15 +12,15 @@ import {
 } from '@bubblewrap/core';
 import { ShortcutInfo } from '@bubblewrap/core/dist/lib/ShortcutInfo.js';
 import { findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
-import { AndroidPackageOptions } from './androidPackageOptions.js';
+import { AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import fs from 'fs-extra';
 import {
   KeyTool,
   CreateKeyOptions,
 } from '@bubblewrap/core/dist/lib/jdk/KeyTool.js';
 import { WebManifestShortcutJson } from '@bubblewrap/core/dist/lib/types/WebManifest.js';
-import { LocalKeyFileSigningOptions } from './signingOptions.js';
-import { GeneratedAppPackage } from './generatedAppPackage.js';
+import { LocalKeyFileSigningOptions } from '../models/signingOptions.js';
+import { GeneratedAppPackage } from '../models/generatedAppPackage.js';
 import { TwaManifestJson } from '@bubblewrap/core/dist/lib/TwaManifest.js';
 import { fetchUtils } from '@bubblewrap/core';
 import { FetchEngine } from '@bubblewrap/core/dist/lib/FetchUtils.js';

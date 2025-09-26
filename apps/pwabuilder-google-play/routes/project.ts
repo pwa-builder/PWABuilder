@@ -1,24 +1,23 @@
 import express, { response } from 'express';
 import escape from 'escape-html';
-import { BubbleWrapper } from '../packaging/bubbleWrapper.js';
-import { AndroidPackageOptions as AndroidPackageOptions } from '../packaging/androidPackageOptions.js';
+import { BubbleWrapper } from '../services/bubbleWrapper.js';
+import { AndroidPackageOptions as AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import { join } from 'path';
-import tmp, { dir } from 'tmp';
+import tmp from 'tmp';
 import net from 'net';
 import archiver from 'archiver';
 import fs from 'fs-extra';
 import {
   LocalKeyFileSigningOptions,
   SigningOptions,
-} from '../packaging/signingOptions.js';
+} from '../models/signingOptions.js';
 import { deleteAsync } from 'del';
-import { GeneratedAppPackage } from '../packaging/generatedAppPackage.js';
-import { AppPackageRequest } from '../packaging/appPackageRequest.js';
+import { GeneratedAppPackage } from '../models/generatedAppPackage.js';
+import { AppPackageRequest } from '../models/appPackageRequest.js';
 import generatePassword from 'password-generator';
 import fetch, { Response } from 'node-fetch';
-import { logUrlResult } from '../packaging/urlLogger.js';
 import { errorToString } from '../packaging/utils.js';
-import { AnalyticsInfo, trackEvent } from '../packaging/analytics.js';
+import { AnalyticsInfo, trackEvent } from '../services/analytics.js';
 
 const router = express.Router();
 
@@ -48,14 +47,10 @@ router.post(
       correlationId: correlationId ? correlationId.toString() : null,
       referrer: request.query.ref ? request.query.ref.toString() : null,
     };
+    
     if (apkRequest.validationErrors.length > 0 || !apkRequest.options) {
       const errorMessage =
         'Invalid PWA settings: ' + apkRequest.validationErrors.join(', ');
-      logUrlResult(
-        apkRequest.options?.pwaUrl || apkRequest.options?.host || '',
-        false,
-        errorMessage
-      );
       console.error("Package request was invalid", errorMessage);
       trackEvent(analyticsInfo, errorMessage, false);
       response.status(500).send(escape(errorMessage));
@@ -70,21 +65,11 @@ router.post(
       console.info("Zipping app package...");
       const zipFile = await zipAppPackage(appPackage, apkRequest.options);
       response.sendFile(zipFile, {});
-      logUrlResult(
-        apkRequest.options.pwaUrl || apkRequest.options.host,
-        true,
-        null
-      );
       trackEvent(analyticsInfo, null, true);
       console.info('Package generation completed successfully.');
     } catch (err) {
       console.error('Error generating app package', err);
       const errorString = errorToString(err);
-      logUrlResult(
-        apkRequest.options.pwaUrl || apkRequest.options.host,
-        false,
-        'Error generating app package ' + errorToString
-      );
       trackEvent(analyticsInfo, errorString, false);
       response
         .status(500)

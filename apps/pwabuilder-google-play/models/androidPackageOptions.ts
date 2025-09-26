@@ -10,6 +10,10 @@ import { SigningOptions } from "./signingOptions.js";
  */
 export type AndroidPackageOptions = {
     /**
+     * The ID of the PWABuilder analysis that is associated with this Google Play app package creation. May be null if the package creation was triggered outside of PWABuilder.
+     */
+    analysisId: string | null;
+    /**
      * Additional origins to be considered trusted by the app.
      */
     additionalTrustedOrigins?: string[],
@@ -170,4 +174,14 @@ export type AndroidPackageOptions = {
      * The URL of the PWA as input to pwabuilder.com
      */
     pwaUrl: string;
+
+    /**
+     * Optional information to include with telemetry events fired during this package creation.
+     */
+    analyticsInfo?: {
+        platformId?: string | null;
+        platformIdVersion?: string | null;
+        correlationId?: string | null;
+        referrer?: string | null;
+    } | null;
 }
