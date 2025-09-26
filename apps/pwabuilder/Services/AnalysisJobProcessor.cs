@@ -1,8 +1,3 @@
-
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using PWABuilder.Models;
 
 namespace PWABuilder.Services;
@@ -14,7 +9,7 @@ public class AnalysisJobProcessor : IHostedService
 {
     private const int MaxRetryCount = 3;
     private readonly IAnalysisJobQueue queue;
-    private readonly IAnalysisDb db;
+    private readonly IPWABuilderDatabase db;
     private CancellationTokenSource? abortToken;
     private Task? jobProcessorTask;
     private readonly ManifestDetector manifestDetector;
@@ -27,7 +22,7 @@ public class AnalysisJobProcessor : IHostedService
 
     public AnalysisJobProcessor(
         IAnalysisJobQueue queue, 
-        IAnalysisDb db, 
+        IPWABuilderDatabase db, 
         ManifestDetector manifestDetector,
         ManifestAnalyzer manifestAnalyzer,
         ServiceWorkerDetector serviceWorkerDetector,
@@ -102,7 +97,7 @@ public class AnalysisJobProcessor : IHostedService
         try
         {
             // Grab the actual analysis object from the database.
-            var analysis = await db.GetByIdAsync(job.AnalysisId);
+            var analysis = await db.GetByIdAsync<Analysis>(job.AnalysisId);
             if (analysis == null)
             {
                 await RetryJobOrFail(job, new Exception($"Analysis with ID {job.AnalysisId} was not found."));
@@ -114,7 +109,7 @@ public class AnalysisJobProcessor : IHostedService
 
             // Mark the analysis as processing.
             analysis.Status = AnalysisStatus.Processing;
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
 
             // Create our own cancellation token source so that we can manually cancel this.
             // Link it to the parent cancellation token to monitor that as well.
@@ -131,7 +126,7 @@ public class AnalysisJobProcessor : IHostedService
             var generalCapabilities = await generalCapDetectionTask;
             analysis.ProcessCapabilities(generalCapabilities);
             var servesHtmlStatus = FailIfNotServedHtml(analysis, cancelTokenSrc);
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
             if (servesHtmlStatus == PwaCapabilityCheckStatus.Failed)
             {
                 logger.LogWarning("Completed analysis {id} for {url} in {duration} seconds. The URL does not appear to serve HTML content, so no further analysis was performed.", analysis.Id, job.Url, analysis.Duration?.TotalSeconds);
@@ -140,33 +135,33 @@ public class AnalysisJobProcessor : IHostedService
 
             // Step 2: find the manifest.
             analysis.WebManifest = await manifestDetectionTask;
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
 
             // Step 3: analyze the manifest for validity and capabilities.
             var manifestCapabilities = await manifestAnalysisTask;
             analysis.ProcessCapabilities(manifestCapabilities);
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
 
             // Step 4: find the service worker.
             analysis.ServiceWorker = await serviceWorkerDetectionTask;
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
 
             // Step 5: analyze the service worker to determine capabilities like push notifications, background sync, etc.
             var swCapabilities = await serviceWorkerAnalysisTask;
             analysis.ProcessCapabilities(swCapabilities);
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
 
             // Step 6, check for HTTPS.
             var httpsCapabilities = TryCheckHttpsCapabilities(job.Url, analysis.WebManifest, analysis.ServiceWorker);
             analysis.ProcessCapabilities(httpsCapabilities);
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
 
             // All done! Mark the analysis as completed.
             analysis.Status = AnalysisStatus.Completed;
             analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
             analysisLogger.FlushLogs();
             logger.LogInformation("Completed analysis {id} for {url} in {duration} seconds. Manifest result {manifest}, Service worker result {sw}, score {score}", analysis.Id, job.Url, analysis.Duration?.TotalSeconds, analysis.WebManifest?.Url, analysis.ServiceWorker?.Url, analysis.Capabilities.Count(c => c.Status == PwaCapabilityCheckStatus.Passed));
-            await db.SaveAsync(analysis);
+            await db.SaveAsync(analysis.Id, analysis);
         }
         catch (Exception error)
         {
@@ -267,7 +262,7 @@ public class AnalysisJobProcessor : IHostedService
     {
         try
         {
-            var analysis = await db.GetByIdAsync(analysisId);            
+            var analysis = await db.GetByIdAsync<Analysis>(analysisId);
             if (analysis != null)
             {
                 analysis.Status = AnalysisStatus.Failed;
@@ -276,7 +271,7 @@ public class AnalysisJobProcessor : IHostedService
                     .Where(capability => capability.Status == PwaCapabilityCheckStatus.InProgress)
                     .ToList()
                     .ForEach(capability => capability.Status = PwaCapabilityCheckStatus.Skipped);
-                await db.SaveAsync(analysis);
+                await db.SaveAsync(analysis.Id, analysis);
             }
             else
             {

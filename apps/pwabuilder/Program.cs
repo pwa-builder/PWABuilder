@@ -4,10 +4,10 @@ using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using PWABuilder.Services;
 using PWABuilder.Common;
 using PWABuilder.IOS.Services;
 using PWABuilder.Models;
-using PWABuilder.Services;
 using PWABuilder.Utils;
 using PWABuilder.Validations.Services;
 using StackExchange.Redis;
@@ -34,19 +34,19 @@ builder.Services.AddTransient<ImageGenerator>();
 builder.Services.AddTransient<IOSPackageCreator>();
 if (builder.Environment.IsDevelopment())
 {
-    // In development, we use an in-memory queue for analysis jobs. This prevents issues around using Azure Managed Identity authentication locally.
+    // In development, we use an in-memory queue for analysis jobs and store package jobs. This prevents issues around using Azure Managed Identity authentication locally.
     builder.Services.AddSingleton<IAnalysisJobQueue, InMemoryAnalysisJobQueue>();
 
     // In development, we use an in-memory database for Analysis objects. This makes local development and testing simpler, as we don't need to connect to Redis.
-    builder.Services.AddSingleton<IAnalysisDb, InMemoryAnalysisDb>();
+    builder.Services.AddSingleton<IPWABuilderDatabase, InMemoryPWABuilderDatabase>();
 }
 else
 {
     // In production, we use an Azure Queue with Managed Identity authentication.
     builder.Services.AddSingleton<IAnalysisJobQueue, AnalysisJobQueue>();
 
-    // In production, we use AnalysisDb, which uses Redis as a backing store.
-    builder.Services.AddSingleton<IAnalysisDb, AnalysisDb>();
+    // In production, we use PWABuilderDatabase, which uses Redis as a backing store.
+    builder.Services.AddSingleton<IPWABuilderDatabase, PWABuilderDatabase>();
 }
 builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
