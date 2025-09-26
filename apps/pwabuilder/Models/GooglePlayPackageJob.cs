@@ -51,4 +51,9 @@ public class GooglePlayPackageJob
         var lastSixChars = hashStr[^Math.Min(6, hashStr.Length)..];
         return $"googleplaypackagejob:{uri.Host}:{lastSixChars}";
     }
+
+    /// <summary>
+    /// Logs generated during processing of this job, if any. This may be displayed to the user.
+    /// </summary>
+    public List<string> Logs { get; set; } = [];
 }

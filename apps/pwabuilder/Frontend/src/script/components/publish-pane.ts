@@ -1128,7 +1128,8 @@ export class PublishPane extends LitElement {
   // Load form data after rendering the form
   updated(changedProps: Map<string, any>) {
     if (changedProps.has('cardsOrForm') && !this.cardsOrForm) {
-      setTimeout(() => this.loadFormData(), 0);
+      // COMMENTED OUT: this was causing all kinds of unintended problems.
+      // setTimeout(() => this.loadFormData(), 0);
     }
   }
 
