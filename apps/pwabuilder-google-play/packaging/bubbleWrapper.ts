@@ -208,12 +208,8 @@ export class BubbleWrapper {
       // Create a gradle.properties file to set up the build environment.
       // These properties help with build performance and stability. See https://docs.gradle.org/current/userguide/performance.html
       gradlePropertiesFilePath = join(this.projectDirectory, 'gradle.properties');
-      const gradlePropertiesContent = `
-      org.gradle.parallel=true
-      org.gradle.daemon=true
-      org.gradle.jvmargs=-Xmx2048M
-      `;
-    await fs.writeFile(gradlePropertiesFilePath, gradlePropertiesContent);
+      const gradlePropertiesContent = "org.gradle.parallel=true\norg.gradle.daemon=true\norg.gradle.jvmargs=-Xmx2048M";
+      await fs.writeFile(gradlePropertiesFilePath, gradlePropertiesContent);
     } catch (error) {
       console.warn("Couldn't write gradle.properties file. Proceeding without it.", error, gradlePropertiesFilePath);
     }
