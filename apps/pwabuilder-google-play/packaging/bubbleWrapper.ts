@@ -25,6 +25,7 @@ import { TwaManifestJson } from '@bubblewrap/core/dist/lib/TwaManifest.js';
 import { fetchUtils } from '@bubblewrap/core';
 import { FetchEngine } from '@bubblewrap/core/dist/lib/FetchUtils.js';
 import generatePassword from 'password-generator';
+import { join } from 'path';
 
 /*
  * Wraps Google's bubblewrap to build a signed APK from a PWA.
@@ -189,6 +190,8 @@ export class BubbleWrapper {
   }
 
   private async buildApk(): Promise<string> {
+    this.tryWriteGradlePropertiesFile();
+
     const gradleWrapper = new GradleWrapper(
       process,
       this.androidSdkTools,
@@ -197,6 +200,23 @@ export class BubbleWrapper {
     console.info("Building the APK with Gradle...");
     await gradleWrapper.assembleRelease();
     return `${this.projectDirectory}/app/build/outputs/apk/release/app-release-unsigned.apk`;
+  }
+
+  private async tryWriteGradlePropertiesFile() {
+    let gradlePropertiesFilePath = "";
+    try {
+      // Create a gradle.properties file to set up the build environment.
+      // These properties help with build performance and stability. See https://docs.gradle.org/current/userguide/performance.html
+      gradlePropertiesFilePath = join(this.projectDirectory, 'gradle.properties');
+      const gradlePropertiesContent = `
+      org.gradle.parallel=true
+      org.gradle.daemon=true
+      org.gradle.jvmargs=-Xmx2048M
+      `;
+    await fs.writeFile(gradlePropertiesFilePath, gradlePropertiesContent);
+    } catch (error) {
+      console.warn("Couldn't write gradle.properties file. Proceeding without it.", error, gradlePropertiesFilePath);
+    }
   }
 
   private async signApk(
