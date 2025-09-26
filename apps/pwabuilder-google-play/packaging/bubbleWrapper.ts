@@ -190,7 +190,6 @@ export class BubbleWrapper {
   }
 
   private async buildApk(): Promise<string> {
-    this.tryWriteGradlePropertiesFile();
 
     const gradleWrapper = new GradleWrapper(
       process,
@@ -200,19 +199,6 @@ export class BubbleWrapper {
     console.info("Building the APK with Gradle...");
     await gradleWrapper.assembleRelease();
     return `${this.projectDirectory}/app/build/outputs/apk/release/app-release-unsigned.apk`;
-  }
-
-  private async tryWriteGradlePropertiesFile() {
-    let gradlePropertiesFilePath = "";
-    try {
-      // Create a gradle.properties file to set up the build environment.
-      // These properties help with build performance and stability. See https://docs.gradle.org/current/userguide/performance.html
-      gradlePropertiesFilePath = join(this.projectDirectory, 'gradle.properties');
-      const gradlePropertiesContent = "org.gradle.parallel=true\norg.gradle.daemon=true\norg.gradle.jvmargs=-Xmx2048M\nandroid.useAndroidX=true";
-      await fs.writeFile(gradlePropertiesFilePath, gradlePropertiesContent);
-    } catch (error) {
-      console.warn("Couldn't write gradle.properties file. Proceeding without it.", error, gradlePropertiesFilePath);
-    }
   }
 
   private async signApk(
