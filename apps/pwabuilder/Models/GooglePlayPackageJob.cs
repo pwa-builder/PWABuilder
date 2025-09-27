@@ -18,6 +18,11 @@ public class GooglePlayPackageJob
     public required string AnalysisId { get; init; }
 
     /// <summary>
+    /// The current status of the store package job.
+    /// </summary>
+    public required GooglePlayPackageJobStatus Status { get; set; }
+
+    /// <summary>
     /// The date the store package job was created.
     /// </summary>
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;

@@ -1,4 +1,4 @@
-import { GooglePlayPackagingJob } from "../models/googlePlayPackageJob";
+import { GooglePlayPackageJob } from "../models/googlePlayPackageJob";
 import Redis from "ioredis";
 
 /**
@@ -27,7 +27,7 @@ export class PackageJobProcessor {
     }
 
     private async runJobs(): Promise<void> {
-        let job: GooglePlayPackagingJob | null = null;
+        let job: GooglePlayPackageJob | null = null;
         try {
             job = await this.dequeueJob();
 
@@ -46,23 +46,23 @@ export class PackageJobProcessor {
         }
     }
 
-    private async dequeueJob(): Promise<GooglePlayPackagingJob | null> {
+    private async dequeueJob(): Promise<GooglePlayPackageJob | null> {
         const jobJson = await this.redis.lpop(this.jobQueueKey);
         if (!jobJson) {
             return null;
         }
         try {
-            return JSON.parse(jobJson) as GooglePlayPackagingJob;
+            return JSON.parse(jobJson) as GooglePlayPackageJob;
         } catch (err) {
             console.error("Failed to parse Google Play packaging job from Redis", err, jobJson);
             return null;
         }
     }
 
-    private async processJob(job: GooglePlayPackagingJob): Promise<void> {
-        
+    private async processJob(job: GooglePlayPackageJob): Promise<void> {
+
     }
 
-    private async retryJobOrMarkAsFailed(job: GooglePlayPackagingJob, jobError: any): Promise<void> {
+    private async retryJobOrMarkAsFailed(job: GooglePlayPackageJob, jobError: any): Promise<void> {
     }
 }
