@@ -42,11 +42,9 @@ jobs:
         run: docker info
 
       - name: Docker build
-        working-directory: ./apps/pwabuilder-google-play
         run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 4GB
 
       - name: Docker push
-        working-directory: ./apps/pwabuilder-google-play
         run: docker push pwabuilder.azurecr.io/pwabuilder:production
 
       - name: Restart Azure Web App Staging Slot
