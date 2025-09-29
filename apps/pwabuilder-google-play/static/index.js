@@ -142,12 +142,12 @@ async function submit() {
             body: options,
             headers: new Headers({ 'content-type': 'application/json', 'platform-identifier': 'ServerUI', 'platform-identifier-version': '1.0.0' }),
         });
+        const endTime = Date.now();
         if (response.status === 200) {
             const data = await response.blob();
             const url = window.URL.createObjectURL(data);
             window.location.assign(url);
 
-            const endTime = Date.now();
             const duration = endTime - startTime;
             resultsDiv.textContent = `Success. Duration: ${duration} ms, download started 😎`;
         } else {
