@@ -8,7 +8,7 @@
     "start": "node ./server.js",
     "postinstall": "tsc",
     "dev": "node --inspect=5858 --loader ts-node/esm ./server.ts",
-    "build": "tsc",
+    "build": "tsc --noEmitOnError",
     "docker:build": "npm run build && docker build -t cloud-apk .",
     "docker:run": "docker run -p 5779:5858 cloud-apk"
   },
