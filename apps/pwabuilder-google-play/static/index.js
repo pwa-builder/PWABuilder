@@ -33,7 +33,7 @@ function getUnsignedApkOptions() {
         "display": "standalone",
         "enableSiteSettingsShortcut": true,
         "enableNotifications": false,
-        "includeSourceCode": true,
+        "includeSourceCode": false,
         "fallbackType": "customtabs",
         "features": {
             "locationDelegation": {
@@ -130,6 +130,7 @@ function keyFileChosen(e) {
 }
 
 async function submit() {
+    const startTime = Date.now();
     resultsDiv.textContent = "";
 
     setLoading(true);
@@ -146,13 +147,17 @@ async function submit() {
             const url = window.URL.createObjectURL(data);
             window.location.assign(url);
 
-            resultsDiv.textContent = "Success, download started 😎";
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+            resultsDiv.textContent = `Success, download started 😎 (Duration: ${duration} ms)`;
         } else {
             const responseText = await response.text();
             resultsDiv.textContent = `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`;
         }
     } catch (err) {
-        resultsDiv.textContent = "Failed. Error: " + err;
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        resultsDiv.textContent = `Failed. Error: ${err} (Duration: ${duration} ms)`;
     }
     finally {
         setLoading(false);
