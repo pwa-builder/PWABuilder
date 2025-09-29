@@ -9,4 +9,5 @@ export interface GooglePlayPackageJob {
     errors: string[];
     logs: string[];
     packageOptions: AndroidPackageOptions;
+    uploadedBlobFileName: string | null;
 }

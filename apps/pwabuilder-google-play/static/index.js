@@ -149,15 +149,16 @@ async function submit() {
 
             const endTime = Date.now();
             const duration = endTime - startTime;
-            resultsDiv.textContent = `Success, download started 😎 (Duration: ${duration} ms)`;
+            resultsDiv.textContent = `Success. Duration: ${duration} ms, download started 😎`;
         } else {
             const responseText = await response.text();
-            resultsDiv.textContent = `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`;
+            const duration = endTime - startTime;
+            resultsDiv.textContent = `Failed. Duration: ${duration} ms, Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}.`;
         }
     } catch (err) {
         const endTime = Date.now();
         const duration = endTime - startTime;
-        resultsDiv.textContent = `Failed. Error: ${err} (Duration: ${duration} ms)`;
+        resultsDiv.textContent = `Failed. Duration: ${duration} ms, Error: ${err}`;
     }
     finally {
         setLoading(false);

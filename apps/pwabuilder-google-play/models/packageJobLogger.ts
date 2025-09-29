@@ -1,4 +1,5 @@
 import { GooglePlayPackageJob } from "./googlePlayPackageJob.js";
+import { PackageCreationProgress } from "./packageCreationProgress.js";
 
 /**
  * A logger that writes logs to a Google Play packaging job's log storage.
@@ -22,11 +23,21 @@ export class PackageJobLogger {
         this.log("error", message, optionalArgs);
     }
 
+    logProgress(progress: PackageCreationProgress): void {
+        const level = progress.level || "info";
+        this.log(level, progress.message);
+    }
+
     private log(level: "info" | "warn" | "error", message: string, optionalArgs?: any[]): void {
         const timestamp = new Date().toISOString();
         const optionsArgsStr = optionalArgs ? " " + optionalArgs.map(arg => JSON.stringify(arg || "")).join(" ") : "";
         const logEntry = `${timestamp} [${level}]: ${message}${optionsArgsStr}`;
         this.job.logs.push(logEntry);
+
+        if (level === "error") {
+            this.job.errors.push(logEntry);
+        }
+
         console.log(logEntry);
     }
 }

@@ -52,7 +52,7 @@ export class PackageCreator {
     public async createZip(packageOptions: AndroidPackageOptions): Promise<string> {
         const appPackage = await this.create(packageOptions);
         try {
-            const zipFilePath = this.zipAppPackage(appPackage, packageOptions);
+            const zipFilePath = await this.zipAppPackage(appPackage, packageOptions);
             return zipFilePath;
         } catch (err) {
             const errorStr = errorToString(err);
@@ -288,8 +288,10 @@ export class PackageCreator {
                 const output = fs.createWriteStream(tmpZipFile);
                 output.on('close', () => {
                     if (tmpZipFile) {
+                        this.dispatchProgressEvent("App package zipped successfully.");
                         resolve(tmpZipFile);
                     } else {
+                        this.dispatchProgressEvent("An error occurred while creating the zip file.", "error");
                         reject('No zip file was created');
                     }
                 });
@@ -335,8 +337,7 @@ export class PackageCreator {
                 // Zip up the app bundle as well.
                 if (appPackage.appBundleFilePath) {
                     archive.file(appPackage.appBundleFilePath, {
-                        name: `${apkOptions.name}${apkOptions.signingMode === 'none' ? '-unsigned' : ''
-                            }.aab`,
+                        name: `${apkOptions.name}${apkOptions.signingMode === 'none' ? '-unsigned' : ''}.aab`,
                     });
                 }
 

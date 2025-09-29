@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/pwa-builder/pwabuilder-google-play/",
   "dependencies": {
+    "@azure/identity": "^4.12.0",
+    "@azure/storage-blob": "^12.28.0",
     "@bubblewrap/core": "^1.24.0",
     "@resvg/resvg-js": "^2.4.1",
     "@types/archiver": "^3.0.0",
