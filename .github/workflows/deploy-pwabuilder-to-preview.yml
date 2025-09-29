@@ -2,7 +2,7 @@ name: Deploy PWABuilder web app to staging
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - "apps/pwabuilder/**"
   workflow_dispatch:
@@ -11,11 +11,11 @@ env:
   # ACR Configuration
   ACR_RESOURCE_GROUP: pwabuilder-registry
   ACR_NAME: pwabuilder
-  
+
   # Web App Configuration
   WEB_APP_NAME: pwabuilder
-  WEB_APP_RESOURCE_GROUP: pwabuilder-prod  # Replace with your Web App's resource group
-  WEB_APP_SLOT: preview  # Deployment slot name
+  WEB_APP_RESOURCE_GROUP: pwabuilder-prod # Replace with your Web App's resource group
+  WEB_APP_SLOT: preview # Deployment slot name
 
 jobs:
   build-and-deploy:
@@ -23,42 +23,44 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Log in to Azure with Managed Identity
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZURE_APP_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Log in to Azure docker registry (ACR)
-      run: az acr login --name ${{ env.ACR_NAME }}
+      - name: Log in to Azure with Managed Identity
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Docker info
-      run: docker info
+      - name: Log in to Azure docker registry (ACR)
+        run: az acr login --name ${{ env.ACR_NAME }}
 
-    - name: Docker build
-      run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 4GB
+      - name: Docker info
+        run: docker info
 
-    - name: Docker push
-      run: docker push pwabuilder.azurecr.io/pwabuilder:production
-      
-    - name: Restart Azure Web App Staging Slot
-      run: |
-        echo "🔄 Restarting Azure Web App staging slot to pull latest container..."
-        
-        # Force Web App staging slot to pull latest container image
-        az webapp config container set \
-          --name ${{ env.WEB_APP_NAME }} \
-          --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} \
-          --slot ${{ env.WEB_APP_SLOT }} \
-          --docker-custom-image-name pwabuilder.azurecr.io/pwabuilder:production
-        
-        # Restart the Web App staging slot
-        az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} --slot ${{ env.WEB_APP_SLOT }}
-        
-        echo "✅ Web App staging slot restart completed"
+      - name: Docker build
+        working-directory: ./apps/pwabuilder-google-play
+        run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 4GB
+
+      - name: Docker push
+        working-directory: ./apps/pwabuilder-google-play
+        run: docker push pwabuilder.azurecr.io/pwabuilder:production
+
+      - name: Restart Azure Web App Staging Slot
+        run: |
+          echo "🔄 Restarting Azure Web App staging slot to pull latest container..."
+
+          # Force Web App staging slot to pull latest container image
+          az webapp config container set \
+            --name ${{ env.WEB_APP_NAME }} \
+            --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} \
+            --slot ${{ env.WEB_APP_SLOT }} \
+            --docker-custom-image-name pwabuilder.azurecr.io/pwabuilder:production
+
+          # Restart the Web App staging slot
+          az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} --slot ${{ env.WEB_APP_SLOT }}
+
+          echo "✅ Web App staging slot restart completed"
