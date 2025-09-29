@@ -88,6 +88,7 @@ COPY . .
 
 ENV NODE_ENV=development
 RUN npm install
+RUN npm run build
 
 FROM builder AS app
 WORKDIR /app
@@ -100,4 +101,4 @@ COPY --from=builder /app .
 ENV PORT=5858
 EXPOSE 5858
 
-CMD ["node", "server.js"]
+CMD npm start
