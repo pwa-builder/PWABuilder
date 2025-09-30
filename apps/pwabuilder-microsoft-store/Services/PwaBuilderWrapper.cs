@@ -30,9 +30,9 @@ namespace PWABuilder.MicrosoftStore.Services
         protected readonly WindowsActionsService windowsActionService;
 
         public PwaBuilderWrapper(
-            IOptions<AppSettings> settings, 
+            IOptions<AppSettings> settings,
             ProcessRunner procRunner,
-            IWebHostEnvironment host, 
+            IWebHostEnvironment host,
             ILogger<PwaBuilderWrapper> logger,
             IHttpClientFactory httpClientFactory,
             TempDirectory tempDirectory,
@@ -59,12 +59,12 @@ namespace PWABuilder.MicrosoftStore.Services
         /// <param name="fallback"></param>
         /// <returns></returns>
         public async Task<PwaBuilderCommandLineResult> Run(
-            WindowsAppPackageOptions options, 
-            ImageGeneratorResult appImages, 
-            WebAppManifestContext webManifest, 
+            WindowsAppPackageOptions options,
+            ImageGeneratorResult appImages,
+            WebAppManifestContext webManifest,
             string outputDirectory,
             string processor,
-            bool fallback, 
+            bool fallback,
             CancellationToken cancelToken)
         {
             var pwaBuilderFilePath = Path.Combine(host.ContentRootPath, PwaBuilderPath);
@@ -104,16 +104,27 @@ namespace PWABuilder.MicrosoftStore.Services
 
         protected virtual string PwaBuilderPath => settings.PwaBuilderPath;
 
-        private ProcessException CreatePwaBuilderCliError(Exception innerException, string message, WindowsActionsFiles? actionFiles, string outputDirectory, WindowsAppPackageOptions options, string? standardOutput, string? standardErrorOutput, ImageGeneratorResult appImages, WebAppManifestContext webManifest)
+        private ProcessException CreatePwaBuilderCliError(
+            Exception innerException,
+            string message,
+            WindowsActionsFiles? actionFiles,
+            string outputDirectory,
+            WindowsAppPackageOptions options,
+            string? standardOutput,
+            string? standardErrorOutput,
+            ImageGeneratorResult appImages,
+            WebAppManifestContext webManifest)
         {
-            var msixOptionsStr = CreateCommandLineArgs(options, appImages, webManifest, actionFiles, outputDirectory);
+            var pwabuilderCLIArgs = CreateCommandLineArgs(options, appImages, webManifest, actionFiles, outputDirectory);
             var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}");
             var toolFailedError = new ProcessException(formattedMessage, innerException, standardOutput, standardErrorOutput);
             toolFailedError.Data.Add("StandardOutput", standardOutput);
             toolFailedError.Data.Add("StandardError", standardErrorOutput);
             toolFailedError.Data.Add("outputDirectory", outputDirectory);
-            toolFailedError.Data.Add("msixOptions", msixOptionsStr);
+            toolFailedError.Data.Add("pwabuilderCLIArgs", pwabuilderCLIArgs);
             toolFailedError.Data.Add("url", options.Url);
+            toolFailedError.Data.Add("appImagesCount", appImages.ImagePaths.Count);
+            toolFailedError.Data.Add("appImages", appImages.ImagePaths);
             logger.LogError(toolFailedError, toolFailedError.Message);
             return toolFailedError;
         }
@@ -174,16 +185,16 @@ namespace PWABuilder.MicrosoftStore.Services
 
             if (fallback && options.ManifestFilePath != null)
             {
-                args.Add( "manifest-file", options.ManifestFilePath );
+                args.Add("manifest-file", options.ManifestFilePath);
             }
 
-            if(options.EnableWebAppWidgets != null)
+            if (options.EnableWebAppWidgets != null)
             {
-                if(options.EnableWebAppWidgets == true)
+                if (options.EnableWebAppWidgets == true)
                 {
                     args.Add("enable-features", "msWebAppWidgets");
                     //For sideload package, there is no processor specification. For store package, there is.
-                    if (processor != "") 
+                    if (processor != "")
                     {
                         args.Add("processor-architecture", processor);
                     }
@@ -192,9 +203,10 @@ namespace PWABuilder.MicrosoftStore.Services
 
             //Allowed values for targetDeviceFamilies are Holographic, Desktop and Team
             if (options.TargetDeviceFamilies != null)
-            {       
-               string families = string.Join(";", options.TargetDeviceFamilies.Select(family => { 
-                    switch(family.ToLower())
+            {
+                string families = string.Join(";", options.TargetDeviceFamilies.Select(family =>
+                {
+                    switch (family.ToLower())
                     {
                         case "desktop": return "Windows.Desktop";
                         case "holographic": return "Windows.Holographic";
@@ -202,13 +214,13 @@ namespace PWABuilder.MicrosoftStore.Services
                         default: return "";
                     }
 
-                    }));
+                }));
 
                 if (families != null && families != "")
                 {
                     args.Add("target-device-family", families);
                 }
-                
+
             }
 
 
