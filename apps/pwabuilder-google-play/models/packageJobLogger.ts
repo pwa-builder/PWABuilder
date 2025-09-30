@@ -32,12 +32,18 @@ export class PackageJobLogger {
         const timestamp = new Date().toISOString();
         const optionsArgsStr = optionalArgs ? " " + optionalArgs.map(arg => JSON.stringify(arg || "")).join(" ") : "";
         const logEntry = `${timestamp} [${level}]: ${message}${optionsArgsStr}`;
-        this.job.logs.push(logEntry);
 
+        this.job.logs.push(logEntry);
         if (level === "error") {
             this.job.errors.push(logEntry);
         }
 
-        console.log(logEntry);
+        if (level === "warn") {
+            console.warn(message, optionalArgs);
+        } else if (level === "error") {
+            console.error(message, optionalArgs);
+        } else {
+            console.info(message, optionalArgs);
+        }
     }
 }

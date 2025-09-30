@@ -2,7 +2,8 @@ import { AndroidPackageOptions } from "./androidPackageOptions.js";
 
 export interface GooglePlayPackageJob {
     id: string;
-    analysisId: string;
+    pwaUrl: string;
+    analysisId: string | null;
     status: "Queued" | "InProgress" | "Completed" | "Failed";
     createdAt: string;
     retryCount: number;

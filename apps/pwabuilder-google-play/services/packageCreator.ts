@@ -9,10 +9,10 @@ import { base64ToBuffer } from "../utils/base64ToBuffer.js";
 import archiver from 'archiver';
 import { deleteAsync } from 'del';
 import { AnalyticsInfo, trackEvent } from './analytics.js';
-import { errorToString } from '../common/utils.js';
 import { msToFriendly } from "../utils/msToFriendly.js";
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import EventEmitter from "events";
+import { errorToString } from "../utils/errorToString.js";
 
 /**
  * Generates an app package ready for upload to Google Play.

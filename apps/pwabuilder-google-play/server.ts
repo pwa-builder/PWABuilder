@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import app from './app.js';
-// import { PackageJobProcessor } from './services/packageJobProcessor.js';
+import { PackageJobProcessor } from './services/packageJobProcessor.js';
 
 const configResult = dotenv.config({
     path: `./env/${app.get("env")}.env`
@@ -29,8 +29,8 @@ if (!jdk8Path || !androidDevToolsPath) {
 
 // Kick off our background job processor. 
 // This periodically polls Redis for new Google Play packaging jobs and processes them.
-//const jobProcessor = new PackageJobProcessor();
-//jobProcessor.start();
+const jobProcessor = new PackageJobProcessor();
+jobProcessor.start();
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
