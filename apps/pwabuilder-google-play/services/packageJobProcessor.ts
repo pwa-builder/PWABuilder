@@ -34,8 +34,7 @@ export class PackageJobProcessor {
         } catch (jobError) {
             console.error("Error processing Google Play packaging job", jobError);
             if (job) {
-                const fooLogger = jobLogger || new PackageJobLogger(job);
-                this.retryJobOrMarkAsFailed(job, jobError, fooLogger);
+                this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
             }
         } finally {
             // Whether success or failure, queue up another job run.
@@ -47,16 +46,19 @@ export class PackageJobProcessor {
         const packageCreator = new PackageCreator();
         const progressHandler = (e: PackageCreationProgress) => this.jobProgressed(e, job, logger);
         packageCreator.addEventListener("progress", progressHandler);
-
         try {
+            // Mark it as in progress.
+            job.status = "InProgress";
+            await database.save(job.id, job);
+
             const zipFilePath = await packageCreator.createZip(job.packageOptions);
             this.jobProgressed({ level: "info", message: "Successfully generated Google Play package. Saving zip file..." }, job, logger);
             await this.jobCompleted(job, zipFilePath, logger);
 
         } catch (err) {
             logger.error("Error during package creation", err);
-        }
-        finally {
+            throw err;
+        } finally {
             packageCreator.removeEventListener("progress", progressHandler);
         }
     }
@@ -65,13 +67,13 @@ export class PackageJobProcessor {
         if (job.retryCount < this.maxRetryCount) {
             job.retryCount++;
             logger.info("Retrying job", { attempt: job.retryCount + 1, maxAttempts: this.maxRetryCount + 1 });
-            await database.setJson(job.id, job);
+            await database.save(job.id, job);
             await packageJobQueue.requeue(job);
         } else {
             // We've already attempted processing this max times. Mark the job as failed.
             logger.error(`Job failed after ${this.maxRetryCount + 1} attempts.`, jobError);
             job.status = "Failed";
-            await database.setJson(job.id, job);
+            await database.save(job.id, job);
         }
     }
 
@@ -80,7 +82,7 @@ export class PackageJobProcessor {
 
         // Save the job state back to Redis so we have a record of progress.
         try {
-            await database.setJson(job.id, job);
+            await database.save(job.id, job);
         } catch (statusSaveError) {
             // Don't throw the error, we don't want to fail the job just because we couldn't save progress.
             logger.error("Failed to save job progress to Redis", statusSaveError);
@@ -103,7 +105,7 @@ export class PackageJobProcessor {
             job.status = "Completed";
             job.uploadedBlobFileName = blobFileName;
             jobLogger.info(`Successfully uploaded package zip file ${blobFileName}.`);
-            await database.setJson(job.id, job);
+            await database.save(job.id, job);
         } catch (completionError) {
             jobLogger.error("Error marking job as completed.", completionError);
             throw completionError;

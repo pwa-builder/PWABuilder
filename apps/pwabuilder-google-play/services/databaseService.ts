@@ -6,7 +6,7 @@ import { Redis } from "ioredis";
 export interface DatabaseService {
     ready: Promise<void>;
     getJson<T>(key: string): Promise<T | null>;
-    setJson<T>(key: string, value: T): Promise<void>;
+    save<T>(key: string, value: T): Promise<void>;
     dequeue<T>(key: string): Promise<T | null>;
     enqueue<T>(key: string, value: T): Promise<void>;
 }
@@ -63,7 +63,7 @@ export class RedisService implements DatabaseService {
      * @param key The key under which to store the object
      * @param value The object to store
      */
-    async setJson<T>(key: string, value: T): Promise<void> {
+    async save<T>(key: string, value: T): Promise<void> {
         try {
             await this.redis.set(key, JSON.stringify(value));
         } catch (error) {
@@ -110,7 +110,7 @@ class InMemoryDatabaseService implements DatabaseService {
         return Promise.resolve(JSON.parse(jsonOrNull) as T);
     }
 
-    setJson<T>(key: string, value: T): Promise<void> {
+    save<T>(key: string, value: T): Promise<void> {
         this.store.set(key, JSON.stringify(value));
         return Promise.resolve();
     }
