@@ -28,7 +28,7 @@ export class PackageJobLogger {
         this.log(level, progress.message);
     }
 
-    private log(level: "info" | "warn" | "error", message: string, optionalArgs?: any[]): void {
+    private log(level: "info" | "warn" | "error", message: string, ...optionalArgs: any[]): void {
         const timestamp = new Date().toISOString();
         const optionsArgsStr = optionalArgs ? " " + optionalArgs.map(arg => JSON.stringify(arg || "")).join(" ") : "";
         const logEntry = `${timestamp} [${level}]: ${message}${optionsArgsStr}`;

@@ -56,7 +56,7 @@ export class PackageJobQueue {
     }
 
     private createJobFromPackageArgs(packageArgs: AndroidPackageOptions): GooglePlayPackageJob {
-        const hash = createHash(packageArgs).toString();
+        const hash = createHash(packageArgs).toString() + createHash(Date.now());
         const pwaUri = new URL(packageArgs.pwaUrl);
         const id = `googleplaypackagejob:${pwaUri.host}:${hash.slice(-6)}`;
         return {
