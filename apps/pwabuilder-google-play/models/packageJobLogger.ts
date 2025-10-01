@@ -38,12 +38,11 @@ export class PackageJobLogger {
             this.job.errors.push(logEntry);
         }
 
-        if (level === "warn") {
-            console.warn(message, optionalArgs ? optionalArgs : undefined);
-        } else if (level === "error") {
-            console.error(message, optionalArgs ? optionalArgs : undefined);
-        } else {
-            console.info(message, optionalArgs ? optionalArgs : undefined);
-        }
+        const consoleMethod = level === "warn" ? console.warn
+            : level === "error" ? console.error
+                : console.info;
+
+        const args = optionalArgs ? [message, optionalArgs] : [message];
+        consoleMethod(...args);
     }
 }
