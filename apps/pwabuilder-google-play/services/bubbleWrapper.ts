@@ -227,7 +227,7 @@ export class BubbleWrapper {
         }
 
         const outputFile = `${this.projectDirectory}/app-release-signed.apk`;
-        this.dispatchProgressEvent('Signing the APK...');
+        this.dispatchProgressEvent('Signing the app package...');
         await this.androidSdkTools.apksigner(
             signingInfo.keyFilePath,
             `"${signingInfo.storePassword}"`, // Escape the store password, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
@@ -236,7 +236,7 @@ export class BubbleWrapper {
             apkFilePath,
             outputFile
         );
-        this.dispatchProgressEvent('APK signed successfully');
+        this.dispatchProgressEvent('App package signed successfully');
         return outputFile;
     }
 
