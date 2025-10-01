@@ -98,7 +98,7 @@ export class RedisService implements DatabaseService {
 
 class InMemoryDatabaseService implements DatabaseService {
     private readonly store: Map<string, string> = new Map(); // key is ID of the object, value is the JSON string.
-    private readonly queue: any[] = [];
+    private readonly queues: Map<string, any[]> = new Map(); // key is the name of the queue, value is an array of JSON strings representing the items in the queue.
     public readonly ready = Promise.resolve();
 
     getJson<T>(key: string): Promise<T | null> {
@@ -115,8 +115,9 @@ class InMemoryDatabaseService implements DatabaseService {
         return Promise.resolve();
     }
 
-    dequeue<T>(_: string): Promise<T | null> {
-        const firstItemInList = this.queue.shift();
+    dequeue<T>(key: string): Promise<T | null> {
+        const list = this.queues.get(key) || [];
+        const firstItemInList = list.shift();
         if (!firstItemInList) {
             return Promise.resolve(null);
         }
@@ -124,8 +125,10 @@ class InMemoryDatabaseService implements DatabaseService {
         return Promise.resolve(JSON.parse(firstItemInList) as T);
     }
 
-    enqueue<T>(_: string, value: T): Promise<void> {
-        this.queue.push(JSON.stringify(value));
+    enqueue<T>(key: string, value: T): Promise<void> {
+        const list = this.queues.get(key) || [];
+        list.push(JSON.stringify(value));
+        this.queues.set(key, list);
         return Promise.resolve();
     }
 }

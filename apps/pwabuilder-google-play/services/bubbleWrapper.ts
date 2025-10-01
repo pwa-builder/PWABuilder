@@ -86,7 +86,6 @@ export class BubbleWrapper {
         this.dispatchProgressEvent('Creating Trusted Web Activity (TWA) project...');
         await this.generateTwaProject();
 
-        this.dispatchProgressEvent('Building APK...');
         const apkPath = await this.buildApk();
 
         // Do we have a signing key?
@@ -213,7 +212,7 @@ export class BubbleWrapper {
             this.androidSdkTools,
             this.projectDirectory
         );
-        this.dispatchProgressEvent("Building the APK with Gradle...");
+        this.dispatchProgressEvent("Building the app package with Gradle. This can take a few minutes...");
         await gradleWrapper.assembleRelease();
         return `${this.projectDirectory}/app/build/outputs/apk/release/app-release-unsigned.apk`;
     }
