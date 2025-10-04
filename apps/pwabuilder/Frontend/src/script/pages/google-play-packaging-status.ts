@@ -200,6 +200,7 @@ export class GooglePlayPackagingStatus extends LitElement {
             blob = await downloadGooglePlayPackageZip(job.id);
             clearTimeout(this.jobTimeoutHandle);
             this.downloadBlob(blob, job);
+            this.appendLog("Package created successfully. Download has begun.");
         } catch (downloadError) {
             this.downloadFailed(job, downloadError);
         }
@@ -240,11 +241,10 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private downloadBlob(blob: Blob, job: GooglePlayPackageJob): void {
-        console.log("Downloading Google Play package zip file...", job);
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "";
+        a.download = `${job.packageOptions.launcherName || job.packageOptions.name || "My PWA"} - Google Play package.zip`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

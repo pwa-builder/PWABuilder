@@ -4,7 +4,7 @@ export const googlePlayPackagingStatusStyles = css`
     :host {
         padding: 16px;
         display: block;
-        background-image: url("/assets/new/hero1920_withmani.webp");
+        background-image: url("/assets/new/Hero1920_withmani.webp");
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center top;

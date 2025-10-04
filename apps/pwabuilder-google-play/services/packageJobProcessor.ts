@@ -104,7 +104,7 @@ export class PackageJobProcessor {
         try {
             job.status = "Completed";
             job.uploadedBlobFileName = blobFileName;
-            jobLogger.info(`Successfully uploaded package zip file ${blobFileName}.`);
+            jobLogger.info(`Successfully uploaded package zip file ${blobFileName}`);
             await database.save(job.id, job);
         } catch (completionError) {
             jobLogger.error("Error marking job as completed.", completionError);
