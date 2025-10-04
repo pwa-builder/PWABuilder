@@ -248,6 +248,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
     }
 
     private trackPackageFailure(error: unknown): void {
