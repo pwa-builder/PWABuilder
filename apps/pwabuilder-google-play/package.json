@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./server.js",
     "postinstall": "tsc",
-    "dev": "node --inspect=5858 --loader ts-node/esm ./server.ts",
+    "dev": "cross-env NODE_ENV=development node --inspect=5858 --loader ts-node/esm ./server.ts",
     "build": "tsc --noEmitOnError",
     "docker:build": "npm run build && docker build -t cloud-apk .",
     "docker:run": "docker run -p 5779:5858 cloud-apk"
@@ -58,5 +58,8 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.4",
     "unzip2": "^0.2.5"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }

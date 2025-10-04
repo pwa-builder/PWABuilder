@@ -124,13 +124,12 @@ class LocalFileSystemBlobService implements BlobStorage {
 }
 
 // export our blob storage singleton. For local development, this will be a service that uses the local file system. For other environments, it will be a service that uses Azure Storage blob containers.
-const isLocalDevelopment = process.env.NODE_ENV === "development";
-if (isLocalDevelopment) {
+const isLocalDev = process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined;
+if (isLocalDev) {
     console.info("Local development detected, using LocalFileSystemBlobService for blob storage.");
 } else {
     console.info(`${process.env.NODE_ENV} environment detected. Using AzureStorageBlobService for blob storage.`);
 }
-export const blobStorage =
-    isLocalDevelopment ?
-        new LocalFileSystemBlobService() as BlobStorage :
-        new AzureStorageBlobService() as BlobStorage;
+export const blobStorage = isLocalDev ?
+    new LocalFileSystemBlobService() as BlobStorage :
+    new AzureStorageBlobService() as BlobStorage;

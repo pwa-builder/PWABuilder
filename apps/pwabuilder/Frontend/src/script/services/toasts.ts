@@ -31,12 +31,16 @@ export async function showToast(title: string, details: string, variant: "primar
         if (details) {
             body += '<br>';
         }
-    } 
+    }
     if (details) {
         body += details;
     }
-    
+
     toast.innerHTML = body;
     (toast as any).toast();
     return toast;
 }
+
+export async function showDrawer(): Promise<void> {
+
+} 

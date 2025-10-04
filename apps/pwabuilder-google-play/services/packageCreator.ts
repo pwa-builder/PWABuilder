@@ -36,12 +36,12 @@ export class PackageCreator {
             return appPackage;
         } catch (err) {
             const errorStr = errorToString(err);
-            this.dispatchProgressEvent(`Error generating app package: ${errorStr}`, "error");
+            this.dispatchProgressEvent(`Error creating app package: ${errorStr}`, "error");
             this.analyticsTrackPackageCreationFailure(packageOptions, errorStr);
             throw err;
         } finally {
             const durationMs = Date.now() - startTime;
-            this.dispatchProgressEvent(`Finished generating package for ${packageOptions.pwaUrl} in ${msToFriendly(durationMs)}`);
+            this.dispatchProgressEvent(`Process completed in ${msToFriendly(durationMs)}`);
         }
     }
 

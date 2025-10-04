@@ -5,6 +5,7 @@ import { PackageOptions, ShareTarget, ShortcutItem } from './interfaces';
  * It should match the CloudApk service's AndroidPackageOptions interface: https://github.com/pwa-builder/CloudAPK/blob/master/build/androidPackageOptions.ts
  */
 export interface AndroidPackageOptions extends PackageOptions {
+    analysisId?: string | null;
     appVersion: string;
     appVersionCode: number;
     backgroundColor: string;

@@ -65,7 +65,8 @@ export class RedisService implements DatabaseService {
      */
     async save<T>(key: string, value: T): Promise<void> {
         try {
-            await this.redis.set(key, JSON.stringify(value));
+            const expirationSeconds = 90 * 24 * 60 * 60; // 90 days in seconds
+            await this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds);
         } catch (error) {
             console.error(`Error saving JSON to Redis with key ${key}:`, error);
             throw error;
@@ -134,7 +135,7 @@ class InMemoryDatabaseService implements DatabaseService {
 }
 
 // export our database singleton. For local development, this will be an in-memory database. For other environments, it will be a Redis database in Azure.
-const isLocalDev = process.env.NODE_ENV === "development";
+const isLocalDev = process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined;
 if (isLocalDev) {
     console.info("Local development detected, using in-memory database.");
 } else {
