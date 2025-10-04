@@ -216,12 +216,12 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private jobTimedOut(): void {
-        this.appendLog("Timed out waiting for Google Play packaging job to complete.");
+        this.appendLog("[error] Timed out waiting for Google Play packaging job to complete.");
         this.hasFailed = true;
     }
 
     private pollJobFailed(jobId: string, error: unknown): void {
-        this.appendLog(`Error when querying for Google Play packaging job ${jobId}.`);
+        this.appendLog(`[error] Error when querying for Google Play packaging job ${jobId}.`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
     }
