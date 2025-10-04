@@ -2,12 +2,15 @@ import { css } from "lit";
 
 export const googlePlayPackagingStatusStyles = css`
     :host {
-        padding: 16px;
         display: block;
         background-image: url("/assets/new/Hero1920_withmani.webp");
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center top;
+
+        @media (max-width: 535px) {
+            background-position-y: 70px;
+        }
     }
 
     .page-title {
@@ -29,6 +32,11 @@ export const googlePlayPackagingStatusStyles = css`
         margin-left: auto;
         margin-right: auto;
         margin-top: 100px;
+        padding: 16px;
+
+        @media (max-width: 535px) {
+            padding: 0;
+        }
     }
 
     sl-card {
@@ -46,6 +54,7 @@ export const googlePlayPackagingStatusStyles = css`
         display: flex;
         align-items: center;
         gap: 16px;
+        overflow: clip;
 
         .pwa-icon {
             max-width: 92px;
@@ -61,6 +70,14 @@ export const googlePlayPackagingStatusStyles = css`
             margin: 0;
             color: var(--sl-color-neutral-600);
             font-size: 0.8em;
+
+            @media (max-width: 535px) {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 200px;
+            }
         }
     }
 
@@ -73,7 +90,6 @@ export const googlePlayPackagingStatusStyles = css`
         height: 400px;
         overflow: auto;
         padding: 16px;
-        width: 98%;
 
         .log {
             display: block;

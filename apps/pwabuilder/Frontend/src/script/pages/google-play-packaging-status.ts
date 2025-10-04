@@ -73,6 +73,15 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     renderTitle(): TemplateResult {
+        if (this.hasFailed) {
+            return html`
+                <h2 class="page-title">
+                    <sl-icon name="exclamation-octagon"></sl-icon>
+                    Unable to create Google Play package
+                </h2>
+            `;
+        }
+
         if (!this.job) {
             return html`
             <h2 class="page-title">
