@@ -17,6 +17,7 @@ export const googlePlayPackagingStatusStyles = css`
         display: flex;
         align-items: center;
         gap: 16px;
+        padding: 0 6px;
 
         sl-icon[name="check-circle-fill"] {
             color: var(--sl-color-success-600);

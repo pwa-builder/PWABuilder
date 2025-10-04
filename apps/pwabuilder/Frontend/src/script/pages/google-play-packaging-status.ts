@@ -154,7 +154,7 @@ export class GooglePlayPackagingStatus extends LitElement {
             const title = encodeURIComponent("Error creating Google Play package");
             const errorLogs = this.logs.filter(l => l.includes("[error]"));
             const lastErrorLog = ([...errorLogs].reverse()[0] || [...this.logs].reverse()[0] || "No longs available").replaceAll("\n", "\n> ");
-            const body = encodeURIComponent(`I received the [following error](https://pwabuilder.com/google-play-packaging-status?jobId=${this.job.id}) when creating a Google Play package for ${this.job?.packageOptions.pwaUrl || "[empty]"}.\n\n> ${lastErrorLog}`);
+            const body = encodeURIComponent(`I received the [following error](https://pwabuilder.com/google-play-packaging-status?jobId=${this.job?.id}) when creating a Google Play package for ${this.job?.packageOptions.pwaUrl || "[empty]"}.\n\n> ${lastErrorLog}`);
             return html`
                 <div class="card-footer" slot="footer">
                     <sl-button @click="${this.retryJob}">Retry</sl-button>
