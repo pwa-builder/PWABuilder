@@ -167,10 +167,15 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     renderLog(log: string): TemplateResult {
+        let logClass = "log";
         if (log.includes("[error]")) {
-            return html`<span class="log error">${log}</span>`;
+            logClass += " error";
         }
-        return html`<span class="log">${log}</span>`;
+        if (log.includes("[warn]")) {
+            logClass += " warn";
+        }
+
+        return html`<span class="${logClass}">${log}</span>`;
     }
 
     private async pollJob(jobId: string): Promise<void> {
