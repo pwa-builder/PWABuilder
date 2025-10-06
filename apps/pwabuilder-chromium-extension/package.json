@@ -25,7 +25,7 @@
   "homepage": "https://github.com/pwa-builder/pwabuilder-chromium-extension#readme",
   "dependencies": {
     "@shoelace-style/shoelace": "^2.20.1",
-    "lit": "^3.3.0",
+    "lit": "^3.3.1",
     "@pwabuilder/manifest-editor": "file:../../components/manifest-editor",
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation"
   },
