@@ -12,12 +12,12 @@ namespace PWABuilder.Controllers;
 public class AnalysesController : ControllerBase
 {
     private readonly ILogger<AnalysesController> logger;
-    private readonly IAnalysisDb analysisDb;
+    private readonly IPWABuilderDatabase db;
     private readonly IAnalysisJobQueue analysisJobQueue;
 
-    public AnalysesController(IAnalysisDb analysisDb, IAnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
+    public AnalysesController(IPWABuilderDatabase analysisDb, IAnalysisJobQueue analysisJobQueue, ILogger<AnalysesController> logger)
     {
-        this.analysisDb = analysisDb;
+        this.db = analysisDb;
         this.analysisJobQueue = analysisJobQueue;
         this.logger = logger;
     }
@@ -51,7 +51,7 @@ public class AnalysesController : ControllerBase
             AnalysisId = analysis.Id,
             Url = url
         };
-        await this.analysisDb.SaveAsync(analysis);
+        await this.db.SaveAsync(analysis.Id, analysis);
         await this.analysisJobQueue.EnqueueAsync(job);
         return analysis.Id;
     }
@@ -65,7 +65,7 @@ public class AnalysesController : ControllerBase
     [ResponseCache(NoStore = true)] // We don't want to cache this endpoint as the analysis changes in the background.
     public async Task<Analysis?> Get(string id)
     {
-        var analysis = await this.analysisDb.GetByIdAsync(id);
+        var analysis = await this.db.GetByIdAsync<Analysis>(id);
         if (analysis == null)
         {
             logger.LogWarning("Analysis with ID {id} not found.", id);

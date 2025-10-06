@@ -11,10 +11,10 @@ import { recordPageView, storeQueryParam } from './script/utils/analytics';
 @customElement('app-index')
 export class AppIndex extends LitElement {
 
-  @state() pageName: string = '';
+    @state() pageName: string = '';
 
-  static get styles() {
-    return css`
+    static get styles() {
+        return css`
       #router-outlet > * {
         width: 100% !important;
       }
@@ -84,116 +84,121 @@ export class AppIndex extends LitElement {
         grid-area: sidebar;
       }
     `;
-  }
-
-  constructor() {
-    super();
-
-    storeQueryParam('ref');
-
-    window.addEventListener('vaadin-router-location-changed', ev => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      recordPageView(
-        ev.detail.location.pathname, // path
-        ev.detail.location.route?.component // page name
-      );
-    });
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    window.addEventListener('DOMContentLoaded', this.handlePageChange);
-    window.addEventListener('popstate', this.handlePageChange);
-  }
-
-  disconnectedCallback() {
-    window.removeEventListener('DOMContentLoaded', this.handlePageChange);
-    window.removeEventListener('popstate', this.handlePageChange);
-    super.disconnectedCallback();
-  }
-
-  handlePageChange = () => {
-
-    var urlObj = new URL(location.href);
-
-    // Get the pathname (page name)
-    var pathname = urlObj.pathname;
-
-    // Remove leading slash if present
-    this.pageName = pathname.replace(/^\//, '');
-
-    type PageMap = {
-      [key: string]: string
     }
 
-    const pages: PageMap = {
-      'reportcard': 'Report Card',
-      'freetoken': 'Free Token',
-      'congratulations': 'Congratulations',
-      'portals': 'Portals',
-      'imagegenerator': 'Image Generator'
+    constructor() {
+        super();
+
+        storeQueryParam('ref');
+
+        window.addEventListener('vaadin-router-location-changed', ev => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            recordPageView(
+                ev.detail.location.pathname, // path
+                ev.detail.location.route?.component // page name
+            );
+        });
     }
 
-    this.setPageTitle(pages[this.pageName.toLocaleLowerCase()] || 'Home');
-  }
+    connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener('DOMContentLoaded', this.handlePageChange);
+        window.addEventListener('popstate', this.handlePageChange);
+    }
 
-   // Function to set the page title dynamically
-   setPageTitle(title: string) {
-    document!.getElementById('pageTitle')!.textContent = title;
-    document.title = `${title} / PWABuilder`; // Update the browser tab title
-  }
+    disconnectedCallback() {
+        window.removeEventListener('DOMContentLoaded', this.handlePageChange);
+        window.removeEventListener('popstate', this.handlePageChange);
+        super.disconnectedCallback();
+    }
 
-  firstUpdated() {
-    // this method is a lifecycle even in lit-element
-    // for more info check out the lit-element docs https://lit-element.polymer-project.org/guide/lifecycle
+    handlePageChange = () => {
 
-    // For more info on using the @vaadin/router check here https://vaadin.com/router
-    const router = new Router(this.shadowRoot?.querySelector('#router-outlet'));
-    router.setRoutes([
-      {
-        path: '',
-        animate: true,
-        children: [
-          { 
-            path: '/', 
-            component: 'app-home',
-            action: async () => {
-              await import ('./script/pages/app-home.js');
-            }
-          },
-          {
-            path: '/reportcard',
-            component: 'app-report',
-            action: async () => {
-              await import('./script/pages/app-report.js');
+        var urlObj = new URL(location.href);
+
+        // Get the pathname (page name)
+        var pathname = urlObj.pathname;
+
+        // Remove leading slash if present
+        this.pageName = pathname.replace(/^\//, '');
+
+        type PageMap = {
+            [key: string]: string
+        }
+
+        const pages: PageMap = {
+            'reportcard': 'Report Card',
+            'freetoken': 'Free Token',
+            'congratulations': 'Congratulations',
+            'portals': 'Portals',
+            'imagegenerator': 'Image Generator'
+        }
+
+        this.setPageTitle(pages[this.pageName.toLocaleLowerCase()] || 'Home');
+    }
+
+    // Function to set the page title dynamically
+    setPageTitle(title: string) {
+        document!.getElementById('pageTitle')!.textContent = title;
+        document.title = `${title} / PWABuilder`; // Update the browser tab title
+    }
+
+    firstUpdated() {
+        // this method is a lifecycle even in lit-element
+        // for more info check out the lit-element docs https://lit-element.polymer-project.org/guide/lifecycle
+
+        // For more info on using the @vaadin/router check here https://vaadin.com/router
+        const router = new Router(this.shadowRoot?.querySelector('#router-outlet'));
+        router.setRoutes([
+            {
+                path: '',
+                animate: true,
+                children: [
+                    {
+                        path: '/',
+                        component: 'app-home',
+                        action: async () => {
+                            await import('./script/pages/app-home.js');
+                        }
+                    },
+                    {
+                        path: '/reportcard',
+                        component: 'app-report',
+                        action: async () => {
+                            await import('./script/pages/app-report.js');
+                        },
+                    },
+                    {
+                        path: '/portals', // used by the power platform team
+                        component: 'powerplatform-publish',
+                        action: async () => {
+                            await import('./script/pages/powerplatform-publish.js');
+                        },
+                    },
+                    {
+                        path: '/imageGenerator', // used by Edge dev tools
+                        component: 'image-generator',
+                        action: async () => {
+                            await import('./script/pages/image-generator.js');
+                        },
+                    },
+                    {
+                        path: '/google-play-packaging-status',
+                        component: 'google-play-packaging-status',
+                        action: async () => await import('./script/pages/google-play-packaging-status.js')
+                    },
+                    {
+                        path: '(.*)', // Match any other route not defined above
+                        redirect: '/', // Redirect to the home page or another valid route
+                    },
+                ] as Route[],
             },
-          },
-          {
-            path: '/portals', // used by the power platform team
-            component: 'powerplatform-publish',
-            action: async () => {
-              await import('./script/pages/powerplatform-publish.js');
-            },
-          },
-          {
-            path: '/imageGenerator', // used by Edge dev tools
-            component: 'image-generator',
-            action: async () => {
-              await import('./script/pages/image-generator.js');
-            },
-          },
-          {
-            path: '(.*)', // Match any other route not defined above
-            redirect: '/', // Redirect to the home page or another valid route
-          },
-        ] as Route[],
-      },
-    ]);
-  }
+        ]);
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div id="wrapper">
         <!-- cookie banner not required so long as we only have essential cookies -->
         <!-- <cookie-banner></cookie-banner> -->
@@ -206,5 +211,5 @@ export class AppIndex extends LitElement {
       </div>
 
     `;
-  }
+    }
 }
