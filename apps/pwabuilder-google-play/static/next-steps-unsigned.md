@@ -4,6 +4,7 @@ You've successfully generated a Google Play Store app package (`.apk` file) for 
 You chose to generate an *unsigned* package, so there are a few additional steps. If you'd rather generated a signed package, you can do so in [PWABuilder's Android Options dialog](https://medium.com/pwabuilder/microsoft-and-google-team-up-to-make-pwas-better-in-the-play-store-b59710e487#6325).
 
 Your next steps:
+
 1. Sign your APK.
 2. Generate `assetlinks.json` and deploy to your server.
 3. Test your package on an Android device or Android emulator.
@@ -21,7 +22,7 @@ To sign your APK, you can either [instruct PWABuilder to generate a signed APK](
 
 ## 2. Generate and deploy `assetlinks.json`
 
-While this step is optional, skipping it will cause Android to display a browser addres bar in your app. 
+While this step is optional, skipping it will cause Android to display a browser addres bar in your app.
 
 A [Digital Asset Links](https://developers.google.com/web/updates/2019/08/twas-quickstart#creating-your-asset-link-file) file proves you own your PWA's domain.
 

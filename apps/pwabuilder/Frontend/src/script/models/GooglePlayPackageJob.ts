@@ -1,4 +1,4 @@
-import { AndroidPackageOptions } from "./androidPackageOptions.js";
+import { AndroidPackageOptions } from "../utils/android-validation";
 
 export interface GooglePlayPackageJob {
     id: string;

@@ -18,6 +18,11 @@ public class GooglePlayPackageJob
     public required string AnalysisId { get; init; }
 
     /// <summary>
+    /// The current status of the store package job.
+    /// </summary>
+    public required GooglePlayPackageJobStatus Status { get; set; }
+
+    /// <summary>
     /// The date the store package job was created.
     /// </summary>
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
@@ -28,6 +33,11 @@ public class GooglePlayPackageJob
     public int RetryCount { get; set; }
 
     /// <summary>
+    /// Logs generated during processing of this job, if any. This may be displayed to the user.
+    /// </summary>
+    public List<string> Logs { get; set; } = [];
+
+    /// <summary>
     /// A list of errors that occurred while processing this job, if any.
     /// </summary>
     public List<string> Errors { get; set; } = [];
@@ -36,6 +46,11 @@ public class GooglePlayPackageJob
     /// The options used to create the Google Play package.
     /// </summary>
     public required JsonElement PackageOptions { get; set; }
+
+    /// <summary>
+    /// The file name of upload zip file in blob storage, if the job has completed successfully.
+    /// </summary>
+    public string? UploadedBlobFileName { get; set; }
 
     /// <summary>
     /// Generates an ID for the job using the URI and the current time. This ID is intended for use in Redis cache.
@@ -51,9 +66,4 @@ public class GooglePlayPackageJob
         var lastSixChars = hashStr[^Math.Min(6, hashStr.Length)..];
         return $"googleplaypackagejob:{uri.Host}:{lastSixChars}";
     }
-
-    /// <summary>
-    /// Logs generated during processing of this job, if any. This may be displayed to the user.
-    /// </summary>
-    public List<string> Logs { get; set; } = [];
 }

@@ -7,17 +7,17 @@ namespace PWABuilder.IOS.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GooglePlayPackageController
+public class GooglePlayPackagesController
 {
     private readonly ITelemetryService analyticsService;
-    private readonly ILogger<GooglePlayPackageController> logger;
+    private readonly ILogger<GooglePlayPackagesController> logger;
     private readonly IPWABuilderDatabase db;
 
     private const string googlePlayPackageQueueKey = "googleplaypackagejobs";
 
-    public GooglePlayPackageController(
+    public GooglePlayPackagesController(
         ITelemetryService analyticsService,
-        ILogger<GooglePlayPackageController> logger,
+        ILogger<GooglePlayPackagesController> logger,
         IPWABuilderDatabase db
     )
     {

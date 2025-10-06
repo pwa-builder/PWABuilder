@@ -115,6 +115,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+    app.UseHsts();
 }
 app.UseAuthorization();
 app.MapControllers();

@@ -17,6 +17,7 @@ submitBtn.addEventListener("click", () => submit());
 
 setCode(getSignedApk());
 codeArea.scrollTop = 0;
+packagingStartMs = 0;
 
 function setCode(options) {
     const code = JSON.stringify(options, undefined, 4);
@@ -33,7 +34,7 @@ function getUnsignedApkOptions() {
         "display": "standalone",
         "enableSiteSettingsShortcut": true,
         "enableNotifications": false,
-        "includeSourceCode": true,
+        "includeSourceCode": false,
         "fallbackType": "customtabs",
         "features": {
             "locationDelegation": {
@@ -54,6 +55,7 @@ function getUnsignedApkOptions() {
         "navigationDividerColorDark": "#1976d2",
         "orientation": "default",
         "packageId": "app.webboard",
+        "pwaUrl": "https://webboard.app",
         "serviceAccountJsonFile": undefined,
         "shortcuts": [
             {
@@ -131,31 +133,78 @@ function keyFileChosen(e) {
 
 async function submit() {
     resultsDiv.textContent = "";
+    packagingStartMs = Date.now();
 
     setLoading(true);
     try {
         // Convert the JSON to an object and back to a string to ensure proper formatting.
         const options = JSON.stringify(JSON.parse(codeArea.value));
-        const response = await fetch("/generateAppPackage", {
+        const response = await fetch("/enqueuePackageJob", {
             method: "POST",
             body: options,
             headers: new Headers({ 'content-type': 'application/json', 'platform-identifier': 'ServerUI', 'platform-identifier-version': '1.0.0' }),
         });
-        if (response.status === 200) {
-            const data = await response.blob();
-            const url = window.URL.createObjectURL(data);
-            window.location.assign(url);
 
-            resultsDiv.textContent = "Success, download started 😎";
-        } else {
-            const responseText = await response.text();
-            resultsDiv.textContent = `Failed. Status code ${response.status}, Error: ${response.statusText}, Details: ${responseText}`;
+        if (!response.ok) {
+            appendResults(`Failed to enqueue Google Play packaging job. Status code ${response.status}, Error: ${response.statusText}.`);
+            setLoading(false);
+            return;
         }
+
+        const jobId = await response.text();
+        appendResults(`Enqueued job ${jobId}. Waiting for processing...`);
+        setTimeout(() => this.pollJob(jobId), 2000);
     } catch (err) {
-        resultsDiv.textContent = "Failed. Error: " + err;
-    }
-    finally {
+        appendResults(`Failed. Error: ${err}`);
         setLoading(false);
+    }
+}
+
+async function pollJob(jobId) {
+    const jobFetch = await fetch("/getPackageJob?id=" + encodeURIComponent(jobId));
+    if (!jobFetch.ok) {
+        appendResults(`Failed to fetch job ${jobId}. Status code ${jobFetch.status}, Error: ${jobFetch.statusText}.`);
+        setLoading(false);
+        return;
+    }
+
+    const job = await jobFetch.json();
+
+    // If it's completed, download the zip.
+    if (job.status === "Completed") {
+        appendResults(`Job completed in ${Date.now() - packagingStartMs}ms. Triggering download...`);
+        downloadJobZip(jobId);
+    } else if (job.status === "Failed") {
+        appendResults(`Job failed in ${Date.now() - packagingStartMs}ms. See logs above for details.`);
+        setLoading(false);
+    } else {
+        // If we're enqueued or in progress, show the logs from the packaging process and poll again in 2s.
+        setTimeout(() => this.pollJob(jobId), 2000);
+        job.logs.forEach(l => appendResultIfNotIncluded(l));
+    }
+}
+
+async function downloadJobZip(jobId) {
+    const zipFetch = await fetch("/downloadPackageZip?id=" + encodeURIComponent(jobId));
+    if (zipFetch.ok) {
+        const data = await zipFetch.blob();
+        const url = window.URL.createObjectURL(data);
+        window.location.assign(url);
+        setLoading(false);
+    } else {
+        appendResults(`Failed to download package zip for job ${jobId}. Status code ${zipFetch.status}, Error: ${zipFetch.statusText}.`);
+        setLoading(false);
+    }
+}
+
+function appendResults(val) {
+    resultsDiv.textContent = [resultsDiv.textContent, val].join("\n");
+}
+
+function appendResultIfNotIncluded(line) {
+    const resultLines = resultsDiv.textContent.split("\n");
+    if (!resultLines.includes(line)) {
+        appendResults(line);
     }
 }
 

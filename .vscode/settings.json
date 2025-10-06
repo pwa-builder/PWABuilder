@@ -1,11 +1,24 @@
 {
   "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
   "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "typescript.preferences.quoteStyle": "double",
+  "[javascript]": {
+    "editor.tabSize": 4
+  },
   "files.saveConflictResolution": "askUser",
   "typescript.tsc.autoDetect": "on",
   "typescript.reportStyleChecksAsWarnings": true,
   "typescript.validate.enable": true,
   "javascript.validate.enable": true,
-  "sarif-viewer.connectToGithubCodeScanning": "on"
+  "sarif-viewer.connectToGithubCodeScanning": "off",
+  "csharp.format.enable": false,
+  "csharp.semanticHighlighting.enabled": true
 }
