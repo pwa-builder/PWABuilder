@@ -25,11 +25,12 @@ public class ManifestCreator
     /// Creates a web manifest for the specified site. It will use any metadata on the page to help generate a manifest.
     /// </summary>
     /// <param name="siteUri">The URL of the site to generate the manifest for.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>A new web manifest.</returns>
-    public async Task<WebAppManifest> Create(Uri siteUri)
+    public async Task<WebAppManifest> Create(Uri siteUri, CancellationToken cancelToken)
     {
         // Fetch the site
-        var manifestResult = await this.LoadPage(siteUri)
+        var manifestResult = await this.LoadPage(siteUri, cancelToken)
             .PipeAsync(async html => await CreateManifestFromHtml(siteUri, html));
         if (manifestResult.Error != null)
         {
@@ -415,9 +416,9 @@ public class ManifestCreator
         return string.IsNullOrWhiteSpace(metaVal) ? fallbackValue : metaVal;
     }
 
-    private async Task<Result<HtmlDocument>> LoadPage(Uri url)
+    private async Task<Result<HtmlDocument>> LoadPage(Uri url, CancellationToken cancelToken)
     {
-        var fetchResult = await TryFetch(url, "text/html");
+        var fetchResult = await TryFetch(url, ["text/html"], cancelToken);
         return fetchResult.Pipe(CreateDocumentFromHtml);
     }
 
@@ -437,57 +438,48 @@ public class ManifestCreator
     /// <param name="url"></param>
     /// <param name="acceptHeaders"></param>
     /// <returns></returns>
-    private async Task<Result<string>> TryFetch(Uri url, params string[] acceptHeaders)
+    private async Task<Result<string>> TryFetch(Uri url, IEnumerable<string> acceptHeaders, CancellationToken cancelToken)
     {
+        // First, make sure we have HTML. Read just the headers and make sure it has the right content-type response.
         try
         {
-            using var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
-            if (acceptHeaders != null)
-            {
-                foreach (var header in acceptHeaders)
-                {
-                    httpRequest.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(header));
-                }
-            }
+            using var headersOnlyResponse = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancelToken);
+            headersOnlyResponse.EnsureSuccessStatusCode();
+            headersOnlyResponse.EnsureContentType("text/html");
+        }
+        catch (Exception contentTypeError)
+        {
+            logger.LogError(contentTypeError, "Failed to verify {url} serves HTML content during manifest creation process. Will return an empty manifest.", url);
+            return string.Empty;
+        }
 
-            var httpResponse = await http.SendAsync(httpRequest);
-            httpResponse.EnsureSuccessStatusCode();
-            var content = await httpResponse.Content.ReadAsStringAsync();
-            return content;
+        try
+        {
+            var htmlResponse = await http.GetStringAsync(url, acceptHeaders, 1024 * 1024 * 2, cancelToken); // 2MB max HTML            httpResponse.EnsureSuccessStatusCode();
+            return htmlResponse ?? string.Empty;
         }
         catch (InvalidOperationException invalidOpError) when (invalidOpError.Message.Contains("The character set provided in ContentType is invalid."))
         {
             // Invalid encoding? Sometimes webpages have incorrectly set their charset / content type.
             // See if we can just parse the thing using UTF-8.
             logger.LogWarning(invalidOpError, "Unable to parse using HTTP client due to invalid ContentType. Attempting to parse using UTF-8.");
-            return await TryFetchWithForcedUtf8(url, acceptHeaders);
+            return await TryFetchWithForcedUtf8(url, acceptHeaders, cancelToken);
         }
         catch (Exception httpException)
         {
             logger.LogWarning(httpException, "Failed to fetch {url} using HTTP client. Falling back to HTTP/2 fetch.", url);
-            return await TryFetchWithHttp2Client(url, acceptHeaders);
+            return await TryFetchWithHttp2Client(url, acceptHeaders, cancelToken);
         }
     }
 
-    private async Task<Result<string>> TryFetchWithForcedUtf8(Uri url, params string[] acceptHeaders)
+    private async Task<Result<string>> TryFetchWithForcedUtf8(Uri url, IEnumerable<string> acceptHeaders, CancellationToken cancelToken)
     {
         try
         {
-            using var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
-            if (acceptHeaders != null)
-            {
-                foreach (var header in acceptHeaders)
-                {
-                    httpRequest.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(header));
-                }
-            }
-
-            var httpResponse = await http.SendAsync(httpRequest);
-            httpResponse.EnsureSuccessStatusCode();
-            var contentBytes = await httpResponse.Content.ReadAsByteArrayAsync();
-            var responseString = Encoding.UTF8.GetString(contentBytes);
-            logger.LogInformation("Successfully parsed the HTML using forced UTF-8 mode");
-            return responseString;
+            var byteStream = await this.http.GetStreamAsync(url, acceptHeaders, 1024 * 1024 * 2, cancelToken);
+            using var memStream = new MemoryStream();
+            await byteStream.CopyToAsync(memStream, cancelToken);
+            return Encoding.UTF8.GetString(memStream.ToArray());
         }
         catch (Exception error)
         {
@@ -496,7 +488,7 @@ public class ManifestCreator
         }
     }
 
-    private async Task<Result<string>> TryFetchWithHttp2Client(Uri url, params string[] acceptHeaders)
+    private async Task<Result<string>> TryFetchWithHttp2Client(Uri url, IEnumerable<string> acceptHeaders, CancellationToken cancelToken)
     {
         try
         {

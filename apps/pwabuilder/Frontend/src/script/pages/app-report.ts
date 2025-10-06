@@ -227,10 +227,10 @@ export class AppReport extends LitElement {
     }
 
     private async applyManifestContext(url: string, manifestUrl?: string, manifestRaw?: string) {
+        this.isAppCardInfoLoading = false;
         this.manifestContext = await this.processManifest(url, manifestUrl, manifestRaw);
         this.createdManifest = this.manifestContext.isGenerated || false;
         setManifestContext(this.manifestContext);
-        this.isAppCardInfoLoading = false;
         await this.populateAppCard(this.manifestContext, manifestUrl);
     }
 
