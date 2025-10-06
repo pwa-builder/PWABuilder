@@ -19,7 +19,7 @@
     "@pwabuilder/manifest-validation": "file:../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../libraries/site-analytics",
     "@shoelace-style/shoelace": "^2.20.1",
-    "lit": "^3.3.0"
+    "lit": "^3.3.1"
   },
   "devDependencies": {
     "@web/dev-server": "^0.4.6",
