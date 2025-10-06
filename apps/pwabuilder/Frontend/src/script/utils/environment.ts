@@ -23,7 +23,7 @@ if (import.meta.env.PROD) {
     env.windowsPackageGeneratorUrl =
         'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
     env.androidPackageGeneratorUrl =
-        'https://pwabuilder-cloudapk-staging.azurewebsites.net'; // ZANZ move this back to production when ready.
+        'https://pwabuilder-cloudapk.azurewebsites.net';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
     env.oculusPackageGeneratorUrl =
         'https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create';
