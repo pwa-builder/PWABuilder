@@ -128,9 +128,9 @@ export class PWAManifestEditor extends LitElement {
   }
 
   private removeEmptyFields(manifest: Manifest): Manifest {
-    var new_manifest: Manifest = manifest;
-    for(const key in manifest) {
-      const value = manifest[key];
+    var new_manifest: Manifest = {...manifest};
+    for(const key in new_manifest) {
+      const value = new_manifest[key];
       if((typeof value === "string" || Array.isArray(value)) && value.length === 0){
         delete new_manifest[key];
       }
