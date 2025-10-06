@@ -203,6 +203,7 @@ export class ServiceWorkerInfoCard extends LitElement {
           distance="10"
           class="tooltip"
           placement=${this.placement}
+          aria-label="Information about ${this.capabilityId}"
           @sl-hide=${() => this.handleHover(false)}
         >
           <slot name="trigger" slot="trigger"></slot>
@@ -218,6 +219,7 @@ export class ServiceWorkerInfoCard extends LitElement {
           <sl-dropdown
             distance="10"
             class="tooltip"
+            aria-label="Information about ${this.capabilityId}"
             @sl-hide=${() => this.handleHover(false)}
           >
           <slot name="trigger" slot="trigger"></slot>

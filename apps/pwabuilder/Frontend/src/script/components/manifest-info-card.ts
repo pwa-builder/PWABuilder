@@ -253,6 +253,7 @@ export class ManifestInfoCard extends LitElement {
             distance="10"
             placement="${this.placement}"
             class="tooltip"
+            aria-label="Information about ${this.field}"
             @sl-hide=${() => this.handleHover(false)}
           >
           <slot name="trigger" slot="trigger"></slot>
@@ -270,6 +271,7 @@ export class ManifestInfoCard extends LitElement {
           <sl-dropdown
             distance="10"
             class="tooltip"
+            aria-label="Information about ${this.field}"
             @sl-hide=${() => this.handleHover(false)}
           >
           <slot name="trigger" slot="trigger"></slot>
