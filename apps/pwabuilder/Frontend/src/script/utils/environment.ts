@@ -19,7 +19,7 @@ if (import.meta.env.PROD) {
     env.api = '/api';
     env.manifestCreatorUrl =
         '/api/manifests/create';
-    env.imageProxyUrl = '/api/images/getSafeImage';
+    env.imageProxyUrl = '/api/images/getSafeImageForAnalysis';
     env.windowsPackageGeneratorUrl =
         'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
     env.androidPackageGeneratorUrl =
@@ -37,7 +37,7 @@ if (import.meta.env.PROD) {
     env.api = '/api';
     env.manifestCreatorUrl =
         '/api/manifests/create';
-    env.imageProxyUrl = '/api/images/getSafeImage';
+    env.imageProxyUrl = '/api/images/getSafeImageForAnalysis';
     env.windowsPackageGeneratorUrl =
         'https://localhost:5001/msix/generatezip';
     env.androidPackageGeneratorUrl =
