@@ -152,8 +152,7 @@ export class GooglePlayPackagingStatus extends LitElement {
 
         if (this.job?.status === "Failed" || this.hasFailed) {
             const title = encodeURIComponent("Error creating Google Play package");
-            const errorLogs = this.logs.filter(l => l.includes("[error]"));
-            const lastErrorLog = ([...errorLogs].reverse()[0] || [...this.logs].reverse()[0] || "No longs available").replaceAll("\n", "\n> ");
+            const lastErrorLog = this.getErrorLogForGitHubIssue(this.logs).replaceAll("\n", "\n> ");
             const body = encodeURIComponent(`I received the [following error](https://pwabuilder.com/google-play-packaging-status?jobId=${this.job?.id}) when creating a Google Play package for ${this.job?.packageOptions.pwaUrl || "[empty]"}.\n\n> ${lastErrorLog}`);
             return html`
                 <div class="card-footer" slot="footer">
@@ -306,5 +305,12 @@ export class GooglePlayPackagingStatus extends LitElement {
         } catch (error) {
             this.appendLog("Error retrying job: " + error);
         }
+    }
+
+    private getErrorLogForGitHubIssue(logs: string[]): string {
+        const logsReversed = [...logs].reverse();
+        const errorLogs = logsReversed.filter(l => l.includes("[error]"));
+        const logWithStack = errorLogs.find(l => l.includes("\n"));
+        return logWithStack || errorLogs[0] || "No logs available";
     }
 }
