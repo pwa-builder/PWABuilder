@@ -17,7 +17,12 @@ export class PackageJobQueue {
     public async enqueue(packageArgs: AndroidPackageOptions): Promise<string> {
         const job = this.createJobFromPackageArgs(packageArgs);
         try {
+            // Put the job into the queue for processing.
             await database.enqueue(this.jobQueueKey, job);
+
+            // Also, store the job itself in the database as its own key so we can immediately look up the status.
+            await database.save(job.id, job);
+
             return job.id;
         } catch (enqueueError) {
             console.error("Error enqueueing Google Play packaging job", enqueueError);
