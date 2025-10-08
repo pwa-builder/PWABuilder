@@ -66,7 +66,8 @@ export class RedisService implements DatabaseService {
     async save<T>(key: string, value: T): Promise<void> {
         try {
             const expirationSeconds = 90 * 24 * 60 * 60; // 90 days in seconds
-            await this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds);
+            const result = await this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds);
+            console.info("Saved object to redis", key, result);
         } catch (error) {
             console.error(`Error saving JSON to Redis with key ${key}:`, error);
             throw error;
@@ -112,6 +113,7 @@ class InMemoryDatabaseService implements DatabaseService {
     }
 
     save<T>(key: string, value: T): Promise<void> {
+        console.info("Saving object to in-memory storage", key);
         this.store.set(key, JSON.stringify(value));
         return Promise.resolve();
     }
