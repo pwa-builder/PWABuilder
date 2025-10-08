@@ -381,4 +381,7 @@ playwright-report/
 test-results/
 
 # MacOS finder temp
-*.DS_Store*.tsbuildinfo
+*.DS_Store
+
+# TypeScript build info
+*.tsbuildinfo
