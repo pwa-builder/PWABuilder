@@ -126,10 +126,6 @@ if (app.Environment.IsDevelopment())
     app.UseWebSockets(); // used for hot module reload with Vite local dev server.
     app.UseCors("AllowAllOrigins");
 
-    app.MapSwagger();
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "PWABuilder v1"));
-
     // For development, tell ASP.NET to serve .ts files. This is needed for Vite to serve web workers.
     var contentFileProvider = new FileExtensionContentTypeProvider();
     contentFileProvider.Mappings[".ts"] = "application/javascript";
