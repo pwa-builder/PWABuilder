@@ -143,7 +143,7 @@ export class PackageCreator {
                 errorMessage.includes('ENOTFOUND');
             if (is403Error) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithSafeUrls(options);
-                this.dispatchProgressEvent('Encountered 403 error when generating app package. This indicates PWABuilder was unable to download the images in your web manifest. If the problem persists, please ensure the images specified in your manfiest can be fetched without 404s, redirects, or authentication walls. Retrying with safe URL proxy and HTTP2.', "warn");
+                this.dispatchProgressEvent('Encountered 403 error when generating app package. This indicates PWABuilder was unable to download the images in your web manifest. If the problem persists, please ensure the images specified in your manifest can be fetched without 404s, redirects, or authentication walls. Retrying with safe URL proxy and HTTP2.', "warn");
                 const bubbleWrapper = new BubbleWrapper(
                     optionsWithSafeUrl,
                     projectDirPath,

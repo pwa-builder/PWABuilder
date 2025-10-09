@@ -8,7 +8,8 @@ export interface DatabaseService {
     getJson<T>(key: string): Promise<T | null>;
     save<T>(key: string, value: T): Promise<void>;
     dequeue<T>(key: string): Promise<T | null>;
-    enqueue<T>(key: string, value: T): Promise<void>;
+    enqueue<T>(key: string, value: T): Promise<number>;
+    queueLength(key: string): Promise<number>;
 }
 
 /**
@@ -93,8 +94,19 @@ export class RedisService implements DatabaseService {
      * @param key The key of the list to push onto.
      * @param value The value to push onto the list. This will be converted to a JSON string.
      */
-    async enqueue<T>(key: string, value: T): Promise<void> {
-        await this.redis.rpush(key, JSON.stringify(value));
+    async enqueue<T>(key: string, value: T): Promise<number> {
+        const totalItems = await this.redis.rpush(key, JSON.stringify(value));
+        console.info(`Added ${key} to the queue ${key}. Queue length is now ${totalItems}`);
+        return totalItems;
+    }
+
+    /**
+     * Gets the length of the queue with the given key.
+     * @param key The key of the list to get the length of.
+     * @returns The length of the list.
+     */
+    queueLength(key: string): Promise<number> {
+        return this.redis.llen(key);
     }
 }
 
@@ -128,11 +140,16 @@ class InMemoryDatabaseService implements DatabaseService {
         return Promise.resolve(JSON.parse(firstItemInList) as T);
     }
 
-    enqueue<T>(key: string, value: T): Promise<void> {
+    enqueue<T>(key: string, value: T): Promise<number> {
         const list = this.queues.get(key) || [];
         list.push(JSON.stringify(value));
         this.queues.set(key, list);
-        return Promise.resolve();
+        return Promise.resolve(list.length);
+    }
+
+    queueLength(key: string): Promise<number> {
+        const list = this.queues.get(key) || [];
+        return Promise.resolve(list.length);
     }
 }
 
