@@ -90,10 +90,6 @@ builder
             .JsonIgnoreCondition
             .WhenWritingNull;
     });
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PWABuilder", Version = "v1" });
-});
 
 if (builder.Environment.IsDevelopment())
 {
