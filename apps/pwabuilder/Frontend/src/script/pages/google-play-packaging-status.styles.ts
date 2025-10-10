@@ -103,6 +103,10 @@ export const googlePlayPackagingStatusStyles = css`
                 background-color: var(--sl-color-neutral-300);
             }
 
+            &.warn {
+                color: var(--sl-color-warning-600);
+            }
+
             &.error {
                 color: var(--sl-color-danger-600);
             }
