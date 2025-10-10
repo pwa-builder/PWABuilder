@@ -7,12 +7,12 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 @customElement('companies-packaged')
 export class ComapniesPackaged extends LitElement {
 
-  @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "glass", "tiktok",  "x"];
-  @state() paused: boolean = false;
-  
-  static get styles() {
-    return [
-    css`
+    @state() companies: string[] = ["facebook", "instagram", "mailchimp", "plutotv", "sketchapp", "glass", "tiktok", "x"];
+    @state() paused: boolean = false;
+
+    static get styles() {
+        return [
+            css`
       :host {
         --carousel-width: 1000px;
         --slide-width: 200px;
@@ -58,8 +58,8 @@ export class ComapniesPackaged extends LitElement {
         background-position: center;
       }
       .controls {
-        height: 25px;
-        width: 25px;
+        height: 32px;
+        width: 32px;
         border: 1px solid var(--primary-color);
         border-radius: 50%;
         display: flex;
@@ -174,53 +174,53 @@ export class ComapniesPackaged extends LitElement {
         }
       }
     `
-    ];
-  }
-
-  constructor() {
-    super();
-  }
-
-  connectedCallback(): void {
-    super.connectedCallback();
-    /* const shuffled = this.shuffle(this.companies);
-    this.companies = [...shuffled]; */
-  }
-
-  shuffle(array: any) {
-    let currentIndex = array.length
-    let randomIndex;
-
-    // While there remain elements to shuffle...
-    while (currentIndex != 0) {
-
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+        ];
     }
 
-    return array;
-  }
-
-  toggleAnimation(){
-    this.paused = !this.paused;
-    let animatedElement = (this.shadowRoot!.querySelector(".slide-track") as HTMLElement);
-    if(this.paused){
-      animatedElement!.style.animationPlayState = 'paused';
-      recordPWABuilderProcessStep("middle.carousel_paused", AnalyticsBehavior.ProcessCheckpoint);
-    } else {
-      animatedElement!.style.animationPlayState = 'running';
-      recordPWABuilderProcessStep("middle.carousel_played", AnalyticsBehavior.ProcessCheckpoint);
-
+    constructor() {
+        super();
     }
-  }
 
-  render() {
-    return html`
+    connectedCallback(): void {
+        super.connectedCallback();
+        /* const shuffled = this.shuffle(this.companies);
+        this.companies = [...shuffled]; */
+    }
+
+    shuffle(array: any) {
+        let currentIndex = array.length
+        let randomIndex;
+
+        // While there remain elements to shuffle...
+        while (currentIndex != 0) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+
+        return array;
+    }
+
+    toggleAnimation() {
+        this.paused = !this.paused;
+        let animatedElement = (this.shadowRoot!.querySelector(".slide-track") as HTMLElement);
+        if (this.paused) {
+            animatedElement!.style.animationPlayState = 'paused';
+            recordPWABuilderProcessStep("middle.carousel_paused", AnalyticsBehavior.ProcessCheckpoint);
+        } else {
+            animatedElement!.style.animationPlayState = 'running';
+            recordPWABuilderProcessStep("middle.carousel_played", AnalyticsBehavior.ProcessCheckpoint);
+
+        }
+    }
+
+    render() {
+        return html`
     <div id="success-wrapper">
       <div id="success-title">
           <h2>Apps packaged</h2>
@@ -228,29 +228,29 @@ export class ComapniesPackaged extends LitElement {
       </div>
       <div class="slider">
         <div class="slide-track">
-          ${this.companies.map((comp: string) => 
-              html`
+          ${this.companies.map((comp: string) =>
+            html`
               <div class="slide">
                 <img src="/assets/new/${comp}_carousel.png" alt="${comp} logo" />
               </div>`
-            )}
-            ${this.companies.map((comp: string) => 
-              html`
+        )}
+            ${this.companies.map((comp: string) =>
+            html`
               <div class="slide">
                 <img src="/assets/new/${comp}_carousel.png" alt="${comp} logo" />
               </div>`
-            )}
+        )}
         </div>
       </div>
-      ${this.paused ? 
-        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()}  role="button" aria-label="Click here to play carousel">
-              <sl-icon name="play-fill" alt="Play apps scrolling button"  role="img"></sl-icon>
-            </button>` : 
-            
-        html`<button class="controls" type="button" @click=${() => this.toggleAnimation()} role="button" aria-label="Click here to pause carousel"> 
-              <sl-icon name="pause-fill" alt="Pause apps scrolling button" role="img"></sl-icon>
+      ${this.paused ?
+                html`<button class="controls" type="button" @click=${this.toggleAnimation}  role="button" aria-label="Click here to play carousel">
+              <sl-icon name="play-fill" role="img"></sl-icon>
+            </button>` :
+
+                html`<button class="controls" type="button" @click=${this.toggleAnimation} role="button" aria-label="Click here to pause carousel"> 
+              <sl-icon name="pause-fill" role="img"></sl-icon>
             </button>`}
     </div>
     `;
-  }
+    }
 }

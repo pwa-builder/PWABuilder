@@ -7,7 +7,11 @@ import { database } from "./databaseService.js";
  * A queue containing Google Play packaging jobs to be processed. Implemented as a Redis list.
  */
 export class PackageJobQueue {
-    private readonly jobQueueKey = "googleplaypackagejobs";
+    private get jobQueueKey(): string {
+        // Use a different queue key in production vs non-production so that staging and dev doesn't process production jobs.
+        // This needs to be a property getter so that it picks up changes to NODE_ENV e.g. when swapping staging and production in Azure.
+        return process.env.NODE_ENV === "production" ? "googleplaypackagejobs-prod" : "googleplaypackagejobs-nonprod";
+    }
 
     /**
      * Enqueues a new Google Play packaging job.
@@ -17,7 +21,13 @@ export class PackageJobQueue {
     public async enqueue(packageArgs: AndroidPackageOptions): Promise<string> {
         const job = this.createJobFromPackageArgs(packageArgs);
         try {
-            await database.enqueue(this.jobQueueKey, job);
+            // Store the job itself in the database as its own key so we can immediately look up the status.
+            await database.save(job.id, job);
+
+            // Put the job into the queue for processing.
+            const queueLength = await database.enqueue(this.jobQueueKey, job);
+            console.info(`Enqueued new Google Play packaging job ${job.id}. ${queueLength} ${queueLength === 1 ? "job" : "jobs"} are now in the queue.`);
+
             return job.id;
         } catch (enqueueError) {
             console.error("Error enqueueing Google Play packaging job", enqueueError);
@@ -35,6 +45,10 @@ export class PackageJobQueue {
             if (!jobData) {
                 return null;
             }
+
+            const queueLength = await database.queueLength(this.jobQueueKey);
+            console.info(`Dequeued Google Play packaging job ${jobData.id}. ${queueLength} jobs remaining in the queue.`);
+
             return jobData;
         } catch (dequeueError) {
             console.error("Error dequeuing Google Play packaging job", dequeueError);
