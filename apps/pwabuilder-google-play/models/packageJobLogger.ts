@@ -42,7 +42,7 @@ export class PackageJobLogger {
             : level === "error" ? console.error
                 : console.info;
 
-        const args = optionalArgs ? [message, optionalArgs] : [message];
+        const args = optionalArgs && optionalArgs.length > 0 ? [message, optionalArgs] : [message];
         consoleMethod(...args);
     }
 }
