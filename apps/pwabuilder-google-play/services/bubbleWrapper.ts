@@ -158,8 +158,8 @@ export class BubbleWrapper {
         };
         await jarSigner.sign(
             jarSigningInfo,
-            signingInfo.storePassword,
-            signingInfo.keyPassword,
+            `"${signingInfo.storePassword}"`, // Escape the store password, otherwise passwords with special characters will break. See https://github.com/pwa-builder/PWABuilder/issues/5017
+            `"${signingInfo.keyPassword}"`, // Escape the key password for the same reason.
             inputFile,
             outputFile
         );
