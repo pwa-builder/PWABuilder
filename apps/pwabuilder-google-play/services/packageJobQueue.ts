@@ -26,7 +26,7 @@ export class PackageJobQueue {
 
             // Put the job into the queue for processing.
             const queueLength = await database.enqueue(this.jobQueueKey, job);
-            console.info(`Enqueued new Google Play packaging job ${job.id}. ${queueLength} ${queueLength === 1 ? "job" : "jobs"} are now in the queue.`);
+            console.info(`Enqueued new Google Play packaging job ${job.id} to ${this.jobQueueKey}. ${queueLength} ${queueLength === 1 ? "job" : "jobs"} are now in the queue.`);
 
             return job.id;
         } catch (enqueueError) {
