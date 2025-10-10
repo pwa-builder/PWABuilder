@@ -2,7 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import {
-  smallBreakPoint,
+    smallBreakPoint,
 } from '../utils/css/breakpoints';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
@@ -11,17 +11,17 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 
 @customElement('sw-info-card')
 export class ServiceWorkerInfoCard extends LitElement {
-  @property({ type: String }) field: string = "";
-  @property({ type: String }) capabilityId: string = "";
-  @property({ type: String }) description = "";
-  @property({ type: String }) docsUrl = "";
-  @property({ type: String }) placement:  "" |"top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
-  @state() currentlyHovering: boolean = false;
-  @state() hoverTimer: any;
+    @property({ type: String }) field: string = "";
+    @property({ type: String }) capabilityId: string = "";
+    @property({ type: String }) description = "";
+    @property({ type: String }) docsUrl = "";
+    @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
+    @state() currentlyHovering: boolean = false;
+    @state() hoverTimer: any;
 
-  static get styles() {
-    return [
-    css`
+    static get styles() {
+        return [
+            css`
 
       .mic-wrapper {
         display: flex;
@@ -140,70 +140,69 @@ export class ServiceWorkerInfoCard extends LitElement {
       `)}
 
     `
-    ];
-  }
-
-  constructor() {
-    super();
-  }
-
-  firstUpdated(){
-
-  }
-
-  trackLearnMoreAnalytics(){
-    // general counter
-    recordPWABuilderProcessStep(`service_worker.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
-    //specific field counter
-    recordPWABuilderProcessStep(`service_worker.${this.capabilityId}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-  // opens tooltip
-  handleHover(entering: boolean){
-    this.currentlyHovering = entering;
-    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
-    let myEvent = new CustomEvent('trigger-hover',
-      {
-        detail: {
-          tooltip: tooltip,
-          entering: entering
-        },
-        bubbles: true,
-        composed: true
-      });
-    if(!entering){
-      setTimeout(() => { this.closeTooltip(myEvent) }, 250)
-    } else {
-      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
+        ];
     }
-  }
 
-  closeTooltip(e: CustomEvent){
-    if(!this.currentlyHovering){
-      clearTimeout(this.hoverTimer);
-      this.dispatchEvent(e);
+    constructor() {
+        super();
     }
-  }
 
-  // hacky work around for clicking links with keyboard that are nested in menu items
-  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
-  handleClickingLink(linkTag: string){
-    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
-    anchor.click();
-    this.trackLearnMoreAnalytics();
-  }
+    firstUpdated() {
 
-  render() {
-    return html`
+    }
+
+    trackLearnMoreAnalytics() {
+        // general counter
+        recordPWABuilderProcessStep(`service_worker.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+        //specific field counter
+        recordPWABuilderProcessStep(`service_worker.${this.capabilityId}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    }
+
+    // opens tooltip
+    handleHover(entering: boolean) {
+        this.currentlyHovering = entering;
+        let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+        let myEvent = new CustomEvent('trigger-hover',
+            {
+                detail: {
+                    tooltip: tooltip,
+                    entering: entering
+                },
+                bubbles: true,
+                composed: true
+            });
+        if (!entering) {
+            setTimeout(() => { this.closeTooltip(myEvent) }, 250)
+        } else {
+            this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
+        }
+    }
+
+    closeTooltip(e: CustomEvent) {
+        if (!this.currentlyHovering) {
+            clearTimeout(this.hoverTimer);
+            this.dispatchEvent(e);
+        }
+    }
+
+    // hacky work around for clicking links with keyboard that are nested in menu items
+    // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+    handleClickingLink(linkTag: string) {
+        const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
+        anchor.click();
+        this.trackLearnMoreAnalytics();
+    }
+
+    render() {
+        return html`
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
       ${this.placement !== "" ?
-        html`
+                html`
         <sl-dropdown
           distance="10"
           class="tooltip"
           placement=${this.placement}
-          aria-label="Information about ${this.capabilityId}"
           @sl-hide=${() => this.handleHover(false)}
         >
           <slot name="trigger" slot="trigger"></slot>
@@ -215,7 +214,7 @@ export class ServiceWorkerInfoCard extends LitElement {
           </sl-menu>
         </sl-dropdown>
         ` :
-        html`
+                html`
           <sl-dropdown
             distance="10"
             class="tooltip"
@@ -233,9 +232,9 @@ export class ServiceWorkerInfoCard extends LitElement {
           </sl-menu>
         </sl-dropdown>
         `
-      }
+            }
 
     </div>
     `;
-  }
+    }
 }
