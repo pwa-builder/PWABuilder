@@ -382,3 +382,6 @@ test-results/
 
 # MacOS finder temp
 *.DS_Store
+
+# TypeScript build info
+*.tsbuildinfo
