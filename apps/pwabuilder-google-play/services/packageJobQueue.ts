@@ -7,8 +7,11 @@ import { database } from "./databaseService.js";
  * A queue containing Google Play packaging jobs to be processed. Implemented as a Redis list.
  */
 export class PackageJobQueue {
-    // Use a different queue key in production vs non-production so that staging and dev doesn't process production jobs.
-    private readonly jobQueueKey = process.env.NODE_ENV === "production" ? "googleplaypackagejobs-prod" : "googleplaypackagejobs-nonprod";
+    private get jobQueueKey(): string {
+        // Use a different queue key in production vs non-production so that staging and dev doesn't process production jobs.
+        // This needs to be a property getter so that it picks up changes to NODE_ENV e.g. when swapping staging and production in Azure.
+        return process.env.NODE_ENV === "production" ? "googleplaypackagejobs-prod" : "googleplaypackagejobs-nonprod";
+    }
 
     /**
      * Enqueues a new Google Play packaging job.
