@@ -47,7 +47,7 @@ export class PackageJobQueue {
             }
 
             const queueLength = await database.queueLength(this.jobQueueKey);
-            console.info(`Dequeued Google Play packaging job ${jobData.id}. ${queueLength} jobs remaining in the queue.`);
+            console.info(`Dequeued Google Play packaging job ${jobData.id} from ${this.jobQueueKey}. ${queueLength} jobs remaining in the queue.`);
 
             return jobData;
         } catch (dequeueError) {
