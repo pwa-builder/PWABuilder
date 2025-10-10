@@ -12,7 +12,7 @@
     "build": "tsc && rollup -c"
   },
   "dependencies": {
-    "lit": "^3.3.0",
+    "lit": "^3.3.1",
     "msal": "^1.4.16",
     "tslib": "^2.4.0"
   },
