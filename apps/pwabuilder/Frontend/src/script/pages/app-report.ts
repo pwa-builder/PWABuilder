@@ -1298,7 +1298,7 @@ export class AppReport extends LitElement {
         return html`
       <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", capability.id || "")}>
         <sw-info-card capabilityId="${capability.id}" description="${capability.description || ""}" docsUrl="${capability.learnMoreUrl || ""}">
-          <div class="circle-icon" tabindex="0" role="button" slot="trigger">
+          <div class="circle-icon" tabindex="0" role="button" slot="trigger" aria-label="${capability.featureName || ""}">
             <img class="circle-icon-img" src="${capability.featureIcon || ""}" alt="" />
             ${passedCheckIcon}
           </div>
@@ -1374,8 +1374,8 @@ export class AppReport extends LitElement {
             : null
         return html`
     <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.field || "")} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-        <manifest-info-card field="${v.field || ""}" placement="bottom" description="${v.description || ""}" docsUrl="${v.learnMoreUrl || ""}" imageUrl="${v.imageUrl || ""}">
-          <div class="circle-icon" tabindex="0" role="button" slot="trigger">
+        <manifest-info-card field="${v.field || ""}" placement="bottom" description="${v.description || ""}" docsUrl="${v.learnMoreUrl || ""}" imageUrl="${v.imageUrl || ""}" aria-label="${v.description || ""}" role="contentinfo">
+          <div class="circle-icon" tabindex="0" role="button" slot="trigger" aria-label="${v.field || ""}">
             <img class="circle-icon-img" src="${v.featureIcon || ""}" alt="" />
             ${validIcon}
           </div>
