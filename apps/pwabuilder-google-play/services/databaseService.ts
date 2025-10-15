@@ -28,7 +28,19 @@ export class RedisService implements DatabaseService {
             throw new Error("REDIS_CONNECTION_STRING environment variable is not set.");
         }
 
-        this.redis = new Redis(connectionString);
+        // Configure Redis with proper timeouts and retry logic
+        this.redis = new Redis(connectionString, {
+            connectTimeout: 10000, // 10 seconds to establish connection
+            commandTimeout: 5000,  // 5 seconds for individual commands
+            lazyConnect: true,     // Don't connect immediately
+            maxRetriesPerRequest: 3,
+            enableReadyCheck: true,
+            reconnectOnError: (err) => {
+                const targetError = 'READONLY';
+                return err.message.includes(targetError);
+            }
+        });
+
         this.ready = new Promise((resolve, reject) => {
             this.redis.on("ready", () => {
                 console.info("Redis ready to accept commands");
@@ -43,6 +55,17 @@ export class RedisService implements DatabaseService {
             this.redis.on("connect", () => {
                 console.info("Redis connected successfully");
             });
+
+            this.redis.on("close", () => {
+                console.warn("Redis connection closed");
+            });
+
+            this.redis.on("reconnecting", () => {
+                console.info("Redis reconnecting...");
+            });
+
+            // Connect to Redis
+            this.redis.connect().catch(reject);
         });
     }
 
@@ -52,11 +75,24 @@ export class RedisService implements DatabaseService {
      * @returns The parsed JSON object, or null if not found
      */
     async getJson<T>(key: string): Promise<T | null> {
-        const json = await this.redis.get(key);
-        if (!json) {
-            return null;
+        try {
+            const timeoutPromise = new Promise<never>((_, reject) => {
+                setTimeout(() => reject(new Error(`Redis get timeout after 5 seconds for key: ${key}`)), 5000);
+            });
+
+            const json = await Promise.race([
+                this.redis.get(key),
+                timeoutPromise
+            ]);
+
+            if (!json) {
+                return null;
+            }
+            return JSON.parse(json) as T;
+        } catch (error) {
+            console.error(`Error in getJson for key ${key}:`, error);
+            throw error;
         }
-        return JSON.parse(json) as T;
     }
 
     /**
@@ -67,7 +103,16 @@ export class RedisService implements DatabaseService {
     async save<T>(key: string, value: T): Promise<void> {
         try {
             const expirationSeconds = 90 * 24 * 60 * 60; // 90 days in seconds
-            await this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds);
+
+            const timeoutPromise = new Promise<never>((_, reject) => {
+                setTimeout(() => reject(new Error(`Redis set timeout after 5 seconds for key: ${key}`)), 5000);
+            });
+
+            await Promise.race([
+                this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds),
+                timeoutPromise
+            ]);
+
             console.info("Saved object to redis", key);
         } catch (error) {
             console.error(`Error saving JSON to Redis with key ${key}:`, error);
@@ -81,12 +126,32 @@ export class RedisService implements DatabaseService {
      * @returns The popped item serialized as JSON, or null if the list was empty.
      */
     async dequeue<T>(key: string): Promise<T | null> {
-        const json = await this.redis.lpop(key);
-        if (!json) {
-            return null;
-        }
+        try {
+            console.debug(`Attempting to dequeue from key: ${key}`);
+            const startTime = Date.now();
 
-        return JSON.parse(json) as T;
+            // Add manual timeout wrapper
+            const timeoutPromise = new Promise<never>((_, reject) => {
+                setTimeout(() => reject(new Error(`Redis lpop timeout after 10 seconds for key: ${key}`)), 10000);
+            });
+
+            const json = await Promise.race([
+                this.redis.lpop(key),
+                timeoutPromise
+            ]);
+
+            const duration = Date.now() - startTime;
+            console.debug(`Redis lpop completed in ${duration}ms for key: ${key}`);
+
+            if (!json) {
+                return null;
+            }
+
+            return JSON.parse(json) as T;
+        } catch (error) {
+            console.error(`Error in dequeue for key ${key}:`, error);
+            throw error;
+        }
     }
 
     /**
