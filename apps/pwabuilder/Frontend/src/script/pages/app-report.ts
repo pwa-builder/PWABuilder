@@ -1142,7 +1142,6 @@ export class AppReport extends LitElement {
                 <img title="Windows" src="${this.getThemedIcon('/assets/windows_icon.svg')}" alt="Windows" />
                 <img title="iOS" src="${this.getThemedIcon('/assets/apple_icon.svg')}" alt="iOS" />
                 <img title="Android" src="${this.getThemedIcon('/assets/android_icon_full.svg')}" alt="Android" />
-                <img title="Meta Quest" src="${this.getThemedIcon('/assets/meta_icon.svg')}" alt="Meta Quest" />
               </div>
             </div>
           </div>

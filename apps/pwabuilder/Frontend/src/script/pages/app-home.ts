@@ -183,7 +183,6 @@ export class AppHome extends LitElement {
                   <img title="Windows" src="/assets/windows_icon.svg" alt="Windows" />
                   <img title="iOS" src="/assets/apple_icon.svg" alt="iOS" />
                   <img title="Android" src="/assets/android_icon_full.svg" alt="Android" />
-                  <img title="Meta Quest" src="/assets/meta_icon.svg" alt="Meta Quest" />
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
