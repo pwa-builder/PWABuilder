@@ -91,7 +91,7 @@ public class ManifestAnalyzer
     {
         // Ignore the warning about the switch expression not handling unnamed enum values, e.g. casting a random integer to PwaCapabilityId. We don't care about that.
         // However, we want to enable CS8509 which requires that all known enum values are handled.
-        #pragma warning disable CS8524
+#pragma warning disable CS8524
 
         return capability.Id switch
         {
@@ -147,7 +147,7 @@ public class ManifestAnalyzer
             // General capabilities are handled elsewhere.
             PwaCapabilityId.ServesHtml => throw new NotImplementedException()
         };
-        #pragma warning restore CS8524 
+#pragma warning restore CS8524
     }
 
     private static PwaCapabilityCheckStatus CheckManifestImageArray(JsonElement manifest, string fieldName)
@@ -168,22 +168,32 @@ public class ManifestAnalyzer
         {
             foreach (var icon in icons.EnumerateArray())
             {
-                var isDesiredType = icon.TryGetProperty("type", out var iconType) && iconType.ValueKind == JsonValueKind.String && string.Equals(iconType.GetString(), imageType, StringComparison.OrdinalIgnoreCase);
+                var hasTypeProperty = icon.TryGetProperty("type", out var iconType) && iconType.ValueKind == JsonValueKind.String;
+                var declaredTypeMatches = hasTypeProperty && string.Equals(iconType.GetString(), imageType, StringComparison.OrdinalIgnoreCase);
 
-                // If there was no type defined, see if we can sus it out using the file extension.
-                if (!isDesiredType && !icon.TryGetProperty("type", out _))
+                var isDesiredType = false;
+                var hasSrcProp = icon.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String;
+
+                if (hasSrcProp)
                 {
-                    var hasSrcProp = icon.TryGetProperty("src", out var src);
-                    if (hasSrcProp && src.ValueKind == JsonValueKind.String)
+                    var fileExtension = Path.GetExtension(src.GetString());
+                    var extensionMatchesType = fileExtension switch
                     {
-                        var fileExtension = Path.GetExtension(src.GetString());
-                        isDesiredType = fileExtension switch
-                        {
-                            ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
-                            ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
-                            ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
-                            _ => false
-                        };
+                        ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
+                        ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
+                        ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
+                        _ => false
+                    };
+
+                    if (hasTypeProperty)
+                    {
+                        // Both type property and file extension must match the desired type
+                        isDesiredType = declaredTypeMatches && extensionMatchesType;
+                    }
+                    else
+                    {
+                        // If no type property is defined, fallback to file extension check
+                        isDesiredType = extensionMatchesType;
                     }
                 }
 

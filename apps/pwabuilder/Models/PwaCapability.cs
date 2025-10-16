@@ -187,6 +187,21 @@ public class PwaCapability
             },
             new PwaCapability
             {
+                Id = PwaCapabilityId.IconsAreFetchable,
+                Description = "The icons in your web manifest must be fetchable on the network.",
+                TodoAction = "Fix the links to your icons.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
                 Id = PwaCapabilityId.Shortcuts,
                 Description = "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
                 TodoAction = "Let users jump to key tasks or pages in your app by adding shortcuts to your manifest.",
