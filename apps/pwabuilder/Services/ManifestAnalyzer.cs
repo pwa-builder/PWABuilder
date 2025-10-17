@@ -294,13 +294,13 @@ public class ManifestAnalyzer
         }
 
         var imageValidationTasks = new List<Task<bool>>();
-        
+
         foreach (var image in images.EnumerateArray())
         {
             // Only validate if both src and type are present
             var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
             var hasType = image.TryGetProperty("type", out var type) && type.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(type.GetString());
-            
+
             if (hasSrc && hasType)
             {
                 try
@@ -341,13 +341,13 @@ public class ManifestAnalyzer
         }
 
         var imageValidationTasks = new List<Task<bool>>();
-        
+
         foreach (var image in images.EnumerateArray())
         {
             // Only validate if both src and sizes are present
             var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
             var hasSizes = image.TryGetProperty("sizes", out var sizes) && sizes.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(sizes.GetString());
-            
+
             if (hasSrc && hasSizes)
             {
                 try
