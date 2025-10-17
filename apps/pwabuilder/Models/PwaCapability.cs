@@ -202,6 +202,36 @@ public class PwaCapability
             },
             new PwaCapability
             {
+                Id = PwaCapabilityId.IconTypesAreValid,
+                Description = "The declared types of icons in your web manifest must match their actual file types.",
+                TodoAction = "Ensure that icon type declarations match the actual file types (e.g., if type is 'image/png', the file should actually be a PNG).",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.IconSizesAreValid,
+                Description = "The declared sizes of icons in your web manifest must match their actual dimensions.",
+                TodoAction = "Ensure that icon size declarations match the actual image dimensions (e.g., if sizes is '192x192', the image should actually be 192x192 pixels).",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
                 Id = PwaCapabilityId.Shortcuts,
                 Description = "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
                 TodoAction = "Let users jump to key tasks or pages in your app by adding shortcuts to your manifest.",
@@ -325,6 +355,36 @@ public class PwaCapability
                 Id = PwaCapabilityId.ScreenshotsAreFetchable,
                 Description = "The screenshots in your web manifest must be fetchable on the network.",
                 TodoAction = "Fix the links to your screenshots.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "screenshots",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ScreenshotTypesAreValid,
+                Description = "The declared types of screenshots in your web manifest must match their actual file types.",
+                TodoAction = "Ensure that screenshot type declarations match the actual file types (e.g., if type is 'image/png', the file should actually be a PNG).",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "screenshots",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ScreenshotSizesAreValid,
+                Description = "The declared sizes of screenshots in your web manifest must match their actual dimensions.",
+                TodoAction = "Ensure that screenshot size declarations match the actual image dimensions (e.g., if sizes is '1920x1080', the image should actually be 1920x1080 pixels).",
                 Level = PwaCapabilityLevel.Recommended,
                 FeatureName = null,
                 FeatureIcon = null,

@@ -103,11 +103,15 @@ public class ManifestAnalyzer
             PwaCapabilityId.Shortcuts => new PwaManifestCapabilityCheck(capability, CheckShortcuts),
             PwaCapabilityId.Categories => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringArrayField(m.Manifest, "categories")),
             PwaCapabilityId.Icons => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "icons")),
+            PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("icons", manifest, cancelToken)),
+            PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid("icons", manifest, cancelToken)),
+            PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid("icons", manifest, cancelToken)),
             PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 192, "image/png")),
             PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 512, "image/png")),
             PwaCapabilityId.Screenshots => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "screenshots")),
-            PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("icons", manifest, cancelToken)),
             PwaCapabilityId.ScreenshotsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("screenshots", manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid("screenshots", manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid("screenshots", manifest, cancelToken)),
             PwaCapabilityId.HasWideScreenshot => new PwaManifestCapabilityCheck(capability, m => CheckScreenshotFormFactor(m, "wide")),
             PwaCapabilityId.HasNarrowScreenshot => new PwaManifestCapabilityCheck(capability, m => CheckScreenshotFormFactor(m, "narrow")),
             PwaCapabilityId.FileHandlers => new PwaManifestCapabilityCheck(capability, CheckFileHandlers),
@@ -274,6 +278,100 @@ public class ManifestAnalyzer
         var imageExistChecks = await Task.WhenAll(iconFetchTasks);
         var allImagesExist = imageExistChecks.All(a => a);
         return allImagesExist ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+    }
+
+    /// <summary>
+    /// Validates that the declared types of images in the manifest match their actual file types.
+    /// </summary>
+    private async Task<PwaCapabilityCheckStatus> CheckImageTypesAreValid(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        var manifest = manifestContext.Manifest;
+        var hasImagesField = manifest.TryGetProperty(fieldName, out var images)
+            && images.ValueKind == JsonValueKind.Array;
+        if (!hasImagesField)
+        {
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+        }
+
+        var imageValidationTasks = new List<Task<bool>>();
+        
+        foreach (var image in images.EnumerateArray())
+        {
+            // Only validate if both src and type are present
+            var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
+            var hasType = image.TryGetProperty("type", out var type) && type.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(type.GetString());
+            
+            if (hasSrc && hasType)
+            {
+                try
+                {
+                    var imageUri = new Uri(manifestContext.Url, src.GetString()!);
+                    var declaredType = type.GetString();
+                    imageValidationTasks.Add(this.imageValidator.ValidateImageTypeAsync(imageUri, declaredType, cancelToken));
+                }
+                catch (UriFormatException)
+                {
+                    // Invalid URI, skip this image
+                    continue;
+                }
+            }
+        }
+
+        if (imageValidationTasks.Count == 0)
+        {
+            return PwaCapabilityCheckStatus.Skipped; // No images with type declarations to validate
+        }
+
+        var results = await Task.WhenAll(imageValidationTasks);
+        var allTypesValid = results.All(r => r);
+        return allTypesValid ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+    }
+
+    /// <summary>
+    /// Validates that the declared sizes of images in the manifest match their actual dimensions.
+    /// </summary>
+    private async Task<PwaCapabilityCheckStatus> CheckImageSizesAreValid(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        var manifest = manifestContext.Manifest;
+        var hasImagesField = manifest.TryGetProperty(fieldName, out var images)
+            && images.ValueKind == JsonValueKind.Array;
+        if (!hasImagesField)
+        {
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+        }
+
+        var imageValidationTasks = new List<Task<bool>>();
+        
+        foreach (var image in images.EnumerateArray())
+        {
+            // Only validate if both src and sizes are present
+            var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
+            var hasSizes = image.TryGetProperty("sizes", out var sizes) && sizes.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(sizes.GetString());
+            
+            if (hasSrc && hasSizes)
+            {
+                try
+                {
+                    var imageUri = new Uri(manifestContext.Url, src.GetString()!);
+                    var declaredSizes = sizes.GetString();
+                    imageValidationTasks.Add(this.imageValidator.ValidateImageSizeAsync(imageUri, declaredSizes, cancelToken));
+                }
+                catch (UriFormatException)
+                {
+                    // Invalid URI, skip this image
+                    continue;
+                }
+            }
+        }
+
+        if (imageValidationTasks.Count == 0)
+        {
+            return PwaCapabilityCheckStatus.Skipped; // No images with size declarations to validate
+        }
+
+        var results = await Task.WhenAll(imageValidationTasks);
+        var allSizesValid = results.All(r => r);
+        return allSizesValid ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
     private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
