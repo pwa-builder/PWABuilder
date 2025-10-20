@@ -21,8 +21,8 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ILogger<AnalysisJobProcessor> logger;
 
     public AnalysisJobProcessor(
-        IAnalysisJobQueue queue, 
-        IPWABuilderDatabase db, 
+        IAnalysisJobQueue queue,
+        IPWABuilderDatabase db,
         ManifestDetector manifestDetector,
         ManifestAnalyzer manifestAnalyzer,
         ServiceWorkerDetector serviceWorkerDetector,
@@ -178,7 +178,7 @@ public class AnalysisJobProcessor : IHostedService
     private static PwaCapabilityCheckStatus FailIfNotServedHtml(Analysis analysis, CancellationTokenSource cancelTokenSrc)
     {
         var servedHtmlCapability = analysis.Capabilities.First(c => c.Id == PwaCapabilityId.ServesHtml);
-        if (servedHtmlCapability.Status != PwaCapabilityCheckStatus.Passed)
+        if (servedHtmlCapability.Status == PwaCapabilityCheckStatus.Failed)
         {
             cancelTokenSrc.Cancel();
             analysis.Status = AnalysisStatus.Completed;
