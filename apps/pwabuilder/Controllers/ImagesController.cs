@@ -34,7 +34,17 @@ public class ImagesController : ControllerBase
         // }
 
         var maxSize = 1024 * 1024 * 5; // 5mb
-        var imageStream = await http.GetImageAsync(imageUrl, maxSize, cancelToken);
+        HttpClientExtensions.LimitedReadStreamWithMediaType imageStream;
+        try
+        {
+            imageStream = await http.GetImageAsync(imageUrl, maxSize, cancelToken);
+        }
+        catch (HttpRequestException requestError) when (requestError.StatusCode != null)
+        {
+            // If it's an HTTP error, such as a 403, return that status code to the caller.
+            return StatusCode((int)requestError.StatusCode.Value, requestError.Message);
+        }
+
         if (imageStream == null)
         {
             return NotFound($"Image not found at {imageUrl}");

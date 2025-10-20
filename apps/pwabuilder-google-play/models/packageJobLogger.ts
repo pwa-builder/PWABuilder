@@ -30,7 +30,7 @@ export class PackageJobLogger {
 
     private log(level: "info" | "warn" | "error", message: string, ...optionalArgs: any[]): void {
         const timestamp = new Date().toISOString();
-        const optionsArgsStr = optionalArgs ? " " + optionalArgs.map(arg => JSON.stringify(arg || "")).join(" ") : "";
+        const optionsArgsStr = optionalArgs && optionalArgs.length > 0 ? " " + optionalArgs.map(arg => JSON.stringify(arg || "")).join(" ") : "";
         const logEntry = `${timestamp} [${level}]: ${message}${optionsArgsStr}`;
 
         this.job.logs.push(logEntry);
@@ -42,7 +42,11 @@ export class PackageJobLogger {
             : level === "error" ? console.error
                 : console.info;
 
-        const args = optionalArgs && optionalArgs.length > 0 ? [message, optionalArgs] : [message];
-        consoleMethod(...args);
+        //const args = optionalArgs && optionalArgs.length > 0 ? [message, optionalArgs] : [message];
+        if (optionalArgs && optionalArgs.length > 0) {
+            consoleMethod(message, ...optionalArgs);
+        } else {
+            consoleMethod(message);
+        }
     }
 }
