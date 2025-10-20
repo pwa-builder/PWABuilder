@@ -127,7 +127,6 @@ export class RedisService implements DatabaseService {
      */
     async dequeue<T>(key: string): Promise<T | null> {
         try {
-            console.debug(`Attempting to dequeue from key: ${key}`);
             const startTime = Date.now();
 
             // Add manual timeout wrapper
@@ -141,7 +140,9 @@ export class RedisService implements DatabaseService {
             ]);
 
             const duration = Date.now() - startTime;
-            console.debug(`Redis lpop completed in ${duration}ms for key: ${key}`);
+            if (duration > 5000) {
+                console.warn(`Redis lpop completed in ${duration}ms for key: ${key}`);
+            }
 
             if (!json) {
                 return null;

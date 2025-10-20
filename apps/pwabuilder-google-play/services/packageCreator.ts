@@ -121,7 +121,7 @@ export class PackageCreator {
         //
         // When this happens, we can swap out the APK url items with a safe proxy server that doesn't have the same issues.
         // For example, if the icon is https://foo.com/img.png, we change this to
-        // https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=https://foo.com/img/png
+        // https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=https://foo.com/img/png
         const http1Fetch = 'node-fetch';
         const http2Fetch = 'fetch-h2';
         try {
