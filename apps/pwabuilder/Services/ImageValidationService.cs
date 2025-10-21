@@ -114,21 +114,29 @@ public class ImageValidationService : IImageValidationService
 
         try
         {
-            using var response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead, cancelToken);
+            using var response = await httpClient.GetAsync(imageUri, cancelToken);
             if (!response.IsSuccessStatusCode)
             {
                 return false; // Image doesn't exist
             }
 
-            // Get the actual content type from the response
-            var actualContentType = response.Content.Headers.ContentType?.MediaType;
-            if (string.IsNullOrWhiteSpace(actualContentType))
+            using var imageStream = await response.Content.ReadAsStreamAsync(cancelToken);
+
+            // Use ImageSharp to detect the actual image format
+            var detectedFormat = await SixLabors.ImageSharp.Image.DetectFormatAsync(imageStream, cancelToken);
+            if (detectedFormat == null)
             {
-                return false; // No content type in response
+                return false; // Could not detect image format
             }
 
-            // Compare declared type with actual type (case-insensitive)
-            return string.Equals(declaredType.Trim(), actualContentType.Trim(), StringComparison.OrdinalIgnoreCase);
+            var actualMimeType = detectedFormat.DefaultMimeType;
+            if (string.IsNullOrWhiteSpace(actualMimeType))
+            {
+                return false; // No mime type from detected format
+            }
+
+            // Compare declared type with actual detected type (case-insensitive)
+            return string.Equals(declaredType.Trim(), actualMimeType.Trim(), StringComparison.OrdinalIgnoreCase);
         }
         catch
         {
@@ -155,7 +163,7 @@ public class ImageValidationService : IImageValidationService
             }
 
             using var imageStream = await response.Content.ReadAsStreamAsync(cancelToken);
-            
+
             // Use ImageSharp to get actual image dimensions
             var imageInfo = await SixLabors.ImageSharp.Image.IdentifyAsync(imageStream, cancelToken);
             if (imageInfo == null)
@@ -168,12 +176,12 @@ public class ImageValidationService : IImageValidationService
 
             // Parse declared sizes (e.g., "192x192" or "192x192 256x256")
             var sizesList = declaredSizes.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            
+
             foreach (var size in sizesList)
             {
                 var sizeParts = size.Split('x', StringSplitOptions.RemoveEmptyEntries);
-                if (sizeParts.Length == 2 && 
-                    int.TryParse(sizeParts[0], out var declaredWidth) && 
+                if (sizeParts.Length == 2 &&
+                    int.TryParse(sizeParts[0], out var declaredWidth) &&
                     int.TryParse(sizeParts[1], out var declaredHeight))
                 {
                     if (actualWidth == declaredWidth && actualHeight == declaredHeight)
