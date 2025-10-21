@@ -73,12 +73,6 @@ export class PublishPane extends LitElement {
             "logo": "/assets/apple_icon.svg",
             "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
             "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
-        },
-        "Meta":
-        {
-            "logo": "/assets/meta_icon.svg",
-            "packaging_text": "Click below for instructions on how to submit to the Meta Quest Store.",
-            "package_instructions": "https://docs.pwabuilder.com/#/builder/meta"
         }
     }
 
@@ -119,18 +113,6 @@ export class PublishPane extends LitElement {
             isActionCard: true,
             icon: '/assets/Publish_Apple.svg',
             renderDownloadButton: () => this.renderiOSDownloadButton()
-        },
-        {
-            title: 'Meta Quest',
-            factoids: [
-                "PWAs are first class applications",
-                "Bring your 2D apps to VR's immersive screen",
-                "Build immersive 3D experiences for VR using WebXR",
-                "Currently in developer preview via sideloading"
-            ],
-            isActionCard: true,
-            icon: '/assets/Publish_Meta.svg',
-            renderDownloadButton: () => this.renderOculusDownloadButton()
         }
     ];
 
