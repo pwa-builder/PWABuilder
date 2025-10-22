@@ -174,7 +174,7 @@ public class ManifestDetector
             logger.LogWarning(jsonError, "Error parsing manifest JSON at {manifestUrl}.", manifestUrl);
             return null;
         }
-        
+
         return new ManifestDetection
         {
             Url = manifestUrl,

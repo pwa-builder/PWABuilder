@@ -14,14 +14,14 @@ public class ManifestsController : ControllerBase
     /// <param name="manifestCreatorService">The manifest creation service.</param>
     /// <returns>A new web manifest for the specified site.</returns>
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromQuery] Uri url, [FromServices] ManifestCreator manifestCreatorService)
+    public async Task<IActionResult> Create([FromQuery] Uri url, [FromServices] ManifestCreator manifestCreatorService, CancellationToken cancellationToken)
     {
         if (!url.IsAbsoluteUri)
         {
             url = new Uri($"https://{url}", UriKind.Absolute);
         }
 
-        var manifest = await manifestCreatorService.Create(url);
+        var manifest = await manifestCreatorService.Create(url, cancellationToken);
         return Ok(manifest);
     }
 }

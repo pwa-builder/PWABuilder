@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { manifest_fields } from '@pwabuilder/manifest-information';
 import {
-  smallBreakPoint,
+    smallBreakPoint,
 } from '../utils/css/breakpoints';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
@@ -12,18 +12,18 @@ import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {
-  @property({ type: String }) field: string = "";
-  @property({ type: String }) description = "";
-  @property({ type: String }) docsUrl = "";
-  @property({ type: String }) imageUrl = "";
-  @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
-  @state() currentlyHovering: boolean = false;
-  @state() currentlyOpen: boolean = false;
-  @state() hoverTimer: any;
+    @property({ type: String }) field: string = "";
+    @property({ type: String }) description = "";
+    @property({ type: String }) docsUrl = "";
+    @property({ type: String }) imageUrl = "";
+    @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
+    @state() currentlyHovering: boolean = false;
+    @state() currentlyOpen: boolean = false;
+    @state() hoverTimer: any;
 
-  static get styles() {
-    return [
-      css`
+    static get styles() {
+        return [
+            css`
     
       .mic-wrapper {
         display: flex;
@@ -167,88 +167,88 @@ export class ManifestInfoCard extends LitElement {
       `)}
 
     `
-    ];
-  }
-
-  constructor() {
-    super();
-  }
-
-  openME() {
-    // general counter
-    recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    // specific counter
-    recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
-    (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
-    let tab: string = manifest_fields[this.field]?.location || "info";
-    let event: CustomEvent = new CustomEvent('open-manifest-editor', {
-      detail: {
-        field: this.field,
-        tab: tab
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(event);
-  }
-
-  trackLearnMoreAnalytics() {
-    // general counter
-    recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    //specific field counter
-    recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-
-  // opens tooltip
-  handleHover(entering: boolean) {
-    this.currentlyHovering = entering;
-    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
-    let myEvent = new CustomEvent('trigger-hover',
-      {
-        detail: {
-          tooltip: tooltip,
-          entering: entering
-        },
-        bubbles: true,
-        composed: true
-      });
-    if (!entering) {
-      setTimeout(() => { this.closeTooltip(myEvent) }, 250)
-    } else {
-      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
+        ];
     }
-  }
 
-  handleClick() {
-    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown);
-    if (!tooltip.open) {
-      tooltip.show();
+    constructor() {
+        super();
     }
-    this.currentlyOpen = tooltip.open;
-  }
 
-  closeTooltip(e: CustomEvent) {
-    if (!this.currentlyHovering) {
-      clearTimeout(this.hoverTimer);
-      this.dispatchEvent(e);
+    openME() {
+        // general counter
+        recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+        // specific counter
+        recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+        (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
+        let tab: string = manifest_fields[this.field]?.location || "info";
+        let event: CustomEvent = new CustomEvent('open-manifest-editor', {
+            detail: {
+                field: this.field,
+                tab: tab
+            },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(event);
     }
-  }
 
-  // hacky work around for clicking links with keyboard that are nested in menu items
-  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
-  handleClickingLink(linkTag: string) {
-    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
-    anchor.click();
-    this.trackLearnMoreAnalytics();
-  }
+    trackLearnMoreAnalytics() {
+        // general counter
+        recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+        //specific field counter
+        recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    }
 
-  render() {
-    return html`
+
+    // opens tooltip
+    handleHover(entering: boolean) {
+        this.currentlyHovering = entering;
+        let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+        let myEvent = new CustomEvent('trigger-hover',
+            {
+                detail: {
+                    tooltip: tooltip,
+                    entering: entering
+                },
+                bubbles: true,
+                composed: true
+            });
+        if (!entering) {
+            setTimeout(() => { this.closeTooltip(myEvent) }, 250)
+        } else {
+            this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
+        }
+    }
+
+    handleClick() {
+        let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown);
+        if (!tooltip.open) {
+            tooltip.show();
+        }
+        this.currentlyOpen = tooltip.open;
+    }
+
+    closeTooltip(e: CustomEvent) {
+        if (!this.currentlyHovering) {
+            clearTimeout(this.hoverTimer);
+            this.dispatchEvent(e);
+        }
+    }
+
+    // hacky work around for clicking links with keyboard that are nested in menu items
+    // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+    handleClickingLink(linkTag: string) {
+        const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
+        anchor.click();
+        this.trackLearnMoreAnalytics();
+    }
+
+    render() {
+        return html`
     <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
       ${this.placement !== "" ?
-        html`
+                html`
           <sl-dropdown
             distance="10"
             placement="${this.placement}"
@@ -266,10 +266,11 @@ export class ManifestInfoCard extends LitElement {
           </sl-menu>
         </sl-dropdown>
         ` :
-        html`
+                html`
           <sl-dropdown
             distance="10"
             class="tooltip"
+            aria-label="Information about ${this.field}"
             @sl-hide=${() => this.handleHover(false)}
           >
           <slot name="trigger" slot="trigger"></slot>
@@ -287,17 +288,17 @@ export class ManifestInfoCard extends LitElement {
 
     </div>
     `;
-  }
-
-  renderImage(): TemplateResult {
-    if (!this.imageUrl) {
-      return html``;
     }
 
-    return html`
+    renderImage(): TemplateResult {
+        if (!this.imageUrl) {
+            return html``;
+        }
+
+        return html`
       <div class="image-section">
         <img src="${this.imageUrl}" alt="Visual example of the feature" />
       </div>
     `;
-  }
+    }
 }

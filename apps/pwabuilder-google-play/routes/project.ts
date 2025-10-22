@@ -153,6 +153,8 @@ async function getPackageJob(request: express.Request, response: express.Respons
         return;
     }
 
+    console.info("Received request for package job status", jobId);
+
     const job = await database.getJson<GooglePlayPackageJob>(jobId);
     if (!job) {
         console.warn("No job found with ID", jobId);
@@ -161,6 +163,7 @@ async function getPackageJob(request: express.Request, response: express.Respons
     }
 
     // Send back the job as JSON.
+    console.info("Request for package job completed successfully. Returning job", jobId, job.status);
     response.status(200).json(job);
 }
 

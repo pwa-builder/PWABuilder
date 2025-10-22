@@ -82,30 +82,71 @@ public static class HttpClientExtensions
     /// <param name="cancelToken">Cancellation token.</param>
     /// <returns>The string fetched from the URI.</returns>
     /// <exception cref="InvalidOperationException">The response was longer than the max size.</exception>
-    public static async Task<LimitedReadStreamWithMediaType> GetImageAsync(this HttpClient client, Uri requestUri, long maxSizeInBytes, CancellationToken cancelToken)
+    public static async Task<LimitedReadStreamWithMediaType> GetStreamAsync(this HttpClient client, Uri requestUri, IEnumerable<string> accepts, long maxSizeInBytes, CancellationToken cancelToken)
     {
-        var imageRequest = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        var streamRequest = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
         // Add the accept header for images.
-        imageRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("image/*"));
+        // Add the accept header if provided.
+        foreach (var acceptType in accepts)
+        {
+            streamRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptType));
+        }
 
         // Send it.
-        var imageFetch = await client.SendAsync(imageRequest, cancelToken);
+        var streamFetch = await client.SendAsync(streamRequest, cancelToken);
 
         // We have a max size, so we need to check the content length.
         // First, ensure we've got success.
-        imageFetch.EnsureSuccessStatusCode();
+        streamFetch.EnsureSuccessStatusCode();
 
         // See if we have a Content-Length header
-        var contentLength = imageFetch.Content.Headers.ContentLength;
+        var contentLength = streamFetch.Content.Headers.ContentLength;
         if (contentLength.HasValue && contentLength.Value > maxSizeInBytes)
         {
             throw new InvalidOperationException($"Attempted to fetch {requestUri}, but response content-length header says the response size ({contentLength.Value}) exceeds the maximum allowed size ({maxSizeInBytes}).");
         }
 
         // Read in a string as a stream to ensure we don't exceed the max size.
-        var stream = await imageFetch.Content.ReadAsStreamAsync(cancelToken);
-        return new LimitedReadStreamWithMediaType(stream, maxSizeInBytes, imageFetch.Content.Headers.ContentType?.MediaType);
+        var stream = await streamFetch.Content.ReadAsStreamAsync(cancelToken);
+        return new LimitedReadStreamWithMediaType(stream, maxSizeInBytes, streamFetch.Content.Headers.ContentType?.MediaType);
+    }
+
+    /// <summary>
+    /// Fetches an image from the specified URI while providing an expected content type and a maximum response size.
+    /// </summary>
+    /// <param name="client">The HTTP client.</param>
+    /// <param name="requestUri">The URI to request.</param>
+    /// <param name="maxSizeInBytes">The maximum size in bytes of the response.</param>
+    /// <param name="cancelToken">Cancellation token.</param>
+    /// <returns>The string fetched from the URI.</returns>
+    /// <exception cref="InvalidOperationException">The response was longer than the max size.</exception>
+    public static Task<LimitedReadStreamWithMediaType> GetImageAsync(this HttpClient client, Uri requestUri, long maxSizeInBytes, CancellationToken cancelToken)
+    {
+        return GetStreamAsync(client, requestUri, ["image/*"], maxSizeInBytes, cancelToken);
+    }
+
+    /// <summary>
+    /// Makes a request to the URL and reads only the response headers. It throws an HttpRequestException if the response headers don't contain the specified content type.
+    /// </summary>
+    /// <param name="http">The HTTP client.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
+    /// <param name="responseContentType">The expected response content type. If the response doesn't contain this content type header, an HttpRequestException will be thrown.</param>
+    /// <exception cref="HttpRequestException">The request didn't have a response content-type containing <paramref name="responseContentType"/>.
+    public static void EnsureContentType(this HttpResponseMessage response, string responseContentType)
+    {
+        // If there is no content type header, consider this test skipped. 
+        var contentType = response.Content.Headers.ContentType;
+        if (string.IsNullOrEmpty(contentType?.MediaType))
+        {
+            throw new HttpRequestException($"Expected a response content-type header of {responseContentType}, but it had none.");
+        }
+
+        var hasMatchingContentType = contentType.MediaType.Contains("text/html");
+        if (!hasMatchingContentType)
+        {
+            throw new HttpRequestException($"Expected a response content-type header of {responseContentType}, but it only had {contentType.MediaType}.");
+        }
     }
 
     public class LimitedReadStreamWithMediaType : Stream

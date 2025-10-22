@@ -121,7 +121,7 @@ export class PackageCreator {
         //
         // When this happens, we can swap out the APK url items with a safe proxy server that doesn't have the same issues.
         // For example, if the icon is https://foo.com/img.png, we change this to
-        // https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=https://foo.com/img/png
+        // https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=https://foo.com/img/png
         const http1Fetch = 'node-fetch';
         const http2Fetch = 'fetch-h2';
         try {
@@ -135,15 +135,15 @@ export class PackageCreator {
             bubbleWrapper.addEventListener("progress", e => this.bubblewrapProgress(e))
             return await bubbleWrapper.generateAppPackage();
         } catch (error) {
-            const errorMessage = (error as Error)?.message || '';
-            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403.", "warn");
+            const errorMessage = (error as Error)?.message || `${error}`;
+            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403. " + errorMessage, "warn");
             const is403Error =
                 errorMessage.includes('403') ||
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
             if (is403Error) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithSafeUrls(options);
-                this.dispatchProgressEvent('Encountered 403 error when generating app package. This indicates PWABuilder was unable to downlaod the images in your web manifest. If the problem persists, please ensure the images specified in your manfiest can be fetched without 404s, redirects, or authentication walls. Retrying with safe URL proxy and HTTP2.', "warn");
+                this.dispatchProgressEvent('Encountered 403 error when generating app package. This indicates PWABuilder was unable to download the images in your web manifest. If the problem persists, please ensure the images specified in your manifest can be fetched without 404s, redirects, or authentication walls. Retrying with safe URL proxy and HTTP2.', "warn");
                 const bubbleWrapper = new BubbleWrapper(
                     optionsWithSafeUrl,
                     projectDirPath,
@@ -251,8 +251,9 @@ export class PackageCreator {
         for (let prop of absoluteUrlProps) {
             const url = newOptions[prop];
             if (url && typeof url === 'string') {
+                const absoluteUrl = new URL(url, options.webManifestUrl);
                 const safeUrlFetcherEndpoint = 'https://pwabuilder.com/api/images/getsafeimageforanalysis';
-                const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(url)}`;
+                const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(absoluteUrl.toString())}&analysisId=${encodeURIComponent(options.analysisId || "")}`;
                 (newOptions[prop] as any) = safeUrl;
             }
         }
