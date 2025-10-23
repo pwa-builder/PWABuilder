@@ -106,14 +106,29 @@ namespace PWABuilder.Services
             // To test offline capability, we load the page in puppeteer. Then we disconnect the network and try to reload the page.
             // If the page loads successfully while offline, we mark the capability as passed.
             // NOTE: in the past we used Lighthouse's offline audit for this check. But as of summer 2025, Lighthouse has removed PWA audits including offline support audit.
+            var consoleOutHandler = new EventHandler<ConsoleEventArgs>((sender, e) => LogPuppeteerPageConsole(e, logger, appUrl));
+            IPage? page = null;
             try
             {
-                var page = await puppeteerService.Navigate(appUrl);
+                page = await puppeteerService.Navigate(appUrl);
+                page.Console += consoleOutHandler;
 
                 cancelToken.ThrowIfCancellationRequested();
 
                 // Wait for network to be idle
-                await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 1000, Timeout = 20000 });
+                await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 2000, Timeout = 20000 });
+
+                // Check if service worker is registered and active
+                var swRegistered = await page.EvaluateExpressionAsync<bool>(@"
+                    navigator.serviceWorker && 
+                    navigator.serviceWorker.controller !== null
+                ");
+                if (!swRegistered)
+                {
+                    offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
+                    offlineCapability.ErrorMessage = "No active service worker found afer load.";
+                    return offlineCapability;
+                }
 
                 cancelToken.ThrowIfCancellationRequested();
 
@@ -123,8 +138,8 @@ namespace PWABuilder.Services
                 // Try to reload the page
                 var response = await page.ReloadAsync(new NavigationOptions
                 {
-                    Timeout = 5000,
-                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, WaitUntilNavigation.Networkidle2],
+                    Timeout = 20000,
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load],
                 });
 
                 if (response != null && response.Ok)
@@ -133,6 +148,7 @@ namespace PWABuilder.Services
                 }
                 else
                 {
+                    offlineCapability.ErrorMessage = $"Offline capability check failed due to response {response?.Status}";
                     offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
                     logger.LogInformation("Offline capability check for {url} failed. Response: {status} {statusText}", appUrl, (int?)response?.Status, response?.StatusText);
                 }
@@ -141,11 +157,37 @@ namespace PWABuilder.Services
             }
             catch (Exception ex)
             {
+                offlineCapability.ErrorMessage = $"Offline capability check failed due to an exception: {ex.Message}";
                 logger.LogWarning(ex, "Error checking offline capability for {url}", appUrl);
                 offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
             }
+            finally
+            {
+                if (page != null)
+                {
+                    page.Console -= consoleOutHandler;
+                    page.Dispose();
+                }
+            }
 
             return offlineCapability;
+        }
+
+        private void LogPuppeteerPageConsole(ConsoleEventArgs e, ILogger logger, Uri appUrl)
+        {
+            if (e.Message == null)
+            {
+                return;
+            }
+
+            var level = e.Message.Type switch
+            {
+                ConsoleType.Error => LogLevel.Error,
+                ConsoleType.Warning => LogLevel.Warning,
+                ConsoleType.Info => LogLevel.Information,
+                _ => LogLevel.Debug,
+            };
+            logger.Log(level, "Puppeteer console log for {url}: {text}", appUrl, e.Message.Text);
         }
 
         private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, ServiceWorkerDetection swDetection, string swScripts)
