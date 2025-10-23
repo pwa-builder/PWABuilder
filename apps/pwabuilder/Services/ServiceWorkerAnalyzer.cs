@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
 
@@ -43,16 +44,25 @@ namespace PWABuilder.Services
                 RegexOptions.Multiline
             ),
         ];
+        private readonly IPuppeteerService puppeteerService;
 
-        public ServiceWorkerAnalyzer(WebStringCache webCache)
+        /// <summary>
+        /// Creates a new service worker analyzer.
+        /// </summary>
+        /// <param name="webCache"></param>
+        /// <param name="puppeteer"></param>
+        public ServiceWorkerAnalyzer(WebStringCache webCache, IPuppeteerService puppeteer)
         {
             this.webCache = webCache;
+            this.puppeteerService = puppeteer;
         }
 
         /// <inheritdoc />
         public async Task<List<PwaCapability>> TryAnalyzeServiceWorkerAsync(ServiceWorkerDetection? swDetection, Uri appUrl, ILogger logger, CancellationToken cancelToken)
         {
-            var swCaps = PwaCapability.CreateServiceWorkerCapabilities();
+            var swCaps = PwaCapability.CreateServiceWorkerCapabilities()
+                .Where(c => c.Id != PwaCapabilityId.OfflineSupport) // OfflineSupport is checked separately in the TryRunOfflineCheck method.
+                .ToList();
             if (swDetection == null)
             {
                 HandleNoServiceWorker(swCaps, logger);
@@ -82,12 +92,67 @@ namespace PWABuilder.Services
             return swCaps;
         }
 
+        /// <inheritdoc />
+        public async Task<PwaCapability> TryRunOfflineCheck(ServiceWorkerDetection? swDetection, Uri appUrl, ILogger logger, CancellationToken cancelToken)
+        {
+            var offlineCapability = PwaCapability.CreateServiceWorkerCapabilities()
+                .First(c => c.Id == PwaCapabilityId.OfflineSupport);
+            if (swDetection == null)
+            {
+                offlineCapability.Status = PwaCapabilityCheckStatus.Skipped;
+                return offlineCapability;
+            }
+
+            // To test offline capability, we load the page in puppeteer. Then we disconnect the network and try to reload the page.
+            // If the page loads successfully while offline, we mark the capability as passed.
+            // NOTE: in the past we used Lighthouse's offline audit for this check. But as of summer 2025, Lighthouse has removed PWA audits including offline support audit.
+            try
+            {
+                var page = await puppeteerService.Navigate(appUrl);
+
+                cancelToken.ThrowIfCancellationRequested();
+
+                // Wait for network to be idle
+                await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 1000, Timeout = 20000 });
+
+                cancelToken.ThrowIfCancellationRequested();
+
+                // Disconnect network
+                await page.SetOfflineModeAsync(true);
+
+                // Try to reload the page
+                var response = await page.ReloadAsync(new NavigationOptions
+                {
+                    Timeout = 5000,
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, WaitUntilNavigation.Networkidle2],
+                });
+
+                if (response != null && response.Ok)
+                {
+                    offlineCapability.Status = PwaCapabilityCheckStatus.Passed;
+                }
+                else
+                {
+                    offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
+                    logger.LogInformation("Offline capability check for {url} failed. Response: {status} {statusText}", appUrl, (int?)response?.Status, response?.StatusText);
+                }
+
+                return offlineCapability;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Error checking offline capability for {url}", appUrl);
+                offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
+            }
+
+            return offlineCapability;
+        }
+
         private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, ServiceWorkerDetection swDetection, string swScripts)
         {
             return swCapability.Id switch
             {
                 PwaCapabilityId.HasServiceWorker => swDetection != null ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed,
-                PwaCapabilityId.OfflineSupport => PwaCapabilityCheckStatus.Failed, // TODO: implement offline check. We used to test this using Lighthouse, but they removed offline audit check as of Lighthouse v12.
                 PwaCapabilityId.ServiceWorkerIsNotEmpty => CheckServiceWorkerNotEmpty(swScripts),
                 PwaCapabilityId.BackgroundSync => CheckBackgroundSync(swScripts),
                 PwaCapabilityId.PeriodicSync => CheckPeriodicSync(swScripts),

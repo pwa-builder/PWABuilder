@@ -129,6 +129,7 @@ public class AnalysisJobProcessor : IHostedService
         var generalCapDetectionTask = generalWebAppCapabilityDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
         var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
         var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
+        var serviceWorkerOfflineTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryRunOfflineCheck(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities
         var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
         var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, logger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
 
@@ -164,6 +165,11 @@ public class AnalysisJobProcessor : IHostedService
         // Step 6, check for HTTPS.
         var httpsCapabilities = TryCheckHttpsCapabilities(job.Url, analysis.WebManifest, analysis.ServiceWorker);
         analysis.ProcessCapabilities(httpsCapabilities);
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // Step 7, check for offline capability.
+        var offlineCapability = await serviceWorkerOfflineTask;
+        analysis.ProcessCapabilities([offlineCapability]);
         await db.SaveAsync(analysis.Id, analysis);
 
         // All done! Mark the analysis as completed.
