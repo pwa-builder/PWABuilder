@@ -102,11 +102,11 @@ public class Analysis
             return false;
         }
 
-        // All required fields must be valid.
+        // All required fields must not have a failed status.
         var allRequiredFieldsValid = this.Capabilities.Count > 0
             && this.Capabilities
             .Where(v => v.Level == PwaCapabilityLevel.Required && v.Category != PwaCapabilityCategory.Https) // Skip HTTPS check here because Lighthouse takes too long.
-            .All(v => v.Status == PwaCapabilityCheckStatus.Passed);
+            .All(v => v.Status != PwaCapabilityCheckStatus.Failed);
 
         return allRequiredFieldsValid;
     }

@@ -269,6 +269,6 @@ public class ImageValidationService : IImageValidationService
             return new Exception($"Image at {imageUrl} returned with the wrong content-type. Expected an image content type, but got {contentType}. \n\nFor Supabase-hosted images, update your manifest images to use the image rendering endpoint: {imageUrl.AbsoluteUri.Replace("/object/public", "/render/image/public")}");
         }
 
-        return new Exception($"Fetching image {imageUrl} returned with the wrong content-type {contentType}. Expected an image content type, such as image/png, image/jpg, or image/webp");
+        return new Exception($"Fetching image {imageUrl} returned with Content-Type {contentType}. Expected an image content type, such as image/png, image/jpeg, or image/webp");
     }
 }
