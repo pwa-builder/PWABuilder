@@ -120,7 +120,7 @@ public class Analysis
         foreach (var capability in capabilities)
         {
             var existingCapability = this.Capabilities.First(c => c.Id == capability.Id);
-            existingCapability.Status = capability.Status;
+            existingCapability.Copy(capability);
         }
     }
 }

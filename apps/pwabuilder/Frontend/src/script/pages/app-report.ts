@@ -1096,27 +1096,28 @@ export class AppReport extends LitElement {
 
         actionItems.sort((a, b) => this.sortActionItems(a, b));
         return html`
-        ${repeat(actionItems, t => t.id, t => this.renderTodo(t))}
-    `;
+            ${repeat(actionItems, t => t.id, t => this.renderTodo(t))}
+        `;
     }
 
     private renderTodo(todo: PwaCapability): TemplateResult {
         const hiddenClass = this.todoFilters.includes(todo.level) ? "" : "d-none";
 
         return html`
-      <todo-item
-        class="${hiddenClass}"
-        status=${todo.level}
-        field=${todo.field || ""}
-        fix=${todo.todoAction}
-        card=${todo.category}
-        description=${todo.description || ""}
-        docsUrl=${todo.learnMoreUrl || ""}
-        imageUrl=${todo.imageUrl || ""}
-        @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
-        @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
-        @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field || "")}></todo-item>
-    `;
+            <todo-item
+                class="${hiddenClass}"
+                status=${todo.level}
+                field=${todo.field || ""}
+                error=${todo.errorMessage || ""}
+                fix=${todo.todoAction}
+                card=${todo.category}
+                description=${todo.description || ""}
+                docsUrl=${todo.learnMoreUrl || ""}
+                imageUrl=${todo.imageUrl || ""}
+                @todo-clicked=${(e: CustomEvent) => this.animateItem(e)}
+                @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}
+                @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "action_items", todo.field || "")}></todo-item>
+            `;
     }
 
     private getThemedIcon(url: string): string {
@@ -1363,8 +1364,8 @@ export class AppReport extends LitElement {
     renderAppCapabilitiesCards(): TemplateResult {
         const features = this.analysis?.capabilities.filter(v => v.level === "Feature" && v.category === "WebAppManifest") || [];
         return html`
-      ${repeat(features, f => this.renderAppCapabilityCard(f))}
-    `;
+          ${repeat(features, f => this.renderAppCapabilityCard(f))}
+        `;
     }
 
     renderAppCapabilityCard(v: PwaCapability): TemplateResult {
@@ -1372,16 +1373,25 @@ export class AppReport extends LitElement {
             ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />`
             : null
         return html`
-    <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.field || "")} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
-        <manifest-info-card field="${v.field || ""}" placement="bottom" description="${v.description || ""}" docsUrl="${v.learnMoreUrl || ""}" imageUrl="${v.imageUrl || ""}" aria-label="${v.description || ""}" role="contentinfo">
-          <div class="circle-icon" tabindex="0" role="button" slot="trigger" aria-label="${v.field || ""}">
-            <img class="circle-icon-img" src="${v.featureIcon || ""}" alt="" />
-            ${validIcon}
-          </div>
-        </manifest-info-card>
-        <p>${v.featureName || v.field || ""}</p>
-      </div>
-    `;
+            <div class="icon-and-name" @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "app_caps", v.field || "")} @open-manifest-editor=${(e: CustomEvent) => this.openManifestEditorModal(e.detail.field, e.detail.tab)}>
+                <manifest-info-card 
+                    field="${v.field || ""}" 
+                    placement="bottom" 
+                    description="${v.description || ""}" 
+                    error="${v.errorMessage || ""}"
+                    docsUrl="${v.learnMoreUrl || ""}" 
+                    imageUrl="${v.imageUrl || ""}" 
+                    aria-label="${v.description || ""}" 
+                    role="contentinfo">
+                    
+                    <div class="circle-icon" tabindex="0" role="button" slot="trigger" aria-label="${v.field || ""}">
+                        <img class="circle-icon-img" src="${v.featureIcon || ""}" alt="" />
+                        ${validIcon}
+                    </div>
+                </manifest-info-card>
+                <p>${v.featureName || v.field || ""}</p>
+            </div>
+        `;
     }
 
     renderPackageSpinner(): TemplateResult {
@@ -1398,12 +1408,12 @@ export class AppReport extends LitElement {
 
         // @readyForRetest=${() => this.addRetestTodo("Manifest")}
         return html`      
-      <manifest-editor-frame 
-        analysisId="${this.analysisId || ''}"
-        .isGenerated=${this.createdManifest} 
-        .startingTab=${this.startingManifestEditorTab} 
-        .focusOn=${this.focusOnME}></manifest-editor-frame>
-    `;
+            <manifest-editor-frame 
+                analysisId="${this.analysisId || ''}"
+                .isGenerated=${this.createdManifest} 
+                .startingTab=${this.startingManifestEditorTab} 
+                .focusOn=${this.focusOnME}></manifest-editor-frame>
+        `;
     }
 
     renderAnalysisInfoDialog(): TemplateResult {
@@ -1412,22 +1422,22 @@ export class AppReport extends LitElement {
         }
 
         return html`
-      <sl-dialog class="analysis-logs-dialog" label="Analysis Logs">
-        <h3>
-          Logs
-          <sl-copy-button value="Shoelace rocks!" from="logs-text-area.value"></sl-copy-button>
-        </h3>
-        <sl-textarea id="logs-text-area" rows="4" readonly value="${this.analysis.logs.join("\r\n")}"></sl-textarea>
+            <sl-dialog class="analysis-logs-dialog" label="Analysis Logs">
+                <h3>
+                    Logs
+                    <sl-copy-button value="Shoelace rocks!" from="logs-text-area.value"></sl-copy-button>
+                </h3>
+                <sl-textarea id="logs-text-area" rows="4" readonly value="${this.analysis.logs.join("\r\n")}"></sl-textarea>
 
-        <br >
-        <hr />
-        <h3>
-          JSON
-          <sl-copy-button from="logs-json.value"></sl-copy-button>
-        </h3>
-        <sl-textarea id="logs-json" rows="4" readonly value="${JSON.stringify(this.analysis, null, 2)}"></sl-textarea>
-      </sl-dialog>
-    `;
+                <br >
+                <hr />
+                <h3>
+                    JSON
+                    <sl-copy-button from="logs-json.value"></sl-copy-button>
+                </h3>
+                <sl-textarea id="logs-json" rows="4" readonly value="${JSON.stringify(this.analysis, null, 2)}"></sl-textarea>
+            </sl-dialog>
+        `;
     }
 
     renderAnalysisErrorDialog(): TemplateResult {

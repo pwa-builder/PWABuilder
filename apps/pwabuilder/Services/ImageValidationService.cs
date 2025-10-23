@@ -1,5 +1,6 @@
 using System.Text.Json;
 using PWABuilder.Common;
+using PWABuilder.Models;
 using SixLabors.ImageSharp;
 
 namespace PWABuilder.Validations.Services;
@@ -15,7 +16,7 @@ public interface IImageValidationService
     /// <param name="imageUri">The URI of the image to check.</param>
     /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>True if the image exists, otherwise false.</returns>
-    Task<bool> TryImageExistsAsync(Uri imageUri, CancellationToken cancelToken);
+    Task<Result<bool>> TryImageExistsAsync(Uri imageUri, CancellationToken cancelToken);
 
     /// <summary>
     /// Validates that the image matches the declared type in the manifest.
@@ -24,7 +25,7 @@ public interface IImageValidationService
     /// <param name="declaredType">The type declared in the manifest (e.g., "image/png").</param>
     /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>True if the actual image type matches the declared type, otherwise false.</returns>
-    Task<bool> ValidateImageTypeAsync(Uri imageUri, string? declaredType, CancellationToken cancelToken);
+    Task<Result<bool>> TryValidateImageTypeAsync(Uri imageUri, string? declaredType, CancellationToken cancelToken);
 
     /// <summary>
     /// Validates that the image matches the declared dimensions in the manifest.
@@ -32,8 +33,8 @@ public interface IImageValidationService
     /// <param name="imageUri">The URI of the image to check.</param>
     /// <param name="declaredSizes">The sizes declared in the manifest (e.g., "192x192").</param>
     /// <param name="cancelToken">The cancellation token.</param>
-    /// <returns>True if the actual image dimensions match any of the declared sizes, otherwise false.</returns>
-    Task<bool> ValidateImageSizeAsync(Uri imageUri, string? declaredSizes, CancellationToken cancelToken);
+    /// <returns>True if the actual image dimensions match any of the declared sizes, otherwise the result will contain an exception.</returns>
+    Task<Result<bool>> TryValidateImageSizeAsync(Uri imageUri, string? declaredSizes, CancellationToken cancelToken);
 }
 
 /// <summary>
@@ -42,10 +43,12 @@ public interface IImageValidationService
 public class ImageValidationService : IImageValidationService
 {
     private readonly HttpClient httpClient;
+    private readonly ILogger<ImageValidationService> logger;
 
-    public ImageValidationService(IHttpClientFactory httpClientFactory)
+    public ImageValidationService(IHttpClientFactory httpClientFactory, ILogger<ImageValidationService> logger)
     {
         httpClient = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
+        this.logger = logger;
     }
 
     public class ManifestIcon
@@ -68,20 +71,22 @@ public class ImageValidationService : IImageValidationService
     /// </summary>
     /// <param name="imageUrl"></param>
     /// <returns></returns>
-    public async Task<bool> TryImageExistsAsync(Uri imageUrl, CancellationToken cancelToken)
+    public async Task<Result<bool>> TryImageExistsAsync(Uri imageUrl, CancellationToken cancelToken)
     {
         // First try HEAD which is cheap and quick.
         try
         {
-            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
-            if (response.IsSuccessStatusCode)
+            using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
+            if (headResponse.IsSuccessStatusCode)
             {
-                return true;
+                // Ensure the content type is an image
+                return EnsureImageContentType(imageUrl, headResponse.Content.Headers.ContentType?.MediaType);
             }
         }
-        catch
+        catch (Exception headException)
         {
-            // Ingore exception and see if we can fetch it via GET.
+            // Ignore exception and see if we can fetch it via GET.
+            logger.LogWarning(headException, "Attempted to check if image {url} exists via HEAD request, but got exception. Will try GET.", imageUrl);
         }
 
         // We couldn't load the image with HEAD. See if we can load it with GET without fetching the whole body.
@@ -93,23 +98,35 @@ public class ImageValidationService : IImageValidationService
                 cancelToken
             );
 
-            return response.IsSuccessStatusCode &&
-                   response.Content.Headers.ContentType?.MediaType?.StartsWith("image/") == true;
+            if (response.IsSuccessStatusCode)
+            {
+                return EnsureImageContentType(imageUrl, response.Content.Headers.ContentType?.MediaType);
+            }
+            else
+            {
+                return new HttpRequestException($"Fetching image {imageUrl} failed with status code {(int)response.StatusCode} {response.ReasonPhrase}.", null, response.StatusCode);
+            }
         }
-        catch
+        catch (Exception error)
         {
-            return false;
+            logger.LogWarning(error, "Attempted to check if image {url} exists, but got an exception.", imageUrl);
+            return error;
         }
     }
 
     /// <summary>
     /// Validates that the image matches the declared type in the manifest.
     /// </summary>
-    public async Task<bool> ValidateImageTypeAsync(Uri imageUri, string? declaredType, CancellationToken cancelToken)
+    public async Task<Result<bool>> TryValidateImageTypeAsync(Uri imageUri, string? declaredType, CancellationToken cancelToken)
     {
         if (string.IsNullOrWhiteSpace(declaredType))
         {
             return true; // No type declared, so we can't validate it
+        }
+
+        if (declaredType.Trim().Equals("image/x-icon", StringComparison.OrdinalIgnoreCase) || imageUri.ToString().EndsWith(".ico"))
+        {
+            return true; // ImageSharp doesn't handle ico files. We'll skip those and assume all is well.
         }
 
         try
@@ -117,37 +134,52 @@ public class ImageValidationService : IImageValidationService
             using var response = await httpClient.GetAsync(imageUri, cancelToken);
             if (!response.IsSuccessStatusCode)
             {
-                return false; // Image doesn't exist
+                return new HttpRequestException($"Fetching image {imageUri} failed with status code {(int)response.StatusCode} {response.ReasonPhrase}.", null, response.StatusCode);
             }
 
             using var imageStream = await response.Content.ReadAsStreamAsync(cancelToken);
 
             // Use ImageSharp to detect the actual image format
-            var detectedFormat = await SixLabors.ImageSharp.Image.DetectFormatAsync(imageStream, cancelToken);
+            var detectedFormat = await Image.DetectFormatAsync(imageStream, cancelToken);
             if (detectedFormat == null)
             {
-                return false; // Could not detect image format
+                logger.LogWarning("Could not detect image format for {imageUri}.", imageUri);
+                return true; // Allow the user to specify types not supported by ImageSharp.
             }
 
             var actualMimeType = detectedFormat.DefaultMimeType;
             if (string.IsNullOrWhiteSpace(actualMimeType))
             {
-                return false; // No mime type from detected format
+                logger.LogWarning("Detected image format for {imageUri} but has no mime type.", imageUri);
+                return true; // Allow the user to specify types not supported by ImageSharp.
             }
 
             // Compare declared type with actual detected type (case-insensitive)
-            return string.Equals(declaredType.Trim(), actualMimeType.Trim(), StringComparison.OrdinalIgnoreCase);
+            var isExpectedImageType = string.Equals(declaredType.Trim(), actualMimeType.Trim(), StringComparison.OrdinalIgnoreCase);
+            if (!isExpectedImageType)
+            {
+                logger.LogInformation("Image type mismatch for {imageUri}: declared type {declaredType}, actual type {actualMimeType}.", imageUri, declaredType, actualMimeType);
+                return new Exception($"Your web manifest declares {imageUri} to be of type {declaredType}, but it's actually {actualMimeType}.");
+            }
+
+            return true;
         }
-        catch
+        catch (UnknownImageFormatException unknownFormatError)
         {
-            return false;
+            logger.LogWarning(unknownFormatError, "Unsupported image format for {imageUri}.", imageUri);
+            return true; // Allow the test to pass for unsupported formats.
+        }
+        catch (Exception error)
+        {
+            logger.LogError(error, "Image type validation failed for {imageUri} due to an error.", imageUri);
+            return new Exception($"Error loading image {imageUri} for type validation.", error);
         }
     }
 
     /// <summary>
     /// Validates that the image matches the declared dimensions in the manifest.
     /// </summary>
-    public async Task<bool> ValidateImageSizeAsync(Uri imageUri, string? declaredSizes, CancellationToken cancelToken)
+    public async Task<Result<bool>> TryValidateImageSizeAsync(Uri imageUri, string? declaredSizes, CancellationToken cancelToken)
     {
         if (string.IsNullOrWhiteSpace(declaredSizes))
         {
@@ -159,16 +191,27 @@ public class ImageValidationService : IImageValidationService
             using var response = await httpClient.GetAsync(imageUri, cancelToken);
             if (!response.IsSuccessStatusCode)
             {
-                return false; // Image doesn't exist
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return new HttpRequestException($"Fetching image {imageUri} failed with 404 Not Found.", null, response.StatusCode);
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    return new HttpRequestException($"Fetching image {imageUri} failed with 403 Forbidden. Please ensure your web server, firewall, or CDN isn't blocking PWABuilder from accessing your images.", null, response.StatusCode);
+                }
+
+                return new HttpRequestException($"Fetching image at {imageUri} failed with status code {(int)response.StatusCode} {response.ReasonPhrase}.", null, response.StatusCode);
             }
 
             using var imageStream = await response.Content.ReadAsStreamAsync(cancelToken);
 
             // Use ImageSharp to get actual image dimensions
-            var imageInfo = await SixLabors.ImageSharp.Image.IdentifyAsync(imageStream, cancelToken);
+            var imageInfo = await Image.IdentifyAsync(imageStream, cancelToken);
             if (imageInfo == null)
             {
-                return false; // Could not identify image
+                logger.LogWarning("Could not identify image dimensions for {imageUri}.", imageUri);
+                return true; // Allow the test to pass even if we can't identify the dimensions of the image.
             }
 
             var actualWidth = imageInfo.Width;
@@ -191,12 +234,41 @@ public class ImageValidationService : IImageValidationService
                 }
             }
 
-            return false; // No matching sizes found
+            return new Exception($"Your web manifest declares {imageUri} to be {declaredSizes}, but its actual size is {actualWidth}x{actualHeight}.");
         }
-        catch
+        catch (UnknownImageFormatException unknownFormatError)
         {
-            return false;
+            logger.LogWarning(unknownFormatError, "Unsupported image format for {imageUri}.", imageUri);
+            return true; // Allow the test to pass for unsupported formats.
+        }
+        catch (Exception error)
+        {
+            logger.LogError(error, "Image size validation failed for {imageUri} due to an error.", imageUri);
+            return error;
         }
     }
 
+    private Result<bool> EnsureImageContentType(Uri imageUrl, string? contentType)
+    {
+        // If we have no content type, we can't validate it. Assume it's valid and hope for the best.
+        if (string.IsNullOrWhiteSpace(contentType))
+        {
+            logger.LogWarning("Image at {imageUrl} has no content-type header.", imageUrl);
+            return true;
+        }
+
+        if (contentType?.StartsWith("image/", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+
+        // Successful image but wrong content type. This can cause some platforms (e.g. Google Play with Bubblewrap) to reject the image.
+        // Common case: check if it's a Supabase binary image, served as application/octet-stream. If so, they can fix it by using the image render URL.
+        if (imageUrl.AbsoluteUri.Contains("supabase.co/storage/") && imageUrl.AbsolutePath.Contains("/object/public/"))
+        {
+            return new Exception($"Image at {imageUrl} returned with the wrong content-type. Expected a image content type, but got {contentType}. \n\nFor Supabase-hosted images, update your manifest images to use the image rendering endpoint: {imageUrl.AbsoluteUri.Replace("/object/public", "/render/image/public")}");
+        }
+
+        return new Exception($"Fetching image {imageUrl} returned with the wrong content-type {contentType}. Expected an image content type, such as image/png, image/jpg, or image/webp");
+    }
 }
