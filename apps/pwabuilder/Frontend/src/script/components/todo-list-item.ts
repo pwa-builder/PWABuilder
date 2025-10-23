@@ -85,7 +85,7 @@ export class TodoItem extends LitElement {
         }
 
         return html`
-            <p><strong>Error:</strong> ${this.error}</p>
+            <p class="error"><strong>Error:</strong> ${this.error}</p>
         `;
     }
 

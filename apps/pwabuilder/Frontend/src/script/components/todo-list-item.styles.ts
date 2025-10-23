@@ -25,6 +25,10 @@ export const todoListItemStyles = css`
         margin-top: -2px;
     }
 
+    .error {
+        white-space: pre-line;
+    }
+
     .footer {
         display: flex;
         gap: var(--sl-spacing-medium);
