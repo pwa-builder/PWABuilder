@@ -17,6 +17,7 @@ export class ManifestInfoCard extends LitElement {
     @property({ type: String }) docsUrl = "";
     @property({ type: String }) imageUrl = "";
     @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
+    @property({ type: String }) error = "";
     @state() currentlyHovering: boolean = false;
     @state() currentlyOpen: boolean = false;
     @state() hoverTimer: any;
@@ -246,43 +247,49 @@ export class ManifestInfoCard extends LitElement {
 
     render() {
         return html`
-    <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
-      ${this.placement !== "" ?
+        <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
+        ${this.placement !== "" ?
                 html`
-          <sl-dropdown
-            distance="10"
-            placement="${this.placement}"
-            class="tooltip"
-            @sl-hide=${() => this.handleHover(false)}
-          >
-          <slot name="trigger" slot="trigger"></slot>
-          <div class="info-box">
-            <p class="info-blurb">${this.description}</p>
-            ${this.renderImage()}            
-          </div>
-          <sl-menu>
-            <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
-            ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
-          </sl-menu>
-        </sl-dropdown>
-        ` :
-                html`
-          <sl-dropdown
-            distance="10"
-            class="tooltip"
-            aria-label="Information about ${this.field}"
-            @sl-hide=${() => this.handleHover(false)}
-          >
-          <slot name="trigger" slot="trigger"></slot>
-          <div class="info-box">
-            <p class="info-blurb">${this.description}</p>
-            ${this.renderImage()}
+            <sl-dropdown
+                distance="10"
+                placement="${this.placement}"
+                class="tooltip"
+                @sl-hide=${() => this.handleHover(false)}
+            >
+            <slot name="trigger" slot="trigger"></slot>
+            <div class="info-box">
+                <p class="info-blurb">
+                    ${this.description}
+                    ${this.renderError()}
+                </p>
+                ${this.renderImage()}            
+            </div>
             <sl-menu>
-            <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
-              ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
-          </sl-menu>
-          </div>
-        </sl-dropdown>
+                <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+                ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
+            </sl-menu>
+            </sl-dropdown>
+            ` :
+                html`
+            <sl-dropdown
+                distance="10"
+                class="tooltip"
+                aria-label="Information about ${this.field}"
+                @sl-hide=${() => this.handleHover(false)}
+            >
+            <slot name="trigger" slot="trigger"></slot>
+            <div class="info-box">
+                <p class="info-blurb">
+                    ${this.description}
+                    ${this.renderError()}
+                </p>
+                ${this.renderImage()}
+                <sl-menu>
+                <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+                ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
+            </sl-menu>
+            </div>
+            </sl-dropdown>
         `}
 
 
@@ -296,9 +303,22 @@ export class ManifestInfoCard extends LitElement {
         }
 
         return html`
-      <div class="image-section">
-        <img src="${this.imageUrl}" alt="Visual example of the feature" />
-      </div>
-    `;
+            <div class="image-section">
+                <img src="${this.imageUrl}" alt="Visual example of the feature" />
+            </div>
+        `;
+    }
+
+    renderError(): TemplateResult {
+        if (!this.error) {
+            return html``;
+        }
+
+        return html`
+            <br>
+            <div>
+                <p>${this.error}</p>
+            </div>
+        `;
     }
 }

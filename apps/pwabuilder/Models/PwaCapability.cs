@@ -77,6 +77,22 @@ public class PwaCapability
     public string? ErrorMessage { get; set; }
 
     /// <summary>
+    /// Copies descriptive fields from another capability.
+    /// </summary>
+    /// <param name="other"></param>
+    public void Copy(PwaCapability other)
+    {
+        // Copy all writable instance properties from the other capability to this one.
+        var properties = typeof(PwaCapability).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+            .Where(p => p.CanWrite);
+        foreach (var prop in properties)
+        {
+            var value = prop.GetValue(other);
+            prop.SetValue(this, value);
+        }
+    }
+
+    /// <summary>
     /// Create a list of all progressive web app manifest-based capabilities and validations.
     /// </summary>
     /// <returns></returns>
@@ -187,6 +203,51 @@ public class PwaCapability
             },
             new PwaCapability
             {
+                Id = PwaCapabilityId.IconsAreFetchable,
+                Description = "The icons in your web manifest must be fetchable and must have an image content-type.",
+                TodoAction = "Fix the links to your icons in your web manifest.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.IconTypesAreValid,
+                Description = "The declared types of icons in your web manifest must match their actual file types.",
+                TodoAction = "Fix the icon types in your web manifest.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.IconSizesAreValid,
+                Description = "The declared sizes of icons in your web manifest must match their actual dimensions.",
+                TodoAction = "Fix the icon sizes in your web app manifest.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
                 Id = PwaCapabilityId.Shortcuts,
                 Description = "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
                 TodoAction = "Let users jump to key tasks or pages in your app by adding shortcuts to your manifest.",
@@ -249,7 +310,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.ProtocolHandlers,
                 Description = "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
-                TodoAction = "Specify whether you want users to use your PWA or your native app.",
+                TodoAction = "Let your app handle protocols like mailto:// or sms://, or custom protocols like web+mypwa:// by adding protocol_handlers to your manifest.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Protocol Handlers",
                 FeatureIcon = new Uri("/assets/new/protocol_handlers_icon.svg", UriKind.Relative),
@@ -310,6 +371,36 @@ public class PwaCapability
                 Id = PwaCapabilityId.ScreenshotsAreFetchable,
                 Description = "The screenshots in your web manifest must be fetchable on the network.",
                 TodoAction = "Fix the links to your screenshots.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "screenshots",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ScreenshotTypesAreValid,
+                Description = "The declared types of screenshots in your web manifest must match their actual file types.",
+                TodoAction = "Ensure that screenshot type declarations match the actual file types (e.g., if type is 'image/png', the file should actually be a PNG).",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "screenshots",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=screenshots-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ScreenshotSizesAreValid,
+                Description = "The declared sizes of screenshots in your web manifest must match their actual dimensions.",
+                TodoAction = "Ensure that screenshot size declarations match the actual image dimensions (e.g., if sizes is '1920x1080', the image should actually be 1920x1080 pixels).",
                 Level = PwaCapabilityLevel.Recommended,
                 FeatureName = null,
                 FeatureIcon = null,

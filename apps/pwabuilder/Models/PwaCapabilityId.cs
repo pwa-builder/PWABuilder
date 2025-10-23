@@ -38,9 +38,13 @@ public enum PwaCapabilityId
 
     // other manifest checks
     IconsAreFetchable,
+    IconTypesAreValid,
+    IconSizesAreValid,
     HasSquare192x192PngAnyPurposeIcon,
     HasSquare512x512PngAnyPurposeIcon,
     ScreenshotsAreFetchable,
+    ScreenshotTypesAreValid,
+    ScreenshotSizesAreValid,
     HasWideScreenshot,
     HasNarrowScreenshot,
 

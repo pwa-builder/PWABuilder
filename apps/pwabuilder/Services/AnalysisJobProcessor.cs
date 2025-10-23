@@ -96,77 +96,82 @@ public class AnalysisJobProcessor : IHostedService
     {
         try
         {
-            // Grab the actual analysis object from the database.
-            var analysis = await db.GetByIdAsync<Analysis>(job.AnalysisId);
-            if (analysis == null)
-            {
-                await RetryJobOrFail(job, new Exception($"Analysis with ID {job.AnalysisId} was not found."));
-                return;
-            }
-
-            // Create a new AnalysisLogger that will log message both to the Analysis.Logs object and to this service's logger.
-            var analysisLogger = new AnalysisLogger(analysis, this.logger);
-
-            // Mark the analysis as processing.
-            analysis.Status = AnalysisStatus.Processing;
-            await db.SaveAsync(analysis.Id, analysis);
-
-            // Create our own cancellation token source so that we can manually cancel this.
-            // Link it to the parent cancellation token to monitor that as well.
-            var cancelTokenSrc = CancellationTokenSource.CreateLinkedTokenSource(cancelToken);
-
-            // Kick off the independent jobs simultaneously so that our analysis completes faster.
-            var generalCapDetectionTask = generalWebAppCapabilityDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
-            var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
-            var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
-            var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
-            var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, logger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
-
-            // Step 1: run the general capabilities, such as whether the URL serves HTML. If not, we fail fast.
-            var generalCapabilities = await generalCapDetectionTask;
-            analysis.ProcessCapabilities(generalCapabilities);
-            var servesHtmlStatus = FailIfNotServedHtml(analysis, cancelTokenSrc);
-            await db.SaveAsync(analysis.Id, analysis);
-            if (servesHtmlStatus == PwaCapabilityCheckStatus.Failed)
-            {
-                logger.LogWarning("Completed analysis {id} for {url} in {duration} seconds. The URL does not appear to serve HTML content, so no further analysis was performed.", analysis.Id, job.Url, analysis.Duration?.TotalSeconds);
-                return;
-            }
-
-            // Step 2: find the manifest.
-            analysis.WebManifest = await manifestDetectionTask;
-            await db.SaveAsync(analysis.Id, analysis);
-
-            // Step 3: analyze the manifest for validity and capabilities.
-            var manifestCapabilities = await manifestAnalysisTask;
-            analysis.ProcessCapabilities(manifestCapabilities);
-            await db.SaveAsync(analysis.Id, analysis);
-
-            // Step 4: find the service worker.
-            analysis.ServiceWorker = await serviceWorkerDetectionTask;
-            await db.SaveAsync(analysis.Id, analysis);
-
-            // Step 5: analyze the service worker to determine capabilities like push notifications, background sync, etc.
-            var swCapabilities = await serviceWorkerAnalysisTask;
-            analysis.ProcessCapabilities(swCapabilities);
-            await db.SaveAsync(analysis.Id, analysis);
-
-            // Step 6, check for HTTPS.
-            var httpsCapabilities = TryCheckHttpsCapabilities(job.Url, analysis.WebManifest, analysis.ServiceWorker);
-            analysis.ProcessCapabilities(httpsCapabilities);
-            await db.SaveAsync(analysis.Id, analysis);
-
-            // All done! Mark the analysis as completed.
-            analysis.Status = AnalysisStatus.Completed;
-            analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
-            analysisLogger.FlushLogs();
-            logger.LogInformation("Completed analysis {id} for {url} in {duration} seconds. Manifest result {manifest}, Service worker result {sw}, score {score}", analysis.Id, job.Url, analysis.Duration?.TotalSeconds, analysis.WebManifest?.Url, analysis.ServiceWorker?.Url, analysis.Capabilities.Count(c => c.Status == PwaCapabilityCheckStatus.Passed));
-            await db.SaveAsync(analysis.Id, analysis);
+            await ProcessJobAsync(job, cancelToken);
         }
         catch (Exception error)
         {
             await RetryJobOrFail(job, error);
         }
+    }
+
+    private async Task ProcessJobAsync(AnalysisJob job, CancellationToken cancelToken)
+    {
+        // Grab the actual analysis object from the database.
+        var analysis = await db.GetByIdAsync<Analysis>(job.AnalysisId);
+        if (analysis == null)
+        {
+            await RetryJobOrFail(job, new Exception($"Analysis with ID {job.AnalysisId} was not found."));
+            return;
+        }
+
+        // Create a new AnalysisLogger that will log message both to the Analysis.Logs object and to this service's logger.
+        var analysisLogger = new AnalysisLogger(analysis, this.logger);
+
+        // Mark the analysis as processing.
+        analysis.Status = AnalysisStatus.Processing;
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // Create our own cancellation token source so that we can manually cancel this.
+        // Link it to the parent cancellation token to monitor that as well.
+        var cancelTokenSrc = CancellationTokenSource.CreateLinkedTokenSource(cancelToken);
+
+        // Kick off the independent jobs simultaneously so that our analysis completes faster.
+        var generalCapDetectionTask = generalWebAppCapabilityDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+        var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+        var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
+        var manifestDetectionTask = manifestDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+        var manifestAnalysisTask = manifestDetectionTask.ContinueWith(t => manifestAnalyzer.TryAnalyzeManifestAsync(t.Result, logger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+
+        // Step 1: run the general capabilities, such as whether the URL serves HTML. If not, we fail fast.
+        var generalCapabilities = await generalCapDetectionTask;
+        analysis.ProcessCapabilities(generalCapabilities);
+        var servesHtmlStatus = FailIfNotServedHtml(analysis, cancelTokenSrc);
+        await db.SaveAsync(analysis.Id, analysis);
+        if (servesHtmlStatus == PwaCapabilityCheckStatus.Failed)
+        {
+            logger.LogWarning("Completed analysis {id} for {url} in {duration} seconds. The URL does not appear to serve HTML content, so no further analysis was performed.", analysis.Id, job.Url, analysis.Duration?.TotalSeconds);
+            return;
+        }
+
+        // Step 2: find the manifest.
+        analysis.WebManifest = await manifestDetectionTask;
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // Step 3: analyze the manifest for validity and capabilities.
+        var manifestCapabilities = await manifestAnalysisTask;
+        analysis.ProcessCapabilities(manifestCapabilities);
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // Step 4: find the service worker.
+        analysis.ServiceWorker = await serviceWorkerDetectionTask;
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // Step 5: analyze the service worker to determine capabilities like push notifications, background sync, etc.
+        var swCapabilities = await serviceWorkerAnalysisTask;
+        analysis.ProcessCapabilities(swCapabilities);
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // Step 6, check for HTTPS.
+        var httpsCapabilities = TryCheckHttpsCapabilities(job.Url, analysis.WebManifest, analysis.ServiceWorker);
+        analysis.ProcessCapabilities(httpsCapabilities);
+        await db.SaveAsync(analysis.Id, analysis);
+
+        // All done! Mark the analysis as completed.
+        analysis.Status = AnalysisStatus.Completed;
+        analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
+        analysisLogger.FlushLogs();
+        logger.LogInformation("Completed analysis {id} for {url} in {duration} seconds. Manifest result {manifest}, Service worker result {sw}, score {score}", analysis.Id, job.Url, analysis.Duration?.TotalSeconds, analysis.WebManifest?.Url, analysis.ServiceWorker?.Url, analysis.Capabilities.Count(c => c.Status == PwaCapabilityCheckStatus.Passed));
+        await db.SaveAsync(analysis.Id, analysis);
     }
 
     /// <summary>

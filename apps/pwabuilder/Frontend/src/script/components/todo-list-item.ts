@@ -1,148 +1,129 @@
 import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
-import { manifest_fields, service_worker_fields } from '@pwabuilder/manifest-information';
+import { manifest_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
 import './sw-info-card'
 import { todoListItemStyles } from './todo-list-item.styles';
+import "@shoelace-style/shoelace/dist/components/details/details";
+import "@shoelace-style/shoelace/dist/components/button/button";
+import { AnalyticsBehavior, recordPWABuilderProcessStep } from "../utils/analytics";
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
-  @property({ type: String }) field: string = "";
-  @property({ type: String }) card: "ServiceWorker" | "WebAppManifest" | "Https" | "" = "";
-  @property({ type: String }) fix: string = "";
-  @property({ type: String }) status: "Required" | "Recommended" | "Optional" | "Feature" | "Retest" | "" = "";
-  @property({ type: String }) description: string = "";
-  @property({ type: String }) docsUrl: string | null = null;
-  @property({ type: String }) imageUrl: string | null = null;
+    @property({ type: String }) field: string = "";
+    @property({ type: String }) card: "ServiceWorker" | "WebAppManifest" | "Https" | "General" | "" = "";
+    @property({ type: String }) fix: string = "";
+    @property({ type: String }) status: "Required" | "Recommended" | "Optional" | "Feature" | "Retest" | "" = "";
+    @property({ type: String }) error: string | null = null;
+    @property({ type: String }) description: string = "";
+    @property({ type: String }) docsUrl: string | null = null;
+    @property({ type: String }) imageUrl: string | null = null;
 
-  @state() clickable: boolean = false;
-  @state() isOpen: boolean = false;
+    @state() clickable: boolean = false;
+    @state() isOpen: boolean = false;
 
-  @state() darkMode: boolean = false;
+    @state() darkMode: boolean = false;
 
-  static styles = [todoListItemStyles];
+    static styles = [todoListItemStyles];
 
-  constructor() {
-    super();
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    // understand the users color preference
-    const result = window.matchMedia('(prefers-color-scheme: dark)');
-    this.darkMode = result.matches; // TRUE if user prefers dark mode
-  }
-
-  decideClasses() {
-
-    const isRetest = this.status === "Retest" || this.field.startsWith("Open") || !!manifest_fields[this.field] || !!service_worker_fields[this.field];
-    this.clickable = isRetest;
-
-    return { iwrapper: true, clickable: this.clickable }
-  }
-
-  bubbleEvent() {
-    if (manifest_fields[this.field]) {
-      let tooltip = (this.shadowRoot!.querySelector('manifest-info-card') as any);
-      tooltip.handleHover(!this.isOpen);
+    constructor() {
+        super();
     }
 
-    if (service_worker_fields[this.field]) {
-      let tooltip = (this.shadowRoot!.querySelector('sw-info-card') as any);
-      tooltip.handleHover(!this.isOpen);
+    connectedCallback() {
+        super.connectedCallback();
+
+        const result = window.matchMedia('(prefers-color-scheme: dark)');
+        this.darkMode = result.matches;
     }
 
-    let event = new CustomEvent('todo-clicked', {
-      detail: {
-        field: this.field,
-        card: this.card,
-        fix: this.fix,
-        displayString: this.description,
-        errorString: this.fix
-      }
-    });
-    this.dispatchEvent(event);
-  }
+    renderIcon(): TemplateResult {
+        const yield_src = "/assets/new/yield.svg";
+        const stop_src = "/assets/new/stop.svg";
+        const enhancement_src = "/assets/new/enhancement.svg";
+        const info_src = "/assets/new/info-circle.png";
+        const retest_src = "/assets/new/retest-icon.svg";
+        const retest_src_light = "/assets/new/retest-icon_light.svg";
+        switch (this.status) {
+            case "Required":
+                return html`<img class="status-icon" src=${stop_src} alt=""/>`
+            case "Recommended":
+                return html`<img class="status-icon" src=${yield_src} alt=""/>`
+            case "Feature":
+                return html`<img class="status-icon" src=${enhancement_src} alt=""/>`
+            case "Optional":
+                return html`<img class="status-icon" src=${info_src} alt=""/>`
+            case "Retest":
+                return html`<img class="status-icon" src=${this.darkMode ? retest_src_light : retest_src} style="color: black" alt="retest site icon"/>`
+        }
 
-  triggerHoverState(e: CustomEvent) {
-    let element = this.shadowRoot!.querySelector(".iwrapper");
-    if (e.detail.entering) {
-      element?.classList.add("active");
-      this.isOpen = true;
-    } else {
-      element?.classList.remove("active");
-      this.isOpen = false;
-    }
-  }
-
-
-  decideIcon() {
-    switch (this.status) {
-      case "Required":
-        return html`<img src=${stop_src} alt=""/>`
-      case "Recommended":
-        return html`<img src=${yield_src} alt=""/>`
-      case "Feature":
-        return html`<img src=${enhancement_src} alt=""/>`
-      case "Optional":
-        return html`<img src=${info_src} alt=""/>`
-      case "Retest":
-        return html`<img src=${this.darkMode ? retest_src_light : retest_src} style="color: black" alt="retest site icon"/>`
+        return html`<img class="status-icon" src=${yield_src} alt="yield result icon"/>`
     }
 
-    return html`<img src=${yield_src} alt="yield result icon"/>`
-  }
 
-
-  render() {
-    return html`
-      <div class="${classMap(this.decideClasses())}" @click=${() => this.bubbleEvent()}>
-        <div class="left">
-          ${this.decideIcon()}
-          <p>${this.fix}</p>
-        </div>
-
-        ${this.renderManifestInfoCard()}
-        ${this.renderServiceWorkerInfoCard()}
-      </div>
-    `;
-  }
-
-  renderManifestInfoCard(): TemplateResult {
-    if (this.card !== "WebAppManifest") {
-      return html``;
+    render(): TemplateResult {
+        return html`
+            <sl-details>
+                <div class="summary" slot="summary">
+                    ${this.renderIcon()}
+                    ${this.fix}
+                </div>
+                <p>${this.description}</p>
+                ${this.renderError()}
+                <div class="footer">
+                    ${this.renderLearnMore()}
+                    ${this.renderEditInManifest()}
+                </div>
+            </sl-details>  
+        `;
     }
 
-    return html`
-      <manifest-info-card field=${this.field} placement="left" description="${this.description || ""}" docsUrl="${this.docsUrl || ""}" imageUrl="${this.imageUrl || ""}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
-        <button slot="trigger" type="button" class="right">
-          <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
-        </button>
-      </manifest-info-card>
-    `;
-  }
+    renderError(): TemplateResult {
+        if (!this.error) {
+            return html``;
+        }
 
-  renderServiceWorkerInfoCard(): TemplateResult {
-    if (this.card !== "ServiceWorker" && this.card !== "Https") {
-      return html``;
+        return html`
+            <p><strong>Error:</strong> ${this.error}</p>
+        `;
     }
 
-    return html`
-      <sw-info-card capabilityId="${this.field}" description="${this.description || ""}" docsUrl="${this.docsUrl || ""}" .placement="${"left"}" @trigger-hover=${(e: CustomEvent) => this.triggerHoverState(e)}>
-        <button slot="trigger" type="button" class="right">
-          <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
-        </button>
-      </sw-info-card>
-    `;
-  }
+    renderLearnMore(): TemplateResult {
+        if (!this.docsUrl) {
+            return html``;
+        }
+
+        return html`
+            <sl-button href="${this.docsUrl}" target="_blank" variant="text" size="small">Learn more</sl-button>
+        `;
+    }
+
+    renderEditInManifest(): TemplateResult {
+        if (!this.field || this.card !== "WebAppManifest") {
+            return html``;
+        }
+
+        return html`
+            <sl-button @click=${this.openManifestEditor} variant="text" size="small">Edit in manifest</sl-button>
+        `;
+    }
+
+    openManifestEditor() {
+        // general counter
+        recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+        recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+        // (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
+        let tab: string = manifest_fields[this.field]?.location || "info";
+        let event: CustomEvent = new CustomEvent('open-manifest-editor', {
+            detail: {
+                field: this.field,
+                tab: tab
+            },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(event);
+    }
 }
-
-const yield_src = "/assets/new/yield.svg";
-const stop_src = "/assets/new/stop.svg";
-const enhancement_src = "/assets/new/enhancement.svg";
-const info_src = "/assets/new/info-circle.png";
-const retest_src = "/assets/new/retest-icon.svg";
-const retest_src_light = "/assets/new/retest-icon_light.svg";
