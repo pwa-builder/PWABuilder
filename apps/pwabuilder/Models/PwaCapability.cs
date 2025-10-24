@@ -489,7 +489,7 @@ public class PwaCapability
             new PwaCapability
             {
                 Id = PwaCapabilityId.Widgets,
-                Description = "Widgets are adaptive cards with text, images, an actions related to your app. On Windows, widgets appear over the desktp when the user clicks the widget taskbar icon or presses Win+W.",
+                Description = "Widgets are adaptive cards with text, images, an actions related to your app. On Windows, widgets appear over the desktop when the user clicks the widget taskbar icon or presses Win+W.",
                 TodoAction = "Let users add your app as a widget.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Widgets",
