@@ -140,6 +140,14 @@ namespace PWABuilder.Services
 
                 cancelToken.ThrowIfCancellationRequested();
 
+                // Some PWAs can have the page closed or disconnected via navigation after we waited for service worker.
+                // Check for that here and load the page manually if needed.
+                if (page.IsClosed)
+                {
+                    logger.LogWarning("During offline test, page was closed. Navigating to the page fresh to resume offline test.");
+                    page = await puppeteerService.Navigate(appUrl);
+                }
+
                 // Disconnect network
                 await page.SetOfflineModeAsync(true);
 
