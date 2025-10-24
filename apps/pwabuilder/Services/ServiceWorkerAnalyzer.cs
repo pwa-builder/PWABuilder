@@ -106,10 +106,9 @@ namespace PWABuilder.Services
             // To test offline capability, we load the page in puppeteer. Then we disconnect the network and try to reload the page.
             // If the page loads successfully while offline, we mark the capability as passed.
             // NOTE: in the past we used Lighthouse's offline audit for this check. But as of summer 2025, Lighthouse has removed PWA audits including offline support audit.
-            IPage? page = null;
             try
             {
-                page = await puppeteerService.NavigateAsync(appUrl);
+                using var page = await puppeteerService.NavigateAsync(appUrl);
                 cancelToken.ThrowIfCancellationRequested();
 
                 // Wait for network to be idle
@@ -138,7 +137,7 @@ namespace PWABuilder.Services
                 cancelToken.ThrowIfCancellationRequested();
 
                 // Disconnect network
-                page = await SetOfflineModeWithDisconnectedFallback(page, appUrl, logger);
+                await page.SetOfflineModeAsync(true);
 
                 // Try to reload the page
                 var response = await page.ReloadAsync(new NavigationOptions
@@ -166,44 +165,8 @@ namespace PWABuilder.Services
                 logger.LogWarning(ex, "Error checking offline capability for {url}", appUrl);
                 offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
             }
-            finally
-            {
-                if (page != null)
-                {
-                    page.Dispose();
-                }
-            }
 
             return offlineCapability;
-        }
-
-        private async Task<IPage> SetOfflineModeWithDisconnectedFallback(IPage page, Uri appUrl, ILogger logger)
-        {
-            try
-            {
-                // Try to set offline mode. 
-                await page.SetOfflineModeAsync(true);
-                return page;
-            }
-            catch (TargetClosedException closedError)
-            {
-                // Some PWAs, such as https://belgrade.plus, have a disconnection error after waiting for service worker. 
-                // Re-navigate the page and immediately set offline mode since we've already loaded it.
-                logger.LogWarning(closedError, "During offline detection test, the page disconnected. Reloading the page.");
-                using var newPage = await this.puppeteerService.NavigateAsync(appUrl);
-                await newPage.SetOfflineModeAsync(true);
-
-                try
-                {
-                    page.Dispose();
-                }
-                catch (Exception disposeError)
-                {
-                    logger.LogWarning(disposeError, "Error disposing Puppeteer page during offline detection fallback.");
-                }
-
-                return newPage;
-            }
         }
 
         private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, ServiceWorkerDetection swDetection, string swScripts)
