@@ -2,19 +2,30 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 
 # Install dependencies for Puppeteer (runtime only, no Node.js needed here)
-# Install Chrome version 138.0.7204.101 to match PuppeteerSharp 20.2.x default. 
+# Install Chrome for Testing version 138.0.6957.99 to match PuppeteerSharp 20.2.x default
 # IMPORTANT: Changing the PuppeteerSharp version or the Chrome version independently may break things. Only use compatible versions.
 RUN apt-get update && apt-get install -y \
     wget \
-    gnupg \
+    unzip \
     ca-certificates \
     procps \
     libxss1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libxkbcommon0 \
+    libgtk-3-0 \
     fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
     --no-install-recommends \
-    && wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_138.0.6957.99-1_amd64.deb \
-    && apt-get install -y ./google-chrome-stable_138.0.6957.99-1_amd64.deb \
-    && rm google-chrome-stable_138.0.6957.99-1_amd64.deb \
+    && wget -q https://storage.googleapis.com/chrome-for-testing-public/138.0.6957.99/linux64/chrome-linux64.zip \
+    && unzip -q chrome-linux64.zip \
+    && mv chrome-linux64/chrome /usr/bin/google-chrome-stable \
+    && chmod +x /usr/bin/google-chrome-stable \
+    && rm -rf chrome-linux64.zip chrome-linux64 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
