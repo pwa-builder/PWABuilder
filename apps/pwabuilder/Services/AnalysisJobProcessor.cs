@@ -3,7 +3,7 @@ using PWABuilder.Models;
 namespace PWABuilder.Services;
 
 /// <summary>
-/// Background service that periodically checks for new AnalysisJob objects in the Azure queue and processes them.
+/// Background service that periodically checks for new AnalysisJob objects in the queue and processes them.
 /// </summary>
 public class AnalysisJobProcessor : IHostedService
 {
@@ -16,7 +16,6 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ManifestAnalyzer manifestAnalyzer;
     private readonly ServiceWorkerDetector serviceWorkerDetector;
     private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
-    private readonly ILighthouseService lighthouse;
     private readonly GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
@@ -28,12 +27,10 @@ public class AnalysisJobProcessor : IHostedService
         ServiceWorkerDetector serviceWorkerDetector,
         IServiceWorkerAnalyzer serviceWorkerAnalyzer,
         GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector,
-        ILighthouseService lighthouse,
         ILogger<AnalysisJobProcessor> logger)
     {
         this.queue = queue;
         this.db = db;
-        this.lighthouse = lighthouse;
         this.manifestDetector = manifestDetector;
         this.manifestAnalyzer = manifestAnalyzer;
         this.serviceWorkerDetector = serviceWorkerDetector;
@@ -63,7 +60,7 @@ public class AnalysisJobProcessor : IHostedService
 
     private async Task ListenForJobs(CancellationToken cancelToken)
     {
-        // In a loop, check for new AnalysisJob objects in the Azure queue.
+        // In a loop, check for new AnalysisJob objects in the Analysis queue.
         while (!cancelToken.IsCancellationRequested)
         {
             var job = await TryDequeueAsync(cancelToken);
@@ -87,7 +84,7 @@ public class AnalysisJobProcessor : IHostedService
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error dequeue analysis job from the Azure Queue.");
+            logger.LogError(ex, "Error dequeue analysis job.");
             return null;
         }
     }

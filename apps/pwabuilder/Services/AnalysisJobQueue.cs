@@ -47,7 +47,6 @@ public class InMemoryAnalysisJobQueue : IAnalysisJobQueue
 public class AnalysisJobQueue : IAnalysisJobQueue
 {
     private readonly IPWABuilderDatabase db;
-    private readonly IWebHostEnvironment env;
     private readonly ILogger<AnalysisJobQueue> logger;
 
     /// <summary>
@@ -57,10 +56,9 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     /// <param name="env"></param>
     /// <param name="settings"></param>
     /// <param name="logger"></param>
-    public AnalysisJobQueue(IPWABuilderDatabase database, IWebHostEnvironment env, IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
+    public AnalysisJobQueue(IPWABuilderDatabase database, IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
     {
         this.db = database;
-        this.env = env;
         this.logger = logger;
     }
 
@@ -74,6 +72,7 @@ public class AnalysisJobQueue : IAnalysisJobQueue
         try
         {
             await this.db.EnqueueAsync(this.QueueId, job);
+            logger.LogInformation("Enqueued analysis job for {analysisId} from {queue}", job.AnalysisId, QueueId);
         }
         catch (Exception error)
         {
@@ -91,7 +90,13 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     {
         try
         {
-            return await db.DequeueAsync<AnalysisJob>(QueueId);
+            var job = await db.DequeueAsync<AnalysisJob>(QueueId);
+            if (job != null)
+            {
+                logger.LogInformation("Dequeued analysis job for {analysisId} from {queue}", job.AnalysisId, QueueId);
+            }
+
+            return job;
         }
         catch (Exception error)
         {
@@ -103,5 +108,5 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     /// <summary>
     /// Gets the ID of the analysis list item in Redis. This must be a prop: if we swap staging and production in Azure, it needs to use the correct env.
     /// </summary>
-    private string QueueId => $"analysis-jobs-{env.EnvironmentName}";
+    private string QueueId => $"analysis-jobs-{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown-env"}";
 }
