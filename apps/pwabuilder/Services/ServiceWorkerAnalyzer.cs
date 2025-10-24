@@ -118,15 +118,23 @@ namespace PWABuilder.Services
                 // Wait for network to be idle
                 await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 2000, Timeout = 20000 });
 
-                // Check if service worker is registered and active
-                var swRegistered = await page.EvaluateExpressionAsync<bool>(@"
-                    navigator.serviceWorker && 
-                    navigator.serviceWorker.controller !== null
+                // Wait until we have an active service worker.
+                var swRegistered = await page.EvaluateFunctionAsync<bool>(@"
+                    () => {
+                        // Await service worker registration, or timeout after 10s
+                        const swRegistrationReady = navigator.serviceWorker.ready.then(() => true);
+                        const swRegTimeout = new Promise(resolve => setTimeout(() => resolve(false), 10000));
+                        return Promise.race([
+                            swRegistrationReady,
+                            swRegTimeout
+                        ]);
+                    }
                 ");
                 if (!swRegistered)
                 {
+                    logger.LogInformation("During offline detection attempt for {url}, no service worker was registered. Marking offline detection test as failed.", appUrl);
                     offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
-                    offlineCapability.ErrorMessage = "No active service worker found afer load.";
+                    offlineCapability.ErrorMessage = "During offline detection attempt, no active service worker found after load.";
                     return offlineCapability;
                 }
 

@@ -269,7 +269,7 @@ public class ManifestCreator
             var imgDimensions = await SixLabors.ImageSharp.Image.IdentifyAsync(imageStream);
             if (imgDimensions == null)
             {
-                throw new Exception("Unable to identify image dimensions for {url}. Image metadata was null.");
+                throw new Exception($"Unable to identify image dimensions for {url}. Image metadata was null.");
             }
 
             return $"{imgDimensions.Width}x{imgDimensions.Height}";

@@ -310,7 +310,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.ProtocolHandlers,
                 Description = "The protocol_handlers member specifies an array of objects that are protocols which this web app can register and handle. Protocol handlers register the application in an OS's application preferences; the registration associates a specific application with the given protocol scheme. For example, when using the protocol handler mailto:// on a web page, registered email applications open.",
-                TodoAction = "Let your app handle protocols like mailto:// or sms://, or custom protocols like web+mypwa:// by adding protocol_handlers to your manifest.",
+                TodoAction = "Let your app handle protocols like mailto: or sms:, or custom protocols like web+mypwa:, by adding protocol_handlers to your manifest.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Protocol Handlers",
                 FeatureIcon = new Uri("/assets/new/protocol_handlers_icon.svg", UriKind.Relative),
