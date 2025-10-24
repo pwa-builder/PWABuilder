@@ -263,6 +263,51 @@ public class PwaCapability
             },
             new PwaCapability
             {
+                Id = PwaCapabilityId.ShortcutIconsAreFetchable,
+                Description = "The icons of shortcuts in your web manifest must be fetchable on the network.",
+                TodoAction = "Fix the links to your shortcut icons in your web manifest.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "shortcuts",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ShortcutIconTypesAreValid,
+                Description = "The declared types of shortcut icons in your web manifest must match their actual file types.",
+                TodoAction = "Ensure that shortcut icon type declarations match the actual file types (e.g., if type is 'image/png', the file should actually be a PNG).",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "shortcuts",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.ShortcutIconSizesAreValid,
+                Description = "The declared sizes of shortcut icons in your web manifest must match their actual dimensions.",
+                TodoAction = "Ensure that shortcut icon size declarations match the actual image dimensions (e.g., if sizes is '64x64', the image should actually be 64x64 pixels).",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "shortcuts",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=shortcuts-array"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
                 Id = PwaCapabilityId.Categories,
                 Description = "The categories member is an array of strings that represent the categories of the web application.",
                 TodoAction = "Enrich your PWA's install experience by adding categories to your manifest.",

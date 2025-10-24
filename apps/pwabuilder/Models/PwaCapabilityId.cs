@@ -45,6 +45,9 @@ public enum PwaCapabilityId
     ScreenshotsAreFetchable,
     ScreenshotTypesAreValid,
     ScreenshotSizesAreValid,
+    ShortcutIconsAreFetchable,
+    ShortcutIconTypesAreValid,
+    ShortcutIconSizesAreValid,
     HasWideScreenshot,
     HasNarrowScreenshot,
 
