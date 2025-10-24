@@ -22,7 +22,7 @@ namespace PWABuilder.Services
         public static async Task<IBrowser> CreateBrowserAsync(IHostEnvironment env, LaunchOptions? customLaunchOptions = null)
         {
             var chromePath = "/usr/bin/google-chrome-stable"; // production chrome path
-            if (!env.IsProduction()) // If we're not in production, fetch it.
+            if (env.IsDevelopment()) // If we're in development, fetch it.
             {
                 // download the browser executable
                 var fetcher = new BrowserFetcher();
