@@ -9,6 +9,5 @@ public class AppSettings
     public string ApplicationInsightsConnectionString { get; set; } = string.Empty;
     public string AzureStorageAccountName { get; set; } = string.Empty;
     public string AzureManagedIdentityApplicationId { get; set; } = string.Empty;
-    public string AzureAnalysesQueueName { get; set; } = string.Empty;
     public string AnalysisDbRedisConnectionString { get; set; } = string.Empty;
 }

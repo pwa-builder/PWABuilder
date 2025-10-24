@@ -172,7 +172,7 @@ public class PWABuilderDatabase : IPWABuilderDatabase
             throw;
         }
     }
-    
+
     /// <summary>
     /// Dequeues an item from the front of the specified list in the database as an atomic operation. If the list is empty or doesn't exist, null will be returned.
     /// </summary>
@@ -184,13 +184,12 @@ public class PWABuilderDatabase : IPWABuilderDatabase
         try
         {
             var json = await this.redis.ListLeftPopAsync(listId);
-            if (!json.HasValue)
+            if (!json.HasValue || string.IsNullOrEmpty(json))
             {
                 return null;
             }
 
-            var item = System.Text.Json.JsonSerializer.Deserialize<T>(json!);
-            return item;
+            return System.Text.Json.JsonSerializer.Deserialize<T>(json!);
         }
         catch (Exception ex)
         {

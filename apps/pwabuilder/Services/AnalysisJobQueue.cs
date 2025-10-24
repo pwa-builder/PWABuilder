@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 namespace PWABuilder.Services;
 
 /// <summary>
-/// Manages the queue of AnalysisJobs to process. In development env, it uses <see cref="InMemoryAnalysisJobQueue"/>. Otherwise, it uses an Azure Queue with Managed Identity auth.
+/// Manages the queue of AnalysisJobs to process. In development env, it uses <see cref="InMemoryAnalysisJobQueue"/>. Otherwise, it uses Redis atomic lists.
 /// </summary>
 public interface IAnalysisJobQueue
 {
@@ -42,54 +42,48 @@ public class InMemoryAnalysisJobQueue : IAnalysisJobQueue
 }
 
 /// <summary>
-/// The queue for managing AnalysisJobs. The backing store is an Azure Storage Queue with Managed Identity authentication.
+/// The queue for managing AnalysisJobs. The backing store is a Redis list.
 /// </summary>
 public class AnalysisJobQueue : IAnalysisJobQueue
 {
-    private readonly QueueClient queue;
+    private readonly IPWABuilderDatabase db;
+    private readonly IWebHostEnvironment env;
     private readonly ILogger<AnalysisJobQueue> logger;
 
-    public AnalysisJobQueue(IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
+    /// <summary>
+    /// Creates a new AnalysisJobQueue.
+    /// </summary>
+    /// <param name="database"></param>
+    /// <param name="env"></param>
+    /// <param name="settings"></param>
+    /// <param name="logger"></param>
+    public AnalysisJobQueue(IPWABuilderDatabase database, IWebHostEnvironment env, IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
     {
-        var queueUri = new Uri($"https://{settings.Value.AzureStorageAccountName}.queue.core.windows.net/{settings.Value.AzureAnalysesQueueName}");
-        var credential = new ManagedIdentityCredential(clientId: settings.Value.AzureManagedIdentityApplicationId);
-        var queueOptions = new QueueClientOptions
-        {
-            Retry =
-            {
-                MaxRetries = 5,
-                Delay = TimeSpan.FromSeconds(2),
-                Mode = Azure.Core.RetryMode.Exponential
-            }
-        };
-        this.queue = new QueueClient(queueUri, credential, queueOptions);
+        this.db = database;
+        this.env = env;
         this.logger = logger;
     }
 
     /// <summary>
-    /// Enqueues an AnalysisJob to the Azure Queue for processing.
+    /// Enqueues an AnalysisJob to the Redis list for processing.
     /// </summary>
     /// <param name="job"></param>
     /// <returns></returns>
     public async Task EnqueueAsync(AnalysisJob job)
     {
-        // Add the job to the Azure Queue
-        await this.EnsureQueueExistsAsync();
-
         try
         {
-            var jobJson = System.Text.Json.JsonSerializer.Serialize(job);
-            await this.queue.SendMessageAsync(jobJson);
+            await this.db.EnqueueAsync(this.QueueId, job);
         }
         catch (Exception error)
         {
-            logger.LogError(error, "Error enqueuing AnalysisJob to the Azure Queue.");
+            logger.LogError(error, "Error enqueuing AnalysisJob.");
             throw;
         }
     }
 
     /// <summary>
-    /// Dequeues an AnalysisJob from the Azure Queue.
+    /// Dequeues an AnalysisJob from the queue.
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -97,58 +91,17 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     {
         try
         {
-            var response = await this.DequeueCore(cancellationToken);
-            return response;
+            return await db.DequeueAsync<AnalysisJob>(QueueId);
         }
         catch (Exception error)
         {
-            logger.LogError(error, "Error dequeuing AnalysisJob from the Azure Queue.");
+            logger.LogError(error, "Error dequeuing AnalysisJob");
             throw;
         }
     }
 
-    private async Task<AnalysisJob?> DequeueCore(CancellationToken cancelToken)
-    {
-        // ReceiveMessageAsync will hide this message temporarily from other consumers.
-        // We still need to call DeleteMessageAsync to remove it from the queue.
-        var response = await this.queue.ReceiveMessageAsync(cancellationToken: cancelToken);
-        try
-        {
-            var analysisJobJson = response?.Value?.MessageText;
-            if (analysisJobJson == null)
-            {
-                return null;
-            }
-
-            var job = System.Text.Json.JsonSerializer.Deserialize<AnalysisJob>(analysisJobJson);
-            return job;
-        }
-        catch (Exception serializationError)
-        {
-            logger.LogError(serializationError, "Error deserializing AnalysisJob from the Azure Queue. Queue message is set to expire on {expire}. Message JSON: {queueMessage}", response?.Value?.ExpiresOn, response?.Value?.MessageText);
-            throw;
-        }
-        finally
-        {
-            // We've read the message. Delete it.
-            if (response?.Value?.MessageId != null)
-            {
-                await this.queue.DeleteMessageAsync(response.Value.MessageId, response.Value.PopReceipt, cancelToken);
-            }
-        }
-    }
-
-    private async Task EnsureQueueExistsAsync()
-    {
-        try
-        {
-            // Ensure the queue exists
-            await this.queue.CreateIfNotExistsAsync();
-        }
-        catch (Exception error)
-        {
-            logger.LogError(error, "Failed to ensure the AnalysisJob queue exists in Azure. Please make sure the Azure Storage access key is valid.");
-            throw;
-        }
-    }
+    /// <summary>
+    /// Gets the ID of the analysis list item in Redis. This must be a prop: if we swap staging and production in Azure, it needs to use the correct env.
+    /// </summary>
+    private string QueueId => $"analysis-jobs-{env.EnvironmentName}";
 }
