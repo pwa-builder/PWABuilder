@@ -51,7 +51,7 @@ public class ServiceWorkerDetector
     {
         try
         {
-            using var page = await puppeteer.Navigate(appUrl);
+            using var page = await puppeteer.NavigateAsync(appUrl);
             var serviceWorkerUrl = await TryGetServiceWorkerUrlFromPuppeteer(page, logger);
             if (string.IsNullOrWhiteSpace(serviceWorkerUrl))
             {

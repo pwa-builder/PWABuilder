@@ -84,7 +84,7 @@ public class AnalysisJobProcessor : IHostedService
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error dequeue analysis job.");
+            logger.LogError(ex, "Error dequeueing analysis job.");
             return null;
         }
     }

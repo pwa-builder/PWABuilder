@@ -106,13 +106,10 @@ namespace PWABuilder.Services
             // To test offline capability, we load the page in puppeteer. Then we disconnect the network and try to reload the page.
             // If the page loads successfully while offline, we mark the capability as passed.
             // NOTE: in the past we used Lighthouse's offline audit for this check. But as of summer 2025, Lighthouse has removed PWA audits including offline support audit.
-            var consoleOutHandler = new EventHandler<ConsoleEventArgs>((sender, e) => LogPuppeteerPageConsole(e, logger, appUrl));
             IPage? page = null;
             try
             {
-                page = await puppeteerService.Navigate(appUrl);
-                page.Console += consoleOutHandler;
-
+                page = await puppeteerService.NavigateAsync(appUrl);
                 cancelToken.ThrowIfCancellationRequested();
 
                 // Wait for network to be idle
@@ -140,16 +137,8 @@ namespace PWABuilder.Services
 
                 cancelToken.ThrowIfCancellationRequested();
 
-                // Some PWAs can have the page closed or disconnected via navigation after we waited for service worker.
-                // Check for that here and load the page manually if needed.
-                if (page.IsClosed)
-                {
-                    logger.LogWarning("During offline test, page was closed. Navigating to the page fresh to resume offline test.");
-                    page = await puppeteerService.Navigate(appUrl);
-                }
-
                 // Disconnect network
-                await page.SetOfflineModeAsync(true);
+                page = await SetOfflineModeWithDisconnectedFallback(page, appUrl, logger);
 
                 // Try to reload the page
                 var response = await page.ReloadAsync(new NavigationOptions
@@ -181,7 +170,6 @@ namespace PWABuilder.Services
             {
                 if (page != null)
                 {
-                    page.Console -= consoleOutHandler;
                     page.Dispose();
                 }
             }
@@ -189,21 +177,33 @@ namespace PWABuilder.Services
             return offlineCapability;
         }
 
-        private void LogPuppeteerPageConsole(ConsoleEventArgs e, ILogger logger, Uri appUrl)
+        private async Task<IPage> SetOfflineModeWithDisconnectedFallback(IPage page, Uri appUrl, ILogger logger)
         {
-            if (e.Message == null)
+            try
             {
-                return;
+                // Try to set offline mode. 
+                await page.SetOfflineModeAsync(true);
+                return page;
             }
-
-            var level = e.Message.Type switch
+            catch (TargetClosedException closedError)
             {
-                ConsoleType.Error => LogLevel.Error,
-                ConsoleType.Warning => LogLevel.Warning,
-                ConsoleType.Info => LogLevel.Information,
-                _ => LogLevel.Debug,
-            };
-            logger.Log(level, "Puppeteer console log for {url}: {text}", appUrl, e.Message.Text);
+                // Some PWAs, such as https://belgrade.plus, have a disconnection error after waiting for service worker. 
+                // Re-navigate the page and immediately set offline mode since we've already loaded it.
+                logger.LogWarning(closedError, "During offline detection test, the page disconnected. Reloading the page.");
+                using var newPage = await this.puppeteerService.NavigateAsync(appUrl);
+                await newPage.SetOfflineModeAsync(true);
+
+                try
+                {
+                    page.Dispose();
+                }
+                catch (Exception disposeError)
+                {
+                    logger.LogWarning(disposeError, "Error disposing Puppeteer page during offline detection fallback.");
+                }
+
+                return newPage;
+            }
         }
 
         private PwaCapabilityCheckStatus RunCapabilityCheck(PwaCapability swCapability, ServiceWorkerDetection swDetection, string swScripts)

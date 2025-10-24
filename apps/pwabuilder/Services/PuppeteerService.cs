@@ -8,10 +8,12 @@ namespace PWABuilder.Services
     public class PuppeteerService : IPuppeteerService
     {
         private readonly Task<IBrowser> reusableBrowser;
+        private readonly ILogger<PuppeteerService> logger;
 
-        public PuppeteerService(Task<IBrowser> reusableBrowser)
+        public PuppeteerService(Task<IBrowser> reusableBrowser, ILogger<PuppeteerService> logger)
         {
             this.reusableBrowser = reusableBrowser;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -87,9 +89,17 @@ namespace PWABuilder.Services
         /// </summary>
         /// <param name="site"></param>
         /// <returns></returns>
-        public async Task<IPage> Navigate(Uri site)
+        public async Task<IPage> NavigateAsync(Uri site)
         {
             var browser = await this.reusableBrowser;
+
+            // Safety check: if we have too many pages open, something might be wrong
+            var pages = await browser.PagesAsync();
+            if (pages.Length > 10) // Adjust threshold as needed
+            {
+                logger.LogWarning("There are {pageCount} pages open in the Puppeteer browser. Possible page leak detected.", pages.Length);
+            }
+
             var page = await browser.NewPageAsync();
 
             await page.SetUserAgentAsync(Constants.DesktopUserAgent);
@@ -109,7 +119,7 @@ namespace PWABuilder.Services
         {
             try
             {
-                return await Navigate(site);
+                return await NavigateAsync(site);
             }
             catch (Exception error)
             {
