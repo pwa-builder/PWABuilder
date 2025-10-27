@@ -85,10 +85,10 @@ RUN apt-get update \
     && rm /tmp/chrome.deb \
     && apt-get purge -y --auto-remove wget gnupg \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd -r pwabuilder && useradd -r -g pwabuilder -d /app -s /bin/bash pwabuilder \
-    && chown -R pwabuilder:pwabuilder /app
+    && groupadd -r pwabuilder && useradd -r -g pwabuilder -d /app -s /bin/bash pwabuilder
 
 WORKDIR /app
+RUN chown -R pwabuilder:pwabuilder /app
 EXPOSE 8080
 
 # Copy from publish stage
