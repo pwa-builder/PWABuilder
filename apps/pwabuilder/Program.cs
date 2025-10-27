@@ -14,6 +14,13 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true) // load base settings
+        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true) // load environment-specific settings
+        .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true) // load local settings
+        .AddEnvironmentVariables();
+builder.Configuration.AddConfiguration(configuration.Build());
+
 // Remove duplicate logging.
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
