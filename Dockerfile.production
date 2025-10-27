@@ -71,10 +71,32 @@ RUN dotnet build "PWABuilder.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "PWABuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Final stage
-FROM base AS final
+# Final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+
+# Install Chrome dependencies and create non-root user
+RUN apt-get update \
+    && apt-get install -y wget gnupg \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && wget -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.116-1_amd64.deb \
+    && apt-get install -y /tmp/chrome.deb \
+    && rm /tmp/chrome.deb \
+    && apt-get purge -y --auto-remove wget gnupg \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -r pwabuilder && useradd -r -g pwabuilder -d /app -s /bin/bash pwabuilder \
+    && chown -R pwabuilder:pwabuilder /app
+
 WORKDIR /app
+EXPOSE 8080
+
+# Copy from publish stage
 COPY --from=publish /app/publish .
+
+# Explicitly copy environment-specific appsettings files
+COPY --from=build /src/appsettings.Production.json ./appsettings.Production.json
+COPY --from=build /src/appsettings.Staging.json ./appsettings.Staging.json
 
 # Enable detailed logging for debugging
 ENV ASPNETCORE_DETAILEDERRORS=true

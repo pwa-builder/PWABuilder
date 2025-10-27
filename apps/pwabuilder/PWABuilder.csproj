@@ -50,4 +50,14 @@
   <ItemGroup>
     <None Include="Resources\IOS\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  
+  <!-- Explicitly include environment-specific appsettings files in publish -->
+  <ItemGroup>
+    <Content Include="appsettings.Production.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="appsettings.Staging.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
