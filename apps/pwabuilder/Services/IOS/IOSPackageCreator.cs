@@ -12,18 +12,21 @@ namespace PWABuilder.IOS.Services
         private readonly TempDirectory temp;
         private readonly AppSettings appSettings;
         private readonly ILogger<IOSPackageCreator> logger;
+        private readonly IWebHostEnvironment env;
 
         public IOSPackageCreator(
             ImageGenerator imageGenerator,
             IOptions<AppSettings> appSettings,
             TempDirectory temp,
-            ILogger<IOSPackageCreator> logger
+            ILogger<IOSPackageCreator> logger,
+            IWebHostEnvironment env
         )
         {
             this.imageGenerator = imageGenerator;
             this.appSettings = appSettings.Value;
             this.temp = temp;
             this.logger = logger;
+            this.env = env;
         }
 
         /// <summary>
@@ -36,6 +39,11 @@ namespace PWABuilder.IOS.Services
             try
             {
                 var outputDir = temp.CreateDirectory($"ios-package-{Guid.NewGuid()}");
+
+                if (string.IsNullOrEmpty(appSettings.IOSSourceCodePath))
+                {
+                    throw new InvalidOperationException($"iOS source code path is not configured for env {env.EnvironmentName}.");
+                }
 
                 // Make a copy of the iOS source code.
                 new DirectoryInfo(appSettings.IOSSourceCodePath).CopyContents(
