@@ -143,7 +143,13 @@ export class PackageCreator {
                 errorMessage.includes('ENOTFOUND');
             if (is403Error) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithSafeUrls(options);
-                this.dispatchProgressEvent('Encountered 403 error when generating app package. This indicates PWABuilder was unable to download the images in your web manifest. If the problem persists, please ensure the images specified in your manifest can be fetched without 404s, redirects, or authentication walls. Retrying with safe URL proxy and HTTP2.', "warn");
+                // See if it's Cloudflare. Check the Server response header for "cloudflare".
+                const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
+                if (isCloudflare) {
+                    this.dispatchProgressEvent("Cloudflare is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable Cloudflare's \"Bot fight mode\" while you're packaging with PWABuilder.", "warn");
+                } else {
+                    this.dispatchProgressEvent("Your web app is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable your firewall, CDN, or Cloudflare while packaging with PWABuilder.", "warn");
+                }
                 const bubbleWrapper = new BubbleWrapper(
                     optionsWithSafeUrl,
                     projectDirPath,
@@ -190,7 +196,21 @@ export class PackageCreator {
         };
     }
 
-    scheduleTmpFileCleanup(file: string | null): void {
+    private TryCheckCloudflare(iconUrl: string): Promise<boolean> {
+        // Do a fetch to get just the headers of the icon. If the response headers come back
+        // with the Server header being "cloudflare", we know Cloudflare is in use.
+        return new Promise(async (resolve) => {
+            try {
+                const response = await fetch(iconUrl, { method: 'GET' });
+                const serverHeader = response.headers.get('Server') || '';
+                resolve(!!serverHeader && serverHeader.includes('cloudflare'));
+            } catch (error) {
+                resolve(false);
+            }
+        });
+    }
+
+    private scheduleTmpFileCleanup(file: string | null): void {
         if (file) {
             console.info('Scheduled cleanup for tmp file', file);
             const delFile = function () {
