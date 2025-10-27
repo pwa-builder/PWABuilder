@@ -94,10 +94,6 @@ EXPOSE 8080
 # Copy from publish stage
 COPY --from=publish /app/publish .
 
-# Explicitly copy environment-specific appsettings files
-COPY --from=build /src/appsettings.Production.json ./appsettings.Production.json
-COPY --from=build /src/appsettings.Staging.json ./appsettings.Staging.json
-
 # Enable detailed logging for debugging
 ENV ASPNETCORE_DETAILEDERRORS=true
 ENV Logging__LogLevel__Default=Information
@@ -121,9 +117,8 @@ ENV HOME=/home/appuser
 RUN mkdir -p /home/appuser \
     && chown -R appuser:appgroup /home/appuser
 
-# Give the user permission to access Chrome
-RUN chown -R appuser:appgroup /usr/bin/google-chrome-stable
-RUN chmod +x /usr/bin/google-chrome-stable
+# Give the user permission to access Chrome (if available)
+RUN if [ -f /usr/bin/google-chrome-stable ]; then chown -R appuser:appgroup /usr/bin/google-chrome-stable && chmod +x /usr/bin/google-chrome-stable; fi
 
 USER appuser
 
