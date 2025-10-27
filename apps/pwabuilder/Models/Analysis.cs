@@ -106,7 +106,7 @@ public class Analysis
         var allRequiredFieldsValid = this.Capabilities.Count > 0
             && this.Capabilities
             .Where(v => v.Level == PwaCapabilityLevel.Required && v.Category != PwaCapabilityCategory.Https) // Skip HTTPS check here because Lighthouse takes too long.
-            .All(v => v.Status != PwaCapabilityCheckStatus.Failed); // We don't check for Passed here because some tests, such as "images must be the type you declare", can be skipped when the user has no images with types specified in the manifest.
+            .All(v => v.Status is PwaCapabilityCheckStatus.Passed or PwaCapabilityCheckStatus.Skipped);
 
         return allRequiredFieldsValid;
     }
