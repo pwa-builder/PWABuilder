@@ -1,7 +1,7 @@
 ﻿using System.IO.Compression;
-using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using PWABuilder.Common;
 using PWABuilder.IOS.Common;
 using PWABuilder.IOS.Models;
 using PWABuilder.Models;
@@ -26,10 +26,7 @@ namespace PWABuilder.IOS.Services
             ILogger<ImageGenerator> logger
         )
         {
-            http = new HttpClient(
-                new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All }
-            );
-            http.AddLatestEdgeUserAgent();
+            http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
             imageGeneratorServiceUrl = new Uri(appSettings.Value.ImageGeneratorApiUrl);
             this.logger = logger;
         }
@@ -205,7 +202,7 @@ namespace PWABuilder.IOS.Services
         {
             var imageSizes = ImageTargetSizeExtensions.GetAll();
             return from size in imageSizes
-                select ImageSource.From(size, webManifest, generatedImagesZip);
+                   select ImageSource.From(size, webManifest, generatedImagesZip);
         }
 
         private async Task<List<string>> TryWriteImageSourcesToDirectory(

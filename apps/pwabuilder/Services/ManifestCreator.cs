@@ -215,7 +215,7 @@ public class ManifestCreator
             using var httpResponse = await http.SendAsync(httpMessage);
             httpResponse.EnsureSuccessStatusCode();
 
-            var maxImageSize = 500_000; // 500k
+            var maxImageSize = 1_500_000; // 1.5MB
             var imageStreamLength = httpResponse.Content.Headers.ContentLength.HasValue ? (int)httpResponse.Content.Headers.ContentLength.GetValueOrDefault() : 20_000;
             if (imageStreamLength > maxImageSize)
             {
@@ -285,6 +285,12 @@ public class ManifestCreator
     {
         try
         {
+            // ImageSharp can't detect ico images. If the URL ends in .ico extension, assume it's a legit ico file.
+            if (url.EndsWith(".ico", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return "image/x-icon";
+            }
+
             var imageFormat = await SixLabors.ImageSharp.Image.DetectFormatAsync(imageStream);
             if (imageFormat == null)
             {
