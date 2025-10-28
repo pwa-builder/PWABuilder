@@ -135,7 +135,7 @@ public class ServiceWorkerDetector
 
         try
         {
-            var serviceWorkerJs = await webStringCache.Get(serviceWorkerUrl, Constants.JavascriptMimeTypes, cancelToken, maxSizeInBytes: 1024 * 1024 * 1);
+            var serviceWorkerJs = await webStringCache.Get(serviceWorkerUrl, Constants.JavascriptMimeTypes, logger, cancelToken, maxSizeInBytes: 1024 * 1024 * 1);
             if (serviceWorkerJs == null)
             {
                 logger.LogWarning("Service worker at {serviceWorkerUrl} returned null content.", serviceWorkerUrl);
@@ -189,7 +189,7 @@ public class ServiceWorkerDetector
     {
         try
         {
-            var html = await webStringCache.Get(appUrl, ["text/html"], cancelToken);
+            var html = await webStringCache.Get(appUrl, ["text/html"], logger, cancelToken);
             return html;
         }
         catch (Exception htmlFetchError)

@@ -254,7 +254,7 @@ namespace PWABuilder.Services
             // Fetch the content of each script
             var contents = new List<string>();
             var scriptFetches = normalizedUrls
-                .Select(url => webCache.Get(url, Constants.JavascriptMimeTypes, cancelToken));
+                .Select(url => webCache.Get(url, Constants.JavascriptMimeTypes, logger, cancelToken));
             try
             {
                 var scriptResults = await Task.WhenAll(scriptFetches);
