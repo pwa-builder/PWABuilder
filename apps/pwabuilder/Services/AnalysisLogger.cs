@@ -45,14 +45,6 @@ public class AnalysisLogger : ILogger
             {
                 message += $" | StackTrace: {exception.StackTrace}";
             }
-
-            // Include inner exceptions
-            var innerEx = exception.InnerException;
-            while (innerEx is not null)
-            {
-                message += $" | InnerException: {innerEx.GetType().Name}: {innerEx.Message}";
-                innerEx = innerEx.InnerException;
-            }
         }
 
         logs.Enqueue(message);
