@@ -36,7 +36,26 @@ public class AnalysisLogger : ILogger
 
         // Write it to the Analysis object in a thread-safe manner.
         var message = $"[{logLevel}] {formatter(state, exception)}";
-        logs.Enqueue(message);     
+
+        // Explicitly include exception details if present
+        if (exception is not null)
+        {
+            message += $" | Exception: {exception.GetType().Name}: {exception.Message}";
+            if (!string.IsNullOrEmpty(exception.StackTrace))
+            {
+                message += $" | StackTrace: {exception.StackTrace}";
+            }
+
+            // Include inner exceptions
+            var innerEx = exception.InnerException;
+            while (innerEx is not null)
+            {
+                message += $" | InnerException: {innerEx.GetType().Name}: {innerEx.Message}";
+                innerEx = innerEx.InnerException;
+            }
+        }
+
+        logs.Enqueue(message);
     }
 
     /// <summary>
