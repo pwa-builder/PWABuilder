@@ -38,17 +38,18 @@ public class WebStringCache
     /// <param name="logger">An optional logger to log the results to.</param>
     /// <param name="maxSizeInBytes">The maximum size of the resource to fetch
     /// <returns>The resource at the given URL.</returns>
-    public async Task<string?> Get(Uri url, IEnumerable<string> accepts, ILogger? logger, CancellationToken cancelToken, int maxSizeInBytes = defaultMaxSizeInBytes)
+    public async Task<string?> GetOrFetchAsync(Uri url, IEnumerable<string> accepts, ILogger? logger, CancellationToken cancelToken, int maxSizeInBytes = defaultMaxSizeInBytes)
     {
         var cacheKey = GetCacheKey(url, accepts);
         var cached = await redis.StringGetAsync(cacheKey);
         if (cached.HasValue && !string.IsNullOrWhiteSpace(cached))
         {
+            (logger ?? this.logger).LogInformation("Web string cache hit for {url}", url);
             return cached;
         }
 
         // It's not in the cache. Fetch it and if fetch was successful, put it in the cache.
-        var webString = await TryGetResource(url, accepts, maxSizeInBytes, logger ?? this.logger, cancelToken);
+        var webString = await TryFetchResourceAsync(url, accepts, maxSizeInBytes, logger ?? this.logger, cancelToken);
         if (webString != null)
         {
             await redis.StringSetAsync(cacheKey, webString, cacheExpiration);
@@ -57,14 +58,14 @@ public class WebStringCache
         return webString;
     }
 
-    private async Task<string?> TryGetResource(Uri appUrl, IEnumerable<string> accepts, int maxSizeInBytes, ILogger logger, CancellationToken cancelToken)
+    private async Task<string?> TryFetchResourceAsync(Uri appUrl, IEnumerable<string> accepts, int maxSizeInBytes, ILogger logger, CancellationToken cancelToken)
     {
         try
         {
             var webString = await http.GetStringAsync(appUrl, accepts, maxSizeInBytes, cancelToken);
             if (webString == null)
             {
-                logger.LogWarning("No response received for {appUrl} with accept {accept}.", appUrl, accepts);
+                logger.LogWarning("No response received for {appUrl} with accept headers {accept}.", appUrl, accepts);
                 return null;
             }
 

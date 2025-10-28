@@ -51,6 +51,8 @@ public class ServiceWorkerDetector
     {
         try
         {
+            logger.LogInformation("Attempting to fetch service worker for {appUrl} via Puppeteer.", appUrl);
+
             using var page = await puppeteer.NavigateAsync(appUrl);
             var serviceWorkerUrl = await TryGetServiceWorkerUrlFromPuppeteer(page, logger);
             if (string.IsNullOrWhiteSpace(serviceWorkerUrl))
@@ -60,6 +62,7 @@ public class ServiceWorkerDetector
             }
 
             // Cool. Can we grab the script contents? That'd be fabulous and we can skip fetching it from C#.
+            logger.LogInformation("Found service worker URL {serviceWorkerUrl} for {appUrl} via Puppeteer. Attempting to fetch service worker contents...", serviceWorkerUrl, appUrl);
             var serviceWorkerUri = new Uri(appUrl, serviceWorkerUrl);
             var serviceWorkerContent = await TryGetServiceWorkerContentsFromPuppeteer(page, logger);
             if (!string.IsNullOrWhiteSpace(serviceWorkerContent))
@@ -73,6 +76,7 @@ public class ServiceWorkerDetector
 
             // We couldn't grab the service worker contents from Puppeteer. 
             // See if we can grab it from the network ourselves.
+            logger.LogWarning("Service worker contents at {serviceWorkerUrl} could not be fetched via Puppeteer. Falling back to C# fetch.", serviceWorkerUrl);
             var serviceWorker = await TryFetchServiceWorker(serviceWorkerUri, logger, cancelToken);
             return serviceWorker;
         }
@@ -135,7 +139,7 @@ public class ServiceWorkerDetector
 
         try
         {
-            var serviceWorkerJs = await webStringCache.Get(serviceWorkerUrl, Constants.JavascriptMimeTypes, logger, cancelToken, maxSizeInBytes: 1024 * 1024 * 1);
+            var serviceWorkerJs = await webStringCache.GetOrFetchAsync(serviceWorkerUrl, Constants.JavascriptMimeTypes, logger, cancelToken, maxSizeInBytes: 1024 * 1024 * 1);
             if (serviceWorkerJs == null)
             {
                 logger.LogWarning("Service worker at {serviceWorkerUrl} returned null content.", serviceWorkerUrl);
@@ -172,7 +176,7 @@ public class ServiceWorkerDetector
                 match.Groups[2].Value : null;
             if (string.IsNullOrEmpty(relativeServiceWorkerUrl))
             {
-                logger.LogInformation("No service worker URL found in HTML of {appUrl}", appUrl);
+                logger.LogInformation("No service worker URL found via HTML parsing of {appUrl}", appUrl);
                 return null;
             }
 
@@ -189,7 +193,7 @@ public class ServiceWorkerDetector
     {
         try
         {
-            var html = await webStringCache.Get(appUrl, ["text/html"], logger, cancelToken);
+            var html = await webStringCache.GetOrFetchAsync(appUrl, ["text/html"], logger, cancelToken);
             return html;
         }
         catch (Exception htmlFetchError)

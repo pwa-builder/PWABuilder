@@ -130,7 +130,7 @@ public class ManifestDetector
 
         try
         {
-            var manifestJson = await webStringCache.Get(manifestUrl, Constants.ManifestMimeTypes, logger, cancelToken, 1024 * 1024 * 5);
+            var manifestJson = await webStringCache.GetOrFetchAsync(manifestUrl, Constants.ManifestMimeTypes, logger, cancelToken, 1024 * 1024 * 5);
             if (string.IsNullOrWhiteSpace(manifestJson))
             {
                 logger.LogWarning("Manifest at {manifestUrl} returned empty content.", manifestUrl);
@@ -187,7 +187,7 @@ public class ManifestDetector
     {
         try
         {
-            var htmlString = await webStringCache.Get(appUrl, ["text/html"], logger, cancelToken);
+            var htmlString = await webStringCache.GetOrFetchAsync(appUrl, ["text/html"], logger, cancelToken);
             return htmlString;
         }
         catch (Exception htmlFetchError)
