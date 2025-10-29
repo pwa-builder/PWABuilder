@@ -51,21 +51,6 @@ public class ImageValidationService : IImageValidationService
         this.logger = logger;
     }
 
-    public class ManifestIcon
-    {
-        public string? src { get; set; }
-        public string? type { get; set; }
-        public string? sizes { get; set; }
-    }
-
-    public class ManifestScreenshot
-    {
-        public string? src { get; set; }
-        public string? type { get; set; }
-        public string? sizes { get; set; }
-        public string? platform { get; set; }
-    }
-
     /// <summary>
     /// Checks whether the image exists asynchronously. 
     /// </summary>
@@ -101,6 +86,17 @@ public class ImageValidationService : IImageValidationService
             if (response.IsSuccessStatusCode)
             {
                 return EnsureImageContentType(imageUrl, response.Content.Headers.ContentType?.MediaType);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                // Common error: 403 Forbidden. Usually indicates Cloudflare is blocking us.
+                var isCloudflare = response.Headers.Server.Any(h => string.Equals(h?.ToString(), "cloudflare", StringComparison.OrdinalIgnoreCase));
+                if (isCloudflare)
+                {
+                    return new HttpRequestException($"Your Cloudflare settings are blocking PWABuilder from accessing your web app's image {imageUrl}. Please temporarily disable Cloudflare's \"Bot fight mode\" while you package with PWABuilder.", null, response.StatusCode);
+                }
+
+                return new HttpRequestException($"Fetching image {imageUrl} failed with 403 Forbidden. Please ensure your web app firewall, CDN, or other security service isn't blocking PWABuilder from accessing your app images. Consider whitelisting PWABuilder's user agent, PWABuilderHttpAgent", null, response.StatusCode);
             }
             else
             {

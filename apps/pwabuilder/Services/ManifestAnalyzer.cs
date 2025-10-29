@@ -103,20 +103,20 @@ public class ManifestAnalyzer
             PwaCapabilityId.ThemeColor => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "theme_color", 3)),
             PwaCapabilityId.BackgroundColor => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "background_color", 3)),
             PwaCapabilityId.Shortcuts => new PwaManifestCapabilityCheck(capability, CheckShortcuts),
-            PwaCapabilityId.ShortcutIconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("shortcuts", manifest, cancelToken)),
-            PwaCapabilityId.ShortcutIconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid("shortcuts", manifest, cancelToken)),
-            PwaCapabilityId.ShortcutIconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid("shortcuts", manifest, cancelToken)),
+            PwaCapabilityId.ShortcutIconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetShortcutImages(manifest), manifest, cancelToken)),
+            PwaCapabilityId.ShortcutIconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetShortcutImages(manifest), manifest, cancelToken)),
+            PwaCapabilityId.ShortcutIconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetShortcutImages(manifest), manifest, cancelToken)),
             PwaCapabilityId.Categories => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringArrayField(m.Manifest, "categories")),
             PwaCapabilityId.Icons => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "icons")),
-            PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("icons", manifest, cancelToken)),
-            PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid("icons", manifest, cancelToken)),
-            PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid("icons", manifest, cancelToken)),
+            PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("icons", manifest), manifest, cancelToken)),
+            PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
+            PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 192, "image/png")),
             PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 512, "image/png")),
             PwaCapabilityId.Screenshots => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "screenshots")),
-            PwaCapabilityId.ScreenshotsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("screenshots", manifest, cancelToken)),
-            PwaCapabilityId.ScreenshotTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid("screenshots", manifest, cancelToken)),
-            PwaCapabilityId.ScreenshotSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid("screenshots", manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
             PwaCapabilityId.HasWideScreenshot => new PwaManifestCapabilityCheck(capability, m => CheckScreenshotFormFactor(m, "wide")),
             PwaCapabilityId.HasNarrowScreenshot => new PwaManifestCapabilityCheck(capability, m => CheckScreenshotFormFactor(m, "narrow")),
             PwaCapabilityId.FileHandlers => new PwaManifestCapabilityCheck(capability, CheckFileHandlers),
@@ -142,7 +142,7 @@ public class ManifestAnalyzer
             PwaCapabilityId.ScopeExtensions => new PwaManifestCapabilityCheck(capability, CheckScopeExtensions),
             PwaCapabilityId.Id => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "id", 1)),
 
-            // Service worker capabilities are handled elsewhere, in ServiceWorkerAnalyzer.
+            // Service worker capabilities are handled in ServiceWorkerAnalyzer.
             PwaCapabilityId.HasServiceWorker => throw new NotImplementedException(),
             PwaCapabilityId.ServiceWorkerIsNotEmpty => throw new NotImplementedException(),
             PwaCapabilityId.PeriodicSync => throw new NotImplementedException(),
@@ -254,12 +254,36 @@ public class ManifestAnalyzer
         return hasDesiredFormFactor ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private async Task<Result<PwaCapabilityCheckStatus>> CheckImagesAreFetchable(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    private static IEnumerable<JsonElement> GetManifestArray(string fieldName, ManifestDetection manifestContext)
     {
-        var manifest = manifestContext.Manifest;
-        var hasImagesField = manifestContext.Manifest.TryGetProperty(fieldName, out var images)
-            && images.ValueKind == JsonValueKind.Array;
-        if (!hasImagesField)
+        var hasImagesField = manifestContext.Manifest.TryGetProperty(fieldName, out var array)
+            && array.ValueKind == JsonValueKind.Array;
+        if (hasImagesField)
+        {
+            return array.EnumerateArray();
+        }
+
+        return [];
+    }
+
+    private static IEnumerable<JsonElement> GetShortcutImages(ManifestDetection manifestContext)
+    {
+        var shortcuts = GetManifestArray("shortcuts", manifestContext);
+        return shortcuts.SelectMany(s =>
+        {
+            var hasShortcutIcons = s.TryGetProperty("icons", out var icons);
+            if (hasShortcutIcons && icons.ValueKind == JsonValueKind.Array)
+            {
+                return icons.EnumerateArray();
+            }
+
+            return [];
+        });
+    }
+
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckImagesAreFetchable(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        if (!images.Any())
         {
             return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
         }
@@ -274,7 +298,7 @@ public class ManifestAnalyzer
               }
            ]
         */
-        var iconUris = images.EnumerateArray()
+        var iconUris = images
             .Where(icon => icon.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String)
             .Select(icon => icon.GetProperty("src").GetString())
             .Where(src => !string.IsNullOrWhiteSpace(src))
@@ -295,19 +319,16 @@ public class ManifestAnalyzer
     /// <summary>
     /// Validates that the declared types of images in the manifest match their actual file types.
     /// </summary>
-    private async Task<Result<PwaCapabilityCheckStatus>> CheckImageTypesAreValid(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckImageTypesAreValid(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
     {
-        var manifest = manifestContext.Manifest;
-        var hasImagesField = manifest.TryGetProperty(fieldName, out var images)
-            && images.ValueKind == JsonValueKind.Array;
-        if (!hasImagesField)
+        if (!images.Any())
         {
             return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
         }
 
         var imageValidationTasks = new List<Task<Result<bool>>>();
 
-        foreach (var image in images.EnumerateArray())
+        foreach (var image in images)
         {
             // Only validate if both src and type are present
             var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
@@ -329,6 +350,12 @@ public class ManifestAnalyzer
         var imageTypeFailure = results.Select(r => r.Error).FirstOrDefault(e => e != null);
         if (imageTypeFailure != null)
         {
+            // If it's a 403 Forbidden error, skip the check. We'll surface errors via CheckImagesAreFetchable instead.
+            if (imageTypeFailure is HttpRequestException httpRequestException && httpRequestException.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                return PwaCapabilityCheckStatus.Skipped;
+            }
+
             return imageTypeFailure;
         }
 
@@ -338,19 +365,16 @@ public class ManifestAnalyzer
     /// <summary>
     /// Validates that the declared sizes of images in the manifest match their actual dimensions.
     /// </summary>
-    private async Task<Result<PwaCapabilityCheckStatus>> CheckImageSizesAreValid(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckImageSizesAreValid(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
     {
-        var manifest = manifestContext.Manifest;
-        var hasImagesField = manifest.TryGetProperty(fieldName, out var images)
-            && images.ValueKind == JsonValueKind.Array;
-        if (!hasImagesField)
+        if (!images.Any())
         {
             return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
         }
 
         var imageValidationTasks = new List<Task<Result<bool>>>();
 
-        foreach (var image in images.EnumerateArray())
+        foreach (var image in images)
         {
             // Only validate if both src and sizes are present
             var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
@@ -372,6 +396,12 @@ public class ManifestAnalyzer
         var firstImageError = results.Select(r => r.Error).FirstOrDefault(e => e != null);
         if (firstImageError != null)
         {
+            // If it's a 403 error, skip the check. We'll surface errors via CheckImagesAreFetchable instead.
+            if (firstImageError is HttpRequestException httpRequestException && httpRequestException.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                return PwaCapabilityCheckStatus.Skipped;
+            }
+
             return firstImageError;
         }
         else
