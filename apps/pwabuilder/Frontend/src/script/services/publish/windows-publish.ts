@@ -116,6 +116,7 @@ export function createWindowsPackageOptionsFromManifest(
     }
 
     const icon = findBestAppIcon(manifestIcons);
+    const baseImageAbsoluteUrl = icon?.src ? new URL(icon?.src || '', getManifestUrl()) : null;
     const options: WindowsPackageOptions = {
         name: name as string,
         packageId: packageID,
@@ -138,7 +139,7 @@ export function createWindowsPackageOptionsFromManifest(
         manifestUrl: maniURL,
         manifest: manifest,
         images: {
-            baseImage: icon?.src || '',
+            baseImage: baseImageAbsoluteUrl?.toString() || '',
             backgroundColor: 'transparent',
             padding: 0.0,
         },
