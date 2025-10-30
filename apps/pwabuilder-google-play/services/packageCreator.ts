@@ -302,7 +302,7 @@ export class PackageCreator {
     }
 
     private static getImageProxyUrl(imageUrl: URL, analysisId: string | null): string {
-        return `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(imageUrl)}&analysisId=${encodeURIComponent(analysisId || "")}`;
+        return `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(imageUrl.toString())}&analysisId=${encodeURIComponent(analysisId || "")}`;
     }
 
     /***
