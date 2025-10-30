@@ -60,6 +60,8 @@ public class ManifestDetector
             var manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
             if (!string.IsNullOrWhiteSpace(manifestContents))
             {
+                // Update the web string cache with the manifest.
+                await webStringCache.UpdateAsync(manifestUrl, manifestContents, Constants.ManifestMimeTypes);
                 return CreateManifestDetection(manifestUrl, manifestContents, logger);
             }
         }

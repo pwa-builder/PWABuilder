@@ -14,7 +14,7 @@ public class WebStringCache
     private readonly HttpClient http;
 
     private const int defaultMaxSizeInBytes = 2 * 1024 * 1024; // 2MB
-    private static readonly TimeSpan cacheExpiration = TimeSpan.FromMinutes(5);
+    private static readonly TimeSpan cacheExpiration = TimeSpan.FromMinutes(30);
 
     /// <summary>
     /// Creates a new WebStringCache.
@@ -56,6 +56,27 @@ public class WebStringCache
         }
 
         return webString;
+    }
+
+    /// <summary>
+    /// Updates the cache with the given URL and string.
+    /// </summary>
+    /// <param name="url">The URL of the web resource to cache.</param>
+    /// <param name="value">The string value of the web resource at <paramref name="url"/>.</param>
+    /// <param name="accepts">The accept headers to use. These help create the cache key for the resource.</param>
+    /// <returns></returns>
+    public async Task UpdateAsync(Uri url, string value, IReadOnlyCollection<string> accepts)
+    {
+        try
+        {
+            var cacheKey = GetCacheKey(url, accepts);
+            await redis.StringSetAsync(cacheKey, value, cacheExpiration);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unable to update web string cache for {url} due to an error.", url);
+            throw;
+        }
     }
 
     private async Task<string?> TryFetchResourceAsync(Uri appUrl, IEnumerable<string> accepts, int maxSizeInBytes, ILogger logger, CancellationToken cancelToken)
