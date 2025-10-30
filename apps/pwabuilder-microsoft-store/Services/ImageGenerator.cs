@@ -27,7 +27,7 @@ namespace PWABuilder.MicrosoftStore
         private readonly Uri imageGeneratorServiceUrl;
 
         public ImageGenerator(
-            IHttpClientFactory httpClientFactory, 
+            IHttpClientFactory httpClientFactory,
             IOptions<AppSettings> appSettings,
             ILogger<ImageGenerator> logger)
         {
@@ -82,9 +82,13 @@ namespace PWABuilder.MicrosoftStore
             // Better than nothing: the largest image from the manifest
 
             // Go through each source and see if we can get the bytes for it.
+
+            var manifestUrl = !string.IsNullOrEmpty(webManifest.Url) ? new Uri(webManifest.Url) : null;
+            var baseImageAbsoluteUri = manifestUrl != null && imageOptions.BaseImage != null ?
+                new Uri(manifestUrl, imageOptions.BaseImage?.ToString()) : null;
             var baseImageSources = new[]
             {
-                (source: imageOptions.BaseImage, description: "base image from package options"),
+                (source: baseImageAbsoluteUri, description: "base image from package options"),
                 (source: webManifest.GetIconSuitableForWindowsApps(512), description: "largest square PNG or JPG icon 512x512 or larger from web manifest"),
                 (source: webManifest.GetIconSuitableForWindowsApps(256), description: "largest square PNG or JPG icon 256x256 or larger from web manifest"),
                 (source: webManifest.GetIconSuitableForWindowsApps(128), description: "largest square PNG or JPG icon 128x128 or larger from web manifest"),
@@ -114,7 +118,7 @@ namespace PWABuilder.MicrosoftStore
 
             var imageSourceDescriptions = baseImageSources
                 .Where(s => s.source != null)
-                .Select(s => $"{s.description}: {s.source?.ToString()}");            
+                .Select(s => $"{s.description}: {s.source?.ToString()}");
             throw new InvalidOperationException($"Couldn't find a suitable base image from which to generate all Windows package images. Please ensure your web app manifest has a square PNG image 512x512 or larger. Base image sources: {string.Join(", ", imageSourceDescriptions)}");
         }
 

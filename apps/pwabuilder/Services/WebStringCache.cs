@@ -114,6 +114,8 @@ public class WebStringCache
             null => "unspecified",
             _ => "other"
         };
-        return $"{id}:{url.Host}:{url.AbsoluteUri.GetHashCodeStable()}"; // We use stable here because other instances of the web app might try to load this value.
+
+        // We use stable here because other instances of the web app might try to load this value, e.g. during 403 Forbidden errors when fetching the manifest.
+        return $"{id}:{url.Host}:{url.AbsoluteUri.GetHashCodeStable()}";
     }
 }

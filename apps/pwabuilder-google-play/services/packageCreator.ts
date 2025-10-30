@@ -138,6 +138,8 @@ export class PackageCreator {
             const errorMessage = (error as Error)?.message || `${error}`;
             this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden. " + errorMessage, "warn");
             const is403Error =
+                (error as any)?.status === 403 ||
+                (error as any)?.response?.status === 403 ||
                 errorMessage.includes('403') ||
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
