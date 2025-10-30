@@ -112,6 +112,6 @@ public class WebStringCache
             null => "unspecified",
             _ => "other"
         };
-        return $"{id}:{url.Host}:{url.GetHashCode()}";
+        return $"{id}:{url.Host}:{url.AbsoluteUri.GetHashCodeStable()}"; // We use stable here because other instances of the web app might try to load this value.
     }
 }
