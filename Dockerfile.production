@@ -74,17 +74,20 @@ RUN dotnet publish "PWABuilder.csproj" -c Release -o /app/publish /p:UseAppHost=
 # Final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
-# Install Chrome dependencies and create non-root user
-RUN apt-get update \
-    && apt-get install -y wget gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && wget -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.116-1_amd64.deb \
-    && apt-get install -y /tmp/chrome.deb \
-    && rm /tmp/chrome.deb \
-    && apt-get purge -y --auto-remove wget gnupg \
-    && rm -rf /var/lib/apt/lists/* \
+# Chrome for Testing: please review all the latest versions here:
+# https://googlechromelabs.github.io/chrome-for-testing/
+ENV CHROMEDRIVER_VERSION=142.0.7444.59
+
+# install chrome
+RUN apt-get update && apt-get install -y wget && apt-get install -y zip
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+### install chromedriver
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip \
+    && unzip chromedriver-linux64.zip && rm -dfr chromedriver_linux64.zip \
+    && mv /chromedriver-linux64/chromedriver /usr/bin/chromedriver \
+    && chmod +x /usr/bin/chromedriver \
     && groupadd -r pwabuilder && useradd -r -g pwabuilder -d /app -s /bin/bash pwabuilder
 
 WORKDIR /app
