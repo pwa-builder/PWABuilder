@@ -136,19 +136,19 @@ export class PackageCreator {
             return await bubbleWrapper.generateAppPackage();
         } catch (error) {
             const errorMessage = (error as Error)?.message || `${error}`;
-            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403. " + errorMessage, "warn");
+            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden. " + errorMessage, "warn");
             const is403Error =
                 errorMessage.includes('403') ||
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
             if (is403Error) {
-                const optionsWithSafeUrl = this.getAndroidOptionsWithSafeUrls(options);
+                const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
                 const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
                 if (isCloudflare) {
-                    this.dispatchProgressEvent("Cloudflare is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable Cloudflare's \"Bot fight mode\" while you're packaging with PWABuilder.", "warn");
+                    this.dispatchProgressEvent("Cloudflare is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable Cloudflare's \"Bot fight mode\" while you're packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
                 } else {
-                    this.dispatchProgressEvent("Your web app is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable your firewall, CDN, or Cloudflare while packaging with PWABuilder.", "warn");
+                    this.dispatchProgressEvent("Your web app is blocking PWABuilder from accessing your app's images, serving 403 Forbidden errors to PWABuilder. If the problem persists, please temporarily disable your firewall, CDN, or Cloudflare while packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
                 }
                 const bubbleWrapper = new BubbleWrapper(
                     optionsWithSafeUrl,
@@ -260,7 +260,7 @@ export class PackageCreator {
         }
     }
 
-    private getAndroidOptionsWithSafeUrls(options: AndroidPackageOptions): AndroidPackageOptions {
+    private getAndroidOptionsWithProxiedUrls(options: AndroidPackageOptions): AndroidPackageOptions {
         const absoluteUrlProps: Array<keyof AndroidPackageOptions> = [
             'maskableIconUrl',
             'monochromeIconUrl',
@@ -272,12 +272,37 @@ export class PackageCreator {
             const url = newOptions[prop];
             if (url && typeof url === 'string') {
                 const absoluteUrl = new URL(url, options.webManifestUrl);
-                const safeUrlFetcherEndpoint = 'https://pwabuilder.com/api/images/getsafeimageforanalysis';
-                const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(absoluteUrl.toString())}&analysisId=${encodeURIComponent(options.analysisId || "")}`;
-                (newOptions[prop] as any) = safeUrl;
+                const isManifestUrl = prop === 'webManifestUrl';
+                if (isManifestUrl) {
+                    // We have a special endpoint for manifests that checks the PWABuilder web string cache first.
+                    (newOptions as any)[prop] = `https://pwabuilder.com/api/manifests/getFromCacheOrProxy?manifestUrl=${encodeURIComponent(absoluteUrl.toString())}`;
+                    this.dispatchProgressEvent(`Updated manifest URL to use manifest proxy. Old value ${options.webManifestUrl}, new value ${(newOptions)[prop]}`);
+                } else {
+                    // Otherwise, use the image proxy.
+                    (newOptions as any)[prop] = PackageCreator.getImageProxyUrl(absoluteUrl, options.analysisId);
+                    this.dispatchProgressEvent(`Updated ${prop} to use image proxy. Old value ${options[prop]}, new value ${(newOptions)[prop]}`);
+                }
             }
         }
+
+        // Also, any shortcut images should be proxied too.
+        if (newOptions.shortcuts && Array.isArray(newOptions.shortcuts)) {
+            newOptions.shortcuts.forEach(shortcut => {
+                (shortcut.icons || [])
+                    .filter(icon => !!icon.src)
+                    .forEach(icon => {
+                        const oldValue = icon.src;
+                        icon.src = PackageCreator.getImageProxyUrl(new URL(icon.src, options.webManifestUrl), options.analysisId);
+                        this.dispatchProgressEvent(`Updated shortcut icon to use image proxy. Old value ${oldValue}, new value ${icon.src}`);
+                    });
+            });
+        }
+
         return newOptions;
+    }
+
+    private static getImageProxyUrl(imageUrl: URL, analysisId: string | null): string {
+        return `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(imageUrl)}&analysisId=${encodeURIComponent(analysisId || "")}`;
     }
 
     /***
