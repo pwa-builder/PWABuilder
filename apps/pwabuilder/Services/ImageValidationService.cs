@@ -124,6 +124,10 @@ public class ImageValidationService : IImageValidationService
         {
             return true; // ImageSharp doesn't handle ico files. We'll skip those and assume all is well.
         }
+        if (declaredType.Trim().Equals("image/svg+xml", StringComparison.OrdinalIgnoreCase) || imageUri.ToString().EndsWith(".svg"))
+        {
+            return true; // ImageSharp doesn't handle svg files. We'll skip those and assume all is well.
+        }
 
         try
         {

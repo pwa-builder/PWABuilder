@@ -41,6 +41,7 @@ public class WebStringCache
     public async Task<string?> GetOrFetchAsync(Uri url, IEnumerable<string> accepts, ILogger? logger, CancellationToken cancelToken, int maxSizeInBytes = defaultMaxSizeInBytes)
     {
         var cacheKey = GetCacheKey(url, accepts);
+        (logger ?? this.logger).LogInformation("Fetching from web string cache for {url} with cache key {cacheKey}", url, cacheKey);
         var cached = await redis.StringGetAsync(cacheKey);
         if (cached.HasValue && !string.IsNullOrWhiteSpace(cached))
         {
@@ -70,6 +71,7 @@ public class WebStringCache
         try
         {
             var cacheKey = GetCacheKey(url, accepts);
+            logger.LogInformation("Updating web string cache for {url} with cache key {cacheKey}", url, cacheKey);
             await redis.StringSetAsync(cacheKey, value, cacheExpiration);
         }
         catch (Exception ex)
