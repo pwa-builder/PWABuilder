@@ -241,7 +241,6 @@ namespace PWABuilder.MicrosoftStore
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
-                request.Version = new Version(2, 0);
                 imageFetch = await http.SendAsync(request);
                 if (!imageFetch.IsSuccessStatusCode)
                 {
@@ -251,8 +250,28 @@ namespace PWABuilder.MicrosoftStore
             }
             catch (Exception fetchError)
             {
-                logger.LogWarning(fetchError, "Attempted to fetch image at {url}, but download failed with exception", imageUri);
-                return null;
+                logger.LogWarning(fetchError, "Attempted to fetch image at {url}, but download failed with exception. Will try HTTP/2", imageUri);
+            }
+
+            if (imageFetch == null)
+            {
+                // Try one more time with HTTP/2
+                try
+                {
+                    using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
+                    request.Version = HttpVersion.Version20;
+                    imageFetch = await http.SendAsync(request);
+                    if (!imageFetch.IsSuccessStatusCode)
+                    {
+                        logger.LogWarning("Attempted to fetch image at {url} with HTTP/2, but download failed with status {code}, {reason}", imageUri, imageFetch.StatusCode, imageFetch.ReasonPhrase);
+                        return null;
+                    }
+                }
+                catch (Exception fetchError)
+                {
+                    logger.LogError(fetchError, "Attempted to fetch image at {url} with HTTP/2, but download failed with exception", imageUri);
+                    return null;
+                }
             }
 
             try
