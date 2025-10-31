@@ -200,7 +200,7 @@ async function enqueuePackage(request: express.Request, response: express.Respon
         packageOptions.analyticsInfo = analyticsInfo;
         const jobId = await packageJobQueue.enqueue(packageOptions);
 
-        console.info(`Package job enqueued with ID: ${jobId}`);
+        console.info(`Package job enqueued with ID ${jobId} for ${packageOptions.analysisId}`);
         response.status(200).send(jobId);
     } catch (error) {
         console.error("Failed to enqueue package job:", error);
