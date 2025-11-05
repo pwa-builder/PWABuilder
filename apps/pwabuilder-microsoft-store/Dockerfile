@@ -1,5 +1,5 @@
-# Use Windows Server as the base image
-FROM mcr.microsoft.com/windows/server:ltsc2025
+# Use Windows Server as the base image - using latest 2022 LTSC build for GitHub Actions compatibility
+FROM mcr.microsoft.com/windows/server:ltsc2022-KB5070884
 
 # Install .NET 9.0 SDK (includes runtime)
 RUN powershell -Command \
