@@ -106,6 +106,7 @@ if (!builder.Environment.IsDevelopment())
         options.Preload = true;
         options.IncludeSubDomains = true;
         options.MaxAge = TimeSpan.FromDays(365);
+        options.ExcludedHosts.Clear(); // Clear any default exclusions
     });
 }
 
@@ -131,6 +132,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     app.UseHttpsRedirection();
 }
+
+app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
