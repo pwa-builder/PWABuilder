@@ -98,6 +98,17 @@ builder
             .WhenWritingNull;
     });
 
+// Configure HSTS for production
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddHsts(options =>
+    {
+        options.Preload = true;
+        options.IncludeSubDomains = true;
+        options.MaxAge = TimeSpan.FromDays(365);
+    });
+}
+
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
@@ -117,8 +128,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection();
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 app.UseAuthorization();
 app.MapControllers();
