@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
@@ -128,11 +129,17 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
-// Configure forwarded headers for reverse proxy scenarios (Azure App Service, etc.)
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+// Configure forwarded headers FIRST - this must be before any other middleware
+var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
-    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
-});
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+
+// For Azure App Service and other cloud providers, trust all proxies
+forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+
+app.UseForwardedHeaders(forwardedHeadersOptions);
 
 // Configure the HTTP request pipeline.
 // Add debugging to understand why HSTS isn't working
