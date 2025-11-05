@@ -77,11 +77,13 @@ namespace PWABuilder.Services
                     "--disable-prompt-on-repost",           // Auto-handle form reposts
                     "--run-all-compositor-stages-before-draw"
                 ],
+
             };
             launchOptions.ExecutablePath = chromePath;
 
             // open a new page in the controlled browser
-            return await Puppeteer.LaunchAsync(launchOptions);
+            var browser = await Puppeteer.LaunchAsync(launchOptions);
+            return browser;
         }
 
         /// <summary>
@@ -102,13 +104,16 @@ namespace PWABuilder.Services
 
             var page = await browser.NewPageAsync();
 
+            // Disable performance monitoring to avoid Protocol error (Performance.enable) issues
+            await page.SetCacheEnabledAsync(false);
+
             await page.SetUserAgentAsync(Constants.DesktopUserAgent);
             await page.GoToAsync(
                 site.ToString(),
                 new NavigationOptions
                 {
                     Timeout = 30000,
-                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, WaitUntilNavigation.Networkidle2],
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, /* WaitUntilNavigation.Networkidle2 - COMMENTED OUT: many PWAs have preload service worker scripts that preload all app assets. We don't want to wait for that. */],
                 }
             );
 
