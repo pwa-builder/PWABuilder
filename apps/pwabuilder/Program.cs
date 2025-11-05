@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Microsoft.PWABuilder.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -142,45 +141,9 @@ forwardedHeadersOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedHeadersOptions);
 
 // Configure the HTTP request pipeline.
-// Add debugging to understand why HSTS isn't working
-app.Use(async (context, next) =>
-{
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Environment: {env}, IsDevelopment: {isDev}, IsHttps: {isHttps}, Scheme: {scheme}, Host: {host}, Proto Header: {proto}",
-        app.Environment.EnvironmentName,
-        app.Environment.IsDevelopment(),
-        context.Request.IsHttps,
-        context.Request.Scheme,
-        context.Request.Host,
-        context.Request.Headers["X-Forwarded-Proto"].FirstOrDefault() ?? "none");
-
-    await next();
-
-    var hasHsts = context.Response.Headers.ContainsKey("Strict-Transport-Security");
-    logger.LogInformation("Response has HSTS header: {hasHsts}", hasHsts);
-    if (hasHsts)
-    {
-        var hstsValue = context.Response.Headers["Strict-Transport-Security"].ToString();
-        logger.LogInformation("HSTS value: {hstsValue}", hstsValue);
-    }
-}); if (!app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
-
-    // Manual HSTS middleware as fallback - this ensures HSTS is always added for HTTPS requests
-    app.Use(async (context, next) =>
-    {
-        await next();
-
-        // Add HSTS header manually if not already present and request is HTTPS
-        if (context.Request.IsHttps && !context.Response.Headers.ContainsKey("Strict-Transport-Security"))
-        {
-            context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload";
-            var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            logger.LogInformation("Manually added HSTS header for {host}{path}", context.Request.Host, context.Request.Path);
-        }
-    });
-
     app.UseHttpsRedirection();
 }
 
