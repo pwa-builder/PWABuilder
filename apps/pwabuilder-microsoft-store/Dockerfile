@@ -1,5 +1,5 @@
 # Use Windows Server as the base image
-FROM mcr.microsoft.com/windows/server:ltsc2022
+FROM mcr.microsoft.com/windows/server:ltsc2025
 
 # Install .NET 9.0 SDK (includes runtime)
 RUN powershell -Command \
