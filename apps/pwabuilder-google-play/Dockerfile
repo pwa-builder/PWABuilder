@@ -78,6 +78,7 @@ RUN mkdir -p "$ANDROID_HOME"/.android && \
 FROM pre-minimal AS node-final
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     apt-get update -qq && apt-get install -qq nodejs yarn && \
+    npm install -g npm@latest && \
     npm install -g bower cordova eslint gulp-cli @ionic/cli mocha node-gyp
 
 FROM node-final AS builder
@@ -88,6 +89,7 @@ COPY . .
 
 ENV NODE_ENV=development
 RUN npm install
+RUN npm audit fix --force
 RUN npm run build
 RUN ls -la /app/server.*
 
