@@ -1,5 +1,5 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
-FROM --platform=linux/amd64 ubuntu:20.04  AS ubuntu
+FROM --platform=linux/amd64 ubuntu:24.04  AS ubuntu
 
 ARG ANDROID_SDK_TOOLS_VERSION="11076708"
 ARG NODE_VERSION="20.x"

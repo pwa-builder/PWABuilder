@@ -10,7 +10,7 @@
     "dev": "cross-env NODE_ENV=development node --inspect=5858 --loader ts-node/esm ./server.ts",
     "build": "tsc --noEmitOnError",
     "docker:build": "npm run build && docker build -t cloud-apk .",
-    "docker:run": "docker run -p 5779:5858 cloud-apk"
+    "docker:run": "docker run -p 5779:5858 -e NODE_ENV=development cloud-apk"
   },
   "repository": {
     "type": "git",
@@ -46,7 +46,6 @@
     "express": "^4.21.2",
     "fs-extra": "^11.1.0",
     "ioredis": "^5.8.0",
-    "lodash": "^4.17.21",
     "multer": "2.0.2",
     "node-fetch": "^3.3.1",
     "password-generator": "^2.3.2",
@@ -56,8 +55,7 @@
     "tmp": "^0.2.4",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.4",
-    "unzip2": "^0.2.5"
+    "typescript": "^5.0.4"
   },
   "devDependencies": {
     "cross-env": "^10.1.0"
