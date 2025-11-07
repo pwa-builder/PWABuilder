@@ -10,9 +10,12 @@ enum AppInsightsStatus {
 var appInsightsStatus: AppInsightsStatus = AppInsightsStatus.DEFAULT;
 export function setupAnalytics() {
     try {
+        // Disable OpenTelemetry to prevent conflicts with Azure SDK
+        process.env.APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL = 'off';
+
         appInsights.setup()
-            .setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C)
-            .setAutoDependencyCorrelation(true)
+            .setDistributedTracingMode(DistributedTracingModes.AI)
+            .setAutoDependencyCorrelation(false)
             .setAutoCollectRequests(false)
             .setAutoCollectPerformance(false, false)
             .setAutoCollectExceptions(false)
