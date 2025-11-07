@@ -57,6 +57,23 @@
   "overrides": {
     "tough-cookie": ">=4.1.3",
     "handlebars": ">=4.7.7",
-    "json-schema": ">=0.4.0"
+    "json-schema": ">=0.4.0",
+    "protobufjs": ">=7.3.2",
+    "google-protobuf": ">=3.21.9",
+    "ws": ">=8.17.1",
+    "tar-fs": ">=3.0.6",
+    "form-data": ">=4.0.5",
+    "node-uuid": ">=1.4.4",
+    "uuid": ">=8.3.2",
+    "node-forge": ">=0.7.2",
+    "qs": ">=6.3.2",
+    "path-parse": ">=1.0.7",
+    "fstream": ">=1.0.12",
+    "dot-prop": ">=5.1.1",
+    "hoek": ">=5.0.3",
+    "vm2": ">=3.9.8",
+    "async": ">=3.2.2",
+    "hawk": ">=9.0.1",
+    "minimatch": ">=3.0.2"
   }
 }
