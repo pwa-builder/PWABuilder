@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import app from './app.js';
 import { PackageJobProcessor } from './services/packageJobProcessor.js';
+import { setupAnalytics } from "./services/analytics.js";
 
 const configResult = dotenv.config({
     path: `./env/${app.get("env")}.env`
@@ -26,6 +27,8 @@ const androidDevToolsPath = process.env.ANDROIDTOOLSPATH;
 if (!jdk8Path || !androidDevToolsPath) {
     console.error("Couldn't find environment variables for JDK8 path or Android Dev tools", app.get("env"), jdk8Path, androidDevToolsPath);
 }
+
+setupAnalytics();
 
 // Kick off our background job processor. 
 // This periodically polls Redis for new Google Play packaging jobs and processes them.
