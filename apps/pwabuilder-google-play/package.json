@@ -62,7 +62,7 @@
     "google-protobuf": ">=3.21.9",
     "ws": ">=8.17.1",
     "tar-fs": ">=3.0.6",
-    "form-data": ">=4.0.5",
+    "form-data": ">=4.0.4",
     "node-uuid": ">=1.4.4",
     "uuid": ">=8.3.2",
     "node-forge": ">=0.7.2",
