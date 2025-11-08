@@ -1,9 +1,8 @@
-import { Redis } from "ioredis";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { PackageCreator } from "./packageCreator.js";
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import { PackageJobLogger } from "../models/packageJobLogger.js";
-import { blobStorage, AzureStorageBlobService } from "./azureStorageBlobService.js";
+import { blobStorage } from "./azureStorageBlobService.js";
 import { database } from "./databaseService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
 
