@@ -96,10 +96,6 @@ export class AzureStorageBlobService implements BlobStorage {
                 try {
                     console.info("Initializing Azure services...");
 
-                    // Import Azure open telemetry in order to avoid race condition around @azure/core-tracing.
-                    const azureOpenTelemetry = await import("@azure/opentelemetry-instrumentation-azure-sdk");
-                    azureOpenTelemetry.logger.info("Azure Open Telemetry initialized");
-
                     console.info("Azure services initialized.");
 
                     // Dynamic imports to prevent early loading of Azure packages
