@@ -10,6 +10,7 @@ enum AnalyticsStatus {
 let analyticsStatus: AnalyticsStatus = AnalyticsStatus.DEFAULT;
 let tracer: any = null;
 let meter: any = null;
+let isShuttingDown = false;
 
 export function setupAnalytics() {
     try {
@@ -17,6 +18,12 @@ export function setupAnalytics() {
         const connectionString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
 
         if (connectionString) {
+            console.log('Setting up Azure Monitor OpenTelemetry...');
+
+            // Additional environment variables to prevent Azure SDK conflicts
+            process.env.AZURE_TRACING_DISABLED = 'true';
+            process.env.APPLICATIONINSIGHTS_NO_AZURE_INSTRUMENTATION = 'true';
+
             // Configure Azure Monitor with OpenTelemetry
             useAzureMonitor({
                 azureMonitorExporterOptions: {
@@ -32,13 +39,40 @@ export function setupAnalytics() {
 
             analyticsStatus = AnalyticsStatus.ENABLED;
             console.log('Azure Monitor OpenTelemetry enabled successfully');
+
+            // Handle graceful shutdown
+            const gracefulShutdown = async () => {
+                if (isShuttingDown) return;
+                isShuttingDown = true;
+                console.warn('Shutting down OpenTelemetry...');
+                // Give telemetry time to flush before exit
+                setTimeout(() => process.exit(0), 2000);
+            };
+
+            process.on('SIGTERM', gracefulShutdown);
+            process.on('SIGINT', gracefulShutdown);
         } else {
             console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING not found, analytics disabled');
             analyticsStatus = AnalyticsStatus.DISABLED;
         }
     } catch (e) {
         analyticsStatus = AnalyticsStatus.DISABLED;
-        console.warn("Azure Monitor OpenTelemetry couldn't be enabled", e);
+        // Check if it's a duplicate registration error
+        const error = e as Error;
+        if (error.message && error.message.includes('duplicate registration')) {
+            console.warn("OpenTelemetry API already registered (likely by Azure SDK), continuing with existing registration...");
+            // Try to get existing tracer and meter
+            try {
+                tracer = trace.getTracer('pwabuilder-google-play', '1.0.0');
+                meter = metrics.getMeter('pwabuilder-google-play', '1.0.0');
+                analyticsStatus = AnalyticsStatus.ENABLED;
+                console.log('Using existing OpenTelemetry registration');
+            } catch (getError) {
+                console.warn("Could not get existing OpenTelemetry providers:", getError);
+            }
+        } else {
+            console.warn("Azure Monitor OpenTelemetry couldn't be enabled", e);
+        }
     }
 } export function trackEvent(
     analyticsInfo: AnalyticsInfo,
@@ -49,8 +83,8 @@ export function setupAnalytics() {
         setupAnalytics();
     }
 
-    if (analyticsStatus === AnalyticsStatus.DISABLED || !tracer) {
-        console.warn("Analytics disabled, skipping event tracking");
+    if (analyticsStatus === AnalyticsStatus.DISABLED || !tracer || isShuttingDown) {
+        console.warn("Analytics disabled or shutting down, skipping event tracking");
         return;
     }
 
@@ -88,15 +122,21 @@ export function setupAnalytics() {
         // End the span
         span.end();
 
-        // Create a metric counter for package events
-        const packageCounter = meter.createCounter('pwa_package_events', {
-            description: 'Count of PWA package creation events'
-        });
+        // Create a metric counter for package events - with error handling
+        if (meter && !isShuttingDown) {
+            try {
+                const packageCounter = meter.createCounter('pwa_package_events', {
+                    description: 'Count of PWA package creation events'
+                });
 
-        packageCounter.add(1, {
-            success: success.toString(),
-            platform: 'android'
-        });
+                packageCounter.add(1, {
+                    success: success.toString(),
+                    platform: 'android'
+                });
+            } catch (metricError) {
+                console.warn('Failed to record metric:', metricError);
+            }
+        }
 
     } catch (e) {
         console.error('Error tracking event with OpenTelemetry:', e);
