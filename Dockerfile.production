@@ -59,10 +59,14 @@ COPY . .
 WORKDIR /src/apps/pwabuilder/Frontend
 RUN npm install
 RUN npm run build
+
 # Build lighthouse custom audits
 WORKDIR /src/apps/pwabuilder/node-scripts
 RUN npm install
 RUN npm run build
+
+# Force fix any NPM vulnerabilities
+RUN npm audit fix --force
 
 # Build backend
 WORKDIR /src/apps/pwabuilder
