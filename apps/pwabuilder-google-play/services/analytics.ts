@@ -10,7 +10,6 @@ enum AnalyticsStatus {
 let analyticsStatus: AnalyticsStatus = AnalyticsStatus.DEFAULT;
 let tracer: any = null;
 let meter: any = null;
-let isShuttingDown = false;
 
 export function setupAnalytics() {
     try {
@@ -40,17 +39,8 @@ export function setupAnalytics() {
             analyticsStatus = AnalyticsStatus.ENABLED;
             console.log('Azure Monitor OpenTelemetry enabled successfully');
 
-            // Handle graceful shutdown
-            const gracefulShutdown = async () => {
-                if (isShuttingDown) return;
-                isShuttingDown = true;
-                console.warn('Shutting down OpenTelemetry...');
-                // Give telemetry time to flush before exit
-                setTimeout(() => process.exit(0), 2000);
-            };
-
-            process.on('SIGTERM', gracefulShutdown);
-            process.on('SIGINT', gracefulShutdown);
+            // Note: Azure Monitor OpenTelemetry distro handles shutdown automatically
+            // No need for manual shutdown handlers as they can conflict with built-in shutdown logic
         } else {
             console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING not found, analytics disabled');
             analyticsStatus = AnalyticsStatus.DISABLED;
@@ -83,8 +73,8 @@ export function setupAnalytics() {
         setupAnalytics();
     }
 
-    if (analyticsStatus === AnalyticsStatus.DISABLED || !tracer || isShuttingDown) {
-        console.warn("Analytics disabled or shutting down, skipping event tracking");
+    if (analyticsStatus === AnalyticsStatus.DISABLED || !tracer) {
+        console.warn("Analytics disabled, skipping event tracking");
         return;
     }
 
@@ -123,7 +113,7 @@ export function setupAnalytics() {
         span.end();
 
         // Create a metric counter for package events - with error handling
-        if (meter && !isShuttingDown) {
+        if (meter) {
             try {
                 const packageCounter = meter.createCounter('pwa_package_events', {
                     description: 'Count of PWA package creation events'

@@ -11,7 +11,7 @@ export interface BlobStorage {
 
 /**
  * Blob storage service that connects to PWABuilder's Azure Storage account for uploading and downloading files.
- * NOTE: we lazily initialize the Azure BlobServiceClient and ContainerClient to avoid loading Azure SDK packages too early, which can cause conflicts with OpenTelemetry in our environment. Without this, we'd see errors like, "Module @azure/core-tracing has been loaded before @azure/opentelemetry-instrumentation-azure-sdk so it might not work, please initialize it before requiring @azure/core-tracing'"
+ * NOTE: we lazily initialize the Azure BlobServiceClient and ContainerClient for better performance and to avoid loading large Azure SDK packages during application startup when they may not be needed (e.g., in development mode).
  */
 export class AzureStorageBlobService implements BlobStorage {
     private blobServiceClientTask: Promise<BlobServiceClient> | null = null;
