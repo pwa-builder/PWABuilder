@@ -33,6 +33,14 @@ export class PackageJobProcessor {
         let hadTimeout = false;
 
         try {
+            // Check Redis health before attempting to dequeue
+            const isHealthy = await database.healthCheck();
+            if (!isHealthy) {
+                console.warn("Redis health check failed, skipping job dequeue cycle");
+                hadTimeout = true; // Treat as timeout to use longer delay
+                return;
+            }
+
             job = await packageJobQueue.dequeue();
             if (job) {
                 jobLogger = new PackageJobLogger(job);
@@ -40,12 +48,18 @@ export class PackageJobProcessor {
             }
         } catch (jobError) {
             const error = jobError as Error;
-            // Check if it's a Redis timeout specifically
-            const isRedisTimeout = error.message && error.message.includes('Command timed out');
-            if (isRedisTimeout) {
+            // Check if it's a Redis-related error
+            const isRedisError = error.message && (
+                error.message.includes('Command timed out') ||
+                error.message.includes('Connection is closed') ||
+                error.message.includes('Redis not ready') ||
+                error.message.includes('already connecting/connected')
+            );
+
+            if (isRedisError) {
                 hadTimeout = true;
-                console.warn("Redis timeout during job dequeue - will retry on next cycle", error.message);
-                // Don't mark job as failed for Redis timeouts, just wait for next cycle
+                console.warn("Redis error during job dequeue - will retry on next cycle", error.message);
+                // Don't mark job as failed for Redis errors, just wait for next cycle
             } else {
                 console.error("Error processing Google Play packaging job", jobError);
                 if (job) {
@@ -54,8 +68,8 @@ export class PackageJobProcessor {
             }
         } finally {
             // Whether success or failure, queue up another job run.
-            // Use longer delay if we had a Redis timeout to give Redis time to recover
-            const delay = hadTimeout ? 10000 : this.jobCheckIntervalMs;
+            // Use longer delay if we had a Redis error to give Redis time to recover
+            const delay = hadTimeout ? 15000 : this.jobCheckIntervalMs;
             setTimeout(() => this.runJobs(), delay);
         }
     }

@@ -10,6 +10,7 @@ export interface DatabaseService {
     dequeue<T>(key: string): Promise<T | null>;
     enqueue<T>(key: string, value: T): Promise<number>;
     queueLength(key: string): Promise<number>;
+    healthCheck(): Promise<boolean>;
 }
 
 /**
@@ -18,32 +19,39 @@ export interface DatabaseService {
 export class RedisService implements DatabaseService {
     public readonly ready: Promise<void>;
     private readonly redis: Redis;
+    private readonly connectionString: string;
 
     /**
      *
      */
     constructor() {
-        const connectionString = process.env.REDIS_CONNECTION_STRING;
-        if (!connectionString) {
+        this.connectionString = process.env.REDIS_CONNECTION_STRING || "";
+        if (!this.connectionString) {
             throw new Error("REDIS_CONNECTION_STRING environment variable is not set.");
         }
 
-        // Configure Redis with proper timeouts and retry logic for Azure deployment scenarios
-        this.redis = new Redis(connectionString, {
+        this.redis = this.createRedisConnection();
+        this.ready = this.initializeConnection();
+    }
+
+    private createRedisConnection(): Redis {
+        return new Redis(this.connectionString, {
             connectTimeout: 30000,     // 30 seconds to establish connection (Azure cold start)
-            commandTimeout: 15000,     // 15 seconds for individual commands (Azure warmup)
+            commandTimeout: 10000,     // 10 seconds for individual commands
             lazyConnect: true,         // Don't connect immediately
-            maxRetriesPerRequest: 5,   // More retries for deployment scenarios
+            maxRetriesPerRequest: 3,   // Reasonable retries
             enableReadyCheck: true,
             keepAlive: 30000,          // Keep connections alive
             family: 4,                 // Force IPv4 for better Azure compatibility
             reconnectOnError: (err) => {
-                const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+                const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNREFUSED'];
                 return targetErrors.some(targetError => err.message.includes(targetError));
             }
         });
+    }
 
-        this.ready = new Promise((resolve, reject) => {
+    private async initializeConnection(): Promise<void> {
+        return new Promise((resolve, reject) => {
             this.redis.on("ready", () => {
                 console.info("Redis ready to accept commands");
                 resolve();
@@ -132,27 +140,15 @@ export class RedisService implements DatabaseService {
             const startTime = Date.now();
             console.debug(`Starting Redis lpop for key: ${key}`);
 
-            // Health check: Ping Redis first to ensure connection is healthy
-            try {
-                await this.redis.ping();
-            } catch (pingError) {
-                console.warn(`Redis ping failed before lpop for key ${key}:`, pingError);
-                // Try to reconnect if ping fails
-                await this.redis.connect();
-            }
-
-            // First check if the list exists and has items to avoid blocking on empty lists
-            const listLength = await this.redis.llen(key);
-            if (listLength === 0) {
-                console.debug(`Queue ${key} is empty, skipping lpop`);
+            // Check Redis status first
+            const redisStatus = this.redis.status;
+            if (redisStatus !== 'ready') {
+                console.warn(`Redis status is ${redisStatus}, skipping dequeue for key: ${key}`);
                 return null;
             }
 
-            console.debug(`Queue ${key} has ${listLength} items, proceeding with lpop`);
-
-            // Use a shorter timeout for lpop since we know the list has items
             const timeoutPromise = new Promise<never>((_, reject) => {
-                setTimeout(() => reject(new Error(`Redis lpop timeout after 10 seconds for key: ${key} (list length: ${listLength})`)), 10000);
+                setTimeout(() => reject(new Error(`Redis lpop timeout after 10 seconds for key: ${key}`)), 10000);
             });
 
             const json = await Promise.race([
@@ -161,42 +157,38 @@ export class RedisService implements DatabaseService {
             ]);
 
             const duration = Date.now() - startTime;
-            console.debug(`Redis lpop completed in ${duration}ms for key: ${key}`);
 
             if (duration > 2000) {
-                console.warn(`Slow Redis lpop operation: ${duration}ms for key: ${key}`);
+                console.warn(`Slow Redis lpop operation: ${duration}ms for key: ${key} `);
             }
 
             if (!json) {
-                console.warn(`Redis lpop returned null despite list having ${listLength} items for key: ${key}`);
                 return null;
             }
 
             return JSON.parse(json) as T;
         } catch (error) {
-            console.error(`Error in dequeue for key ${key}:`, error);
+            console.error(`Error in dequeue for key ${key}: `, error);
 
-            // If lpop times out, let's try to diagnose Redis state
+            // If there's a connection error, provide diagnostics but don't try to reconnect here
+            // Let the Redis client handle reconnection automatically
             try {
-                const listLength = await this.redis.llen(key);
-                const redisInfo = await this.redis.info('memory');
-                console.error(`Redis diagnostics after lpop failure - List length: ${listLength}, Memory info: ${redisInfo.split('\n')[1]}`);
+                const redisStatus = this.redis.status;
+                console.error(`Redis status after dequeue failure: ${redisStatus}`);
             } catch (diagError) {
-                console.error('Failed to get Redis diagnostics:', diagError);
+                console.error('Failed to get Redis status:', diagError);
             }
 
             throw error;
         }
-    }
-
-    /**
+    }    /**
      * Pushes the given value onto the end of the list with the given key.
      * @param key The key of the list to push onto.
      * @param value The value to push onto the list. This will be converted to a JSON string.
      */
     async enqueue<T>(key: string, value: T): Promise<number> {
         const totalItems = await this.redis.rpush(key, JSON.stringify(value));
-        console.info(`Added ${key} to the queue ${key}. Queue length is now ${totalItems}`);
+        console.info(`Added ${key} to the queue ${key}. Queue length is now ${totalItems} `);
         return totalItems;
     }
 
@@ -207,6 +199,30 @@ export class RedisService implements DatabaseService {
      */
     queueLength(key: string): Promise<number> {
         return this.redis.llen(key);
+    }
+
+    /**
+     * Checks if Redis connection is healthy
+     * @returns Promise<boolean> indicating if Redis is healthy
+     */
+    async healthCheck(): Promise<boolean> {
+        try {
+            if (this.redis.status !== 'ready') {
+                return false;
+            }
+
+            // Try a simple ping with timeout
+            const pingPromise = this.redis.ping();
+            const timeoutPromise = new Promise<never>((_, reject) => {
+                setTimeout(() => reject(new Error('Health check timeout')), 3000);
+            });
+
+            await Promise.race([pingPromise, timeoutPromise]);
+            return true;
+        } catch (error) {
+            console.warn('Redis health check failed:', error);
+            return false;
+        }
     }
 }
 
@@ -251,6 +267,11 @@ class InMemoryDatabaseService implements DatabaseService {
         const list = this.queues.get(key) || [];
         return Promise.resolve(list.length);
     }
+
+    healthCheck(): Promise<boolean> {
+        // In-memory database is always healthy
+        return Promise.resolve(true);
+    }
 }
 
 // export our database singleton. For local development, this will be an in-memory database. For other environments, it will be a Redis database in Azure.
@@ -258,7 +279,7 @@ const isLocalDev = process.env.NODE_ENV === "development" || process.env.NODE_EN
 if (isLocalDev) {
     console.info("Local development detected, using in-memory database.");
 } else {
-    console.info(`${process.env.NODE_ENV} environment detected. Using Redis for database service.`);
+    console.info(`${process.env.NODE_ENV} environment detected.Using Redis for database service.`);
 }
 export const database = isLocalDev ?
     new InMemoryDatabaseService() as DatabaseService :
