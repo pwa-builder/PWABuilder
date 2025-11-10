@@ -18,7 +18,13 @@ export class PackageJobProcessor {
      * Begins the background job processor that periodically checks for Google Play packaging jobs and processes them.
      */
     start(): void {
-        database.ready.then(() => setTimeout(() => this.runJobs(), this.jobCheckIntervalMs));
+        // Wait for database to be ready, then add additional delay for Azure deployment scenarios
+        database.ready.then(() => {
+            console.info('Database ready, starting job processor in 5 seconds to allow for complete initialization...');
+            setTimeout(() => this.runJobs(), 5000); // 5 second delay instead of 2 seconds
+        }).catch((error) => {
+            console.error('Failed to start job processor due to database initialization error:', error);
+        });
     }
 
     private async runJobs(): Promise<void> {

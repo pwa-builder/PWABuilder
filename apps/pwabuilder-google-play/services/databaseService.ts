@@ -28,16 +28,18 @@ export class RedisService implements DatabaseService {
             throw new Error("REDIS_CONNECTION_STRING environment variable is not set.");
         }
 
-        // Configure Redis with proper timeouts and retry logic
+        // Configure Redis with proper timeouts and retry logic for Azure deployment scenarios
         this.redis = new Redis(connectionString, {
-            connectTimeout: 10000, // 10 seconds to establish connection
-            commandTimeout: 5000,  // 5 seconds for individual commands
-            lazyConnect: true,     // Don't connect immediately
-            maxRetriesPerRequest: 3,
+            connectTimeout: 30000,     // 30 seconds to establish connection (Azure cold start)
+            commandTimeout: 15000,     // 15 seconds for individual commands (Azure warmup)
+            lazyConnect: true,         // Don't connect immediately
+            maxRetriesPerRequest: 5,   // More retries for deployment scenarios
             enableReadyCheck: true,
+            keepAlive: 30000,          // Keep connections alive
+            family: 4,                 // Force IPv4 for better Azure compatibility
             reconnectOnError: (err) => {
-                const targetError = 'READONLY';
-                return err.message.includes(targetError);
+                const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT'];
+                return targetErrors.some(targetError => err.message.includes(targetError));
             }
         });
 
@@ -77,7 +79,7 @@ export class RedisService implements DatabaseService {
     async getJson<T>(key: string): Promise<T | null> {
         try {
             const timeoutPromise = new Promise<never>((_, reject) => {
-                setTimeout(() => reject(new Error(`Redis get timeout after 5 seconds for key: ${key}`)), 5000);
+                setTimeout(() => reject(new Error(`Redis get timeout after 15 seconds for key: ${key}`)), 15000);
             });
 
             const json = await Promise.race([
@@ -105,7 +107,7 @@ export class RedisService implements DatabaseService {
             const expirationSeconds = 90 * 24 * 60 * 60; // 90 days in seconds
 
             const timeoutPromise = new Promise<never>((_, reject) => {
-                setTimeout(() => reject(new Error(`Redis set timeout after 5 seconds for key: ${key}`)), 5000);
+                setTimeout(() => reject(new Error(`Redis set timeout after 15 seconds for key: ${key}`)), 15000);
             });
 
             await Promise.race([
@@ -129,9 +131,9 @@ export class RedisService implements DatabaseService {
         try {
             const startTime = Date.now();
 
-            // Add manual timeout wrapper
+            // Add manual timeout wrapper with longer timeout for deployment scenarios
             const timeoutPromise = new Promise<never>((_, reject) => {
-                setTimeout(() => reject(new Error(`Redis lpop timeout after 10 seconds for key: ${key}`)), 10000);
+                setTimeout(() => reject(new Error(`Redis lpop timeout after 20 seconds for key: ${key}`)), 20000);
             });
 
             const json = await Promise.race([
