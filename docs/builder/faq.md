@@ -243,7 +243,7 @@ If you're using Cloudflare, please temporarily disable Cloudflare's "Bot fight m
   
 ### Error: `request to [URL] failed, reason: unable to verify the first certificate`
 
-This is likely the result of an incomplete SSL certificate chain. You can test this to be sure here: https://www.ssllabs.com/ssltest/index.html
+This is likely the result of an incomplete SSL certificate chain. You can test this via [SSLLabs](https://www.ssllabs.com/ssltest/index.html).
 
 ### Error: `Error creating app package: Could not find MIME for Buffer stack
 
