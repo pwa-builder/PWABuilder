@@ -10,14 +10,8 @@ enum AppInsightsStatus {
 var appInsightsStatus: AppInsightsStatus = AppInsightsStatus.DEFAULT;
 export function setupAnalytics() {
     try {
-        // Completely disable OpenTelemetry to prevent conflicts with Azure SDK
-        process.env.APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL = 'off';
-        process.env.APPLICATIONINSIGHTS_NO_DIAGNOSTIC_CHANNEL = 'true';
-        process.env.APPLICATIONINSIGHTS_NO_STATSBEAT = 'true';
-        // Disable Azure SDK OpenTelemetry instrumentation
-        process.env.AZURE_TRACING_DISABLED = 'true';
-        // Disable Application Insights auto-instrumentation of Azure SDK
-        process.env.APPLICATIONINSIGHTS_NO_AZURE_INSTRUMENTATION = 'true';
+        // Environment variables are set at application startup in server.ts
+        // to ensure they're configured before any Azure packages are imported
 
         appInsights.setup()
             .setDistributedTracingMode(DistributedTracingModes.AI)
