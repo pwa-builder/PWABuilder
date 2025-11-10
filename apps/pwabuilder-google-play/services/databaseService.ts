@@ -130,10 +130,29 @@ export class RedisService implements DatabaseService {
     async dequeue<T>(key: string): Promise<T | null> {
         try {
             const startTime = Date.now();
+            console.debug(`Starting Redis lpop for key: ${key}`);
 
-            // Add manual timeout wrapper with longer timeout for deployment scenarios
+            // Health check: Ping Redis first to ensure connection is healthy
+            try {
+                await this.redis.ping();
+            } catch (pingError) {
+                console.warn(`Redis ping failed before lpop for key ${key}:`, pingError);
+                // Try to reconnect if ping fails
+                await this.redis.connect();
+            }
+
+            // First check if the list exists and has items to avoid blocking on empty lists
+            const listLength = await this.redis.llen(key);
+            if (listLength === 0) {
+                console.debug(`Queue ${key} is empty, skipping lpop`);
+                return null;
+            }
+
+            console.debug(`Queue ${key} has ${listLength} items, proceeding with lpop`);
+
+            // Use a shorter timeout for lpop since we know the list has items
             const timeoutPromise = new Promise<never>((_, reject) => {
-                setTimeout(() => reject(new Error(`Redis lpop timeout after 20 seconds for key: ${key}`)), 20000);
+                setTimeout(() => reject(new Error(`Redis lpop timeout after 10 seconds for key: ${key} (list length: ${listLength})`)), 10000);
             });
 
             const json = await Promise.race([
@@ -142,17 +161,30 @@ export class RedisService implements DatabaseService {
             ]);
 
             const duration = Date.now() - startTime;
-            if (duration > 5000) {
-                console.warn(`Redis lpop completed in ${duration}ms for key: ${key}`);
+            console.debug(`Redis lpop completed in ${duration}ms for key: ${key}`);
+
+            if (duration > 2000) {
+                console.warn(`Slow Redis lpop operation: ${duration}ms for key: ${key}`);
             }
 
             if (!json) {
+                console.warn(`Redis lpop returned null despite list having ${listLength} items for key: ${key}`);
                 return null;
             }
 
             return JSON.parse(json) as T;
         } catch (error) {
             console.error(`Error in dequeue for key ${key}:`, error);
+
+            // If lpop times out, let's try to diagnose Redis state
+            try {
+                const listLength = await this.redis.llen(key);
+                const redisInfo = await this.redis.info('memory');
+                console.error(`Redis diagnostics after lpop failure - List length: ${listLength}, Memory info: ${redisInfo.split('\n')[1]}`);
+            } catch (diagError) {
+                console.error('Failed to get Redis diagnostics:', diagError);
+            }
+
             throw error;
         }
     }

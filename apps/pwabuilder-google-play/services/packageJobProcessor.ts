@@ -30,6 +30,8 @@ export class PackageJobProcessor {
     private async runJobs(): Promise<void> {
         let job: GooglePlayPackageJob | null = null;
         let jobLogger: PackageJobLogger | null = null;
+        let hadTimeout = false;
+
         try {
             job = await packageJobQueue.dequeue();
             if (job) {
@@ -37,13 +39,24 @@ export class PackageJobProcessor {
                 await this.processJob(job, jobLogger);
             }
         } catch (jobError) {
-            console.error("Error processing Google Play packaging job", jobError);
-            if (job) {
-                this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
+            const error = jobError as Error;
+            // Check if it's a Redis timeout specifically
+            const isRedisTimeout = error.message && error.message.includes('Command timed out');
+            if (isRedisTimeout) {
+                hadTimeout = true;
+                console.warn("Redis timeout during job dequeue - will retry on next cycle", error.message);
+                // Don't mark job as failed for Redis timeouts, just wait for next cycle
+            } else {
+                console.error("Error processing Google Play packaging job", jobError);
+                if (job) {
+                    this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
+                }
             }
         } finally {
             // Whether success or failure, queue up another job run.
-            setTimeout(() => this.runJobs(), this.jobCheckIntervalMs);
+            // Use longer delay if we had a Redis timeout to give Redis time to recover
+            const delay = hadTimeout ? 10000 : this.jobCheckIntervalMs;
+            setTimeout(() => this.runJobs(), delay);
         }
     }
 
