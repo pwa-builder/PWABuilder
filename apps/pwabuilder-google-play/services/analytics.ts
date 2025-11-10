@@ -1,5 +1,4 @@
 import * as appInsights from 'applicationinsights';
-import { DistributedTracingModes } from 'applicationinsights';
 
 enum AppInsightsStatus {
     ENABLED = 1,
@@ -14,8 +13,6 @@ export function setupAnalytics() {
         // to ensure they're configured before any Azure packages are imported
 
         appInsights.setup()
-            .setDistributedTracingMode(DistributedTracingModes.AI)
-            .setAutoDependencyCorrelation(false)
             .setAutoCollectRequests(false)
             .setAutoCollectPerformance(false, false)
             .setAutoCollectExceptions(false)

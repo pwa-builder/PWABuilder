@@ -94,6 +94,8 @@ export class AzureStorageBlobService implements BlobStorage {
         if (!this.blobServiceClientTask) {
             this.blobServiceClientTask = new Promise<BlobServiceClient>(async (resolve, reject) => {
                 try {
+                    console.info("Initializing Azure services, including @azure/core-tracing...");
+
                     // Dynamic imports to prevent early loading of Azure packages
                     const { BlobServiceClient } = await import("@azure/storage-blob");
                     const { DefaultAzureCredential } = await import("@azure/identity");
