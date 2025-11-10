@@ -23,16 +23,25 @@ export function setupAnalytics() {
             process.env.AZURE_TRACING_DISABLED = 'true';
             process.env.APPLICATIONINSIGHTS_NO_AZURE_INSTRUMENTATION = 'true';
 
-            // Configure Azure Monitor with OpenTelemetry
-            useAzureMonitor({
-                azureMonitorExporterOptions: {
-                    connectionString
-                },
-                // Configure sampling ratio if needed
-                samplingRatio: 1.0,
-            });
+            // Disable Azure Monitor internal metrics that can cause shutdown conflicts
+            process.env.APPLICATIONINSIGHTS_NO_STATSBEAT = 'true';
+            process.env.APPLICATIONINSIGHTS_STATSBEAT_DISABLED = 'true';
+            process.env.APPLICATIONINSIGHTS_NO_DIAGNOSTIC_CHANNEL = 'true';
 
-            // Create tracer and meter for custom telemetry
+            // Configure Azure Monitor with OpenTelemetry
+            try {
+                useAzureMonitor({
+                    azureMonitorExporterOptions: {
+                        connectionString,
+                    },
+                    // Configure sampling ratio if needed
+                    samplingRatio: 1.0,
+                });
+                console.log('Azure Monitor useAzureMonitor() completed successfully');
+            } catch (azureMonitorError) {
+                console.warn('Error in useAzureMonitor, but continuing:', azureMonitorError);
+                // Continue anyway - we'll still try to get tracer/meter
+            }            // Create tracer and meter for custom telemetry
             tracer = trace.getTracer('pwabuilder-google-play', '1.0.0');
             meter = metrics.getMeter('pwabuilder-google-play', '1.0.0');
 

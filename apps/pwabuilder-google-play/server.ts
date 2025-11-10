@@ -2,6 +2,10 @@
 // to prevent conflicts with Azure Monitor OpenTelemetry
 process.env.AZURE_TRACING_DISABLED = 'true';
 process.env.APPLICATIONINSIGHTS_NO_AZURE_INSTRUMENTATION = 'true';
+// Disable Azure Monitor internal metrics that can cause periodic shutdown issues
+process.env.APPLICATIONINSIGHTS_NO_STATSBEAT = 'true';
+process.env.APPLICATIONINSIGHTS_STATSBEAT_DISABLED = 'true';
+process.env.APPLICATIONINSIGHTS_NO_DIAGNOSTIC_CHANNEL = 'true';
 
 import dotenv from 'dotenv';
 import app from './app.js';
