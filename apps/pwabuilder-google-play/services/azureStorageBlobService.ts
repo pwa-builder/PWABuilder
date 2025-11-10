@@ -100,6 +100,8 @@ export class AzureStorageBlobService implements BlobStorage {
                     const azureOpenTelemetry = await import("@azure/opentelemetry-instrumentation-azure-sdk");
                     azureOpenTelemetry.logger.info("Azure Open Telemetry initialized");
 
+                    console.info("Azure services initialized.");
+
                     // Dynamic imports to prevent early loading of Azure packages
                     const { BlobServiceClient } = await import("@azure/storage-blob");
                     const { DefaultAzureCredential } = await import("@azure/identity");

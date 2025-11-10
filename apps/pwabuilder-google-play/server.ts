@@ -1,17 +1,5 @@
-// CRITICAL: Set OpenTelemetry environment variables FIRST to prevent conflicts
-process.env.APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL = 'off';
-process.env.APPLICATIONINSIGHTS_NO_DIAGNOSTIC_CHANNEL = 'true';
-process.env.APPLICATIONINSIGHTS_NO_STATSBEAT = 'true';
-process.env.AZURE_TRACING_DISABLED = 'true';
-process.env.APPLICATIONINSIGHTS_NO_AZURE_INSTRUMENTATION = 'true';
-// Disable OpenTelemetry completely to prevent Azure SDK conflicts
-process.env.OTEL_SDK_DISABLED = 'true';
-process.env.OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED = 'false';
-
-// Setup analytics early to avoid race issues with open telemetry.
+// Setup Azure Monitor OpenTelemetry early to initialize telemetry properly
 import { setupAnalytics } from "./services/analytics.js";
-setupAnalytics();
-
 import dotenv from 'dotenv';
 import app from './app.js';
 import { PackageJobProcessor } from './services/packageJobProcessor.js';
@@ -40,6 +28,8 @@ const androidDevToolsPath = process.env.ANDROIDTOOLSPATH;
 if (!jdk8Path || !androidDevToolsPath) {
     console.error("Couldn't find environment variables for JDK8 path or Android Dev tools", app.get("env"), jdk8Path, androidDevToolsPath);
 }
+
+setupAnalytics();
 
 // Kick off our background job processor. 
 // This periodically polls Redis for new Google Play packaging jobs and processes them.
