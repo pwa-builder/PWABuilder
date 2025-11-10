@@ -8,9 +8,12 @@ process.env.APPLICATIONINSIGHTS_NO_AZURE_INSTRUMENTATION = 'true';
 process.env.OTEL_SDK_DISABLED = 'true';
 process.env.OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED = 'false';
 
+// Setup analytics early to avoid race issues with open telemetry.
+import { setupAnalytics } from "./services/analytics.js";
+setupAnalytics();
+
 import dotenv from 'dotenv';
 import app from './app.js';
-import { setupAnalytics } from "./services/analytics.js";
 import { PackageJobProcessor } from './services/packageJobProcessor.js';
 
 const configResult = dotenv.config({
@@ -37,8 +40,6 @@ const androidDevToolsPath = process.env.ANDROIDTOOLSPATH;
 if (!jdk8Path || !androidDevToolsPath) {
     console.error("Couldn't find environment variables for JDK8 path or Android Dev tools", app.get("env"), jdk8Path, androidDevToolsPath);
 }
-
-setupAnalytics();
 
 // Kick off our background job processor. 
 // This periodically polls Redis for new Google Play packaging jobs and processes them.

@@ -1,4 +1,6 @@
 import * as appInsights from 'applicationinsights';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
 
 enum AppInsightsStatus {
     ENABLED = 1,
@@ -9,8 +11,12 @@ enum AppInsightsStatus {
 var appInsightsStatus: AppInsightsStatus = AppInsightsStatus.DEFAULT;
 export function setupAnalytics() {
     try {
-        // Environment variables are set at application startup in server.ts
-        // to ensure they're configured before any Azure packages are imported
+        const sdk = new NodeSDK({
+            traceExporter: new ConsoleSpanExporter(),
+            instrumentations: [],
+        });
+
+        sdk.start();
 
         appInsights.setup()
             .setAutoCollectRequests(false)
