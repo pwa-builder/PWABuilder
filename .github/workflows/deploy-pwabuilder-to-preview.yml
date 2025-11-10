@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "apps/pwabuilder/**"
+      - "Dockerfile.production"
   workflow_dispatch:
 
 env:
