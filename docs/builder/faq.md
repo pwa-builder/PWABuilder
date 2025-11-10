@@ -245,6 +245,14 @@ If you're using Cloudflare, please temporarily disable Cloudflare's "Bot fight m
 
 This is likely the result of an incomplete SSL certificate chain. You can test this to be sure here: https://www.ssllabs.com/ssltest/index.html
 
+### Error: `Error creating app package: Could not find MIME for Buffer stack
+
+This can occur when your web manifest file contains an icon that is either missing or has an invalid MIME type.
+
+The best way to diagnose and fix this issue is, load your web app in the browser, hit F12 to open dev tools, go to the Application tab, and click Manifest. It will show you warnings and errors with your icons.
+
+Fix those, and then PWABuilder should work for you.
+
 ### Error: `Failed to download icon [Icon URL]. Responded with status 404`
 
 This error usually occurs when there is an empty array within another array in a manifest field.
