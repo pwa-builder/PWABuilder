@@ -138,7 +138,6 @@ export class RedisService implements DatabaseService {
     async dequeue<T>(key: string): Promise<T | null> {
         try {
             const startTime = Date.now();
-            console.debug(`Starting Redis lpop for key: ${key}`);
 
             // Check Redis status first
             const redisStatus = this.redis.status;
