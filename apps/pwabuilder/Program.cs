@@ -46,6 +46,9 @@ if (builder.Environment.IsDevelopment())
 
     // In development, we use an in-memory database for Analysis objects. This makes local development and testing simpler, as we don't need to connect to Redis.
     builder.Services.AddSingleton<IPWABuilderDatabase, InMemoryPWABuilderDatabase>();
+
+    // In development, we use an in-memory blob storage service.
+    builder.Services.AddSingleton<IBlobStorageService, InMemoryBlobStorageService>();
 }
 else
 {
@@ -54,6 +57,9 @@ else
 
     // In production, we use PWABuilderDatabase, which uses Redis as a backing store.
     builder.Services.AddSingleton<IPWABuilderDatabase, PWABuilderDatabase>();
+
+    // In production, we use Azure Storage for blob storage.
+    builder.Services.AddSingleton<IBlobStorageService, AzureStorageService>();
 }
 builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
