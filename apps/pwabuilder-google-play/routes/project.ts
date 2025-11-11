@@ -23,6 +23,14 @@ const packageCreator = new PackageCreator();
 packageCreator.addEventListener("progress", e => packageCreationProgress(e));
 
 /**
+ * Health check endpoint that verifies the service is running.
+ * This is used by Azure health checks to ensure app instance is healthy.
+ */
+router.get('/ping', (_: express.Request, response: express.Response) => {
+    response.status(200).json({ status: 'healthy' });
+});
+
+/**
  * Generates an APK package and zips it up along with the signing key info. Sends back the zip file.
  * Expects a POST body containing @see ApkOptions form data.
  * 
