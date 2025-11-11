@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using PWABuilder.Controllers;
 using PWABuilder.Models;
 using PWABuilder.Services;
 
 namespace PWABuilder.Controllers;
 
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 public class MsStorePackagesController : ControllerBase
 {
     private readonly IBlobStorageService blobStorageService;
