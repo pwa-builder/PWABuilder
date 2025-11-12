@@ -45,22 +45,8 @@ public class MsStorePackagesController : ControllerBase
             return Unauthorized();
         }
 
-        var stream = await blobStorageService.DownloadBlobAsync("resources", "pwabuilder.zip");
+        var stream = await blobStorageService.DownloadBlobAsync("resources", "pwa_builder.zip");
         Response.RegisterForDispose(stream);
-        return File(stream, "application/zip", "pwabuilder.zip");
-    }
-
-    [HttpGet("list-files-temp")]
-    public async Task<IActionResult> ListFiles(string key)
-    {
-        // Validate the key.
-        if (key != cliKey)
-        {
-            logger.LogWarning("Unauthorized attempt to list files in resources container with invalid key.");
-            return Unauthorized();
-        }
-
-        var blobs = await blobStorageService.ListBlobsAsync("resources");
-        return Ok(blobs);
+        return File(stream, "application/zip", "pwa_builder.zip");
     }
 }
