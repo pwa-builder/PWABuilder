@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
+      - ".github/workflows/deploy-msstore-to-preview.yml"
     branches: [ "main" ]
   pull_request:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
+      - ".github/workflows/deploy-msstore-to-preview.yml"
     branches: [ main ]
   workflow_dispatch: 
 
