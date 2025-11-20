@@ -136,14 +136,15 @@ export class PackageCreator {
             return await bubbleWrapper.generateAppPackage();
         } catch (error) {
             const errorMessage = (error as Error)?.message || `${error}`;
-            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden. " + errorMessage, "warn");
+            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden or timeout. " + errorMessage, "warn");
             const is403Error =
                 (error as any)?.status === 403 ||
                 (error as any)?.response?.status === 403 ||
                 errorMessage.includes('403') ||
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
-            if (is403Error) {
+            const isTimeout = errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ESOCKETTIMEDOUT');
+            if (is403Error || isTimeout) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
                 const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
