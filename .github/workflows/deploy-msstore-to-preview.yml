@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
+      - ".github/workflows/deploy-msstore-to-preview.yml"
     branches: [ "main" ]
   pull_request:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
+      - ".github/workflows/deploy-msstore-to-preview.yml"
     branches: [ main ]
   workflow_dispatch: 
 
@@ -39,14 +41,9 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Download zipped pwa_builder internal tool from Azure Blob Storage
+      - name: Download zipped pwa_builder internal tool from PWABuilder API
         run: |
-          az storage blob download `
-            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} `
-            --container-name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_CONTAINER_NAME }} `
-            --name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_BLOB_NAME }} `
-            --file pwabuilder.zip `
-            --auth-mode login
+          curl -L "https://pwabuilder.com/api/MsStorePackages/cli?key=${{ secrets.PWABUILDER_CLI_KEY }}" -o pwabuilder.zip
 
       - name: Extracting pwa_builder zip file
         run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
