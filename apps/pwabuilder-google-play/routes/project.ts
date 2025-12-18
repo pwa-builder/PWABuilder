@@ -387,6 +387,18 @@ function validateAndroidOptionsRequest(request: express.Request): AppPackageRequ
         ...requiredFields.filter((f) => !options![f]).map((f) => `${f as string} is required`)
     );
 
+    // Ensure webManifestUrl is an absolute HTTPS URL.
+    if (options.webManifestUrl) {
+        try {
+            const manifestUrl = new URL(options.webManifestUrl, options.fullScopeUrl);
+            if (manifestUrl.protocol !== 'https:') {
+                validationErrors.push('webManifestUrl must be an absolute HTTPS URL');
+            }
+        } catch (manifestUrlError) {
+            validationErrors.push('webManifestUrl must be an absolute HTTPS URL');
+        }
+    }
+
     // We must have signing options if the signing is enabled.
     if (options.signingMode !== 'none' && !options.signing) {
         validationErrors.push(
