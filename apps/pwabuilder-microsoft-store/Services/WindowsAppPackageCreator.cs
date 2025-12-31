@@ -37,7 +37,7 @@ namespace PWABuilder.MicrosoftStore.Services
             ClassicWindowsPackageCreator classicPackageCreator,
             SpartanWindowsPackageCreator spartanPackageCreator,
             WebManifestFinder manifestFinder,
-            ImageGenerator imageGenerator, 
+            ImageGenerator imageGenerator,
             TempDirectory temp,
             Analytics urlLogger,
             IWebHostEnvironment host,
@@ -68,25 +68,25 @@ namespace PWABuilder.MicrosoftStore.Services
             ValidateOptions(options);
 
             // Check for redirects.
-            var redirectUri = await TryCheckForRedirect(new Uri(options.Url));
+            var redirectUri = await TryCheckForRedirect(options.Url);
             if (redirectUri != null)
             {
                 logger.LogInformation("Detected redirect for {url}, redirecting to {target}. Will use the redirect target for packaging.", options.Url, redirectUri);
-                options.Url = redirectUri.ToString();
+                options.Url = redirectUri;
             }
 
-            var packageType = options.Publisher == null || options.Publisher.CommonName == devPackagePublisherCommonName ? 
+            var packageType = options.Publisher == null || options.Publisher.CommonName == devPackagePublisherCommonName ?
                 WindowsPackageType.DeveloperPackage : WindowsPackageType.StorePackage;
             try
             {
                 var zipResult = await GenerateZipAsync(options, cancelToken);
-                analytics.Record(options.Url, true, packageType, analyticsInfo, options.PackageId, options.Publisher?.CommonName, options.Publisher?.DisplayName, null);
+                await analytics.RecordStorePackageSuccess(options, packageType, analyticsInfo);
                 return zipResult;
             }
             catch (Exception error)
             {
                 logger.LogError(error, "Error generating app package for {url}", options.Url);
-                analytics.Record(options.Url, false, packageType, analyticsInfo, null, null, null, error.ToString());
+                await analytics.RecordStorePackageFailure(error, options, packageType, analyticsInfo);
                 throw;
             }
             finally

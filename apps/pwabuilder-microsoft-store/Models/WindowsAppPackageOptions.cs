@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore.Models
 {
@@ -26,7 +23,7 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <summary>
         /// The URL of the PWA to generate an .msix file from.
         /// </summary>
-        public string Url { get; set; } = string.Empty;
+        public required Uri Url { get; set; }
 
         /// <summary>
         /// The version of the app.
@@ -51,13 +48,12 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <summary>
         /// The Application ID of the application
         /// </summary>
-        public string? ApplicationId { get; set; } = "App";  
+        public string? ApplicationId { get; set; } = "App";
 
         /// <summary>
         /// The App User Model Id (aumid) that will be declared in the MSIX manifest. Default is Microsoft.MicrosoftEdge.[channel]_8wekyb3d8bbwe!MSEDGE
         /// </summary>
-        public string? AppUserModelId { get;set; }
-
+        public string? AppUserModelId { get; set; }
 
         /// <summary>
         /// Extended configuration. Expected values are "sharetarget", "filetype". Currently not used but reserved for future use.
@@ -82,10 +78,10 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <summary>
         /// The URL to the web app manifest. If null, it will be fetched via the manifest finder service.
         /// </summary>
-        public string? ManifestUrl { get; set; }
+        public Uri? ManifestUrl { get; set; }
 
         /// <summary>
-        /// The web app manifest. Used for fetching app images from the manifest. If not supplied, the manifest will be fetched via a the PWABuilder manifest detector service.
+        /// The PWA's web app manifest contents.
         /// </summary>
         public JsonDocument? Manifest { get; set; }
 
@@ -112,7 +108,7 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <summary>
         /// The Device families supported by the package. The currently accepted values are "Desktop","Holographic" or "Team".
         /// </summary>
-        public List<string>? TargetDeviceFamilies { get; set; } 
+        public List<string>? TargetDeviceFamilies { get; set; }
 
         /// <summary>
         /// Whether to use the old pwa_builder.exe tool that accepts passing a manifest URL into the tool, rather than fetching it dynamically.
@@ -155,7 +151,7 @@ namespace PWABuilder.MicrosoftStore.Models
                     errors.Add("Package ID must be at least 3 characters");
                 }
             }
-            
+
             if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
             {
                 errors.Add("URL must be a valid absolute URL");
@@ -200,7 +196,7 @@ namespace PWABuilder.MicrosoftStore.Models
                     errors.Add("Invalid classic package version. Must be a version in the 'x.x.x' format.");
                 }
                 else
-                { 
+                {
                     if (version != null && classicVersion >= version)
                     {
                         errors.Add("The classic app package version must be less than the modern app package version.");
@@ -265,13 +261,14 @@ namespace PWABuilder.MicrosoftStore.Models
             }
 
             //Checking if the Device families are valid
-            if(this.TargetDeviceFamilies != null)
+            if (this.TargetDeviceFamilies != null)
             {
-                var deviceFamilies = new[] { "holographic", "desktop", "team"};
+                var deviceFamilies = new[] { "holographic", "desktop", "team" };
                 this.TargetDeviceFamilies = this.TargetDeviceFamilies.Where(deviceFamily => deviceFamily != null && deviceFamily != "").Select(deviceFamily => deviceFamily.Trim()).Distinct().ToList<string>();
                 foreach (string family in this.TargetDeviceFamilies)
                 {
-                    if(!deviceFamilies.Any(c => c == family.ToLower())) {
+                    if (!deviceFamilies.Any(c => c == family.ToLower()))
+                    {
                         errors.Add("TargetDeviceFamilies must contain only the following " + string.Join(", ", deviceFamilies));
                     }
 
@@ -313,7 +310,7 @@ namespace PWABuilder.MicrosoftStore.Models
                 .First(val => !string.IsNullOrWhiteSpace(val));
 
             // Make sure the URL is absolute, relative to the web manifest path.
-            return webManifest.ResolveUri(startUrl!, this.Url); 
+            return webManifest.ResolveUri(startUrl!, this.Url);
         }
     }
 }

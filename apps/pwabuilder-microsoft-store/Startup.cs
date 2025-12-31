@@ -28,10 +28,10 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-        
+
         // Validate Windows SDK directory exists
         ValidateWindowsSdkDirectory();
-        
+
         services.AddCors(options =>
         {
             options.AddPolicy(
@@ -62,6 +62,7 @@ public class Startup
         services.AddTransient<MakePriWrapper>();
         services.AddTransient<MakeAppxWrapper>();
         services.AddTransient<TempDirectory>();
+        services.AddSingleton<CosmosDbService>();
         services.AddTransient<Analytics>();
         services.AddSingleton<ZombieProcessKiller>();
         services.AddTransient<ProcessRunner>();
@@ -145,14 +146,14 @@ public class Startup
     {
         var appSettings = Configuration.GetSection("AppSettings");
         var windowsSdkDirectory = appSettings["WindowsSdkDirectory"];
-        
+
         if (string.IsNullOrWhiteSpace(windowsSdkDirectory))
         {
             throw new InvalidOperationException(
                 "WindowsSdkDirectory is not configured in AppSettings. " +
                 "Please ensure the Windows SDK is installed and the correct path is specified in configuration.");
         }
-        
+
         if (!Directory.Exists(windowsSdkDirectory))
         {
             throw new DirectoryNotFoundException(
@@ -160,7 +161,7 @@ public class Startup
                 "Please ensure the Windows SDK is properly installed. " +
                 "Expected tools like makeappx.exe should be available in this directory.");
         }
-        
+
         // Additional validation: check if makeappx.exe exists in the SDK directory
         var makeAppxPath = Path.Combine(windowsSdkDirectory, "makeappx.exe");
         if (!File.Exists(makeAppxPath))
@@ -169,7 +170,7 @@ public class Startup
                 $"Required tool 'makeappx.exe' not found in Windows SDK directory: '{windowsSdkDirectory}'. " +
                 "Please ensure the Windows SDK is properly installed with MSIX packaging tools.");
         }
-        
+
         Console.WriteLine($"✓ Windows SDK validated successfully at: {windowsSdkDirectory}");
     }
 }

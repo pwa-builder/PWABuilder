@@ -84,5 +84,25 @@ namespace PWABuilder.MicrosoftStore.Models
         /// App Insights connection string
         /// </summary>
         public string ApplicationInsightsConnectionString { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The CosmosDB endpoint URL (e.g., https://your-account.documents.azure.com:443/)
+        /// </summary>
+        public string CosmosDbEndpoint { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The CosmosDB database name
+        /// </summary>
+        public string CosmosDbDatabaseName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The CosmosDB container name for storing package analytics
+        /// </summary>
+        public string CosmosDbContainerName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The Azure Managed Identity Application ID for user-assigned managed identity authentication. If null or empty, the system-assigned managed identity will be used.
+        /// </summary>
+        public string? AzureManagedIdentityApplicationId { get; set; }
     }
 }
