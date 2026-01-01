@@ -27,9 +27,9 @@ public class PwaBuilderMsStorePackage
     public Uri? ManifestUrl { get; set; }
 
     /// <summary>
-    /// The raw JSON of the PWA's web app manifest.
+    /// The raw JSON string of the PWA's web app manifest.
     /// </summary>
-    public JsonDocument? Manifest { get; set; }
+    public string? Manifest { get; set; }
 
     /// <summary>
     /// The error message that occurred during package generation, if any.
