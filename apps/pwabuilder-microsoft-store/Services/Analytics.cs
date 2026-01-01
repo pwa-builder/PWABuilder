@@ -97,8 +97,7 @@ namespace PWABuilder.MicrosoftStore
                 SendAppInsightsEvent(package, analyticsInfo);
 
                 // Save to CosmosDB using the package's correlation ID as the partition key
-                var partitionKey = package.CorrelationId ?? Guid.NewGuid().ToString();
-                var success = await this.cosmosDbService.SaveItemAsync(package, partitionKey);
+                var success = await this.cosmosDbService.SaveItemAsync(package, package.Id);
 
                 if (success)
                 {

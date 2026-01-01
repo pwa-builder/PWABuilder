@@ -14,7 +14,7 @@ public class PwaBuilderMsStorePackage
     /// The unique identifier for this document in CosmosDB. 
     /// </summary>
     [JsonPropertyName("id")]
-    public string? Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     /// <summary>
     /// The URL of the PWA.
