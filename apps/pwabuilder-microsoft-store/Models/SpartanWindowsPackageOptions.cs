@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PWABuilder.MicrosoftStore.Models
 {
@@ -14,7 +15,7 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <summary>
         /// Gets the URL for the package. If null, the URL from <see cref="WindowsAppPackageOptions.Url"/> will be used.
         /// </summary>
-        public string? Url { get; set; }
+        public Uri? Url { get; set; }
 
         /// <summary>
         /// The version of the package. If null, the version from <see cref="WindowsAppPackageOptions.Version"/> will be used.

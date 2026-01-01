@@ -59,11 +59,11 @@ namespace PWABuilder.MicrosoftStore
             // Update the Application element so its StartPage = the PWA's URL
             var appElement = xmlDoc.GetRequiredElementByTagName("Application");
             var appUrl = options.EdgeHtmlPackage?.Url ?? options.Url;
-            appElement.SetAttribute("StartPage", appUrl);
+            appElement.SetAttribute("StartPage", appUrl.ToString());
 
             // Update the existing Rule to allow the app to have access to Windows Runtime.
             var existingWinRuntimeRule = xmlDoc.GetRequiredElementByTagName("uap:Rule");
-            existingWinRuntimeRule.SetAttribute("Match", appUrl);
+            existingWinRuntimeRule.SetAttribute("Match", appUrl.ToString());
 
             // Add any additional URLs with Windows Runtime access.
             if (options.EdgeHtmlPackage?.UrlsWithWindowsRuntimeAccess != null)

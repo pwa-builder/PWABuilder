@@ -62,7 +62,7 @@ namespace PWABuilder.MicrosoftStore
         public async Task<WebAppManifestContext> Find(WindowsAppPackageOptions options)
         {
             // If we have a manifest and a manifest URL, use those.
-            Uri.TryCreate(options.ManifestUrl, UriKind.Absolute, out var manifestUri);
+            var manifestUri = options.ManifestUrl;
             JsonDocument? rawManifest = null;
             if (options.Manifest == null && manifestUri != null)
             {
@@ -70,7 +70,6 @@ namespace PWABuilder.MicrosoftStore
                 options.Manifest = rawManifest;
                 await GenerateManifestFile(options);
                 return WebAppManifestContext.From(options.Manifest!, manifestUri);
-
             }
 
             //Only if custom manifest is provided, pass the custom manifest to pwa_builder.exe (But this feature does not work if the app has widgets)
@@ -78,14 +77,11 @@ namespace PWABuilder.MicrosoftStore
             {
                 options.UsePWABuilderWithCustomManifest = true;
                 await GenerateManifestFile(options);
-                return WebAppManifestContext.From(options.Manifest, manifestUri != null ? manifestUri : new Uri(options.Url));
+                return WebAppManifestContext.From(options.Manifest, manifestUri != null ? manifestUri : options.Url);
             }
 
             // No manifest could be fetched so far. Reach out to our manifest detection service and find it.
-            if (!Uri.TryCreate(options.Url, UriKind.Absolute, out var pwaUri))
-            {
-                throw new ArgumentException("Must have a valid URL to find the web app manifest. Url was " + options.Url);
-            }
+            var pwaUri = options.Url;
 
             var apiUrl = webManifestFinderServiceUrl + $"?site={Uri.EscapeDataString(pwaUri.ToString())}";
             var jsonResult = await InvokeManifestFinderService(apiUrl);

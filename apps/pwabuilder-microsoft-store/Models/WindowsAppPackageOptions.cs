@@ -152,10 +152,7 @@ namespace PWABuilder.MicrosoftStore.Models
                 }
             }
 
-            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
-            {
-                errors.Add("URL must be a valid absolute URL");
-            }
+            var uri = this.Url;
 
             // The version requirements for the Microsoft Store: https://docs.microsoft.com/en-us/windows/uwp/publish/package-version-numbering
             //
@@ -304,7 +301,7 @@ namespace PWABuilder.MicrosoftStore.Models
             {
                 this.StartUrl, // If the user specified one in the options, use that.
                 webManifest.Start_url, // Otherwise fall back to web manifest's start_url
-                this.Url // Finally, fallback to the URL of the PWA.
+                this.Url?.ToString() // Finally, fallback to the URL of the PWA.
             };
             var startUrl = potentialStartUrls
                 .First(val => !string.IsNullOrWhiteSpace(val));
