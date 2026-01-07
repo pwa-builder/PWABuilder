@@ -24,7 +24,7 @@ namespace PWABuilder.MicrosoftStore
         private readonly HttpClient http;
         private readonly TempDirectory temp;
 
-        private const string webManifestFinderServiceUrl = "https://pwabuilder-apiv2-container.calmflower-2e2ebb94.eastus.azurecontainerapps.io/api/FindWebManifest";
+        private const string webManifestFinderServiceUrl = "https://pwabuilder.com/api/manifests/findManifestLegacyApiV2";
 
         public WebManifestFinder(IHttpClientFactory httpClientFactory, ILogger<WebManifestFinder> logger, TempDirectory temp)
         {
