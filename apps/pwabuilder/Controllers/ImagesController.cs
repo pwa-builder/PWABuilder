@@ -33,6 +33,11 @@ public class ImagesController : ControllerBase
     [HttpGet("getSafeImageForAnalysis")]
     public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IPWABuilderDatabase db, CancellationToken cancelToken)
     {
+        if (imageUrl.IsLoopback)
+        {
+            return BadRequest("Loopback URLs are not allowed.");
+        }
+
         HttpClientExtensions.LimitedReadStreamWithMediaType imageStream;
         try
         {
