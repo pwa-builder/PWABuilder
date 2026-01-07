@@ -33,13 +33,9 @@ public class ImagesController : ControllerBase
     [HttpGet("getSafeImageForAnalysis")]
     public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IPWABuilderDatabase db, CancellationToken cancelToken)
     {
-        if (imageUrl.IsLoopback)
+        if (!imageUrl.IsAbsoluteInternetHttps())
         {
-            return BadRequest("Loopback URLs are not allowed.");
-        }
-        if (imageUrl.Scheme != Uri.UriSchemeHttps)
-        {
-            return BadRequest("Only HTTPS URLs are supported.");
+            return BadRequest("Image URL must be an absolute HTTPS URI pointing to a non-local address.");
         }
 
         HttpClientExtensions.LimitedReadStreamWithMediaType imageStream;

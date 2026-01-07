@@ -37,6 +37,11 @@ public class ManifestsController : ControllerBase
     [HttpGet("getFromCacheOrProxy")]
     public async Task<IActionResult> GetFromCacheOrProxy([FromQuery] Uri manifestUrl, [FromServices] WebStringCache webStringCache, CancellationToken cancellationToken)
     {
+        if (!manifestUrl.IsAbsoluteInternetHttps())
+        {
+            return BadRequest("Manifest URL must be an absolute HTTPS URI pointing to a non-local address.");
+        }
+
         // See if we have the manifest in our web string cache.
         string? manifestContent;
         try

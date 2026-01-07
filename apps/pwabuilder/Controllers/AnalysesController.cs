@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
 
@@ -34,9 +35,9 @@ public class AnalysesController : ControllerBase
         {
             url = new Uri($"https://{url}", UriKind.Absolute);
         }
-        if (url.IsLoopback)
+        if (!url.IsAbsoluteInternetHttps())
         {
-            return BadRequest("Loopback URLs are not allowed.");
+            return BadRequest("URL must be an absolute HTTPS URI pointing to a non-local address.");
         }
 
         // Create a new Analysis object in the database and enqueue an AnalysisJob.

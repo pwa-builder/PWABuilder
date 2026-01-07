@@ -25,11 +25,12 @@
         }
 
         /// <summary>
-        /// Tests whether the URI is not a loopback URI (localhost), and that it is an HTTPs URI.
+        /// Tests whether the URI is an absolute HTTPS URI that is not loopback.
         /// </summary>
-        public static bool IsHttps(this Uri uri)
+        /// <returns>True if the URI is absolute, HTTPS, and not loopback; false otherwise.</returns>
+        public static bool IsAbsoluteInternetHttps(this Uri uri)
         {
-            return !uri.IsLoopback && uri.Scheme == Uri.UriSchemeHttps;
+            return uri.IsAbsoluteUri && !uri.IsLoopback && uri.Scheme == Uri.UriSchemeHttps;
         }
     }
 }
