@@ -37,6 +37,10 @@ public class ImagesController : ControllerBase
         {
             return BadRequest("Loopback URLs are not allowed.");
         }
+        if (imageUrl.Scheme != Uri.UriSchemeHttps)
+        {
+            return BadRequest("Only HTTPS URLs are supported.");
+        }
 
         HttpClientExtensions.LimitedReadStreamWithMediaType imageStream;
         try

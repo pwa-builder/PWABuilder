@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using PWABuilder.IOS.Common;
+using PWABuilder.Common;
 
 namespace PWABuilder.IOS.Models
 {

@@ -1,4 +1,4 @@
-﻿namespace PWABuilder.IOS.Common
+﻿namespace PWABuilder.Common
 {
     public static class UriExtensions
     {
@@ -22,6 +22,14 @@
         {
             Uri.TryCreate(baseUri, uriString, out var uri);
             return uri;
+        }
+
+        /// <summary>
+        /// Tests whether the URI is not a loopback URI (localhost), and that it is an HTTPs URI.
+        /// </summary>
+        public static bool IsHttps(this Uri uri)
+        {
+            return !uri.IsLoopback && uri.Scheme == Uri.UriSchemeHttps;
         }
     }
 }
