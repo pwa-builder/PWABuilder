@@ -50,7 +50,8 @@ namespace PWABuilder.MicrosoftStore
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
-            };
+            }
+            ;
 
         }
 
@@ -63,10 +64,9 @@ namespace PWABuilder.MicrosoftStore
         {
             // If we have a manifest and a manifest URL, use those.
             var manifestUri = options.ManifestUrl;
-            JsonDocument? rawManifest = null;
             if (options.Manifest == null && manifestUri != null)
             {
-                rawManifest = await TryFetchManifestFrom(manifestUri, options);
+                var rawManifest = await TryFetchManifestFrom(manifestUri, options);
                 options.Manifest = rawManifest;
                 await GenerateManifestFile(options);
                 return WebAppManifestContext.From(options.Manifest!, manifestUri);

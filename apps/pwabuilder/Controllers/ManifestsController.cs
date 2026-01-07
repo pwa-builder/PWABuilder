@@ -8,6 +8,17 @@ namespace PWABuilder.Controllers;
 [Route("api/[controller]")]
 public class ManifestsController : ControllerBase
 {
+    private readonly ILogger<ManifestsController> logger;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ManifestsController"/> class.
+    /// </summary>
+    /// <param name="logger">The logger instance.</param>
+    public ManifestsController(ILogger<ManifestsController> logger)
+    {
+        this.logger = logger;
+    }
+
     /// <summary>
     /// Creates a new web manifest for the specified URL.
     /// </summary>
@@ -59,5 +70,61 @@ public class ManifestsController : ControllerBase
         }
 
         return Content(manifestContent, "application/manifest+json");
+    }
+
+    /// <summary>
+    /// Provides a legacy API endpoint for finding web manifests, compatible with the old PWABuilder API v2 service. 
+    /// This is used by the MS Store packaging service to detect a manifest for a given site URL.
+    /// </summary>
+    /// <param name="site">The website to detect the web manifest for.</param>
+    /// <param name="detector">The manifest detection service.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns></returns>
+    [HttpGet("findManifestLegacyApiV2")]
+    public async Task<IActionResult> FindManifestLegacyApiV2([FromQuery] Uri site, [FromServices] ManifestDetector detector, CancellationToken cancellationToken)
+    {
+        if (!site.IsAbsoluteInternetHttps())
+        {
+            return BadRequest("Site URL must be an absolute HTTPS URI pointing to a non-local address.");
+        }
+
+        try
+        {
+            var manifestContext = await detector.TryDetectAsync(site, logger, cancellationToken);
+            if (manifestContext != null)
+            {
+                return Ok(new
+                {
+                    content = new
+                    {
+                        url = manifestContext.Url,
+                        json = manifestContext.Manifest,
+                        raw = manifestContext.ManifestRaw
+                    }
+                });
+            }
+            else // Couldn't find manifest.
+            {
+                // Yes, we return OK 200 here with an error response, rather than 4xx, to support legacy existing behavior from the old API.
+                return Ok(new
+                {
+                    Error = new
+                    {
+                        Message = "Unable to detect manifest"
+                    }
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Legacy manifest detection for {site} failed with exception.", site);
+            return Ok(new
+            {
+                Error = new
+                {
+                    Message = "Unable to detect manifest due to exception"
+                }
+            });
+        }
     }
 }
