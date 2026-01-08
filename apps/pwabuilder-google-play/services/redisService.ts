@@ -48,7 +48,7 @@ export class RedisService implements DatabaseService {
             commandTimeout: 10000,     // 10 seconds for individual commands
             lazyConnect: true,         // Don't connect immediately
             maxRetriesPerRequest: 3,   // Reasonable retries
-            enableReadyCheck: true,
+            enableReadyCheck: false,   // Disable ready check - we'll authenticate first then manually signal ready
             keepAlive: 30000,          // Keep connections alive
             family: 4,                 // Force IPv4 for better Azure compatibility
             reconnectOnError: (err) => {
@@ -80,6 +80,9 @@ export class RedisService implements DatabaseService {
                         const token = await this.credential.getToken("https://redis.azure.com/.default");
                         await this.redis.call("AUTH", "default", token.token);
                         console.info("Redis authenticated successfully with managed identity");
+
+                        // Manually emit ready event after successful authentication
+                        this.redis.emit("ready");
                     } catch (authError) {
                         console.error("Redis authentication failed:", authError);
                         reject(authError);
