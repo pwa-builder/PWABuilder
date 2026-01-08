@@ -73,10 +73,9 @@ export class RedisService implements DatabaseService {
             await this.redis.connect();
             console.info("Redis connected, authenticating with managed identity...");
 
-            // Authenticate immediately after connection, before any other commands
-            await this.redis.call("HELLO", "3");
+            // Get token and authenticate with HELLO 3 AUTH command (combines protocol switch and auth)
             const token = await this.credential.getToken("https://redis.azure.com/.default");
-            await this.redis.call("AUTH", "default", token.token);
+            await this.redis.call("HELLO", "3", "AUTH", "default", token.token);
             console.info("Redis authenticated successfully with managed identity");
 
             // Set up reconnection handler to re-authenticate
@@ -89,9 +88,8 @@ export class RedisService implements DatabaseService {
                 if (this.redis.status === "reconnecting" || this.redis.status === "connecting") {
                     console.info("Re-authenticating after reconnection...");
                     try {
-                        await this.redis.call("HELLO", "3");
                         const token = await this.credential.getToken("https://redis.azure.com/.default");
-                        await this.redis.call("AUTH", "default", token.token);
+                        await this.redis.call("HELLO", "3", "AUTH", "default", token.token);
                         console.info("Re-authentication successful");
                     } catch (authError) {
                         console.error("Redis re-authentication failed:", authError);
