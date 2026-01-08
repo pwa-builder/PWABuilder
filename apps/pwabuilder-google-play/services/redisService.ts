@@ -1,11 +1,11 @@
-import { Redis } from "ioredis";
+import { createClient, RedisClientType } from "@redis/client";
 import { DefaultAzureCredential } from "@azure/identity";
-import { EntraIdManagedIdentityAuthenticator } from "@redis/entraid";
+import { EntraIdCredentialsProviderFactory, REDIS_SCOPE_DEFAULT } from "@redis/entraid";
 
 /**
  * A service for interacting with a Redis database. In local development, this will be implemented as an in-memory database. For non-local environments, it will be implemented as a Redis database.
  */
-export interface DatabaseService {
+export interface RedisDatabaseService {
     ready: Promise<void>;
     getJson<T>(key: string): Promise<T | null>;
     save<T>(key: string, value: T): Promise<void>;
@@ -18,11 +18,10 @@ export interface DatabaseService {
 /**
  * Database service that connects to PWABuilder's Redis instance in Azure.
  */
-export class RedisService implements DatabaseService {
+export class RedisService implements RedisDatabaseService {
     public readonly ready: Promise<void>;
-    private readonly redis: Redis;
+    private readonly redis: RedisClientType;
     private readonly redisHost: string;
-    private readonly authenticator: EntraIdManagedIdentityAuthenticator;
 
     /**
      *
@@ -33,29 +32,37 @@ export class RedisService implements DatabaseService {
             throw new Error("REDIS_HOST environment variable is not set.");
         }
 
-        this.authenticator = new EntraIdManagedIdentityAuthenticator(new DefaultAzureCredential());
         this.redis = this.createRedisConnection();
         this.ready = this.initializeConnection();
     }
 
-    private createRedisConnection(): Redis {
-        return new Redis({
-            host: this.redisHost,
-            port: 6380,
-            tls: {
-                servername: this.redisHost
-            },
-            connectTimeout: 30000,     // 30 seconds to establish connection (Azure cold start)
-            commandTimeout: 10000,     // 10 seconds for individual commands
-            lazyConnect: true,         // Don't connect immediately
-            maxRetriesPerRequest: 3,   // Reasonable retries
-            enableReadyCheck: false,   // Disable ready check - authenticate first
-            keepAlive: 30000,          // Keep connections alive
-            family: 4,                 // Force IPv4 for better Azure compatibility
-            reconnectOnError: (err) => {
-                const targetErrors = ['READONLY', 'ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNREFUSED'];
-                return targetErrors.some(targetError => err.message.includes(targetError));
+    private createRedisConnection(): RedisClientType {
+        // Create credentials provider for authentication
+        const credential = new DefaultAzureCredential();
+        const credentialsProvider = EntraIdCredentialsProviderFactory.createForDefaultAzureCredential({
+            credential,
+            scopes: REDIS_SCOPE_DEFAULT,
+            tokenManagerConfig: {
+                expirationRefreshRatio: 0.8 // Refresh token after 80% of its lifetime
             }
+        });
+
+        return createClient({
+            socket: {
+                host: this.redisHost,
+                port: 6380,
+                tls: true,
+                connectTimeout: 30000,  // 30 seconds to establish connection (Azure cold start)
+                reconnectStrategy: (retries) => {
+                    // Exponential backoff with max 3000ms delay
+                    const delay = Math.min(retries * 100, 3000);
+                    console.info(`Reconnecting to Redis, attempt ${retries}, waiting ${delay}ms`);
+                    return delay;
+                }
+            },
+            credentialsProvider,
+            commandsQueueMaxLength: 1000,
+            pingInterval: 30000  // Keep-alive ping every 30 seconds
         });
     }
 
@@ -66,35 +73,13 @@ export class RedisService implements DatabaseService {
                 console.error("Redis connection error:", err);
             });
 
-            this.redis.on("close", () => {
-                console.warn("Redis connection closed");
-            });
-
-            // Connect to Redis
-            await this.redis.connect();
-            console.info("Redis connected, authenticating with managed identity...");
-
-            // Authenticate using EntraId authenticator (handles token refresh automatically)
-            await this.authenticator.authenticateWithHello(this.redis);
-            console.info("Redis authenticated successfully with managed identity");
-
-            // Set up reconnection handler to re-authenticate
             this.redis.on("reconnecting", () => {
                 console.info("Redis reconnecting...");
             });
 
-            // Re-authenticate after reconnection
-            this.redis.on("connect", async () => {
-                if (this.redis.status === "reconnecting" || this.redis.status === "connecting") {
-                    console.info("Re-authenticating after reconnection...");
-                    try {
-                        await this.authenticator.authenticateWithHello(this.redis);
-                        console.info("Re-authentication successful");
-                    } catch (authError) {
-                        console.error("Redis re-authentication failed:", authError);
-                    }
-                }
-            });
+            // Connect to Redis - authentication is handled automatically by credentialsProvider
+            await this.redis.connect();
+            console.info("Redis connected and authenticated with managed identity");
         } catch (error) {
             console.error("Failed to initialize Redis connection:", error);
             throw error;
@@ -141,7 +126,9 @@ export class RedisService implements DatabaseService {
             });
 
             await Promise.race([
-                this.redis.set(key, JSON.stringify(value), 'EX', expirationSeconds),
+                this.redis.set(key, JSON.stringify(value), {
+                    EX: expirationSeconds
+                }),
                 timeoutPromise
             ]);
 
@@ -162,9 +149,8 @@ export class RedisService implements DatabaseService {
             const startTime = Date.now();
 
             // Check Redis status first
-            const redisStatus = this.redis.status;
-            if (redisStatus !== 'ready') {
-                console.warn(`Redis status is ${redisStatus}, skipping dequeue for key: ${key}`);
+            if (!this.redis.isReady) {
+                console.warn('Redis not ready, skipping dequeue for key:', key);
                 return null;
             }
 
@@ -173,7 +159,7 @@ export class RedisService implements DatabaseService {
             });
 
             const json = await Promise.race([
-                this.redis.lpop(key),
+                this.redis.lPop(key),
                 timeoutPromise
             ]);
 
@@ -194,8 +180,7 @@ export class RedisService implements DatabaseService {
             // If there's a connection error, provide diagnostics but don't try to reconnect here
             // Let the Redis client handle reconnection automatically
             try {
-                const redisStatus = this.redis.status;
-                console.error(`Redis status after dequeue failure: ${redisStatus}`);
+                console.error('Redis ready status after dequeue failure:', this.redis.isReady);
             } catch (diagError) {
                 console.error('Failed to get Redis status:', diagError);
             }
@@ -208,7 +193,7 @@ export class RedisService implements DatabaseService {
      * @param value The value to push onto the list. This will be converted to a JSON string.
      */
     async enqueue<T>(key: string, value: T): Promise<number> {
-        const totalItems = await this.redis.rpush(key, JSON.stringify(value));
+        const totalItems = await this.redis.rPush(key, JSON.stringify(value));
         console.info(`Added ${key} to the queue ${key}. Queue length is now ${totalItems} `);
         return totalItems;
     }
@@ -219,7 +204,7 @@ export class RedisService implements DatabaseService {
      * @returns The length of the list.
      */
     queueLength(key: string): Promise<number> {
-        return this.redis.llen(key);
+        return this.redis.lLen(key);
     }
 
     /**
@@ -228,7 +213,7 @@ export class RedisService implements DatabaseService {
      */
     async healthCheck(): Promise<boolean> {
         try {
-            if (this.redis.status !== 'ready') {
+            if (!this.redis.isReady) {
                 return false;
             }
 
@@ -247,7 +232,7 @@ export class RedisService implements DatabaseService {
     }
 }
 
-class InMemoryDatabaseService implements DatabaseService {
+class InMemoryDatabaseService implements RedisDatabaseService {
     private readonly store: Map<string, string> = new Map(); // key is ID of the object, value is the JSON string.
     private readonly queues: Map<string, any[]> = new Map(); // key is the name of the queue, value is an array of JSON strings representing the items in the queue.
     public readonly ready = Promise.resolve();
@@ -303,5 +288,5 @@ if (isLocalDev) {
     console.info(`${process.env.NODE_ENV} environment detected.Using Redis for database service.`);
 }
 export const database = isLocalDev ?
-    new InMemoryDatabaseService() as DatabaseService :
-    new RedisService() as DatabaseService;
+    new InMemoryDatabaseService() as RedisDatabaseService :
+    new RedisService() as RedisDatabaseService;
