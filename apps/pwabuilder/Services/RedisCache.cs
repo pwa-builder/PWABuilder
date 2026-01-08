@@ -225,7 +225,11 @@ public class RedisCache : IRedisCache
     private static async Task<IDatabase> InitializeRedis(IOptions<AppSettings> options)
     {
         var configurationOptions = ConfigurationOptions.Parse(options.Value.AzureRedisHost);
-        await configurationOptions.ConfigureForAzureWithSystemAssignedManagedIdentityAsync();
+        configurationOptions.Protocol = RedisProtocol.Resp3;
+
+        // Configure Azure Active Directory authentication using managed identity
+        await configurationOptions.ConfigureForAzureWithTokenCredentialAsync(new DefaultAzureCredential());
+
         var connection = await ConnectionMultiplexer.ConnectAsync(configurationOptions);
         return connection.GetDatabase();
     }
