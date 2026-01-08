@@ -59,59 +59,49 @@ export class RedisService implements DatabaseService {
     }
 
     private async initializeConnection(): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                this.redis.on("ready", () => {
-                    console.info("Redis ready to accept commands");
-                    resolve();
-                });
+        try {
+            // Set up error handler before connecting
+            this.redis.on("error", (err: Error) => {
+                console.error("Redis connection error:", err);
+            });
 
-                this.redis.on("error", (err: Error) => {
-                    console.error("Redis connection error:", err);
-                });
+            this.redis.on("close", () => {
+                console.warn("Redis connection closed");
+            });
 
-                this.redis.on("connect", async () => {
-                    console.info("Redis connected, authenticating with managed identity...");
-                    try {
-                        // Enable RESP3 protocol (required for Azure AD authentication)
-                        await this.redis.call("HELLO", "3");
+            // Connect to Redis
+            await this.redis.connect();
+            console.info("Redis connected, authenticating with managed identity...");
 
-                        // Get token and authenticate
-                        const token = await this.credential.getToken("https://redis.azure.com/.default");
-                        await this.redis.call("AUTH", "default", token.token);
-                        console.info("Redis authenticated successfully with managed identity");
+            // Authenticate immediately after connection, before any other commands
+            await this.redis.call("HELLO", "3");
+            const token = await this.credential.getToken("https://redis.azure.com/.default");
+            await this.redis.call("AUTH", "default", token.token);
+            console.info("Redis authenticated successfully with managed identity");
 
-                        // Manually emit ready event after successful authentication
-                        this.redis.emit("ready");
-                    } catch (authError) {
-                        console.error("Redis authentication failed:", authError);
-                        reject(authError);
-                    }
-                });
+            // Set up reconnection handler to re-authenticate
+            this.redis.on("reconnecting", () => {
+                console.info("Redis reconnecting...");
+            });
 
-                this.redis.on("close", () => {
-                    console.warn("Redis connection closed");
-                });
-
-                this.redis.on("reconnecting", async () => {
-                    console.info("Redis reconnecting...");
-                    // Re-authenticate on reconnection
+            // Re-authenticate after reconnection
+            this.redis.on("connect", async () => {
+                if (this.redis.status === "reconnecting" || this.redis.status === "connecting") {
+                    console.info("Re-authenticating after reconnection...");
                     try {
                         await this.redis.call("HELLO", "3");
                         const token = await this.credential.getToken("https://redis.azure.com/.default");
                         await this.redis.call("AUTH", "default", token.token);
+                        console.info("Re-authentication successful");
                     } catch (authError) {
                         console.error("Redis re-authentication failed:", authError);
                     }
-                });
-
-                // Connect to Redis
-                await this.redis.connect();
-            } catch (error) {
-                console.error("Failed to initialize Redis connection:", error);
-                reject(error);
-            }
-        });
+                }
+            });
+        } catch (error) {
+            console.error("Failed to initialize Redis connection:", error);
+            throw error;
+        }
     }
 
     /**
