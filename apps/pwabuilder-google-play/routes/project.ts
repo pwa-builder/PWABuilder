@@ -12,7 +12,7 @@ import { PackageCreator } from '../services/packageCreator.js';
 import { PackageCreationProgress } from '../models/packageCreationProgress.js';
 import { errorToString } from "../utils/errorToString.js";
 import { packageJobQueue } from "../services/packageJobQueue.js";
-import { database } from "../services/databaseService.js";
+import { database } from "../services/redisService.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
 

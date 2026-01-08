@@ -1,7 +1,7 @@
 import { AndroidPackageOptions } from "../models/androidPackageOptions.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { createHash } from "../utils/hashCode.js";
-import { database } from "./databaseService.js";
+import { database } from "./redisService.js";
 
 /**
  * A queue containing Google Play packaging jobs to be processed. Implemented as a Redis list.

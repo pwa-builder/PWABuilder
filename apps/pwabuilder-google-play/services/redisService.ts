@@ -1,4 +1,5 @@
 import { Redis } from "ioredis";
+import { DefaultAzureCredential } from "@azure/identity";
 
 /**
  * A service for interacting with a Redis database. In local development, this will be implemented as an in-memory database. For non-local environments, it will be implemented as a Redis database.
@@ -19,23 +20,30 @@ export interface DatabaseService {
 export class RedisService implements DatabaseService {
     public readonly ready: Promise<void>;
     private readonly redis: Redis;
-    private readonly connectionString: string;
+    private readonly redisHost: string;
+    private readonly credential: DefaultAzureCredential;
 
     /**
      *
      */
     constructor() {
-        this.connectionString = process.env.REDIS_CONNECTION_STRING || "";
-        if (!this.connectionString) {
-            throw new Error("REDIS_CONNECTION_STRING environment variable is not set.");
+        this.redisHost = process.env.REDIS_HOST || "";
+        if (!this.redisHost) {
+            throw new Error("REDIS_HOST environment variable is not set.");
         }
 
+        this.credential = new DefaultAzureCredential();
         this.redis = this.createRedisConnection();
         this.ready = this.initializeConnection();
     }
 
     private createRedisConnection(): Redis {
-        return new Redis(this.connectionString, {
+        return new Redis({
+            host: this.redisHost,
+            port: 6380,
+            tls: {
+                servername: this.redisHost
+            },
             connectTimeout: 30000,     // 30 seconds to establish connection (Azure cold start)
             commandTimeout: 10000,     // 10 seconds for individual commands
             lazyConnect: true,         // Don't connect immediately
@@ -51,31 +59,55 @@ export class RedisService implements DatabaseService {
     }
 
     private async initializeConnection(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.redis.on("ready", () => {
-                console.info("Redis ready to accept commands");
-                resolve();
-            });
+        return new Promise(async (resolve, reject) => {
+            try {
+                this.redis.on("ready", () => {
+                    console.info("Redis ready to accept commands");
+                    resolve();
+                });
 
-            this.redis.on("error", (err: Error) => {
-                console.error("Redis connection error:", err);
-                reject(err);
-            });
+                this.redis.on("error", (err: Error) => {
+                    console.error("Redis connection error:", err);
+                });
 
-            this.redis.on("connect", () => {
-                console.info("Redis connected successfully");
-            });
+                this.redis.on("connect", async () => {
+                    console.info("Redis connected, authenticating with managed identity...");
+                    try {
+                        // Enable RESP3 protocol (required for Azure AD authentication)
+                        await this.redis.call("HELLO", "3");
 
-            this.redis.on("close", () => {
-                console.warn("Redis connection closed");
-            });
+                        // Get token and authenticate
+                        const token = await this.credential.getToken("https://redis.azure.com/.default");
+                        await this.redis.call("AUTH", "default", token.token);
+                        console.info("Redis authenticated successfully with managed identity");
+                    } catch (authError) {
+                        console.error("Redis authentication failed:", authError);
+                        reject(authError);
+                    }
+                });
 
-            this.redis.on("reconnecting", () => {
-                console.info("Redis reconnecting...");
-            });
+                this.redis.on("close", () => {
+                    console.warn("Redis connection closed");
+                });
 
-            // Connect to Redis
-            this.redis.connect().catch(reject);
+                this.redis.on("reconnecting", async () => {
+                    console.info("Redis reconnecting...");
+                    // Re-authenticate on reconnection
+                    try {
+                        await this.redis.call("HELLO", "3");
+                        const token = await this.credential.getToken("https://redis.azure.com/.default");
+                        await this.redis.call("AUTH", "default", token.token);
+                    } catch (authError) {
+                        console.error("Redis re-authentication failed:", authError);
+                    }
+                });
+
+                // Connect to Redis
+                await this.redis.connect();
+            } catch (error) {
+                console.error("Failed to initialize Redis connection:", error);
+                reject(error);
+            }
         });
     }
 
