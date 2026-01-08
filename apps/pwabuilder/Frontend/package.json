@@ -28,7 +28,7 @@
     "browser-fs-access": "^0.23.0",
     "colorjs.io": "^0.4.0",
     "cors": "^2.8.5",
-    "express": "^4.17.3",
+    "express": "^4.22.1",
     "ionicons": "^6.0.3",
     "lit": "^3.3.0"
   },
