@@ -225,7 +225,6 @@ public class RedisCache : IRedisCache
     private static async Task<IDatabase> InitializeRedis(IOptions<AppSettings> options)
     {
         var configurationOptions = ConfigurationOptions.Parse(options.Value.AzureRedisHost);
-        configurationOptions.Protocol = RedisProtocol.Resp3;
         await configurationOptions.ConfigureForAzureWithSystemAssignedManagedIdentityAsync();
         var connection = await ConnectionMultiplexer.ConnectAsync(configurationOptions);
         return connection.GetDatabase();
