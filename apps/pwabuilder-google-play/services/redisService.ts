@@ -1,5 +1,6 @@
 import { Redis } from "ioredis";
 import { DefaultAzureCredential } from "@azure/identity";
+import { EntraIdManagedIdentityAuthenticator } from "@redis/entraid";
 
 /**
  * A service for interacting with a Redis database. In local development, this will be implemented as an in-memory database. For non-local environments, it will be implemented as a Redis database.
@@ -21,7 +22,7 @@ export class RedisService implements DatabaseService {
     public readonly ready: Promise<void>;
     private readonly redis: Redis;
     private readonly redisHost: string;
-    private readonly credential: DefaultAzureCredential;
+    private readonly authenticator: EntraIdManagedIdentityAuthenticator;
 
     /**
      *
@@ -32,7 +33,7 @@ export class RedisService implements DatabaseService {
             throw new Error("REDIS_HOST environment variable is not set.");
         }
 
-        this.credential = new DefaultAzureCredential();
+        this.authenticator = new EntraIdManagedIdentityAuthenticator(new DefaultAzureCredential());
         this.redis = this.createRedisConnection();
         this.ready = this.initializeConnection();
     }
@@ -48,7 +49,7 @@ export class RedisService implements DatabaseService {
             commandTimeout: 10000,     // 10 seconds for individual commands
             lazyConnect: true,         // Don't connect immediately
             maxRetriesPerRequest: 3,   // Reasonable retries
-            enableReadyCheck: false,   // Disable ready check - we'll authenticate first then manually signal ready
+            enableReadyCheck: false,   // Disable ready check - authenticate first
             keepAlive: 30000,          // Keep connections alive
             family: 4,                 // Force IPv4 for better Azure compatibility
             reconnectOnError: (err) => {
@@ -73,12 +74,8 @@ export class RedisService implements DatabaseService {
             await this.redis.connect();
             console.info("Redis connected, authenticating with managed identity...");
 
-            // Get token and extract OID for username
-            const token = await this.credential.getToken("https://redis.azure.com/.default");
-            const username = this.extractOidFromToken(token.token);
-
-            // Authenticate with HELLO 3 AUTH command (combines protocol switch and auth)
-            await this.redis.call("HELLO", "3", "AUTH", username, token.token);
+            // Authenticate using EntraId authenticator (handles token refresh automatically)
+            await this.authenticator.authenticateWithHello(this.redis);
             console.info("Redis authenticated successfully with managed identity");
 
             // Set up reconnection handler to re-authenticate
@@ -91,9 +88,7 @@ export class RedisService implements DatabaseService {
                 if (this.redis.status === "reconnecting" || this.redis.status === "connecting") {
                     console.info("Re-authenticating after reconnection...");
                     try {
-                        const token = await this.credential.getToken("https://redis.azure.com/.default");
-                        const username = this.extractOidFromToken(token.token);
-                        await this.redis.call("HELLO", "3", "AUTH", username, token.token);
+                        await this.authenticator.authenticateWithHello(this.redis);
                         console.info("Re-authentication successful");
                     } catch (authError) {
                         console.error("Redis re-authentication failed:", authError);
@@ -103,36 +98,6 @@ export class RedisService implements DatabaseService {
         } catch (error) {
             console.error("Failed to initialize Redis connection:", error);
             throw error;
-        }
-    }
-
-    /**
-     * Extracts the Object ID (OID) from an Azure AD JWT token.
-     * The OID is used as the username for Redis authentication with managed identity.
-     * @param token The JWT access token
-     * @returns The Object ID from the token
-     */
-    private extractOidFromToken(token: string): string {
-        try {
-            // JWT tokens have 3 parts separated by dots: header.payload.signature
-            // We need to decode the payload (middle part)
-            const parts = token.split('.');
-            if (parts.length !== 3) {
-                throw new Error('Invalid JWT token format');
-            }
-
-            // Decode the base64-encoded payload
-            const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
-
-            // Extract the OID claim
-            if (!payload.oid) {
-                throw new Error('Token does not contain an OID claim');
-            }
-
-            return payload.oid;
-        } catch (error) {
-            console.error('Failed to extract OID from token:', error);
-            throw new Error('Failed to extract OID from Azure AD token');
         }
     }
 
