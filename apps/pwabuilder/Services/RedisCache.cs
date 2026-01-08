@@ -226,6 +226,8 @@ public class RedisCache : IRedisCache
     {
         var configurationOptions = ConfigurationOptions.Parse(options.Value.AzureRedisHost);
         configurationOptions.Protocol = RedisProtocol.Resp3;
+        configurationOptions.Ssl = true;
+        configurationOptions.AbortOnConnectFail = false;
 
         // Configure Azure Active Directory authentication using managed identity
         await configurationOptions.ConfigureForAzureWithTokenCredentialAsync(new DefaultAzureCredential());
