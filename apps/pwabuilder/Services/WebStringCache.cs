@@ -9,7 +9,7 @@ namespace PWABuilder.Services;
 /// </summary>
 public class WebStringCache
 {
-    private readonly RedisCache redis;
+    private readonly IRedisCache redis;
     private readonly ILogger<WebStringCache> logger;
     private readonly HttpClient http;
 
@@ -22,7 +22,7 @@ public class WebStringCache
     /// <param name="redis">The Redis cache.</param>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="logger">The logger.</param>
-    public WebStringCache(RedisCache redis, IHttpClientFactory httpClientFactory, ILogger<WebStringCache> logger)
+    public WebStringCache(IRedisCache redis, IHttpClientFactory httpClientFactory, ILogger<WebStringCache> logger)
     {
         this.redis = redis;
         http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
