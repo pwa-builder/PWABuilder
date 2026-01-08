@@ -1,52 +1,58 @@
-using StackExchange.Redis;
 using PWABuilder.Models;
+using Microsoft.Extensions.Options;
+using Azure.Identity;
+using Microsoft.Azure.StackExchangeRedis;
+using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 
 namespace PWABuilder.Services;
 
 /// <summary>
-/// Interface for accessing and managing PWABuilder objects (analysis, store packaging jobs, etc.) in the database. 
-/// In development, this will use <see cref="InMemoryPWABuilderDb"/>. In production, it will use <see cref="PWABuilderDb"/>, which uses Redis as a backing store.
+/// Interface for accessing and managing PWABuilder objects (analysis, store packaging jobs, etc.) in a cache. 
+/// In development, this will use <see cref="InMemoryRedisCache"/>. In production, it will use <see cref="RedisCache"/>, which uses Redis as a backing store.
 /// </summary>
-public interface IPWABuilderDatabase
+public interface IRedisCache
 {
     /// <summary>
     /// Gets an analysis with the specified ID.
     /// </summary>
     /// <param name="id">The ID of the analysis to load.</param>
-    /// <typeparam name="T">The type of the object to load from the database.</typeparam>
+    /// <typeparam name="T">The type of the object to load from the Redis cache.</typeparam>
     /// <returns>The analysis with the specified ID, or null if it doesn't exist.</returns>
     Task<T?> GetByIdAsync<T>(string id) where T : class;
 
     /// <summary>
-    /// Saves the specified object to the database.
+    /// Saves the specified object to the Redis cache.
     /// </summary>
     /// <param name="item">The object to save.</param>
+    /// <param name="expiration">The expiration time for the cached item. If null, the default expiration time will be used.</param>
+    /// <param name="id">The ID of the object to save.</param>
     /// <typeparam name="T">The type of the object to save.</typeparam>
     /// <returns></returns>
-    Task SaveAsync<T>(string id, T item) where T : class;
+    Task SaveAsync<T>(string id, T item, TimeSpan? expiration = null) where T : class;
 
     /// <summary>
-    /// Enqueues an item onto the end of a list in the database as an atomic operation. If the list doesn't exist, it will be created.
+    /// Enqueues an item onto the end of a list in the Redis cache as an atomic operation. If the list doesn't exist, it will be created.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="listId">The ID of the list in the database.</param>
+    /// <param name="listId">The ID of the list in the Redis cache.</param>
     /// <param name="item">The item to enqueue into the list.</param>
     /// <returns></returns>
     Task EnqueueAsync<T>(string listId, T item) where T : class;
 
     /// <summary>
-    /// Dequeues an item from a list in the database as an atomic operation. If the list is empty or doesn't exist, null will be returned.
+    /// Dequeues an item from a list in the Redis cache as an atomic operation. If the list is empty or doesn't exist, null will be returned.
     /// </summary>
     /// <typeparam name="T">The type of object to dequeue from the list.</typeparam>
-    /// <param name="listId">The ID of the list in the database.</param>
+    /// <param name="listId">The ID of the list in the Redis cache.</param>
     /// <returns>The first item from the list, or null if the list is empty.</returns>
     Task<T?> DequeueAsync<T>(string listId) where T : class;
 }
 
 /// <summary>
-/// An in-memory database for storing PWABuilder objects like analyses and store packaging jobs. Useful for local development and testing.
+/// An in-memory cache for storing PWABuilder objects like analyses and store packaging jobs. Useful for local development and testing.
 /// </summary>
-public class InMemoryPWABuilderDatabase : IPWABuilderDatabase
+public class InMemoryRedisCache : IRedisCache
 {
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, object> store = new();
 
@@ -57,7 +63,7 @@ public class InMemoryPWABuilderDatabase : IPWABuilderDatabase
         return Task.FromResult((T?)item);
     }
 
-    public Task SaveAsync<T>(string id, T item) where T : class
+    public Task SaveAsync<T>(string id, T item, TimeSpan? expiration = null) where T : class
     {
         store[id] = item;
         return Task.CompletedTask;
@@ -87,26 +93,26 @@ public class InMemoryPWABuilderDatabase : IPWABuilderDatabase
 /// <summary>
 /// Queries and stores PWABuilder objects (analyses, store packaging jobs, etc.) in the PWABuilder's Redis cache in Azure.
 /// </summary>
-public class PWABuilderDatabase : IPWABuilderDatabase
+public class RedisCache : IRedisCache
 {
-    // How long items should remain in the database before expiring.
+    // How long items should remain in the cache before expiring.
     private static readonly TimeSpan itemExpiration = TimeSpan.FromDays(7);
-    private readonly ILogger<PWABuilderDatabase> logger;
-    private readonly IDatabase redis;
+    private readonly ILogger<RedisCache> logger;
+    private readonly Task<IDatabase> redisTask;
 
-    public PWABuilderDatabase(IDatabase redis, ILogger<PWABuilderDatabase> logger)
+    public RedisCache(IOptions<AppSettings> options, ILogger<RedisCache> logger)
     {
-        this.redis = redis;
+        this.redisTask = InitializeRedis(options);
         this.logger = logger;
     }
 
     /// <summary>
-    /// Saves a new or existing item to the database.
+    /// Saves a new or existing item to the cache.
     /// </summary>
-    /// <param name="id">The ID of the item to save. If an item with this ID already exists in the database, it'll be overwritten.</param>
+    /// <param name="id">The ID of the item to save. If an item with this ID already exists in the cache, it'll be overwritten.</param>
     /// <param name="item">The item to add or update.</param>
     /// <typeparam name="T">The type of the item to save.</typeparam>
-    public async Task SaveAsync<T>(string id, T item) where T : class
+    public async Task SaveAsync<T>(string id, T item, TimeSpan? expiration = null) where T : class
     {
         try
         {
@@ -115,8 +121,17 @@ public class PWABuilderDatabase : IPWABuilderDatabase
                 analysis.LastModifiedAt = DateTime.UtcNow;
             }
 
+            // If it's already a string, just save it directly; forget JSON serialization.
+            var redis = await this.redisTask;
+            if (item is string strItem)
+            {
+                await redis.StringSetAsync(id, strItem, expiry: expiration ?? itemExpiration);
+                return;
+            }
+
             var json = System.Text.Json.JsonSerializer.Serialize(item);
-            await this.redis.StringSetAsync(id, json, expiry: itemExpiration);
+            await redis.StringSetAsync(id, json, expiry: expiration ?? itemExpiration);
+            logger.LogInformation("Saved item {id} to Redis cache.", id);
         }
         catch (Exception ex)
         {
@@ -134,11 +149,18 @@ public class PWABuilderDatabase : IPWABuilderDatabase
     {
         try
         {
-            var json = await this.redis.StringGetAsync(id);
+            var redis = await this.redisTask;
+            var json = await redis.StringGetAsync(id);
             if (!json.HasValue)
             {
                 logger.LogWarning("Attempted to retrieve item {id}, but it does not exist.", id);
                 return null;
+            }
+
+            // If it's a string, just return it directly; forget JSON deserialization.
+            if (typeof(T) == typeof(string))
+            {
+                return json as T;
             }
 
             // See if we can parse it back into the requested type
@@ -147,13 +169,13 @@ public class PWABuilderDatabase : IPWABuilderDatabase
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error retrieving item {id} from the database.", id);
+            logger.LogError(ex, "Error retrieving item {id} from the Redis cache.", id);
             throw;
         }
     }
 
     /// <summary>
-    /// Saves an item to a list in the database as an atomic operation. If the list doesn't exist, it will be created.
+    /// Saves an item to a list in the Redis cache as an atomic operation. If the list doesn't exist, it will be created.
     /// </summary>
     /// <typeparam name="T">The type of object to enqueue into the list.</typeparam>
     /// <param name="listId">The ID of the list to enqueue the item onto. It will be added to the back of the list.</param>
@@ -163,8 +185,9 @@ public class PWABuilderDatabase : IPWABuilderDatabase
     {
         try
         {
+            var redis = await this.redisTask;
             var json = System.Text.Json.JsonSerializer.Serialize(item);
-            await this.redis.ListRightPushAsync(listId, json);
+            await redis.ListRightPushAsync(listId, json);
         }
         catch (Exception ex)
         {
@@ -174,16 +197,17 @@ public class PWABuilderDatabase : IPWABuilderDatabase
     }
 
     /// <summary>
-    /// Dequeues an item from the front of the specified list in the database as an atomic operation. If the list is empty or doesn't exist, null will be returned.
+    /// Dequeues an item from the front of the specified list in the Redis cache as an atomic operation. If the list is empty or doesn't exist, null will be returned.
     /// </summary>
     /// <typeparam name="T">The type of object to dequeue from the list.</typeparam>
-    /// <param name="listId">The ID of the list in the database.</param>
+    /// <param name="listId">The ID of the list in the Redis cache.</param>
     /// <returns>The first item from the list, or null if the list is empty.</returns>
     public async Task<T?> DequeueAsync<T>(string listId) where T : class
     {
         try
         {
-            var json = await this.redis.ListLeftPopAsync(listId);
+            var redis = await this.redisTask;
+            var json = await redis.ListLeftPopAsync(listId);
             if (!json.HasValue || string.IsNullOrEmpty(json))
             {
                 return null;
@@ -196,5 +220,14 @@ public class PWABuilderDatabase : IPWABuilderDatabase
             logger.LogError(ex, "Error dequeuing item from list {listKey} in Redis.", listId);
             throw;
         }
+    }
+
+    private static async Task<IDatabase> InitializeRedis(IOptions<AppSettings> options)
+    {
+        var configurationOptions = ConfigurationOptions.Parse(options.Value.AzureRedisHost);
+        configurationOptions.Protocol = RedisProtocol.Resp3;
+        await configurationOptions.ConfigureForAzureWithSystemAssignedManagedIdentityAsync();
+        var connection = await ConnectionMultiplexer.ConnectAsync(configurationOptions);
+        return connection.GetDatabase();
     }
 }

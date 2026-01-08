@@ -45,7 +45,7 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddSingleton<IAnalysisJobQueue, InMemoryAnalysisJobQueue>();
 
     // In development, we use an in-memory database for Analysis objects. This makes local development and testing simpler, as we don't need to connect to Redis.
-    builder.Services.AddSingleton<IPWABuilderDatabase, InMemoryPWABuilderDatabase>();
+    builder.Services.AddSingleton<IRedisCache, InMemoryRedisCache>();
 
     // In development, we use an in-memory blob storage service.
     builder.Services.AddSingleton<IBlobStorageService, InMemoryBlobStorageService>();
@@ -56,7 +56,7 @@ else
     builder.Services.AddSingleton<IAnalysisJobQueue, AnalysisJobQueue>();
 
     // In production, we use PWABuilderDatabase, which uses Redis as a backing store.
-    builder.Services.AddSingleton<IPWABuilderDatabase, PWABuilderDatabase>();
+    builder.Services.AddSingleton<IRedisCache, RedisCache>();
 
     // In production, we use Azure Storage for blob storage.
     builder.Services.AddSingleton<IBlobStorageService, AzureStorageService>();
@@ -73,12 +73,6 @@ builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddSingleton<ManifestAnalyzer>();
 builder.Services.AddSingleton<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddSingleton<IImageValidationService, ImageValidationService>();
-builder.Services.AddSingleton(services =>
-{
-    // Created an Redis IDatabase instance singleton.
-    var settings = services.GetRequiredService<IOptions<AppSettings>>();
-    return ConnectionMultiplexer.Connect(settings.Value.AnalysisDbRedisConnectionString).GetDatabase();
-});
 builder.Services.AddSingleton(services =>
 {
     // Create a single, reusable Puppeteer browser instance. This can be used across different requests so that we're not spinning up multiple browsers for each request.

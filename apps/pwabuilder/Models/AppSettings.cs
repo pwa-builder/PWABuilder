@@ -9,6 +9,6 @@ public class AppSettings
     public string ApplicationInsightsConnectionString { get; set; } = string.Empty;
     public string AzureManagedIdentityApplicationId { get; set; } = string.Empty;
     public string AzureStorageAccountName { get; set; } = string.Empty;
-    public string AnalysisDbRedisConnectionString { get; set; } = string.Empty;
+    public string AzureRedisHost { get; set; } = string.Empty;
     public string PWABuilderCliKey { get; set; } = string.Empty;
 }

@@ -10,12 +10,12 @@ namespace PWABuilder.Controllers;
 [Route("api/[controller]")]
 public class ImagesController : ControllerBase
 {
-    private readonly IPWABuilderDatabase analysisDb;
+    private readonly IRedisCache analysisDb;
     private readonly HttpClient http;
     private readonly ILogger<ImagesController> logger;
     private const int maxSize = 1024 * 1024 * 5; // 5mb
 
-    public ImagesController(IPWABuilderDatabase analysisDb, IHttpClientFactory httpClientFactory, ILogger<ImagesController> logger)
+    public ImagesController(IRedisCache analysisDb, IHttpClientFactory httpClientFactory, ILogger<ImagesController> logger)
     {
         this.analysisDb = analysisDb;
         this.http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
@@ -31,7 +31,7 @@ public class ImagesController : ControllerBase
     /// <param name="imageUrl">The URL of the image to proxy.</param>
     /// <returns></returns>
     [HttpGet("getSafeImageForAnalysis")]
-    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IPWABuilderDatabase db, CancellationToken cancelToken)
+    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IRedisCache db, CancellationToken cancelToken)
     {
         if (!imageUrl.IsAbsoluteInternetHttps())
         {
@@ -72,7 +72,7 @@ public class ImagesController : ControllerBase
         }
     }
 
-    private async Task<HttpClientExtensions.LimitedReadStreamWithMediaType?> TryDownloadImageViaPuppeteer(string analysisId, Uri imageUrl, IPuppeteerService puppeteer, IPWABuilderDatabase db)
+    private async Task<HttpClientExtensions.LimitedReadStreamWithMediaType?> TryDownloadImageViaPuppeteer(string analysisId, Uri imageUrl, IPuppeteerService puppeteer, IRedisCache db)
     {
         try
         {

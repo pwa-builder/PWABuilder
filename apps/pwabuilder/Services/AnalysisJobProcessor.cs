@@ -9,7 +9,7 @@ public class AnalysisJobProcessor : IHostedService
 {
     private const int MaxRetryCount = 3;
     private readonly IAnalysisJobQueue queue;
-    private readonly IPWABuilderDatabase db;
+    private readonly IRedisCache db;
     private CancellationTokenSource? abortToken;
     private Task? jobProcessorTask;
     private readonly ManifestDetector manifestDetector;
@@ -21,7 +21,7 @@ public class AnalysisJobProcessor : IHostedService
 
     public AnalysisJobProcessor(
         IAnalysisJobQueue queue,
-        IPWABuilderDatabase db,
+        IRedisCache db,
         ManifestDetector manifestDetector,
         ManifestAnalyzer manifestAnalyzer,
         ServiceWorkerDetector serviceWorkerDetector,

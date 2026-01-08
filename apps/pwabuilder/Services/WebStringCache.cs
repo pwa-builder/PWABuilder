@@ -9,7 +9,7 @@ namespace PWABuilder.Services;
 /// </summary>
 public class WebStringCache
 {
-    private readonly IDatabase redis;
+    private readonly RedisCache redis;
     private readonly ILogger<WebStringCache> logger;
     private readonly HttpClient http;
 
@@ -22,7 +22,7 @@ public class WebStringCache
     /// <param name="redis">The Redis cache.</param>
     /// <param name="httpClientFactory">The HTTP client factory.</param>
     /// <param name="logger">The logger.</param>
-    public WebStringCache(IDatabase redis, IHttpClientFactory httpClientFactory, ILogger<WebStringCache> logger)
+    public WebStringCache(RedisCache redis, IHttpClientFactory httpClientFactory, ILogger<WebStringCache> logger)
     {
         this.redis = redis;
         http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
@@ -42,8 +42,8 @@ public class WebStringCache
     {
         var cacheKey = GetCacheKey(url, accepts);
         (logger ?? this.logger).LogInformation("Fetching from web string cache for {url} with cache key {cacheKey}", url, cacheKey);
-        var cached = await redis.StringGetAsync(cacheKey);
-        if (cached.HasValue && !string.IsNullOrWhiteSpace(cached))
+        var cached = await redis.GetByIdAsync<string>(cacheKey);
+        if (cached != null && !string.IsNullOrWhiteSpace(cached))
         {
             (logger ?? this.logger).LogInformation("Web string cache hit for {url}", url);
             return cached;
@@ -53,7 +53,7 @@ public class WebStringCache
         var webString = await TryFetchResourceAsync(url, accepts, maxSizeInBytes, logger ?? this.logger, cancelToken);
         if (webString != null)
         {
-            await redis.StringSetAsync(cacheKey, webString, cacheExpiration);
+            await redis.SaveAsync(cacheKey, webString, cacheExpiration);
         }
 
         return webString;
@@ -72,7 +72,7 @@ public class WebStringCache
         {
             var cacheKey = GetCacheKey(url, accepts);
             logger.LogInformation("Updating web string cache for {url} with cache key {cacheKey}", url, cacheKey);
-            await redis.StringSetAsync(cacheKey, value, cacheExpiration);
+            await redis.SaveAsync(cacheKey, value, cacheExpiration);
         }
         catch (Exception ex)
         {

@@ -46,7 +46,7 @@ public class InMemoryAnalysisJobQueue : IAnalysisJobQueue
 /// </summary>
 public class AnalysisJobQueue : IAnalysisJobQueue
 {
-    private readonly IPWABuilderDatabase db;
+    private readonly IRedisCache db;
     private readonly ILogger<AnalysisJobQueue> logger;
 
     /// <summary>
@@ -56,7 +56,7 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     /// <param name="env"></param>
     /// <param name="settings"></param>
     /// <param name="logger"></param>
-    public AnalysisJobQueue(IPWABuilderDatabase database, IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
+    public AnalysisJobQueue(IRedisCache database, IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
     {
         this.db = database;
         this.logger = logger;
