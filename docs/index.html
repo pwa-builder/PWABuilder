@@ -82,11 +82,14 @@
         executeScript: true,
         externalLinkTarget: "_self",
         plugins: [
+          // Send telemetry for page views.
           function (hook) {
             hook.doneEach(function () {
               window.recordPageView(document.location.href, getPageName());
             });
           },
+
+          // Insert a banner about a new post.
           function (hook) {
             var summitBanner = [
               "<sl-alert open>",
@@ -102,6 +105,28 @@
               return summitBanner + html;
             });
           },
+          function (hook) {
+            // Rewrite the sidebar toggle button so it works with Windows narrator.
+            hook.doneEach(function () {
+              const sidebarToggleBtn =
+                document.querySelector(".sidebar-toggle");
+              if (sidebarToggleBtn) {
+                sidebarToggleBtn.classList.add("sidebar-toggle-button");
+                sidebarToggleBtn.removeAttribute("tabindex");
+                sidebarToggleBtn.setAttribute(
+                  "aria-label",
+                  "Toggle primary navigation"
+                );
+                sidebarToggleBtn.removeAttribute("title", "");
+                sidebarToggleBtn.setAttribute("aria-controls", "__sidebar");
+                sidebarToggleBtn.setAttribute(
+                  "aria-keyshortcuts",
+                  "Control+\\"
+                );
+                sidebarToggleBtn.innerHTML = `<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>`;
+              }
+            });
+          },
         ],
       };
     </script>
@@ -111,7 +136,7 @@
     <script src="https://cdn.jsdelivr.net/npm/docsify@^5.0.0-rc/dist/plugins/search.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js "></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-prism@latest/dist/docsify-prism.min.js "></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js "></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js "></script> -->
     <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1 "></script>
     <script>
       if (typeof navigator.serviceWorker !== "undefined") {

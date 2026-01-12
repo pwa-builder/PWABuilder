@@ -231,6 +231,10 @@ sl-menu {
     padding: 10px;
 }
 
+.sidebar-toggle-button {
+    top: calc(50% - 40px);
+}
+
 /* High contrast support for sidebar links */
 @media (prefers-contrast: high), (forced-colors: active) {
     .sidebar nav ul li a:focus {
