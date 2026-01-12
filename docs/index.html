@@ -1,108 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>PWABuilder Suite Documentation - test</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="description" content="Documentation for building great progressive web apps with the PWABuilder tooling suite.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <meta property="og:image" content="/assets/icons/share-logo.png">
-    
+    <meta
+      name="description"
+      content="Documentation for building great progressive web apps with the PWABuilder tooling suite."
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+    />
+    <meta property="og:image" content="/assets/icons/share-logo.png" />
+
     <!-- Google Site Verification for Google Search Console dashboard -->
-    <meta name="google-site-verification" content="HPBaodfLBvVIFzKwWeIWMwaIwH_ArRkSG1xjWhpqhhg" />
+    <meta
+      name="google-site-verification"
+      content="HPBaodfLBvVIFzKwWeIWMwaIwH_ArRkSG1xjWhpqhhg"
+    />
 
     <link rel="icon" href="/assets/icons/icon_24.png" type="image/png" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/docsify@^5.0.0-rc/dist/themes/core.min.css"
+    />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/dist/themes/light.css" />
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/dist/themes/light.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"
+    ></script>
 
-    <link rel="stylesheet" href="styles/global.css"/>
+    <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/vs-prism.css" />
     <link rel="manifest" href="manifest.json" />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div id="app"></div>
 
-    <script type="text/javascript" src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://js.monitor.azure.com/scripts/c/ms.analytics-web-3.min.js"
+    ></script>
 
     <script type="module">
-        import { recordPageView, recordPageAction } from "./public/analytics/index.js"; 
-        window.recordPageView = recordPageView;
-        window.recordPageAction = recordPageAction;
+      import {
+        recordPageView,
+        recordPageAction,
+      } from "./public/analytics/index.js";
+      window.recordPageView = recordPageView;
+      window.recordPageAction = recordPageAction;
     </script>
 
     <script>
-        function getPageName() {
-            var pageName = "docs-home-about";
-            try {
-                var results = (document.location.href).match("#\/[a-zA-Z\/-]+");
-                var parsedSubURL = results[0];
-                pageName = "docs" + parsedSubURL.replace("#", "").replaceAll("/", "-");
-            } catch {
-                console.warn("Failed to parse page name at: " + document.location.href);
-            }
-
-            return pageName;
+      function getPageName() {
+        var pageName = "docs-home-about";
+        try {
+          var results = document.location.href.match("#\/[a-zA-Z\/-]+");
+          var parsedSubURL = results[0];
+          pageName =
+            "docs" + parsedSubURL.replace("#", "").replaceAll("/", "-");
+        } catch {
+          console.warn(
+            "Failed to parse page name at: " + document.location.href
+          );
         }
 
-        window.$docsify = {
-            repo: 'https://github.com/pwa-builder/PWABuilder',
-            loadSidebar: true,
-            subMaxLevel: 2,
-            auto2top: true,
-            executeScript: true,
-            externalLinkTarget: '_self',
-            plugins: [
-                function(hook) {
-                    hook.doneEach(function() {
-                        window.recordPageView(document.location.href, getPageName());
-                    });
-                },
-                function(hook) {
-                    var summitBanner = [
-                        '<sl-alert open>',
-                        '<sl-icon slot="icon" name="bookmark-heart"></sl-icon>',
-                        '<div>',
-                        '<strong> New blog post! See how to enable in-app purchases on iOS in your PWA! </strong><br />',
-                        'Our latest post, <a href="https://blog.pwabuilder.com/posts/you-won\'t-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/"><b>You Won\’t Believe How We Enabled In-App Purchases for PWAs on iOS</b></a>, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!',
-                        '</div>',
-                        '</sl-alert>'
-                    ].join('');
+        return pageName;
+      }
 
-                    hook.afterEach(function(html) {
-                        return summitBanner + html;
-                    });
-                }
-            ]
-        };
+      window.$docsify = {
+        repo: "https://github.com/pwa-builder/PWABuilder",
+        loadSidebar: true,
+        subMaxLevel: 2,
+        auto2top: true,
+        executeScript: true,
+        externalLinkTarget: "_self",
+        plugins: [
+          function (hook) {
+            hook.doneEach(function () {
+              window.recordPageView(document.location.href, getPageName());
+            });
+          },
+          function (hook) {
+            var summitBanner = [
+              "<sl-alert open>",
+              '<sl-icon slot="icon" name="bookmark-heart"></sl-icon>',
+              "<div>",
+              "<strong> New blog post! See how to enable in-app purchases on iOS in your PWA! </strong><br />",
+              'Our latest post, <a href="https://blog.pwabuilder.com/posts/you-won\'t-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/"><b>You Won\’t Believe How We Enabled In-App Purchases for PWAs on iOS</b></a>, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!',
+              "</div>",
+              "</sl-alert>",
+            ].join("");
+
+            hook.afterEach(function (html) {
+              return summitBanner + html;
+            });
+          },
+        ],
+      };
     </script>
     <!-- Docsify v4 -->
-    <script src="//cdn.jsdelivr.net/npm/docsify@4 "></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@^5.0.0-rc "></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js "></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js "></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js "></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify-prism@latest/dist/docsify-prism.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@^5.0.0-rc/dist/plugins/search.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js "></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-prism@latest/dist/docsify-prism.min.js "></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1 "></script>
     <script>
-        if (typeof navigator.serviceWorker !== 'undefined') {
-          navigator.serviceWorker.register('sw.js')
-        }
+      if (typeof navigator.serviceWorker !== "undefined") {
+        navigator.serviceWorker.register("sw.js");
+      }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        const githubCorner = document.querySelector('.github-corner');
+      document.addEventListener("DOMContentLoaded", function () {
+        const githubCorner = document.querySelector(".github-corner");
         if (githubCorner) {
-            githubCorner.setAttribute('title', 'View source on GitHub');
+          githubCorner.setAttribute("title", "View source on GitHub");
         }
-        });
+      });
     </script>
-    
-
-</body>
-
+  </body>
 </html>

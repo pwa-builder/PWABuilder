@@ -222,6 +222,15 @@ sl-menu {
     border-radius: 4px;
 }
 
+.sidebar-nav img {
+    max-width: 100%;
+}
+
+.sidebar-nav sl-menu {
+    margin: 0;
+    padding: 10px;
+}
+
 /* High contrast support for sidebar links */
 @media (prefers-contrast: high), (forced-colors: active) {
     .sidebar nav ul li a:focus {
