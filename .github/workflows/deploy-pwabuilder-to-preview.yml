@@ -6,6 +6,7 @@ on:
     paths:
       - "apps/pwabuilder/**"
       - "Dockerfile.production"
+      - ".github/workflows/deploy-pwabuilder-to-preview.yml"
   workflow_dispatch:
 
 env:
