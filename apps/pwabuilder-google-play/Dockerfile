@@ -89,7 +89,6 @@ COPY . .
 
 ENV NODE_ENV=development
 RUN npm install
-RUN npm audit fix --force
 RUN npm run build
 RUN ls -la /app/server.*
 
