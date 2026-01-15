@@ -45,22 +45,35 @@ jobs:
           echo "Downloading pwa_builder tool from API..."
           curl -L --fail-with-body -w "%{http_code}" -o pwabuilder.zip "https://pwabuilder.com/api/MsStorePackages/cli?key=${{ secrets.PWABUILDER_CLI_KEY }}"
           
-          # Check if the download was successful and the file is a valid zip
-          if [ ! -f "pwabuilder.zip" ]; then
-            echo "Error: pwabuilder.zip was not downloaded"
+          # Check if the download was successful and the file exists
+          if (-not (Test-Path "pwabuilder.zip")) {
+            Write-Error "Error: pwabuilder.zip was not downloaded"
             exit 1
-          fi
+          }
           
-          # Verify it's actually a zip file
-          file pwabuilder.zip
-          if ! file pwabuilder.zip | grep -q "Zip archive"; then
-            echo "Error: Downloaded file is not a valid zip archive"
-            echo "File contents preview:"
-            head -n 10 pwabuilder.zip
+          # Check file size - empty or very small files are likely error responses
+          $fileSize = (Get-Item "pwabuilder.zip").Length
+          if ($fileSize -lt 1024) {
+            Write-Error "Error: Downloaded file is too small ($fileSize bytes), likely an error response"
+            Write-Host "File contents:"
+            Get-Content pwabuilder.zip -First 10
             exit 1
-          fi
+          }
           
-          echo "Successfully downloaded valid zip file"
+          # Try to test if it's a valid zip by attempting to read it
+          try {
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $zip = [System.IO.Compression.ZipFile]::OpenRead("pwabuilder.zip")
+            $entryCount = $zip.Entries.Count
+            $zip.Dispose()
+            Write-Host "Successfully downloaded valid zip file with $entryCount entries"
+          }
+          catch {
+            Write-Error "Error: Downloaded file is not a valid zip archive"
+            Write-Host "File contents preview:"
+            Get-Content pwabuilder.zip -First 10
+            exit 1
+          }
 
       - name: Extracting pwa_builder zip file
         run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
