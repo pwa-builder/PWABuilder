@@ -1,12 +1,11 @@
 {
-  "recommendations": [
-    "bierner.lit-html",
-    "runem.lit-plugin",
-    "esbenp.prettier-vscode",
-    "christian-kohler.npm-intellisense",
-    "msjsdiag.debugger-for-edge",
-    "dbaeumer.vscode-eslint",
-    "ms-vscode.vscode-typescript-next",
-    "ms-vscode-remote.remote-containers"
-  ]
+    "recommendations": [
+        "bierner.lit-html",
+        "runem.lit-plugin",
+        "christian-kohler.npm-intellisense",
+        "msjsdiag.debugger-for-edge",
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode-remote.remote-containers"
+    ]
 }
