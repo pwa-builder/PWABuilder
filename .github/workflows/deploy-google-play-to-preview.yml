@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - "apps/pwabuilder-google-play/**"
+      - ".github/workflows/deploy-google-play-to-preview.yml"
   workflow_dispatch: null
 
 jobs:
@@ -27,7 +28,7 @@ jobs:
       - name: Login with Azure CLI
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_APP_ID }}
+          client-id: ${{ secrets.AZURE_WESTUS_APP_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
@@ -54,7 +55,7 @@ jobs:
       - name: Login with Azure CLI
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_APP_ID }}
+          client-id: ${{ secrets.AZURE_CENTRALUS_APP_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
