@@ -42,7 +42,25 @@ jobs:
 
       - name: Download zipped pwa_builder internal tool from PWABuilder API
         run: |
-          curl -L "https://pwabuilder.com/api/MsStorePackages/cli?key=${{ secrets.PWABUILDER_CLI_KEY }}" -o pwabuilder.zip
+          echo "Downloading pwa_builder tool from API..."
+          curl -L --fail-with-body -w "%{http_code}" -o pwabuilder.zip "https://pwabuilder.com/api/MsStorePackages/cli?key=${{ secrets.PWABUILDER_CLI_KEY }}"
+          
+          # Check if the download was successful and the file is a valid zip
+          if [ ! -f "pwabuilder.zip" ]; then
+            echo "Error: pwabuilder.zip was not downloaded"
+            exit 1
+          fi
+          
+          # Verify it's actually a zip file
+          file pwabuilder.zip
+          if ! file pwabuilder.zip | grep -q "Zip archive"; then
+            echo "Error: Downloaded file is not a valid zip archive"
+            echo "File contents preview:"
+            head -n 10 pwabuilder.zip
+            exit 1
+          fi
+          
+          echo "Successfully downloaded valid zip file"
 
       - name: Extracting pwa_builder zip file
         run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
