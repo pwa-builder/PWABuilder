@@ -1,5 +1,5 @@
 # PWABuilder
-The simplest way to create progressive web apps across platforms and devices.
+The simplest way to create [progressive web apps](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) across platforms and devices.
 
 This repo is home to several projects in the PWABuilder family of tools. 
 
