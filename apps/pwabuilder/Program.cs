@@ -84,6 +84,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(Constants.PwaBuilderAgentHttpClient, client =>
 {
     client.DefaultRequestHeaders.UserAgent.ParseAdd($"{Constants.DesktopUserAgent} PWABuilderHttpAgent");
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    AutomaticDecompression = System.Net.DecompressionMethods.All
 });
 
 builder
