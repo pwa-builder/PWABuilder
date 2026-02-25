@@ -5,29 +5,27 @@ using PWABuilder.Common;
 using PWABuilder.IOS.Common;
 using PWABuilder.IOS.Models;
 using PWABuilder.Models;
+using PWABuilder.Services;
 
 namespace PWABuilder.IOS.Services
 {
     /// <summary>
-    /// Creates the recommended Windows package images using images from the <see cref="WindowsAppPackageOptions"/>, images from the PWA's web app manifest, and images generated on behalf of the user from the PWABuilder app image generator service.
+    /// Creates the recommended iOS package images using images from the <see cref="IOSAppPackageOptions"/>, images from the PWA's web app manifest, and images generated on behalf of the user from the PWABuilder image generator service.
     /// </summary>
-    /// <remarks>
-    /// PWABuilder app image generator service is at https://www.pwabuilder.com/imageGenerator
-    /// </remarks>
-    public class ImageGenerator
+    public class IOSImageWriter
     {
-        private readonly ILogger<ImageGenerator> logger;
+        private readonly StoreImageCreator storeImageCreator;
         private readonly HttpClient http;
-        private readonly Uri imageGeneratorServiceUrl;
+        private readonly ILogger<IOSImageWriter> logger;
 
-        public ImageGenerator(
+        public IOSImageWriter(
+            StoreImageCreator storeImageCreator,
             IHttpClientFactory httpClientFactory,
-            IOptions<AppSettings> appSettings,
-            ILogger<ImageGenerator> logger
+            ILogger<IOSImageWriter> logger
         )
         {
-            http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
-            imageGeneratorServiceUrl = new Uri(appSettings.Value.ImageGeneratorApiUrl);
+            this.storeImageCreator = storeImageCreator;
+            this.http = httpClientFactory.CreateClient();
             this.logger = logger;
         }
 
@@ -39,7 +37,7 @@ namespace PWABuilder.IOS.Services
         /// <param name="manifest">The web app manifest containing one or more images.</param>
         /// <param name="outputDirectory">The directory to write the images to.</param>
         /// <returns>An object containing the paths to the generated images.</returns>
-        public async Task<ImageGeneratorResult> Generate(
+        public async Task<ImageGeneratorResult> WriteImages(
             IOSAppPackageOptions.Validated options,
             WebAppManifestContext manifest,
             string outputDirectory
@@ -47,7 +45,7 @@ namespace PWABuilder.IOS.Services
         {
             // 1. Generate images using PWABuilder's image generation service.
             // These will be used as a backup if the options and manifest are missing images.
-            var generatedImagesZip = await InvokePwabuilderImageGeneratorService(options, manifest);
+            using var generatedImagesZip = await GenerateStoreImagesZip(options, manifest);
 
             // 2. Assemble the image sources from web manifest and generated images zip.
             var imageSources = GetImageSourcesForTargetSizes(manifest, generatedImagesZip);
@@ -57,14 +55,13 @@ namespace PWABuilder.IOS.Services
             return new ImageGeneratorResult(imagePaths);
         }
 
-        private async Task<ImageGeneratorServiceZipFile> InvokePwabuilderImageGeneratorService(
+        private async Task<ImageGeneratorServiceZipFile> GenerateStoreImagesZip(
             IOSAppPackageOptions.Validated options,
             WebAppManifestContext webManifest
         )
         {
             var baseImageBytes = await GetBaseImage(options, webManifest);
-            var imagesZipUrl = await CreateIOSImagesZip(baseImageBytes, 0, "transparent");
-            return await DownloadIOSImagesZip(imagesZipUrl);
+            return await CreateIOSImagesZip(baseImageBytes, 0, "white");
         }
 
         private async Task<byte[]> GetBaseImage(
@@ -72,7 +69,7 @@ namespace PWABuilder.IOS.Services
             WebAppManifestContext webManifest
         )
         {
-            // Find a base image from which to generate all Windows package images.
+            // Find a base image from which to generate all iOS package images.
             // Best: the user supplied an image.
             // Second best: the largest square image from the manifest
             // Better than nothing: the largest image from the manifest
@@ -80,7 +77,10 @@ namespace PWABuilder.IOS.Services
             // Go through each source and see if we can get the bytes for it.
             var baseImageSources = new[]
             {
-                (source: options.ImageUri, description: "the base image from package options"),
+                (
+                    source: options.ImageUri,
+                    description: "the base image from package options"
+                ),
                 (
                     source: webManifest.GetIconSuitableForIOSApps(1024),
                     description: "the largest square PNG icon 1024x1024 or larger from web manifest"
@@ -100,7 +100,7 @@ namespace PWABuilder.IOS.Services
                 (
                     source: webManifest.GetIconSuitableForIOSApps(0),
                     description: "the largest square PNG icon from web manifest"
-                ),
+                )
             };
 
             if (baseImageSources.All(s => s.source == null))
@@ -127,72 +127,16 @@ namespace PWABuilder.IOS.Services
             }
 
             throw new InvalidOperationException(
-                $"Couldn't find a suitable base image from which to generate all Windows package images. Please ensure your web app manifest has a square PNG image 512x512 or larger. Base image sources: {string.Join(", ", baseImageSources)}"
+                $"Couldn't find a suitable base image from which to generate all iOS package images. Please ensure your web app manifest has a square PNG image 512x512 or larger. Base image sources: {string.Join(", ", baseImageSources)}"
             );
         }
 
-        private async Task<Uri> CreateIOSImagesZip(
-            byte[] image,
-            double padding,
-            string backgroundColor
-        )
+        private async Task<ImageGeneratorServiceZipFile> CreateIOSImagesZip(byte[] imageBytes, double padding, string backgroundColor)
         {
-            // The image generation API takes the following parameters, documented here: https://github.com/pwa-builder/pwabuilder-Image-Generator
-            // - fileName: bytes
-            // - padding: double (0 = no padding, 1 = max padding)
-            // - color: hex color, named color, or "transparent"
-            // - platform: ios
-            // - colorChanged: if colorOption = "choose", this should be 1. Otherwise, omit.
-            var fileContent = new StreamContent(new MemoryStream(image));
-            fileContent.Headers.ContentDisposition =
-                new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data")
-                {
-                    Name = "file",
-                    FileName = "image.png",
-                };
-            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(
-                "application/octet-stream"
-            );
-            var imageGeneratorArgs = new MultipartFormDataContent
-            {
-                { fileContent, "fileName" },
-                { new StringContent(padding.ToString()), "padding" },
-                { new StringContent(backgroundColor), "color" },
-                { new StringContent("ios"), "platform" },
-            };
-
-            var imagesResponse = await http.PostAsync(imageGeneratorServiceUrl, imageGeneratorArgs);
-            if (!imagesResponse.IsSuccessStatusCode)
-            {
-                throw new HttpRequestException(
-                    $"Image generator service call failed with status {(int)imagesResponse.StatusCode} ({imagesResponse.StatusCode}): {imagesResponse.ReasonPhrase}"
-                );
-            }
-
-            var imagesResponseString = await imagesResponse.Content.ReadAsStringAsync(); // it should be a JSON string containing a ImageGeneratorServiceResult
-            var imagesResult = JsonSerializer.Deserialize<ImageGeneratorServiceResult>(
-                imagesResponseString,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-            );
-            if (imagesResult == null)
-            {
-                throw new InvalidOperationException("Unable to deserialize image generator result");
-            }
-            if (!Uri.TryCreate(imageGeneratorServiceUrl, imagesResult.Uri, out var imagesZipUri))
-            {
-                throw new Exception(
-                    $"Unable to generate images for Windows package. The image URI returned from the image generator service, '{imagesResult.Uri}', is an invalid URI. Raw response: {imagesResponseString}"
-                );
-            }
-
-            return imagesZipUri;
-        }
-
-        private async Task<ImageGeneratorServiceZipFile> DownloadIOSImagesZip(Uri url)
-        {
-            var zipStream = await http.GetStreamAsync(url);
-            var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, false);
-            return new ImageGeneratorServiceZipFile(zipArchive);
+            using var baseImageStream = new MemoryStream(imageBytes);
+            var zipStream = await storeImageCreator.CreateStoreImagesZipAsync(baseImageStream, null, padding, backgroundColor, ["ios"], CancellationToken.None);
+            var zipFile = new ZipArchive(zipStream, ZipArchiveMode.Read, false);
+            return new ImageGeneratorServiceZipFile(zipFile);
         }
 
         private IEnumerable<ImageSource> GetImageSourcesForTargetSizes(

@@ -80,17 +80,18 @@ public class ImagesController : ControllerBase
     [HttpPost("generateStoreImages")]
     [RequestFormLimits(MultipartBodyLengthLimit = 5 * 1024 * 1024)]
     [RequestSizeLimit(5 * 1024 * 1024)]
-    public async Task<IActionResult> GenerateStoreImages([FromForm] StoreImageGenerationRequest request, [FromServices] StoreImageGenerationService imageGenerator, CancellationToken cancelToken)
+    public async Task<IActionResult> GenerateStoreImages([FromForm] StoreImageCreationOptions request, [FromServices] StoreImageCreator storeImageCreator, CancellationToken cancelToken)
     {
         try
         {
-            var storeImagesZipStream = await imageGenerator.CreateStoreImagesZipAsync(request, cancelToken);
+            using var baseImageStream = request.BaseImage.OpenReadStream();
+            var storeImagesZipStream = await storeImageCreator.CreateStoreImagesZipAsync(baseImageStream, request.BaseImage.ContentType, request.Padding, request.BackgroundColor, request.Platforms, cancelToken);
             return File(storeImagesZipStream, "application/zip", "appstore-images.zip");
         }
-        catch (Exception imageGeneratorError)
+        catch (Exception imageCreationError)
         {
-            logger.LogError(imageGeneratorError, "Error generating store images for image of size {size} for {platforms} with padding {padding} and color {color}.", request.BaseImage.Length, string.Join(", ", request.Platform), request.Padding, request.Color);
-            return StatusCode(500, $"An error occurred while generating store images: {imageGeneratorError.Message}");
+            logger.LogError(imageCreationError, "Error generating store images for image of size {size} for {platforms} with padding {padding} and color {color}.", request.BaseImage.Length, string.Join(", ", request.Platforms), request.Padding, request.BackgroundColor);
+            return StatusCode(500, $"An error occurred while generating store images: {imageCreationError.Message}");
         }
     }
 

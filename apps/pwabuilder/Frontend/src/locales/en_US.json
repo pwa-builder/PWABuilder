@@ -271,7 +271,7 @@
         "input_image": "Choose your base image",
         "input_image_help": "You should choose a 512x512 or larger square PNG/SVG/WEBP image. This image will be used to generate all the images for your chosen platforms.",
         "padding": "Padding",
-        "padding_text": "0 is no padding, 1 is 100% of the source image. Google Play and iOS App Store both recommend full bleed icons with zero padding.",
+        "padding_text": "0 is no padding, 1 is 100% of the source image. The Microsoft Store, Google Play, and iOS App Store recommend full bleed icons with zero padding.",
         "background_color": "Background Color",
         "best_guess": "Best guess",
         "transparent": "Transparent",

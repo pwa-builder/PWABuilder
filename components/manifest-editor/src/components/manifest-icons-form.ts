@@ -16,18 +16,11 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
-const baseUrl = 'https://appimagegenerator-prod.azurewebsites.net';
-
 let manifestInitialized = false;
 
 interface PlatformInformation {
     label: string;
     value: string;
-}
-
-interface ImageGeneratorServicePostResponse {
-    Message: string;
-    Uri: string;
 }
 
 const platformsData: Array<PlatformInformation> = [
@@ -502,39 +495,44 @@ export class ManifestIconsForm extends LitElement {
             const colorValue = 'transparent';
             const paddingValue = .3;
 
-            form.append('fileName', file as Blob);
+            form.append('baseImage', file as Blob);
             form.append('padding', String(paddingValue));
-            form.append('color', colorValue);
+            form.append('backgroundColor', colorValue);
 
-            this.selectedPlatforms.forEach((plat: PlatformInformation) => form.append('platform', plat.value));
+            this.selectedPlatforms.forEach((plat: PlatformInformation) => form.append('platforms', plat.value));
 
-            const res = await fetch(`${baseUrl}/api/image`, {
+            const createStoreImagesRequest = await fetch("/api/images/generateStoreImages", {
                 method: 'POST',
                 body: form,
             });
 
-            const postRes =
-                (await res.json()) as unknown as ImageGeneratorServicePostResponse;
-
-            if (postRes.Message) {
-                throw new Error('Error from service: ' + postRes.Message);
+            if (!createStoreImagesRequest.ok) {
+                const errorText = await createStoreImagesRequest.text();
+                throw new Error(errorText || `Image generation failed with status ${createStoreImagesRequest.status}`);
             }
+
+            const blob = await createStoreImagesRequest.blob();
+            const disposition = createStoreImagesRequest.headers.get("Content-Disposition");
+            const fileNameMatch = disposition ? /filename="?([^";\n]+)"?/i.exec(disposition) : null;
+            const fileName = fileNameMatch?.[1] ?? "appstore-images.zip";
+            const url = URL.createObjectURL(blob);
 
             this.zipGenerated = true;
             setTimeout(() => { this.zipGenerated = false }, 3000);
 
             this.generatingZip = false;
-            this.downloadZip(`${baseUrl}${postRes.Uri}`);
+            this.downloadZip(url, fileName);
+            URL.revokeObjectURL(url);
         } catch (e) {
             console.error(e);
             //this.error = (e as Error).message;
         }
     }
 
-    downloadZip(zipUrl: string) {
+    downloadZip(zipUrl: string, fileName: string) {
         const hyperlink = document.createElement("a");
         hyperlink.href = zipUrl;
-        hyperlink.download = "";
+        hyperlink.download = fileName;
         hyperlink.click();
     }
 

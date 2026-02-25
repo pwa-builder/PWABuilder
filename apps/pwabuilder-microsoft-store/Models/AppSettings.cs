@@ -78,7 +78,7 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <summary>
         /// The URL of the image generator API.
         /// </summary>
-        public string ImageGeneratorApiUrl { get; set; } = string.Empty;
+        public required Uri ImageGeneratorApiUrl { get; set; }
 
         /// <summary>
         /// App Insights connection string

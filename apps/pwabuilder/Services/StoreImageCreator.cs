@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO.Compression;
+using Microsoft.Extensions.Options;
 using PWABuilder.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
@@ -10,34 +11,42 @@ using Svg.Skia;
 
 namespace PWABuilder.Services;
 
-public class StoreImageGenerationService
+/// <summary>
+/// Service that creates store-ready icons for an app.
+/// </summary>
+public class StoreImageCreator
 {
-    private readonly ILogger<StoreImageGenerationService> logger;
+    private readonly ILogger<StoreImageCreator> logger;
     private const int MaxDimension = 1024;
 
-    public StoreImageGenerationService(ILogger<StoreImageGenerationService> logger)
+    public StoreImageCreator(ILogger<StoreImageCreator> logger)
     {
         this.logger = logger;
     }
 
-    public async Task<Stream> CreateStoreImagesZipAsync(StoreImageGenerationRequest request, CancellationToken cancelToken)
+    /// <summary>
+    /// Creates a zip file containing store-ready icons for the specified platforms based on the provided base image, padding, and background color.
+    /// </summary>
+    /// <param name="options">The store image generation options.</param>
+    /// <param name="cancelToken">A cancellation token.</param>
+    /// <returns>A zip file containing the store-ready images.</returns>
+    public async Task<Stream> CreateStoreImagesZipAsync(Stream baseImageStream, string? baseImageContentType, double padding, string backgroundColor, List<string> platforms, CancellationToken cancelToken)
     {
-        // Grab the image from the request and load it into an ImageSharp.Image<Rtba32>.
-        using var baseImgStream = request.BaseImage.OpenReadStream();
-        using var baseImg = request.BaseImage.ContentType switch
+        // Create an ImageSharp.Image<Rtba32> from the base image stream.
+        using var baseImg = baseImageContentType switch
         {
-            "image/svg+xml" => ConvertSvgToImageSharp(baseImgStream), // ImageSharp doesn't  natively handle SVG. We must use SkiaSharp to load it and convert it into a ImageSharp.Image<Rgba32>.
-            _ => await Image.LoadAsync<Rgba32>(baseImgStream, cancelToken)
+            "image/svg+xml" => ConvertSvgToImageSharp(baseImageStream), // ImageSharp doesn't  natively handle SVG. We must use SkiaSharp to load it and convert it into a ImageSharp.Image<Rgba32>.
+            _ => await Image.LoadAsync<Rgba32>(baseImageStream, cancelToken)
         };
 
         var zipStream = new MemoryStream();
         using (var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
         {
-            foreach (var platform in request.Platform)
+            foreach (var platform in platforms)
             {
                 try
                 {
-                    await WriteImagesToZip(zip, platform, baseImg, request, cancelToken);
+                    await WriteImagesToZip(zip, platform, baseImg, padding, backgroundColor, cancelToken);
                 }
                 catch (Exception error)
                 {
@@ -53,25 +62,25 @@ public class StoreImageGenerationService
         return zipStream;
     }
 
-    private async Task WriteImagesToZip(ZipArchive zip, string platform, Image<Rgba32> baseImg, StoreImageGenerationRequest request, CancellationToken cancelToken)
+    private async Task WriteImagesToZip(ZipArchive zip, string platform, Image<Rgba32> baseImg, double padding, string backgroundColor, CancellationToken cancelToken)
     {
         var bgColor = default(Color?);
-        if (Color.TryParse(request.Color, out var parsedColor))
+        if (Color.TryParse(backgroundColor, out var parsedColor))
         {
             bgColor = parsedColor;
         }
 
         if (platform is "windows" or "windows11")
         {
-            await CreateMicrosoftStoreImages(zip, baseImg, request.Padding, bgColor, cancelToken);
+            await CreateMicrosoftStoreImages(zip, baseImg, padding, bgColor, cancelToken);
         }
         else if (platform is "android")
         {
-            await CreateGooglePlayImages(zip, baseImg, request.Padding, bgColor);
+            await CreateGooglePlayImages(zip, baseImg, padding, bgColor);
         }
         else if (platform is "ios")
         {
-            await CreateIOSAppStoreImages(zip, baseImg, request.Padding, bgColor);
+            await CreateIOSAppStoreImages(zip, baseImg, padding, bgColor);
         }
         else
         {

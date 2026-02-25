@@ -1,32 +1,30 @@
 import { LitElement, css, html, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import {
-  AnalyticsBehavior,
-  recordProcessStep,
-  recordPWABuilderProcessStep,
+    AnalyticsBehavior,
+    recordProcessStep,
+    recordPWABuilderProcessStep,
 } from '../utils/analytics';
 import { getManifestContext, getURL } from '../services/app-info';
 import { IOSAppPackageOptions } from '../utils/ios-validation';
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AndroidPackageOptions } from '../utils/android-validation';
-import { OculusAppPackageOptions } from '../utils/oculus-validation';
 import { generatePackage, Platform } from '../services/publish';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 import {
-  // smallBreakPoint,
-  mediumBreakPoint,
-  largeBreakPoint,
-  //xLargeBreakPoint,
-  xxxLargeBreakPoint,
-  smallBreakPoint,
+    // smallBreakPoint,
+    mediumBreakPoint,
+    largeBreakPoint,
+    //xLargeBreakPoint,
+    xxxLargeBreakPoint,
+    smallBreakPoint,
 } from '../utils/css/breakpoints';
 
 import './windows-form';
 import './android-form';
 import './ios-form';
-import './oculus-form';
 import { fetchOrCreateManifest } from '../services/manifest';
 import { createWindowsPackageOptionsFromManifest } from '../services/publish/windows-publish';
 import { ManifestContext } from '../utils/interfaces';
@@ -34,36 +32,36 @@ import { ManifestContext } from '../utils/interfaces';
 @customElement('test-publish-pane')
 export class TestPublishPane extends LitElement {
 
-  // tells page we are generating a package
-  @state() generating = false;
-  @state() selectedStore = "";
+    // tells page we are generating a package
+    @state() generating = false;
+    @state() selectedStore = "";
 
-  // Used to download files
-  @state() readyToDownload = false;
-  @state() blob: Blob | File | null | undefined;
-  @state() testBlob: Blob | File | null | undefined;
-  @state() downloadFileName: string | null = null;
-  @state() feedbackMessages: TemplateResult[] = [];
+    // Used to download files
+    @state() readyToDownload = false;
+    @state() blob: Blob | File | null | undefined;
+    @state() testBlob: Blob | File | null | undefined;
+    @state() downloadFileName: string | null = null;
+    @state() feedbackMessages: TemplateResult[] = [];
 
 
-  readonly platforms: ICardData[] = [
-    {
-      title: 'Windows',
-      factoids: [
-        "PWAs can be indistinguishable from native apps on Windows",
-        "PWAs are first class applications",
-        "Collect 100% of revenue generated via third party commerce platforms",
-        "1B+ store enabled devices"
-      ],
-      isActionCard: true,
-      icon: '/assets/Publish_Windows.svg',
-      renderDownloadButton: () => this.renderWindowsDownloadButton()
-    }
-  ];
+    readonly platforms: ICardData[] = [
+        {
+            title: 'Windows',
+            factoids: [
+                "PWAs can be indistinguishable from native apps on Windows",
+                "PWAs are first class applications",
+                "Collect 100% of revenue generated via third party commerce platforms",
+                "1B+ store enabled devices"
+            ],
+            isActionCard: true,
+            icon: '/assets/Publish_Windows.svg',
+            renderDownloadButton: () => this.renderWindowsDownloadButton()
+        }
+    ];
 
-  static get styles() {
-    return [
-    css`
+    static get styles() {
+        return [
+            css`
       * {
         box-sizing: border-box;
       }
@@ -347,109 +345,109 @@ export class TestPublishPane extends LitElement {
 
       `)}
     `
-    ];
-  }
+        ];
+    }
 
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  firstUpdated(){
+    firstUpdated() {
 
-  }
+    }
 
-  renderWindowsDownloadButton(): TemplateResult {
-    return html`
+    renderWindowsDownloadButton(): TemplateResult {
+        return html`
       <sl-button class="package-button" ?loading=${this.generating} id="test-package-button"
           @click="${this.generateWindowsTestPackage}" .secondary="${true}">
         Download Test Package
       </sl-button>
     `;
-  }
-
-  async generateWindowsTestPackage() {
-    recordPWABuilderProcessStep("windows_test_package_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    let manifestContext: ManifestContext = getManifestContext();
-    if (manifestContext.isGenerated) {
-      let context = await fetchOrCreateManifest();
-      manifestContext = context!;
     }
 
-    const options = createWindowsPackageOptionsFromManifest(manifestContext.manifest);
-    await this.generate("windows", options);
-  }
-
-  async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions | OculusAppPackageOptions) {
-    // Record analysis results to our analytics portal.
-    recordProcessStep(
-      'analyze-and-package-pwa',
-      `create-${platform}-package`,
-      AnalyticsBehavior.CompleteProcess,
-      { url: getURL() });
-
-      recordProcessStep(
-        'pwa-builder',
-        `create-${platform}-package`,
-        AnalyticsBehavior.CompleteProcess,
-        { url: getURL() });
-
-    try {
-      this.generating = true;
-      const packageData = await generatePackage(platform, options);
-
-      if (packageData) {
-        this.downloadFileName = `${packageData.appName}.zip`;
-        if (packageData.type === 'test') {
-          this.testBlob = packageData.blob;
-        } else {
-          this.blob = packageData.blob;
-          this.readyToDownload = true;
-          this.downloadPackage()
+    async generateWindowsTestPackage() {
+        recordPWABuilderProcessStep("windows_test_package_clicked", AnalyticsBehavior.ProcessCheckpoint);
+        let manifestContext: ManifestContext = getManifestContext();
+        if (manifestContext.isGenerated) {
+            let context = await fetchOrCreateManifest();
+            manifestContext = context!;
         }
-      }
-      this.renderSuccessMessage()
-    } catch (err: any) {
-      console.error(err);
-      this.renderErrorMessage(err);
-      //this.showAlertModal(err as Error, platform);
-      recordProcessStep(
-        'analyze-and-package-pwa',
-        `create-${platform}-package-failed`,
-        AnalyticsBehavior.CancelProcess,
-        {
-          url: getURL(),
-          error: err
-        });
-        recordProcessStep(
-          'pwa-builder',
-          `create-${platform}-package-failed`,
-          AnalyticsBehavior.CancelProcess,
-          {
-            url: getURL(),
-            error: err
-          });
-    } finally {
-      this.generating = false;
-      /* this.openAndroidOptions = false;
-      this.openWindowsOptions = false;
-      this.openiOSOptions = false;
-      this.openOculusOptions = false; */
-    }
-  }
 
-  renderErrorMessage(err: any){
-    let errString = err.stack;
-    let stack_trace = `The site I was testing is: ${getURL()}\n`; // stored in copy st button
-    stack_trace += errString.slice(
-      errString.indexOf(" at ") + 1
-    ); 
-    let title = errString.split(",")[0]; // first line of error message
-    let quick_desc = errString.slice(
-      errString.indexOf("Details:") + 8,
-      errString.indexOf(" at ")
-    ); // the quick description they get to read (searchable)
-    
-    let error = html`
+        const options = createWindowsPackageOptionsFromManifest(manifestContext.manifest);
+        await this.generate("windows", options);
+    }
+
+    async generate(platform: Platform, options?: AndroidPackageOptions | IOSAppPackageOptions | WindowsPackageOptions) {
+        // Record analysis results to our analytics portal.
+        recordProcessStep(
+            'analyze-and-package-pwa',
+            `create-${platform}-package`,
+            AnalyticsBehavior.CompleteProcess,
+            { url: getURL() });
+
+        recordProcessStep(
+            'pwa-builder',
+            `create-${platform}-package`,
+            AnalyticsBehavior.CompleteProcess,
+            { url: getURL() });
+
+        try {
+            this.generating = true;
+            const packageData = await generatePackage(platform, options);
+
+            if (packageData) {
+                this.downloadFileName = `${packageData.appName}.zip`;
+                if (packageData.type === 'test') {
+                    this.testBlob = packageData.blob;
+                } else {
+                    this.blob = packageData.blob;
+                    this.readyToDownload = true;
+                    this.downloadPackage()
+                }
+            }
+            this.renderSuccessMessage()
+        } catch (err: any) {
+            console.error(err);
+            this.renderErrorMessage(err);
+            //this.showAlertModal(err as Error, platform);
+            recordProcessStep(
+                'analyze-and-package-pwa',
+                `create-${platform}-package-failed`,
+                AnalyticsBehavior.CancelProcess,
+                {
+                    url: getURL(),
+                    error: err
+                });
+            recordProcessStep(
+                'pwa-builder',
+                `create-${platform}-package-failed`,
+                AnalyticsBehavior.CancelProcess,
+                {
+                    url: getURL(),
+                    error: err
+                });
+        } finally {
+            this.generating = false;
+            /* this.openAndroidOptions = false;
+            this.openWindowsOptions = false;
+            this.openiOSOptions = false;
+            this.openOculusOptions = false; */
+        }
+    }
+
+    renderErrorMessage(err: any) {
+        let errString = err.stack;
+        let stack_trace = `The site I was testing is: ${getURL()}\n`; // stored in copy st button
+        stack_trace += errString.slice(
+            errString.indexOf(" at ") + 1
+        );
+        let title = errString.split(",")[0]; // first line of error message
+        let quick_desc = errString.slice(
+            errString.indexOf("Details:") + 8,
+            errString.indexOf(" at ")
+        ); // the quick description they get to read (searchable)
+
+        let error = html`
       <div class="feedback-holder type-error">
         <img src="/assets/new/stop.svg" alt="invalid result icon" />
         <div class="error-info">
@@ -463,53 +461,53 @@ export class TestPublishPane extends LitElement {
         <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `
-    this.feedbackMessages.push(error);
-  }
+        this.feedbackMessages.push(error);
+    }
 
-  renderSuccessMessage(){
-    this.feedbackMessages.push(html`
+    renderSuccessMessage() {
+        this.feedbackMessages.push(html`
       <div class="feedback-holder type-success">
         <img src="/assets/new/valid.svg" alt="successful download icon" />
         <p class="success-desc">${`Congratulations! Your ${this.selectedStore} test package has successfully downloaded!`}</p>
         <img @click=${() => this.feedbackMessages = []} class="close_feedback" src="assets/images/Close_desk.png" alt="close icon" />
       </div>
     `);
-  }
-
-  copyText(text: string){
-    navigator.clipboard.writeText(text);
-  }
-
-  async downloadPackage(){
-    let blob = (this.blob || this.testBlob);
-    if (blob) {
-      let filename = this.downloadFileName || 'your_pwa.zip';
-      var element = document.createElement('a');
-      element.href = URL.createObjectURL(blob!)
-      element.setAttribute('download', filename);
-
-      element.style.display = 'none';
-      document.body.appendChild(element);
-
-      element.click();
-
-      document.body.removeChild(element);
-
-      this.blob = undefined;
-      this.testBlob = undefined;
     }
-  }
 
-  renderContentCards(): TemplateResult[] {
-    return this.platforms.map(
-      platform => html`
+    copyText(text: string) {
+        navigator.clipboard.writeText(text);
+    }
+
+    async downloadPackage() {
+        let blob = (this.blob || this.testBlob);
+        if (blob) {
+            let filename = this.downloadFileName || 'your_pwa.zip';
+            var element = document.createElement('a');
+            element.href = URL.createObjectURL(blob!)
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+
+            this.blob = undefined;
+            this.testBlob = undefined;
+        }
+    }
+
+    renderContentCards(): TemplateResult[] {
+        return this.platforms.map(
+            platform => html`
         <div class="card-wrapper">
           ${platform.title != "iOS" ? null :
-            html`
+                    html`
             <div class="experimental-tracker">
             <p>Experimental</p>
             </div>`
-          } 
+                } 
           <div class="title-block">
             <img class="platform-icon" src="${platform.icon}" alt="platform icon" />
             <h3>${platform.title}</h3>
@@ -522,22 +520,22 @@ export class TestPublishPane extends LitElement {
             </ul>
           </div>
         </div>`
-    );
-  }
-
-  async hideDialog(e: any){
-    let dialog: any = this.shadowRoot!.querySelector(".dialog");
-    if(e.target === dialog){
-      this.blob = undefined;
-      this.generating = false;
-      await dialog!.hide();
-      recordPWABuilderProcessStep("test_publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
-      document.body.style.height = "unset";
+        );
     }
-  }
 
-  render() {
-    return html`
+    async hideDialog(e: any) {
+        let dialog: any = this.shadowRoot!.querySelector(".dialog");
+        if (e.target === dialog) {
+            this.blob = undefined;
+            this.generating = false;
+            await dialog!.hide();
+            recordPWABuilderProcessStep("test_publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
+            document.body.style.height = "unset";
+        }
+    }
+
+    render() {
+        return html`
       <sl-dialog class="dialog" @sl-show=${() => document.body.style.height = "100vh"} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
@@ -549,18 +547,18 @@ export class TestPublishPane extends LitElement {
               ${this.renderContentCards()}
             </div>
             
-            <div id="feedback">${this.feedbackMessages.length > 0 ?  this.feedbackMessages.map((error: TemplateResult) => error) : null}</div>
+            <div id="feedback">${this.feedbackMessages.length > 0 ? this.feedbackMessages.map((error: TemplateResult) => error) : null}</div>
           </div>
         </div>
       </sl-dialog>
     `;
-  }
+    }
 }
 
 interface ICardData {
-  title: 'Windows' | 'Android' | 'iOS' | "Meta Quest";
-  factoids: string[];
-  isActionCard: boolean;
-  icon: string;
-  renderDownloadButton: () => TemplateResult;
+    title: 'Windows' | 'Android' | 'iOS' | "Meta Quest";
+    factoids: string[];
+    isActionCard: boolean;
+    icon: string;
+    renderDownloadButton: () => TemplateResult;
 }
