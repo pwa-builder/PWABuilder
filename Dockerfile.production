@@ -1,5 +1,5 @@
 # Use the official ASP.NET Core runtime as the base image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 
 # Install dependencies for Puppeteer (runtime only, no Node.js needed here)
 # Install Chrome version 130.0.6723.116 which is compatible with PuppeteerSharp 20.2.x
@@ -37,7 +37,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 
 # Use the SDK image to build the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Install Node.js in build stage
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
@@ -76,7 +76,7 @@ FROM build AS publish
 RUN dotnet publish "PWABuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 
 # Chrome for Testing: please review all the latest versions here:
 # https://googlechromelabs.github.io/chrome-for-testing/

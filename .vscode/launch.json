@@ -1,75 +1,75 @@
 {
-  // VS Code debugger launch file. When you press F5 in VS Code,
-  // this debugger configuration will launch.
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "launch.backend",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "tasks.build-backend",
-      "postDebugTask": "tasks.stop-debugging",
-      "program": "${workspaceFolder}/apps/pwabuilder/bin/Debug/net9.0/PWABuilder.dll",
-      "serverReadyAction": {
-        "action": "startDebugging",
-        "name": "launch.edge",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
-      "cwd": "${workspaceFolder}/apps/pwabuilder",
-      "env": {
-        "LIGHTHOUSE_WORKDIR": "./node-scripts",
-        "NODE_BIN": "C:/Program Files/nodejs/node.exe"
-      }
-    },
-    {
-      "name": "launch.edge",
-      "url": "https://localhost:7217",
-      "request": "launch",
-      "type": "msedge",
-      "webRoot": "${workspaceFolder}/apps/pwabuilder/Frontend",
-      "sourceMaps": true,
-      "trace": true,
-      "preLaunchTask": "tasks.launch-vite",
-      "postDebugTask": "tasks.stop-debugging"
-    },
-    {
-      "name": "Attach: Google Play Service",
-      "type": "node",
-      "request": "attach",
-      "preLaunchTask": "tasks.google-play:dev",
-      "env": {
-        "NODE_ENV": "test"
-      },
-      "port": 5858,
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "localRoot": "${workspaceFolder}/apps/pwabuilder-google-play",
-      "remoteRoot": "${workspaceFolder}/apps/pwabuilder-google-play"
-    },
-    {
-      "name": "launch.microsoft-package-generator",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "tasks.build-microsoft-package-generator",
-      "postDebugTask": "tasks.stop-debugging",
-      "program": "${workspaceFolder}/apps/pwabuilder-microsoft-store/bin/Debug/net9.0/PWABuilder.MicrosoftStore.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store",
-      "stopAtEntry": false,
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-  ],
-  "compounds": [
-    {
-      "name": "Launch All PWABuilder (Local)",
-      "configurations": [
-        "launch.backend",
-        "launch.microsoft-package-generator",
-        "Attach: Google Play Service"
-      ]
-    }
-  ]
+    // VS Code debugger launch file. When you press F5 in VS Code,
+    // this debugger configuration will launch.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "launch.backend",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "tasks.build-backend",
+            "postDebugTask": "tasks.stop-debugging",
+            "program": "${workspaceFolder}/apps/pwabuilder/bin/Debug/net10.0/PWABuilder.dll",
+            "serverReadyAction": {
+                "action": "startDebugging",
+                "name": "launch.edge",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "cwd": "${workspaceFolder}/apps/pwabuilder",
+            "env": {
+                "LIGHTHOUSE_WORKDIR": "./node-scripts",
+                "NODE_BIN": "C:/Program Files/nodejs/node.exe"
+            }
+        },
+        {
+            "name": "launch.edge",
+            "url": "https://localhost:7217",
+            "request": "launch",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}/apps/pwabuilder/Frontend",
+            "sourceMaps": true,
+            "trace": true,
+            "preLaunchTask": "tasks.launch-vite",
+            "postDebugTask": "tasks.stop-debugging"
+        },
+        {
+            "name": "Attach: Google Play Service",
+            "type": "node",
+            "request": "attach",
+            "preLaunchTask": "tasks.google-play:dev",
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "port": 5858,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "localRoot": "${workspaceFolder}/apps/pwabuilder-google-play",
+            "remoteRoot": "${workspaceFolder}/apps/pwabuilder-google-play"
+        },
+        {
+            "name": "launch.microsoft-package-generator",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "tasks.build-microsoft-package-generator",
+            "postDebugTask": "tasks.stop-debugging",
+            "program": "${workspaceFolder}/apps/pwabuilder-microsoft-store/bin/Debug/net10.0/PWABuilder.MicrosoftStore.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/apps/pwabuilder-microsoft-store",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Launch All PWABuilder (Local)",
+            "configurations": [
+                "launch.backend",
+                "launch.microsoft-package-generator",
+                "Attach: Google Play Service"
+            ]
+        }
+    ]
 }

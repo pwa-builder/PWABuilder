@@ -276,7 +276,7 @@ public class ManifestCreator
         }
         catch (Exception imageDimensionError)
         {
-            logger.LogWarning(imageDimensionError, "Unable to identify image dimensions");
+            logger.LogWarning(imageDimensionError, "Unable to identify image dimensions for {url}", url);
             return new Result<string>(null, imageDimensionError);
         }
     }
@@ -301,7 +301,7 @@ public class ManifestCreator
         }
         catch (Exception imageDimensionError)
         {
-            logger.LogWarning(imageDimensionError, "Unable to identify image mime type");
+            logger.LogWarning(imageDimensionError, "Unable to identify image mime type for {url}", url);
             return new Result<string>(null, imageDimensionError);
         }
     }

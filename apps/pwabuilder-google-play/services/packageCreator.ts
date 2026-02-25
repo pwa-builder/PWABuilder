@@ -91,7 +91,7 @@ export class PackageCreator {
 
             // Get the signing information.
             this.dispatchProgressEvent(`Creating signing information...`);
-            const signing = await this.createLocalSigninKeyInfo(options, projectDirPath);
+            const signing = await this.createLocalSigningKeyInfo(options, projectDirPath);
 
             // Generate the APK, keys, and digital asset links.
             return await this.createAppPackageWith403Fallback(
@@ -169,7 +169,7 @@ export class PackageCreator {
         }
     }
 
-    private async createLocalSigninKeyInfo(apkSettings: AndroidPackageOptions, projectDir: string): Promise<LocalKeyFileSigningOptions | null> {
+    private async createLocalSigningKeyInfo(apkSettings: AndroidPackageOptions, projectDir: string): Promise<LocalKeyFileSigningOptions | null> {
         // If we're told not to sign it, skip this.
         if (apkSettings.signingMode === 'none') {
             return null;
