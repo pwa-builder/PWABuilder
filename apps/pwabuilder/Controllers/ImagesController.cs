@@ -1,3 +1,5 @@
+using System.Drawing;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using PuppeteerSharp;
 using PWABuilder.Common;
@@ -10,14 +12,12 @@ namespace PWABuilder.Controllers;
 [Route("api/[controller]")]
 public class ImagesController : ControllerBase
 {
-    private readonly IRedisCache analysisDb;
     private readonly HttpClient http;
     private readonly ILogger<ImagesController> logger;
     private const int maxSize = 1024 * 1024 * 5; // 5mb
 
-    public ImagesController(IRedisCache analysisDb, IHttpClientFactory httpClientFactory, ILogger<ImagesController> logger)
+    public ImagesController(IHttpClientFactory httpClientFactory, ILogger<ImagesController> logger)
     {
-        this.analysisDb = analysisDb;
         this.http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
         this.logger = logger;
     }
@@ -69,6 +69,29 @@ public class ImagesController : ControllerBase
 
             logger.LogError(error, "Image proxy failed to download image from {url} due to an error.", imageUrl);
             return NotFound($"Image not found at {imageUrl} due to an error.");
+        }
+    }
+
+    /// <summary>
+    /// Generates store images from a base image for one or more platforms.
+    /// </summary>
+    /// <param name="request">The image generation parameters including the base image file, padding, color, and target platforms.</param>
+    /// <returns>The generated store images.</returns>
+    [HttpPost("generateStoreImages")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 5 * 1024 * 1024)]
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    public async Task<IActionResult> GenerateStoreImages([FromForm] StoreImageCreationOptions request, [FromServices] StoreImageCreator storeImageCreator, CancellationToken cancelToken)
+    {
+        try
+        {
+            using var baseImageStream = request.BaseImage.OpenReadStream();
+            var storeImagesZipStream = await storeImageCreator.CreateStoreImagesZipAsync(baseImageStream, request.BaseImage.ContentType, request.Padding, request.BackgroundColor, request.Platforms, cancelToken);
+            return File(storeImagesZipStream, "application/zip", "appstore-images.zip");
+        }
+        catch (Exception imageCreationError)
+        {
+            logger.LogError(imageCreationError, "Error generating store images for image of size {size} for {platforms} with padding {padding} and color {color}.", request.BaseImage.Length, string.Join(", ", request.Platforms), request.Padding, request.BackgroundColor);
+            return StatusCode(500, $"An error occurred while generating store images: {imageCreationError.Message}");
         }
     }
 

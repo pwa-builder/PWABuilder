@@ -4,6 +4,7 @@ using Azure.Identity;
 using Microsoft.Azure.StackExchangeRedis;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace PWABuilder.Services;
 
@@ -164,7 +165,7 @@ public class RedisCache : IRedisCache
             }
 
             // See if we can parse it back into the requested type
-            var item = System.Text.Json.JsonSerializer.Deserialize<T>(json!); // we can be sure json isn't null here because we checked for HasValue above.
+            var item = JsonSerializer.Deserialize<T>(json.ToString());
             return item;
         }
         catch (Exception ex)
@@ -213,7 +214,7 @@ public class RedisCache : IRedisCache
                 return null;
             }
 
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json!);
+            return JsonSerializer.Deserialize<T>(json.ToString());
         }
         catch (Exception ex)
         {

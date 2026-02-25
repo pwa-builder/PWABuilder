@@ -14,7 +14,6 @@ namespace PWABuilder.IOS.Models
 
         public ZipArchiveEntry? GetTargetSize(ImageTargetSize size)
         {
-            // Square44x44Logo isn't a typo here - the image generator service uses those files names, then appends the actual size to the file name.
             return zip.GetEntry($"ios/{size.ToFileName()}.png");
         }
 
