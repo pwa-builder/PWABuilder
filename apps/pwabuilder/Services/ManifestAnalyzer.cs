@@ -564,7 +564,7 @@ public class ManifestAnalyzer
             && scopeExtensions.ValueKind == JsonValueKind.Array
             && scopeExtensions.GetArrayLength() > 0
             // each extension needs a "type" string. 
-            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("scope", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
+            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("type", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
             // each extension needs a "origin" string which must be a valid URL.
             && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("origin", out var extensionOrigin) && extensionOrigin.ValueKind == JsonValueKind.String && Uri.TryCreate(extensionOrigin.GetString(), UriKind.Absolute, out _));
         return hasScopeExtensions ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;

@@ -8,21 +8,21 @@ namespace PWABuilder.IOS.Services
 {
     public class IOSPackageCreator
     {
-        private readonly ImageGenerator imageGenerator;
+        private readonly IOSImageWriter iosImageWriter;
         private readonly TempDirectory temp;
         private readonly AppSettings appSettings;
         private readonly ILogger<IOSPackageCreator> logger;
         private readonly IWebHostEnvironment env;
 
         public IOSPackageCreator(
-            ImageGenerator imageGenerator,
+            IOSImageWriter iosImageWriter,
             IOptions<AppSettings> appSettings,
             TempDirectory temp,
             ILogger<IOSPackageCreator> logger,
             IWebHostEnvironment env
         )
         {
-            this.imageGenerator = imageGenerator;
+            this.iosImageWriter = iosImageWriter;
             this.appSettings = appSettings.Value;
             this.temp = temp;
             this.logger = logger;
@@ -52,7 +52,7 @@ namespace PWABuilder.IOS.Services
 
                 // Create any missing images for the iOS template.
                 // This should be done before project.ApplyChanges(). Otherwise, it'll attempt to write the images to the "pwa-shell" directory, which no longer exists after ApplyChanges().
-                await imageGenerator.Generate(
+                await iosImageWriter.WriteImages(
                     options,
                     WebAppManifestContext.From(options.Manifest, options.ManifestUri),
                     outputDir

@@ -1,68 +1,61 @@
-import { LitElement, css, html, TemplateResult } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import { localeStrings } from '../../locales';
+import { LitElement, css, html, TemplateResult } from "lit";
+import { customElement, state } from "lit/decorators.js";
+import { localeStrings } from "../../locales";
 
-import '../components/app-header';
-import '../components/app-file-input';
-import { FileInputDetails, Lazy } from '../utils/interfaces';
+import "../components/app-header";
+import "../components/app-file-input";
+import { FileInputDetails, Lazy } from "../utils/interfaces";
 
-import { recordProcessStep, AnalyticsBehavior } from '../utils/analytics';
-import { env } from '../utils/environment';
+import { recordProcessStep, AnalyticsBehavior } from "../utils/analytics";
 
-import '@shoelace-style/shoelace/dist/components/button/button.js';
+import "@shoelace-style/shoelace/dist/components/button/button.js";
 
 interface PlatformInformation {
-  label: string;
-  value: string;
+    label: string;
+    value: string;
 }
 
-interface ImageGeneratorServicePostResponse {
-  Message: string;
-  Uri: string;
-}
-
-type ColorRadioValues = 'best guess' | 'transparent' | 'custom';
+type ColorRadioValues = "best guess" | "transparent" | "custom";
 const loc = localeStrings.imageGenerator;
 const platformsData: Array<PlatformInformation> = [
-  { label: loc.windows11, value: 'windows11' },
-  { label: loc.android, value: 'android' },
-  { label: loc.ios, value: 'ios' }
+    { label: loc.windows11, value: "windows11" },
+    { label: loc.android, value: "android" },
+    { label: loc.ios, value: "ios" }
 ];
-const baseUrl = env.imageGeneratorUrl;
 
 function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
-  if (!value || !unknownValue) {
-    return false;
-  }
+    if (!value || !unknownValue) {
+        return false;
+    }
 
-  return (value as Object).toString() === (unknownValue as Object).toString();
+    return (value as Object).toString() === (unknownValue as Object).toString();
 }
 
-@customElement('image-generator')
+@customElement("image-generator")
 export class ImageGenerator extends LitElement {
-  @state({ hasChanged: boolListHasChanged })
-  platformSelected: Array<boolean> = platformsData.map(() => true);
+    @state({ hasChanged: boolListHasChanged })
+    platformSelected: Array<boolean> = platformsData.map(() => true);
 
-  @state() files: Lazy<FileList>;
+    @state() files: Lazy<FileList>;
 
-  @state() padding = 0.3;
+    @state() padding = 0.0;
 
-  @state() colorOption: ColorRadioValues = 'transparent';
+    @state() colorOption: ColorRadioValues = "transparent";
 
-  // hex color
-  @state() color: string = '#ffffff';
+    // hex color
+    @state() color: string = "#ffffff";
 
-  @state() selectAllState = false;
+    @state() selectAllState = false;
 
-  @state() generating = false;
+    @state() generating = false;
 
-  @state() generateEnabled = false;
+    @state() generateEnabled = false;
 
-  @state() error: Lazy<string>;
+    @state() error: Lazy<string>;
 
-  static get styles() {
-    return [
-      css`
+    static get styles() {
+        return [
+            css`
         :host {
           --loader-size: 1.8em;
           --sl-input-height-medium: 1.5rem;
@@ -163,19 +156,19 @@ export class ImageGenerator extends LitElement {
           cursor: pointer;
         }
       `,
-    ];
-  }
+        ];
+    }
 
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  firstUpdated() {
-    recordProcessStep('image-generation', `page-loaded`, AnalyticsBehavior.StartProcess);
-  }
+    firstUpdated() {
+        recordProcessStep("image-generation", `page-loaded`, AnalyticsBehavior.StartProcess);
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div>
         <app-header></app-header>
         <main id="main" class="main background">
@@ -187,7 +180,7 @@ export class ImageGenerator extends LitElement {
                 <div class="image-section">
                   <h2>${loc.input_image}</h2>
                   <p>${loc.input_image_help}</p>
-                  <app-file-input @input-change=${this.handleInputChange}></app-file-input>
+                  <app-file-input accept="image/png, image/svg+xml, image/jpeg, image/webp, image/gif, image/tiff, image/bmp" @input-change="${this.handleInputChange}"></app-file-input>
                 </div>
                 <div class="padding-section">
                   <label for="padding"><h2>${loc.padding}</h2></label>
@@ -245,144 +238,149 @@ export class ImageGenerator extends LitElement {
         </main>
       </div>
     `;
-  }
+    }
 
-  renderPlatformList() {
-    return platformsData.map(
-      (platform, i) => html`
-      <div class="checkbox-div">
-        <input 
-          type="checkbox"
-          name="platform" 
-          id="${`${platform.value}-checkbox`}"
-          value="${platform.value}" 
-          ?checked=${this.platformSelected[i]}
-          @change=${this.handleCheckbox} 
-          data-index=${i} />
-        <label for="${platform.value}-checkbox">${platform.label}</label>
-      </div>
-      `
-    );
-  }
+    renderPlatformList() {
+        return platformsData.map(
+            (platform, i) => html`
+            <div class="checkbox-div">
+                <input 
+                type="checkbox"
+                name="platform" 
+                id="${`${platform.value}-checkbox`}"
+                value="${platform.value}" 
+                ?checked=${this.platformSelected[i]}
+                @change=${this.handleCheckbox} 
+                data-index=${i} />
+                <label for="${platform.value}-checkbox">${platform.label}</label>
+            </div>
+            `
+        );
+    }
 
-  renderColorPicker() {
-    if (this.colorOption === 'custom') {
-      return html`<div class="custom-color-block">
+    renderColorPicker() {
+        if (this.colorOption === "custom") {
+            return html`<div class="custom-color-block">
   <label for="theme-custom-color">${localeStrings.values.custom}</label>
   <input type="color" id="theme-custom-color" name="color" .value=${this.color}
     @change=${this.handleThemeColorInputChange} />
 </div>`;
+        }
+
+        return undefined;
     }
 
-    return undefined;
-  }
+    renderError(): TemplateResult {
+        if (this.error) {
+            return html`<p style="font-size: 16px; color: red;">${this.error}</p>`;
+        }
 
-  renderError(): TemplateResult {
-    if (this.error) {
-      return html`<p style="font-size: 16px; color: red;">${this.error}</p>`;
+        return html``;
     }
 
-    return html``;
-  }
+    handleInputChange(event: CustomEvent<FileInputDetails>) {
+        recordProcessStep("image-generation", "choose-file-clicked", AnalyticsBehavior.ProcessCheckpoint);
 
-  handleInputChange(event: CustomEvent<FileInputDetails>) {
-    recordProcessStep('image-generation', 'choose-file-clicked', AnalyticsBehavior.ProcessCheckpoint);
-
-    const input = event.detail.input;
-    if (input.files) {
-      this.files = input.files;
-    }
-    this.checkGenerateEnabled();
-  }
-
-  handlePaddingChange(event: Event) {
-    const input = <HTMLInputElement>event.target;
-    let updatedValue = input.value;
-    this.padding = parseFloat(updatedValue);
-  }
-
-  handleCheckbox(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const index = input.dataset['index'];
-    this.platformSelected[index as any] = input.checked;
-
-    this.checkGenerateEnabled();
-  }
-
-  handleBackgroundRadioChange(event: CustomEvent) {
-    const value: ColorRadioValues = (<HTMLInputElement>event.target)
-      .value as ColorRadioValues;
-    this.colorOption = value;
-    this.checkGenerateEnabled();
-  }
-
-  handleThemeColorInputChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.color = input.value;
-    this.checkGenerateEnabled();
-  }
-
-  async generateZip() {
-    recordProcessStep('image-generation', 'generate-zip-clicked', AnalyticsBehavior.CompleteProcess);
-    const file = this.files ? this.files[0] : null;
-    if (!file) {
-      const errorMessage = 'No file available to generate zip';
-      console.error(errorMessage);
-      this.error = errorMessage;
-      return;
+        const input = event.detail.input;
+        if (input.files) {
+            this.files = input.files;
+        }
+        this.checkGenerateEnabled();
     }
 
-    try {
-      this.generateEnabled = false;
-      this.generating = true;
-
-      const form = new FormData();
-      const colorValue =
-        this.colorOption === 'custom' ? this.color : // custom? Then send in the chosen color
-        this.colorOption === 'best guess' ? '' : // best guess? Then send in an empty string, which the API interprets as best guess
-          'transparent'; // otherwise, it must be transparent
-
-      form.append('fileName', file as Blob);
-      form.append('padding', String(this.padding));
-      form.append('color', colorValue);
-
-      platformsData
-        .filter((_, index) => this.platformSelected[index])
-        .forEach(data => form.append('platform', data.value));
-
-      const res = await fetch(`${baseUrl}/api/image`, {
-        method: 'POST',
-        body: form,
-      });
-
-      const postRes =
-        (await res.json()) as unknown as ImageGeneratorServicePostResponse;
-
-      if (postRes.Message) {
-        throw new Error('Error from service: ' + postRes.Message);
-      }
-
-      this.downloadZip(`${baseUrl}${postRes.Uri}`);
-    } catch (e) {
-      console.error(e);
-      this.error = (e as Error).message;
-    } finally {
-      this.generating = false;
-      this.generateEnabled = true;
+    handlePaddingChange(event: Event) {
+        const input = <HTMLInputElement>event.target;
+        let updatedValue = input.value;
+        this.padding = parseFloat(updatedValue);
     }
-  }
 
-  downloadZip(zipUrl: string) {
-    const hyperlink = document.createElement("a");
-    hyperlink.href = zipUrl;
-    hyperlink.download = "";
-    hyperlink.click();
-  }
+    handleCheckbox(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const index = input.dataset["index"];
+        this.platformSelected[index as any] = input.checked;
 
-  checkGenerateEnabled() {
-    this.generateEnabled =
-      this.files !== undefined &&
-      this.platformSelected.reduce((a, b) => a || b);
-    return this.generateEnabled;
-  }
+        this.checkGenerateEnabled();
+    }
+
+    handleBackgroundRadioChange(event: CustomEvent) {
+        const value: ColorRadioValues = (<HTMLInputElement>event.target)
+            .value as ColorRadioValues;
+        this.colorOption = value;
+        this.checkGenerateEnabled();
+    }
+
+    handleThemeColorInputChange(event: Event) {
+        const input = event.target as HTMLInputElement;
+        this.color = input.value;
+        this.checkGenerateEnabled();
+    }
+
+    async generateZip() {
+        recordProcessStep("image-generation", "generate-zip-clicked", AnalyticsBehavior.CompleteProcess);
+        const file = this.files ? this.files[0] : null;
+        if (!file) {
+            const errorMessage = "No file available to generate zip";
+            console.error(errorMessage);
+            this.error = errorMessage;
+            return;
+        }
+
+        try {
+            this.generateEnabled = false;
+            this.generating = true;
+
+            const form = new FormData();
+            const colorValue =
+                this.colorOption === "custom" ? this.color : // custom? Then send in the chosen color
+                    this.colorOption === "best guess" ? "" : // best guess? Then send in an empty string, which the API interprets as best guess
+                        "transparent"; // otherwise, it must be transparent
+
+            form.append("baseImage", file as Blob);
+            form.append("padding", String(this.padding));
+            form.append("backgroundColor", colorValue);
+
+            platformsData
+                .filter((_, index) => this.platformSelected[index])
+                .forEach(data => form.append("platforms", data.value));
+
+            const createStoreImagesRequest = await fetch("/api/images/generateStoreImages", {
+                method: "POST",
+                body: form,
+            });
+
+            if (!createStoreImagesRequest.ok) {
+                const errorText = await createStoreImagesRequest.text();
+                throw new Error(errorText || `Image generation failed with status ${createStoreImagesRequest.status}`);
+            }
+
+            const blob = await createStoreImagesRequest.blob();
+            const disposition = createStoreImagesRequest.headers.get("Content-Disposition");
+            const fileNameMatch = disposition ? /filename="?([^";\n]+)"?/i.exec(disposition) : null;
+            const fileName = fileNameMatch?.[1] ?? "appstore-images.zip";
+            const url = URL.createObjectURL(blob);
+            this.downloadZip(url, fileName);
+            URL.revokeObjectURL(url);
+
+        } catch (e) {
+            console.error(e);
+            this.error = (e as Error).message;
+        } finally {
+            this.generating = false;
+            this.generateEnabled = true;
+        }
+    }
+
+    downloadZip(zipUrl: string, fileName: string) {
+        const hyperlink = document.createElement("a");
+        hyperlink.href = zipUrl;
+        hyperlink.download = fileName;
+        hyperlink.click();
+    }
+
+    checkGenerateEnabled() {
+        this.generateEnabled =
+            this.files !== undefined &&
+            this.platformSelected.reduce((a, b) => a || b);
+        return this.generateEnabled;
+    }
 }
