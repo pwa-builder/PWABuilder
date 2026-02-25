@@ -5,7 +5,7 @@ namespace PWABuilder.Models;
 /// <summary>
 /// Represents a request to generate store images from a base image.
 /// </summary>
-public sealed class StoreImageGenerationRequest
+public sealed class StoreImageCreationOptions
 {
     /// <summary>
     /// The base image file uploaded by the client.
@@ -19,13 +19,13 @@ public sealed class StoreImageGenerationRequest
     public required double Padding { get; set; }
 
     /// <summary>
-    /// The background color to use. Can be a hex color, named color, or "transparent".
+    /// The background color to use. Can be a hex color, named color, or "transparent". This color will be used when adding any specified padding or for the background when bringing the image into a non-square target.
     /// </summary>
-    public required string Color { get; set; }
+    public required string BackgroundColor { get; set; }
 
     /// <summary>
     /// One or more target platform identifiers for which store images should be generated.
     /// </summary>
     [MinLength(1)]
-    public required List<string> Platform { get; set; }
+    public required List<string> Platforms { get; set; }
 }

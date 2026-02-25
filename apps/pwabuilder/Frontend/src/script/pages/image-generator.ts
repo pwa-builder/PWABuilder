@@ -7,7 +7,6 @@ import "../components/app-file-input";
 import { FileInputDetails, Lazy } from "../utils/interfaces";
 
 import { recordProcessStep, AnalyticsBehavior } from "../utils/analytics";
-import { env } from "../utils/environment";
 
 import "@shoelace-style/shoelace/dist/components/button/button.js";
 
@@ -23,7 +22,6 @@ const platformsData: Array<PlatformInformation> = [
     { label: loc.android, value: "android" },
     { label: loc.ios, value: "ios" }
 ];
-const baseUrl = env.imageGeneratorUrl;
 
 function boolListHasChanged<T>(value: T, unknownValue: T): boolean {
     if (!value || !unknownValue) {
@@ -339,11 +337,11 @@ export class ImageGenerator extends LitElement {
 
             form.append("baseImage", file as Blob);
             form.append("padding", String(this.padding));
-            form.append("color", colorValue);
+            form.append("backgroundColor", colorValue);
 
             platformsData
                 .filter((_, index) => this.platformSelected[index])
-                .forEach(data => form.append("platform", data.value));
+                .forEach(data => form.append("platforms", data.value));
 
             const createStoreImagesRequest = await fetch("/api/images/generateStoreImages", {
                 method: "POST",
@@ -356,8 +354,11 @@ export class ImageGenerator extends LitElement {
             }
 
             const blob = await createStoreImagesRequest.blob();
+            const disposition = createStoreImagesRequest.headers.get("Content-Disposition");
+            const fileNameMatch = disposition ? /filename="?([^";\n]+)"?/i.exec(disposition) : null;
+            const fileName = fileNameMatch?.[1] ?? "appstore-images.zip";
             const url = URL.createObjectURL(blob);
-            this.downloadZip(url);
+            this.downloadZip(url, fileName);
             URL.revokeObjectURL(url);
 
         } catch (e) {
@@ -369,10 +370,10 @@ export class ImageGenerator extends LitElement {
         }
     }
 
-    downloadZip(zipUrl: string) {
+    downloadZip(zipUrl: string, fileName: string) {
         const hyperlink = document.createElement("a");
         hyperlink.href = zipUrl;
-        hyperlink.download = "";
+        hyperlink.download = fileName;
         hyperlink.click();
     }
 

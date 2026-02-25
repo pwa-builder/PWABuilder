@@ -496,7 +496,7 @@ public class PwaCapability
                 FeatureIcon = new Uri("/assets/new/share_target_icon.svg", UriKind.Relative),
                 Field = "share_target",
                 IsFieldExistenceCheck = true,
-                LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/screenshots#form_factor"),
+                LearnMoreUrl = new Uri("https://developer.chrome.com/docs/capabilities/web-apis/web-share-target"),
                 ImageUrl = new Uri("/assets/manifest_examples/share_target_example_image.jpg", UriKind.Relative),
                 Category = PwaCapabilityCategory.WebAppManifest,
                 Status = PwaCapabilityCheckStatus.InProgress

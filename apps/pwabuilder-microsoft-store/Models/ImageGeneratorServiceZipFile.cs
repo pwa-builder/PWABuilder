@@ -33,13 +33,13 @@ namespace PWABuilder.MicrosoftStore.Models
                 throw new NotSupportedException("Unable to find scale set type " + type);
             }
 
-            return zip.GetEntry($"windows11/{prefix}{scale.ToWindowsImageNamingConventionSuffix()}.png");
+            return zip.GetEntry($"windows/{prefix}{scale.ToWindowsImageNamingConventionSuffix()}.png");
         }
 
         public ZipArchiveEntry? GetTargetSize(ImageTargetSize size, ImageAltForm altForm)
         {
             // Square44x44Logo isn't a typo here - the image generator service uses those files names, then appends the actual size to the file name.
-            return zip.GetEntry($"windows11/{altForm.ToWindowsImageNamingConventionString(size)}.png");
+            return zip.GetEntry($"windows/{altForm.ToWindowsImageNamingConventionString(size)}.png");
         }
 
         public void Dispose()
