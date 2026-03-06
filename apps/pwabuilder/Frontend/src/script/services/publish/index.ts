@@ -1,5 +1,5 @@
-import { GooglePlayPackageError } from "../../models/GooglePlayPackageError";
-import { GooglePlayPackageJob } from "../../models/GooglePlayPackageJob";
+import { GooglePlayPackageError } from "../../models/google-play-package-error";
+import { GooglePlayPackageJob } from "../../models/google-play-package-job";
 import { AndroidPackageOptions } from '../../utils/android-validation';
 import { PackageOptions } from '../../utils/interfaces';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';

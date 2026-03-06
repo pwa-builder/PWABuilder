@@ -1,13 +1,13 @@
 import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { manifest_fields } from '@pwabuilder/manifest-information';
 //import { recordPWABuilderProcessStep } from '../utils/analytics';
 import './manifest-info-card'
 import './sw-info-card'
 import { todoListItemStyles } from './todo-list-item.styles';
-import "@shoelace-style/shoelace/dist/components/details/details";
-import "@shoelace-style/shoelace/dist/components/button/button";
+import "@shoelace-style/shoelace/dist/components/details/details.js";
+import "@shoelace-style/shoelace/dist/components/button/button.js";
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from "../utils/analytics";
+import { manifest_fields } from "../models/manifest-fields";
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {

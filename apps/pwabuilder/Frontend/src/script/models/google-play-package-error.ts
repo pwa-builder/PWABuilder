@@ -1,4 +1,4 @@
-import { GooglePlayPackageJob } from "./GooglePlayPackageJob";
+import { GooglePlayPackageJob } from "./google-play-package-job";
 
 export class GooglePlayPackageError extends Error {
     constructor(innerErrorOrMessage: unknown, public readonly packageJob: GooglePlayPackageJob | null) {

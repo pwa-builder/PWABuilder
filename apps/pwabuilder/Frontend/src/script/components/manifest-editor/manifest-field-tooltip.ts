@@ -1,9 +1,9 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { manifest_fields } from '@pwabuilder/manifest-information';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import { manifestFieldTooltipStyles } from "./manifest-field-tooltip.styles";
+import { manifest_fields } from "../../models/manifest-fields";
 
 @customElement('manifest-field-tooltip')
 export class ManifestFieldTooltip extends LitElement {

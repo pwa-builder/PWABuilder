@@ -26,7 +26,7 @@ import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
 import { classMap } from 'lit/directives/class-map.js';
 import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
-import { GooglePlayPackageError } from "../models/GooglePlayPackageError";
+import { GooglePlayPackageError } from "../models/google-play-package-error";
 import { enqueueGooglePlayPackageJob } from "../services/publish/android-publish";
 import { AndroidPackageOptions } from "../utils/android-validation";
 import { Router } from '@vaadin/router';

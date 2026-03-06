@@ -1,4 +1,4 @@
-import { GooglePlayPackageJob } from "../../models/GooglePlayPackageJob";
+import { GooglePlayPackageJob } from "../../models/google-play-package-job";
 import {
     validateAndroidOptions,
     AndroidPackageOptions,
