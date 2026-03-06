@@ -1,4 +1,4 @@
-import { Screenshot } from '../../../utils/interfaces';
+import { Screenshot } from "@pwabuilder/manifest-validation";
 
 const screenshotServiceBaseUrl = 'https://pwa-screenshots.azurewebsites.net';
 
