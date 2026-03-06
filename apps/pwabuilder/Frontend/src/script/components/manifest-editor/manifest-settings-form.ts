@@ -1,10 +1,7 @@
 import { LitElement, css, html, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Manifest } from '../utils/interfaces';
-import { langCodes, languageCodes } from '../locales';
-import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
-import { errorInTab, insertAfter } from '../utils/helpers';
-import {classMap} from 'lit/directives/class-map.js';
+import { required_fields, validateSingleField, singleFieldValidation, Manifest } from '@pwabuilder/manifest-validation';
+import { classMap } from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/select/select.js';
@@ -14,35 +11,39 @@ import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
 import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
+import { errorInTab, insertAfter } from "../../utils/helpers";
+import { langCodes, languageCodes } from "../../../locales";
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
-const displayOptions: Array<string> =  ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
-const overrideOptions: Array<string> =  ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
+const displayOptions: Array<string> = ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
+const overrideOptions: Array<string> = ['browser', 'fullscreen', 'minimal-ui', 'standalone', 'window-controls-overlay'];
 let manifestInitialized: boolean = false;
 
 @customElement('manifest-settings-form')
 export class ManifestSettingsForm extends LitElement {
 
-  @property({type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
-    if(value !== oldValue && value.name){
-      manifestInitialized = true;
-      return value !== oldValue;
-    }
-    return value !== oldValue;
-  }}) manifest: Manifest = {};
+    @property({
+        type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
+            if (value !== oldValue && value.name) {
+                manifestInitialized = true;
+                return value !== oldValue;
+            }
+            return value !== oldValue;
+        }
+    }) manifest: Manifest = {};
 
-  private shouldValidateAllFields: boolean = true;
-  private validationPromise: Promise<void> | undefined;
+    private shouldValidateAllFields: boolean = true;
+    private validationPromise: Promise<void> | undefined;
 
-  @property({type: String}) focusOn: string = "";
+    @property({ type: String }) focusOn: string = "";
 
-  @state() errorMap: any = {};
-  @state() activeOverrideItems: string[] = [];
+    @state() errorMap: any = {};
+    @state() activeOverrideItems: string[] = [];
 
 
 
-  static get styles() {
-    return css`
+    static get styles() {
+        return css`
 
       :host {
         --sl-focus-ring-width: 3px;
@@ -301,305 +302,305 @@ export class ManifestSettingsForm extends LitElement {
         }
       }
     `;
-  }
-
-  constructor() {
-    super();
-  }
-
-  firstUpdated(){
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
-    }
-  }
-
-  protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
-
-    let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
-    if(this.focusOn && field){
-      setTimeout(() => {field!.scrollIntoView({block: "end", behavior: "smooth"})}, 500)
     }
 
-    if(manifestInitialized){
-      manifestInitialized = false;
-      this.requestValidateAllFields();
-      this.initOverrideList();
-    }
-  }
-
-  private async requestValidateAllFields() {
-    
-    this.shouldValidateAllFields = true;
-
-    if (this.validationPromise) {
-      return;
-    }
-    
-    while (this.shouldValidateAllFields) {
-      this.shouldValidateAllFields = false;
-
-      this.validationPromise = this.validateAllFields();
-      await this.validationPromise;
+    constructor() {
+        super();
     }
 
-  }
+    firstUpdated() {
+        let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+        if (this.focusOn && field) {
+            setTimeout(() => { field!.scrollIntoView({ block: "end", behavior: "smooth" }) }, 500)
+        }
+    }
 
-  async validateAllFields(){
+    protected async updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
 
-    for(let i = 0; i < settingsFields.length; i++){
-      let field = settingsFields[i];
+        let field = this.shadowRoot!.querySelector('[data-field="' + this.focusOn + '"]');
+        if (this.focusOn && field) {
+            setTimeout(() => { field!.scrollIntoView({ block: "end", behavior: "smooth" }) }, 500)
+        }
 
-      if(field in this.manifest){
-        const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+        if (manifestInitialized) {
+            manifestInitialized = false;
+            this.requestValidateAllFields();
+            this.initOverrideList();
+        }
+    }
+
+    private async requestValidateAllFields() {
+
+        this.shouldValidateAllFields = true;
+
+        if (this.validationPromise) {
+            return;
+        }
+
+        while (this.shouldValidateAllFields) {
+            this.shouldValidateAllFields = false;
+
+            this.validationPromise = this.validateAllFields();
+            await this.validationPromise;
+        }
+
+    }
+
+    async validateAllFields() {
+
+        for (let i = 0; i < settingsFields.length; i++) {
+            let field = settingsFields[i];
+
+            if (field in this.manifest) {
+                const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
+                let passed = validation!.valid;
+
+                if (!passed) {
+                    let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+                    input!.classList.add("error");
+
+                    if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
+                        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+                        error_div!.parentElement!.removeChild(error_div!);
+                    }
+
+                    // update error list
+                    if (validation.errors) {
+                        let div = document.createElement('div');
+                        div.classList.add(`${field}-error-div`);
+                        this.errorMap[field] = 0;
+                        validation.errors.forEach((error: string) => {
+                            let p = document.createElement('p');
+                            p.innerText = error;
+                            p.style.color = "#eb5757";
+                            p.setAttribute('aria-live', 'polite');
+                            div.append(p);
+                            this.errorMap[field]++;
+                        });
+                        insertAfter(div, input!.parentNode!.lastElementChild);
+                    }
+                }
+            } else {
+                /* This handles the case where the field is not in the manifest.. 
+                we only want to make it red if its REQUIRED. */
+                if (required_fields.includes(field)) {
+                    let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+                    input!.classList.add("error");
+
+                    if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
+                        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+                        error_div!.parentElement!.removeChild(error_div!);
+                    }
+                    this.errorMap[field] = 0;
+                    let div = document.createElement('div');
+                    div.classList.add(`${field}-error-div`);
+                    let p = document.createElement('p');
+                    p.innerText = `${field} is required and is missing from your manifest.`;
+                    p.style.color = "#eb5757";
+                    div.append(p);
+                    this.errorMap[field]++;
+                    insertAfter(div, input!.parentNode!.lastElementChild);
+
+                }
+            }
+        }
+
+        this.validationPromise = undefined;
+        if (Object.keys(this.errorMap).length === 0) {
+            this.dispatchEvent(errorInTab(false, "settings"));
+        } else {
+            this.dispatchEvent(errorInTab(true, "settings"));
+        }
+    }
+
+    initOverrideList() {
+        this.activeOverrideItems = [];
+
+        if (this.manifest.display_override) {
+            this.manifest.display_override!.forEach((item: string) => {
+                this.activeOverrideItems.push(item);
+            });
+        }
+
+    }
+
+    async handleInputChange(event: InputEvent) {
+
+        if (this.validationPromise) {
+            await this.validationPromise;
+        }
+
+        const input = <HTMLInputElement | HTMLSelectElement>event.target;
+        let updatedValue = input.value;
+        const fieldName = input.dataset['field'];
+
+        let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+            detail: {
+                field: fieldName,
+            },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(fieldChangeAttempted);
+
+        const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
         let passed = validation!.valid;
 
-        if(!passed){
-          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          input!.classList.add("error");
 
-          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-            error_div!.parentElement!.removeChild(error_div!);
-          }
-          
-          // update error list
-          if(validation.errors){
-            let div = document.createElement('div');
-            div.classList.add(`${field}-error-div`);
-            this.errorMap[field] = 0;
-            validation.errors.forEach((error: string) => {
-              let p = document.createElement('p');
-              p.innerText = error;
-              p.style.color = "#eb5757";
-              p.setAttribute('aria-live', 'polite');
-              div.append(p);
-              this.errorMap[field]++;
+        if (passed) {
+            // Since we already validated, we only send valid updates.
+            let manifestUpdated = new CustomEvent('manifestUpdated', {
+                detail: {
+                    field: fieldName,
+                    change: updatedValue
+                },
+                bubbles: true,
+                composed: true
             });
-            insertAfter(div, input!.parentNode!.lastElementChild);
-          }
+            this.dispatchEvent(manifestUpdated);
+
+            if (input.classList.contains("error")) {
+                input.classList.toggle("error");
+                delete this.errorMap[fieldName!];
+                let last = input!.parentNode!.lastElementChild
+                input!.parentNode!.removeChild(last!)
+            }
+        } else {
+            if (this.shadowRoot!.querySelector(`.${fieldName}-error-div`)) {
+                let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
+                error_div!.parentElement!.removeChild(error_div!);
+            }
+
+            // update error list
+            if (validation.errors) {
+                let div = document.createElement('div');
+                div.classList.add(`${fieldName}-error-div`);
+                this.errorMap[fieldName!] = 0;
+                validation.errors.forEach((error: string) => {
+                    let p = document.createElement('p');
+                    p.innerText = error;
+                    p.style.color = "#eb5757";
+                    p.setAttribute('aria-live', 'polite');
+                    div.append(p);
+                    this.errorMap[fieldName!]++;
+                });
+                insertAfter(div, input!.parentNode!.lastElementChild);
+            }
+
+            input.classList.add("error");
         }
-      } else {
-        /* This handles the case where the field is not in the manifest.. 
-        we only want to make it red if its REQUIRED. */
-        if(required_fields.includes(field)){
-          let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-          input!.classList.add("error");
-
-          if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-            let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-            error_div!.parentElement!.removeChild(error_div!);
-          }
-          this.errorMap[field] = 0;
-          let div = document.createElement('div');
-          div.classList.add(`${field}-error-div`);
-          let p = document.createElement('p');
-          p.innerText = `${field} is required and is missing from your manifest.`;
-          p.style.color = "#eb5757";
-          div.append(p);
-          this.errorMap[field]++;
-          insertAfter(div, input!.parentNode!.lastElementChild);
-          
+        if (Object.keys(this.errorMap).length == 0) {
+            this.dispatchEvent(errorInTab(false, "settings"));
+        } else {
+            this.dispatchEvent(errorInTab(true, "settings"));
         }
-      }
     }
 
-    this.validationPromise = undefined;
-    if(Object.keys(this.errorMap).length === 0){
-      this.dispatchEvent(errorInTab(false, "settings"));
-    } else {
-      this.dispatchEvent(errorInTab(true, "settings"));
-    }
-  }
-
-  initOverrideList() {
-    this.activeOverrideItems = [];
-
-    if(this.manifest.display_override){
-      this.manifest.display_override!.forEach((item: string) => {
-        this.activeOverrideItems.push(item);
-      });
+    // temporary fix that helps with codes like en-US that we don't cover.
+    parseLangCode(code: string) {
+        if (code) {
+            return code.split("-")[0];
+        }
+        return "";
     }
 
-  }
+    async toggleOverrideList(label: string, origin: string) {
 
-  async handleInputChange(event: InputEvent){
-
-    if(this.validationPromise){
-      await this.validationPromise;
-    }
-
-    const input = <HTMLInputElement | HTMLSelectElement>event.target;
-    let updatedValue = input.value;
-    const fieldName = input.dataset['field'];
-
-    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
-      detail: {
-          field: fieldName,
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(fieldChangeAttempted);
-
-    const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
-    let passed = validation!.valid;
-
-
-    if(passed){
-      // Since we already validated, we only send valid updates.
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: fieldName,
-            change: updatedValue
-        },
-        bubbles: true,
-        composed: true
-      });
-      this.dispatchEvent(manifestUpdated);
-
-      if(input.classList.contains("error")){
-        input.classList.toggle("error");
-        delete this.errorMap[fieldName!];
-        let last = input!.parentNode!.lastElementChild
-        input!.parentNode!.removeChild(last!)
-      }
-    } else {
-      if(this.shadowRoot!.querySelector(`.${fieldName}-error-div`)){
-        let error_div = this.shadowRoot!.querySelector(`.${fieldName}-error-div`);
-        error_div!.parentElement!.removeChild(error_div!);
-      }
-      
-      // update error list
-      if(validation.errors){
-        let div = document.createElement('div');
-        div.classList.add(`${fieldName}-error-div`);
-        this.errorMap[fieldName!] = 0;
-        validation.errors.forEach((error: string) => {
-          let p = document.createElement('p');
-          p.innerText = error;
-          p.style.color = "#eb5757";
-          p.setAttribute('aria-live', 'polite');
-          div.append(p);
-          this.errorMap[fieldName!]++;
+        let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
+            detail: {
+                field: "display_override",
+            },
+            bubbles: true,
+            composed: true
         });
-        insertAfter(div, input!.parentNode!.lastElementChild);
-      }
-      
-      input.classList.add("error");
-    }
-    if(Object.keys(this.errorMap).length == 0){
-      this.dispatchEvent(errorInTab(false, "settings"));
-    } else {
-      this.dispatchEvent(errorInTab(true, "settings"));
-    }
-  }
+        this.dispatchEvent(fieldChangeAttempted);
 
-  // temporary fix that helps with codes like en-US that we don't cover.
-  parseLangCode(code: string){
-    if(code){
-      return code.split("-")[0];
-    } 
-    return "";
-  }
+        let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`sl-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`sl-menu-item[value="${label}"]`);
 
-  async toggleOverrideList(label: string, origin: string){
+        let active = !(checkbox as HTMLInputElement)!.checked;
 
-    let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
-      detail: {
-          field: "display_override",
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(fieldChangeAttempted);
+        if (active) {
+            // remove from active list
+            let remIndex = this.activeOverrideItems.indexOf(label);
+            this.activeOverrideItems.splice(remIndex, 1);
 
-    let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`sl-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`sl-menu-item[value="${label}"]`);
+        } else {
+            // push to active list
+            this.activeOverrideItems.push(label);
+        }
 
-    let active = !(checkbox as HTMLInputElement)!.checked;
-    
-    if(active){
-      // remove from active list
-      let remIndex = this.activeOverrideItems.indexOf(label);
-      this.activeOverrideItems.splice(remIndex, 1);
+        this.validatePlatformList("display_override", this.activeOverrideItems!);
 
-    } else {
-      // push to active list
-      this.activeOverrideItems.push(label);
+        this.requestUpdate();
     }
 
-    this.validatePlatformList("display_override", this.activeOverrideItems!);
+    async validatePlatformList(field: string, updatedValue: any[]) {
 
-    this.requestUpdate();
-  }
+        if (this.validationPromise) {
+            await this.validationPromise;
+        }
 
-  async validatePlatformList(field: string, updatedValue: any[]){
+        let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+        const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
+        let passed = validation!.valid;
 
-    if(this.validationPromise){
-      await this.validationPromise;
+        if (passed) {
+
+            let manifestUpdated = new CustomEvent('manifestUpdated', {
+                detail: {
+                    field: field,
+                    change: [...updatedValue]
+                },
+                bubbles: true,
+                composed: true
+            });
+
+            this.dispatchEvent(manifestUpdated);
+
+            if (input!.classList.contains("error")) {
+                input!.classList.toggle("error");
+                delete this.errorMap[field];
+                let last = input!.parentNode!.lastElementChild;
+                last!.parentNode!.removeChild(last!);
+            }
+        } else {
+            if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
+                let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
+                error_div!.parentElement!.removeChild(error_div!);
+            }
+
+            // update error list
+            if (validation.errors) {
+                let div = document.createElement('div');
+                div.classList.add(`${field}-error-div`);
+                this.errorMap[field] = 0;
+                validation.errors.forEach((error: string) => {
+                    let p = document.createElement('p');
+                    p.innerText = error;
+                    p.style.color = "#eb5757";
+                    p.setAttribute('aria-live', 'polite');
+                    div.append(p);
+                    this.errorMap[field]++;
+                });
+                insertAfter(div, input!.parentNode!.lastElementChild);
+            }
+
+            input!.classList.add("error");
+        }
+        if (Object.keys(this.errorMap).length === 0) {
+            this.dispatchEvent(errorInTab(false, "platform"));
+        } else {
+            this.dispatchEvent(errorInTab(true, "platform"));
+        }
     }
-    
-    let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
-    const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
-    let passed = validation!.valid;
 
-    if(passed){
-
-      let manifestUpdated = new CustomEvent('manifestUpdated', {
-        detail: {
-            field: field,
-            change: [...updatedValue]
-        },
-        bubbles: true,
-        composed: true
-      });
-
-      this.dispatchEvent(manifestUpdated);
-
-      if(input!.classList.contains("error")){
-        input!.classList.toggle("error");
-        delete this.errorMap[field];
-        let last = input!.parentNode!.lastElementChild;
-        last!.parentNode!.removeChild(last!);
-      } 
-    } else {
-      if(this.shadowRoot!.querySelector(`.${field}-error-div`)){
-        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-        error_div!.parentElement!.removeChild(error_div!);
-      }
-      
-      // update error list
-      if(validation.errors){
-        let div = document.createElement('div');
-        div.classList.add(`${field}-error-div`);
-        this.errorMap[field] = 0;
-        validation.errors.forEach((error: string) => {
-          let p = document.createElement('p');
-          p.innerText = error;
-          p.style.color = "#eb5757";
-          p.setAttribute('aria-live', 'polite');
-          div.append(p);
-          this.errorMap[field]++;
-        });
-        insertAfter(div, input!.parentNode!.lastElementChild);
-      }
-
-      input!.classList.add("error");
+    decideFocus(field: string) {
+        let decision = this.focusOn === field;
+        return { focus: decision }
     }
-    if(Object.keys(this.errorMap).length === 0){
-      this.dispatchEvent(errorInTab(false, "platform"));
-    } else {
-      this.dispatchEvent(errorInTab(true, "platform"));
-    }
-  }
 
-  decideFocus(field: string){
-    let decision = this.focusOn === field;
-    return {focus: decision}
-  }
-
-  render() {
-    return html`
+    render() {
+        return html`
       <div id="form-holder">
         <div class="form-row">
           <div class="form-field">
@@ -693,18 +694,18 @@ export class ManifestSettingsForm extends LitElement {
                 <sl-menu-label>Active Override Items</sl-menu-label>
                 ${this.activeOverrideItems.length != 0 ?
                 this.activeOverrideItems.map((item: string, index: number) =>
-                  html`
+                    html`
                     <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, "menu-item")}>
                       <p slot="prefix" class="menu-prefix">${index + 1}</p>
                       ${item}
                     </sl-menu-item>
                   `) :
-                  html`<sl-menu-item disabled>-</sl-menu-item>`
-                }
+                html`<sl-menu-item disabled>-</sl-menu-item>`
+            }
                 <sl-divider></sl-divider>
                 <div id="override-options-grid">
                   ${overrideOptions.map((item: string) =>
-                      html`
+                html`
                         <sl-checkbox class="override-item" size="small" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
                           ${item}
                         </sl-checkbox>
@@ -717,8 +718,8 @@ export class ManifestSettingsForm extends LitElement {
         </div>
       </div>
     `;
-  }
+    }
 }
 
-const orientationOptions: Array<string> =  ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary'];
+const orientationOptions: Array<string> = ['any', 'natural', 'landscape', 'portrait', 'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary'];
 const dirOptions: Array<string> = ['auto', 'ltr', 'rtl'];

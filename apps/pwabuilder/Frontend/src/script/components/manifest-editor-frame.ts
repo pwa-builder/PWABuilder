@@ -2,14 +2,13 @@ import { LitElement, css, html } from 'lit';
 import { customElement, state, property } from 'lit/decorators.js';
 
 import {
-  smallBreakPoint,
-  mediumBreakPoint,
-  largeBreakPoint,
-  xLargeBreakPoint,
-  xxxLargeBreakPoint,
+    smallBreakPoint,
+    mediumBreakPoint,
+    largeBreakPoint,
+    xLargeBreakPoint,
+    xxxLargeBreakPoint,
 } from '../utils/css/breakpoints';
 
-import '@pwabuilder/manifest-editor';
 import { getManifestContext } from '../services/app-info';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { Manifest } from '@pwabuilder/manifest-validation';
@@ -17,23 +16,24 @@ import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 import { ManifestContext } from '../utils/interfaces';
 import { env } from '../utils/environment';
+import '../components/manifest-editor/pwa-manifest-editor.js';
 
 @customElement('manifest-editor-frame')
 export class ManifestEditorFrame extends LitElement {
 
-  @property({ type: Boolean }) isGenerated: boolean = false;
-  @property({ type: String }) startingTab: string = "info";
-  @property({ type: String }) focusOn: string = "";
-  @property({ type: String }) analysisId: string = "";
+    @property({ type: Boolean }) isGenerated: boolean = false;
+    @property({ type: String }) startingTab: string = "info";
+    @property({ type: String }) focusOn: string = "";
+    @property({ type: String }) analysisId: string = "";
 
-  @state() manifest: Manifest = {};
-  @state() manifestURL: string = '';
-  @state() baseURL: string = '';
-  @state() tooltipOpen: boolean = false;
+    @state() manifest: Manifest = {};
+    @state() manifestURL: string = '';
+    @state() baseURL: string = '';
+    @state() tooltipOpen: boolean = false;
 
-  static get styles() {
-    return [
-      css`
+    static get styles() {
+        return [
+            css`
       * {
         box-sizing: border-box;
       }
@@ -221,104 +221,104 @@ export class ManifestEditorFrame extends LitElement {
           
       `)}
     `
-    ];
-  }
-
-  constructor() {
-    super();
-  }
-
-  // grabs the manifest, manifest url and site base url on load
-  connectedCallback(): void {
-    super.connectedCallback();
-    this.manifest = getManifestContext().manifest;
-    this.manifestURL = getManifestContext().manifestUrl;
-    this.baseURL = sessionStorage.getItem("current_url")!;
-  }
-
-  public launch(appUrl: string, manifest: ManifestContext): void {
-    this.manifest = manifest.manifest;
-    this.manifestURL = manifest.manifestUrl;
-    this.baseURL = appUrl;
-
-    const dialog = this.shadowRoot?.querySelector(".dialog") as SlDialog;
-    if (dialog) {
-      dialog.show();
+        ];
     }
-  }
 
-  // downloads manifest and tells the site they need to retest to see new manifest changes
-  downloadManifest() {
-    let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
-    editor.downloadManifest();
-
-    let readyForRetest = new CustomEvent('readyForRetest', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(readyForRetest);
-  }
-
-  // hides modal
-  async hideDialog(e: any) {
-    const dialog: any = this.shadowRoot!.querySelector(".dialog");
-    if (e.target === dialog) {
-      await dialog!.hide();
-      recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
-      document.body.style.height = "unset";
+    constructor() {
+        super();
     }
-  }
 
-  async openDialog() {
-    document.body.style.height = "100vh"
-    const dialog = this.shadowRoot!.querySelector(".dialog");
-
-    dialog?.removeEventListener('sl-request-close', () => { });
-    dialog?.addEventListener('sl-request-close', (event: any) => {
-      if (event.detail.source === 'keyboard' && this.tooltipOpen) {
-        event.preventDefault();
-      }
-    }, { once: true });
-  }
-
-  /* Next functions are for analytics */
-
-  handleTabSwitch(e: CustomEvent) {
-    recordPWABuilderProcessStep(`manifest_editor.tab_switched`, AnalyticsBehavior.ProcessCheckpoint);
-    recordPWABuilderProcessStep(`manifest_editor.${e.detail.tab}_tab_selected`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-  handleManifestDownloaded() {
-    recordPWABuilderProcessStep(`manifest_editor.download_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-  handleFieldChange(e: CustomEvent) {
-    let readyForRetest = new CustomEvent('readyForRetest', {
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(readyForRetest);
-    recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
-  }
-
-  handleManifestCopied() {
-    recordPWABuilderProcessStep(`manifest_editor.copy_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-  handleImageGeneration(e: CustomEvent, field: string) {
-    if (field === "icons") {
-      recordPWABuilderProcessStep(`manifest_editor.icon_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint, { platforms: [...e.detail.selectedPlatforms] });
-    } else {
-      recordPWABuilderProcessStep(`manifest_editor.screenshot_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint);
+    // grabs the manifest, manifest url and site base url on load
+    connectedCallback(): void {
+        super.connectedCallback();
+        this.manifest = getManifestContext().manifest;
+        this.manifestURL = getManifestContext().manifestUrl;
+        this.baseURL = sessionStorage.getItem("current_url")!;
     }
-  }
 
-  handleUploadIcon() {
-    recordPWABuilderProcessStep(`manifest_editor.upload_icon_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
+    public launch(appUrl: string, manifest: ManifestContext): void {
+        this.manifest = manifest.manifest;
+        this.manifestURL = manifest.manifestUrl;
+        this.baseURL = appUrl;
 
-  render() {
-    return html`
+        const dialog = this.shadowRoot?.querySelector(".dialog") as SlDialog;
+        if (dialog) {
+            dialog.show();
+        }
+    }
+
+    // downloads manifest and tells the site they need to retest to see new manifest changes
+    downloadManifest() {
+        let editor = (this.shadowRoot!.querySelector("pwa-manifest-editor") as any);
+        editor.downloadManifest();
+
+        let readyForRetest = new CustomEvent('readyForRetest', {
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(readyForRetest);
+    }
+
+    // hides modal
+    async hideDialog(e: any) {
+        const dialog: any = this.shadowRoot!.querySelector(".dialog");
+        if (e.target === dialog) {
+            await dialog!.hide();
+            recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
+            document.body.style.height = "unset";
+        }
+    }
+
+    async openDialog() {
+        document.body.style.height = "100vh"
+        const dialog = this.shadowRoot!.querySelector(".dialog");
+
+        dialog?.removeEventListener('sl-request-close', () => { });
+        dialog?.addEventListener('sl-request-close', (event: any) => {
+            if (event.detail.source === 'keyboard' && this.tooltipOpen) {
+                event.preventDefault();
+            }
+        }, { once: true });
+    }
+
+    /* Next functions are for analytics */
+
+    handleTabSwitch(e: CustomEvent) {
+        recordPWABuilderProcessStep(`manifest_editor.tab_switched`, AnalyticsBehavior.ProcessCheckpoint);
+        recordPWABuilderProcessStep(`manifest_editor.${e.detail.tab}_tab_selected`, AnalyticsBehavior.ProcessCheckpoint);
+    }
+
+    handleManifestDownloaded() {
+        recordPWABuilderProcessStep(`manifest_editor.download_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    }
+
+    handleFieldChange(e: CustomEvent) {
+        let readyForRetest = new CustomEvent('readyForRetest', {
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(readyForRetest);
+        recordPWABuilderProcessStep(`manifest_editor.field_change_attempted`, AnalyticsBehavior.ProcessCheckpoint, { field: e.detail.field });
+    }
+
+    handleManifestCopied() {
+        recordPWABuilderProcessStep(`manifest_editor.copy_manifest_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    }
+
+    handleImageGeneration(e: CustomEvent, field: string) {
+        if (field === "icons") {
+            recordPWABuilderProcessStep(`manifest_editor.icon_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint, { platforms: [...e.detail.selectedPlatforms] });
+        } else {
+            recordPWABuilderProcessStep(`manifest_editor.screenshot_generation_attempted`, AnalyticsBehavior.ProcessCheckpoint);
+        }
+    }
+
+    handleUploadIcon() {
+        recordPWABuilderProcessStep(`manifest_editor.upload_icon_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    }
+
+    render() {
+        return html`
       <sl-dialog class="dialog" @sl-show=${() => this.openDialog()} @sl-hide=${(e: any) => this.hideDialog(e)} noHeader>
         <div id="frame-wrapper">
           <div id="frame-content">
@@ -341,7 +341,7 @@ export class ManifestEditorFrame extends LitElement {
               @generateScreenshotsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "screenshots")}
               @uploadIcons=${() => this.handleUploadIcon()}
               @generateIconsAttempted=${(e: CustomEvent) => this.handleImageGeneration(e, "icons")}
-              @trigger-hover=${(e: CustomEvent) => this.tooltipOpen = e.detail.entering}
+              
             ></pwa-manifest-editor>
             
           </div>
@@ -363,5 +363,5 @@ export class ManifestEditorFrame extends LitElement {
         </div>
       </sl-dialog>
     `;
-  }
+    }
 }

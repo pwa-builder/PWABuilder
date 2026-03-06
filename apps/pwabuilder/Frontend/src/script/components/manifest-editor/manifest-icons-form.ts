@@ -1,20 +1,16 @@
-import { required_fields, validateSingleField, singleFieldValidation } from '@pwabuilder/manifest-validation';
+import { required_fields, validateSingleField, singleFieldValidation, Manifest, Icon } from '@pwabuilder/manifest-validation';
 import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
 import { repeat } from "lit/directives/repeat.js";
 import { customElement, property, state } from 'lit/decorators.js';
-import { errorInTab, insertAfter } from '../utils/helpers';
-import {
-    Icon,
-    Lazy,
-    Manifest,
-} from '../utils/interfaces';
-import { resolveUrl } from '../utils/urls';
 import { classMap } from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
 import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
+import { Lazy } from "../../utils/interfaces";
+import { errorInTab, insertAfter } from "../../utils/helpers";
+import { resolveUrl } from "../../utils/url";
 
 let manifestInitialized = false;
 

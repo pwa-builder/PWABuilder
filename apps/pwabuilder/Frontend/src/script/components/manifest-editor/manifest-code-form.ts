@@ -1,22 +1,22 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Manifest } from '../utils/interfaces';
-import { prettyString } from '../utils/pretty-json';
 
 import "./toast";
 
 import '@pwabuilder/code-editor'
+import { prettyString } from "../../utils/prettyJson";
+import { Manifest } from "@pwabuilder/manifest-validation";
 
 @customElement('manifest-code-form')
 export class ManifestCodeForm extends LitElement {
 
-  @property({type: Object}) manifest: Manifest = {};
-  @state() showCopyToast: any | null = false;
+    @property({ type: Object }) manifest: Manifest = {};
+    @state() showCopyToast: any | null = false;
 
 
-  static get styles() {
-    return [
-      css`
+    static get styles() {
+        return [
+            css`
         #code-holder {
           position: relative;
           max-width: 700px;
@@ -40,22 +40,22 @@ export class ManifestCodeForm extends LitElement {
           cursor: pointer;
         }
       `,
-    ];
-  }
+        ];
+    }
 
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  firstUpdated() {
-  }
+    firstUpdated() {
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div id="code-holder">
         <code-editor .startText=${prettyString(this.manifest)} .readOnly=${true}></code-editor>
       </div>
       ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
     `;
-  }
+    }
 }
