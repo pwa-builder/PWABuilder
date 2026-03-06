@@ -1,16 +1,16 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import '@pwabuilder/code-editor';
+import '../components/code-editor';
 
 @customElement('sw-panel')
 export class SWPanel extends LitElement {
 
-  @property({type: Object}) sw: any = {};
+    @property({ type: Object }) sw: any = {};
 
 
-  static get styles() {
-    return css`
+    static get styles() {
+        return css`
 
       .panel-holder {
         display: flex;
@@ -37,18 +37,18 @@ export class SWPanel extends LitElement {
 
 
     `;
-  }
+    }
 
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  handleEditorUpdate(){
-    console.log("update");
-  }
+    handleEditorUpdate() {
+        console.log("update");
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div class="panel-holder">
         <div class="panel-desc">
           <h2>${this.sw.type}</h2>
@@ -66,5 +66,5 @@ export class SWPanel extends LitElement {
         </div>
       </div>
     `;
-  }
+    }
 }

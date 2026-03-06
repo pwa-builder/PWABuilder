@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import "./toast";
 
-import '@pwabuilder/code-editor'
+import '../code-editor';
 import { prettyString } from "../../utils/prettyJson";
 import { Manifest } from "@pwabuilder/manifest-validation";
 
