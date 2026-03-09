@@ -191,18 +191,18 @@ public class ManifestAnalyzer
                         ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
                         ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
                         ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
-                        _ => false
+                        _ => new bool?() // We're unsure. This can happen if the extension isn't plain from the URL, e.g. http://example.com/images/512
                     };
 
                     if (hasTypeProperty)
                     {
                         // Both type property and file extension must match the desired type
-                        isDesiredType = declaredTypeMatches && extensionMatchesType;
+                        isDesiredType = declaredTypeMatches && (extensionMatchesType == true || extensionMatchesType == null);
                     }
                     else
                     {
                         // If no type property is defined, fallback to file extension check
-                        isDesiredType = extensionMatchesType;
+                        isDesiredType = extensionMatchesType == true || extensionMatchesType == null;
                     }
                 }
 
