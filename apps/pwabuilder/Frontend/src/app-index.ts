@@ -129,7 +129,6 @@ export class AppIndex extends LitElement {
 
         const pages: PageMap = {
             'reportcard': 'Report Card',
-            'freetoken': 'Free Token',
             'congratulations': 'Congratulations',
             'portals': 'Portals',
             'imagegenerator': 'Image Generator'
@@ -206,7 +205,7 @@ export class AppIndex extends LitElement {
         <main id="content">
           <div id="router-outlet"></div>
         </main>
-        ${this.pageName === "freeToken" || this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
+        ${this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
         <app-footer></app-footer>
       </div>
 

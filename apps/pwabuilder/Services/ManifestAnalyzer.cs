@@ -62,7 +62,9 @@ public class ManifestAnalyzer
             try
             {
                 var manifestCheck = this.manifestChecks[capability.Id];
-                capability.Status = await manifestCheck.Check(manifestDetection, cancelToken);
+                var (status, error) = await manifestCheck.Check(manifestDetection, cancelToken);
+                capability.Status = error != null ? PwaCapabilityCheckStatus.Failed : status;
+                capability.ErrorMessage = error?.Message;
             }
             catch (Exception ex)
             {
@@ -91,7 +93,7 @@ public class ManifestAnalyzer
     {
         // Ignore the warning about the switch expression not handling unnamed enum values, e.g. casting a random integer to PwaCapabilityId. We don't care about that.
         // However, we want to enable CS8509 which requires that all known enum values are handled.
-        #pragma warning disable CS8524
+#pragma warning disable CS8524
 
         return capability.Id switch
         {
@@ -101,13 +103,20 @@ public class ManifestAnalyzer
             PwaCapabilityId.ThemeColor => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "theme_color", 3)),
             PwaCapabilityId.BackgroundColor => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "background_color", 3)),
             PwaCapabilityId.Shortcuts => new PwaManifestCapabilityCheck(capability, CheckShortcuts),
+            PwaCapabilityId.ShortcutIconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetShortcutImages(manifest), manifest, cancelToken)),
+            PwaCapabilityId.ShortcutIconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetShortcutImages(manifest), manifest, cancelToken)),
+            PwaCapabilityId.ShortcutIconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetShortcutImages(manifest), manifest, cancelToken)),
             PwaCapabilityId.Categories => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringArrayField(m.Manifest, "categories")),
             PwaCapabilityId.Icons => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "icons")),
+            PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("icons", manifest), manifest, cancelToken)),
+            PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
+            PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 192, "image/png")),
             PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 512, "image/png")),
             PwaCapabilityId.Screenshots => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "screenshots")),
-            PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("icons", manifest, cancelToken)),
-            PwaCapabilityId.ScreenshotsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable("screenshots", manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
+            PwaCapabilityId.ScreenshotSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
             PwaCapabilityId.HasWideScreenshot => new PwaManifestCapabilityCheck(capability, m => CheckScreenshotFormFactor(m, "wide")),
             PwaCapabilityId.HasNarrowScreenshot => new PwaManifestCapabilityCheck(capability, m => CheckScreenshotFormFactor(m, "narrow")),
             PwaCapabilityId.FileHandlers => new PwaManifestCapabilityCheck(capability, CheckFileHandlers),
@@ -133,7 +142,7 @@ public class ManifestAnalyzer
             PwaCapabilityId.ScopeExtensions => new PwaManifestCapabilityCheck(capability, CheckScopeExtensions),
             PwaCapabilityId.Id => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "id", 1)),
 
-            // Service worker capabilities are handled elsewhere, in ServiceWorkerAnalyzer.
+            // Service worker capabilities are handled in ServiceWorkerAnalyzer.
             PwaCapabilityId.HasServiceWorker => throw new NotImplementedException(),
             PwaCapabilityId.ServiceWorkerIsNotEmpty => throw new NotImplementedException(),
             PwaCapabilityId.PeriodicSync => throw new NotImplementedException(),
@@ -147,7 +156,7 @@ public class ManifestAnalyzer
             // General capabilities are handled elsewhere.
             PwaCapabilityId.ServesHtml => throw new NotImplementedException()
         };
-        #pragma warning restore CS8524 
+#pragma warning restore CS8524
     }
 
     private static PwaCapabilityCheckStatus CheckManifestImageArray(JsonElement manifest, string fieldName)
@@ -168,22 +177,32 @@ public class ManifestAnalyzer
         {
             foreach (var icon in icons.EnumerateArray())
             {
-                var isDesiredType = icon.TryGetProperty("type", out var iconType) && iconType.ValueKind == JsonValueKind.String && string.Equals(iconType.GetString(), imageType, StringComparison.OrdinalIgnoreCase);
+                var hasTypeProperty = icon.TryGetProperty("type", out var iconType) && iconType.ValueKind == JsonValueKind.String;
+                var declaredTypeMatches = hasTypeProperty && string.Equals(iconType.GetString(), imageType, StringComparison.OrdinalIgnoreCase);
 
-                // If there was no type defined, see if we can sus it out using the file extension.
-                if (!isDesiredType && !icon.TryGetProperty("type", out _))
+                var isDesiredType = false;
+                var hasSrcProp = icon.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String;
+
+                if (hasSrcProp)
                 {
-                    var hasSrcProp = icon.TryGetProperty("src", out var src);
-                    if (hasSrcProp && src.ValueKind == JsonValueKind.String)
+                    var fileExtension = Path.GetExtension(src.GetString());
+                    var extensionMatchesType = fileExtension switch
                     {
-                        var fileExtension = Path.GetExtension(src.GetString());
-                        isDesiredType = fileExtension switch
-                        {
-                            ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
-                            ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
-                            ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
-                            _ => false
-                        };
+                        ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
+                        ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
+                        ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
+                        _ => new bool?() // We're unsure. This can happen if the extension isn't plain from the URL, e.g. http://example.com/images/512
+                    };
+
+                    if (hasTypeProperty)
+                    {
+                        // Both type property and file extension must match the desired type
+                        isDesiredType = declaredTypeMatches && (extensionMatchesType == true || extensionMatchesType == null);
+                    }
+                    else
+                    {
+                        // If no type property is defined, fallback to file extension check
+                        isDesiredType = extensionMatchesType == true || extensionMatchesType == null;
                     }
                 }
 
@@ -235,12 +254,36 @@ public class ManifestAnalyzer
         return hasDesiredFormFactor ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private async Task<PwaCapabilityCheckStatus> CheckImagesAreFetchable(string fieldName, ManifestDetection manifestContext, CancellationToken cancelToken)
+    private static IEnumerable<JsonElement> GetManifestArray(string fieldName, ManifestDetection manifestContext)
     {
-        var manifest = manifestContext.Manifest;
-        var hasImagesField = manifestContext.Manifest.TryGetProperty(fieldName, out var images)
-            && images.ValueKind == JsonValueKind.Array;
-        if (!hasImagesField)
+        var hasImagesField = manifestContext.Manifest.TryGetProperty(fieldName, out var array)
+            && array.ValueKind == JsonValueKind.Array;
+        if (hasImagesField)
+        {
+            return array.EnumerateArray();
+        }
+
+        return [];
+    }
+
+    private static IEnumerable<JsonElement> GetShortcutImages(ManifestDetection manifestContext)
+    {
+        var shortcuts = GetManifestArray("shortcuts", manifestContext);
+        return shortcuts.SelectMany(s =>
+        {
+            var hasShortcutIcons = s.TryGetProperty("icons", out var icons);
+            if (hasShortcutIcons && icons.ValueKind == JsonValueKind.Array)
+            {
+                return icons.EnumerateArray();
+            }
+
+            return [];
+        });
+    }
+
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckImagesAreFetchable(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        if (!images.Any())
         {
             return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
         }
@@ -255,15 +298,116 @@ public class ManifestAnalyzer
               }
            ]
         */
-        var iconUris = images.EnumerateArray()
+        var iconUris = images
             .Where(icon => icon.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String)
             .Select(icon => icon.GetProperty("src").GetString())
             .Where(src => !string.IsNullOrWhiteSpace(src))
             .Select(src => new Uri(manifestContext.Url, src));
         var iconFetchTasks = iconUris.Select(uri => this.imageValidator.TryImageExistsAsync(uri, cancelToken));
         var imageExistChecks = await Task.WhenAll(iconFetchTasks);
-        var allImagesExist = imageExistChecks.All(a => a);
-        return allImagesExist ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+        var imageWithError = imageExistChecks
+            .Select(c => c.Error)
+            .FirstOrDefault(e => e != null);
+        if (imageWithError != null)
+        {
+            return imageWithError;
+        }
+
+        return PwaCapabilityCheckStatus.Passed;
+    }
+
+    /// <summary>
+    /// Validates that the declared types of images in the manifest match their actual file types.
+    /// </summary>
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckImageTypesAreValid(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        if (!images.Any())
+        {
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+        }
+
+        var imageValidationTasks = new List<Task<Result<bool>>>();
+
+        foreach (var image in images)
+        {
+            // Only validate if both src and type are present
+            var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
+            var hasType = image.TryGetProperty("type", out var type) && type.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(type.GetString());
+            var hasUri = Uri.TryCreate(manifestContext.Url, src.GetString(), out var imageUri) && hasSrc;
+            if (hasSrc && hasType && hasUri && imageUri != null)
+            {
+                var declaredType = type.GetString();
+                imageValidationTasks.Add(this.imageValidator.TryValidateImageTypeAsync(imageUri, declaredType, cancelToken));
+            }
+        }
+
+        if (imageValidationTasks.Count == 0)
+        {
+            return PwaCapabilityCheckStatus.Skipped; // No images with type declarations to validate
+        }
+
+        var results = await Task.WhenAll(imageValidationTasks);
+        var imageTypeFailure = results.Select(r => r.Error).FirstOrDefault(e => e != null);
+        if (imageTypeFailure != null)
+        {
+            // If it's a 403 Forbidden error, skip the check. We'll surface errors via CheckImagesAreFetchable instead.
+            if (imageTypeFailure is HttpRequestException httpRequestException && httpRequestException.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                return PwaCapabilityCheckStatus.Skipped;
+            }
+
+            return imageTypeFailure;
+        }
+
+        return PwaCapabilityCheckStatus.Passed;
+    }
+
+    /// <summary>
+    /// Validates that the declared sizes of images in the manifest match their actual dimensions.
+    /// </summary>
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckImageSizesAreValid(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        if (!images.Any())
+        {
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+        }
+
+        var imageValidationTasks = new List<Task<Result<bool>>>();
+
+        foreach (var image in images)
+        {
+            // Only validate if both src and sizes are present
+            var hasSrc = image.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
+            var hasSizes = image.TryGetProperty("sizes", out var sizes) && sizes.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(sizes.GetString());
+            var hasUri = Uri.TryCreate(manifestContext.Url, src.GetString(), out var imageUri) && hasSrc;
+            if (hasSrc && hasSizes && hasUri && imageUri != null)
+            {
+                var declaredSizes = sizes.GetString();
+                imageValidationTasks.Add(this.imageValidator.TryValidateImageSizeAsync(imageUri, declaredSizes, cancelToken));
+            }
+        }
+
+        if (imageValidationTasks.Count == 0)
+        {
+            return PwaCapabilityCheckStatus.Skipped; // No images with size declarations to validate
+        }
+
+        var results = await Task.WhenAll(imageValidationTasks);
+        var firstImageError = results.Select(r => r.Error).FirstOrDefault(e => e != null);
+        if (firstImageError != null)
+        {
+            // If it's a 403 error, skip the check. We'll surface errors via CheckImagesAreFetchable instead.
+            if (firstImageError is HttpRequestException httpRequestException && httpRequestException.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                return PwaCapabilityCheckStatus.Skipped;
+            }
+
+            return firstImageError;
+        }
+        else
+        {
+            return PwaCapabilityCheckStatus.Passed;
+        }
     }
 
     private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
@@ -420,7 +564,7 @@ public class ManifestAnalyzer
             && scopeExtensions.ValueKind == JsonValueKind.Array
             && scopeExtensions.GetArrayLength() > 0
             // each extension needs a "type" string. 
-            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("scope", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
+            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("type", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
             // each extension needs a "origin" string which must be a valid URL.
             && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("origin", out var extensionOrigin) && extensionOrigin.ValueKind == JsonValueKind.String && Uri.TryCreate(extensionOrigin.GetString(), UriKind.Absolute, out _));
         return hasScopeExtensions ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
@@ -428,28 +572,28 @@ public class ManifestAnalyzer
 
     internal class PwaManifestCapabilityCheck
     {
-        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, CancellationToken, Task<PwaCapabilityCheckStatus>> check)
+        public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, CancellationToken, Task<Result<PwaCapabilityCheckStatus>>> check)
         {
             Id = capability.Id;
             Check = check;
         }
 
         public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, Task<PwaCapabilityCheckStatus>> check)
-            : this(capability, (manifestContext, _) => check(manifestContext))
+            : this(capability, (manifestContext, _) => check(manifestContext).ContinueWith(t => Result.From(t.Result)))
         {
         }
 
         public PwaManifestCapabilityCheck(PwaCapability capability, Func<ManifestDetection, PwaCapabilityCheckStatus> check)
-            : this(capability, (manifestContext, _) => Task.FromResult(check(manifestContext)))
+            : this(capability, (manifestContext, _) => Task.FromResult(Result.From(check(manifestContext))))
         {
         }
 
         public PwaManifestCapabilityCheck(PwaCapability capability, Func<JsonElement, PwaCapabilityCheckStatus> check)
-            : this(capability, (manifestContext, _) => Task.FromResult(check(manifestContext.Manifest)))
+            : this(capability, (manifestContext, _) => Task.FromResult(Result.From(check(manifestContext.Manifest))))
         {
         }
 
         public PwaCapabilityId Id { get; init; }
-        public Func<ManifestDetection, CancellationToken, Task<PwaCapabilityCheckStatus>> Check { get; set; }
+        public Func<ManifestDetection, CancellationToken, Task<Result<PwaCapabilityCheckStatus>>> Check { get; set; }
     }
 }

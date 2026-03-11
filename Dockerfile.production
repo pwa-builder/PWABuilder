@@ -1,18 +1,29 @@
 # Use the official ASP.NET Core runtime as the base image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 
 # Install dependencies for Puppeteer (runtime only, no Node.js needed here)
+# Install Chrome version 130.0.6723.116 which is compatible with PuppeteerSharp 20.2.x
+# IMPORTANT: This specific version is chosen for compatibility with PuppeteerSharp 20.2.x
 RUN apt-get update && apt-get install -y \
     wget \
-    gnupg \
+    unzip \
     ca-certificates \
     procps \
     libxss1 \
-    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libxkbcommon0 \
+    libgtk-3-0 \
+    fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
     --no-install-recommends \
+    && wget -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_130.0.6723.116-1_amd64.deb \
+    && dpkg -i /tmp/chrome.deb || apt-get install -f -y \
+    && rm /tmp/chrome.deb \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -26,7 +37,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 
 # Use the SDK image to build the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Install Node.js in build stage
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
@@ -48,10 +59,14 @@ COPY . .
 WORKDIR /src/apps/pwabuilder/Frontend
 RUN npm install
 RUN npm run build
+
 # Build lighthouse custom audits
 WORKDIR /src/apps/pwabuilder/node-scripts
 RUN npm install
 RUN npm run build
+
+# Force fix any NPM vulnerabilities
+RUN npm audit fix --force
 
 # Build backend
 WORKDIR /src/apps/pwabuilder
@@ -60,9 +75,30 @@ RUN dotnet build "PWABuilder.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "PWABuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Final stage
-FROM base AS final
+# Final stage/image
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+
+# Chrome for Testing: please review all the latest versions here:
+# https://googlechromelabs.github.io/chrome-for-testing/
+ENV CHROMEDRIVER_VERSION=142.0.7444.59
+
+# install chrome
+RUN apt-get update && apt-get install -y wget && apt-get install -y zip
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+### install chromedriver
+RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip \
+    && unzip chromedriver-linux64.zip && rm -dfr chromedriver_linux64.zip \
+    && mv /chromedriver-linux64/chromedriver /usr/bin/chromedriver \
+    && chmod +x /usr/bin/chromedriver \
+    && groupadd -r pwabuilder && useradd -r -g pwabuilder -d /app -s /bin/bash pwabuilder
+
 WORKDIR /app
+RUN chown -R pwabuilder:pwabuilder /app
+EXPOSE 8080
+
+# Copy from publish stage
 COPY --from=publish /app/publish .
 
 # Enable detailed logging for debugging
@@ -88,9 +124,8 @@ ENV HOME=/home/appuser
 RUN mkdir -p /home/appuser \
     && chown -R appuser:appgroup /home/appuser
 
-# Give the user permission to access Chrome
-RUN chown -R appuser:appgroup /usr/bin/google-chrome-stable
-RUN chmod +x /usr/bin/google-chrome-stable
+# Give the user permission to access Chrome (if available)
+RUN if [ -f /usr/bin/google-chrome-stable ]; then chown -R appuser:appgroup /usr/bin/google-chrome-stable && chmod +x /usr/bin/google-chrome-stable; fi
 
 USER appuser
 

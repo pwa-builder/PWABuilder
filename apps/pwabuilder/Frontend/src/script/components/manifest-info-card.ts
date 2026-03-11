@@ -1,29 +1,30 @@
 import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { manifest_fields } from '@pwabuilder/manifest-information';
 import {
-  smallBreakPoint,
+    smallBreakPoint,
 } from '../utils/css/breakpoints';
 import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import { manifest_fields } from "../models/manifest-fields";
 
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {
-  @property({ type: String }) field: string = "";
-  @property({ type: String }) description = "";
-  @property({ type: String }) docsUrl = "";
-  @property({ type: String }) imageUrl = "";
-  @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
-  @state() currentlyHovering: boolean = false;
-  @state() currentlyOpen: boolean = false;
-  @state() hoverTimer: any;
+    @property({ type: String }) field: string = "";
+    @property({ type: String }) description = "";
+    @property({ type: String }) docsUrl = "";
+    @property({ type: String }) imageUrl = "";
+    @property({ type: String }) placement: "" | "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end" = "";
+    @property({ type: String }) error = "";
+    @state() currentlyHovering: boolean = false;
+    @state() currentlyOpen: boolean = false;
+    @state() hoverTimer: any;
 
-  static get styles() {
-    return [
-      css`
+    static get styles() {
+        return [
+            css`
     
       .mic-wrapper {
         display: flex;
@@ -167,137 +168,157 @@ export class ManifestInfoCard extends LitElement {
       `)}
 
     `
-    ];
-  }
-
-  constructor() {
-    super();
-  }
-
-  openME() {
-    // general counter
-    recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    // specific counter
-    recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-
-    (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
-    let tab: string = manifest_fields[this.field]?.location || "info";
-    let event: CustomEvent = new CustomEvent('open-manifest-editor', {
-      detail: {
-        field: this.field,
-        tab: tab
-      },
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(event);
-  }
-
-  trackLearnMoreAnalytics() {
-    // general counter
-    recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-    //specific field counter
-    recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
-  }
-
-
-  // opens tooltip
-  handleHover(entering: boolean) {
-    this.currentlyHovering = entering;
-    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
-    let myEvent = new CustomEvent('trigger-hover',
-      {
-        detail: {
-          tooltip: tooltip,
-          entering: entering
-        },
-        bubbles: true,
-        composed: true
-      });
-    if (!entering) {
-      setTimeout(() => { this.closeTooltip(myEvent) }, 250)
-    } else {
-      this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
+        ];
     }
-  }
 
-  handleClick() {
-    let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown);
-    if (!tooltip.open) {
-      tooltip.show();
+    constructor() {
+        super();
     }
-    this.currentlyOpen = tooltip.open;
-  }
 
-  closeTooltip(e: CustomEvent) {
-    if (!this.currentlyHovering) {
-      clearTimeout(this.hoverTimer);
-      this.dispatchEvent(e);
+    openME() {
+        // general counter
+        recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+        // specific counter
+        recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+
+        (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
+        let tab: string = manifest_fields[this.field]?.location || "info";
+        let event: CustomEvent = new CustomEvent('open-manifest-editor', {
+            detail: {
+                field: this.field,
+                tab: tab
+            },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(event);
     }
-  }
 
-  // hacky work around for clicking links with keyboard that are nested in menu items
-  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
-  handleClickingLink(linkTag: string) {
-    const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
-    anchor.click();
-    this.trackLearnMoreAnalytics();
-  }
+    trackLearnMoreAnalytics() {
+        // general counter
+        recordPWABuilderProcessStep(`manifest_tooltip.learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+        //specific field counter
+        recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_learn_more_clicked`, AnalyticsBehavior.ProcessCheckpoint);
+    }
 
-  render() {
-    return html`
-    <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
-      ${this.placement !== "" ?
-        html`
-          <sl-dropdown
-            distance="10"
-            placement="${this.placement}"
-            class="tooltip"
-            @sl-hide=${() => this.handleHover(false)}
-          >
-          <slot name="trigger" slot="trigger"></slot>
-          <div class="info-box">
-            <p class="info-blurb">${this.description}</p>
-            ${this.renderImage()}            
-          </div>
-          <sl-menu>
-            <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
-            ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
-          </sl-menu>
-        </sl-dropdown>
-        ` :
-        html`
-          <sl-dropdown
-            distance="10"
-            class="tooltip"
-            @sl-hide=${() => this.handleHover(false)}
-          >
-          <slot name="trigger" slot="trigger"></slot>
-          <div class="info-box">
-            <p class="info-blurb">${this.description}</p>
-            ${this.renderImage()}
+
+    // opens tooltip
+    handleHover(entering: boolean) {
+        this.currentlyHovering = entering;
+        let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+        let myEvent = new CustomEvent('trigger-hover',
+            {
+                detail: {
+                    tooltip: tooltip,
+                    entering: entering
+                },
+                bubbles: true,
+                composed: true
+            });
+        if (!entering) {
+            setTimeout(() => { this.closeTooltip(myEvent) }, 250)
+        } else {
+            this.hoverTimer = setTimeout(() => { this.dispatchEvent(myEvent) }, 750)
+        }
+    }
+
+    handleClick() {
+        let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown);
+        if (!tooltip.open) {
+            tooltip.show();
+        }
+        this.currentlyOpen = tooltip.open;
+    }
+
+    closeTooltip(e: CustomEvent) {
+        if (!this.currentlyHovering) {
+            clearTimeout(this.hoverTimer);
+            this.dispatchEvent(e);
+        }
+    }
+
+    // hacky work around for clicking links with keyboard that are nested in menu items
+    // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+    handleClickingLink(linkTag: string) {
+        const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('a[data-tag="' + linkTag + '"]')!;
+        anchor.click();
+        this.trackLearnMoreAnalytics();
+    }
+
+    render() {
+        return html`
+        <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
+        ${this.placement !== "" ?
+                html`
+            <sl-dropdown
+                distance="10"
+                placement="${this.placement}"
+                class="tooltip"
+                @sl-hide=${() => this.handleHover(false)}
+            >
+            <slot name="trigger" slot="trigger"></slot>
+            <div class="info-box">
+                <p class="info-blurb">
+                    ${this.description}
+                    ${this.renderError()}
+                </p>
+                ${this.renderImage()}            
+            </div>
             <sl-menu>
-            <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
-              ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
-          </sl-menu>
-          </div>
-        </sl-dropdown>
+                <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+                ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
+            </sl-menu>
+            </sl-dropdown>
+            ` :
+                html`
+            <sl-dropdown
+                distance="10"
+                class="tooltip"
+                aria-label="Information about ${this.field}"
+                @sl-hide=${() => this.handleHover(false)}
+            >
+            <slot name="trigger" slot="trigger"></slot>
+            <div class="info-box">
+                <p class="info-blurb">
+                    ${this.description}
+                    ${this.renderError()}
+                </p>
+                ${this.renderImage()}
+                <sl-menu>
+                <sl-menu-item  @click=${() => this.handleClickingLink(this.field)}><a class="learn-more" data-tag=${this.field} href="${this.docsUrl || "https://docs.pwabuilder.com"}" target="blank" rel="noopener noreferrer">Learn More</a></sl-menu-item>
+                ${manifest_fields[this.field]?.location ? html`<sl-menu-item @click=${() => this.openME()}>Edit in Manifest</sl-menu-item>` : null}
+            </sl-menu>
+            </div>
+            </sl-dropdown>
         `}
 
 
     </div>
     `;
-  }
-
-  renderImage(): TemplateResult {
-    if (!this.imageUrl) {
-      return html``;
     }
 
-    return html`
-      <div class="image-section">
-        <img src="${this.imageUrl}" alt="Visual example of the feature" />
-      </div>
-    `;
-  }
+    renderImage(): TemplateResult {
+        if (!this.imageUrl) {
+            return html``;
+        }
+
+        return html`
+            <div class="image-section">
+                <img src="${this.imageUrl}" alt="Visual example of the feature" />
+            </div>
+        `;
+    }
+
+    renderError(): TemplateResult {
+        if (!this.error) {
+            return html``;
+        }
+
+        return html`
+            <br>
+            <div>
+                <p>${this.error}</p>
+            </div>
+        `;
+    }
 }

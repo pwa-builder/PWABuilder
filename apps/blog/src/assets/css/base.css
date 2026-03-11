@@ -4,120 +4,131 @@
 @import url("https://fonts.googleapis.com/css2?family=Hind:wght@300;400;700&display=swap");
 
 :root {
-  --font-family: "Hind", sans-serif;
-  --font-bold: 700;
-  --font-medium: 400;
+    --font-family: "Hind", sans-serif;
 
-  --font-size: 14px;
-  --small-font-size: 12px;
-  --small-medium-font-size: 22px;
-  --medium-font-size: 28px;
-  --large-font-size: 32px;
-  --xlarge-font-size: 44px;
+    --body-font: Segoe UI Variable Text, 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
 
-  --primary-font-color: #292c3a;
-  --secondary-font-color: #eeeeee;
+    --font-bold: 700;
+    --font-medium: 400;
 
-  --primary-background-color: #ffffff;
-  --secondary-background-color: #292c3a;
+    --font-size: 14px;
+    --small-font-size: 12px;
+    --small-medium-font-size: 22px;
+    --medium-font-size: 28px;
+    --large-font-size: 32px;
+    --xlarge-font-size: 44px;
 
-  --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-  --button-radius: 44px;
-  --mobile-button-radius: 61px;
-  --mobile-button-height: 64px;
-  --mobile-button-font-size: 22px;
-  --desktop-button-height: 40px;
+    --primary-font-color: #292c3a;
+    --secondary-font-color: #eeeeee;
 
-  --input-radius: 8px;
+    --primary-background-color: #ffffff;
+    --secondary-background-color: #292c3a;
 
-  --link-color: #5d5db9;
-  --mobile-link-color: #0683f9;
+    --button-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    --button-radius: 44px;
+    --mobile-button-radius: 61px;
+    --mobile-button-height: 64px;
+    --mobile-button-font-size: 22px;
+    --desktop-button-height: 40px;
 
-  --list-border: 0.67681px solid #e5e5e5;
-  --success-color: #a2f4cc;
-  --light-primary-color: rgba(255, 255, 255, 0.6);
+    --input-radius: 8px;
+
+    --link-color: #5d5db9;
+    --mobile-link-color: #0683f9;
+
+    --list-border: 0.67681px solid #e5e5e5;
+    --success-color: #a2f4cc;
+    --light-primary-color: rgba(255, 255, 255, 0.6);
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-:not(pre) > code[class*="language-"] {
-  /* Fixes issue where theme removes indentation. */
-  white-space: pre;
+:not(pre)>code[class*="language-"] {
+    /* Fixes issue where theme removes indentation. */
+    white-space: pre;
 }
 
 html,
 body {
-  font-size: min(max(var(--font-size), 4vw), 22px);
-  font-family: var(--font-family), sans-serif;
-  line-height: 1.5;
-  color: var(--primary-font-color);
-  background: var(--primary-background-color);
-  padding: 0;
-  margin: 0;
-  scroll-behavior: smooth;
-  @apply antialiased;
+    font-size: min(max(var(--font-size), 4vw), 22px);
+    font-family: var(--font-family), sans-serif;
+    line-height: 1.5;
+    color: var(--primary-font-color);
+    background: var(--primary-background-color);
+    padding: 0;
+    margin: 0;
+    scroll-behavior: smooth;
+    @apply antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
 }
 
 h4 {
-  color: #4F3FB6;
+    color: #4F3FB6;
 }
 
-p, blockquote {
-  margin: revert;
+p,
+blockquote {
+    margin: revert;
 }
 
 blockquote {
-  box-shadow: inset 3px 0 0 0 rgb(41 41 41);
-  padding-left: 1rem;
+    box-shadow: inset 3px 0 0 0 rgb(41 41 41);
+    padding-left: 1rem;
 }
 
-.figcaption_hack, figcaption {
-  color: rgba(117, 117, 117, 1);
-  font-size: 0.6rem;
-  line-height: 2.5;
-  font-weight: var(--font-bold);
-  text-align: center;
-  margin-right: auto;
-  margin-left: auto;
-  max-width: 70%;
-  display: block;
+.figcaption_hack,
+figcaption {
+    color: rgba(117, 117, 117, 1);
+    font-size: 0.6rem;
+    line-height: 2.5;
+    font-weight: var(--font-bold);
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 70%;
+    display: block;
 }
 
 video {
-  margin: auto;
+    margin: auto;
 }
 
 li {
-  font-size: 1rem;
+    font-size: 1rem;
 }
 
-li > a {
-  font-size: 1rem;
+li>a {
+    font-size: 1rem;
 }
 
 a {
-  color:rgba(79, 63, 182, 1);
-  ;
-  text-decoration: underline;
+    color: rgba(79, 63, 182, 1);
+    ;
+    text-decoration: underline;
 }
 
-ol, ul {
-  margin-top: 1rem;
-  padding-left: 2rem;
+ol,
+ul {
+    margin-top: 1rem;
+    padding-left: 2rem;
 }
 
 ol {
-  list-style: decimal;
+    list-style: decimal;
 }
 
 ul {
-  list-style: square;
+    list-style: square;
 }
 
 h1,
@@ -125,81 +136,81 @@ h2,
 h3,
 h4,
 h5 {
-  @apply font-bold leading-tight mt-3 break-words;
-  transition: all 200ms ease-in;
+    @apply font-bold leading-tight mt-3 break-words;
+    transition: all 200ms ease-in;
 }
 
 h1 {
-  @apply text-4xl;
+    @apply text-4xl;
 }
 
 h2 {
-  @apply text-2xl;
+    @apply text-2xl;
 }
 
 h3 {
-  @apply text-xl;
+    @apply text-xl;
 }
 
 h4 {
-  @apply text-lg;
+    @apply text-lg;
 }
 
 a {
-  @apply text-base font-bold;
+    @apply text-base font-bold;
 }
 
 a:hover {
-  @apply underline;
+    @apply underline;
 }
 
 p {
-  @apply text-base;
+    @apply text-base;
 }
 
 pre {
-  @apply my-2 text-sm tracking-wider break-words;
-  border-radius: 25px;
+    @apply my-2 text-sm tracking-wider break-words;
+    border-radius: 25px;
 }
 
 pre[class*=language-] {
-  overflow: scroll !important;
+    overflow: scroll !important;
 }
 
 hr {
-  @apply mt-4 mb-2 border-b border-gray-600;
+    @apply mt-4 mb-2 border-b border-gray-600;
 }
 
 small {
-  font-size: 0.8rem;
+    font-size: 0.8rem;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
 }
 
 .my-8 {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 @media (max-width: 800px) {
-  nav[aria-label="sub-navigation"] {
-    display: flex;
-    align-items: flex-start;
-  }
+    nav[aria-label="sub-navigation"] {
+        display: flex;
+        align-items: flex-start;
+    }
 }
 
 @media screen and (-ms-high-contrast: white-on-black) {
-  .bg-primary {
-    border: 4px solid #ffffff;
-  }
+    .bg-primary {
+        border: 4px solid #ffffff;
+    }
 }
 
 @media screen and (-ms-high-contrast: black-on-white) {
-  .bg-primary {
-    border: 4px solid #ffffff;
-  }
+    .bg-primary {
+        border: 4px solid #ffffff;
+    }
 }
 
 /**
@@ -209,36 +220,37 @@ code {
  * @link https://css-tricks.com/introduction-reduced-motion-media-query/#article-header-id-3
  */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01s !important;
-    transition-duration: 0.01s !important;
-  }
+    * {
+        animation-duration: 0.01s !important;
+        transition-duration: 0.01s !important;
+    }
 }
 
 .js-focus-visible :focus:not([data-focus-visible-added]) {
-  @apply outline-none;
+    @apply outline-none;
 }
 
 img[role="presentation"] {
-  box-shadow: rgb(0 0 0 / 20%) 0px 7px 29px 0px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+    box-shadow: rgb(0 0 0 / 20%) 0px 7px 29px 0px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .post-date {
-  font-size: 12pt;
+    font-size: 12pt;
 }
 
 .post-excerpt {
-  margin: 0;
+    margin: 0;
 }
 
 #backToHomeButton {
-  text-decoration: none;
+    text-decoration: none;
 }
 
-#backToHomeButton:focus, #backToHomeButton:hover {
-  text-decoration: underline;
+#backToHomeButton:focus,
+#backToHomeButton:hover {
+    text-decoration: underline;
 }
 
 /*

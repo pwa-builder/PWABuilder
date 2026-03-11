@@ -60,13 +60,21 @@ public readonly struct Result<T>
     }
 
     public static implicit operator Result<T>(T result) => new Result<T>(result);
-    public static implicit operator Result<T>(Exception error) => new Result<T>(default, error);
+    public static implicit operator Result<T>(Exception error) => new(default, error);
 }
 
+/// <summary>
+/// Represents a result or an exception. This static class contains helpers for creating Result objects.
+/// </summary>
 public static class Result
 {
     public static Result<T> From<T>(T val)
     {
         return new Result<T>(val);
+    }
+
+    public static Result<T> FromError<T>(Exception error)
+    {
+        return new Result<T>(default, error);
     }
 }

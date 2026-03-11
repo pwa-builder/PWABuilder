@@ -215,7 +215,7 @@ public class ManifestCreator
             using var httpResponse = await http.SendAsync(httpMessage);
             httpResponse.EnsureSuccessStatusCode();
 
-            var maxImageSize = 500_000; // 500k
+            var maxImageSize = 1_500_000; // 1.5MB
             var imageStreamLength = httpResponse.Content.Headers.ContentLength.HasValue ? (int)httpResponse.Content.Headers.ContentLength.GetValueOrDefault() : 20_000;
             if (imageStreamLength > maxImageSize)
             {
@@ -269,14 +269,14 @@ public class ManifestCreator
             var imgDimensions = await SixLabors.ImageSharp.Image.IdentifyAsync(imageStream);
             if (imgDimensions == null)
             {
-                throw new Exception("Unable to identify image dimensions for {url}. Image metadata was null.");
+                throw new Exception($"Unable to identify image dimensions for {url}. Image metadata was null.");
             }
 
             return $"{imgDimensions.Width}x{imgDimensions.Height}";
         }
         catch (Exception imageDimensionError)
         {
-            logger.LogWarning(imageDimensionError, "Unable to identify image dimensions");
+            logger.LogWarning(imageDimensionError, "Unable to identify image dimensions for {url}", url);
             return new Result<string>(null, imageDimensionError);
         }
     }
@@ -285,6 +285,12 @@ public class ManifestCreator
     {
         try
         {
+            // ImageSharp can't detect ico images. If the URL ends in .ico extension, assume it's a legit ico file.
+            if (url.EndsWith(".ico", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return "image/x-icon";
+            }
+
             var imageFormat = await SixLabors.ImageSharp.Image.DetectFormatAsync(imageStream);
             if (imageFormat == null)
             {
@@ -295,7 +301,7 @@ public class ManifestCreator
         }
         catch (Exception imageDimensionError)
         {
-            logger.LogWarning(imageDimensionError, "Unable to identify image mime type");
+            logger.LogWarning(imageDimensionError, "Unable to identify image mime type for {url}", url);
             return new Result<string>(null, imageDimensionError);
         }
     }

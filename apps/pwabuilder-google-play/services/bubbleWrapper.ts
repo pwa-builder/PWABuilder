@@ -11,7 +11,7 @@ import {
     SigningKeyInfo,
 } from '@bubblewrap/core';
 import { ShortcutInfo } from '@bubblewrap/core/dist/lib/ShortcutInfo.js';
-import { findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
+import { escapeDoubleQuotedShellString, findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
 import { AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import fs from 'fs-extra';
 import { KeyTool, CreateKeyOptions } from '@bubblewrap/core/dist/lib/jdk/KeyTool.js';
@@ -154,16 +154,26 @@ export class BubbleWrapper {
         const jarSigner = new JarSigner(this.jdkHelper);
         const jarSigningInfo: SigningKeyInfo = {
             path: signingInfo.keyFilePath,
-            alias: signingInfo.alias,
+            alias: `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
         };
-        await jarSigner.sign(
-            jarSigningInfo,
-            signingInfo.storePassword,
-            signingInfo.keyPassword,
-            inputFile,
-            outputFile
-        );
-        return outputFile;
+
+        // Escape the store password, otherwise passwords with special characters will break. See https://github.com/pwa-builder/PWABuilder/issues/5017
+        const storePassword = `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`;
+        const keyPassword = `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`;
+        try {
+            await jarSigner.sign(
+                jarSigningInfo,
+                storePassword,
+                keyPassword,
+                inputFile,
+                outputFile
+            );
+            return outputFile;
+        } catch (signingError) {
+            this.dispatchProgressEvent(`Error signing the app bundle. Using key password:\n${keyPassword}\nStore password:\n ${storePassword}\n\n${signingError}`, "error");
+            console.error("Error signing the app bundle", signingError);
+            throw signingError;
+        }
     }
 
     private async generateTwaProject(): Promise<TwaManifest> {
@@ -230,9 +240,9 @@ export class BubbleWrapper {
         this.dispatchProgressEvent('Signing the app package...');
         await this.androidSdkTools.apksigner(
             signingInfo.keyFilePath,
-            `"${signingInfo.storePassword}"`, // Escape the store password, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
-            `"${signingInfo.alias}"`,
-            `"${signingInfo.keyPassword}"`, // Escape the key password for the same reason.
+            `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`, // Escape the store password with double quotes, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
+            `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
+            `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`, // Escape the key password for the same reason.
             apkFilePath,
             outputFile
         );

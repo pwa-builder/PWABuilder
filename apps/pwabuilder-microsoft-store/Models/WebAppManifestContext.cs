@@ -27,7 +27,7 @@ namespace PWABuilder.MicrosoftStore.Models
             var context = new WebAppManifestContext
             {
                 ManifestUri = manifestUri
-            };  
+            };
 
             var contextProps = typeof(WebAppManifestContext).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Where(p => p.CanRead && p.CanWrite);
 
@@ -122,9 +122,9 @@ namespace PWABuilder.MicrosoftStore.Models
                 // Looking for an unplated icon? Prioritize icons with "unplated" as the purpose.
                 windowsIconsWithDimensions = windowsIconsWithDimensions
                     .Where(i => i.HasPurpose("unplated") || i.IsAnyPurpose())
-                    .OrderBy(i => i.HasPurpose("unplated") ? 0 : 1);                    
+                    .OrderBy(i => i.HasPurpose("unplated") ? 0 : 1);
             }
-                
+
             return windowsIconsWithDimensions
                 .Select(i => i.GetSrcUri(this.ManifestUri == null ? new Uri(this.Url!) : this.ManifestUri))
                 .FirstOrDefault();
@@ -144,9 +144,9 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <param name="minDimensions">The minimum dimensions to find.</param>
         public Uri? GetIconSuitableForWindowsApps(int minDimensions)
         {
-            var isSuitable = new Func<WebManifestIcon, bool>(i => 
-                (i.IsAnyPurpose() || i.IsMaskablePurpose()) && 
-                i.IsSquare() && 
+            var isSuitable = new Func<WebManifestIcon, bool>(i =>
+                (i.IsAnyPurpose() || i.IsMaskablePurpose()) &&
+                i.IsSquare() &&
                 i.GetLargestDimension().GetValueOrDefault().width >= minDimensions);
 
             var iconsOrderByLargest = GetIconsOrderedByLargest();
@@ -173,9 +173,9 @@ namespace PWABuilder.MicrosoftStore.Models
         /// </summary>
         /// <param name="path">The path to resolve.</param>
         /// <returns>A new URI containing an absolute path relative to this web manifest's path.</returns>
-        public Uri ResolveUri(string path, string url)
+        public Uri ResolveUri(string path, Uri url)
         {
-            return new Uri(this.ManifestUri != null ? this.ManifestUri : this.Url != null ? new Uri(this.Url) : new Uri(url), path);
+            return new Uri(this.ManifestUri != null ? this.ManifestUri : this.Url != null ? new Uri(this.Url) : url, path);
         }
 
         /// <summary>

@@ -257,3 +257,19 @@ To upgrade to the latest pwa_builder.exe tool:
 5. Rename the file to `pwa__builder.zip`
 6. Upload to the `pwabuildercommon` Azure Storage account, inside the `resources` directory, overwriting the existing `pwa_builder.zip` file.
 7. Trigger a new build of this solution in GitHub Actions. The build pipeline will pick up the new pwa_builder.zip file and inject it into the Docker image.
+
+## Updating the classic Windows package template
+
+The classic Windows package template file is located in `Resources\Windows\ClassicPackageTemplate.appx`.
+
+The source code for this template is located in the `/ClassicPackage` directory.
+
+The classic package also uses a special launcher executable. The source code for this launcher is located in the /`ClassicPackage.Launcher` directory.
+
+The classic package is used for compatibility with versions of Windows prior to Windows 10 May 2020 Update. Long-term, the classic package will be deprecated once those versions of Windows are no longer supported by Microsoft.
+
+## Sideloader source code
+
+PWABuilder Microsoft Store packages include a sideloader app that allows users to test their PWA package locally before uploading to the Store.
+
+The source code for this sideloader app is located in the `/Sideloader` directory.

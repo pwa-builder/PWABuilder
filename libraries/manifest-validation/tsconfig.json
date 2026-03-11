@@ -2,11 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
-    "rootDir": "./src",
-    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
-    "removeComments": true,                           /* Disable emitting comments. */
+    "outDir": "./dist" /* Specify an output folder for all emitted files. */,
+    "removeComments": true /* Disable emitting comments. */,
     "moduleResolution": "nodenext",
     // "esModuleInterop": true,
-    "module": "ES2020",
+    "module": "ES2020"
   }
 }

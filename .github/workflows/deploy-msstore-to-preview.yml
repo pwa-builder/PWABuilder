@@ -4,28 +4,29 @@ on:
   push:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
-    branches: [ "main" ]
+      - ".github/workflows/deploy-msstore-to-preview.yml"
+    branches: ["main"]
   pull_request:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
-    branches: [ main ]
-  workflow_dispatch: 
+      - ".github/workflows/deploy-msstore-to-preview.yml"
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-
   build:
     runs-on: windows-2022
     permissions:
       contents: read
-      id-token: write 
-    
+      id-token: write
+
     steps:
       - uses: actions/checkout@v4
-        with:  
-          lfs: 'true'
-      - uses: microsoft/variable-substitution@v1 
         with:
-          files: './apps/pwabuilder-microsoft-store/appsettings.Production.json'
+          lfs: "true"
+      - uses: microsoft/variable-substitution@v1
+        with:
+          files: "./apps/pwabuilder-microsoft-store/appsettings.Production.json"
         env:
           AppSettings.ApplicationInsightsConnectionString: ${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
 
@@ -35,25 +36,51 @@ jobs:
       - name: Login with Azure CLI with federated credentials
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_APP_ID }}
+          client-id: ${{ secrets.AZURE_WESTUS_APP_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Download zipped pwa_builder internal tool from Azure Blob Storage
+      - name: Download zipped pwa_builder internal tool from PWABuilder API
         run: |
-          az storage blob download `
-            --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} `
-            --container-name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_CONTAINER_NAME }} `
-            --name ${{ secrets.AZURE_STORAGE_PWABUILDEREXE_BLOB_NAME }} `
-            --file pwabuilder.zip `
-            --auth-mode login
+          echo "Downloading pwa_builder tool from API..."
+          curl -L --fail-with-body -w "%{http_code}" -o pwabuilder.zip "https://pwabuilder.com/api/MsStorePackages/cli?key=${{ secrets.PWABUILDER_CLI_KEY }}"
+          
+          # Check if the download was successful and the file exists
+          if (-not (Test-Path "pwabuilder.zip")) {
+            Write-Error "Error: pwabuilder.zip was not downloaded"
+            exit 1
+          }
+          
+          # Check file size - empty or very small files are likely error responses
+          $fileSize = (Get-Item "pwabuilder.zip").Length
+          if ($fileSize -lt 1024) {
+            Write-Error "Error: Downloaded file is too small ($fileSize bytes), likely an error response"
+            Write-Host "File contents:"
+            Get-Content pwabuilder.zip -First 10
+            exit 1
+          }
+          
+          # Try to test if it's a valid zip by attempting to read it
+          try {
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $zip = [System.IO.Compression.ZipFile]::OpenRead("pwabuilder.zip")
+            $entryCount = $zip.Entries.Count
+            $zip.Dispose()
+            Write-Host "Successfully downloaded valid zip file with $entryCount entries"
+          }
+          catch {
+            Write-Error "Error: Downloaded file is not a valid zip archive"
+            Write-Host "File contents preview:"
+            Get-Content pwabuilder.zip -First 10
+            exit 1
+          }
 
       - name: Extracting pwa_builder zip file
         run: unzip -o pwabuilder.zip -d apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder
 
       - name: Verify pwa_builder extraction
         run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
-      
+
       - name: Log in to Azure docker registry (ACR)
         run: az acr login --name pwabuilder
 
@@ -67,7 +94,7 @@ jobs:
       - name: Docker push
         working-directory: ./apps/pwabuilder-microsoft-store
         run: docker push pwabuilder.azurecr.io/pwa-windows:production
-        
+
   deploy:
     runs-on: windows-2022
     permissions:
@@ -77,12 +104,12 @@ jobs:
     environment:
       name: staging
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Login with Azure CLI with federated credentials
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_APP_ID }}
+          client-id: ${{ secrets.AZURE_EASTUS_APP_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 

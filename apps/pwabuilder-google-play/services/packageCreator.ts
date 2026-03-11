@@ -91,7 +91,7 @@ export class PackageCreator {
 
             // Get the signing information.
             this.dispatchProgressEvent(`Creating signing information...`);
-            const signing = await this.createLocalSigninKeyInfo(options, projectDirPath);
+            const signing = await this.createLocalSigningKeyInfo(options, projectDirPath);
 
             // Generate the APK, keys, and digital asset links.
             return await this.createAppPackageWith403Fallback(
@@ -121,7 +121,7 @@ export class PackageCreator {
         //
         // When this happens, we can swap out the APK url items with a safe proxy server that doesn't have the same issues.
         // For example, if the icon is https://foo.com/img.png, we change this to
-        // https://pwabuilder-safe-url.azurewebsites.net/api/getsafeurl?url=https://foo.com/img/png
+        // https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=https://foo.com/img/png
         const http1Fetch = 'node-fetch';
         const http2Fetch = 'fetch-h2';
         try {
@@ -135,15 +135,24 @@ export class PackageCreator {
             bubbleWrapper.addEventListener("progress", e => this.bubblewrapProgress(e))
             return await bubbleWrapper.generateAppPackage();
         } catch (error) {
-            const errorMessage = (error as Error)?.message || '';
-            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403.", "warn");
+            const errorMessage = (error as Error)?.message || `${error}`;
+            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden or timeout. " + errorMessage, "warn");
             const is403Error =
+                (error as any)?.status === 403 ||
+                (error as any)?.response?.status === 403 ||
                 errorMessage.includes('403') ||
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
-            if (is403Error) {
-                const optionsWithSafeUrl = this.getAndroidOptionsWithSafeUrls(options);
-                this.dispatchProgressEvent('Encountered 403 error when generating app package. This indicates PWABuilder was unable to downlaod the images in your web manifest. If the problem persists, please ensure the images specified in your manfiest can be fetched without 404s, redirects, or authentication walls. Retrying with safe URL proxy and HTTP2.', "warn");
+            const isTimeout = errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ESOCKETTIMEDOUT');
+            if (is403Error || isTimeout) {
+                const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
+                // See if it's Cloudflare. Check the Server response header for "cloudflare".
+                const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
+                if (isCloudflare) {
+                    this.dispatchProgressEvent("Cloudflare is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable Cloudflare's \"Bot fight mode\" while you're packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
+                } else {
+                    this.dispatchProgressEvent("Your web app is blocking PWABuilder from accessing your app's images, serving 403 Forbidden errors to PWABuilder. If the problem persists, please temporarily disable your firewall, CDN, or Cloudflare while packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
+                }
                 const bubbleWrapper = new BubbleWrapper(
                     optionsWithSafeUrl,
                     projectDirPath,
@@ -160,7 +169,7 @@ export class PackageCreator {
         }
     }
 
-    private async createLocalSigninKeyInfo(apkSettings: AndroidPackageOptions, projectDir: string): Promise<LocalKeyFileSigningOptions | null> {
+    private async createLocalSigningKeyInfo(apkSettings: AndroidPackageOptions, projectDir: string): Promise<LocalKeyFileSigningOptions | null> {
         // If we're told not to sign it, skip this.
         if (apkSettings.signingMode === 'none') {
             return null;
@@ -190,7 +199,21 @@ export class PackageCreator {
         };
     }
 
-    scheduleTmpFileCleanup(file: string | null): void {
+    private TryCheckCloudflare(iconUrl: string): Promise<boolean> {
+        // Do a fetch to get just the headers of the icon. If the response headers come back
+        // with the Server header being "cloudflare", we know Cloudflare is in use.
+        return new Promise(async (resolve) => {
+            try {
+                const response = await fetch(iconUrl, { method: 'GET' });
+                const serverHeader = response.headers.get('Server') || '';
+                resolve(!!serverHeader && serverHeader.includes('cloudflare'));
+            } catch (error) {
+                resolve(false);
+            }
+        });
+    }
+
+    private scheduleTmpFileCleanup(file: string | null): void {
         if (file) {
             console.info('Scheduled cleanup for tmp file', file);
             const delFile = function () {
@@ -240,7 +263,7 @@ export class PackageCreator {
         }
     }
 
-    private getAndroidOptionsWithSafeUrls(options: AndroidPackageOptions): AndroidPackageOptions {
+    private getAndroidOptionsWithProxiedUrls(options: AndroidPackageOptions): AndroidPackageOptions {
         const absoluteUrlProps: Array<keyof AndroidPackageOptions> = [
             'maskableIconUrl',
             'monochromeIconUrl',
@@ -251,12 +274,38 @@ export class PackageCreator {
         for (let prop of absoluteUrlProps) {
             const url = newOptions[prop];
             if (url && typeof url === 'string') {
-                const safeUrlFetcherEndpoint = 'https://pwabuilder.com/api/images/getsafeimageforanalysis';
-                const safeUrl = `${safeUrlFetcherEndpoint}?imageUrl=${encodeURIComponent(url)}`;
-                (newOptions[prop] as any) = safeUrl;
+                const absoluteUrl = new URL(url, options.webManifestUrl);
+                const isManifestUrl = prop === 'webManifestUrl';
+                if (isManifestUrl) {
+                    // We have a special endpoint for manifests that checks the PWABuilder web string cache first.
+                    (newOptions as any)[prop] = `https://pwabuilder.com/api/manifests/getFromCacheOrProxy?manifestUrl=${encodeURIComponent(absoluteUrl.toString())}`;
+                    this.dispatchProgressEvent(`Updated manifest URL to use manifest proxy. Old value ${options.webManifestUrl}, new value ${(newOptions)[prop]}`);
+                } else {
+                    // Otherwise, use the image proxy.
+                    (newOptions as any)[prop] = PackageCreator.getImageProxyUrl(absoluteUrl, options.analysisId);
+                    this.dispatchProgressEvent(`Updated ${prop} to use image proxy. Old value ${options[prop]}, new value ${(newOptions)[prop]}`);
+                }
             }
         }
+
+        // Also, any shortcut images should be proxied too.
+        if (newOptions.shortcuts && Array.isArray(newOptions.shortcuts)) {
+            newOptions.shortcuts.forEach(shortcut => {
+                (shortcut.icons || [])
+                    .filter(icon => !!icon.src)
+                    .forEach(icon => {
+                        const oldValue = icon.src;
+                        icon.src = PackageCreator.getImageProxyUrl(new URL(icon.src, options.webManifestUrl), options.analysisId);
+                        this.dispatchProgressEvent(`Updated shortcut icon to use image proxy. Old value ${oldValue}, new value ${icon.src}`);
+                    });
+            });
+        }
+
         return newOptions;
+    }
+
+    private static getImageProxyUrl(imageUrl: URL, analysisId: string | null): string {
+        return `https://pwabuilder.com/api/images/getSafeImageForAnalysis?imageUrl=${encodeURIComponent(imageUrl.toString())}&analysisId=${encodeURIComponent(analysisId || "")}`;
     }
 
     /***

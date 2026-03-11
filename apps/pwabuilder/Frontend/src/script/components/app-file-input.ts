@@ -11,14 +11,15 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement implements FileInputElement {
-  @property({ type: String, attribute: true }) inputId = '';
-  @query('.file-input') fileInput: Lazy<HTMLInputElement>;
+    @property({ type: String, attribute: true }) inputId = '';
+    @property({ type: String, attribute: true }) accept?: string;
+    @query('.file-input') fileInput: Lazy<HTMLInputElement>;
 
-  @state() buttonText = 'Choose File';
+    @state() buttonText = 'Choose File';
 
-  static get styles() {
-    return [
-      css`
+    static get styles() {
+        return [
+            css`
         [appearance='lightweight'] {
           box-shadow: none;
         }
@@ -26,29 +27,29 @@ export class FileInput extends LitElement implements FileInputElement {
           background-color: transparent;
         }
       `,
-      hidden,
-      fastButtonCss,
-    ];
-  }
+            hidden,
+            fastButtonCss,
+        ];
+    }
 
-  get input(): any {
-    return this.fileInput;
-  }
+    get input(): any {
+        return this.fileInput;
+    }
 
-  get value(): any {
-    return this.fileInput?.value;
-  }
+    get value(): any {
+        return this.fileInput?.value;
+    }
 
-  get files(): any {
-    return this.fileInput?.files || undefined;
-  }
+    get files(): any {
+        return this.fileInput?.files || undefined;
+    }
 
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  render() {
-    return html`
+    render() {
+        return html`
       <div>
         <sl-button
           variant="default"
@@ -60,38 +61,39 @@ export class FileInput extends LitElement implements FileInputElement {
           id="${ifDefined(this.inputId)}"
           class="file-input hidden"
           type="file"
+          accept="${ifDefined(this.accept)}"
           aria-hidden="true"
           @change=${this.handleModalInputFileChosen}
         />
       </div>
     `;
-  }
-
-  clickModalInput() {
-    this.fileInput?.click();
-  }
-
-  handleModalInputFileChosen() {
-    if (this.input) {
-      const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
-        detail: {
-          input: this.input,
-        },
-        composed: true,
-        bubbles: true,
-      });
-
-      this.buttonText = this.input?.files?.item(0)?.name;
-      this.dispatchEvent(changeEvent);
-      this.requestUpdate();
     }
-  }
 
-  clearInput() {
-    this.buttonText = 'Choose File';
-
-    if (this.fileInput) {
-      this.fileInput.files = null;
+    clickModalInput() {
+        this.fileInput?.click();
     }
-  }
+
+    handleModalInputFileChosen() {
+        if (this.input) {
+            const changeEvent = new CustomEvent<FileInputDetails>('input-change', {
+                detail: {
+                    input: this.input,
+                },
+                composed: true,
+                bubbles: true,
+            });
+
+            this.buttonText = this.input?.files?.item(0)?.name;
+            this.dispatchEvent(changeEvent);
+            this.requestUpdate();
+        }
+    }
+
+    clearInput() {
+        this.buttonText = 'Choose File';
+
+        if (this.fileInput) {
+            this.fileInput.files = null;
+        }
+    }
 }

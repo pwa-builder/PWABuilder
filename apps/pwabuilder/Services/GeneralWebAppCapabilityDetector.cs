@@ -56,37 +56,50 @@ public class GeneralWebAppCapabilityDetector
         // such URLs that point to large images.
         try
         {
-            using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancelToken);
-
-            // No successful status code? Consider this check as skipped. Other tests will handle true failure.
-            if (!response.IsSuccessStatusCode)
+            // Try HEAD request first to get headers without downloading content
+            using var headResponse = await http.SendAsync(new HttpRequestMessage(HttpMethod.Head, url), HttpCompletionOption.ResponseHeadersRead, cancelToken);
+            var htmlStatusOnHeadResponse = CheckServesHtmlAsync(headResponse, HttpMethod.Head, logger, url, capapbility);
+            if (htmlStatusOnHeadResponse != PwaCapabilityCheckStatus.Skipped)
             {
-                logger.LogWarning("Tried to check if {url} is HTML content, but got a non-successful status code of {code}. Marking test as skipped.", url, response.StatusCode);
-                return PwaCapabilityCheckStatus.Skipped;
+                // If we passed or failed based on HTTP HEAD, return that result.
+                // If we skipped, try again using HTTP GET.
+                return htmlStatusOnHeadResponse;
             }
 
-            // If there is no content type header, consider this test skipped. 
-            var contentType = response.Content.Headers.ContentType;
-            if (string.IsNullOrEmpty(contentType?.MediaType))
-            {
-                logger.LogInformation("Tried to check if {url} is HTML content, but no content type header was present.", url);
-                return PwaCapabilityCheckStatus.Skipped;
-            }
-
-            var isHtml = contentType.MediaType.Contains("text/html");
-            if (!isHtml)
-            {
-                capapbility.ErrorMessage = "The URL does not serve HTML. Expected text/html, but got " + contentType.MediaType;
-                capapbility.Description = string.Format(capapbility.Description, contentType.MediaType);
-                return PwaCapabilityCheckStatus.Failed;
-            }
-
-            return PwaCapabilityCheckStatus.Passed;
+            using var getResponse = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancelToken);
+            return CheckServesHtmlAsync(getResponse, HttpMethod.Get, logger, url, capapbility);
         }
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Error checking ServesHtml capability for {url}. Marking test as skipped.", url);
             return PwaCapabilityCheckStatus.Skipped;
         }
+    }
+
+    private static PwaCapabilityCheckStatus CheckServesHtmlAsync(HttpResponseMessage response, HttpMethod method, ILogger logger, Uri url, PwaCapability capapbility)
+    {
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogWarning("Tried to check if {url} is HTML content using {method}, but got a non-successful status code of {code}.", url, method, response.StatusCode);
+            return PwaCapabilityCheckStatus.Skipped;
+        }
+
+        // If there is no content type header, consider this test skipped. 
+        var contentType = response.Content.Headers.ContentType;
+        if (string.IsNullOrEmpty(contentType?.MediaType))
+        {
+            logger.LogInformation("Tried to check if {url} is HTML content using {method}, but no content type header was present.", url, method);
+            return PwaCapabilityCheckStatus.Skipped;
+        }
+
+        var isHtml = contentType.MediaType.Contains("text/html");
+        if (!isHtml)
+        {
+            capapbility.ErrorMessage = $"The URL {url} does not serve HTML. Expected text/html, but got {contentType.MediaType}. Used HTTP {method}.";
+            capapbility.Description = string.Format(capapbility.Description, contentType.MediaType);
+            return PwaCapabilityCheckStatus.Failed;
+        }
+
+        return PwaCapabilityCheckStatus.Passed;
     }
 }

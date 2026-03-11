@@ -102,11 +102,11 @@ public class Analysis
             return false;
         }
 
-        // All required fields must be valid.
+        // All required fields must not have a failed status.
         var allRequiredFieldsValid = this.Capabilities.Count > 0
             && this.Capabilities
             .Where(v => v.Level == PwaCapabilityLevel.Required && v.Category != PwaCapabilityCategory.Https) // Skip HTTPS check here because Lighthouse takes too long.
-            .All(v => v.Status == PwaCapabilityCheckStatus.Passed);
+            .All(v => v.Status is PwaCapabilityCheckStatus.Passed or PwaCapabilityCheckStatus.Skipped);
 
         return allRequiredFieldsValid;
     }
@@ -120,7 +120,7 @@ public class Analysis
         foreach (var capability in capabilities)
         {
             var existingCapability = this.Capabilities.First(c => c.Id == capability.Id);
-            existingCapability.Status = capability.Status;
+            existingCapability.Copy(capability);
         }
     }
 }

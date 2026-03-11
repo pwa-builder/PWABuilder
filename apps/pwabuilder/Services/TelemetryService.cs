@@ -1,9 +1,7 @@
-﻿using System.Text.Json;
-using Microsoft.ApplicationInsights;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using PWABuilder.IOS.Models;
 using PWABuilder.Models;
-using PWABuilder.Validations;
 
 namespace PWABuilder.Services
 {

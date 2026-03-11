@@ -1,10 +1,9 @@
-import { Redis } from "ioredis";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { PackageCreator } from "./packageCreator.js";
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import { PackageJobLogger } from "../models/packageJobLogger.js";
-import { blobStorage, AzureStorageBlobService } from "./azureStorageBlobService.js";
-import { database } from "./databaseService.js";
+import { blobStorage } from "./azureStorageBlobService.js";
+import { database } from "./redisService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
 
 /**
@@ -19,26 +18,59 @@ export class PackageJobProcessor {
      * Begins the background job processor that periodically checks for Google Play packaging jobs and processes them.
      */
     start(): void {
-        database.ready.then(() => setTimeout(() => this.runJobs(), this.jobCheckIntervalMs));
+        // Wait for database to be ready, then add additional delay for Azure deployment scenarios
+        database.ready.then(() => {
+            console.info('Database ready, starting job processor in 5 seconds to allow for complete initialization...');
+            setTimeout(() => this.runJobs(), 5000); // 5 second delay instead of 2 seconds
+        }).catch((error) => {
+            console.error('Failed to start job processor due to database initialization error:', error);
+        });
     }
 
     private async runJobs(): Promise<void> {
         let job: GooglePlayPackageJob | null = null;
         let jobLogger: PackageJobLogger | null = null;
+        let hadTimeout = false;
+
         try {
+            // Check Redis health before attempting to dequeue
+            const isHealthy = await database.healthCheck();
+            if (!isHealthy) {
+                console.warn("Redis health check failed, skipping job dequeue cycle");
+                hadTimeout = true; // Treat as timeout to use longer delay
+                return;
+            }
+
             job = await packageJobQueue.dequeue();
             if (job) {
                 jobLogger = new PackageJobLogger(job);
                 await this.processJob(job, jobLogger);
             }
         } catch (jobError) {
-            console.error("Error processing Google Play packaging job", jobError);
-            if (job) {
-                this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
+            const error = jobError as Error;
+            // Check if it's a Redis-related error
+            const isRedisError = error.message && (
+                error.message.includes('Command timed out') ||
+                error.message.includes('Connection is closed') ||
+                error.message.includes('Redis not ready') ||
+                error.message.includes('already connecting/connected')
+            );
+
+            if (isRedisError) {
+                hadTimeout = true;
+                console.warn("Redis error during job dequeue - will retry on next cycle", error.message);
+                // Don't mark job as failed for Redis errors, just wait for next cycle
+            } else {
+                console.error("Error processing Google Play packaging job", jobError);
+                if (job) {
+                    this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
+                }
             }
         } finally {
             // Whether success or failure, queue up another job run.
-            setTimeout(() => this.runJobs(), this.jobCheckIntervalMs);
+            // Use longer delay if we had a Redis error to give Redis time to recover
+            const delay = hadTimeout ? 15000 : this.jobCheckIntervalMs;
+            setTimeout(() => this.runJobs(), delay);
         }
     }
 
@@ -104,7 +136,7 @@ export class PackageJobProcessor {
         try {
             job.status = "Completed";
             job.uploadedBlobFileName = blobFileName;
-            jobLogger.info(`Successfully uploaded package zip file ${blobFileName}`);
+            jobLogger.info("Successfully uploaded package zip file", blobFileName);
             await database.save(job.id, job);
         } catch (completionError) {
             jobLogger.error("Error marking job as completed.", completionError);

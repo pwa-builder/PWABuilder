@@ -60,6 +60,8 @@ public class ManifestDetector
             var manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
             if (!string.IsNullOrWhiteSpace(manifestContents))
             {
+                // Update the web string cache with the manifest.
+                await webStringCache.UpdateAsync(manifestUrl, manifestContents, Constants.ManifestMimeTypes);
                 return CreateManifestDetection(manifestUrl, manifestContents, logger);
             }
         }
@@ -108,7 +110,8 @@ public class ManifestDetector
             var manifestUrl = manifestUrls.LastOrDefault();
             if (manifestUrl == null)
             {
-                logger.LogWarning("Using Puppeteer to find manifest, no manifest links found in the page at {appUrl}.", appUrl);
+                var headContent = await TryGetHeadContentsFromPuppeteerAsync(puppeteerPage, logger);
+                logger.LogWarning("Using Puppeteer to find manifest, no manifest links found in the page at {appUrl}. Page <head> content: {pageContent}", appUrl, headContent);
                 return null;
             }
 
@@ -130,7 +133,7 @@ public class ManifestDetector
 
         try
         {
-            var manifestJson = await webStringCache.Get(manifestUrl, Constants.ManifestMimeTypes, cancelToken, 1024 * 1024 * 5);
+            var manifestJson = await webStringCache.GetOrFetchAsync(manifestUrl, Constants.ManifestMimeTypes, logger, cancelToken, 1024 * 1024 * 5);
             if (string.IsNullOrWhiteSpace(manifestJson))
             {
                 logger.LogWarning("Manifest at {manifestUrl} returned empty content.", manifestUrl);
@@ -174,7 +177,7 @@ public class ManifestDetector
             logger.LogWarning(jsonError, "Error parsing manifest JSON at {manifestUrl}.", manifestUrl);
             return null;
         }
-        
+
         return new ManifestDetection
         {
             Url = manifestUrl,
@@ -187,7 +190,7 @@ public class ManifestDetector
     {
         try
         {
-            var htmlString = await webStringCache.Get(appUrl, ["text/html"], cancelToken);
+            var htmlString = await webStringCache.GetOrFetchAsync(appUrl, ["text/html"], logger, cancelToken);
             return htmlString;
         }
         catch (Exception htmlFetchError)
@@ -235,6 +238,34 @@ public class ManifestDetector
         catch (Exception error)
         {
             logger.LogWarning(error, "Error parsing HTML to find web manifest link in {url}. Will fallback to headless Chrome for manifest parsing.", baseUrl);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Attempts to get the HTML contents of the head element from a Puppeteer page.
+    /// </summary>
+    /// <param name="page">The Puppeteer page to extract head contents from.</param>
+    /// <param name="logger">The logger to use for logging warnings.</param>
+    /// <returns>The HTML string of the head element, or null if it doesn't exist or an exception occurs.</returns>
+    private static async Task<string?> TryGetHeadContentsFromPuppeteerAsync(IPage page, ILogger logger)
+    {
+        try
+        {
+            var headContent = await page.EvaluateExpressionAsync<string?>("document.head?.outerHTML");
+
+            // Ensure head content is reasonable size (under 10k bytes) before returning
+            if (headContent is not null && System.Text.Encoding.UTF8.GetByteCount(headContent) > 10_000)
+            {
+                logger.LogWarning("Head content is too large ({size} bytes), truncating for logging.", System.Text.Encoding.UTF8.GetByteCount(headContent));
+                return headContent[..Math.Min(headContent.Length, 10_000)] + "... [truncated]";
+            }
+
+            return headContent;
+        }
+        catch (Exception error)
+        {
+            logger.LogWarning(error, "Error retrieving head contents from Puppeteer page.");
             return null;
         }
     }

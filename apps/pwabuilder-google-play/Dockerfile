@@ -1,5 +1,5 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
-FROM --platform=linux/amd64 ubuntu:20.04  AS ubuntu
+FROM --platform=linux/amd64 ubuntu:24.04  AS ubuntu
 
 ARG ANDROID_SDK_TOOLS_VERSION="11076708"
 ARG NODE_VERSION="20.x"
@@ -78,6 +78,7 @@ RUN mkdir -p "$ANDROID_HOME"/.android && \
 FROM pre-minimal AS node-final
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     apt-get update -qq && apt-get install -qq nodejs yarn && \
+    npm install -g npm@latest && \
     npm install -g bower cordova eslint gulp-cli @ionic/cli mocha node-gyp
 
 FROM node-final AS builder

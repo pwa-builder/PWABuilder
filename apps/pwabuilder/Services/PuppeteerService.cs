@@ -1,17 +1,19 @@
-using Azure;
+using System.Collections.Concurrent;
 using PuppeteerSharp;
 using PWABuilder.Common;
-using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
     public class PuppeteerService : IPuppeteerService
     {
         private readonly Task<IBrowser> reusableBrowser;
+        private readonly ILogger<PuppeteerService> logger;
+        private readonly ConcurrentBag<PageReference> openPages = [];
 
-        public PuppeteerService(Task<IBrowser> reusableBrowser)
+        public PuppeteerService(Task<IBrowser> reusableBrowser, ILogger<PuppeteerService> logger)
         {
             this.reusableBrowser = reusableBrowser;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -22,7 +24,7 @@ namespace PWABuilder.Services
         public static async Task<IBrowser> CreateBrowserAsync(IHostEnvironment env, LaunchOptions? customLaunchOptions = null)
         {
             var chromePath = "/usr/bin/google-chrome-stable"; // production chrome path
-            if (!env.IsProduction()) // If we're not in production, fetch it.
+            if (env.IsDevelopment()) // If we're in development, fetch it.
             {
                 // download the browser executable
                 var fetcher = new BrowserFetcher();
@@ -75,11 +77,13 @@ namespace PWABuilder.Services
                     "--disable-prompt-on-repost",           // Auto-handle form reposts
                     "--run-all-compositor-stages-before-draw"
                 ],
+
             };
             launchOptions.ExecutablePath = chromePath;
 
             // open a new page in the controlled browser
-            return await Puppeteer.LaunchAsync(launchOptions);
+            var browser = await Puppeteer.LaunchAsync(launchOptions);
+            return browser;
         }
 
         /// <summary>
@@ -87,10 +91,25 @@ namespace PWABuilder.Services
         /// </summary>
         /// <param name="site"></param>
         /// <returns></returns>
-        public async Task<IPage> Navigate(Uri site)
+        public async Task<IPage> NavigateAsync(Uri site)
         {
             var browser = await this.reusableBrowser;
+
+            // Safety check: if we have too many pages open, something might be wrong
+            var pages = await browser.PagesAsync();
+            if (pages.Length > 10) // Adjust threshold as needed
+            {
+                logger.LogWarning("There are {pageCount} pages open in the Puppeteer browser. Possible page leak detected.", pages.Length);
+            }
+
+            // Close any pages that have been opened for more than an hour.
+            await TryCleanupOldPages();
+
             var page = await browser.NewPageAsync();
+            this.openPages.Add(new PageReference(page, site));
+
+            // Disable performance monitoring to avoid Protocol error (Performance.enable) issues
+            await page.SetCacheEnabledAsync(false);
 
             await page.SetUserAgentAsync(Constants.DesktopUserAgent);
             await page.GoToAsync(
@@ -98,7 +117,7 @@ namespace PWABuilder.Services
                 new NavigationOptions
                 {
                     Timeout = 30000,
-                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, WaitUntilNavigation.Networkidle2],
+                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, /* WaitUntilNavigation.Networkidle2 - COMMENTED OUT: many PWAs have preload service worker scripts that preload all app assets. We don't want to wait for that. */],
                 }
             );
 
@@ -109,7 +128,7 @@ namespace PWABuilder.Services
         {
             try
             {
-                return await Navigate(site);
+                return await NavigateAsync(site);
             }
             catch (Exception error)
             {
@@ -122,6 +141,48 @@ namespace PWABuilder.Services
         {
             var browser = await this.reusableBrowser;
             await browser.DisposeAsync();
+        }
+
+        private async Task TryCleanupOldPages()
+        {
+            var hourAgo = DateTimeOffset.UtcNow.AddHours(-1);
+            foreach (var openPage in this.openPages)
+            {
+                if (openPage.CreatedAt < hourAgo)
+                {
+                    logger.LogInformation("Closing stale Puppeteer page for {url} opened {time} ago.", openPage.Url, (DateTimeOffset.UtcNow - openPage.CreatedAt).ToString(@"hh\:mm"));
+                    openPage.Page.TryGetTarget(out var page);
+                    if (page != null)
+                    {
+                        openPages.TryTake(out var _);
+                        try
+                        {
+                            await page.CloseAsync();
+                        }
+                        catch (Exception closeError)
+                        {
+                            logger.LogWarning(closeError, "Error closing stale Puppeteer page for {url}.", openPage.Url);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// An open page in Puppeteer. Uses a weak reference to allow for garbage collection. Used for cleaning up old pages that weren't properly disposed.
+    /// </summary>
+    public class PageReference
+    {
+        public WeakReference<IPage> Page { get; }
+        public DateTimeOffset CreatedAt { get; }
+        public Uri Url { get; }
+
+        public PageReference(IPage page, Uri url)
+        {
+            Page = new WeakReference<IPage>(page);
+            CreatedAt = DateTimeOffset.UtcNow;
+            Url = url;
         }
     }
 }

@@ -1,29 +1,29 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "launch.backend",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "tasks.build-backend",
-      "postDebugTask": "tasks.stop-debugging",
-      "program": "${workspaceFolder}/bin/Debug/net9.0/PWABuilder.dll",
-      "serverReadyAction": {
-        "action": "startDebugging",
-        "name": "launch.edge",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      }
-    },
-    {
-      "name": "launch.edge",
-      "url": "https://localhost:7217",
-      "request": "launch",
-      "type": "msedge",
-      "webRoot": "${workspaceFolder}/frontend",
-      "sourceMaps": true,
-      "trace": true,
-      "preLaunchTask": "tasks.launch-vite",
-      "postDebugTask": "tasks.stop-debugging"
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "launch.backend",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "tasks.build-backend",
+            "postDebugTask": "tasks.stop-debugging",
+            "program": "${workspaceFolder}/bin/Debug/net10.0/PWABuilder.dll",
+            "serverReadyAction": {
+                "action": "startDebugging",
+                "name": "launch.edge",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            }
+        },
+        {
+            "name": "launch.edge",
+            "url": "https://localhost:7217",
+            "request": "launch",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}/frontend",
+            "sourceMaps": true,
+            "trace": true,
+            "preLaunchTask": "tasks.launch-vite",
+            "postDebugTask": "tasks.stop-debugging"
+        }
+    ]
 }

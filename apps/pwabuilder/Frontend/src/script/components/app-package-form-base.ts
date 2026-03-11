@@ -17,8 +17,8 @@ import SlColorPicker from '@shoelace-style/shoelace/dist/components/color-picker
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
 
-  static get styles() {
-    const localStyles =  css`
+    static get styles() {
+        const localStyles = css`
       #form-layout input {
         border: 1px solid rgba(194, 201, 209, 1);
         border-radius: var(--input-border-radius);
@@ -167,46 +167,46 @@ export class AppPackageFormBase extends LitElement {
         }
       }
     `
-    return [localStyles];
-  }
+        return [localStyles];
+    }
 
-  constructor() {
-    super();
-  }
+    constructor() {
+        super();
+    }
 
-  getPackageOptions(): PackageOptions {
-    return {};
-  }
+    getPackageOptions(): PackageOptions {
+        return {};
+    }
 
-  getForm(): HTMLFormElement | undefined {
-    return undefined;
-  }
+    getForm(): HTMLFormElement | undefined {
+        return undefined;
+    }
 
-  protected renderFormInput(formInput: FormInput): TemplateResult {
-    // If it's a checkbox or radio, the label comes after the check
-    if (formInput.type === 'checkbox' || formInput.type === 'radio') {
-      return html`
+    protected renderFormInput(formInput: FormInput): TemplateResult {
+        // If it's a checkbox or radio, the label comes after the check
+        if (formInput.type === 'checkbox' || formInput.type === 'radio') {
+            return html`
         ${this.renderFormInputTextbox(formInput)}
         ${this.renderFormInputLabel(formInput)}
       `;
-    }
+        }
 
-    if(formInput.type === 'color'){
-      return html`
+        if (formInput.type === 'color') {
+            return html`
         ${this.renderFormInputLabel(formInput)}
         ${this.renderFormColorPicker(formInput)}
       `;
-    }
+        }
 
-    // For all others, the label comes first.
-    return html`
+        // For all others, the label comes first.
+        return html`
       ${this.renderFormInputLabel(formInput)}
       ${this.renderFormInputTextbox(formInput)}
     `;
-  }
+    }
 
-  private renderFormColorPicker(formInput: FormInput){
-    return html`
+    private renderFormColorPicker(formInput: FormInput) {
+        return html`
     <div class="colorPickerAndValue">
       <sl-color-picker
               id="${formInput.inputId}"
@@ -231,18 +231,18 @@ export class AppPackageFormBase extends LitElement {
             ></sl-color-picker>
             <p>${formInput.value}</p>
   </div>`;
-  }
+    }
 
-  private renderFormInputTextbox(formInput: FormInput): TemplateResult {
-    const inputType = formInput.type || 'text';
-    const inputClass = formInput.type === 'radio' ? 'form-check-input' : 'form-control';
-    const allInputClasses = inputClass + (formInput.classes ? ` ${formInput.classes}` : '');
+    private renderFormInputTextbox(formInput: FormInput): TemplateResult {
+        const inputType = formInput.type || 'text';
+        const inputClass = formInput.type === 'radio' ? 'form-check-input' : 'form-control';
+        const allInputClasses = inputClass + (formInput.classes ? ` ${formInput.classes}` : '');
 
-    const input = html`
+        const input = html`
       <input id="${formInput.inputId}"
         class="${allInputClasses}"
         placeholder="${formInput.placeholder || ''}"
-        value="${ifDefined(formInput.value)}"
+        value="${ifDefined(formInput.value as string)}"
         type="${inputType}"
         ?required="${formInput.required}"
         name="${ifDefined(formInput.name)}"
@@ -261,156 +261,156 @@ export class AppPackageFormBase extends LitElement {
         @invalid=${this.inputInvalid} />
     `;
 
-    return formInput.disabled
-      ? html`<sl-tooltip content="${formInput.disabledTooltipText || ""}">${input}</sl-tooltip>`
-      : input;
-  }
+        return formInput.disabled
+            ? html`<sl-tooltip content="${formInput.disabledTooltipText || ""}">${input}</sl-tooltip>`
+            : input;
+    }
 
 
-  private renderFormInputLabel(formInput: FormInput): TemplateResult {
-    return html`
+    private renderFormInputLabel(formInput: FormInput): TemplateResult {
+        return html`
       <label for="${formInput.inputId}">
         ${formInput.label}
         ${this.renderTooltip(formInput)}
       </label>
     `;
-  }
-
-  protected renderTooltip(formInput: FormInput): TemplateResult {
-    if (!formInput.tooltip) {
-      return html``;
     }
 
-    // Ensure we have an ID for this element. If not, add one.
-    // We need it for the tooltip.
-    if (!formInput.inputId) {
-      formInput.inputId = Math.random().toString(36).replace('0.', 'form-input-');
-    }
+    protected renderTooltip(formInput: FormInput): TemplateResult {
+        if (!formInput.tooltip) {
+            return html``;
+        }
 
-    return html`
+        // Ensure we have an ID for this element. If not, add one.
+        // We need it for the tooltip.
+        if (!formInput.inputId) {
+            formInput.inputId = Math.random().toString(36).replace('0.', 'form-input-');
+        }
+
+        return html`
       <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
       </info-circle-tooltip>
     `;
-  }
-
-  private colorChanged(e: UIEvent, formInput: FormInput) {
-    interface HTMLSlColorPicker extends HTMLInputElement,  SlColorPicker {
-      size: any;
-      form: any;
-      addEventListener: any;
-      removeEventListener: any;
-    }
-    const inputElement = e.target as HTMLSlColorPicker;
-
-    if(!inputElement || !inputElement.nextElementSibling) return;
-
-    const formattedValue = inputElement.getFormattedValue('hex').toLocaleUpperCase();
-    const colorValue = inputElement.nextElementSibling;
-    const newValue = document.createElement('p');
-    newValue.textContent = formattedValue;
-
-    colorValue.replaceWith(newValue);
-
-    // Run validation if necessary.
-    if (formInput.validationErrorMessage) {
-      const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
-      inputElement.setCustomValidity(errorMessage);
-      inputElement.title = errorMessage;
     }
 
-    // Fire the input handler
-    if (formInput.inputHandler) {
-      formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+    private colorChanged(e: UIEvent, formInput: FormInput) {
+        interface HTMLSlColorPicker extends HTMLInputElement, SlColorPicker {
+            size: any;
+            form: any;
+            addEventListener: any;
+            removeEventListener: any;
+        }
+        const inputElement = e.target as HTMLSlColorPicker;
+
+        if (!inputElement || !inputElement.nextElementSibling) return;
+
+        const formattedValue = inputElement.getFormattedValue('hex').toLocaleUpperCase();
+        const colorValue = inputElement.nextElementSibling;
+        const newValue = document.createElement('p');
+        newValue.textContent = formattedValue;
+
+        colorValue.replaceWith(newValue);
+
+        // Run validation if necessary.
+        if (formInput.validationErrorMessage) {
+            const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+            inputElement.setCustomValidity(errorMessage);
+            inputElement.title = errorMessage;
+        }
+
+        // Fire the input handler
+        if (formInput.inputHandler) {
+            formInput.inputHandler(formattedValue, inputElement.checked, inputElement);
+        }
     }
-  }
 
-  private onInput(e: UIEvent, formInput: FormInput) {
-    const inputElement = e.target as HTMLInputElement | null;
-    if (inputElement) {
-      // Run validation if necessary.
-      if (formInput.validationErrorMessage) {
-        const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
-        inputElement.setCustomValidity(errorMessage);
-        inputElement.title = errorMessage;
-      }
+    private onInput(e: UIEvent, formInput: FormInput) {
+        const inputElement = e.target as HTMLInputElement | null;
+        if (inputElement) {
+            // Run validation if necessary.
+            if (formInput.validationErrorMessage) {
+                const errorMessage = this.inputHasValidationErrors(inputElement) ? formInput.validationErrorMessage : '';
+                inputElement.setCustomValidity(errorMessage);
+                inputElement.title = errorMessage;
+            }
 
-      // Fire the input handler
-      if (formInput.inputHandler) {
-        formInput.inputHandler(inputElement.value || '', inputElement.checked, inputElement);
-      }
+            // Fire the input handler
+            if (formInput.inputHandler) {
+                formInput.inputHandler(inputElement.value || '', inputElement.checked, inputElement);
+            }
+        }
     }
-  }
 
-  private onChange(e: UIEvent, formInput: FormInput) {
-    const inputElement = e.target as HTMLInputElement | null;
-    if (inputElement) {
-      // Fire the changed handler
-      if (formInput.changedHandler) {
-        formInput.changedHandler(inputElement.value || '', inputElement.checked, inputElement);
-      }
+    private onChange(e: UIEvent, formInput: FormInput) {
+        const inputElement = e.target as HTMLInputElement | null;
+        if (inputElement) {
+            // Fire the changed handler
+            if (formInput.changedHandler) {
+                formInput.changedHandler(inputElement.value || '', inputElement.checked, inputElement);
+            }
+        }
     }
-  }
 
-  private inputInvalid(e: UIEvent) {
-    const element = e.target as HTMLInputElement;
-    if (element) {
-      this.expandParentAccordionIfNeeded(element);
+    private inputInvalid(e: UIEvent) {
+        const element = e.target as HTMLInputElement;
+        if (element) {
+            this.expandParentAccordionIfNeeded(element);
+        }
     }
-  }
 
-  private inputHasValidationErrors(input: HTMLInputElement): boolean {
-    const statesChecked = [
-      input.validity.badInput,
-      input.validity.patternMismatch,
-      input.validity.rangeOverflow,
-      input.validity.rangeUnderflow,
-      input.validity.stepMismatch,
-      input.validity.tooLong,
-      input.validity.tooShort,
-      input.validity.typeMismatch,
-      input.validity.valueMissing
-    ];
+    private inputHasValidationErrors(input: HTMLInputElement): boolean {
+        const statesChecked = [
+            input.validity.badInput,
+            input.validity.patternMismatch,
+            input.validity.rangeOverflow,
+            input.validity.rangeUnderflow,
+            input.validity.stepMismatch,
+            input.validity.tooLong,
+            input.validity.tooShort,
+            input.validity.typeMismatch,
+            input.validity.valueMissing
+        ];
 
-    return statesChecked.some(s => s === true);
-  }
-
-  private expandParentAccordionIfNeeded(element: HTMLInputElement) {
-    // If the accordion is hiding any invalid inputs, open it.
-    const isInvalid = !element.validity.valid;
-    const parentAccordion = element.closest('fast-accordion-item');
-    if (parentAccordion && (parentAccordion as any).expanded === false && isInvalid) {
-      const accordionFlipper = parentAccordion.querySelector<HTMLElement>(".flipper-button");
-      accordionFlipper?.click();
-      setTimeout(() => {
-        element.scrollIntoView();
-        element.reportValidity();
-      }, 0);
+        return statesChecked.some(s => s === true);
     }
-  }
+
+    private expandParentAccordionIfNeeded(element: HTMLInputElement) {
+        // If the accordion is hiding any invalid inputs, open it.
+        const isInvalid = !element.validity.valid;
+        const parentAccordion = element.closest('fast-accordion-item');
+        if (parentAccordion && (parentAccordion as any).expanded === false && isInvalid) {
+            const accordionFlipper = parentAccordion.querySelector<HTMLElement>(".flipper-button");
+            accordionFlipper?.click();
+            setTimeout(() => {
+                element.scrollIntoView();
+                element.reportValidity();
+            }, 0);
+        }
+    }
 }
 
 export interface FormInput {
-  label: string;
-  tooltip?: string;
-  tooltipLink?: string;
-  inputId: string;
-  name?: string;
-  type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
-  placeholder?: string;
-  value?: string | string[];
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  minValue?: number;
-  maxValue?: number;
-  pattern?: string;
-  spellcheck?: boolean;
-  readonly?: boolean;
-  validationErrorMessage?: string;
-  checked?: boolean;
-  disabled?: boolean;
-  classes?: string;
-  disabledTooltipText?: string;
-  inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
-  changedHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
+    label: string;
+    tooltip?: string;
+    tooltipLink?: string;
+    inputId: string;
+    name?: string;
+    type?: 'hidden' | 'text' | 'search' | 'tel' | 'url' | 'email' | 'password' | 'datetime' | 'date' | 'month' | 'week' | 'time' | 'datetime-local' | 'number' | 'range' | 'color' | 'checkbox' | 'radio' | 'file' | 'submit' | 'image' | 'reset' | 'button'
+    placeholder?: string;
+    value?: string | string[];
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    minValue?: number;
+    maxValue?: number;
+    pattern?: string;
+    spellcheck?: boolean;
+    readonly?: boolean;
+    validationErrorMessage?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    classes?: string;
+    disabledTooltipText?: string;
+    inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
+    changedHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
 }

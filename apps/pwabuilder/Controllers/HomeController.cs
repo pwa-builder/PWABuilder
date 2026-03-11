@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Microsoft.PWABuilder.Controllers;
 
 [Route("[controller]")]
-[Route("{*url:regex(^(?!api|code|assets|swagger|.*css$|.*json$|.*js$).*$)}")]
+[Route("{*url:regex(^(?!api|code|assets|.*css$|.*json$|.*js$).*$)}")]
 public class HomeController : Controller
 {
     [HttpGet("")]
     [HttpGet("/")]
-    [ResponseCache(Duration = 60 * 5)] // 5 minutes
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Index()
     {
         return View();

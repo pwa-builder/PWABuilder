@@ -116,7 +116,7 @@ namespace PWABuilder.MicrosoftStore.Services
             WebAppManifestContext webManifest)
         {
             var pwabuilderCLIArgs = CreateCommandLineArgs(options, appImages, webManifest, actionFiles, outputDirectory);
-            var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}");
+            var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}", $"CLI args: {pwabuilderCLIArgs}");
             var toolFailedError = new ProcessException(formattedMessage, innerException, standardOutput, standardErrorOutput);
             toolFailedError.Data.Add("StandardOutput", standardOutput);
             toolFailedError.Data.Add("StandardError", standardErrorOutput);

@@ -22,12 +22,11 @@ import {
 import './windows-form';
 import './android-form';
 import './ios-form';
-import './oculus-form';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
 import { classMap } from 'lit/directives/class-map.js';
 import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
-import { GooglePlayPackageError } from "../models/GooglePlayPackageError";
+import { GooglePlayPackageError } from "../models/google-play-package-error";
 import { enqueueGooglePlayPackageJob } from "../services/publish/android-publish";
 import { AndroidPackageOptions } from "../utils/android-validation";
 import { Router } from '@vaadin/router';
@@ -73,12 +72,6 @@ export class PublishPane extends LitElement {
             "logo": "/assets/apple_icon.svg",
             "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
             "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
-        },
-        "Meta":
-        {
-            "logo": "/assets/meta_icon.svg",
-            "packaging_text": "Click below for instructions on how to submit to the Meta Quest Store.",
-            "package_instructions": "https://docs.pwabuilder.com/#/builder/meta"
         }
     }
 
@@ -119,18 +112,6 @@ export class PublishPane extends LitElement {
             isActionCard: true,
             icon: '/assets/Publish_Apple.svg',
             renderDownloadButton: () => this.renderiOSDownloadButton()
-        },
-        {
-            title: 'Meta Quest',
-            factoids: [
-                "PWAs are first class applications",
-                "Bring your 2D apps to VR's immersive screen",
-                "Build immersive 3D experiences for VR using WebXR",
-                "Currently in developer preview via sideloading"
-            ],
-            isActionCard: true,
-            icon: '/assets/Publish_Meta.svg',
-            renderDownloadButton: () => this.renderOculusDownloadButton()
         }
     ];
 
@@ -711,14 +692,6 @@ export class PublishPane extends LitElement {
     renderiOSDownloadButton(): TemplateResult {
         return html`
       <button class="package-button" id="ios-package-button" @click="${() => this.showiOSOptions()}">
-        Generate Package
-      </button>
-    `;
-    }
-
-    renderOculusDownloadButton(): TemplateResult {
-        return html`
-      <button class="package-button" id="oculus-package-button" @click="${() => this.showMetaOptions()}">
         Generate Package
       </button>
     `;

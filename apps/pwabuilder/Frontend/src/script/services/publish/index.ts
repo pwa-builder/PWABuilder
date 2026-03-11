@@ -1,9 +1,8 @@
-import { GooglePlayPackageError } from "../../models/GooglePlayPackageError";
-import { GooglePlayPackageJob } from "../../models/GooglePlayPackageJob";
+import { GooglePlayPackageError } from "../../models/google-play-package-error";
+import { GooglePlayPackageJob } from "../../models/google-play-package-job";
 import { AndroidPackageOptions } from '../../utils/android-validation';
 import { PackageOptions } from '../../utils/interfaces';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';
-import { OculusAppPackageOptions } from '../../utils/oculus-validation';
 import { WindowsPackageOptions } from '../../utils/win-validation';
 import {
     downloadGooglePlayPackageZip,
@@ -11,7 +10,6 @@ import {
     getGooglePlayPackageJob,
 } from './android-publish';
 import { generateIOSPackage } from './ios-publish';
-import { generateOculusPackage } from './oculus-publish';
 import {
     generateWindowsPackage,
 } from './windows-publish';
@@ -36,8 +34,6 @@ export async function generatePackage(
             return await tryGenerateAndroidPackage(packageOptions as AndroidPackageOptions);
         case 'ios':
             return await tryGenerateIOSPackage(packageOptions as IOSAppPackageOptions);
-        case 'meta':
-            return await tryGenerateOculusPackage(packageOptions as OculusAppPackageOptions);
         default:
             throw new Error(
                 `A platform type must be passed, ${type} is not a valid platform.`
@@ -47,15 +43,6 @@ export async function generatePackage(
 
 async function tryGenerateIOSPackage(options: IOSAppPackageOptions): Promise<PackageInfo | null> {
     const result = await generateIOSPackage(options);
-    return {
-        appName: options.name,
-        blob: result,
-        type: "store"
-    };
-}
-
-async function tryGenerateOculusPackage(options: OculusAppPackageOptions): Promise<PackageInfo | null> {
-    const result = await generateOculusPackage(options);
     return {
         appName: options.name,
         blob: result,

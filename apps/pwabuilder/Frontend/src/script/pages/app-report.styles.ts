@@ -756,7 +756,11 @@ sl-spinner {
 }
 
 .todo-items-holder {
-    max-height: 185px;
+    display: flex;
+    flex-direction: column;
+    padding-right: var(--sl-spacing-small);
+    gap: var(--sl-spacing-x-small);
+    max-height: 300px;
     overflow-y: auto;
     scrollbar-width: thin;
 }
@@ -820,7 +824,7 @@ sl-spinner {
 }
 
 #todo-summary-left > h2 {
-    font-size: var(--subheader-font-size);
+    font-size: calc(var(--subheader-font-size) + 4px);
     margin: 0;
 }
 

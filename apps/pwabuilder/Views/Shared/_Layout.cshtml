@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en-US">
 <head>
     <meta charset="utf-8" />
     <title>PWABuilder</title>
@@ -19,7 +19,7 @@
     <meta name="theme-color" content="#FFFFFF" />
     <meta name="ms.appid" content="PWABuilder">
 
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="PWABuilder" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
@@ -45,7 +45,15 @@
     <environment exclude="Development">
         <link rel="stylesheet" href="@viteEntryPointProvider.EntryPointCss" inline-css="true" />
         <script type="module" crossorigin src="@viteEntryPointProvider.EntryPointJs"></script>
+        <script id="vite-plugin-pwa:inline-sw">
+            if ('serviceWorker' in navigator) {
+                window.addEventListener("load", () => navigator.serviceWorker.register("/service-worker.js", {
+                    scope: "/"
+                }).catch(swRegError => console.warn("Unable to register service worker due to error.", swRegError)));
+            }
+        </script>
     </environment>
+    
 
 </head>
 <body>

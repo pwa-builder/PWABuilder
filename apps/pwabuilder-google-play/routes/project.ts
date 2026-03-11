@@ -12,7 +12,7 @@ import { PackageCreator } from '../services/packageCreator.js';
 import { PackageCreationProgress } from '../models/packageCreationProgress.js';
 import { errorToString } from "../utils/errorToString.js";
 import { packageJobQueue } from "../services/packageJobQueue.js";
-import { database } from "../services/databaseService.js";
+import { database } from "../services/redisService.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
 
@@ -21,6 +21,14 @@ const router = express.Router();
 tmp.setGracefulCleanup(); // remove any tmp file artifacts on process exit
 const packageCreator = new PackageCreator();
 packageCreator.addEventListener("progress", e => packageCreationProgress(e));
+
+/**
+ * Health check endpoint that verifies the service is running.
+ * This is used by Azure health checks to ensure app instance is healthy.
+ */
+router.get('/ping', (_: express.Request, response: express.Response) => {
+    response.status(200).json({ status: 'healthy' });
+});
 
 /**
  * Generates an APK package and zips it up along with the signing key info. Sends back the zip file.
@@ -153,6 +161,8 @@ async function getPackageJob(request: express.Request, response: express.Respons
         return;
     }
 
+    console.info("Received request for package job status", jobId);
+
     const job = await database.getJson<GooglePlayPackageJob>(jobId);
     if (!job) {
         console.warn("No job found with ID", jobId);
@@ -161,6 +171,7 @@ async function getPackageJob(request: express.Request, response: express.Respons
     }
 
     // Send back the job as JSON.
+    console.info("Request for package job completed successfully. Returning job", jobId, job.status);
     response.status(200).json(job);
 }
 
@@ -197,7 +208,7 @@ async function enqueuePackage(request: express.Request, response: express.Respon
         packageOptions.analyticsInfo = analyticsInfo;
         const jobId = await packageJobQueue.enqueue(packageOptions);
 
-        console.info(`Package job enqueued with ID: ${jobId}`);
+        console.info(`Package job enqueued with ID ${jobId} for ${packageOptions.analysisId}`);
         response.status(200).send(jobId);
     } catch (error) {
         console.error("Failed to enqueue package job:", error);
@@ -375,6 +386,18 @@ function validateAndroidOptionsRequest(request: express.Request): AppPackageRequ
     validationErrors.push(
         ...requiredFields.filter((f) => !options![f]).map((f) => `${f as string} is required`)
     );
+
+    // Ensure webManifestUrl is an absolute HTTPS URL.
+    if (options.webManifestUrl) {
+        try {
+            const manifestUrl = new URL(options.webManifestUrl, options.fullScopeUrl);
+            if (manifestUrl.protocol !== 'https:') {
+                validationErrors.push('webManifestUrl must be an absolute HTTPS URL');
+            }
+        } catch (manifestUrlError) {
+            validationErrors.push('webManifestUrl must be an absolute HTTPS URL');
+        }
+    }
 
     // We must have signing options if the signing is enabled.
     if (options.signingMode !== 'none' && !options.signing) {
