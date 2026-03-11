@@ -1,0 +1,45 @@
+import { LitElement, PropertyValueMap, TemplateResult } from 'lit';
+import { Manifest } from '@pwabuilder/manifest-validation';
+import "./manifest-field-tooltip";
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/details/details.js';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
+export declare class ManifestPlatformForm extends LitElement {
+    manifest: Manifest;
+    focusOn: string;
+    shortcutHTML: TemplateResult[];
+    protocolHTML: TemplateResult[];
+    relatedAppsHTML: TemplateResult[];
+    errorMap: any;
+    private shouldValidateAllFields;
+    private validationPromise;
+    static get styles(): import("lit").CSSResult;
+    constructor();
+    firstUpdated(): void;
+    protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void>;
+    private requestValidateAllFields;
+    validateAllFields(): Promise<void>;
+    reset(): void;
+    initCatGrid(): void;
+    dispatchUpdateEvent(field: string, change: any, removal?: boolean): void;
+    handleInputChange(event: InputEvent): Promise<void>;
+    addFieldToHTML(field: string): void;
+    addShortcutToManifest(e: any): void;
+    updateShortcutsInManifest(inputs: any, push: boolean, removal?: boolean): Promise<void>;
+    addProtocolToManifest(e: any): void;
+    updateProtocolsInManifest(inputs: any, push: boolean, removal?: boolean): Promise<void>;
+    addRelatedAppToManifest(e: any): void;
+    updateRelatedAppsInManifest(inputs: any, select: any, push: boolean, removal?: boolean): Promise<void>;
+    updateCategories(): void;
+    validatePlatformList(field: string, updatedValue: any[], removal?: boolean): Promise<Boolean>;
+    removeData(tag: string): Promise<void>;
+    updateExistingData(tag: string): void;
+    decideFocus(field: string): {
+        focus: boolean;
+    };
+    render(): TemplateResult<1>;
+}

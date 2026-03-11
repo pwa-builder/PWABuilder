@@ -1,0 +1,31 @@
+import { LitElement, PropertyValueMap } from 'lit';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/tag/tag.js';
+import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
+export declare class SearchExtensions extends LitElement {
+    index: any;
+    empty: boolean;
+    share_target: any;
+    file: any;
+    tags: string[];
+    filteredList: string[];
+    emptyName: boolean;
+    private errorCount;
+    static get styles(): import("lit").CSSResult;
+    constructor();
+    protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void;
+    handleNewType(e: KeyboardEvent): boolean;
+    searchExtension(index: number): void;
+    resizeInput(input: HTMLInputElement): void;
+    createTag(value: string): import("@shoelace-style/shoelace/dist/components/tag/tag.component.js").default;
+    focusInput(): void;
+    removeFocus(): Promise<void>;
+    handleNewTypeFromClick(index: number, ext: string): void;
+    renderTags(type: string): import("lit-html").TemplateResult<1>;
+    removeAcceptEntry(type: string): void;
+    handleTagChange(): void;
+    handleNameChange(): void;
+    removeFile(): void;
+    updateError(): void;
+    render(): import("lit-html").TemplateResult<1>;
+}
