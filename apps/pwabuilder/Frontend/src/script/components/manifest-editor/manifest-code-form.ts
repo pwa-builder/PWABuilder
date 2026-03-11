@@ -1,9 +1,6 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-
 import "./toast";
-
-import '../code-editor';
 import { prettyString } from "../../utils/prettyJson";
 import { Manifest } from "@pwabuilder/manifest-validation";
 
@@ -43,19 +40,25 @@ export class ManifestCodeForm extends LitElement {
         ];
     }
 
-    constructor() {
-        super();
-    }
-
-    firstUpdated() {
-    }
-
     render() {
         return html`
-      <div id="code-holder">
-        <code-editor .startText=${prettyString(this.manifest)} .readOnly=${true}></code-editor>
-      </div>
-      ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
-    `;
+            <div id="code-holder">
+                <lazy-load when="visible" .renderer=${() => this.renderCodeEditor()} .importer=${() => this.importCodeEditor()}></lazy-load>
+            </div>
+            ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
+        `;
+    }
+
+    importCodeEditor(): Promise<unknown> {
+        return import('..//code-editor');
+    }
+
+    renderCodeEditor(): TemplateResult {
+        return html`
+            <code-editor 
+                .startText=${prettyString(this.manifest)} 
+                .readOnly=${true}>
+            </code-editor>
+        `;
     }
 }

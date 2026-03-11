@@ -1,7 +1,6 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
-import '../components/code-editor';
+import '../components/lazy-load';
 
 @customElement('sw-panel')
 export class SWPanel extends LitElement {
@@ -47,6 +46,21 @@ export class SWPanel extends LitElement {
         console.log("update");
     }
 
+    importCodeEditor(): Promise<unknown> {
+        return import('../components/code-editor');
+    }
+
+    renderCodeEditor(): TemplateResult {
+        return html`
+            <code-editor
+                copyText="Copy Service Worker"
+                .startText=${this.sw.code}
+                .readOnly=${true}
+                .editorStateType=${'javascript'}>
+            </code-editor>
+        `;
+    }
+
     render() {
         return html`
       <div class="panel-holder">
@@ -56,12 +70,8 @@ export class SWPanel extends LitElement {
         </div>
         <div class="code-block">
           <h2>Code</h2>
-          <code-editor
-            copyText="Copy Service Worker"
-            .startText=${this.sw.code}
-            .readOnly=${true}
-            .editorStateType=${'javascript'}
-          >
+          <lazy-load .importer=${() => this.importCodeEditor()} .renderer=${() => this.renderCodeEditor()} when="visible"></lazy-load>
+          
         </code-editor>
         </div>
       </div>
