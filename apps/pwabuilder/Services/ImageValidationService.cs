@@ -64,9 +64,9 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
-                // Vercel: Vercel-hosted images will always return 200! Even if they don't exist. It returns a dummy image of length 110322 bytes.
+                // Vercel: Vercel-hosted images will always return 200! Even if they don't exist. It returns a dummy image of length 110322 bytes, or an invalid image of 12 bytes.
                 // Check for that here and fail it if we see it.
-                if (imageUrl.Host.Contains(".vercel.app") && headResponse.Content.Headers.ContentLength == 110322)
+                if (imageUrl.Host.Contains(".vercel.app") && (headResponse.Content.Headers.ContentLength == 110322 || headResponse.Content.Headers.ContentLength == 12))
                 {
                     return new HttpRequestException($"Your PWA's web manifest refers to an image that doesn't exist: {imageUrl}.", null, System.Net.HttpStatusCode.NotFound);
                 }
