@@ -20,11 +20,11 @@ export class ManifestShareForm extends LitElement {
 
     @property({
         type: Object, hasChanged(value: Manifest, oldValue: Manifest) {
-            if (value !== oldValue && value.name) {
+            if (value !== oldValue) {
                 manifestInitialized = true;
-                return value !== oldValue;
+                return true;
             }
-            return value !== oldValue;
+            return false;
         }
     }) manifest: Manifest = {};
 
