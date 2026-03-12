@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import "./toast";
 import { prettyString } from "../../utils/prettyJson";
 import { Manifest } from "@pwabuilder/manifest-validation";
+import "../lazy-load";
 
 @customElement('manifest-code-form')
 export class ManifestCodeForm extends LitElement {

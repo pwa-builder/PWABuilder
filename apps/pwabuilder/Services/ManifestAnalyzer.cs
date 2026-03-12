@@ -111,6 +111,7 @@ public class ManifestAnalyzer
             PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
+            PwaCapabilityId.IconTypesAreNotIcos => new PwaManifestCapabilityCheck(capability, m => CheckImagesAreNonIcos(m)),
             PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 192, "image/png")),
             PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 512, "image/png")),
             PwaCapabilityId.Screenshots => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "screenshots")),
@@ -408,6 +409,37 @@ public class ManifestAnalyzer
         {
             return PwaCapabilityCheckStatus.Passed;
         }
+    }
+
+    private static PwaCapabilityCheckStatus CheckImagesAreNonIcos(ManifestDetection manifest)
+    {
+        // Grab the icon values. They should look like: 
+        /**
+           [
+              {
+                 "src": "/images/foo.png",
+                 "sizes": "16x16",
+                 "purpose": "any"
+              }
+           ]
+        */
+        var images = GetManifestArray("icons", manifest);
+        if (!images.Any())
+        {
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+        }
+
+        var icoImageCount = images
+            .Where(icon => icon.TryGetProperty("type", out var type) && type.ValueKind == JsonValueKind.String)
+            .Select(icon => icon.GetProperty("type").GetString())
+            .Where(type => !string.IsNullOrWhiteSpace(type))
+            .Count(type => string.Equals(type, "image/x-icon", StringComparison.OrdinalIgnoreCase));
+        if (icoImageCount > 0)
+        {
+            return PwaCapabilityCheckStatus.Failed;
+        }
+
+        return PwaCapabilityCheckStatus.Passed;
     }
 
     private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
