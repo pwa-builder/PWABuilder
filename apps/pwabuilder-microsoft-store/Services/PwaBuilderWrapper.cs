@@ -64,13 +64,12 @@ namespace PWABuilder.MicrosoftStore.Services
             WebAppManifestContext webManifest,
             string outputDirectory,
             string processor,
-            bool fallback,
             CancellationToken cancelToken)
         {
             var pwaBuilderFilePath = Path.Combine(host.ContentRootPath, PwaBuilderPath);
 
             var actionsFiles = await windowsActionService.GetWindowsActionsFilesAsync(options, outputDirectory, cancelToken);
-            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsFiles, outputDirectory, processor, fallback);
+            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsFiles, outputDirectory, processor);
             return await RunPwabuilderExe(options, appImages, webManifest, actionsFiles, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
         }
 
@@ -148,7 +147,7 @@ namespace PWABuilder.MicrosoftStore.Services
         /// Creates command line arguments for the pwa_builder.exe command line tool from the specified options.
         /// </summary>
         /// <returns></returns>
-        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string processor = "", bool fallback = false)
+        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string processor = "")
         {
             // pwa_builder.exe expects the full version 'x.x.x.x', where the last section (revision) is zero.
             // The store requires the revision to be zero, as it's reserved for store use.
@@ -183,7 +182,9 @@ namespace PWABuilder.MicrosoftStore.Services
                 { "web-action-localized-custom-entities-files", actionsFiles?.CustomEntitiesLocalizationDirectoryPath?.Path },
             };
 
-            if (fallback && options.ManifestFilePath != null)
+            // COMMENTED OUT 3/16/26: We now always supply the manifest file path unless widgets are enabled. For widgets, we need the real manifest.
+            // Previously, we only supplied the manifest file path as a fallback if the packaging failed. But this didn't work when pwa_buidler.exe would timeout fetching the manifest, e.g. for replit.com.
+            if (options.ManifestFilePath != null && options.EnableWebAppWidgets != true)
             {
                 args.Add("manifest-file", options.ManifestFilePath);
             }
