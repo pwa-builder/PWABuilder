@@ -144,7 +144,8 @@ export class PackageCreator {
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
             const isTimeout = errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ESOCKETTIMEDOUT');
-            if (is403Error || isTimeout) {
+            const isRunDotAppManifestError = options.pwaUrl.indexOf("run.app/") && errorMessage.includes("Unexpected token"); // Sites on run.app spin up when you access them, rendering a loading screen. This is problematic when fetching resources like web manifest, which expects JSON, not HTML. See https://github.com/pwa-builder/PWABuilder/issues/5380
+            if (is403Error || isTimeout || isRunDotAppManifestError) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
                 const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
