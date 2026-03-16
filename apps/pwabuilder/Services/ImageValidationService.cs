@@ -273,7 +273,7 @@ public class ImageValidationService : IImageValidationService
         // Common case: check if it's a Supabase binary image, served as application/octet-stream. If so, they can fix it by using the image render URL.
         if (imageUrl.AbsoluteUri.Contains("supabase.co/storage/") && imageUrl.AbsolutePath.Contains("/object/public/"))
         {
-            return new Exception($"Image at {imageUrl} returned with the wrong content-type. Expected an image content type, but got {contentType}. \n\nFor Supabase-hosted images, update your manifest images to use the image rendering endpoint: {imageUrl.AbsoluteUri.Replace("/object/public", "/render/image/public")}");
+            return new Exception($"Image at {imageUrl} returned with the wrong content-type. Expected an image content type, but got {contentType}. \n\nTo fix this, update your manifest images to use the image rendering endpoint on Supabase: {imageUrl.AbsoluteUri.Replace("/object/public", "/render/image/public")}");
         }
 
         return new Exception($"Fetching image {imageUrl} returned with Content-Type {contentType}. Expected an image content type, such as image/png, image/jpeg, or image/webp");
