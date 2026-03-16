@@ -164,7 +164,7 @@ export class PackageCreator {
             }
 
             // It's not a 403 / connection refused? Just throw it.
-            this.dispatchProgressEvent(`Bubblewrap failed to generated app package due to an error. ${error}`, "error");
+            this.dispatchProgressEvent(`Bubblewrap failed to generate an app package due to an error. ${error}`, "error");
             throw error;
         }
     }
