@@ -49,7 +49,8 @@ public class WebStringCache
             return cached;
         }
 
-        // It's not in the cache. Fetch it and if fetch was successful, put it in the cache.
+        // It's not in the cache. Fetch it and if fetch was successful, put it in the cache.\
+        (logger ?? this.logger).LogInformation("Web string cache miss for {url}. Fetching from the web.", url);
         var webString = await TryFetchResourceAsync(url, accepts, maxSizeInBytes, logger ?? this.logger, cancelToken);
         if (webString != null)
         {
