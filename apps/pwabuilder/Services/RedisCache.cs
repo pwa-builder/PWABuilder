@@ -97,7 +97,7 @@ public class InMemoryRedisCache : IRedisCache
 public class RedisCache : IRedisCache
 {
     // How long items should remain in the cache before expiring.
-    private static readonly TimeSpan itemExpiration = TimeSpan.FromDays(30);
+    private static readonly TimeSpan itemExpiration = TimeSpan.FromDays(3);
     private readonly ILogger<RedisCache> logger;
     private readonly Task<IDatabase> redisTask;
 
