@@ -48,6 +48,13 @@ public interface IRedisCache
     /// <param name="listId">The ID of the list in the Redis cache.</param>
     /// <returns>The first item from the list, or null if the list is empty.</returns>
     Task<T?> DequeueAsync<T>(string listId) where T : class;
+
+    /// <summary>
+    /// Gets the length of a list in the Redis cache.
+    /// </summary>
+    /// <param name="listId">The ID of the list in the Redis cache.</param>
+    /// <returns>The number of items in the list.</returns>
+    Task<long> GetQueueLength(string listId);
 }
 
 /// <summary>
@@ -88,6 +95,16 @@ public class InMemoryRedisCache : IRedisCache
         }
 
         return Task.FromResult((T?)null);
+    }
+
+    public Task<long> GetQueueLength(string listId)
+    {
+        if (store.TryGetValue(listId, out var obj) && obj is System.Collections.Concurrent.ConcurrentQueue<string> list)
+        {
+            return Task.FromResult((long)list.Count);
+        }
+
+        return Task.FromResult(0L);
     }
 }
 
@@ -154,7 +171,7 @@ public class RedisCache : IRedisCache
             var json = await redis.StringGetAsync(id);
             if (!json.HasValue)
             {
-                logger.LogWarning("Attempted to retrieve item {id}, but it does not exist.", id);
+                logger.LogWarning("Attempted to retrieve item {id} from Redis cache, but it does not exist.", id);
                 return null;
             }
 
@@ -187,7 +204,7 @@ public class RedisCache : IRedisCache
         try
         {
             var redis = await this.redisTask;
-            var json = System.Text.Json.JsonSerializer.Serialize(item);
+            var json = JsonSerializer.Serialize(item);
             await redis.ListRightPushAsync(listId, json);
         }
         catch (Exception ex)
@@ -219,6 +236,25 @@ public class RedisCache : IRedisCache
         catch (Exception ex)
         {
             logger.LogError(ex, "Error dequeuing item from list {listKey} in Redis.", listId);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Gets the length of the specified list in the Redis cache.
+    /// </summary>
+    /// <param name="listId">The ID of the list in the Redis cache.</param>
+    /// <returns>The number of items in the list.</returns>
+    public async Task<long> GetQueueLength(string listId)
+    {
+        try
+        {
+            var redis = await this.redisTask;
+            return await redis.ListLengthAsync(listId);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting queue length of {listId} from Redis.", listId);
             throw;
         }
     }
