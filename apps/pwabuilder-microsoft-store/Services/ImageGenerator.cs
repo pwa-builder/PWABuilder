@@ -31,9 +31,9 @@ namespace PWABuilder.MicrosoftStore
             IOptions<AppSettings> appSettings,
             ILogger<ImageGenerator> logger)
         {
-            this.http = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All });
+            this.http = httpClientFactory.CreateClient();
             this.http.AddLatestEdgeUserAgent();
-            this.imageGeneratorServiceUrl = new Uri(appSettings.Value.ImageGeneratorApiUrl);
+            this.imageGeneratorServiceUrl = appSettings.Value.ImageGeneratorApiUrl;
             this.logger = logger;
         }
 
@@ -50,7 +50,7 @@ namespace PWABuilder.MicrosoftStore
             // 1. Generate images using PWABuilder's image generation service. 
             // These will be used as a backup if the options and manifest are missing images.
             var imageOptions = options.Images ?? new WindowsImages();
-            var generatedImagesZip = await InvokePwabuilderImageGeneratorService(imageOptions, manifest);
+            using var generatedImagesZip = await InvokePwabuilderImageGeneratorService(imageOptions, manifest);
 
             // 2. Assemble the image sources from the options, web manifest, and generated images zip.
             var imageSources = GetImageSources(imageOptions, manifest, generatedImagesZip);
@@ -70,8 +70,7 @@ namespace PWABuilder.MicrosoftStore
         private async Task<ImageGeneratorServiceZipFile> InvokePwabuilderImageGeneratorService(WindowsImages imageOptions, WebAppManifestContext webManifest)
         {
             var baseImageBytes = await GetBaseImage(imageOptions, webManifest);
-            var imagesZipUrl = await CreateWindows11ImagesZip(baseImageBytes, imageOptions.Padding, imageOptions.BackgroundColor);
-            return await DownloadWindowsImagesZip(imagesZipUrl);
+            return await CreateWindows11ImagesZip(baseImageBytes, imageOptions.Padding, imageOptions.BackgroundColor);
         }
 
         private async Task<byte[]> GetBaseImage(WindowsImages imageOptions, WebAppManifestContext webManifest)
@@ -122,46 +121,35 @@ namespace PWABuilder.MicrosoftStore
             throw new InvalidOperationException($"Couldn't find a suitable base image from which to generate all Windows package images. Please ensure your web app manifest has a square PNG image 512x512 or larger. Base image sources: {string.Join(", ", imageSourceDescriptions)}");
         }
 
-        private async Task<Uri> CreateWindows11ImagesZip(byte[] image, double padding, string? backgroundColor)
+        private async Task<ImageGeneratorServiceZipFile> CreateWindows11ImagesZip(byte[] image, double padding, string? backgroundColor)
         {
-            // The image generation API documentation (https://github.com/pwa-builder/pwabuilder-Image-Generator/blob/master/README.md)
+            // The image generation API documentation: https://github.com/pwa-builder/PWABuilder/blob/ac5aec8c3ad235cb7f2f54bfa64189ec73e947a6/apps/pwabuilder/Controllers/ImagesController.cs#L83
             // states the image generator takes the following parameters:
-            // - fileName: bytes
-            // - padding: double
+            // - baseImage: bytes
+            // - padding: double from 0 to 1
             // - color: The background color (named color or hex color) of the generated images. If null, the color will be chosen from (0,0) pixel of the source image
             // - platform: windows11
-            // - colorChanged: if colorOption = "choose", this should be 1. Otherwise, omit.
-            var fileContent = new StreamContent(new MemoryStream(image));
-            fileContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("form-data") { Name = "file", FileName = "image.png" };
-            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+            var memStream = new MemoryStream(image);
+            using var fileContent = new StreamContent(memStream);
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
             var imageGeneratorArgs = new MultipartFormDataContent
             {
-                { fileContent, "fileName" },
-                { new StringContent(padding.ToString()), "padding" }, // For Windows 10 images, padding is honored. For Windows 11 images, padding is overriden by individual image sizes. See https://github.com/pwa-builder/pwabuilder-Image-Generator/blob/master/AppImageGenerator/App_Data/windows11Images.json
-                { new StringContent("windows11"), "platform" },
-                { new StringContent(backgroundColor ?? string.Empty), "color" }
+                { fileContent, "BaseImage", "image.png" },
+                { new StringContent(padding.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Padding" },
+                { new StringContent("windows11"), "Platforms" },
+                { new StringContent(backgroundColor ?? "transparent"), "BackgroundColor" }
             };
 
-            var imagesResponse = await this.http.PostAsync(imageGeneratorServiceUrl, imageGeneratorArgs);
+            using var imagesResponse = await this.http.PostAsync(imageGeneratorServiceUrl, imageGeneratorArgs);
             imagesResponse.EnsureSuccessStatusCode();
-            var imagesResponseString = await imagesResponse.Content.ReadAsStringAsync(); // it should be a JSON string containing a ImageGeneratorServiceResult
-            var imagesResult = JsonSerializer.Deserialize<ImageGeneratorServiceResult>(imagesResponseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            if (imagesResult == null)
-            {
-                throw new InvalidOperationException("Unable to deserialize image generator result");
-            }
-            if (!Uri.TryCreate(imageGeneratorServiceUrl, imagesResult.Uri, out var imagesZipUri))
-            {
-                throw new Exception($"Unable to generate images for Windows package. The image URI returned from the image generator service, '{imagesResult.Uri}', is an invalid URI. Raw response: {imagesResponseString}");
-            }
 
-            return imagesZipUri;
-        }
+            // Copy the response into a self-contained MemoryStream so that
+            // the ZipArchive remains usable after the HTTP response is disposed.
+            var zipMemoryStream = new MemoryStream();
+            await imagesResponse.Content.CopyToAsync(zipMemoryStream);
+            zipMemoryStream.Position = 0;
 
-        private async Task<ImageGeneratorServiceZipFile> DownloadWindowsImagesZip(Uri url)
-        {
-            var zipStream = await this.http.GetStreamAsync(url);
-            var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Read, false);
+            var zipArchive = new ZipArchive(zipMemoryStream, ZipArchiveMode.Read);
             return new ImageGeneratorServiceZipFile(zipArchive);
         }
 
@@ -345,11 +333,6 @@ namespace PWABuilder.MicrosoftStore
                 logger.LogWarning(streamError, "Failed to download stream from {source} into {destination}", sourceDescription, filePath);
                 return null;
             }
-        }
-
-        private class ImageGeneratorServiceResult
-        {
-            public string? Uri { get; set; }
         }
     }
 }

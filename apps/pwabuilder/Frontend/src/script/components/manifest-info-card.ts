@@ -1,7 +1,6 @@
 import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import { manifest_fields } from '@pwabuilder/manifest-information';
 import {
     smallBreakPoint,
 } from '../utils/css/breakpoints';
@@ -9,6 +8,7 @@ import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
 import '@shoelace-style/shoelace/dist/components/menu/menu.js';
 import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import { manifest_fields } from "../models/manifest-fields";
 
 @customElement('manifest-info-card')
 export class ManifestInfoCard extends LitElement {

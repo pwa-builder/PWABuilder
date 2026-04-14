@@ -71,28 +71,28 @@ namespace PWABuilder.MicrosoftStore.Services
             {
                 return await BuildStorePackage(options, appImages, webManifest, outputDirectory, string.Empty, cancelToken);
             }
-            
+
             PwaBuilderCommandLineResult result = new();
             Task<PwaBuilderCommandLineResult>[] partialResultTasks = new Task<PwaBuilderCommandLineResult>[3];
-            var architectures = new string[] { "x64", "x86", "arm64"};
-            for(int i=0;i<architectures.Length;i++)
+            var architectures = new string[] { "x64", "x86", "arm64" };
+            for (int i = 0; i < architectures.Length; i++)
             {
                 var subDirectory = Directory.CreateDirectory(Path.Combine(outputDirectory, architectures[i])).FullName;
-                partialResultTasks[i] =  BuildStorePackage(options, appImages, webManifest, subDirectory, architectures[i], cancelToken);
+                partialResultTasks[i] = BuildStorePackage(options, appImages, webManifest, subDirectory, architectures[i], cancelToken);
 
             }
 
             await Task.WhenAll(partialResultTasks);
-                
-            foreach(var task in partialResultTasks)
+
+            foreach (var task in partialResultTasks)
             {
                 result.AppxManifest = task.Result.AppxManifest;
                 result.MsixPlatformFiles.Add(task.Result.MsixFile);
             }
-                
+
             return result;
-            
-        } 
+
+        }
 
         private async Task<PwaBuilderCommandLineResult> BuildStorePackage(
             WindowsAppPackageOptions options,
@@ -103,17 +103,17 @@ namespace PWABuilder.MicrosoftStore.Services
             CancellationToken cancelToken)
         {
             // Run pwabuilder command line to generate the package.
-            
+
             var appxResult = options.UsePWABuilderWithCustomManifest switch
             {
                 //If offline manifest is provided, run PWABuilder and pass the manifest filepath. If not, the manifest would have been downloaded from the source so use that as a fallback in case pwa_builder.exe can't fetch the manifest on its own"
-                true => await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, "", true, cancelToken),
+                true => await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, "", cancelToken),
                 _ => await RunPwaBuilderWithOfflineManifestFallback(options, appImages, webManifest, outputDirectory, processor, cancelToken)
             };
 
             // Generate a real resources.pri for the project.
             appxResult.MsixFile = await UpdateMsixWithLegitResources(appxResult, outputDirectory);
-            
+
             return appxResult;
         }
 
@@ -207,11 +207,11 @@ namespace PWABuilder.MicrosoftStore.Services
                 //If custom manifest is provided 
                 if (options.UsePWABuilderWithCustomManifest == true)
                 {
-                    var customManifestResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, true, cancelToken);
+                    var customManifestResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, cancelToken);
                     logger.LogInformation("Packaged using custom manifest");
                     return customManifestResult;
                 }
-                return await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, false, cancelToken);
+                return await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, cancelToken);
             }
             catch (ProcessException procError)
             when (manifestFetchErrorMessages.Any(m => procError.StandardError?.Contains(m, StringComparison.OrdinalIgnoreCase) == true))
@@ -221,7 +221,7 @@ namespace PWABuilder.MicrosoftStore.Services
                 if (options.Manifest != null)
                 {
                     logger.LogWarning("pwa_builder.exe was unable to fetch the manifest for {url}. Attempting offline manifest fallback", options.Url);
-                    var fallbackResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, true, cancelToken);
+                    var fallbackResult = await pwaBuilder.Run(options, appImages, webManifest, outputDirectory, processor, cancelToken);
                     if (fallbackResult != null)
                     {
                         logger.LogInformation("Offline manifest  fallback succeeded.");
@@ -231,7 +231,7 @@ namespace PWABuilder.MicrosoftStore.Services
 
                 // Either we don't have a manifest URL, or the v91 fallback failed.
                 // Throw the original error.
-                throw; 
+                throw;
             }
         }
     }

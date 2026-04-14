@@ -233,6 +233,21 @@ public class PwaCapability
             },
             new PwaCapability
             {
+                Id = PwaCapabilityId.IconTypesAreNotIcos,
+                Description = "The declared types of icons in your web manifest must not be .ico files, as most app stores don't support them as icons. Instead, use .png or .jpg.",
+                TodoAction = "Remove .ico files from your web app manifest.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
                 Id = PwaCapabilityId.IconSizesAreValid,
                 Description = "The declared sizes of icons in your web manifest must match their actual dimensions.",
                 TodoAction = "Fix the icon sizes in your web app manifest.",
@@ -496,7 +511,7 @@ public class PwaCapability
                 FeatureIcon = new Uri("/assets/new/share_target_icon.svg", UriKind.Relative),
                 Field = "share_target",
                 IsFieldExistenceCheck = true,
-                LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/screenshots#form_factor"),
+                LearnMoreUrl = new Uri("https://developer.chrome.com/docs/capabilities/web-apis/web-share-target"),
                 ImageUrl = new Uri("/assets/manifest_examples/share_target_example_image.jpg", UriKind.Relative),
                 Category = PwaCapabilityCategory.WebAppManifest,
                 Status = PwaCapabilityCheckStatus.InProgress

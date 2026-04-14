@@ -1,0 +1,65 @@
+import { LitElement, TemplateResult, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import "./toast";
+import { prettyString } from "../../utils/prettyJson";
+import { Manifest } from "@pwabuilder/manifest-validation";
+import "../lazy-load";
+
+@customElement('manifest-code-form')
+export class ManifestCodeForm extends LitElement {
+
+    @property({ type: Object }) manifest: Manifest = {};
+    @state() showCopyToast: any | null = false;
+
+
+    static get styles() {
+        return [
+            css`
+        #code-holder {
+          position: relative;
+          max-width: 700px;
+        }
+        #code-editor {
+          overflow-x: scroll;
+          margin: 0;
+          background-color: #f6f8fa;
+          padding: 5px;
+          padding-top: 0;
+          font-size: 16px;
+        }
+        #copy-manifest {
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          display: flex;
+          align-items: center;
+        }
+        #copy-manifest:hover {
+          cursor: pointer;
+        }
+      `,
+        ];
+    }
+
+    render() {
+        return html`
+            <div id="code-holder">
+                <lazy-load when="visible" .renderer=${() => this.renderCodeEditor()} .importer=${() => this.importCodeEditor()}></lazy-load>
+            </div>
+            ${this.showCopyToast ? html`<app-toast>Manifest Copied to Clipboard</app-toast>` : html``}
+        `;
+    }
+
+    importCodeEditor(): Promise<unknown> {
+        return import('..//code-editor');
+    }
+
+    renderCodeEditor(): TemplateResult {
+        return html`
+            <code-editor 
+                .startText=${prettyString(this.manifest)} 
+                .readOnly=${true}>
+            </code-editor>
+        `;
+    }
+}

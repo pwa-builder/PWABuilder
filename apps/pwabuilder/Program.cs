@@ -37,7 +37,7 @@ JsonConvert.DefaultSettings = () =>
 builder.Services.AddSingleton<ViteEntryPointProvider>();
 builder.Services.AddSingleton<IPuppeteerService, PuppeteerService>();
 builder.Services.AddTransient<TempDirectory>();
-builder.Services.AddTransient<ImageGenerator>();
+builder.Services.AddTransient<IOSImageWriter>();
 builder.Services.AddTransient<IOSPackageCreator>();
 if (builder.Environment.IsDevelopment())
 {
@@ -73,6 +73,7 @@ builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddSingleton<ManifestAnalyzer>();
 builder.Services.AddSingleton<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddSingleton<IImageValidationService, ImageValidationService>();
+builder.Services.AddSingleton<StoreImageCreator>();
 builder.Services.AddSingleton(services =>
 {
     // Create a single, reusable Puppeteer browser instance. This can be used across different requests so that we're not spinning up multiple browsers for each request.
@@ -84,6 +85,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(Constants.PwaBuilderAgentHttpClient, client =>
 {
     client.DefaultRequestHeaders.UserAgent.ParseAdd($"{Constants.DesktopUserAgent} PWABuilderHttpAgent");
+})
+.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    AutomaticDecompression = System.Net.DecompressionMethods.All
 });
 
 builder
@@ -135,7 +140,7 @@ var forwardedHeadersOptions = new ForwardedHeadersOptions
 };
 
 // For Azure App Service and other cloud providers, trust all proxies
-forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownIPNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 
 app.UseForwardedHeaders(forwardedHeadersOptions);

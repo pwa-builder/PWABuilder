@@ -40,7 +40,6 @@ body:
           
         #### PWABuilder.com existing functionality tests
           - [ ] Test /portals and ensure is working (linked to from PowerApps)
-          - [ ] Test /imageGenerator and ensure is working (linked to from dev tools)
           - [ ] Accessibility Pass has been run (Using Accessibility Insights Tool)
 
         #### Design

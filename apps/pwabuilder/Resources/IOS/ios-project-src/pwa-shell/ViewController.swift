@@ -4,7 +4,11 @@ import WebKit
 var webView: WKWebView! = nil
 
 class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteractionControllerDelegate {
-    
+    enum LoadingMode {
+        case defaultCachePolicy
+        case forceCache
+    }
+
     var documentController: UIDocumentInteractionController?
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         return self
@@ -17,6 +21,7 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
     var toolbarView: UIToolbar!
     
     var htmlIsLoaded = false;
+    private var loadingMode = LoadingMode.defaultCachePolicy
     
     private var themeObservation: NSKeyValueObservation?
     var currentWebViewTheme: UIUserInterfaceStyle = .unspecified
@@ -58,19 +63,20 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
         
         PWAShell.webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
-        if pullToRefresh {
-            #if !targetEnvironment(macCatalyst)
+        if(pullToRefresh){
             let refreshControl = UIRefreshControl()
-            refreshControl.addTarget(self, action: #selector(refreshWebView(_:)), for: .valueChanged)
+            refreshControl.addTarget(self, action: #selector(refreshWebView(_:)), for: UIControl.Event.valueChanged)
             PWAShell.webView.scrollView.addSubview(refreshControl)
             PWAShell.webView.scrollView.bounces = true
-            #endif
         }
 
         if #available(iOS 15.0, *), adaptiveUIStyle {
-            themeObservation = PWAShell.webView.observe(\.underPageBackgroundColor) { [unowned self] webView, _ in
-                currentWebViewTheme = PWAShell.webView.underPageBackgroundColor.isLight() ?? true ? .light : .dark
+            themeObservation = PWAShell.webView.observe(\.themeColor) { [unowned self] webView, _ in
+                let backgroundColor = PWAShell.webView.underPageBackgroundColor;
+                let themeColor = PWAShell.webView.themeColor;
+                currentWebViewTheme = themeColor?.isLight() ?? backgroundColor?.isLight() ?? true ? .light : .dark
                 self.overrideUIStyle()
+                view.backgroundColor = themeColor ?? backgroundColor;
             }
         }
     }
@@ -123,8 +129,22 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
         webviewView.addSubview(toolbarView)
     }
     
-    @objc func loadRootUrl() {
-        PWAShell.webView.load(URLRequest(url: SceneDelegate.universalLinkToLaunch ?? SceneDelegate.shortcutLinkToLaunch ?? rootUrl))
+    @objc func loadRootUrl(cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy) {
+        PWAShell.webView.load(URLRequest(url: SceneDelegate.universalLinkToLaunch ?? SceneDelegate.shortcutLinkToLaunch ?? rootUrl, cachePolicy: cachePolicy))
+    }
+    
+    func reloadWebview(
+        loadingMode: LoadingMode = LoadingMode.defaultCachePolicy
+    ) {
+        switch loadingMode {
+        case LoadingMode.defaultCachePolicy:
+            loadRootUrl(cachePolicy: .useProtocolCachePolicy);
+
+        case LoadingMode.forceCache:
+            loadRootUrl(cachePolicy: .useProtocolCachePolicy);
+        }
+
+        self.loadingMode = loadingMode
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!){
@@ -146,19 +166,24 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         htmlIsLoaded = false;
         
-        if (error as NSError)._code != (-999) {
-            self.overrideUIStyle(toDefault: true);
+        if (error as NSError)._code == (-999) { return }
+        
+        self.overrideUIStyle(toDefault: true);
+        webView.isHidden = true;
+        loadingView.isHidden = false;
 
-            webView.isHidden = true;
-            loadingView.isHidden = false;
+        if loadingMode == LoadingMode.defaultCachePolicy {
+            DispatchQueue.main.async {
+                self.reloadWebview(loadingMode: LoadingMode.forceCache)
+            }
+        } else {
             animateConnectionProblem(true);
-            
             setProgress(0.05, true);
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 self.setProgress(0.1, true);
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    self.loadRootUrl();
+                    self.reloadWebview()
                 }
             }
         }

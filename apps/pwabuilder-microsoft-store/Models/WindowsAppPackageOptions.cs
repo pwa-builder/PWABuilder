@@ -153,6 +153,11 @@ namespace PWABuilder.MicrosoftStore.Models
             }
 
             var uri = this.Url;
+            // Ensure the URL is an absolute HTTPS, non-loopback URL.
+            if (uri == null || !uri.IsAbsoluteUri || uri.Scheme != Uri.UriSchemeHttps || uri.IsLoopback)
+            {
+                errors.Add("URL must be an absolute HTTPS URL and cannot be a loopback address.");
+            }
 
             // The version requirements for the Microsoft Store: https://docs.microsoft.com/en-us/windows/uwp/publish/package-version-numbering
             //

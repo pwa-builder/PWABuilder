@@ -1,7 +1,6 @@
-using Azure;
+using System.Collections.Concurrent;
 using PuppeteerSharp;
 using PWABuilder.Common;
-using PWABuilder.Models;
 
 namespace PWABuilder.Services
 {
@@ -9,6 +8,7 @@ namespace PWABuilder.Services
     {
         private readonly Task<IBrowser> reusableBrowser;
         private readonly ILogger<PuppeteerService> logger;
+        private readonly ConcurrentBag<PageReference> openPages = [];
 
         public PuppeteerService(Task<IBrowser> reusableBrowser, ILogger<PuppeteerService> logger)
         {
@@ -102,7 +102,11 @@ namespace PWABuilder.Services
                 logger.LogWarning("There are {pageCount} pages open in the Puppeteer browser. Possible page leak detected.", pages.Length);
             }
 
+            // Close any pages that have been opened for more than an hour.
+            await TryCleanupOldPages();
+
             var page = await browser.NewPageAsync();
+            this.openPages.Add(new PageReference(page, site));
 
             // Disable performance monitoring to avoid Protocol error (Performance.enable) issues
             await page.SetCacheEnabledAsync(false);
@@ -137,6 +141,48 @@ namespace PWABuilder.Services
         {
             var browser = await this.reusableBrowser;
             await browser.DisposeAsync();
+        }
+
+        private async Task TryCleanupOldPages()
+        {
+            var hourAgo = DateTimeOffset.UtcNow.AddHours(-1);
+            foreach (var openPage in this.openPages)
+            {
+                if (openPage.CreatedAt < hourAgo)
+                {
+                    logger.LogInformation("Closing stale Puppeteer page for {url} opened {time} ago.", openPage.Url, (DateTimeOffset.UtcNow - openPage.CreatedAt).ToString(@"hh\:mm"));
+                    openPage.Page.TryGetTarget(out var page);
+                    if (page != null)
+                    {
+                        openPages.TryTake(out var _);
+                        try
+                        {
+                            await page.CloseAsync();
+                        }
+                        catch (Exception closeError)
+                        {
+                            logger.LogWarning(closeError, "Error closing stale Puppeteer page for {url}.", openPage.Url);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// An open page in Puppeteer. Uses a weak reference to allow for garbage collection. Used for cleaning up old pages that weren't properly disposed.
+    /// </summary>
+    public class PageReference
+    {
+        public WeakReference<IPage> Page { get; }
+        public DateTimeOffset CreatedAt { get; }
+        public Uri Url { get; }
+
+        public PageReference(IPage page, Uri url)
+        {
+            Page = new WeakReference<IPage>(page);
+            CreatedAt = DateTimeOffset.UtcNow;
+            Url = url;
         }
     }
 }

@@ -8,7 +8,7 @@ public class HomeController : Controller
 {
     [HttpGet("")]
     [HttpGet("/")]
-    [ResponseCache(Duration = 60 * 5)] // 5 minutes
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Index()
     {
         return View();

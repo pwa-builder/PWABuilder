@@ -179,11 +179,26 @@ export class BubbleWrapper {
     private async generateTwaProject(): Promise<TwaManifest> {
         const twaGenerator = new TwaGenerator();
         const twaManifest = this.createTwaManifest(this.apkSettings);
-        await twaGenerator.createTwaProject(
-            this.projectDirectory,
-            twaManifest,
-            new ConsoleLog()
-        );
+        try {
+            await twaGenerator.createTwaProject(
+                this.projectDirectory,
+                twaManifest,
+                new ConsoleLog()
+            );
+        } catch (error) {
+            // Better handling for errors where fetching JSON (usually the web manifest) returns HTML result. 
+            // Example: https://github.com/pwa-builder/PWABuilder/issues/5376
+            if (error instanceof Error && error.message.includes("Unexpected token '<'")) {
+                this.dispatchProgressEvent("It appears your web app manifest is broken. When PWABuilder's Google Play platform went to fetch it, your web app returned HTML instead of JSON. Make sure your web manifest can be loaded directly. Try opening your web app in the browser, open F12 dev tools -> Application -> Manifest, and ensure your web manifest is loading properly.", "error");
+            } else if (error instanceof Error && error.message.includes("Could not find MIME for Buffer")) {
+                // Better handling for icon-related errors where Bubblewrap can't figure out the mime type of an image.
+                // This usually indicates an image is the wrong type (e.g. an SVG or ICO).
+                // Exmaple: https://github.com/pwa-builder/PWABuilder/issues/5367
+                this.dispatchProgressEvent("PWABuilder's Bubblewrap couldn't figure out the MIME type for one of the images in your web manifest. We recommend all your web manifest images should be PNG or JPG.", "error");
+            }
+
+            throw error;
+        }
         return twaManifest;
     }
 

@@ -111,6 +111,7 @@ public class ManifestAnalyzer
             PwaCapabilityId.IconsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
+            PwaCapabilityId.IconTypesAreNotIcos => new PwaManifestCapabilityCheck(capability, m => CheckImagesAreNonIcos(m)),
             PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 192, "image/png")),
             PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 512, "image/png")),
             PwaCapabilityId.Screenshots => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "screenshots")),
@@ -191,18 +192,18 @@ public class ManifestAnalyzer
                         ".png" => string.Equals(imageType, "image/png", StringComparison.OrdinalIgnoreCase),
                         ".jpg" or ".jpeg" => string.Equals(imageType, "image/jpeg", StringComparison.OrdinalIgnoreCase),
                         ".webp" => string.Equals(imageType, "image/webp", StringComparison.OrdinalIgnoreCase),
-                        _ => false
+                        _ => new bool?() // We're unsure. This can happen if the extension isn't plain from the URL, e.g. http://example.com/images/512
                     };
 
                     if (hasTypeProperty)
                     {
                         // Both type property and file extension must match the desired type
-                        isDesiredType = declaredTypeMatches && extensionMatchesType;
+                        isDesiredType = declaredTypeMatches && (extensionMatchesType == true || extensionMatchesType == null);
                     }
                     else
                     {
                         // If no type property is defined, fallback to file extension check
-                        isDesiredType = extensionMatchesType;
+                        isDesiredType = extensionMatchesType == true || extensionMatchesType == null;
                     }
                 }
 
@@ -410,6 +411,37 @@ public class ManifestAnalyzer
         }
     }
 
+    private static PwaCapabilityCheckStatus CheckImagesAreNonIcos(ManifestDetection manifest)
+    {
+        // Grab the icon values. They should look like: 
+        /**
+           [
+              {
+                 "src": "/images/foo.png",
+                 "sizes": "16x16",
+                 "purpose": "any"
+              }
+           ]
+        */
+        var images = GetManifestArray("icons", manifest);
+        if (!images.Any())
+        {
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+        }
+
+        var icoImageCount = images
+            .Where(icon => icon.TryGetProperty("type", out var type) && type.ValueKind == JsonValueKind.String)
+            .Select(icon => icon.GetProperty("type").GetString())
+            .Where(type => !string.IsNullOrWhiteSpace(type))
+            .Count(type => string.Equals(type, "image/x-icon", StringComparison.OrdinalIgnoreCase));
+        if (icoImageCount > 0)
+        {
+            return PwaCapabilityCheckStatus.Failed;
+        }
+
+        return PwaCapabilityCheckStatus.Passed;
+    }
+
     private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)
     {
         var matches = manifest.TryGetProperty(fieldName, out var fieldValue)
@@ -564,7 +596,7 @@ public class ManifestAnalyzer
             && scopeExtensions.ValueKind == JsonValueKind.Array
             && scopeExtensions.GetArrayLength() > 0
             // each extension needs a "type" string. 
-            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("scope", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
+            && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("type", out var extensionType) && extensionType.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(extensionType.GetString()))
             // each extension needs a "origin" string which must be a valid URL.
             && scopeExtensions.EnumerateArray().All(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("origin", out var extensionOrigin) && extensionOrigin.ValueKind == JsonValueKind.String && Uri.TryCreate(extensionOrigin.GetString(), UriKind.Absolute, out _));
         return hasScopeExtensions ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;

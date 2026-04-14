@@ -64,6 +64,14 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
+                // Vercel: Vercel-hosted images will always return 200! Even if they don't exist. 
+                // Check for that here: If it's a Vercel image, we must be able to load it as a real image.
+                var isVercelInvalidImage = headResponse.Headers.Server?.ToString() == "Vercel" && await TryLoadImage(imageUrl) == false;
+                if (isVercelInvalidImage)
+                {
+                    return new HttpRequestException($"Your PWA's web manifest refers to an image that doesn't exist: {imageUrl}.", null, System.Net.HttpStatusCode.NotFound);
+                }
+
                 // Ensure the content type is an image
                 return EnsureImageContentType(imageUrl, headResponse.Content.Headers.ContentType?.MediaType);
             }
@@ -266,9 +274,55 @@ public class ImageValidationService : IImageValidationService
         // Common case: check if it's a Supabase binary image, served as application/octet-stream. If so, they can fix it by using the image render URL.
         if (imageUrl.AbsoluteUri.Contains("supabase.co/storage/") && imageUrl.AbsolutePath.Contains("/object/public/"))
         {
-            return new Exception($"Image at {imageUrl} returned with the wrong content-type. Expected an image content type, but got {contentType}. \n\nFor Supabase-hosted images, update your manifest images to use the image rendering endpoint: {imageUrl.AbsoluteUri.Replace("/object/public", "/render/image/public")}");
+            return new Exception($"Image at {imageUrl} returned with the wrong content-type. Expected an image content type, but got {contentType}. \n\nTo fix this, update your manifest images to use the image rendering endpoint on Supabase: {imageUrl.AbsoluteUri.Replace("/object/public", "/render/image/public")}");
         }
 
         return new Exception($"Fetching image {imageUrl} returned with Content-Type {contentType}. Expected an image content type, such as image/png, image/jpeg, or image/webp");
+    }
+
+    private async Task<bool> TryLoadImage(Uri imageUri)
+    {
+        try
+        {
+            using var response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            using var imageStream = await response.Content.ReadAsStreamAsync();
+
+            try
+            {
+                // Use IdentifyAsync to read image metadata (format/dimensions) without
+                // fully decoding the image. This is faster and uses less memory.
+                var info = await Image.IdentifyAsync(imageStream);
+                if (info == null)
+                {
+                    logger.LogWarning("Could not identify image for {imageUri}.", imageUri);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (UnknownImageFormatException uif)
+            {
+                logger.LogWarning(uif, "Unsupported image format for {imageUri}.", imageUri);
+                return false;
+            }
+            catch (Exception loadEx)
+            {
+                // Any failure while decoding the image should result in a false return
+                // — do not let exceptions escape this helper.
+                logger.LogWarning(loadEx, "Failed to load image {imageUri} with ImageSharp.", imageUri);
+                return false;
+            }
+        }
+        catch (Exception fetchEx)
+        {
+            // Any network/fetching error should not throw to callers — return false.
+            logger.LogWarning(fetchEx, "Failed to fetch image {imageUri} for loading.", imageUri);
+            return false;
+        }
     }
 }

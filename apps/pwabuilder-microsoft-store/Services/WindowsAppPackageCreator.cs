@@ -67,13 +67,14 @@ namespace PWABuilder.MicrosoftStore.Services
         {
             ValidateOptions(options);
 
+            // COMMENTED OUT 2/25/2026 - This code had unintended consequences. For example, this code would detect https://app.eyegifs.com redirects to https://app.eyegifs.com/account/login. But if the user is logged in, we want the PWA to keep the original url and not redirect to login.
             // Check for redirects.
-            var redirectUri = await TryCheckForRedirect(options.Url);
-            if (redirectUri != null)
-            {
-                logger.LogInformation("Detected redirect for {url}, redirecting to {target}. Will use the redirect target for packaging.", options.Url, redirectUri);
-                options.Url = redirectUri;
-            }
+            // var redirectUri = await TryCheckForRedirect(options.Url);
+            // if (redirectUri != null)
+            // {
+            //     logger.LogInformation("Detected redirect for {url}, redirecting to {target}. Will use the redirect target for packaging.", options.Url, redirectUri);
+            //     options.Url = redirectUri;
+            // }
 
             var packageType = options.Publisher == null || options.Publisher.CommonName == devPackagePublisherCommonName ?
                 WindowsPackageType.DeveloperPackage : WindowsPackageType.StorePackage;
@@ -126,34 +127,35 @@ namespace PWABuilder.MicrosoftStore.Services
             }
         }
 
-        /// <summary>
-        /// Checks if the specified URL results in a redirect (301 or 307). If so, returns the Location target of the redirect.
-        /// </summary>
-        /// <remarks>
-        /// This fixes a bug (https://github.com/pwa-builder/PWABuilder/issues/4956) where if the user packages a URL that causes a redirect, Edge doesn't properly handle the installed PWA.
-        /// We fix the bug by checking if there's a redirect for the URL and if so, returns the redirect target URL.
-        /// An example as of June 2025 is https://microsoftedge.github.io/Demos/wami, which redirects to https://microsoftedge.github.io/Demos/wami/  (notice the ending slash).
-        /// </remarks>
-        /// <param name="options"></param>
-        /// <returns>The redirect target URL if there is one.</returns>
-        private async Task<Uri?> TryCheckForRedirect(Uri uri)
-        {
-            try
-            {
-                var response = await this.httpNoAutoRedirect.GetAsync(uri);
-                var isRedirect = (int)response.StatusCode >= 300 && (int)response.StatusCode < 400;
-                if (isRedirect && response.Headers.Location != null)
-                {
-                    return response.Headers.Location;
-                }
-            }
-            catch (Exception httpError)
-            {
-                logger.LogWarning(httpError, "Unable to check the URL for redirect due to HTTP error.");
-            }
+        // COMMENTED OUT: 2/25/2026 - This code had unintended consequences. For example, this code would detect https://app.eyegifs.com redirects to https://app.eyegifs.com/account/login. But if the user is logged in, we want the PWA to keep the original url and not redirect to login.
+        // /// <summary>
+        // /// Checks if the specified URL results in a redirect (301 or 307). If so, returns the Location target of the redirect.
+        // /// </summary>
+        // /// <remarks>
+        // /// This fixes a bug (https://github.com/pwa-builder/PWABuilder/issues/4956) where if the user packages a URL that causes a redirect, Edge doesn't properly handle the installed PWA.
+        // /// We fix the bug by checking if there's a redirect for the URL and if so, returns the redirect target URL.
+        // /// An example as of June 2025 is https://microsoftedge.github.io/Demos/wami, which redirects to https://microsoftedge.github.io/Demos/wami/  (notice the ending slash).
+        // /// </remarks>
+        // /// <param name="options"></param>
+        // /// <returns>The redirect target URL if there is one.</returns>
+        // private async Task<Uri?> TryCheckForRedirect(Uri uri)
+        // {
+        //     try
+        //     {
+        //         var response = await this.httpNoAutoRedirect.GetAsync(uri);
+        //         var isRedirect = (int)response.StatusCode >= 300 && (int)response.StatusCode < 400;
+        //         if (isRedirect && response.Headers.Location != null)
+        //         {
+        //             return new Uri(uri, response.Headers.Location);
+        //         }
+        //     }
+        //     catch (Exception httpError)
+        //     {
+        //         logger.LogWarning(httpError, "Unable to check the URL for redirect due to HTTP error.");
+        //     }
 
-            return null;
-        }
+        //     return null;
+        // }
 
         private async Task<MsixResult> GenerateMsix(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {

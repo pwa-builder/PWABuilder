@@ -75,7 +75,17 @@ public class ManifestDetector
     {
         try
         {
-            return await page.EvaluateExpressionAsync<string?>($"fetch('{manifestUrl}').then(response => response.text())");
+            var manifestContents = await page.EvaluateExpressionAsync<string?>($"fetch('{manifestUrl}').then(response => response.text())");
+            if (!string.IsNullOrWhiteSpace(manifestContents))
+            {
+                logger.LogInformation("Successfully retrieved manifest contents via Puppeteer for {manifestUrl}.", manifestUrl);
+            }
+            else
+            {
+                logger.LogWarning("Manifest URL {manifestUrl} was found via Puppeteer but returned empty content when fetched through Puppeteer.", manifestUrl);
+            }
+
+            return manifestContents;
         }
         catch (Exception ex)
         {
@@ -110,11 +120,13 @@ public class ManifestDetector
             var manifestUrl = manifestUrls.LastOrDefault();
             if (manifestUrl == null)
             {
-                logger.LogWarning("Using Puppeteer to find manifest, no manifest links found in the page at {appUrl}.", appUrl);
+                var headContent = await TryGetHeadContentsFromPuppeteerAsync(puppeteerPage, logger);
+                logger.LogWarning("Using Puppeteer to find manifest, no manifest links found in the page at {appUrl}. Page <head> content: {pageContent}", appUrl, headContent);
                 return null;
             }
 
             // Consturct the absolute URL for the manifest.
+            logger.LogInformation("Manifest detected via Puppeteer for {appUrl}. Manifest URL: {manifestUrl}", appUrl, manifestUrl);
             return new Uri(appUrl, manifestUrl);
         }
         catch (Exception error)
@@ -237,6 +249,34 @@ public class ManifestDetector
         catch (Exception error)
         {
             logger.LogWarning(error, "Error parsing HTML to find web manifest link in {url}. Will fallback to headless Chrome for manifest parsing.", baseUrl);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Attempts to get the HTML contents of the head element from a Puppeteer page.
+    /// </summary>
+    /// <param name="page">The Puppeteer page to extract head contents from.</param>
+    /// <param name="logger">The logger to use for logging warnings.</param>
+    /// <returns>The HTML string of the head element, or null if it doesn't exist or an exception occurs.</returns>
+    private static async Task<string?> TryGetHeadContentsFromPuppeteerAsync(IPage page, ILogger logger)
+    {
+        try
+        {
+            var headContent = await page.EvaluateExpressionAsync<string?>("document.head?.outerHTML");
+
+            // Ensure head content is reasonable size (under 10k bytes) before returning
+            if (headContent is not null && System.Text.Encoding.UTF8.GetByteCount(headContent) > 10_000)
+            {
+                logger.LogWarning("Head content is too large ({size} bytes), truncating for logging.", System.Text.Encoding.UTF8.GetByteCount(headContent));
+                return headContent[..Math.Min(headContent.Length, 10_000)] + "... [truncated]";
+            }
+
+            return headContent;
+        }
+        catch (Exception error)
+        {
+            logger.LogWarning(error, "Error retrieving head contents from Puppeteer page.");
             return null;
         }
     }

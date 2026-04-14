@@ -144,6 +144,14 @@ export function validateAndroidPackageId(packageId?: string | null): AndroidPack
         });
     }
 
+    // Package ID must contain at least one period. See https://github.com/pwa-builder/PWABuilder/issues/5390
+    if (packageId && !packageId.includes('.')) {
+        packageErrors.push({
+            field: 'packageId',
+            error: 'Package ID must contain at least one period. For example, "com.example.app"',
+        });
+    }
+
     return packageErrors;
 }
 

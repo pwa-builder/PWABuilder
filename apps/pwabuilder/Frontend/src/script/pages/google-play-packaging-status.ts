@@ -2,7 +2,7 @@ import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, state } from 'lit/decorators.js';
 import "../components/app-header";
 import { downloadGooglePlayPackageZip, enqueueGooglePlayPackageJob, getGooglePlayPackageJob } from "../services/publish/android-publish";
-import { GooglePlayPackageJob } from "../models/GooglePlayPackageJob";
+import { GooglePlayPackageJob } from "../models/google-play-package-job";
 import { env } from "../utils/environment";
 import "@shoelace-style/shoelace/dist/components/textarea/textarea";
 import { googlePlayPackagingStatusStyles } from "./google-play-packaging-status.styles";

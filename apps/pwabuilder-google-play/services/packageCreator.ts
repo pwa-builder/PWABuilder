@@ -91,7 +91,7 @@ export class PackageCreator {
 
             // Get the signing information.
             this.dispatchProgressEvent(`Creating signing information...`);
-            const signing = await this.createLocalSigninKeyInfo(options, projectDirPath);
+            const signing = await this.createLocalSigningKeyInfo(options, projectDirPath);
 
             // Generate the APK, keys, and digital asset links.
             return await this.createAppPackageWith403Fallback(
@@ -144,7 +144,8 @@ export class PackageCreator {
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
             const isTimeout = errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ESOCKETTIMEDOUT');
-            if (is403Error || isTimeout) {
+            const isRunDotAppManifestError = options.pwaUrl.indexOf("run.app/") && errorMessage.includes("Unexpected token"); // Sites on run.app spin up when you access them, rendering a loading screen. This is problematic when fetching resources like web manifest, which expects JSON, not HTML. See https://github.com/pwa-builder/PWABuilder/issues/5380
+            if (is403Error || isTimeout || isRunDotAppManifestError) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
                 const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
@@ -164,12 +165,12 @@ export class PackageCreator {
             }
 
             // It's not a 403 / connection refused? Just throw it.
-            this.dispatchProgressEvent(`Bubblewrap failed to generated app package due to an error. ${error}`, "error");
+            this.dispatchProgressEvent(`Bubblewrap failed to generate an app package due to an error. ${error}`, "error");
             throw error;
         }
     }
 
-    private async createLocalSigninKeyInfo(apkSettings: AndroidPackageOptions, projectDir: string): Promise<LocalKeyFileSigningOptions | null> {
+    private async createLocalSigningKeyInfo(apkSettings: AndroidPackageOptions, projectDir: string): Promise<LocalKeyFileSigningOptions | null> {
         // If we're told not to sign it, skip this.
         if (apkSettings.signingMode === 'none') {
             return null;

@@ -45,7 +45,15 @@
     <environment exclude="Development">
         <link rel="stylesheet" href="@viteEntryPointProvider.EntryPointCss" inline-css="true" />
         <script type="module" crossorigin src="@viteEntryPointProvider.EntryPointJs"></script>
+        <script id="vite-plugin-pwa:inline-sw">
+            if ('serviceWorker' in navigator) {
+                window.addEventListener("load", () => navigator.serviceWorker.register("/service-worker.js", {
+                    scope: "/"
+                }).catch(swRegError => console.warn("Unable to register service worker due to error.", swRegError)));
+            }
+        </script>
     </environment>
+    
 
 </head>
 <body>

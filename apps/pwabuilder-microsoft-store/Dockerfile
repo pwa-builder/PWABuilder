@@ -1,10 +1,10 @@
 # Use Windows Server as the base image - using latest 2022 LTSC build for GitHub Actions compatibility
 FROM mcr.microsoft.com/windows/server:ltsc2022-KB5070884
 
-# Install .NET 9.0 SDK (includes runtime)
+# Install .NET 10.0 SDK (includes runtime)
 RUN powershell -Command \
     "$ProgressPreference = 'SilentlyContinue'; \
-    Invoke-WebRequest -Uri 'https://dotnetcli.azureedge.net/dotnet/Sdk/9.0.100/dotnet-sdk-9.0.100-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
+    Invoke-WebRequest -Uri 'https://dotnetcli.azureedge.net/dotnet/Sdk/10.0.100/dotnet-sdk-10.0.100-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
     Start-Process -FilePath 'dotnet-sdk-installer.exe' -ArgumentList '/quiet' -Wait; \
     Remove-Item 'dotnet-sdk-installer.exe'"
 

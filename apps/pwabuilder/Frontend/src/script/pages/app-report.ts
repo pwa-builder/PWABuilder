@@ -38,11 +38,11 @@ import { resolveUrl } from '../utils/url';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 //@ts-ignore
 import Color from "../../../node_modules/colorjs.io/dist/color";
-import { manifest_fields } from '@pwabuilder/manifest-information';
 import { enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapabilityStatus, PwaCapabilityLevel } from './app-report.api';
 import { appReportStyles } from './app-report.styles';
 import { createManifestContextFromEmpty } from '../services/manifest';
 import { ManifestEditorFrame } from '../components/manifest-editor-frame';
+import { manifest_fields } from "../models/manifest-fields";
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";

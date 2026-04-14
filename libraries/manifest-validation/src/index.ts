@@ -7,7 +7,7 @@ import { maniTests, findSingleField, loopThroughKeys, loopThroughRequiredKeys } 
 export let currentManifest: Manifest | undefined;
 
 export function validateManifest(manifest: Manifest, includeMissedTests?: boolean): Validation[] {
-    
+
     const validJSON = isValidJSON(manifest);
 
     if (validJSON === false) {
@@ -27,14 +27,14 @@ export async function validateSingleField(field: string, value: any): Promise<si
             //console.log('data', data);
             resolve(data);
         }
-        catch(err) {
+        catch (err) {
             reject(err);
         }
-    })
+    });
 }
 
 export async function reportMissing(manifest: Manifest): Promise<Array<string>> {
-    return new Promise(async(resolve) => {
+    return new Promise(async (resolve) => {
         const data = await findMissingKeys(manifest);
         if (data && data.length > 0) {
             resolve(data);
@@ -45,7 +45,7 @@ export async function reportMissing(manifest: Manifest): Promise<Array<string>> 
 }
 
 export async function validateRequiredFields(manifest: Manifest): Promise<Validation[]> {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const validJSON = isValidJSON(manifest);
         if (validJSON === false) {
             reject('Manifest is not valid JSON');
@@ -94,14 +94,14 @@ export async function isInstallReady(manifest: Manifest): Promise<boolean> {
     return validations.length === 0;
 }
 
-function isValidRelativeURL(str: string){
+function isValidRelativeURL(str: string) {
     var pattern = new RegExp('^(?!www\\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*');
     return !!pattern.test(str);
 }
-  
-export function validateSingleProtocol(proto: any){
+
+export function validateSingleProtocol(proto: any) {
     let validProtocol = validProtocols.includes(proto.protocol) || proto.protocol.startsWith("web+") || proto.protocol.startsWith("web+")
-    if(!validProtocol){
+    if (!validProtocol) {
         return "protocol";
     }
 
@@ -109,7 +109,7 @@ export function validateSingleProtocol(proto: any){
 
     let validURL = isValidURL(proto.url) || isValidRelativeURL(proto.url);
 
-    if(!validURL){
+    if (!validURL) {
         return "url";
     }
 
@@ -117,7 +117,7 @@ export function validateSingleProtocol(proto: any){
 }
 
 export async function groupedValidation(manifest: Manifest): Promise<TokensValidation> {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const validJSON = isValidJSON(manifest);
 
         if (validJSON === false) {
@@ -144,7 +144,7 @@ export async function groupedValidation(manifest: Manifest): Promise<TokensValid
             }
             return false;
         });
-        Object.keys(resultsGrouped).forEach(key => { delete resultsGrouped[key][0].category }  );
+        Object.keys(resultsGrouped).forEach(key => { delete resultsGrouped[key][0].category });
 
         const groupedValidation: TokensValidation = {
             installable: {
