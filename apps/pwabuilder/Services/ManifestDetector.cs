@@ -75,7 +75,17 @@ public class ManifestDetector
     {
         try
         {
-            return await page.EvaluateExpressionAsync<string?>($"fetch('{manifestUrl}').then(response => response.text())");
+            var manifestContents = await page.EvaluateExpressionAsync<string?>($"fetch('{manifestUrl}').then(response => response.text())");
+            if (!string.IsNullOrWhiteSpace(manifestContents))
+            {
+                logger.LogInformation("Successfully retrieved manifest contents via Puppeteer for {manifestUrl}.", manifestUrl);
+            }
+            else
+            {
+                logger.LogWarning("Manifest URL {manifestUrl} was found via Puppeteer but returned empty content when fetched through Puppeteer.", manifestUrl);
+            }
+
+            return manifestContents;
         }
         catch (Exception ex)
         {
@@ -116,6 +126,7 @@ public class ManifestDetector
             }
 
             // Consturct the absolute URL for the manifest.
+            logger.LogInformation("Manifest detected via Puppeteer for {appUrl}. Manifest URL: {manifestUrl}", appUrl, manifestUrl);
             return new Uri(appUrl, manifestUrl);
         }
         catch (Exception error)
