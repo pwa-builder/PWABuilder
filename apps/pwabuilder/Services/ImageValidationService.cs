@@ -64,9 +64,10 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
-                // Vercel: Vercel-hosted images will always return 200! Even if they don't exist. It returns a dummy image of length 110322 bytes, or an invalid image of 12 bytes.
-                // Check for that here and fail it if we see it.
-                if (imageUrl.Host.Contains(".vercel.app") && (headResponse.Content.Headers.ContentLength == 110322 || headResponse.Content.Headers.ContentLength == 12))
+                // Vercel: Vercel-hosted images will always return 200! Even if they don't exist. 
+                // Check for that here: If it's a Vercel image, we must be able to load it as a real image.
+                var isVercelInvalidImage = headResponse.Headers.Server?.ToString() == "Vercel" && await TryLoadImage(imageUrl) == false;
+                if (isVercelInvalidImage)
                 {
                     return new HttpRequestException($"Your PWA's web manifest refers to an image that doesn't exist: {imageUrl}.", null, System.Net.HttpStatusCode.NotFound);
                 }
@@ -277,5 +278,51 @@ public class ImageValidationService : IImageValidationService
         }
 
         return new Exception($"Fetching image {imageUrl} returned with Content-Type {contentType}. Expected an image content type, such as image/png, image/jpeg, or image/webp");
+    }
+
+    private async Task<bool> TryLoadImage(Uri imageUri)
+    {
+        try
+        {
+            using var response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            using var imageStream = await response.Content.ReadAsStreamAsync();
+
+            try
+            {
+                // Use IdentifyAsync to read image metadata (format/dimensions) without
+                // fully decoding the image. This is faster and uses less memory.
+                var info = await Image.IdentifyAsync(imageStream);
+                if (info == null)
+                {
+                    logger.LogWarning("Could not identify image for {imageUri}.", imageUri);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (UnknownImageFormatException uif)
+            {
+                logger.LogWarning(uif, "Unsupported image format for {imageUri}.", imageUri);
+                return false;
+            }
+            catch (Exception loadEx)
+            {
+                // Any failure while decoding the image should result in a false return
+                // — do not let exceptions escape this helper.
+                logger.LogWarning(loadEx, "Failed to load image {imageUri} with ImageSharp.", imageUri);
+                return false;
+            }
+        }
+        catch (Exception fetchEx)
+        {
+            // Any network/fetching error should not throw to callers — return false.
+            logger.LogWarning(fetchEx, "Failed to fetch image {imageUri} for loading.", imageUri);
+            return false;
+        }
     }
 }

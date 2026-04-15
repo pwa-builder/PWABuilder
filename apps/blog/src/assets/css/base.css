@@ -1,7 +1,29 @@
 /* Prism Code Highlighting Theme (see https://prismjs.com) */
 @import url("https://cdn.jsdelivr.net/npm/prism-themes@1.5.0/themes/prism-dracula.css");
-/* Using google fonts for now hosted fonts not working will look into it later */
-@import url("https://fonts.googleapis.com/css2?family=Hind:wght@300;400;700&display=swap");
+/* Self-hosted Hind font (SDL compliance: fonts must be locally hosted or from Microsoft CDN) */
+@font-face {
+    font-family: "Hind";
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url("../fonts/Hind-Light.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Hind";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/Hind-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Hind";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../fonts/Hind-Bold.ttf") format("truetype");
+}
 
 :root {
     --font-family: "Hind", sans-serif;
