@@ -193,9 +193,15 @@ export class RedisService implements RedisDatabaseService {
      * @param value The value to push onto the list. This will be converted to a JSON string.
      */
     async enqueue<T>(key: string, value: T): Promise<number> {
-        const totalItems = await this.redis.rPush(key, JSON.stringify(value));
-        console.info(`Added ${key} to the queue ${key}. Queue length is now ${totalItems} `);
-        return totalItems;
+        let queueLength = await this.redis.lLen(key);
+        if (queueLength >= 50) {
+            throw new Error("Cannot enqueue Google Play package because the queue is too long. Current queue length: " + queueLength);
+        }
+
+        queueLength = await this.redis.rPush(key, JSON.stringify(value));
+        console.info(`Added ${key} to the queue ${key}. Queue length is now ${queueLength} `);
+
+        return queueLength;
     }
 
     /**

@@ -43,13 +43,14 @@ public class WebStringCache
         var cacheKey = GetCacheKey(url, accepts);
         (logger ?? this.logger).LogInformation("Fetching from web string cache for {url} with cache key {cacheKey}", url, cacheKey);
         var cached = await redis.GetByIdAsync<string>(cacheKey);
-        if (cached != null && !string.IsNullOrWhiteSpace(cached))
+        if (!string.IsNullOrWhiteSpace(cached))
         {
-            (logger ?? this.logger).LogInformation("Web string cache hit for {url}", url);
+            (logger ?? this.logger).LogInformation("Web string cache hit for {url} using cache key {cacheKey}", url, cacheKey);
             return cached;
         }
 
-        // It's not in the cache. Fetch it and if fetch was successful, put it in the cache.
+        // It's not in the cache. Fetch it and if fetch was successful, put it in the cache.\
+        (logger ?? this.logger).LogInformation("Web string cache miss for {url} using cache key {cacheKey}. Fetching from the web.", url, cacheKey);
         var webString = await TryFetchResourceAsync(url, accepts, maxSizeInBytes, logger ?? this.logger, cancelToken);
         if (webString != null)
         {

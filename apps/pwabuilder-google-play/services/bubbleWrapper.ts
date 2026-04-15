@@ -170,7 +170,13 @@ export class BubbleWrapper {
             );
             return outputFile;
         } catch (signingError) {
-            this.dispatchProgressEvent(`Error signing the app bundle. Using key password:\n${keyPassword}\nStore password:\n ${storePassword}\n\n${signingError}`, "error");
+            const signingErrorStr = `${signingError}`;
+            if (signingErrorStr.includes("toDerInputStream rejects tag type 75")) {
+                this.dispatchProgressEvent("Error signing the app bundle due to what appears to be an invalid signing key file.", "error");
+            } else {
+                this.dispatchProgressEvent("Error signing the app bundle.", "error");
+            }
+
             console.error("Error signing the app bundle", signingError);
             throw signingError;
         }
