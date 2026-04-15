@@ -47,6 +47,7 @@ export interface WindowsPackageOptions  extends PackageOptions {
   resourceLanguage?: string | string[];
   targetDeviceFamilies?: string[];
   enableWebAppWidgets?: boolean;
+  extensions?: string;
 
   /**
    * Optional Windows Actions declaration. Windows Actions are ways for apps to naturally integrate into Windows and Copilot. 

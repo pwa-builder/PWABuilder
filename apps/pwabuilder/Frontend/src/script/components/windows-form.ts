@@ -1533,6 +1533,24 @@ export class WindowsForm extends AppPackageFormBase {
             }
               </div>
             </div>
+              <div class="form-group" id="app-uri-handler-picker">
+                <label>App URI Handler</label>
+                <div class="form-check">
+                  ${this.renderFormInput({
+                label: 'Enable App URI Handler',
+                value: 'AppUriHandler',
+                tooltip:
+                    'Enables your Windows package to handle URIs for your app. This also allows your app to check if your Windows package is installed.',
+                tooltipLink:
+                    'https://developer.chrome.com/docs/capabilities/get-installed-related-apps#check-windows',
+                inputId: 'app-uri-handler-checkbox',
+                type: 'checkbox',
+                checked: this.packageOptions.extensions === 'appurihandler',
+                inputHandler: (_val: string, checked: boolean) =>
+                    (this.packageOptions.extensions = checked ? 'appurihandler' : undefined),
+            })}
+                </div>
+              </div>
           </sl-details>
         </div>
       </form>
