@@ -145,6 +145,7 @@ export function createWindowsPackageOptionsFromManifest(
         },
         resourceLanguage: languages,
         enableWebAppWidgets: Object.keys(manifest).includes("widgets"),
+        extensions: "appurihandler",
     };
 
     return options;
