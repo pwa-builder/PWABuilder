@@ -167,6 +167,7 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
         htmlIsLoaded = false;
         
         if (error as NSError)._code == (-999) { return }
+        if (error as NSError)._code == 102 { return }
         
         self.overrideUIStyle(toDefault: true);
         webView.isHidden = true;
