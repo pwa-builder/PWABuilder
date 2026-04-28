@@ -423,10 +423,17 @@ export class PublishPane extends LitElement {
       }
 
       #feedback {
-        position: absolute;
-        bottom: .5em;
-        padding: 0 1em;
-        width: 100%;
+        position: fixed;
+        top: .5em;
+        width: 682px;
+
+        @media (max-width: 535px) {
+            top: unset;
+            bottom: .5em;
+            width: 100vw;
+            left: 0;
+            padding: 0 1em;
+        }
       }
 
       .feedback-holder {

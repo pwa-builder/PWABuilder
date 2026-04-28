@@ -105,6 +105,44 @@ export class PackageCreator {
         }
     }
 
+    /**
+     * Returns true if the given URL is considered safe to fetch from this service.
+     * This is a lightweight SSRF safeguard used by TryCheckCloudflare.
+     */
+    private isSafeUrlForFetch(url: string): boolean {
+        if (!url) {
+            return false;
+        }
+        let parsed: URL;
+        try {
+            parsed = new URL(url);
+        } catch {
+            return false;
+        }
+
+        const protocol = parsed.protocol.toLowerCase();
+        if (protocol !== 'http:' && protocol !== 'https:') {
+            return false;
+        }
+
+        const hostname = parsed.hostname.toLowerCase();
+
+        // Disallow obvious local / internal hosts to reduce SSRF risk.
+        if (
+            hostname === 'localhost' ||
+            hostname === '127.0.0.1' ||
+            hostname === '::1' ||
+            hostname.endsWith('.localhost') ||
+            hostname.endsWith('.local') ||
+            hostname.endsWith('.localdomain') ||
+            hostname.endsWith('.internal')
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
     private async createAppPackageWith403Fallback(
         options: AndroidPackageOptions,
         projectDirPath: string,
@@ -205,6 +243,12 @@ export class PackageCreator {
         // with the Server header being "cloudflare", we know Cloudflare is in use.
         return new Promise(async (resolve) => {
             try {
+                if (!this.isSafeUrlForFetch(iconUrl)) {
+                    // Unsafe URL detected; do not perform the request to avoid SSRF.
+                    resolve(false);
+                    return;
+                }
+
                 const response = await fetch(iconUrl, { method: 'GET' });
                 const serverHeader = response.headers.get('Server') || '';
                 resolve(!!serverHeader && serverHeader.includes('cloudflare'));
