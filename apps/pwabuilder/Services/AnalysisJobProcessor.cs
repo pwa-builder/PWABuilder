@@ -17,6 +17,7 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ServiceWorkerDetector serviceWorkerDetector;
     private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
     private readonly GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector;
+    private readonly AnalysisJobProcessorHealthMonitor healthMonitor;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
     public AnalysisJobProcessor(
@@ -27,6 +28,7 @@ public class AnalysisJobProcessor : IHostedService
         ServiceWorkerDetector serviceWorkerDetector,
         IServiceWorkerAnalyzer serviceWorkerAnalyzer,
         GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector,
+        AnalysisJobProcessorHealthMonitor healthMonitor,
         ILogger<AnalysisJobProcessor> logger)
     {
         this.queue = queue;
@@ -36,6 +38,7 @@ public class AnalysisJobProcessor : IHostedService
         this.serviceWorkerDetector = serviceWorkerDetector;
         this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
         this.generalWebAppCapabilityDetector = generalWebAppCapabilityDetector;
+        this.healthMonitor = healthMonitor;
         this.logger = logger;
     }
 
@@ -74,6 +77,8 @@ public class AnalysisJobProcessor : IHostedService
                 await Task.Delay(TimeSpan.FromSeconds(3), cancelToken);
             }
         }
+
+        healthMonitor.JobProcessingCancelled();
     }
 
     private async Task<AnalysisJob?> TryDequeueAsync(CancellationToken cancelToken)
@@ -93,7 +98,9 @@ public class AnalysisJobProcessor : IHostedService
     {
         try
         {
+            this.healthMonitor.MarkAnalysisAsStarted();
             await ProcessJobAsync(job, cancelToken);
+            this.healthMonitor.MarkAnalysisAsCompleted();
         }
         catch (Exception error)
         {

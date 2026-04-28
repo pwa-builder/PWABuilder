@@ -1,4 +1,7 @@
+using System.Net;
+using ExCSS;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
@@ -73,5 +76,52 @@ public class AnalysesController : ControllerBase
             return null;
         }
         return analysis;
+    }
+
+    public async Task<ActionResult> Health([FromServices] AnalysisJobProcessorHealthMonitor healthMonitor)
+    {
+        var errorMessage = string.Empty;
+        if (healthMonitor.JobProcessorStopped)
+        {
+            errorMessage = "The analysis job processor has stopped processing jobs. This may indicate a problem with the AnalysisJobProcessor background service. Check the logs for more details.";
+        }
+        else if (healthMonitor.AnalysisQueueLength > 500)
+        {
+            errorMessage = "There are more than 500 analysis jobs in the queue. This may indicate a severe problem with the AnalysisJobProcessor background service. Check the queue length and monitor it to ensure it's not growing too large.";
+        }
+        else if (healthMonitor.AnalysisQueueLength > 100)
+        {
+            errorMessage = "There are more than 100 analysis jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not processing jobs quickly enough. Check the queue length and monitor it to ensure it's not growing too large.";
+        }
+        else if (healthMonitor.JobsCompletedInLastHourCount < 5 && healthMonitor.AnalysisQueueLength > 10 && healthMonitor.RunningTime > TimeSpan.FromHours(1))
+        {
+            errorMessage = "Fewer than 5 analysis jobs have been completed in the last hour, and there are jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not processing jobs. Check the job processor to ensure it's running and processing jobs.";
+        }
+        else if (healthMonitor.JobsStartedInLastHourCount < 5 && healthMonitor.AnalysisQueueLength > 10 && healthMonitor.RunningTime > TimeSpan.FromHours(1))
+        {
+            errorMessage = "Fewer than 5 analysis jobs have been started in the last hour, and there are jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not starting jobs. Check the job processor to ensure it's running and starting jobs.";
+        }
+        
+        var healthMonitorJson = new
+        {
+            healthMonitor.JobProcessorStopped,
+            healthMonitor.AnalysisQueueLength,
+            healthMonitor.JobsCompletedCount,
+            healthMonitor.JobsCompletedInLastHourCount,
+            healthMonitor.JobsStartedInLastHourCount,
+            ErrorMessage = errorMessage,
+        };
+
+
+        if (!string.IsNullOrEmpty(errorMessage))
+        {
+            logger.LogError("Health check failed: {healthMonitorJson}", JsonConvert.SerializeObject(healthMonitorJson));
+            return StatusCode((int)HttpStatusCode.InternalServerError, errorMessage);
+        }
+        else
+        {
+            logger.LogInformation("Health check passed: {healthMonitorJson}", JsonConvert.SerializeObject(healthMonitorJson));
+            return Ok(healthMonitorJson);
+        }
     }
 }

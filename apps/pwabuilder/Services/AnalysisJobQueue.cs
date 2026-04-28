@@ -46,19 +46,20 @@ public class InMemoryAnalysisJobQueue : IAnalysisJobQueue
 /// </summary>
 public class AnalysisJobQueue : IAnalysisJobQueue
 {
-    private readonly IRedisCache db;
+    private readonly IRedisCache redis;
+    private readonly AnalysisJobProcessorHealthMonitor healthMonitor;
     private readonly ILogger<AnalysisJobQueue> logger;
 
     /// <summary>
     /// Creates a new AnalysisJobQueue.
     /// </summary>
-    /// <param name="database"></param>
+    /// <param name="redis"></param>
     /// <param name="env"></param>
-    /// <param name="settings"></param>
     /// <param name="logger"></param>
-    public AnalysisJobQueue(IRedisCache database, IOptions<AppSettings> settings, ILogger<AnalysisJobQueue> logger)
+    public AnalysisJobQueue(IRedisCache redis, AnalysisJobProcessorHealthMonitor healthMonitor, ILogger<AnalysisJobQueue> logger)
     {
-        this.db = database;
+        this.redis = redis;
+        this.healthMonitor = healthMonitor;
         this.logger = logger;
     }
 
@@ -71,8 +72,18 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     {
         try
         {
-            await this.db.EnqueueAsync(this.QueueId, job);
-            logger.LogInformation("Enqueued analysis job for {analysisId} from {queue}", job.AnalysisId, QueueId);
+            var queueLength = await this.redis.EnqueueAsync(this.QueueId, job);
+            logger.LogInformation("Enqueued analysis job for {analysisId} from {queue}. Queue length: {queueLength}", job.AnalysisId, QueueId, queueLength);
+            healthMonitor.AnalysisQueueLength = queueLength;
+            if (queueLength > 500)
+            {
+                var oldestJobInQueue = await this.DequeueAsync(CancellationToken.None);
+                logger.LogError("More than 500 analysis jobs are in the queue. This may indicate a problem with the AnalysisJobProcessor. Oldest job in queue: {oldestJobInQueue}", oldestJobInQueue?.AnalysisId ?? "[null]");
+            }
+            else if (queueLength > 100)
+            {
+                logger.LogWarning("More than 100 analysis jobs are in the queue. Monitor the queue length to ensure it's not growing too large.");
+            }
         }
         catch (Exception error)
         {
@@ -90,7 +101,7 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     {
         try
         {
-            var job = await db.DequeueAsync<AnalysisJob>(QueueId);
+            var job = await redis.DequeueAsync<AnalysisJob>(QueueId);
             if (job != null)
             {
                 logger.LogInformation("Dequeued analysis job for {analysisId} from {queue}", job.AnalysisId, QueueId);

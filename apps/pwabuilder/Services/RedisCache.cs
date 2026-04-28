@@ -38,8 +38,8 @@ public interface IRedisCache
     /// <typeparam name="T"></typeparam>
     /// <param name="listId">The ID of the list in the Redis cache.</param>
     /// <param name="item">The item to enqueue into the list.</param>
-    /// <returns></returns>
-    Task EnqueueAsync<T>(string listId, T item) where T : class;
+    /// <returns>The new length of the list after the item has been enqueued.</returns>
+    Task<long> EnqueueAsync<T>(string listId, T item) where T : class;
 
     /// <summary>
     /// Dequeues an item from a list in the Redis cache as an atomic operation. If the list is empty or doesn't exist, null will be returned.
@@ -70,11 +70,11 @@ public class InMemoryRedisCache : IRedisCache
         return Task.CompletedTask;
     }
 
-    public Task EnqueueAsync<T>(string listId, T item) where T : class
+    public Task<long> EnqueueAsync<T>(string listId, T item) where T : class
     {
         var list = (System.Collections.Concurrent.ConcurrentQueue<T>)store.GetOrAdd(listId, _ => new System.Collections.Concurrent.ConcurrentQueue<T>());
         list.Enqueue(item);
-        return Task.CompletedTask;
+        return Task.FromResult((long)list.Count);
     }
 
     public Task<T?> DequeueAsync<T>(string listId) where T : class
@@ -182,13 +182,14 @@ public class RedisCache : IRedisCache
     /// <param name="listId">The ID of the list to enqueue the item onto. It will be added to the back of the list.</param>
     /// <param name="item">The item to enqueue onto the list.</param>
     /// <returns></returns>
-    public async Task EnqueueAsync<T>(string listId, T item) where T : class
+    public async Task<long> EnqueueAsync<T>(string listId, T item) where T : class
     {
         try
         {
             var redis = await this.redisTask;
             var json = System.Text.Json.JsonSerializer.Serialize(item);
-            await redis.ListRightPushAsync(listId, json);
+            var queueLength = await redis.ListRightPushAsync(listId, json);
+            return queueLength;
         }
         catch (Exception ex)
         {
