@@ -78,6 +78,14 @@ public class AnalysesController : ControllerBase
         return analysis;
     }
 
+
+    /// <summary>
+    /// Gets the health of the analyses background service. This endpoint checks if the job processor is stopped, the length of the analysis job queue, and the number of jobs completed and started in the last hour to determine if there may be a problem with the job processor. If any potential issues are detected, an error message is returned along with a 500 status code. If no issues are detected, a 200 status code is returned along with the health information.
+    /// </summary>
+    /// <param name="healthMonitor"></param>
+    /// <returns></returns>
+    [HttpGet("health")]
+    [ResponseCache(NoStore = true)]
     public async Task<ActionResult> Health([FromServices] AnalysisJobProcessorHealthMonitor healthMonitor)
     {
         var errorMessage = string.Empty;
