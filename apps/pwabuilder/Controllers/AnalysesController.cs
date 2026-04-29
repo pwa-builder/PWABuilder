@@ -109,7 +109,7 @@ public class AnalysesController : ControllerBase
         {
             errorMessage = "Fewer than 5 analysis jobs have been started in the last hour, and there are jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not starting jobs. Check the job processor to ensure it's running and starting jobs.";
         }
-        
+
         var healthMonitorJson = new
         {
             healthMonitor.JobProcessorStopped,
@@ -117,6 +117,7 @@ public class AnalysesController : ControllerBase
             healthMonitor.JobsCompletedCount,
             healthMonitor.JobsCompletedInLastHourCount,
             healthMonitor.JobsStartedInLastHourCount,
+            healthMonitor.RunningTime,
             ErrorMessage = errorMessage,
         };
 
