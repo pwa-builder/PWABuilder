@@ -7,6 +7,10 @@ import { database } from "./redisService.js";
  * A queue containing Google Play packaging jobs to be processed. Implemented as a Redis list.
  */
 export class PackageJobQueue {
+    private readonly oneHourInMs = 60 * 60 * 1000;
+    private processedJobTimestamps: number[] = [];
+    private readonly startDate = new Date();
+
     private get jobQueueKey(): string {
         // Use a different queue key in production vs non-production so that staging and dev doesn't process production jobs.
         // This needs to be a property getter so that it picks up changes to NODE_ENV e.g. when swapping staging and production in Azure.
@@ -67,6 +71,50 @@ export class PackageJobQueue {
             console.error("Error enqueueing Google Play packaging job", enqueueError);
             throw enqueueError;
         }
+    }
+
+    /**
+     * Gets the current length of the package job queue.
+     * @returns The number of jobs currently in the queue.
+     */
+    public async getQueueLength(): Promise<number> {
+        try {
+            return await database.queueLength(this.jobQueueKey);
+        } catch (error) {
+            console.error("Error getting package job queue length", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Records that a package job finished processing.
+     * @param jobId The completed job ID.
+     */
+    public async recordProcessedJob(_jobId: string): Promise<void> {
+        const now = Date.now();
+        this.processedJobTimestamps.push(now);
+        this.pruneProcessedJobTimestamps(now);
+    }
+
+    /**
+     * Gets the count of package jobs processed in the last hour.
+     * @returns The number of package jobs processed in the previous 60 minutes.
+     */
+    public async getProcessedCountLastHour(): Promise<number> {
+        const now = Date.now();
+        const oneHourAgo = now - this.oneHourInMs;
+        this.pruneProcessedJobTimestamps(now);
+
+        return this.processedJobTimestamps.filter(timestamp => timestamp >= oneHourAgo).length;
+    }
+
+    public getStartDate(): Date {
+        return this.startDate;
+    }
+
+    private pruneProcessedJobTimestamps(currentTimeMs: number): void {
+        const oneHourAgo = currentTimeMs - this.oneHourInMs;
+        this.processedJobTimestamps = this.processedJobTimestamps.filter(timestamp => timestamp >= oneHourAgo);
     }
 
     private createJobFromPackageArgs(packageArgs: AndroidPackageOptions): GooglePlayPackageJob {
