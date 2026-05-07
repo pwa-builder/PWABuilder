@@ -64,10 +64,11 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
-                // Vercel: Vercel-hosted images will always return 200! Even if they don't exist. 
-                // Check for that here: If it's a Vercel image, we must be able to load it as a real image.
-                var isVercelInvalidImage = headResponse.Headers.Server?.ToString() == "Vercel" && await TryLoadImage(imageUrl) == false;
-                if (isVercelInvalidImage)
+                // Vercel-hosted, Netlify-hosted, and run.app images will always return 200! Even if they don't exist. 
+                // Check for that here: If it's one of these images, we must be able to load it as a real image.
+                var isVercelOrNetlifyOrRunDotApp = headResponse.Headers.Server?.ToString() == "Vercel" || headResponse.Headers.Server?.ToString() == "Netlify" || imageUrl.Host.EndsWith(".run.app");
+                var isInvalidImage = isVercelOrNetlifyOrRunDotApp && await TryLoadImage(imageUrl) == false;
+                if (isInvalidImage)
                 {
                     return new HttpRequestException($"Your PWA's web manifest refers to an image that doesn't exist: {imageUrl}.", null, System.Net.HttpStatusCode.NotFound);
                 }
