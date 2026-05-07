@@ -5,12 +5,19 @@ namespace PWABuilder.Services;
 
 public class AnalysisJobProcessorHealthMonitor
 {
-    private const int MinJobsPerHour = 10;
     private static readonly TimeSpan JobWindow = TimeSpan.FromHours(1);
 
     private readonly ConcurrentQueue<DateTime> completedJobTimestamps = new();
     private readonly ConcurrentQueue<DateTime> startedJobTimestamps = new();
     private readonly DateTimeOffset runningTime = DateTimeOffset.UtcNow;
+    private readonly IRedisCache redis;
+    private readonly IWebHostEnvironment env;
+
+    public AnalysisJobProcessorHealthMonitor(IWebHostEnvironment env, IRedisCache redis)
+    {
+        this.redis = redis;
+        this.env = env;
+    }
 
     /// <summary>
     /// Whether the job processor has been stopped.
@@ -55,6 +62,12 @@ public class AnalysisJobProcessorHealthMonitor
     /// How long the app has been running.
     /// </summary>
     public TimeSpan RunningTime => DateTimeOffset.UtcNow - runningTime;
+
+    /// <summary>
+    /// Gets the current length of the Google Play package job queue from Redis.
+    /// </summary>
+    /// <returns></returns>
+    public Task<long> GetGooglePlayPackageQueueLength() => redis.GetQueueLength(env.IsProduction() ? "googleplaypackagejobs-prod" : "googleplaypackagejobs-nonprod");
 
     /// <summary>
     /// Records that an analysis job has been started.
