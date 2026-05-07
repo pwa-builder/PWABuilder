@@ -63,6 +63,7 @@ else
 }
 builder.Services.AddSingleton<WebStringCache>();
 builder.Services.AddHostedService<AnalysisJobProcessor>();
+builder.Services.AddSingleton<AnalysisJobProcessorHealthMonitor>();
 builder.Services.AddSingleton<ManifestDetector>();
 builder.Services.AddSingleton<ServiceWorkerDetector>();
 builder.Services.AddSingleton<ManifestCreator>();

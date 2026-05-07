@@ -31,6 +31,43 @@ router.get('/ping', (_: express.Request, response: express.Response) => {
 });
 
 /**
+ * Health check endpoint that returns the current package job queue length.
+ * Useful for monitoring and diagnostics.
+ */
+router.get('/health', async (_: express.Request, response: express.Response) => {
+    try {
+        const queueLength = await packageJobQueue.getQueueLength();
+        const processedLastHour = await packageJobQueue.getProcessedCountLastHour();
+        const runningTimeMs = Date.now() - packageJobQueue.getStartDate().getTime();
+        const twoHoursInMs = 2 * 60 * 60 * 1000;
+        let errorMessage = "";
+        if (queueLength >= 50) {
+            errorMessage = `Google Play package job queue length is high: ${queueLength} jobs are currently in the queue.`;
+        } else if (queueLength > 5 && processedLastHour < 1 && runningTimeMs > twoHoursInMs) {
+            errorMessage = `Google Play package jobs processed in the last hour is low: only ${processedLastHour} jobs were processed in the previous 60 minutes by the current instance.`;
+        }
+
+        const totalSeconds = Math.floor(runningTimeMs / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const numFormat = new Intl.NumberFormat('en', { minimumIntegerDigits: 2 });
+        const runningTime = `${numFormat.format(hours)}:${numFormat.format(minutes)}:${numFormat.format(seconds)}`;
+        const statusCode = errorMessage ? 500 : 200;
+        response.status(statusCode).json({
+            status: 'healthy',
+            googlePlayPackageQueueLength: queueLength,
+            googlePlayPackagesProcessedInLastHour: processedLastHour,
+            runningTime: runningTime,
+            errorMessage: errorMessage
+        });
+    } catch (error) {
+        console.error("Error getting queue length for health check", error);
+        response.status(500).json({ status: 'unhealthy', error: 'Failed to retrieve queue length' });
+    }
+});
+
+/**
  * Generates an APK package and zips it up along with the signing key info. Sends back the zip file.
  * Expects a POST body containing @see ApkOptions form data.
  * 
