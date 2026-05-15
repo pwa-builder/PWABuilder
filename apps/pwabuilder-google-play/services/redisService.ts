@@ -50,7 +50,7 @@ export class RedisService implements RedisDatabaseService {
         return createClient({
             socket: {
                 host: this.redisHost,
-                port: 6380,
+                port: 10000,
                 tls: true,
                 connectTimeout: 30000,  // 30 seconds to establish connection (Azure cold start)
                 reconnectStrategy: (retries) => {
