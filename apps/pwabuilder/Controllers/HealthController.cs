@@ -27,19 +27,19 @@ public class HealthController : ControllerBase
         }
         else if (healthMonitor.AnalysisQueueLength > 500)
         {
-            errorMessage = "There are more than 500 analysis jobs in the queue. This may indicate a severe problem with the AnalysisJobProcessor background service. Check the queue length and monitor it to ensure it's not growing too large.";
+            errorMessage = $"There are {healthMonitor.AnalysisQueueLength} analysis jobs in the queue. This may indicate a severe problem with the AnalysisJobProcessor background service. Check the queue length and monitor it to ensure it's not growing too large.";
         }
         else if (healthMonitor.AnalysisQueueLength > 100)
         {
-            errorMessage = "There are more than 100 analysis jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not processing jobs quickly enough. Check the queue length and monitor it to ensure it's not growing too large.";
+            errorMessage = $"There are {healthMonitor.AnalysisQueueLength} analysis jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not processing jobs quickly enough. Check the queue length and monitor it to ensure it's not growing too large.";
         }
         else if (healthMonitor.JobsCompletedInLastHourCount < 5 && healthMonitor.AnalysisQueueLength > 10 && healthMonitor.RunningTime > TimeSpan.FromHours(1))
         {
-            errorMessage = "Fewer than 5 analysis jobs have been completed in the last hour, and there are jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not processing jobs. Check the job processor to ensure it's running and processing jobs.";
+            errorMessage = $"{healthMonitor.JobsCompletedInLastHourCount} analysis jobs have been completed in the last hour, and there are {healthMonitor.AnalysisQueueLength} jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not processing jobs. Check the job processor to ensure it's running and processing jobs.";
         }
         else if (healthMonitor.JobsStartedInLastHourCount < 5 && healthMonitor.AnalysisQueueLength > 10 && healthMonitor.RunningTime > TimeSpan.FromHours(1))
         {
-            errorMessage = "Fewer than 5 analysis jobs have been started in the last hour, and there are jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not starting jobs. Check the job processor to ensure it's running and starting jobs.";
+            errorMessage = $"{healthMonitor.JobsStartedInLastHourCount} analysis jobs have been started in the last hour, and there are {healthMonitor.AnalysisQueueLength} jobs in the queue. This may indicate that the AnalysisJobProcessor background service is not starting jobs. Check the job processor to ensure it's running and starting jobs.";
         }
 
         // We don't have error message for google play package length, because we have Azure health monitor on this endpoint

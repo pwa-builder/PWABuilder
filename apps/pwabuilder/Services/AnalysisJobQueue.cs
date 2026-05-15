@@ -72,18 +72,20 @@ public class AnalysisJobQueue : IAnalysisJobQueue
     {
         try
         {
-            var queueLength = await this.redis.EnqueueAsync(this.QueueId, job);
-            logger.LogInformation("Enqueued analysis job for {analysisId} from {queue}. Queue length: {queueLength}", job.AnalysisId, QueueId, queueLength);
-            healthMonitor.AnalysisQueueLength = queueLength;
-            if (queueLength > 500)
+            var queueLength = await this.redis.GetQueueLength(this.QueueId);
+            if (queueLength >= 500)
             {
-                var oldestJobInQueue = await this.DequeueAsync(CancellationToken.None);
-                logger.LogError("More than 500 analysis jobs are in the queue. This may indicate a problem with the AnalysisJobProcessor. Oldest job in queue: {oldestJobInQueue}", oldestJobInQueue?.AnalysisId ?? "[null]");
+                logger.LogError("Attempted to enqueue analysis job for {analysisId}, but there are already {queueLength} jobs in the queue. This may indicate a problem with the AnalysisJobProcessor. Job not enqueued.", job.AnalysisId, queueLength);
+                throw new InvalidOperationException("Too many analysis queued. Please wait.");
             }
             else if (queueLength > 100)
             {
                 logger.LogWarning("More than 100 analysis jobs are in the queue. Monitor the queue length to ensure it's not growing too large.");
             }
+
+            queueLength++;
+            logger.LogInformation("Enqueued analysis job for {analysisId} from {queue}. Queue length: {queueLength}", job.AnalysisId, QueueId, queueLength);
+            healthMonitor.AnalysisQueueLength = queueLength;
         }
         catch (Exception error)
         {
