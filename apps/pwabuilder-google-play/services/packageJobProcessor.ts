@@ -3,7 +3,7 @@ import { PackageCreator } from "./packageCreator.js";
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import { PackageJobLogger } from "../models/packageJobLogger.js";
 import { blobStorage } from "./azureStorageBlobService.js";
-import { database } from "./redisService.js";
+import { redisService } from "./redisService.js";
 import { azureQueue } from "./azureQueueService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
 
@@ -20,7 +20,7 @@ export class PackageJobProcessor {
      */
     start(): void {
         // Wait for database and queue to be ready, then start processing
-        const readyPromises: Promise<void>[] = [database.ready];
+        const readyPromises: Promise<void>[] = [redisService.ready];
         if (azureQueue) {
             readyPromises.push(azureQueue.ready);
         }
@@ -66,7 +66,7 @@ export class PackageJobProcessor {
         try {
             // Mark it as in progress.
             job.status = "InProgress";
-            await database.save(job.id, job);
+            await redisService.save(job.id, job);
 
             const zipFilePath = await packageCreator.createZip(job.packageOptions);
             this.jobProgressed({ level: "info", message: "Successfully generated Google Play package. Saving zip file..." }, job, logger);
@@ -84,13 +84,13 @@ export class PackageJobProcessor {
         if (job.retryCount < this.maxRetryCount) {
             job.retryCount++;
             logger.info("Retrying job", { attempt: job.retryCount + 1, maxAttempts: this.maxRetryCount + 1 });
-            await database.save(job.id, job);
+            await redisService.save(job.id, job);
             await packageJobQueue.requeue(job);
         } else {
             // We've already attempted processing this max times. Mark the job as failed.
             logger.error(`Job failed after ${this.maxRetryCount + 1} attempts.`, jobError);
             job.status = "Failed";
-            await database.save(job.id, job);
+            await redisService.save(job.id, job);
         }
     }
 
@@ -99,7 +99,7 @@ export class PackageJobProcessor {
 
         // Save the job state back to Redis so we have a record of progress.
         try {
-            await database.save(job.id, job);
+            await redisService.save(job.id, job);
         } catch (statusSaveError) {
             // Don't throw the error, we don't want to fail the job just because we couldn't save progress.
             logger.error("Failed to save job progress to Redis", statusSaveError);
@@ -122,7 +122,7 @@ export class PackageJobProcessor {
             job.status = "Completed";
             job.uploadedBlobFileName = blobFileName;
             jobLogger.info("Successfully uploaded package zip file", blobFileName);
-            await database.save(job.id, job);
+            await redisService.save(job.id, job);
             await packageJobQueue.recordProcessedJob(job.id);
         } catch (completionError) {
             jobLogger.error("Error marking job as completed.", completionError);

@@ -1,7 +1,7 @@
 import { AndroidPackageOptions } from "../models/androidPackageOptions.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { createHash } from "../utils/hashCode.js";
-import { database } from "./redisService.js";
+import { redisService } from "./redisService.js";
 import { azureQueue } from "./azureQueueService.js";
 
 /**
@@ -24,7 +24,7 @@ export class PackageJobQueue {
         const job = this.createJobFromPackageArgs(packageArgs);
         try {
             // Store the job itself in the database as its own key so we can immediately look up the status.
-            await database.save(job.id, job);
+            await redisService.save(job.id, job);
 
             // Put the job into the queue for processing.
             if (azureQueue) {

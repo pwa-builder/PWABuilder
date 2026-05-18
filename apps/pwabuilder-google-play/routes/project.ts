@@ -12,7 +12,7 @@ import { PackageCreator } from '../services/packageCreator.js';
 import { PackageCreationProgress } from '../models/packageCreationProgress.js';
 import { errorToString } from "../utils/errorToString.js";
 import { packageJobQueue } from "../services/packageJobQueue.js";
-import { database } from "../services/redisService.js";
+import { redisService } from "../services/redisService.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
 
@@ -156,7 +156,7 @@ async function downloadPackageZip(request: express.Request, response: express.Re
         return;
     }
 
-    const job = await database.getJson<GooglePlayPackageJob>(jobId);
+    const job = await redisService.getJson<GooglePlayPackageJob>(jobId);
     if (!job) {
         console.warn("No job found with ID", jobId);
         response.status(404).send(`No job found with ID`);
@@ -200,7 +200,7 @@ async function getPackageJob(request: express.Request, response: express.Respons
 
     console.info("Received request for package job status", jobId);
 
-    const job = await database.getJson<GooglePlayPackageJob>(jobId);
+    const job = await redisService.getJson<GooglePlayPackageJob>(jobId);
     if (!job) {
         console.warn("No job found with ID", jobId);
         response.status(404).send(`No job found with ID`);
