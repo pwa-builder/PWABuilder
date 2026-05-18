@@ -27,8 +27,11 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
         this.healthMonitor = healthMonitor;
         this.logger = logger;
 
+        var managedIdentityAppId = appSettings.Value.AzureManagedIdentityApplicationId;
+        var credential = new ManagedIdentityCredential(clientId: managedIdentityAppId);
+
         var queueUri = new Uri($"{appSettings.Value.AzureStorageQueueUri.TrimEnd('/')}/{QueueName}");
-        this.queueClient = new QueueClient(queueUri, new DefaultAzureCredential());
+        this.queueClient = new QueueClient(queueUri, credential);
     }
 
     /// <summary>
