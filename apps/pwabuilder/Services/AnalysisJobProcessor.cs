@@ -41,6 +41,7 @@ public class AnalysisJobProcessor : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
+        logger.LogInformation("AnalysisJobProcessor: StartAsync called. Starting background job processing loop.");
         this.abortToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         this.jobProcessorTask = Task.Factory.StartNew(() => ListenForJobs(abortToken.Token), abortToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         return Task.CompletedTask;
@@ -60,12 +61,15 @@ public class AnalysisJobProcessor : IHostedService
 
     private async Task ListenForJobs(CancellationToken cancelToken)
     {
+        logger.LogInformation("AnalysisJobProcessor: ListenForJobs loop started.");
+
         // In a loop, check for new AnalysisJob objects in the Analysis queue.
         while (!cancelToken.IsCancellationRequested)
         {
             var job = await TryDequeueAsync(cancelToken);
             if (job != null)
             {
+                logger.LogInformation("AnalysisJobProcessor: Dequeued job {jobId} for analysis {analysisId}, URL {url}.", job.Id, job.AnalysisId, job.Url);
                 await TryProcessJobAsync(job, cancelToken);
             }
             else
@@ -74,17 +78,24 @@ public class AnalysisJobProcessor : IHostedService
                 await Task.Delay(TimeSpan.FromSeconds(3), cancelToken);
             }
         }
+
+        logger.LogInformation("AnalysisJobProcessor: ListenForJobs loop exited. Cancellation requested: {cancelled}.", cancelToken.IsCancellationRequested);
     }
 
     private async Task<AnalysisJob?> TryDequeueAsync(CancellationToken cancelToken)
     {
         try
         {
-            return await queue.DequeueAsync(cancelToken);
+            var job = await queue.DequeueAsync(cancelToken);
+            if (job is null)
+            {
+                logger.LogTrace("AnalysisJobProcessor: Dequeue returned null (queue empty).");
+            }
+            return job;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error dequeueing analysis job.");
+            logger.LogError(ex, "AnalysisJobProcessor: Error dequeueing analysis job.");
             return null;
         }
     }
@@ -94,22 +105,29 @@ public class AnalysisJobProcessor : IHostedService
         try
         {
             await ProcessJobAsync(job, cancelToken);
+            logger.LogInformation("AnalysisJobProcessor: Successfully processed job {jobId} for analysis {analysisId}.", job.Id, job.AnalysisId);
         }
         catch (Exception error)
         {
+            logger.LogError(error, "AnalysisJobProcessor: Exception while processing job {jobId} for analysis {analysisId}. Attempting retry.", job.Id, job.AnalysisId);
             await RetryJobOrFail(job, error);
         }
     }
 
     private async Task ProcessJobAsync(AnalysisJob job, CancellationToken cancelToken)
     {
+        logger.LogInformation("AnalysisJobProcessor: Processing job {jobId}. Looking up analysis {analysisId}.", job.Id, job.AnalysisId);
+
         // Grab the actual analysis object from the database.
         var analysis = await db.GetByIdAsync<Analysis>(job.AnalysisId);
         if (analysis == null)
         {
+            logger.LogWarning("AnalysisJobProcessor: Analysis {analysisId} not found in Redis. Retry count: {retryCount}.", job.AnalysisId, job.RetryCount);
             await RetryJobOrFail(job, new Exception($"Analysis with ID {job.AnalysisId} was not found."));
             return;
         }
+
+        logger.LogInformation("AnalysisJobProcessor: Found analysis {analysisId} with status {status}. Beginning processing.", job.AnalysisId, analysis.Status);
 
         // Create a new AnalysisLogger that will log message both to the Analysis.Logs object and to this service's logger.
         var analysisLogger = new AnalysisLogger(analysis, this.logger);
