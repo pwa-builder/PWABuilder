@@ -52,8 +52,8 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    // In production, we use a Redis atomic list as the analysis queue.
-    builder.Services.AddSingleton<IAnalysisJobQueue, AnalysisJobQueue>();
+    // In production, we use Azure Queue Storage for the analysis job queue.
+    builder.Services.AddSingleton<IAnalysisJobQueue, AzureStorageAnalysisJobQueue>();
 
     // In production, we use PWABuilderDatabase, which uses Redis as a backing store.
     builder.Services.AddSingleton<IRedisCache, RedisCache>();
