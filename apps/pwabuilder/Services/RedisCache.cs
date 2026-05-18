@@ -229,6 +229,7 @@ public class RedisCache : IRedisCache
             var json = await redis.ListLeftPopAsync(listId);
             if (!json.HasValue || string.IsNullOrEmpty(json))
             {
+                logger.LogInformation("Attempted to dequeue item from list {listKey} in Redis, but the list is empty.", listId);
                 return null;
             }
 
@@ -263,7 +264,6 @@ public class RedisCache : IRedisCache
     private static async Task<IDatabase> InitializeRedis(IOptions<AppSettings> options)
     {
         var configurationOptions = ConfigurationOptions.Parse(options.Value.AzureRedisHost);
-        configurationOptions.Protocol = RedisProtocol.Resp3;
         configurationOptions.Ssl = true;
         configurationOptions.AbortOnConnectFail = false;
 
