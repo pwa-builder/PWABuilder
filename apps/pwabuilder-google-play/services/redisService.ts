@@ -37,8 +37,15 @@ export class RedisService implements RedisDatabaseService {
     }
 
     private createRedisConnection(): RedisClientType {
-        // Create credentials provider for authentication
-        const credential = new DefaultAzureCredential();
+        // Create credentials provider for authentication using the user-assigned managed identity
+        const managedIdentityClientId = process.env.AZURE_MANAGED_IDENTITY_APPLICATION_ID;
+        if (!managedIdentityClientId) {
+            throw new Error("AZURE_MANAGED_IDENTITY_APPLICATION_ID environment variable is not set.");
+        }
+
+        const credential = new DefaultAzureCredential({
+            managedIdentityClientId
+        });
         const credentialsProvider = EntraIdCredentialsProviderFactory.createForDefaultAzureCredential({
             credential,
             scopes: REDIS_SCOPE_DEFAULT,
@@ -293,6 +300,6 @@ if (isLocalDev) {
 } else {
     console.info(`${process.env.NODE_ENV} environment detected.Using Redis for database service.`);
 }
-export const database = isLocalDev ?
+export const redisService = isLocalDev ?
     new InMemoryDatabaseService() as RedisDatabaseService :
     new RedisService() as RedisDatabaseService;
