@@ -6,6 +6,7 @@ using PWABuilder.IOS.Common;
 using PWABuilder.IOS.Models;
 using PWABuilder.Models;
 using PWABuilder.Services;
+using PWABuilder.Validations.Services;
 
 namespace PWABuilder.IOS.Services
 {
@@ -25,7 +26,7 @@ namespace PWABuilder.IOS.Services
         )
         {
             this.storeImageCreator = storeImageCreator;
-            this.http = httpClientFactory.CreateClient();
+            this.http = httpClientFactory.CreateClient(Constants.PwaBuilderAgentHttpClient);
             this.logger = logger;
         }
 
@@ -64,10 +65,7 @@ namespace PWABuilder.IOS.Services
             return await CreateIOSImagesZip(baseImageBytes, 0, "white");
         }
 
-        private async Task<byte[]> GetBaseImage(
-            IOSAppPackageOptions.Validated options,
-            WebAppManifestContext webManifest
-        )
+        private async Task<byte[]> GetBaseImage(IOSAppPackageOptions.Validated options, WebAppManifestContext webManifest)
         {
             // Find a base image from which to generate all iOS package images.
             // Best: the user supplied an image.
