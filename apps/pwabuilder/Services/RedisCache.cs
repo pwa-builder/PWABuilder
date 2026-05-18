@@ -268,8 +268,12 @@ public class RedisCache : IRedisCache
         configurationOptions.Ssl = true;
         configurationOptions.AbortOnConnectFail = false;
 
-        // Configure Azure Active Directory authentication using managed identity
-        await configurationOptions.ConfigureForAzureWithTokenCredentialAsync(new DefaultAzureCredential());
+        // Use the user-assigned managed identity for Entra ID authentication.
+        // DefaultAzureCredential without a client ID would use the system-assigned identity,
+        // which does not have a Redis access policy assigned.
+        var managedIdentityAppId = options.Value.AzureManagedIdentityApplicationId;
+        var credential = new ManagedIdentityCredential(clientId: managedIdentityAppId);
+        await configurationOptions.ConfigureForAzureWithTokenCredentialAsync(credential);
 
         var connection = await ConnectionMultiplexer.ConnectAsync(configurationOptions);
         return connection.GetDatabase();
