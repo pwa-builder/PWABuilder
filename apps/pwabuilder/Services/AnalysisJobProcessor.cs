@@ -78,7 +78,6 @@ public class AnalysisJobProcessor : IHostedService
             else
             {
                 // No jobs? Wait a few seconds before checking again.
-                logger.LogInformation("AnalysisJobProcessor: No jobs in queue. Waiting before checking again.");
                 await Task.Delay(TimeSpan.FromSeconds(3), cancelToken);
             }
         }

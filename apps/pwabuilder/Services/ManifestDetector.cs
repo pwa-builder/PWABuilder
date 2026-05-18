@@ -54,15 +54,31 @@ public class ManifestDetector
 
         var manifestUrl = await TryGetManifestUrlFromPuppeteer(page, appUrl, logger, cancelToken);
 
-        // See if we can get the manifest contents from Puppeteer.
+        // See if we can get the manifest contents, either from HTTP GET or Puppeteer.
         if (manifestUrl != null)
         {
-            var manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
+            // First try HTTP GET.
+            var manifestContents = (await TryFetchManifest(manifestUrl, logger, cancelToken))?.ManifestRaw;
+            if (string.IsNullOrEmpty(manifestContents))
+            {
+                logger.LogWarning("Unable to fetch manifest contents for {manifestUrl} via HTTP GET. Falling back to Puppeteer to get manifest contents.", manifestUrl);
+                manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
+                if (manifestContents == null)
+                {
+                    logger.LogError("Unable to get manifest contents for {manifestUrl} via Puppeteer fallback. Manifest contents cannot be fetched.", manifestUrl);
+                    return null;
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(manifestContents))
             {
                 // Update the web string cache with the manifest.
                 await webStringCache.UpdateAsync(manifestUrl, manifestContents, Constants.ManifestMimeTypes);
                 return CreateManifestDetection(manifestUrl, manifestContents, logger);
+            }
+            else
+            {
+                logger.LogWarning("Manifest URL {manifestUrl} was found via Puppeteer but returned empty content when fetched through Puppeteer.", manifestUrl);
             }
         }
 
