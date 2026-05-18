@@ -15,8 +15,15 @@ export class AzureQueueService {
             throw new Error("AZURE_STORAGE_QUEUE_URI environment variable is not set.");
         }
 
+        const managedIdentityClientId = process.env.AZURE_MANAGED_IDENTITY_APPLICATION_ID;
+        if (!managedIdentityClientId) {
+            throw new Error("AZURE_MANAGED_IDENTITY_APPLICATION_ID environment variable is not set.");
+        }
+
         const queueName = this.getQueueName();
-        const credential = new DefaultAzureCredential();
+        const credential = new DefaultAzureCredential({
+            managedIdentityClientId
+        });
         const serviceClient = new QueueServiceClient(storageQueueUri, credential);
         this.queueClient = serviceClient.getQueueClient(queueName);
 
