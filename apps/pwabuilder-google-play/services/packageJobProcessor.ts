@@ -4,6 +4,7 @@ import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import { PackageJobLogger } from "../models/packageJobLogger.js";
 import { blobStorage } from "./azureStorageBlobService.js";
 import { database } from "./redisService.js";
+import { azureQueue } from "./azureQueueService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
 
 /**
@@ -18,29 +19,26 @@ export class PackageJobProcessor {
      * Begins the background job processor that periodically checks for Google Play packaging jobs and processes them.
      */
     start(): void {
-        // Wait for database to be ready, then add additional delay for Azure deployment scenarios
-        database.ready.then(() => {
-            console.info('Database ready, starting job processor in 5 seconds to allow for complete initialization...');
-            setTimeout(() => this.runJobs(), 5000); // 5 second delay instead of 2 seconds
+        // Wait for database and queue to be ready, then start processing
+        const readyPromises: Promise<void>[] = [database.ready];
+        if (azureQueue) {
+            readyPromises.push(azureQueue.ready);
+        }
+
+        Promise.all(readyPromises).then(() => {
+            console.info('Database and queue ready, starting job processor in 5 seconds...');
+            setTimeout(() => this.runJobs(), 5000);
         }).catch((error) => {
-            console.error('Failed to start job processor due to database initialization error:', error);
+            console.error('Failed to start job processor due to initialization error:', error);
         });
     }
 
     private async runJobs(): Promise<void> {
         let job: GooglePlayPackageJob | null = null;
         let jobLogger: PackageJobLogger | null = null;
-        let hadTimeout = false;
+        let hadError = false;
 
         try {
-            // Check Redis health before attempting to dequeue
-            const isHealthy = await database.healthCheck();
-            if (!isHealthy) {
-                console.warn("Redis health check failed, skipping job dequeue cycle");
-                hadTimeout = true; // Treat as timeout to use longer delay
-                return;
-            }
-
             job = await packageJobQueue.dequeue();
             if (job) {
                 jobLogger = new PackageJobLogger(job);
@@ -48,28 +46,15 @@ export class PackageJobProcessor {
             }
         } catch (jobError) {
             const error = jobError as Error;
-            // Check if it's a Redis-related error
-            const isRedisError = error.message && (
-                error.message.includes('Command timed out') ||
-                error.message.includes('Connection is closed') ||
-                error.message.includes('Redis not ready') ||
-                error.message.includes('already connecting/connected')
-            );
-
-            if (isRedisError) {
-                hadTimeout = true;
-                console.warn("Redis error during job dequeue - will retry on next cycle", error.message);
-                // Don't mark job as failed for Redis errors, just wait for next cycle
-            } else {
-                console.error("Error processing Google Play packaging job", jobError);
-                if (job) {
-                    this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
-                }
+            hadError = true;
+            console.error("Error processing Google Play packaging job", jobError);
+            if (job) {
+                this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
             }
         } finally {
             // Whether success or failure, queue up another job run.
-            // Use longer delay if we had a Redis error to give Redis time to recover
-            const delay = hadTimeout ? 15000 : this.jobCheckIntervalMs;
+            // Use longer delay if we had an error to avoid rapid failure loops
+            const delay = hadError ? 15000 : this.jobCheckIntervalMs;
             setTimeout(() => this.runJobs(), delay);
         }
     }

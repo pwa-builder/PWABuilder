@@ -2,20 +2,18 @@ import { AndroidPackageOptions } from "../models/androidPackageOptions.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { createHash } from "../utils/hashCode.js";
 import { database } from "./redisService.js";
+import { azureQueue } from "./azureQueueService.js";
 
 /**
- * A queue containing Google Play packaging jobs to be processed. Implemented as a Redis list.
+ * A queue containing Google Play packaging jobs to be processed. Backed by Azure Queue Storage in production, in-memory queue in local dev.
  */
 export class PackageJobQueue {
     private readonly oneHourInMs = 60 * 60 * 1000;
     private processedJobTimestamps: number[] = [];
     private readonly startDate = new Date();
 
-    private get jobQueueKey(): string {
-        // Use a different queue key in production vs non-production so that staging and dev doesn't process production jobs.
-        // This needs to be a property getter so that it picks up changes to NODE_ENV e.g. when swapping staging and production in Azure.
-        return process.env.NODE_ENV === "production" ? "googleplaypackagejobs-prod" : "googleplaypackagejobs-nonprod";
-    }
+    // In-memory queue for local development (when azureQueue is null)
+    private readonly inMemoryQueue: GooglePlayPackageJob[] = [];
 
     /**
      * Enqueues a new Google Play packaging job.
@@ -29,8 +27,13 @@ export class PackageJobQueue {
             await database.save(job.id, job);
 
             // Put the job into the queue for processing.
-            const queueLength = await database.enqueue(this.jobQueueKey, job);
-            console.info(`Enqueued new Google Play packaging job ${job.id} to ${this.jobQueueKey}. ${queueLength} ${queueLength === 1 ? "job" : "jobs"} are now in the queue.`);
+            if (azureQueue) {
+                const queueLength = await azureQueue.enqueue(job);
+                console.info(`Enqueued new Google Play packaging job ${job.id}. ${queueLength} ${queueLength === 1 ? "job" : "jobs"} are now in the queue.`);
+            } else {
+                this.inMemoryQueue.push(job);
+                console.info(`Enqueued new Google Play packaging job ${job.id} (in-memory). ${this.inMemoryQueue.length} jobs in queue.`);
+            }
 
             return job.id;
         } catch (enqueueError) {
@@ -45,13 +48,20 @@ export class PackageJobQueue {
      */
     public async dequeue(): Promise<GooglePlayPackageJob | null> {
         try {
-            const jobData = await database.dequeue<GooglePlayPackageJob>(this.jobQueueKey);
+            let jobData: GooglePlayPackageJob | null;
+
+            if (azureQueue) {
+                jobData = await azureQueue.dequeue<GooglePlayPackageJob>();
+            } else {
+                jobData = this.inMemoryQueue.shift() ?? null;
+            }
+
             if (!jobData) {
                 return null;
             }
 
-            const queueLength = await database.queueLength(this.jobQueueKey);
-            console.info(`Dequeued Google Play packaging job ${jobData.id} from ${this.jobQueueKey}. ${queueLength} jobs remaining in the queue.`);
+            const queueLength = await this.getQueueLength();
+            console.info(`Dequeued Google Play packaging job ${jobData.id}. ${queueLength} jobs remaining in the queue.`);
 
             return jobData;
         } catch (dequeueError) {
@@ -66,7 +76,11 @@ export class PackageJobQueue {
      */
     public async requeue(job: GooglePlayPackageJob): Promise<void> {
         try {
-            await database.enqueue(this.jobQueueKey, job);
+            if (azureQueue) {
+                await azureQueue.enqueue(job);
+            } else {
+                this.inMemoryQueue.push(job);
+            }
         } catch (enqueueError) {
             console.error("Error enqueueing Google Play packaging job", enqueueError);
             throw enqueueError;
@@ -79,7 +93,10 @@ export class PackageJobQueue {
      */
     public async getQueueLength(): Promise<number> {
         try {
-            return await database.queueLength(this.jobQueueKey);
+            if (azureQueue) {
+                return await azureQueue.getQueueLength();
+            }
+            return this.inMemoryQueue.length;
         } catch (error) {
             console.error("Error getting package job queue length", error);
             throw error;

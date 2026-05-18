@@ -26,6 +26,7 @@
         "@azure/identity": "^4.13.0",
         "@azure/monitor-opentelemetry": "^1.7.0",
         "@azure/storage-blob": "^12.29.0",
+        "@azure/storage-queue": "^12.29.0",
         "@bubblewrap/core": "^1.24.0",
         "@opentelemetry/api": "^1.9.0",
         "@redis/client": "^5.10.0",
