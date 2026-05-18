@@ -206,6 +206,7 @@ public class RedisCache : IRedisCache
             var redis = await this.redisTask;
             var json = JsonSerializer.Serialize(item);
             var queueLength = await redis.ListRightPushAsync(listId, json);
+            logger.LogInformation("Enqueued item {id} onto list {listKey} in Redis. New queue length: {queueLength}", (item as AnalysisJob)?.Id ?? "[unknown ID]", listId, queueLength);
             return queueLength;
         }
         catch (Exception ex)
