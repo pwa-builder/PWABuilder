@@ -1,6 +1,10 @@
 const CACHE_NAME = 'cool-cache';
 
-// Add whichever assets you want to precache here:
+<script>
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('sw.js')
+  }
+</script>
 const PRECACHE_ASSETS = [
     '/assets/',
     '/src/'
