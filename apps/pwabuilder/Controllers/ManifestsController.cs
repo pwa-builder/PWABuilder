@@ -46,7 +46,7 @@ public class ManifestsController : ControllerBase
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The web manifest content. If not found in cache, it will be fetched from the network. If there is an error fetching from the network, that HTTP result will be returned.</returns>
     [HttpGet("getFromCacheOrProxy")]
-    public async Task<IActionResult> GetFromCacheOrProxy([FromQuery] Uri manifestUrl, [FromServices] WebStringCache webStringCache, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetFromCacheOrProxy([FromQuery] Uri manifestUrl, [FromServices] WebStringCache webStringCache, [FromServices] ManifestDetector detector, CancellationToken cancellationToken)
     {
         if (!manifestUrl.IsAbsoluteInternetHttps())
         {
@@ -62,6 +62,17 @@ public class ManifestsController : ControllerBase
         catch (HttpRequestException httpRequestEx) when (httpRequestEx.StatusCode != null)
         {
             return StatusCode((int)httpRequestEx.StatusCode.Value, httpRequestEx.Message);
+        }
+
+        if (string.IsNullOrEmpty(manifestContent) && Uri.TryCreate(manifestUrl.Scheme + "://" + manifestUrl.Host, UriKind.Absolute, out var hostUrl))
+        {
+            logger.LogInformation("Couldn't find manifest for {url} from web cache. Trying via manifest detector.", manifestUrl);
+            var manifestDetection = await detector.TryDetectAsync(hostUrl, logger, cancellationToken);
+            if (manifestDetection != null && string.Equals(manifestDetection.Url.ToString(), manifestUrl.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                logger.LogInformation("Found manifest content for {manifestUrl} via manifest detector.", manifestUrl);
+                manifestContent = manifestDetection.ManifestRaw;
+            }
         }
 
         if (string.IsNullOrEmpty(manifestContent))
