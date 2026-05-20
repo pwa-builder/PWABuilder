@@ -1,0 +1,6 @@
+{
+    "watch": ["./"],
+    "ext": "ts,js,json",
+    "ignore": ["node_modules"],
+    "exec": "node --inspect=5859 --loader ts-node/esm ./server.ts"
+}
