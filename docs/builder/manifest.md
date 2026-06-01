@@ -182,7 +182,7 @@ In addition to the four display values above, `display_override` can also take t
 `iarc_rating_id` is an optional member that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.
 
 
-You can read more about IARC <a href="https://www.globalratings.com/how-iarc-works.aspx" aria-label="Click here to read more">here</a> 
+You can read more about IARC <a href="https://www.globalratings.com/how-iarc-works/" aria-label="Click here to read more">here</a> 
 
 
 ```json
