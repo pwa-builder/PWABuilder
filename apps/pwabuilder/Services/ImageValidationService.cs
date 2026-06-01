@@ -35,6 +35,14 @@ public interface IImageValidationService
     /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>True if the actual image dimensions match any of the declared sizes, otherwise the result will contain an exception.</returns>
     Task<Result<bool>> TryValidateImageSizeAsync(Uri imageUri, string? declaredSizes, CancellationToken cancelToken);
+
+    /// <summary>
+    /// Attempts to load the image to see if it's a valid image.
+    /// </summary>
+    /// <param name="imageStream">The stream to validate as an image.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the image is valid, otherwise false with any error details.</returns>
+    Task<Result<bool>> IsValidImageAsync(Stream imageStream, CancellationToken cancellationToken);
 }
 
 /// <summary>
@@ -253,6 +261,32 @@ public class ImageValidationService : IImageValidationService
         catch (Exception error)
         {
             logger.LogError(error, "Image size validation failed for {imageUri} due to an error.", imageUri);
+            return error;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<Result<bool>> IsValidImageAsync(Stream imageStream, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var imageInfo = await Image.IdentifyAsync(imageStream, cancellationToken);
+            if (imageInfo == null)
+            {
+                logger.LogInformation("Attempted to identify image from stream, but it couldn't be identified.");
+                return new ArgumentException("Image couldn't be identified.", nameof(imageStream));
+            }
+
+            return true;
+        }
+        catch (UnknownImageFormatException unknownFormatError)
+        {
+            logger.LogInformation(unknownFormatError, "Attempted to identify image from stream, but it was in an unknown format.");
+            return unknownFormatError;
+        }
+        catch (Exception error)
+        {
+            logger.LogInformation(error, "Attempted to identify image from stream, but an error occurred.");
             return error;
         }
     }
