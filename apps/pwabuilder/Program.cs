@@ -45,6 +45,7 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddSingleton<IAnalysisJobQueue, InMemoryAnalysisJobQueue>();
 
     // In development, we use an in-memory database for Analysis objects. This makes local development and testing simpler, as we don't need to connect to Redis.
+    builder.Services.AddSingleton<IAnalysisStore, InMemoryAnalysisStore>();
     builder.Services.AddSingleton<IRedisCache, InMemoryRedisCache>();
 
     // In development, we use an in-memory blob storage service.
@@ -55,7 +56,10 @@ else
     // In production, we use Azure Queue Storage for the analysis job queue.
     builder.Services.AddSingleton<IAnalysisJobQueue, AzureStorageAnalysisJobQueue>();
 
-    // In production, we use PWABuilderDatabase, which uses Redis as a backing store.
+    // In production, analyses are stored in Cosmos DB.
+    builder.Services.AddSingleton<IAnalysisStore, CosmosAnalysisStore>();
+
+    // In production, we use Redis as a backing store for queues and other transient data.
     builder.Services.AddSingleton<IRedisCache, RedisCache>();
 
     // In production, we use Azure Storage for blob storage.
