@@ -1,0 +1,2 @@
+# ignore the generated, minified service-worker.js file. This is created during builds from the real source, /frontend/public/service-worker.js.
+apps/wwwroot/service-worker.js
