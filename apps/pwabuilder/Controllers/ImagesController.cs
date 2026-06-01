@@ -26,13 +26,13 @@ public class ImagesController : ControllerBase
     /// </summary>
     /// <param name="analysisId">The ID of the analysis whose manifest contains the image.</param>
     /// <param name="puppeteer">The Puppeteer service.</param>
-    /// <param name="redis">The Redis cache.</param>
+    /// <param name="analysisStore">The analysis store.</param>
     /// <param name="imageValidation">The image validation service.</param>
     /// <param name="cancelToken">The cancellation token.</param>
     /// <param name="imageUrl">The URL of the image to proxy.</param>
     /// <returns></returns>
     [HttpGet("getSafeImageForAnalysis")]
-    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IRedisCache redis, [FromServices] IImageValidationService imageValidation, CancellationToken cancelToken)
+    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IAnalysisStore analysisStore, [FromServices] IImageValidationService imageValidation, CancellationToken cancelToken)
     {
         if (!imageUrl.IsAbsoluteInternetHttps())
         {
@@ -40,7 +40,7 @@ public class ImagesController : ControllerBase
         }
 
         // Ensure the analysis exists.
-        var analysis = await redis.GetByIdAsync<Analysis>(analysisId);
+        var analysis = await analysisStore.GetByIdAsync(analysisId);
         if (analysis == null)
         {
             logger.LogWarning("Image proxy endpoint failed to find analysis {analysisId} for image URL {imageUrl}", analysisId, imageUrl);
@@ -57,7 +57,7 @@ public class ImagesController : ControllerBase
             // Download via C# HttpClient failed. Try to load the image via Puppeteer.
             if (!string.IsNullOrEmpty(analysisId))
             {
-                using var puppeteerImageStream = await TryDownloadImageViaPuppeteer(analysisId, imageUrl, puppeteer, redis);
+                using var puppeteerImageStream = await TryDownloadImageViaPuppeteer(analysisId, imageUrl, puppeteer, analysisStore);
                 if (puppeteerImageStream != null)
                 {
                     return await ValidateImageAsync(puppeteerImageStream, puppeteerImageStream.MediaType ?? "image/png", imageValidation, cancelToken);
@@ -101,12 +101,12 @@ public class ImagesController : ControllerBase
         }
     }
 
-    private async Task<HttpClientExtensions.LimitedReadStreamWithMediaType?> TryDownloadImageViaPuppeteer(string analysisId, Uri imageUrl, IPuppeteerService puppeteer, IRedisCache db)
+    private async Task<HttpClientExtensions.LimitedReadStreamWithMediaType?> TryDownloadImageViaPuppeteer(string analysisId, Uri imageUrl, IPuppeteerService puppeteer, IAnalysisStore analysisStore)
     {
         try
         {
             // See if we can load the analysis.
-            var analysis = await db.GetByIdAsync<Analysis>(analysisId);
+            var analysis = await analysisStore.GetByIdAsync(analysisId);
             if (analysis == null)
             {
                 logger.LogWarning("Image proxy endpoint failed to find analysis {analysisId} for Puppeteer image download of {imageUrl}", analysisId, imageUrl);
