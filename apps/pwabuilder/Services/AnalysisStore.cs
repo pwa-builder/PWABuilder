@@ -56,7 +56,7 @@ public sealed class InMemoryAnalysisStore : IAnalysisStore
 public sealed class CosmosAnalysisStore : IAnalysisStore
 {
     // 13 months expressed as 395 days.
-    private static readonly int AnalysisTtlInSeconds = (int)TimeSpan.FromDays(395).TotalSeconds;
+    private static readonly int AnalysisTtlInSeconds = (int)TimeSpan.FromDays(365).TotalSeconds;
 
     private readonly ILogger<CosmosAnalysisStore> logger;
     private readonly Task<Container> containerTask;
