@@ -1,10 +1,9 @@
-using System.Drawing;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using PWABuilder.Services;
+using PWABuilder.Validations.Services;
 
 namespace PWABuilder.Controllers;
 
@@ -27,34 +26,41 @@ public class ImagesController : ControllerBase
     /// </summary>
     /// <param name="analysisId">The ID of the analysis whose manifest contains the image.</param>
     /// <param name="puppeteer">The Puppeteer service.</param>
+    /// <param name="analysisStore">The analysis store.</param>
+    /// <param name="imageValidation">The image validation service.</param>
     /// <param name="cancelToken">The cancellation token.</param>
     /// <param name="imageUrl">The URL of the image to proxy.</param>
     /// <returns></returns>
     [HttpGet("getSafeImageForAnalysis")]
-    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IRedisCache db, CancellationToken cancelToken)
+    public async Task<IActionResult> GetSafeImageForAnalysis([FromQuery] string analysisId, [FromQuery] Uri imageUrl, [FromServices] IPuppeteerService puppeteer, [FromServices] IAnalysisStore analysisStore, [FromServices] IImageValidationService imageValidation, CancellationToken cancelToken)
     {
         if (!imageUrl.IsAbsoluteInternetHttps())
         {
             return BadRequest("Image URL must be an absolute HTTPS URI pointing to a non-local address.");
         }
 
-        HttpClientExtensions.LimitedReadStreamWithMediaType imageStream;
+        // Ensure the analysis exists.
+        var analysis = await analysisStore.GetByIdAsync(analysisId);
+        if (analysis == null)
+        {
+            logger.LogWarning("Image proxy endpoint failed to find analysis {analysisId} for image URL {imageUrl}", analysisId, imageUrl);
+            return NotFound($"Analysis with ID {analysisId} not found.");
+        }
+
         try
         {
-            imageStream = await http.GetImageAsync(imageUrl, maxSize, cancelToken);
-            Response.RegisterForDispose(imageStream);
-            return File(imageStream, string.IsNullOrWhiteSpace(imageStream.MediaType) ? "image/png" : imageStream.MediaType);
+            using var imageStream = await http.GetImageAsync(imageUrl, maxSize, cancelToken);
+            return await ValidateImageAsync(imageStream, imageStream.MediaType ?? "image/png", imageValidation, cancelToken);
         }
         catch (Exception error)
         {
             // Download via C# HttpClient failed. Try to load the image via Puppeteer.
             if (!string.IsNullOrEmpty(analysisId))
             {
-                var puppeteerImageStream = await TryDownloadImageViaPuppeteer(analysisId, imageUrl, puppeteer, db);
+                using var puppeteerImageStream = await TryDownloadImageViaPuppeteer(analysisId, imageUrl, puppeteer, analysisStore);
                 if (puppeteerImageStream != null)
                 {
-                    Response.RegisterForDispose(puppeteerImageStream);
-                    return File(puppeteerImageStream, puppeteerImageStream.MediaType ?? "image/png");
+                    return await ValidateImageAsync(puppeteerImageStream, puppeteerImageStream.MediaType ?? "image/png", imageValidation, cancelToken);
                 }
             }
 
@@ -95,12 +101,12 @@ public class ImagesController : ControllerBase
         }
     }
 
-    private async Task<HttpClientExtensions.LimitedReadStreamWithMediaType?> TryDownloadImageViaPuppeteer(string analysisId, Uri imageUrl, IPuppeteerService puppeteer, IRedisCache db)
+    private async Task<HttpClientExtensions.LimitedReadStreamWithMediaType?> TryDownloadImageViaPuppeteer(string analysisId, Uri imageUrl, IPuppeteerService puppeteer, IAnalysisStore analysisStore)
     {
         try
         {
             // See if we can load the analysis.
-            var analysis = await db.GetByIdAsync<Analysis>(analysisId);
+            var analysis = await analysisStore.GetByIdAsync(analysisId);
             if (analysis == null)
             {
                 logger.LogWarning("Image proxy endpoint failed to find analysis {analysisId} for Puppeteer image download of {imageUrl}", analysisId, imageUrl);
@@ -210,5 +216,32 @@ public class ImagesController : ControllerBase
             // Dispose all handles to free memory in the browser
             await resultHandle.DisposeAsync();
         }
+    }
+
+    private async Task<IActionResult> ValidateImageAsync(Stream imageStream, string contentType, IImageValidationService imageValidation, CancellationToken cancellationToken)
+    {
+        // First, we need to copy the stream because the image stream may not be seekable.
+        var memStream = new MemoryStream();
+        await imageStream.CopyToAsync(memStream, cancellationToken);
+        memStream.Position = 0;
+
+        // Validate that it's a real image. This is needed to prevent crafted attacks where the server response is not an image.
+        var imageStatus = await imageValidation.IsValidImageAsync(memStream, cancellationToken);
+        if (imageStatus.Error != null)
+        {
+            logger.LogWarning("Image validation failed for proxied image with content type {contentType}. Error: {error}", contentType, imageStatus.Error);
+            memStream.Dispose();
+            return BadRequest($"You didn't pass a valid image endpoint.");
+        }
+        if (imageStatus.Value == false)
+        {
+            logger.LogWarning("Image validation failed for proxied image with content type {contentType}. The stream is not a valid image.", contentType);
+            memStream.Dispose();
+            return BadRequest($"You didn't pass a valid image endpoint.");
+        }
+
+        memStream.Position = 0;
+        Response.RegisterForDispose(memStream);
+        return File(memStream, contentType);
     }
 }
