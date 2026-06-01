@@ -1,8 +1,8 @@
 # Benefits of Progressive Web Apps
 
-Building a [Progressive Web App](/home/pwa-intro/) has plenty of advantages, from both a developer and user perspective. If you're looking for a summary of what PWAs can bring to the table, the following article covers several benefits, broken down by how they affect either the development experience or the user experience.
+Building a [Progressive Web App](/#/home/pwa-intro) has plenty of advantages, from both a developer and user perspective. If you're looking for a summary of what PWAs can bring to the table, the following article covers several benefits, broken down by how they affect either the development experience or the user experience.
 
-If you are unclear on what a Progressive Web App is from a technical perspective, feel free to check out our [Beginner's Guide to Progressive Web Apps.](/home/pwa-intro/)
+If you are unclear on what a Progressive Web App is from a technical perspective, feel free to check out our [Beginner's Guide to Progressive Web Apps.](/#/home/pwa-intro)
 
 ## Developers
 
@@ -73,7 +73,7 @@ The PWABuilder documentation contains some starter materials and how progressive
 
 Some articles you can check out:
 
-* [Beginner's Guide to Progressive Web Apps](/home/pwa-intro/) - A crash course on what defines a PWA and the basics of how they operate
+* [Beginner's Guide to Progressive Web Apps](/#/home/pwa-intro) - A crash course on what defines a PWA and the basics of how they operate
 
 * [Introduction to Service Workers](/home/sw-intro) - A surface level overview of one of the most important pieces to a PWA: the service worker.
 
