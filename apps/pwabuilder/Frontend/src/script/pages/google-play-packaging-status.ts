@@ -234,7 +234,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         this.appendLog(`[error] Error when querying for Google Play packaging job ${jobId}.`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
-        this.recordPackagingFailed(this.job?.analysisId ?? null, `${error}`);
+        this.recordPackagingFailed(this.job?.analysisId ?? null, error instanceof Error ? error : `${error}`);
     }
 
     private jobFailed(job: GooglePlayPackageJob): void {
@@ -249,7 +249,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         this.appendLog(`Error download Google Play package from ${downloadUrl} for job ${job.id}: ${error}`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
-        this.recordPackagingFailed(job.analysisId, `${error}`);
+        this.recordPackagingFailed(job.analysisId, error instanceof Error ? error : `${error}`);
     }
 
     private recordPackagingCompleted(analysisId: string | null): void {
@@ -263,7 +263,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         });
     }
 
-    private recordPackagingFailed(analysisId: string | null, error: string): void {
+    private recordPackagingFailed(analysisId: string | null, error: string | Error): void {
         if (!analysisId || this.hasRecordedFailure) {
             return;
         }

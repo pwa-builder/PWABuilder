@@ -269,13 +269,13 @@ export async function packagingCompleted(analysisId: string, appStore: AppStore)
  * @param appStore The app store where package generation failed.
  * @param error Optional error details.
  */
-export async function packagingFailed(analysisId: string, appStore: AppStore, error?: string): Promise<void> {
+export async function packagingFailed(analysisId: string, appStore: AppStore, error?: string | Error): Promise<void> {
     const absoluteUrl = `${env.api}/analyses/packagingFailed`;
     const payload: AppStorePackage = {
         analysisId,
         appStore,
         status: "Failed",
-        error: error ?? null
+        error: serializePackagingError(error)
     };
 
     const response = await fetch(absoluteUrl, {
@@ -289,6 +289,24 @@ export async function packagingFailed(analysisId: string, appStore: AppStore, er
     if (!response.ok) {
         throw new Error(`Unable to record packaging failure. Status ${response.status} ${response.statusText}`);
     }
+}
+
+function serializePackagingError(error?: string | Error): string | null {
+    if (!error) {
+        return null;
+    }
+
+    if (typeof error === "string") {
+        return error;
+    }
+
+    const message = `${error.name}: ${error.message}`;
+    if (!error.stack) {
+        return message;
+    }
+
+    // Include stack trace details when available for easier diagnostics.
+    return `${message}\n${error.stack}`;
 }
 
 export async function FindWebManifest(
