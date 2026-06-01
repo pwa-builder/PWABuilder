@@ -13,6 +13,7 @@ import "@shoelace-style/shoelace/dist/components/button/button";
 import { Router } from "@vaadin/router";
 import "@shoelace-style/shoelace/dist/components/spinner/spinner";
 import "@shoelace-style/shoelace/dist/components/icon/icon";
+import { packagingCompleted, packagingFailed } from "./app-report.api";
 
 /**
  * A page that shows the status of a Google Play packaging job.
@@ -27,6 +28,8 @@ export class GooglePlayPackagingStatus extends LitElement {
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
     private readonly maxWaitTimeMs = 15 * 60 * 1000; // Max wait time of 15 minutes
     private jobTimeoutHandle = 0;
+    private hasRecordedCompletion = false;
+    private hasRecordedFailure = false;
 
     static styles = [googlePlayPackagingStatusStyles];
 
@@ -199,6 +202,8 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private async jobCompleted(job: GooglePlayPackageJob): Promise<void> {
+        this.recordPackagingCompleted(job.analysisId);
+
         // If the package was generated more than 24 hours ago, skip download because we're looking at a historical job result.
         const generatedDate = new Date(job.createdAt);
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -222,18 +227,21 @@ export class GooglePlayPackagingStatus extends LitElement {
     private jobTimedOut(): void {
         this.appendLog("[error] Timed out waiting for Google Play packaging job to complete.");
         this.hasFailed = true;
+        this.recordPackagingFailed(this.job?.analysisId ?? null, "Timed out waiting for Google Play packaging job to complete.");
     }
 
     private pollJobFailed(jobId: string, error: unknown): void {
         this.appendLog(`[error] Error when querying for Google Play packaging job ${jobId}.`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
+        this.recordPackagingFailed(this.job?.analysisId ?? null, `${error}`);
     }
 
     private jobFailed(job: GooglePlayPackageJob): void {
         this.hasFailed = true;
         console.error("Google Play packaging job failed.", job.errors);
         this.trackPackageFailure(job.errors.join("\n"));
+        this.recordPackagingFailed(job.analysisId, job.errors.join("\n"));
     }
 
     private downloadFailed(job: GooglePlayPackageJob, error: any): void {
@@ -241,6 +249,29 @@ export class GooglePlayPackagingStatus extends LitElement {
         this.appendLog(`Error download Google Play package from ${downloadUrl} for job ${job.id}: ${error}`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
+        this.recordPackagingFailed(job.analysisId, `${error}`);
+    }
+
+    private recordPackagingCompleted(analysisId: string | null): void {
+        if (!analysisId || this.hasRecordedCompletion) {
+            return;
+        }
+
+        this.hasRecordedCompletion = true;
+        packagingCompleted(analysisId, "GooglePlayStore").catch(error => {
+            console.warn("Unable to record packaging completion.", error);
+        });
+    }
+
+    private recordPackagingFailed(analysisId: string | null, error: string): void {
+        if (!analysisId || this.hasRecordedFailure) {
+            return;
+        }
+
+        this.hasRecordedFailure = true;
+        packagingFailed(analysisId, "GooglePlayStore", error).catch(requestError => {
+            console.warn("Unable to record packaging failure.", requestError);
+        });
     }
 
     private appendLog(message: string): void {

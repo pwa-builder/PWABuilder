@@ -64,6 +64,11 @@ public class Analysis
     public List<string> Logs { get; init; } = [];
 
     /// <summary>
+    /// The app store packaging attempts associated with this analysis.
+    /// </summary>
+    public List<AppStorePackage> AppStorePackages { get; init; } = [];
+
+    /// <summary>
     /// Indicates whether the app can be packaged for app stores.
     /// </summary>
     public bool CanPackage => this.MeetsRequirementsForStorePackaging();
@@ -80,10 +85,10 @@ public class Analysis
     ];
 
     /// <summary>
-    /// Generates an ID for an Analysis using the URI and the current time. This ID is intended for Redis cache.
+    /// Generates an ID for an Analysis using the URI and the current time.
     /// </summary>
     /// <param name="uri">The URI of the analysis to generate an ID for.</param>
-    /// <returns>A Redis cache-compatible ID to be used as the key for the object in Redis.</returns>
+    /// <returns>An ID to be used as the key for the analysis object in persistence storage.</returns>
     public static string GetId(Uri uri)
     {
         var hash = uri.GetHashCode() + DateTime.UtcNow.GetHashCode();
