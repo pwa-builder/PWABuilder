@@ -31,6 +31,11 @@ public class ManifestDetection
 
     private Uri? GetAppIcon()
     {
+        if (this.Manifest.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
         return this.Manifest
             .GetIcons()
             .OrderBySuitableAppIcon()

@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
+using System.Text.Json;
 using Azure.Identity;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using PWABuilder.Models;
 
 namespace PWABuilder.Services;
@@ -121,23 +121,49 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
     {
         if (string.IsNullOrWhiteSpace(settings.AzureCosmosAccountEndpoint)
             || string.IsNullOrWhiteSpace(settings.AzureCosmosDatabaseName)
-            || string.IsNullOrWhiteSpace(settings.AzureCosmosAnalysesContainerName)
-            || string.IsNullOrWhiteSpace(settings.AzureManagedIdentityApplicationId))
+            || string.IsNullOrWhiteSpace(settings.AzureCosmosAnalysesContainerName))
         {
-            throw new InvalidOperationException("Cosmos DB settings are missing. Please configure AppSettings.AzureCosmosAccountEndpoint, AppSettings.AzureCosmosDatabaseName, AppSettings.AzureCosmosAnalysesContainerName, and AppSettings.AzureManagedIdentityApplicationId.");
+            throw new InvalidOperationException("Cosmos DB settings are missing. Please configure AppSettings.AzureCosmosAccountEndpoint, AppSettings.AzureCosmosDatabaseName, and AppSettings.AzureCosmosAnalysesContainerName.");
         }
 
-        // Use the user-assigned managed identity for Entra ID authentication.
-        var credential = new ManagedIdentityCredential(clientId: settings.AzureManagedIdentityApplicationId);
-        var cosmosClientOptions = new CosmosClientOptions
+        var cosmosJsonSerializerOptions = new JsonSerializerOptions
         {
-            SerializerOptions = new CosmosSerializationOptions
-            {
-                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
-            }
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        var cosmosClient = new CosmosClient(settings.AzureCosmosAccountEndpoint, credential, cosmosClientOptions);
+        var cosmosClientOptions = new CosmosClientOptions
+        {
+            Serializer = new SystemTextJsonCosmosSerializer(cosmosJsonSerializerOptions)
+        };
+
+        // Use connection string for localhost/loopback (emulator), managed identity otherwise.
+        var isLocalEmulator = Uri.TryCreate(settings.AzureCosmosAccountEndpoint, UriKind.Absolute, out var endpointUri)
+            && endpointUri.IsLoopback;
+
+        CosmosClient cosmosClient;
+        if (isLocalEmulator)
+        {
+            if (string.IsNullOrWhiteSpace(settings.AzureCosmosLocalConnectionString))
+            {
+                throw new InvalidOperationException("Local Cosmos emulator detected but AppSettings.AzureCosmosLocalConnectionString is not configured.");
+            }
+
+            cosmosClientOptions.HttpClientFactory = () => new HttpClient(new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            });
+            cosmosClient = new CosmosClient(settings.AzureCosmosLocalConnectionString, cosmosClientOptions);
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(settings.AzureManagedIdentityApplicationId))
+            {
+                throw new InvalidOperationException("AppSettings.AzureManagedIdentityApplicationId is required for non-local Cosmos endpoints.");
+            }
+
+            var credential = new ManagedIdentityCredential(clientId: settings.AzureManagedIdentityApplicationId);
+            cosmosClient = new CosmosClient(settings.AzureCosmosAccountEndpoint, credential, cosmosClientOptions);
+        }
 
         var database = await cosmosClient.CreateDatabaseIfNotExistsAsync(settings.AzureCosmosDatabaseName);
         var containerProperties = new ContainerProperties(settings.AzureCosmosAnalysesContainerName, "/id")
@@ -165,5 +191,41 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
                 Analysis = analysis,
                 Ttl = timeToLiveInSeconds
             };
+    }
+
+    private sealed class SystemTextJsonCosmosSerializer : CosmosSerializer
+    {
+        private readonly JsonSerializerOptions serializerOptions;
+
+        public SystemTextJsonCosmosSerializer(JsonSerializerOptions serializerOptions)
+        {
+            this.serializerOptions = serializerOptions;
+        }
+
+        public override T FromStream<T>(Stream stream)
+        {
+            if (stream.CanSeek && stream.Length == 0)
+            {
+                return default!;
+            }
+
+            if (typeof(Stream).IsAssignableFrom(typeof(T)))
+            {
+                return (T)(object)stream;
+            }
+
+            using (stream)
+            {
+                return JsonSerializer.Deserialize<T>(stream, serializerOptions)!;
+            }
+        }
+
+        public override Stream ToStream<T>(T input)
+        {
+            var stream = new MemoryStream();
+            JsonSerializer.Serialize(stream, input, serializerOptions);
+            stream.Position = 0;
+            return stream;
+        }
     }
 }

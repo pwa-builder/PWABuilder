@@ -12,6 +12,7 @@ public class AppSettings
     public string AzureCosmosAccountEndpoint { get; set; } = string.Empty;
     public string AzureCosmosDatabaseName { get; set; } = string.Empty;
     public string AzureCosmosAnalysesContainerName { get; set; } = string.Empty;
+    public string AzureCosmosLocalConnectionString { get; set; } = string.Empty;
     public string AzureStorageQueueUri { get; set; } = string.Empty;
     public string PWABuilderCliKey { get; set; } = string.Empty;
 }
