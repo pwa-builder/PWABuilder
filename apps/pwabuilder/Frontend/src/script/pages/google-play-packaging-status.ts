@@ -4,15 +4,15 @@ import "../components/app-header";
 import { downloadGooglePlayPackageZip, enqueueGooglePlayPackageJob, getGooglePlayPackageJob } from "../services/publish/android-publish";
 import { GooglePlayPackageJob } from "../models/google-play-package-job";
 import { env } from "../utils/environment";
-import "@shoelace-style/shoelace/dist/components/textarea/textarea";
 import { googlePlayPackagingStatusStyles } from "./google-play-packaging-status.styles";
 import { AnalyticsBehavior, recordProcessStep } from "@pwabuilder/site-analytics";
 import { repeat } from "lit/directives/repeat.js";
-import "@shoelace-style/shoelace/dist/components/card/card";
-import "@shoelace-style/shoelace/dist/components/button/button";
+import "@shoelace-style/shoelace/dist/components/textarea/textarea.js";
+import "@shoelace-style/shoelace/dist/components/card/card.js";
+import "@shoelace-style/shoelace/dist/components/button/button.js";
+import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
+import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import { Router } from "@vaadin/router";
-import "@shoelace-style/shoelace/dist/components/spinner/spinner";
-import "@shoelace-style/shoelace/dist/components/icon/icon";
 import { packagingCompleted, packagingFailed } from "./app-report.api";
 
 /**
