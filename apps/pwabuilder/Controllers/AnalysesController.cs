@@ -127,7 +127,7 @@ public class AnalysesController : ControllerBase
         }
 
         analysis.AppStorePackages.Add(appStorePackage);
-        await this.analysisStore.SaveAsync(analysis);
+        await this.analysisStore.SaveAsync(analysis, expiration: TimeSpan.FromDays(365));
         return NoContent();
     }
 }
