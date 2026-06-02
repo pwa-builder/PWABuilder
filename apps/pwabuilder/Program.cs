@@ -45,8 +45,9 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddSingleton<IAnalysisJobQueue, InMemoryAnalysisJobQueue>();
 
     // In development, we use an in-memory database for Analysis objects. This makes local development and testing simpler, as we don't need to connect to Redis.
-    //builder.Services.AddSingleton<IAnalysisStore, InMemoryAnalysisStore>();
-    builder.Services.AddSingleton<IAnalysisStore, CosmosAnalysisStore>();
+    builder.Services.AddSingleton<IAnalysisStore, InMemoryAnalysisStore>();
+
+    // In development, we use an in-memory cache instead of Redis. This allows us to run the app without needing a Redis instance running locally.
     builder.Services.AddSingleton<IRedisCache, InMemoryRedisCache>();
 
     // In development, we use an in-memory blob storage service.
