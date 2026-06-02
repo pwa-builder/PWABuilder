@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using Azure.Identity;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using PWABuilder.Models;
 
 namespace PWABuilder.Services;
@@ -129,7 +129,15 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
 
         // Use the user-assigned managed identity for Entra ID authentication.
         var credential = new ManagedIdentityCredential(clientId: settings.AzureManagedIdentityApplicationId);
-        var cosmosClient = new CosmosClient(settings.AzureCosmosAccountEndpoint, credential);
+        var cosmosClientOptions = new CosmosClientOptions
+        {
+            SerializerOptions = new CosmosSerializationOptions
+            {
+                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+            }
+        };
+
+        var cosmosClient = new CosmosClient(settings.AzureCosmosAccountEndpoint, credential, cosmosClientOptions);
 
         var database = await cosmosClient.CreateDatabaseIfNotExistsAsync(settings.AzureCosmosDatabaseName);
         var containerProperties = new ContainerProperties(settings.AzureCosmosAnalysesContainerName, "/id")
@@ -148,15 +156,14 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
 
         public required Analysis Analysis { get; init; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("ttl")]
-        public int TimeToLiveInSeconds { get; init; }
+        public int Ttl { get; init; }
 
         public static AnalysisCosmosDocument Create(Analysis analysis, int timeToLiveInSeconds) =>
             new()
             {
                 Id = analysis.Id,
                 Analysis = analysis,
-                TimeToLiveInSeconds = timeToLiveInSeconds
+                Ttl = timeToLiveInSeconds
             };
     }
 }
