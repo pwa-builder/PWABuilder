@@ -51,7 +51,7 @@
     },
     {
       "name":"PWA Starter",
-      "url":"/#/starter/quick-start",
+      "url":"/#/builder/quick-start",
       "description":"Takes you to documentation on using the PWA Starter.",
       "icons": [
         {
