@@ -236,7 +236,7 @@ export const parentMenuData: ParentMenu = {
 export const topLevelNavEntries: string[][] = [
   ["Home", "/#"],
   ["PWABuilder","/#/builder/quick-start"],
-  ["PWA Starter","/#/starter/quick-start"],
+  ["PWA Starter","/#/builder/quick-start"],
   ["PWABuilder Studio", "/#/studio/quick-start"]
 ];
 

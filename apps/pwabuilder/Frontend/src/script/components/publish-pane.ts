@@ -34,6 +34,7 @@ import { enqueueMetaHorizonPackageJob } from "../services/publish/meta-horizon-p
 import { AndroidPackageOptions } from "../utils/android-validation";
 import { MetaHorizonPackageOptions } from "../utils/meta-horizon-validation";
 import { Router } from '@vaadin/router';
+import { AppStore, packagingCompleted, packagingFailed, packagingStarted } from '../pages/app-report.api';
 
 @customElement('publish-pane')
 export class PublishPane extends LitElement {
@@ -823,6 +824,15 @@ export class PublishPane extends LitElement {
         try {
             this.generating = true;
 
+            const appStore = this.getAppStoreFromPlatform(platform);
+            if (this.analysisId && appStore) {
+                try {
+                    await packagingStarted(this.analysisId, appStore);
+                } catch (error) {
+                    console.warn("Unable to record packaging start.", error);
+                }
+            }
+
             // For Android platforms, queue up the packaging job and navigate to the Google Play package status page.
             if (options && (platform === "android" || platform === "other-android")) {
                 const googlePlayPackageOptions = options as AndroidPackageOptions;
@@ -852,9 +862,26 @@ export class PublishPane extends LitElement {
                     this.readyToDownload = true;
                     this.downloadPackage()
                 }
+
+                if (this.analysisId && appStore) {
+                    try {
+                        await packagingCompleted(this.analysisId, appStore);
+                    } catch (error) {
+                        console.warn("Unable to record packaging completion.", error);
+                    }
+                }
             }
             this.renderSuccessMessage()
         } catch (err: any) {
+            const appStore = this.getAppStoreFromPlatform(platform);
+            if (this.analysisId && appStore) {
+                try {
+                await packagingFailed(this.analysisId, appStore, err);
+                } catch (error) {
+                    console.warn("Unable to record packaging failure.", error);
+                }
+            }
+
             this.renderErrorMessage(err);
             //this.showAlertModal(err as Error, platform);
             recordProcessStep(
@@ -875,6 +902,19 @@ export class PublishPane extends LitElement {
                 });
         } finally {
             this.generating = false;
+        }
+    }
+
+    private getAppStoreFromPlatform(platform: Platform): AppStore | null {
+        switch (platform) {
+            case "windows":
+                return "MicrosoftStore";
+            case "android":
+                return "GooglePlayStore";
+            case "ios":
+                return "IOSAppStore";
+            default:
+                return null;
         }
     }
 

@@ -141,7 +141,7 @@ export class PackageJobQueue {
         return {
             id: id,
             pwaUrl: packageArgs.pwaUrl,
-            analysisId: null,
+            analysisId: packageArgs.analysisId ?? null,
             errors: [],
             logs: [],
             status: "Queued",
