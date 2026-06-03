@@ -23,8 +23,10 @@ public interface IAnalysisStore
     /// Saves an analysis.
     /// </summary>
     /// <param name="analysis">The analysis to save.</param>
+    /// <param name="expiration">Optional expiration timespan for the analysis. If not provided, a default expiration will be used based on the implementation.</param>
+    /// <param name="cancellationToken">Optional cancellation token.</param>
     /// <returns>A task.</returns>
-    Task SaveAsync(Analysis analysis);
+    Task SaveAsync(Analysis analysis, TimeSpan? expiration = null, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -42,7 +44,7 @@ public sealed class InMemoryAnalysisStore : IAnalysisStore
     }
 
     /// <inheritdoc/>
-    public Task SaveAsync(Analysis analysis)
+    public Task SaveAsync(Analysis analysis, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
     {
         analysis.LastModifiedAt = DateTimeOffset.UtcNow;
         analyses[analysis.Id] = analysis;
@@ -55,8 +57,7 @@ public sealed class InMemoryAnalysisStore : IAnalysisStore
 /// </summary>
 public sealed class CosmosAnalysisStore : IAnalysisStore
 {
-    // 13 months expressed as 395 days.
-    private static readonly int AnalysisTtlInSeconds = (int)TimeSpan.FromDays(365).TotalSeconds;
+    private static readonly int DefaultExpirationInSeconds = (int)TimeSpan.FromDays(14).TotalSeconds;
 
     private readonly ILogger<CosmosAnalysisStore> logger;
     private readonly Task<Container> containerTask;
@@ -94,15 +95,15 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
     }
 
     /// <inheritdoc/>
-    public async Task SaveAsync(Analysis analysis)
+    public async Task SaveAsync(Analysis analysis, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
     {
         try
         {
             var container = await containerTask;
             analysis.LastModifiedAt = DateTimeOffset.UtcNow;
 
-            var document = AnalysisCosmosDocument.Create(analysis, AnalysisTtlInSeconds);
-            await container.UpsertItemAsync(document, new PartitionKey(document.Id));
+            var document = AnalysisCosmosDocument.Create(analysis, expiration.HasValue ? (int)expiration.Value.TotalSeconds : DefaultExpirationInSeconds);
+            await container.UpsertItemAsync(document, new PartitionKey(document.Id), cancellationToken: cancellationToken);
             logger.LogInformation("Saved analysis {id} to Cosmos DB.", analysis.Id);
         }
         catch (Exception ex)
