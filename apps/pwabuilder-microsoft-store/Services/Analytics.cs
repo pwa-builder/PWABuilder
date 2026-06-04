@@ -58,7 +58,9 @@ namespace PWABuilder.MicrosoftStore
                 ErrorStack = error.StackTrace,
                 PackageId = packageOptions.PackageId,
                 PublisherDisplayName = packageOptions.Publisher?.DisplayName,
-                PublisherId = packageOptions.Publisher?.CommonName
+                PublisherId = packageOptions.Publisher?.CommonName,
+                AnalysisId = packageOptions.AnalysisId,
+                CreatedAt = DateTimeOffset.UtcNow
             };
             await TryRecordStorePackageCore(package, analyticsInfo);
         }
@@ -85,7 +87,9 @@ namespace PWABuilder.MicrosoftStore
                 ErrorStack = null,
                 PackageId = packageOptions.PackageId,
                 PublisherDisplayName = packageOptions.Publisher?.DisplayName,
-                PublisherId = packageOptions.Publisher?.CommonName
+                PublisherId = packageOptions.Publisher?.CommonName,
+                AnalysisId = packageOptions.AnalysisId,
+                CreatedAt = DateTimeOffset.UtcNow
             };
             await TryRecordStorePackageCore(package, analyticsInfo);
         }
@@ -94,6 +98,16 @@ namespace PWABuilder.MicrosoftStore
         {
             try
             {
+                // Packages stick around for 5 years for analytics purposes. If it's a test package, we expire in 1 year.
+                if (package.IsDevPackage)
+                {
+                    package.Ttl = (int)TimeSpan.FromDays(365).TotalSeconds;
+                }
+                else
+                {
+                    package.Ttl = (int)TimeSpan.FromDays(365 * 5).TotalSeconds;
+                }
+
                 SendAppInsightsEvent(package, analyticsInfo);
 
                 // Save to CosmosDB using the package's correlation ID as the partition key
