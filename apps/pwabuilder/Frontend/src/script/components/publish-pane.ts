@@ -29,6 +29,7 @@ import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
 import { GooglePlayPackageError } from "../models/google-play-package-error";
 import { enqueueGooglePlayPackageJob } from "../services/publish/android-publish";
 import { AndroidPackageOptions } from "../utils/android-validation";
+import { WindowsPackageOptions } from '../utils/win-validation';
 import { Router } from '@vaadin/router';
 import { AppStore, packagingCompleted, packagingFailed, packagingStarted } from '../pages/app-report.api';
 
@@ -811,6 +812,11 @@ export class PublishPane extends LitElement {
                 const jobId = await enqueueGooglePlayPackageJob(googlePlayPackageOptions);
                 Router.go("/google-play-packaging-status?jobId=" + encodeURIComponent(jobId));
                 return;
+            }
+
+            // For Windows, set the analysis ID if available.
+            if (options && platform === "windows") {
+                (options as WindowsPackageOptions).analysisId = this.analysisId || undefined;
             }
 
             const packageData = await generatePackage(platform, options);
