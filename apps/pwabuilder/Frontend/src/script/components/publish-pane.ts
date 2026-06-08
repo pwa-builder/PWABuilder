@@ -844,7 +844,7 @@ export class PublishPane extends LitElement {
             const appStore = this.getAppStoreFromPlatform(platform);
             if (this.analysisId && appStore) {
                 try {
-                await packagingFailed(this.analysisId, appStore, err);
+                    await packagingFailed(this.analysisId, appStore, err);
                 } catch (error) {
                     console.warn("Unable to record packaging failure.", error);
                 }
