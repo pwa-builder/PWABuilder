@@ -109,7 +109,7 @@ public class AnalysisJobProcessor : IHostedService
     {
         try
         {
-            this.healthMonitor.MarkAnalysisAsStarted();
+            this.healthMonitor.MarkAnalysisAsStarted(job.AnalysisId);
 
             using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancelToken);
             timeoutCts.CancelAfter(TimeSpan.FromSeconds(JobTimeoutSeconds));
@@ -121,12 +121,14 @@ public class AnalysisJobProcessor : IHostedService
         catch (OperationCanceledException) when (!cancelToken.IsCancellationRequested)
         {
             // The job timed out, but the app itself isn't shutting down. Retry or fail.
+            this.healthMonitor.MarkAnalysisAsCompleted();
             var timeoutError = new TimeoutException($"Analysis job timed out after {JobTimeoutSeconds} seconds.");
             logger.LogError(timeoutError, "AnalysisJobProcessor: Job {jobId} for analysis {analysisId} timed out after {timeout} seconds. Attempting retry.", job.Id, job.AnalysisId, JobTimeoutSeconds);
             await RetryJobOrFail(job, timeoutError);
         }
         catch (Exception error)
         {
+            this.healthMonitor.MarkAnalysisAsCompleted();
             logger.LogError(error, "AnalysisJobProcessor: Exception while processing job {jobId} for analysis {analysisId}. Attempting retry.", job.Id, job.AnalysisId);
             await RetryJobOrFail(job, error);
         }

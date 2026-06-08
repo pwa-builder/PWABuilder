@@ -166,6 +166,22 @@ namespace PWABuilder.Services
             await browser.DisposeAsync();
         }
 
+        /// <inheritdoc />
+        public async Task<int> GetOpenPageCountAsync()
+        {
+            try
+            {
+                var browser = await this.reusableBrowser;
+                var pages = await browser.PagesAsync();
+                return pages.Length;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Error getting open page count from Puppeteer browser.");
+                return -1;
+            }
+        }
+
         /// <summary>
         /// Removes a page reference from the tracking list.
         /// </summary>
