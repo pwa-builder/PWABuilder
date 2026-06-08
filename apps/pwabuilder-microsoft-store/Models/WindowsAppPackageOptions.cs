@@ -31,6 +31,11 @@ namespace PWABuilder.MicrosoftStore.Models
         public string Version { get; set; } = string.Empty;
 
         /// <summary>
+        /// The optional ID of the PWABuilder analysis that requested this app package generation.
+        /// </summary>
+        public string? AnalysisId { get; set; }
+
+        /// <summary>
         /// Whether the generated MSIX package will be signable. If false, the app won't be able to be submitted to the Store.
         /// </summary>
         public bool AllowSigning { get; set; }
@@ -273,7 +278,6 @@ namespace PWABuilder.MicrosoftStore.Models
                     {
                         errors.Add("TargetDeviceFamilies must contain only the following " + string.Join(", ", deviceFamilies));
                     }
-
                 }
             }
 

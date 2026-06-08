@@ -75,4 +75,21 @@ public class PwaBuilderMsStorePackage
     /// Version of the platform that generated the package.
     /// </summary>
     public string? PlatformIdVersion { get; set; }
+
+    /// <summary>
+    /// The timestamp when this document was created in CosmosDB.
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    /// <summary>
+    /// The optional ID of the PWABuilder analysis that was packaged for the Microsoft Store.
+    /// </summary>
+    public string? AnalysisId { get; set; }
+
+    /// <summary>
+    /// The time-to-live in seconds for this document in CosmosDB.
+    /// After this period elapses from the document's creation time, CosmosDB automatically deletes the document.
+    /// A value of -1 means the document never expires.
+    /// </summary>
+    public int Ttl { get; set; } = -1;
 }
