@@ -8,6 +8,7 @@ namespace PWABuilder.Services;
 public class AnalysisJobProcessor : IHostedService
 {
     private const int MaxRetryCount = 3;
+    private const int JobTimeoutSeconds = 180;
     private readonly IAnalysisJobQueue queue;
     private readonly IAnalysisStore analysisStore;
     private CancellationTokenSource? abortToken;
@@ -109,9 +110,20 @@ public class AnalysisJobProcessor : IHostedService
         try
         {
             this.healthMonitor.MarkAnalysisAsStarted();
-            await ProcessJobAsync(job, cancelToken);
+
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancelToken);
+            timeoutCts.CancelAfter(TimeSpan.FromSeconds(JobTimeoutSeconds));
+
+            await ProcessJobAsync(job, timeoutCts.Token);
             this.healthMonitor.MarkAnalysisAsCompleted();
             logger.LogInformation("AnalysisJobProcessor: Successfully processed job {jobId} for analysis {analysisId}.", job.Id, job.AnalysisId);
+        }
+        catch (OperationCanceledException) when (!cancelToken.IsCancellationRequested)
+        {
+            // The job timed out, but the app itself isn't shutting down. Retry or fail.
+            var timeoutError = new TimeoutException($"Analysis job timed out after {JobTimeoutSeconds} seconds.");
+            logger.LogError(timeoutError, "AnalysisJobProcessor: Job {jobId} for analysis {analysisId} timed out after {timeout} seconds. Attempting retry.", job.Id, job.AnalysisId, JobTimeoutSeconds);
+            await RetryJobOrFail(job, timeoutError);
         }
         catch (Exception error)
         {
