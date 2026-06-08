@@ -1,15 +1,23 @@
 import { GooglePlayPackageError } from "../../models/google-play-package-error";
 import { GooglePlayPackageJob } from "../../models/google-play-package-job";
+import { MetaHorizonPackageError } from "../../models/meta-horizon-package-error";
+import { MetaHorizonPackageJob } from "../../models/meta-horizon-package-job";
 import { AndroidPackageOptions } from '../../utils/android-validation';
 import { PackageOptions } from '../../utils/interfaces';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';
 import { WindowsPackageOptions } from '../../utils/win-validation';
+import { MetaHorizonPackageOptions } from '../../utils/meta-horizon-validation';
 import {
     downloadGooglePlayPackageZip,
     enqueueGooglePlayPackageJob,
     getGooglePlayPackageJob,
 } from './android-publish';
 import { generateIOSPackage } from './ios-publish';
+import {
+    downloadMetaHorizonPackageZip,
+    enqueueMetaHorizonPackageJob,
+    getMetaHorizonPackageJob,
+} from './meta-horizon-publish';
 import {
     generateWindowsPackage,
 } from './windows-publish';
@@ -34,11 +42,17 @@ export async function generatePackage(
             return await tryGenerateAndroidPackage(packageOptions as AndroidPackageOptions);
         case 'ios':
             return await tryGenerateIOSPackage(packageOptions as IOSAppPackageOptions);
+        case 'meta':
+            return await tryGenerateMetaHorizonPackage(packageOptions as MetaHorizonPackageOptions);
         default:
             throw new Error(
                 `A platform type must be passed, ${type} is not a valid platform.`
             );
     }
+}
+
+function tryGenerateMetaHorizonPackage(options: MetaHorizonPackageOptions): Promise<PackageInfo | null> {
+    return new MetaHorizonPackageService(options).createPackage();
 }
 
 async function tryGenerateIOSPackage(options: IOSAppPackageOptions): Promise<PackageInfo | null> {
@@ -132,5 +146,69 @@ class GooglePlayPackageService {
 
     private jobTimedOut(): void {
         this.promiseWithResolvers.reject(new GooglePlayPackageError("Timed out waiting for Google Play package job to complete.", this.job));
+    }
+}
+
+/**
+ * Service for enqueuing a Meta Horizon package job, monitoring its status, and retrieving the resulting package.
+ */
+class MetaHorizonPackageService {
+    private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
+    private readonly maxWaitTimeMs = 15 * 60 * 1000; // Max wait time of 15 minutes
+    private readonly promiseWithResolvers = Promise.withResolvers<PackageInfo>();
+    private job: MetaHorizonPackageJob | null = null;
+    private jobTimeoutHandle = 0;
+
+    constructor(private readonly packageOptions: MetaHorizonPackageOptions) {
+    }
+
+    public async createPackage(): Promise<PackageInfo> {
+        let jobId: string;
+        try {
+            jobId = await enqueueMetaHorizonPackageJob(this.packageOptions);
+        } catch (enqueueError) {
+            return Promise.reject(new MetaHorizonPackageError(enqueueError, null));
+        }
+
+        setTimeout(() => this.pollJob(jobId), this.pollIntervalMs);
+        this.jobTimeoutHandle = window.setTimeout(() => this.jobTimedOut(), this.maxWaitTimeMs);
+        return this.promiseWithResolvers.promise;
+    }
+
+    private async pollJob(jobId: string): Promise<void> {
+        try {
+            const job = await getMetaHorizonPackageJob(jobId);
+            this.job = job;
+            if (job.status === "Completed") {
+                await this.jobCompleted(job);
+            } else if (job.status === "Failed") {
+                this.promiseWithResolvers.reject(new MetaHorizonPackageError("Meta Horizon package job failed.", job));
+            } else {
+                setTimeout(() => this.pollJob(jobId), this.pollIntervalMs);
+            }
+        } catch (error) {
+            console.error("Failed to retrieve Meta Horizon package job", error);
+            this.promiseWithResolvers.reject(new MetaHorizonPackageError(error, null));
+        }
+    }
+
+    private async jobCompleted(job: MetaHorizonPackageJob): Promise<void> {
+        let blob: Blob;
+        try {
+            blob = await downloadMetaHorizonPackageZip(job.id);
+            this.promiseWithResolvers.resolve({
+                appName: this.packageOptions.name,
+                blob: blob,
+                type: "store"
+            });
+            clearTimeout(this.jobTimeoutHandle);
+        } catch (downloadError) {
+            console.error("Failed to download Meta Horizon package zip file", downloadError);
+            this.promiseWithResolvers.reject(new MetaHorizonPackageError(downloadError, job));
+        }
+    }
+
+    private jobTimedOut(): void {
+        this.promiseWithResolvers.reject(new MetaHorizonPackageError("Timed out waiting for Meta Horizon package job to complete.", this.job));
     }
 }

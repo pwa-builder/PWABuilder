@@ -188,6 +188,11 @@ export class AppIndex extends LitElement {
                         action: async () => await import('./script/pages/google-play-packaging-status.js')
                     },
                     {
+                        path: '/meta-horizon-packaging-status',
+                        component: 'meta-horizon-packaging-status',
+                        action: async () => await import('./script/pages/meta-horizon-packaging-status.js')
+                    },
+                    {
                         path: '(.*)', // Match any other route not defined above
                         redirect: '/', // Redirect to the home page or another valid route
                     },

@@ -152,6 +152,29 @@
                     "NODE_ENV": "test"
                 }
             }
+        },
+        {
+            "label": "tasks.meta-horizon:install",
+            "type": "npm",
+            "path": "apps/pwabuilder-meta-horizon",
+            "script": "install",
+            "isBackground": true,
+            "detail": "npm install for pwabuilder-meta-horizon"
+        },
+        {
+            "label": "tasks.meta-horizon:dev",
+            "type": "npm",
+            "path": "apps/pwabuilder-meta-horizon",
+            "script": "dev",
+            "dependsOn": "tasks.meta-horizon:install",
+            "isBackground": true,
+            "detail": "npm run dev for pwabuilder-meta-horizon",
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "NODE_ENV": "test"
+                }
+            }
         }
     ],
     "inputs": [

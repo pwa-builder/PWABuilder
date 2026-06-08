@@ -22,13 +22,17 @@ import {
 import './windows-form';
 import './android-form';
 import './ios-form';
+import './oculus-form';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
 import { classMap } from 'lit/directives/class-map.js';
 import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
 import { GooglePlayPackageError } from "../models/google-play-package-error";
+import { MetaHorizonPackageError } from "../models/meta-horizon-package-error";
 import { enqueueGooglePlayPackageJob } from "../services/publish/android-publish";
+import { enqueueMetaHorizonPackageJob } from "../services/publish/meta-horizon-publish";
 import { AndroidPackageOptions } from "../utils/android-validation";
+import { MetaHorizonPackageOptions } from "../utils/meta-horizon-validation";
 import { Router } from '@vaadin/router';
 import { AppStore, packagingCompleted, packagingFailed, packagingStarted } from '../pages/app-report.api';
 
@@ -73,6 +77,12 @@ export class PublishPane extends LitElement {
             "logo": "/assets/apple_icon.svg",
             "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
             "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
+        },
+        "Meta":
+        {
+            "logo": "/assets/meta_icon.svg",
+            "packaging_text": "Click below for instructions on how to submit to the Meta Horizon Store.",
+            "package_instructions": "https://developers.meta.com/horizon/documentation/web/pwa-packaging/"
         }
     }
 
@@ -113,6 +123,17 @@ export class PublishPane extends LitElement {
             isActionCard: true,
             icon: '/assets/Publish_Apple.svg',
             renderDownloadButton: () => this.renderiOSDownloadButton()
+        },
+        {
+            title: 'Meta Quest',
+            factoids: [
+                "Bring your PWA to Meta Quest headsets",
+                "Distribute through the Meta Horizon Store",
+                "Supports immersive WebXR and 2D experiences"
+            ],
+            isActionCard: true,
+            icon: '/assets/Publish_Meta.svg',
+            renderDownloadButton: () => this.renderMetaDownloadButton()
         }
     ];
 
@@ -705,6 +726,14 @@ export class PublishPane extends LitElement {
     `;
     }
 
+    renderMetaDownloadButton(): TemplateResult {
+        return html`
+      <button class="package-button" id="meta-package-button" @click="${() => this.showMetaOptions()}">
+        Generate Package
+      </button>
+    `;
+    }
+
     renderForm() {
         if (this.selectedStore === "Windows") {
             return html`<windows-form id="packaging-form" .generating=${this.generating}></windows-form>`
@@ -729,7 +758,7 @@ export class PublishPane extends LitElement {
                     html`<android-form id="packaging-form" .generating=${this.generating} .isGooglePlayApk=${this.isGooglePlay} analysis-id="${this.analysisId || ""}"></android-form>`
                 }`
         } else if (this.selectedStore === "Meta") {
-            return html`<oculus-form id="packaging-form" .generating=${this.generating}>
+            return html`<oculus-form id="packaging-form" .generating=${this.generating} analysis-id="${this.analysisId || ""}">
       </oculus-form>`
         } else {
             return html`<ios-form id="packaging-form" .generating=${this.generating}></ios-form>`
@@ -810,6 +839,15 @@ export class PublishPane extends LitElement {
                 googlePlayPackageOptions.analysisId = this.analysisId || null;
                 const jobId = await enqueueGooglePlayPackageJob(googlePlayPackageOptions);
                 Router.go("/google-play-packaging-status?jobId=" + encodeURIComponent(jobId));
+                return;
+            }
+
+            // For Meta Horizon, queue up the packaging job and navigate to the Meta Horizon package status page.
+            if (options && platform === "meta") {
+                const metaHorizonPackageOptions = options as MetaHorizonPackageOptions;
+                metaHorizonPackageOptions.analysisId = this.analysisId || null;
+                const jobId = await enqueueMetaHorizonPackageJob(metaHorizonPackageOptions);
+                Router.go("/meta-horizon-packaging-status?jobId=" + encodeURIComponent(jobId));
                 return;
             }
 
@@ -916,6 +954,12 @@ export class PublishPane extends LitElement {
             stack_trace += (googlePlayError?.packageJob?.logs || []).join("\n");
             message = (googlePlayError?.packageJob?.errors || []).join(", ");
             quick_desc = googlePlayError?.packageJob?.errors[0] || message || title;
+        } else if (this.selectedStore === "Meta") {
+            const metaHorizonError = err as MetaHorizonPackageError | null;
+            title = metaHorizonError?.message || "Error generating package";
+            stack_trace += (metaHorizonError?.packageJob?.logs || []).join("\n");
+            message = (metaHorizonError?.packageJob?.errors || []).join(", ");
+            quick_desc = metaHorizonError?.packageJob?.errors[0] || message || title;
         } else {
             title = response.statusText;
             stack_trace += err.stack;
