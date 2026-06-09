@@ -132,7 +132,7 @@ namespace PWABuilder.Services
                     new NavigationOptions
                     {
                         Timeout = 30000,
-                        WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, /* WaitUntilNavigation.Networkidle2 - COMMENTED OUT: many PWAs have preload service worker scripts that preload all app assets. We don't want to wait for that. */],
+                        WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, /* Previously, we used WaitUntilNavigation.Networkidle2, but we found many PWAs have preload service worker scripts that preload all app assets. We don't want to wait for that. */],
                     }
                 );
 
