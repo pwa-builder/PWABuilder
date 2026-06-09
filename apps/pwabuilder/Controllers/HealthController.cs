@@ -17,9 +17,10 @@ public class HealthController : ControllerBase
     }
 
     [HttpGet("check")]
-    public async Task<IActionResult> Check([FromServices] AnalysisJobProcessorHealthMonitor healthMonitor)
+    public async Task<IActionResult> Check([FromServices] AnalysisJobProcessorHealthMonitor healthMonitor, [FromServices] IPuppeteerService puppeteer)
     {
         var googlePlayPackageQueueLength = await healthMonitor.GetGooglePlayPackageQueueLength();
+        var openPageCount = await puppeteer.GetOpenPageCountAsync();
         var errorMessage = string.Empty;
         if (healthMonitor.JobProcessorStopped)
         {
@@ -28,6 +29,10 @@ public class HealthController : ControllerBase
         else if (healthMonitor.AnalysisQueueLength > 500)
         {
             errorMessage = $"There are {healthMonitor.AnalysisQueueLength} analysis jobs in the queue. This may indicate a severe problem with the AnalysisJobProcessor background service. Check the queue length and monitor it to ensure it's not growing too large.";
+        }
+        else if (openPageCount > 50)
+        {
+            errorMessage = $"There are {openPageCount} Puppeteer pages open. This indicates a page leak in the browser, which will degrade performance and may stall job processing.";
         }
         else if (healthMonitor.AnalysisQueueLength > 100)
         {
@@ -53,6 +58,9 @@ public class HealthController : ControllerBase
             healthMonitor.JobsCompletedInLastHourCount,
             healthMonitor.JobsStartedInLastHourCount,
             healthMonitor.RunningTime,
+            healthMonitor.CurrentJobDuration,
+            healthMonitor.CurrentJobAnalysisId,
+            OpenPageCount = openPageCount,
             GooglePlayPackageQueueLength = googlePlayPackageQueueLength,
             ErrorMessage = errorMessage,
         };
