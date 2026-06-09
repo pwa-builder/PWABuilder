@@ -29,6 +29,7 @@ import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
 import { GooglePlayPackageError } from "../models/google-play-package-error";
 import { enqueueGooglePlayPackageJob } from "../services/publish/android-publish";
 import { AndroidPackageOptions } from "../utils/android-validation";
+import { WindowsPackageOptions } from '../utils/win-validation';
 import { Router } from '@vaadin/router';
 import { AppStore, packagingCompleted, packagingFailed, packagingStarted } from '../pages/app-report.api';
 
@@ -813,6 +814,11 @@ export class PublishPane extends LitElement {
                 return;
             }
 
+            // For Windows, set the analysis ID if available.
+            if (options && platform === "windows") {
+                (options as WindowsPackageOptions).analysisId = this.analysisId || undefined;
+            }
+
             const packageData = await generatePackage(platform, options);
 
             if (packageData) {
@@ -838,7 +844,7 @@ export class PublishPane extends LitElement {
             const appStore = this.getAppStoreFromPlatform(platform);
             if (this.analysisId && appStore) {
                 try {
-                await packagingFailed(this.analysisId, appStore, err);
+                    await packagingFailed(this.analysisId, appStore, err);
                 } catch (error) {
                     console.warn("Unable to record packaging failure.", error);
                 }
