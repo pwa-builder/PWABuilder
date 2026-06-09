@@ -247,9 +247,9 @@ export class ComapniesPackaged extends LitElement {
         type="button"
         @click=${this.toggleAnimation}
         role="button"
-        aria-label=${this.paused ? "Click here to play carousel" : "Click here to pause carousel"}
+        aria-label="${this.paused ? "Click here to play carousel" : "Click here to pause carousel"}"
       >
-        <sl-icon name=${this.paused ? "play-fill" : "pause-fill"} role="img"></sl-icon>
+        <sl-icon name="${this.paused ? "play-fill" : "pause-fill"}" role="img"></sl-icon>
       </button>
     </div>
     `;
