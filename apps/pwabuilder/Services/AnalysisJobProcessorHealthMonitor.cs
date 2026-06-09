@@ -12,6 +12,8 @@ public class AnalysisJobProcessorHealthMonitor
     private readonly DateTimeOffset runningTime = DateTimeOffset.UtcNow;
     private readonly IRedisCache redis;
     private readonly IWebHostEnvironment env;
+    private DateTimeOffset? currentJobStartedAt;
+    private string? currentJobAnalysisId;
 
     public AnalysisJobProcessorHealthMonitor(IWebHostEnvironment env, IRedisCache redis)
     {
@@ -64,6 +66,18 @@ public class AnalysisJobProcessorHealthMonitor
     public TimeSpan RunningTime => DateTimeOffset.UtcNow - runningTime;
 
     /// <summary>
+    /// How long the current job has been running, or null if no job is in progress.
+    /// </summary>
+    public TimeSpan? CurrentJobDuration => currentJobStartedAt.HasValue
+        ? DateTimeOffset.UtcNow - currentJobStartedAt.Value
+        : null;
+
+    /// <summary>
+    /// The analysis ID of the current job being processed, or null if idle.
+    /// </summary>
+    public string? CurrentJobAnalysisId => currentJobAnalysisId;
+
+    /// <summary>
     /// Gets the current length of the Google Play package job queue from Redis.
     /// </summary>
     /// <returns></returns>
@@ -72,8 +86,10 @@ public class AnalysisJobProcessorHealthMonitor
     /// <summary>
     /// Records that an analysis job has been started.
     /// </summary>
-    public void MarkAnalysisAsStarted()
+    public void MarkAnalysisAsStarted(string? analysisId = null)
     {
+        currentJobStartedAt = DateTimeOffset.UtcNow;
+        currentJobAnalysisId = analysisId;
         startedJobTimestamps.Enqueue(DateTime.UtcNow);
         PruneStartedJobs();
     }
@@ -83,6 +99,8 @@ public class AnalysisJobProcessorHealthMonitor
     /// </summary>
     public void MarkAnalysisAsCompleted()
     {
+        currentJobStartedAt = null;
+        currentJobAnalysisId = null;
         completedJobTimestamps.Enqueue(DateTime.UtcNow);
         PruneCompletedJobs();
 
