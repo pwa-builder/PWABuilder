@@ -12,3 +12,19 @@ test('ensure application loads home page', async ({ page }) => {
     // expect loginButton to exist and be visible
     await expect(loginButton).toBeVisible();
 });
+
+test('carousel pause and play button keeps keyboard focus after activation', async ({ page }) => {
+    const carouselButton = page.getByRole('button', { name: 'Click here to pause carousel' });
+    await expect(carouselButton).toBeVisible();
+
+    await carouselButton.focus();
+    await expect(carouselButton).toBeFocused();
+
+    await page.keyboard.press('Enter');
+
+    const toggledButton = page.getByRole('button', { name: 'Click here to play carousel' });
+    await expect(toggledButton).toBeFocused();
+
+    await page.keyboard.press('Tab');
+    await expect(toggledButton).not.toBeFocused();
+});
