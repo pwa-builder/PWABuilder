@@ -21,4 +21,10 @@ public interface IPuppeteerService : IAsyncDisposable
     /// <param name="url">The URL to navigate to.</param>
     /// <returns></returns>
     Task<IPage?> TryNavigate(Uri url, ILogger logger);
+
+    /// <summary>
+    /// Gets the number of open pages in the browser.
+    /// </summary>
+    /// <returns>The number of open Chrome pages/tabs.</returns>
+    Task<int> GetOpenPageCountAsync();
 }

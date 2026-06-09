@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using PuppeteerSharp;
 using PWABuilder.Common;
 
@@ -6,9 +5,13 @@ namespace PWABuilder.Services
 {
     public class PuppeteerService : IPuppeteerService
     {
+        private static readonly TimeSpan StalePageThreshold = TimeSpan.FromMinutes(10);
+        private static readonly int MaxOpenPages = 50;
+
         private readonly Task<IBrowser> reusableBrowser;
         private readonly ILogger<PuppeteerService> logger;
-        private readonly ConcurrentBag<PageReference> openPages = [];
+        private readonly Lock pagesLock = new();
+        private readonly List<PageReference> openPages = [];
 
         public PuppeteerService(Task<IBrowser> reusableBrowser, ILogger<PuppeteerService> logger)
         {
@@ -97,31 +100,51 @@ namespace PWABuilder.Services
 
             // Safety check: if we have too many pages open, something might be wrong
             var pages = await browser.PagesAsync();
-            if (pages.Length > 10) // Adjust threshold as needed
+            if (pages.Length > 10)
             {
                 logger.LogWarning("There are {pageCount} pages open in the Puppeteer browser. Possible page leak detected.", pages.Length);
             }
 
-            // Close any pages that have been opened for more than an hour.
             await TryCleanupOldPages();
 
+            // If we still have too many pages after cleanup, force-close the oldest tracked pages.
+            if (pages.Length > MaxOpenPages)
+            {
+                logger.LogWarning("Page count ({pageCount}) exceeds max ({maxPages}) after cleanup. Force-closing oldest pages.", pages.Length, MaxOpenPages);
+                await ForceCloseOldestPages(pages.Length - MaxOpenPages + 1);
+            }
+
             var page = await browser.NewPageAsync();
-            this.openPages.Add(new PageReference(page, site));
+            var pageRef = new PageReference(page, site);
+            lock (pagesLock)
+            {
+                openPages.Add(pageRef);
+            }
 
-            // Disable performance monitoring to avoid Protocol error (Performance.enable) issues
-            await page.SetCacheEnabledAsync(false);
+            try
+            {
+                // Disable performance monitoring to avoid Protocol error (Performance.enable) issues
+                await page.SetCacheEnabledAsync(false);
 
-            await page.SetUserAgentAsync(Constants.DesktopUserAgent);
-            await page.GoToAsync(
-                site.ToString(),
-                new NavigationOptions
-                {
-                    Timeout = 30000,
-                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, /* WaitUntilNavigation.Networkidle2 - COMMENTED OUT: many PWAs have preload service worker scripts that preload all app assets. We don't want to wait for that. */],
-                }
-            );
+                await page.SetUserAgentAsync(Constants.DesktopUserAgent);
+                await page.GoToAsync(
+                    site.ToString(),
+                    new NavigationOptions
+                    {
+                        Timeout = 30000,
+                        WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load, /* Previously, we used WaitUntilNavigation.Networkidle2, but we found many PWAs have preload service worker scripts that preload all app assets. We don't want to wait for that. */],
+                    }
+                );
 
-            return page;
+                return page;
+            }
+            catch
+            {
+                // Navigation or setup failed — close the page to prevent leaking a Chrome tab.
+                RemovePageRef(pageRef);
+                await TryClosePageAsync(page, site);
+                throw;
+            }
         }
 
         public async Task<IPage?> TryNavigate(Uri site, ILogger logger)
@@ -143,44 +166,125 @@ namespace PWABuilder.Services
             await browser.DisposeAsync();
         }
 
+        /// <inheritdoc />
+        public async Task<int> GetOpenPageCountAsync()
+        {
+            try
+            {
+                var browser = await this.reusableBrowser;
+                var pages = await browser.PagesAsync();
+                return pages.Length;
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Error getting open page count from Puppeteer browser.");
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Removes a page reference from the tracking list.
+        /// </summary>
+        private void RemovePageRef(PageReference pageRef)
+        {
+            lock (pagesLock)
+            {
+                openPages.Remove(pageRef);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to close a Puppeteer page, logging any errors.
+        /// </summary>
+        private async Task TryClosePageAsync(IPage page, Uri url)
+        {
+            try
+            {
+                if (!page.IsClosed)
+                {
+                    await page.CloseAsync();
+                }
+            }
+            catch (Exception closeError)
+            {
+                logger.LogWarning(closeError, "Error closing Puppeteer page for {url}.", url);
+            }
+        }
+
+        /// <summary>
+        /// Closes pages that have been open longer than <see cref="StalePageThreshold"/>.
+        /// </summary>
         private async Task TryCleanupOldPages()
         {
-            var hourAgo = DateTimeOffset.UtcNow.AddHours(-1);
-            foreach (var openPage in this.openPages)
+            var cutoff = DateTimeOffset.UtcNow - StalePageThreshold;
+
+            // Identify and remove stale entries under the lock, then close pages outside the lock.
+            List<PageReference> stalePages;
+            lock (pagesLock)
             {
-                if (openPage.CreatedAt < hourAgo)
+                stalePages = openPages.Where(p => p.CreatedAt < cutoff).ToList();
+                foreach (var stale in stalePages)
                 {
-                    logger.LogInformation("Closing stale Puppeteer page for {url} opened {time} ago.", openPage.Url, (DateTimeOffset.UtcNow - openPage.CreatedAt).ToString(@"hh\:mm"));
-                    openPage.Page.TryGetTarget(out var page);
-                    if (page != null)
-                    {
-                        openPages.TryTake(out var _);
-                        try
-                        {
-                            await page.CloseAsync();
-                        }
-                        catch (Exception closeError)
-                        {
-                            logger.LogWarning(closeError, "Error closing stale Puppeteer page for {url}.", openPage.Url);
-                        }
-                    }
+                    openPages.Remove(stale);
                 }
+            }
+
+            foreach (var stale in stalePages)
+            {
+                logger.LogInformation("Closing stale Puppeteer page for {url} opened {time} ago.", stale.Url, (DateTimeOffset.UtcNow - stale.CreatedAt).ToString(@"hh\:mm"));
+                await TryClosePageAsync(stale.Page, stale.Url);
+            }
+        }
+
+        /// <summary>
+        /// Force-closes the oldest tracked pages when the page count exceeds the maximum.
+        /// </summary>
+        private async Task ForceCloseOldestPages(int countToClose)
+        {
+            List<PageReference> toClose;
+            lock (pagesLock)
+            {
+                toClose = openPages
+                    .OrderBy(p => p.CreatedAt)
+                    .Take(countToClose)
+                    .ToList();
+                foreach (var page in toClose)
+                {
+                    openPages.Remove(page);
+                }
+            }
+
+            foreach (var pageRef in toClose)
+            {
+                logger.LogWarning("Force-closing Puppeteer page for {url} to stay within page limit.", pageRef.Url);
+                await TryClosePageAsync(pageRef.Page, pageRef.Url);
             }
         }
     }
 
     /// <summary>
-    /// An open page in Puppeteer. Uses a weak reference to allow for garbage collection. Used for cleaning up old pages that weren't properly disposed.
+    /// An open page in Puppeteer. Used for tracking and cleaning up pages that weren't properly closed.
     /// </summary>
-    public class PageReference
+    public sealed class PageReference
     {
-        public WeakReference<IPage> Page { get; }
+        /// <summary>
+        /// The Puppeteer page. Strong reference to ensure we can always close it.
+        /// </summary>
+        public IPage Page { get; }
+
+        /// <summary>
+        /// When the page was created.
+        /// </summary>
         public DateTimeOffset CreatedAt { get; }
+
+        /// <summary>
+        /// The URL the page was navigated to.
+        /// </summary>
         public Uri Url { get; }
 
         public PageReference(IPage page, Uri url)
         {
-            Page = new WeakReference<IPage>(page);
+            Page = page;
             CreatedAt = DateTimeOffset.UtcNow;
             Url = url;
         }
