@@ -174,7 +174,10 @@ export class PackageCreator {
             return await bubbleWrapper.generateAppPackage();
         } catch (error) {
             const errorMessage = (error as Error)?.message || `${error}`;
-            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden or timeout. " + errorMessage, "warn");
+
+            // Is it a 403 Forbidden, a timeout, or a wrong content-type error?
+            // If so, try using our PWABuilder image proxy, which can get around some of these issues.
+            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden, timeout, or wrong content-type error. " + errorMessage, "warn");
             const is403Error =
                 (error as any)?.status === 403 ||
                 (error as any)?.response?.status === 403 ||
@@ -182,8 +185,9 @@ export class PackageCreator {
                 errorMessage.includes('ECONNREFUSED') ||
                 errorMessage.includes('ENOTFOUND');
             const isTimeout = errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ESOCKETTIMEDOUT');
+            const isWrongContentType = errorMessage.includes('with invalid Content-Type'); // Some AI app generation sites will put your web app to sleep while not in use. Then PWAbuilder access an image, and the site serves HTML loading screen instead of image, resulting in invalid Content-Type. In that case, we'll use our image proxy to see if we can access it. See https://github.com/pwa-builder/PWABuilder/issues/5937
             const isRunDotAppManifestError = options.pwaUrl.indexOf("run.app/") && errorMessage.includes("Unexpected token"); // Sites on run.app spin up when you access them, rendering a loading screen. This is problematic when fetching resources like web manifest, which expects JSON, not HTML. See https://github.com/pwa-builder/PWABuilder/issues/5380
-            if (is403Error || isTimeout || isRunDotAppManifestError) {
+            if (is403Error || isTimeout || isRunDotAppManifestError || isWrongContentType) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
                 const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
