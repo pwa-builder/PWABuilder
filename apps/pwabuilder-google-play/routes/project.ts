@@ -55,7 +55,7 @@ router.get('/health', async (_: express.Request, response: express.Response) => 
         const runningTime = `${numFormat.format(hours)}:${numFormat.format(minutes)}:${numFormat.format(seconds)}`;
         const statusCode = errorMessage ? 500 : 200;
         response.status(statusCode).json({
-            status: 'healthy',
+            status: errorMessage ? 'unhealthy' : 'healthy',
             googlePlayPackageQueueLength: queueLength,
             googlePlayPackagesProcessedInLastHour: processedLastHour,
             runningTime: runningTime,
@@ -395,6 +395,13 @@ function validateAndroidOptionsRequest(request: express.Request): AppPackageRequ
             options: null,
             validationErrors,
         };
+    }
+
+    // Coerce enableNotifications to a proper boolean to prevent Gradle build failures.
+    // If the client sends undefined/null/empty, Bubblewrap generates invalid Groovy syntax
+    // (e.g. "enableNotifications: ," instead of "enableNotifications: false,").
+    if (typeof options.enableNotifications !== 'boolean') {
+        options.enableNotifications = !!options.enableNotifications;
     }
 
     // Ensure we have required fields.
