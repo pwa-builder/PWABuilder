@@ -758,7 +758,7 @@ sl-spinner {
 .todo-items-holder {
     display: flex;
     flex-direction: column;
-    padding-right: var(--sl-spacing-small);
+    padding: var(--sl-spacing-small);
     gap: var(--sl-spacing-x-small);
     max-height: 300px;
     overflow-y: auto;
