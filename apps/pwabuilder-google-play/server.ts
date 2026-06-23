@@ -40,11 +40,16 @@ if (!jdk8Path || !androidDevToolsPath) {
     console.error("Couldn't find environment variables for JDK8 path or Android Dev tools", app.get("env"), jdk8Path, androidDevToolsPath);
 }
 
-// Kick off our background job processor. 
-// This periodically polls Redis for new Google Play packaging jobs and processes them.
+// Kick off multiple background job processors for concurrent queue processing.
+// Each processor independently polls Azure Queue Storage and processes one job at a time.
+// Azure Queue's visibility timeout ensures no duplicate processing across processors or instances.
 import { PackageJobProcessor } from './services/packageJobProcessor.js';
-const jobProcessor = new PackageJobProcessor();
-jobProcessor.start();
+const processorCount = 2;
+for (let i = 0; i < processorCount; i++) {
+    const jobProcessor = new PackageJobProcessor();
+    jobProcessor.start();
+}
+console.info(`Started ${processorCount} job processors on this instance.`);
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
