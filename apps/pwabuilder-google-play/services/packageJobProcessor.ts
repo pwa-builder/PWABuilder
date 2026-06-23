@@ -8,7 +8,9 @@ import { azureQueue } from "./azureQueueService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
 
 /**
- * Inspects Redis to see if there are any pending Google Play packaging jobs. If so, it dequeues the job and begins processing it.
+ * Processes Google Play packaging jobs one at a time. Multiple instances of this processor
+ * can safely run in parallel — Azure Queue's visibility timeout ensures each message is
+ * delivered to exactly one consumer.
  */
 export class PackageJobProcessor {
 
@@ -45,11 +47,10 @@ export class PackageJobProcessor {
                 await this.processJob(job, jobLogger);
             }
         } catch (jobError) {
-            const error = jobError as Error;
             hadError = true;
             console.error("Error processing Google Play packaging job", jobError);
             if (job) {
-                this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
+                await this.retryJobOrMarkAsFailed(job, jobError, jobLogger || new PackageJobLogger(job));
             }
         } finally {
             // Whether success or failure, queue up another job run.
