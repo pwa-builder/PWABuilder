@@ -12,6 +12,11 @@ export const todoListItemStyles = css`
         background-color: #f1f1f1;
     }
 
+    sl-details::part(header):focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+
     .summary {
         display: flex;
         align-items: center;
