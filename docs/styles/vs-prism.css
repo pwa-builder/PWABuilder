@@ -139,7 +139,7 @@
  .token.property,
  .token.regex,
  .token.entity {
-   color: #ff0000;
+   color: #e50000;
  }
  
  .token.directive.tag .tag {

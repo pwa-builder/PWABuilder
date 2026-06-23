@@ -296,3 +296,7 @@ sl-alert::part(icon) {
 
 /* sl-menu-item */
 
+/* Copy-to-clipboard button on code blocks */
+.docsify-copy-code-button {
+    background: silver !important;
+}
