@@ -134,13 +134,27 @@ export class AppIndex extends LitElement {
             'imagegenerator': 'Image Generator'
         }
 
-        this.setPageTitle(pages[this.pageName.toLocaleLowerCase()] || 'Home');
+        const pageName = this.pageName.toLocaleLowerCase();
+
+        // For the report card page, include the analyzed site URL in the title so
+        // screen reader users can distinguish between multiple open report card tabs.
+        if (pageName === 'reportcard') {
+            const siteUrl = urlObj.searchParams.get('site');
+            if (siteUrl) {
+                this.setPageTitle('Report Card', `Report card for ${siteUrl} - PWABuilder`);
+            } else {
+                this.setPageTitle(pages['reportcard']);
+            }
+        } else {
+            this.setPageTitle(pages[pageName] || 'Home');
+        }
     }
 
-    // Function to set the page title dynamically
-    setPageTitle(title: string) {
+    // Function to set the page title dynamically.
+    // Pass a fullTitle to override the default "{title} / PWABuilder" format.
+    setPageTitle(title: string, fullTitle?: string) {
         document!.getElementById('pageTitle')!.textContent = title;
-        document.title = `${title} / PWABuilder`; // Update the browser tab title
+        document.title = fullTitle ?? `${title} / PWABuilder`; // Update the browser tab title
     }
 
     firstUpdated() {
