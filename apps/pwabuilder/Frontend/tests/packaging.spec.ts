@@ -109,3 +109,31 @@ test('Ensure demo app can be packaged for Android', async ({ page }) => {
     throw new Error('Response was undefined');
   }
 });
+
+test('Ensure Windows Download Package button has visible focus indicator', async ({ page }) => {
+  const demoButton = page.locator('id=demo-action');
+
+  await demoButton.click();
+  await page.waitForLoadState('networkidle');
+  await expect(page.url()).toContain('/reportcard');
+  await page.waitForLoadState('networkidle');
+
+  await page.locator('id=pfs').click();
+  await page.locator('id=windows-package-button').click();
+
+  const generateButton = page.locator('id=generate-submit');
+  await expect(generateButton).toBeVisible();
+  await generateButton.focus();
+  await expect(generateButton).toBeFocused();
+
+  const outlineWidth = await generateButton.evaluate((element) => {
+    const baseElement = element.shadowRoot?.querySelector('[part~="base"]');
+    if (!baseElement) {
+      return '';
+    }
+
+    return getComputedStyle(baseElement).outlineWidth;
+  });
+
+  expect(outlineWidth).toBe('2px');
+});
