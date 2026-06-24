@@ -246,6 +246,19 @@ sl-menu {
     }
 }
 
+/* High contrast support for sidebar toggle (hamburger) button */
+@media (forced-colors: active) {
+    .sidebar-toggle-button {
+        forced-color-adjust: none;
+        background-color: ButtonFace;
+        border: 2px solid ButtonText;
+    }
+
+    .sidebar-toggle-button span {
+        background-color: ButtonText;
+    }
+}
+
 sl-button {
     width: 100%;
 }
