@@ -19,6 +19,20 @@ export class InfoCircleTooltip extends LitElement {
         display: flex;
         height: fit-content;
       }
+      .info-circle-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+      }
+      .info-circle-btn:focus-visible {
+        outline: 2px solid var(--primary-color, #4f3fb6);
+        outline-offset: 2px;
+        border-radius: 50%;
+      }
       .info-circle-img {
         height: 16px;
         width: 16px;
@@ -40,13 +54,19 @@ export class InfoCircleTooltip extends LitElement {
         text=${this.text}
         link="${ifDefined(this.link)}"
       >
-        <img
+        <button
           id="${this.circleId}"
-          class="info-circle-img"
-          src="assets/tooltip.svg"
-          alt="help outline"
-          aria-hidden="true"
-        />
+          class="info-circle-btn"
+          type="button"
+          aria-label="More information: ${this.text}"
+        >
+          <img
+            class="info-circle-img"
+            src="assets/tooltip.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
       </hoist-tooltip>
     `;
   }
