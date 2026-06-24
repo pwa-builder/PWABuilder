@@ -538,6 +538,14 @@ export class PublishPane extends LitElement {
         border-radius: 50px;
       }
 
+      #generate-submit:focus::part(base),
+      #generate-submit:focus-visible::part(base) {
+        border: 1px solid #ffffff;
+        outline: 2px solid #000000;
+        outline-offset: 2px;
+        box-shadow: var(--button-box-shadow);
+      }
+
       #form-extras sl-button::part(label){
         font-size: 16px;
         padding: .5em 2em;
