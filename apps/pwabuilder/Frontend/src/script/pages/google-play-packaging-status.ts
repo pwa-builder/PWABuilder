@@ -26,7 +26,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     @state() job: GooglePlayPackageJob | null = null;
     @state() isRetrying = false;
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
-    private readonly maxWaitTimeMs = 15 * 60 * 1000; // Max wait time of 15 minutes
+    private readonly maxWaitTimeMs = 30 * 60 * 1000; // Max wait time of 30 minutes
     private jobTimeoutHandle = 0;
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
