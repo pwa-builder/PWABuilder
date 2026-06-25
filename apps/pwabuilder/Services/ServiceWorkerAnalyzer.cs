@@ -140,12 +140,7 @@ namespace PWABuilder.Services
                 await page.SetOfflineModeAsync(true);
 
                 // Try to reload the page
-                var response = await page.ReloadAsync(new NavigationOptions
-                {
-                    Timeout = 20000,
-                    WaitUntil = [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load],
-                });
-
+                var response = await page.ReloadAsync(20000, [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load]);
                 if (response != null && response.Ok)
                 {
                     offlineCapability.Status = PwaCapabilityCheckStatus.Passed;
