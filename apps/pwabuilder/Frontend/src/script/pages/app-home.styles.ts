@@ -151,11 +151,7 @@ export const homeStyles = css`
     grid-area: 1 / 5 / auto / auto;
     width: 100%;
   }
-  .raise:hover:not(disabled){
-    transform: scale(1.01);
-  }
   .raise:focus:not(disabled) {
-    transform: scale(1.01);
     outline: 1px solid #000000;
   }
   #input-form wa-input {
