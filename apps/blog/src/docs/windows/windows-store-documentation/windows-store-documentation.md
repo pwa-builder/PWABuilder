@@ -26,7 +26,7 @@ Both the Microsoft Store and Windows itself natively supports PWAs as first-clas
 
 Follow these steps to get your PWA listed in the Microsoft Store:
 
-1. Reserve an app name in the [Windows Partner Center](https://partner.microsoft.com/dashboard) as explained in this documentation [Publish your Progressive Web App to the Microsoft Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/microsoft-store)
+1. Reserve an app name in the [Microsoft Partner Center](https://partner.microsoft.com/dashboard) as explained in this documentation [Publish your Progressive Web App to the Microsoft Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/microsoft-store)
 2. Create your Microsoft Store app package on [PWA Builder](https://www.pwabuilder.com) 
 3. Follow [the Next steps for getting your PWA into the Microsoft Store](/docs/next-steps-for-getting-your-pwa-into-the-microsoft-store/)
 

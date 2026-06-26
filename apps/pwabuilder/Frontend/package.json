@@ -10,11 +10,15 @@
     "stop": "npm run kill-dev-server",
     "kill-dev-server": "kill-port 5173",
     "test": "playwright test",
+    "copy-icons": "node scripts/copy-icons.mjs",
+    "predev": "npm run copy-icons",
+    "prebuild": "npm run copy-icons",
     "preinstall": "node ../../../scripts/setupDeps.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@awesome.me/webawesome": "^3.9.0",
     "@codemirror/autocomplete": "^6.5.0",
     "@codemirror/commands": "^6.2.2",
     "@codemirror/lang-javascript": "^6.1.6",
@@ -26,16 +30,14 @@
     "@codemirror/view": "^6.9.4",
     "@pwabuilder/manifest-validation": "file:../../../libraries/manifest-validation",
     "@pwabuilder/site-analytics": "file:../../../libraries/site-analytics",
-    "@shoelace-style/shoelace": "^2.20.1",
     "@vaadin/router": "^2.0.0",
     "accessibility-insights-scan": "^2.7.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "browser-fs-access": "^0.23.0",
     "codemirror": "^6.0.1",
-    "colorjs.io": "^0.4.0",
     "ionicons": "^6.0.3",
-    "lit": "^3.3.0"
+    "lit": "^3.3.3"
   },
   "devDependencies": {
     "@azure/msal-browser": "^2.37.0",
@@ -49,6 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
     "@web/dev-server": "^0.4.6",
+    "bootstrap-icons": "^1.13.1",
     "chai": "^4.3.4",
     "concurrently": "^6.0.0",
     "cross-env": "^7.0.3",

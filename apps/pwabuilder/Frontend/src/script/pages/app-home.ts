@@ -17,9 +17,9 @@ import { Lazy, ProgressList, Status } from '../utils/interfaces';
 import { resetInitialManifest } from '../services/manifest';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/button/button.js';
 import { homeStyles } from './app-home.styles';
+import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/input/input.js';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
@@ -186,23 +186,23 @@ export class AppHome extends LitElement {
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
-                    <sl-input slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                    <wa-input slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
                       class="${classMap({ error: this.errorGettingURL })}" aria-labelledby="input-header" @input="${(e: InputEvent) => this.handleURL(e)}">
-                    </sl-input>
+                    </wa-input>
 
                     ${this.errorMessage && this.errorMessage.length > 0
         ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
         : null}
                   </div>
 
-                  <sl-button
+                  <wa-button
                     id="start-button"
                     type="submit"
                     class="navigation raise"
                     ?loading="${this.gettingManifest}"
                     ?disabled="${this.disableStart}"
                     @click="${(e: InputEvent) => this.start(e)}"
-                    aria-label="Start your pwa, will redirect to testing page">Start</sl-button>
+                    aria-label="Start your pwa, will redirect to testing page">Start</wa-button>
                   <p id="demo">Try a <button id="demo-action" aria-label="click here for demo url, will redirect to testing page" @click=${() => this.placeDemoURL()}>demo url</button></p>
                 </div>
 

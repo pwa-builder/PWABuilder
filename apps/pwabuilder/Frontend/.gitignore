@@ -1,0 +1,4 @@
+.spiderloop/
+
+# Bootstrap Icons copied for <wa-icon> (see scripts/copy-icons.mjs)
+public/assets/bootstrap-icons/

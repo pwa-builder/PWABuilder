@@ -1,8 +1,7 @@
 import { LitElement, html, TemplateResult } from "lit";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { customElement, property, state } from "lit/decorators.js";
-import "@shoelace-style/shoelace/dist/components/skeleton/skeleton.js";
-import "@shoelace-style/shoelace/dist/components/visually-hidden/visually-hidden.js";
+import '@awesome.me/webawesome/dist/components/skeleton/skeleton.js';
 
 /**
  * Component that lazily loads another component, showing a loading skeleton while the other component is loading.
@@ -66,10 +65,10 @@ export class LazyLoad extends LitElement {
 
     private renderLoading(): TemplateResult {
         return html`
-            <sl-visually-hidden>
+            <div class="wa-visually-hidden">
                 <h3>Loaded next group of collections</h3>
-            </sl-visually-hidden>
-            <sl-skeleton tabindex="0" class="lazy-loading-skeleton" effect="pulse" ${ref(this.skeletonRef)}></sl-skeleton>
+            </div>
+            <wa-skeleton tabindex="0" class="lazy-loading-skeleton" effect="pulse" ${ref(this.skeletonRef)}></wa-skeleton>
         `;
     }
 
@@ -125,7 +124,7 @@ export class LazyLoad extends LitElement {
             this.visibleObserver = new IntersectionObserver(entries => this.visibleObserved(entries), options);
         }
 
-        const loadingSkeleton = this.querySelector("sl-skeleton");
+        const loadingSkeleton = this.querySelector("wa-skeleton");
         if (loadingSkeleton) {
             this.visibleObserver.observe(loadingSkeleton);
         }

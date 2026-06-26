@@ -1,4 +1,4 @@
-import { css, html, PropertyValueMap, TemplateResult } from 'lit';
+import { html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { fetchOrCreateManifest } from '../services/manifest';
 import {
@@ -12,7 +12,8 @@ import { getManifestContext } from '../services/app-info';
 import { maxSigningKeySizeInBytes, validateAndroidPackageId } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 import { AppNameInputPattern, DnameInputPattern } from '../utils/constants';
-import '@shoelace-style/shoelace/dist/components/details/details.js';
+import { androidFormStyles } from './android-form.styles';
+import "@awesome.me/webawesome/dist/components/details/details.js";
 
 @customElement('android-form')
 
@@ -25,87 +26,7 @@ export class AndroidForm extends AppPackageFormBase {
     @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
     static get styles() {
-
-        const localStyles = css`
-      :host {
-        width: 100%;
-      }
-
-      #android-options-form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .signing-key-fields {
-        margin-left: 30px;
-      }
-
-      #signing-key-file-input {
-        border: none;
-      }
-
-      .flipper-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .form-generate-button {
-        width: 135px;
-        height: 40px;
-      }
-
-      .basic-settings, .adv-settings {
-        display: flex;
-        flex-direction: column;
-        gap: .75em;
-      }
-      #form-layout {
-        flex-grow: 1;
-        display: flex;
-        overflow: auto;
-        flex-direction: column;
-      }
-
-      sl-details {
-        margin-top: 1em;
-      }
-
-      sl-details::part(base){
-        border: none;
-      }
-
-      sl-details::part(summary-icon){
-        display: none;
-      }
-
-      .dropdown_icon {
-        transform: rotate(0deg);
-        transition: transform .5s;
-        height: 30px;
-      }
-
-      sl-details::part(header){
-        padding: 0 10px;
-      }
-      .details-summary {
-        display: flex;
-        align-items: center;
-        width: 100%;
-      }
-      .details-summary p {
-        margin: 0;
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-    `;
-
-        return [
-            ...super.styles,
-            localStyles
-        ];
+        return [...super.styles, androidFormStyles];
     }
 
     constructor() {
@@ -240,13 +161,13 @@ export class AndroidForm extends AppPackageFormBase {
     rotateZero() {
         recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
         let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-        icon!.style.transform = "rotate(0deg)";
+        icon?.style && (icon.style.transform = "rotate(0deg)");
     }
 
     rotateNinety() {
         recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
         let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-        icon!.style.transform = "rotate(90deg)";
+        icon?.style && (icon.style.transform = "rotate(90deg)");
     }
 
     public getPackageOptions(): PackageOptions {
@@ -325,27 +246,12 @@ export class AndroidForm extends AppPackageFormBase {
             inputHandler: (val: string) => this.packageOptions.launcherName = val
         })}
             </div>
-
-            <div class="form-group">
-              <label>${localeStrings.text.android.titles.source_code}</label>
-              <div class="form-check">
-                ${this.renderFormInput({
-            label: 'Enable',
-            tooltip: 'If enabled, your download will include the source code for your Android app.',
-            inputId: 'include-src-input',
-            type: 'checkbox',
-            checked: this.packageOptions.includeSourceCode === true,
-            inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
-        })}
-              </div>
-            </div>
           </div>
 
           <!-- The "all settings" section of the options dialog -->
-          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+          <wa-details @wa-show=${() => this.rotateNinety()} @wa-hide=${() => this.rotateZero()}>
             <div class="details-summary" slot="summary">
-              <p>All Settings</p>
-              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              All Settings
             </div>
               <div class="adv-settings">
                 <div class="form-group">
@@ -566,6 +472,20 @@ export class AndroidForm extends AppPackageFormBase {
                 </div>
 
                 <div class="form-group">
+                  <label>${localeStrings.text.android.titles.source_code}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+            label: 'Enable',
+            tooltip: 'If enabled, your download will include the source code for your Android app.',
+            inputId: 'include-src-input',
+            type: 'checkbox',
+            checked: this.packageOptions.includeSourceCode === true,
+            inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
+        })}
+                  </div>
+                </div>
+
+                <div class="form-group">
                   <label>${localeStrings.text.android.titles.display_mode}</label>
                   <div class="form-check">
                     ${this.renderFormInput({
@@ -772,7 +692,7 @@ export class AndroidForm extends AppPackageFormBase {
                   </div>
                 </div>
               </div>
-          </sl-details>
+          </wa-details>
         </div>
       </form>
     </div>

@@ -66,7 +66,7 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
   drawRingPart(ctx!, 6, trackColor, 200, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(maniColor)!)
 
   // indicator
-  let percentMani = eval(maniPercent);
+  let percentMani = parseFloat(maniData[0]) / parseFloat(maniData[1]);
 
 
   if(percentMani === 0){
@@ -90,7 +90,7 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
   drawRingPart(ctx!, 6, trackColor, 412.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(swColor)!);
 
   // indicator
-  let percentSW = eval(swTotal);
+  let percentSW = parseFloat(swData[0]);
 
   if(percentSW === 0){
     await drawExclamation(ctx!, 357.5);
@@ -112,7 +112,7 @@ export async function draw(canvas: HTMLCanvasElement, manifestData: String, swrD
   drawRingPart(ctx!, 6, trackColor, 624.5, ringYpos, 57.44, 0, 2 * Math.PI, false, accentMap.get(enhColor)!);
 
   // indicator
-  let percentSec = eval(enhTotal);
+  let percentSec = parseFloat(enhData[0]);
 
   if(percentSec === 0) {
     // draw exclamation

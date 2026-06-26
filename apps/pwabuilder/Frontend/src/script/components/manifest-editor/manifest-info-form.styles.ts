@@ -2,26 +2,26 @@ import { css } from 'lit';
 
 export const manifestInfoFormStyles = css`
     :host {
-        --sl-focus-ring-width: 3px;
-        --sl-input-focus-ring-color: #4f3fb670;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width)
-            var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #4f3fb6ac;
-        --sl-input-font-family: Hind, sans-serif;
+        --wa-input-focus-ring-width: 3px;
+        --wa-input-focus-ring-color: #4f3fb670;
+        --wa-input-focus-ring: 0 0 0 var(--wa-input-focus-ring-width)
+            var(--wa-input-focus-ring-color);
+        --wa-input-border-color-focus: #4f3fb6ac;
+        --wa-input-font-family: Hind, sans-serif;
     }
 
-    sl-input::part(base),
-    sl-textarea::part(base),
-    sl-option::part(base),
-    sl-color-picker::part(base),
-    sl-button::part(base) {
-        --sl-input-font-size-medium: 16px;
-        --sl-font-size-medium: 16px;
-        --sl-input-height-medium: 3em;
-        --sl-button-font-size-medium: 16px;
+    wa-input::part(base),
+    wa-textarea::part(base),
+    wa-option::part(base),
+    wa-color-picker::part(base),
+    wa-button::part(base) {
+        --wa-input-font-size-medium: 16px;
+        --wa-font-size-m: 16px;
+        --wa-input-height-medium: 3em;
+        --wa-button-font-size-medium: 16px;
     }
-    sl-input::part(base),
-    sl-textarea::part(base) {
+    wa-input::part(base),
+    wa-textarea::part(base) {
         background-color: #fbfbfb;
     }
     #form-holder {
@@ -37,6 +37,16 @@ export const manifestInfoFormStyles = css`
         font-size: 18px;
         margin: 0;
     }
+    /* Inline required asterisk, matching WebAwesome's required-indicator tokens. */
+    .required-asterisk {
+        color: var(--wa-form-control-required-content-color);
+        margin-inline-start: var(--wa-form-control-required-content-offset);
+    }
+    /* Suppress wa-input's built-in required asterisk: it renders on the input's
+       empty internal label line (its own line). We show it inline in our <h3> instead. */
+    wa-input[required]::part(label) {
+        display: none;
+    }
     .field-desc {
         white-space: no-wrap;
         font-size: 14px;
@@ -46,12 +56,18 @@ export const manifestInfoFormStyles = css`
 
     .long .form-field {
         width: 100%;
+        min-width: 0;
     }
     .form-field {
-        width: 50%;
+        flex: 1 1 0;
+        min-width: 0;
         row-gap: 0.25em;
         display: flex;
         flex-direction: column;
+    }
+    wa-input,
+    wa-textarea {
+        width: 100%;
     }
     .form-field p {
         font-size: 14px;
@@ -124,27 +140,23 @@ export const manifestInfoFormStyles = css`
         margin: 0;
     }
 
-    sl-color-picker {
+    wa-color-picker {
         --grid-width: 315px;
         height: 25px;
     }
 
-    sl-color-picker::part(trigger) {
+    wa-color-picker::part(trigger) {
         border-radius: 0;
         height: 25px;
         width: 75px;
         display: flex;
     }
-    sl-menu {
-        width: 100%;
-    }
-
-    sl-option:focus-within::part(base) {
+    wa-option:focus-within::part(base) {
         color: #ffffff;
         background-color: #4f3fb6;
     }
 
-    sl-option::part(base):hover {
+    wa-option::part(base):hover {
         color: #ffffff;
         background-color: #4f3fb6;
     }
@@ -155,19 +167,19 @@ export const manifestInfoFormStyles = css`
 
     .error::part(base) {
         border-color: #eb5757;
-        --sl-input-focus-ring-color: #eb575770;
-        --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width)
-            var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #eb5757ac;
+        --wa-input-focus-ring-color: #eb575770;
+        --wa-input-focus-ring-width: 3px;
+        --wa-input-focus-ring: 0 0 0 var(--wa-input-focus-ring-width)
+            var(--wa-input-focus-ring-color);
+        --wa-input-border-color-focus: #eb5757ac;
     }
 
     .error::part(control) {
         border-color: #eb5757;
     }
 
-    sl-input::part(input),
-    sl-textarea::part(textarea) {
+    wa-input::part(input),
+    wa-textarea::part(textarea) {
         color: #717171;
     }
 
@@ -186,11 +198,11 @@ export const manifestInfoFormStyles = css`
     }
 
     @media (max-width: 480px) {
-        sl-input::part(base),
-        sl-option::part(base) {
-            --sl-input-font-size-medium: 14px;
-            --sl-font-size-medium: 14px;
-            --sl-input-height-medium: 2.5em;
+        wa-input::part(base),
+        wa-option::part(base) {
+            --wa-input-font-size-medium: 14px;
+            --wa-font-size-m: 14px;
+            --wa-input-height-medium: 2.5em;
         }
 
         .form-row p {

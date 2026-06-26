@@ -1,7 +1,8 @@
 // import '@pwabuilder/manifest-previewer';
 // import { PreviewStage } from '@pwabuilder/manifest-previewer/dist/models';
-import { Manifest } from "@pwabuilder/manifest-validation";
-import { LitElement, css, html } from 'lit';
+import type { Manifest } from "../../models/manifest";
+import { LitElement, html } from 'lit';
+import { manifestPreviewFormStyles } from "./manifest-preview-form.styles";
 import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('manifest-preview-form')
@@ -13,15 +14,7 @@ export class ManifestPreviewForm extends LitElement {
     // The current preview screen
     @state() previewStage: string = 'name';
 
-    static get styles() {
-        return css`
-      :host {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    `;
-    }
+    static styles = [manifestPreviewFormStyles];
 
     constructor() {
         super();

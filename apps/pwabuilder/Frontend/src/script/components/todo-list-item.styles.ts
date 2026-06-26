@@ -7,12 +7,12 @@ export const todoListItemStyles = css`
         font-size: 16px;
     }
 
-    sl-details::part(header) {
-        padding: var(--sl-spacing-x-small);
+    wa-details::part(header) {
+        padding: var(--wa-space-xs);
         background-color: #f1f1f1;
     }
 
-    sl-details::part(header):focus-visible {
+    wa-details::part(header):focus-visible {
         outline: 2px solid var(--primary-color);
         outline-offset: 2px;
     }
@@ -20,7 +20,7 @@ export const todoListItemStyles = css`
     .summary {
         display: flex;
         align-items: center;
-        gap: var(--sl-spacing-x-small);
+        gap: var(--wa-space-xs);
         font-family: var(--body-font);
     }
 
@@ -36,9 +36,13 @@ export const todoListItemStyles = css`
 
     .footer {
         display: flex;
-        gap: var(--sl-spacing-medium);
+        gap: var(--wa-space-m);
 
-        sl-button::part(label) {
+        wa-button {
+            font-size: 1em;
+        }
+
+        wa-button::part(label) {
             padding: 0;
         }
     }

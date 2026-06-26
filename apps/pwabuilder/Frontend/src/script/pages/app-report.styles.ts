@@ -8,11 +8,11 @@ export const appReportStyles = css`
 }
 
 :host {
-    --sl-focus-ring-width: 3px;
-    --sl-input-focus-ring-color: #4f3fb670;
-    --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-    --sl-input-border-color-focus: #4F3FB6ac;
-    --sl-input-font-family: Hind, sans-serif;
+    --wa-input-focus-ring-width: 3px;
+    --wa-input-focus-ring-color: #4f3fb670;
+    --wa-input-focus-ring: 0 0 0 var(--wa-input-focus-ring-width) var(--wa-input-focus-ring-color);
+    --wa-input-border-color-focus: #4F3FB6ac;
+    --wa-input-font-family: Hind, sans-serif;
 }
 
 app-header::part(header) {
@@ -38,39 +38,39 @@ app-header::part(header) {
     gap: 1em;
 }
 
-sl-details {
+wa-details {
     width: 100%;
 }
 
-sl-details::part(header){
+wa-details::part(header){
     padding: 5px 20px;
 }
 
-sl-details:focus-visible {
+wa-details:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
 
-sl-details::part(header):focus-visible {
+wa-details::part(header):focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
 
-sl-details::part(summary):focus-visible {
+wa-details::part(summary):focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
 
-sl-details::part(summary-icon){
+wa-details::part(summary-icon){
     display: none;
 }
 
-sl-details::part(content) {
+wa-details::part(content) {
     padding-top: .75em;
     padding-bottom: 1.5em;
 }
 
-sl-details:disabled{
+wa-details:disabled{
     cursor: no-drop;
 }
 
@@ -94,7 +94,7 @@ button:hover {
     cursor: pointer;
 }
 
-sl-progress-ring {
+wa-progress-ring {
     height: fit-content;
     --track-width: 4px;
     --indicator-width: 8px;
@@ -103,13 +103,13 @@ sl-progress-ring {
     position: relative;
 }
 
-sl-progress-ring::part(label){
+wa-progress-ring::part(label){
     color: var(--primary-color);
     font-weight: bold;
     font-size: 18px;
 }
 
-sl-progress-ring::part(base) {
+wa-progress-ring::part(base) {
     border-radius: 50%;
 }
 
@@ -366,18 +366,16 @@ sl-progress-ring::part(base) {
 }
 
 #last-edited {
+    display: flex;
+    align-items: center;
     white-space: nowrap;
     margin: 0;
+    gap: 12px;
 
     .view-log-btn::part(label) {
         padding: 2px 0 0 0;
         font-size: 0.7em;
     }
-}
-
-#test, #last-edited {
-    font-size: 12px;
-    line-height: 18px;
 }
 
 #test {
@@ -431,7 +429,7 @@ sl-progress-ring::part(base) {
     display: none !important;
 }
 
-sl-spinner {
+wa-spinner {
     vertical-align: middle;
 }
 
@@ -673,11 +671,18 @@ sl-spinner {
 
 
 .mani-tooltip {
-    --sl-tooltip-padding: 0;
+    --wa-tooltip-padding: 0;
+    /* WebAwesome's tooltip body has a dark default border; remove it since this
+       tooltip uses a custom white card (.mani-tooltip-content) with its own shadow. */
+    --wa-tooltip-border-color: transparent;
 }
 
 .mani-tooltip::part(body){
     background-color: #ffffff;
+    /* Remove the default tooltip body padding so the white content card is flush
+       with the body edge; otherwise the arrow attaches below the card and looks
+       disconnected. */
+    padding: 0;
 }
 
 .mani-tooltip::part(base__arrow){
@@ -758,8 +763,8 @@ sl-spinner {
 .todo-items-holder {
     display: flex;
     flex-direction: column;
-    padding: var(--sl-spacing-small);
-    gap: var(--sl-spacing-x-small);
+    padding: var(--wa-space-s);
+    gap: var(--wa-space-xs);
     max-height: 300px;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -791,12 +796,12 @@ sl-spinner {
         height: 16px;
     }
 
-    sl-button::part(label) {
+    wa-button::part(label) {
         font-size: 0.8em;
     }
 
-    sl-menu-item::part(label),
-    sl-badge { 
+    wa-dropdown-item::part(label),
+    wa-badge { 
         font-size: 0.6em;
     }
 }
@@ -859,7 +864,7 @@ sl-spinner {
     width: auto;
 }
 
-#pagination-actions > sl-icon:hover{
+#pagination-actions > wa-icon:hover{
     cursor:pointer
 }
 
@@ -1302,8 +1307,8 @@ arrow-link {
 .gap {
     gap: .5em;
 }
-sl-tooltip::part(base){
-    --sl-tooltip-font-size: 14px;
+wa-tooltip::part(base){
+    --wa-tooltip-font-size: 14px;
 }
 
 .app-capabilities-links {
@@ -1460,7 +1465,7 @@ sl-tooltip::part(base){
         justify-content: space-between;
     }
 
-    sl-textarea::part(textarea) {
+    wa-textarea::part(textarea) {
         font-size: 0.7em;
         overflow: auto;
     }
@@ -1658,7 +1663,7 @@ ${mediumBreakPoint(css`
         flex-direction: column;
     }
 
-    sl-progress-ring {
+    wa-progress-ring {
         --size: 75px;
         --track-width: 4px;
         --subheader-font-size: 14px;
@@ -1688,7 +1693,7 @@ ${mediumBreakPoint(css`
 `)}
 
 ${smallBreakPoint(css`
-    sl-progress-ring {
+    wa-progress-ring {
         --size: 75px;
         --track-width: 4px;
         --indicator-width: 6px;
@@ -1763,7 +1768,7 @@ ${smallBreakPoint(css`
         width: auto;
     }
     #last-edited {
-        font-size: 14px;
+        font-size: 18px;
     }
     #manifest-header, #sw-header, #sec-header {
         padding-bottom: 2.5em;

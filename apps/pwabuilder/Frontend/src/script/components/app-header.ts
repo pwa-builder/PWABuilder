@@ -1,246 +1,16 @@
 import { Router } from '@vaadin/router';
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu.js';
-import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
-import {
-  xxxLargeBreakPoint,
-  xxLargeBreakPoint,
-  xLargeBreakPoint,
-  largeBreakPoint,
-  mediumBreakPoint,
-  smallBreakPoint,
-  xSmallBreakPoint,
-} from '../utils/css/breakpoints';
+import { appHeaderStyles } from './app-header.styles';
+import '@awesome.me/webawesome/dist/components/dropdown/dropdown.js';
+import '@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js';
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
   @property({ type: String }) page = 'home';
 
-  static get styles() {
-    return css`
-      :host {
-        --header-background: white;
-        --header-border: rgba(0, 0, 0, 0.25) solid 1px;
-      }
-
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 16px;
-        padding-right: 16px;
-        background: var(--header-background);
-        color: white;
-        height: 71px;
-
-        border-bottom: var(--header-border);
-        z-index: 1;
-      }
-
-      header img {
-        cursor: pointer;
-        width: 100px;
-        height: auto;
-      }
-
-      nav {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        width: 8em;
-        gap: .75em;
-      }
-
-      .nav_button {
-        all: unset;
-      }
-
-      .nav_link {
-        color: var(--font-color);
-        text-decoration: none;
-        border-bottom: none;
-        font-weight: var(--font-bold);
-        font-size: var(--subheader-font-size);
-        margin: 0;
-      }
-
-      .nav_link:focus {
-        outline: solid;
-        outline-width: 2px;
-      }
-
-      .nav_link span {
-        display: inline-block;
-        height: 18px;
-        font-size: 20px;
-      }
-
-      .nav_link:hover span{
-        cursor: pointer;
-      }
-
-      nav sl-icon {
-        font-size: 2em;
-      }
-
-      .nav_link:visited {
-        color: black;
-      }
-
-      .link {
-        display: block;
-        width: 100%;
-        text-decoration: none;
-      }
-
-      .link:visited, .link:active, .link:link {
-        color: #777777;
-      }
-
-      .hover-color:hover {
-        color: var(--primary-color);
-      }
-
-      sl-menu {
-        display: flex;
-        flex-direction: column;
-        background-color: white;
-        gap: 5px;
-        color: #777777;
-        font-size: 16px;
-        border-radius: 5px;
-        height: fit-content;
-        width: 136px;
-        padding: 16px 22px;
-      }
-
-      sl-menu-item::part(checked-icon), sl-menu-item::part(submenu-icon) {
-        display: none;
-      }
-
-      sl-menu-item::part(base){
-        color: #777777;
-        text-decoration: none;
-        border-bottom: none;
-        font-size: 14px;
-        margin: 0;
-        padding: 0;
-      }
-
-      sl-menu-item::part(base):hover sl-menu-item::part(label) {
-        background-color: unset;
-        color: var(--primary-color);
-      }
-
-      sl-menu-item:focus-visible::part(base) {
-        color: var(--primary-color);
-        background-color: transparent;
-        
-      }
-
-      sl-menu-item:hover::part(base) {
-        color: var(--primary-color);
-        background-color: transparent;
-        font-weight: 700;
-      }
-
-      sl-menu-item:focus-visible .link, sl-menu-item:hover .link {
-        color: var(--primary-color);
-        background-color: transparent;
-        font-weight: 700;
-      }
-
-      sl-dropdown {
-        position: relative;
-        
-      }
-      sl-dropdown::part(base){
-        box-shadow: 0px 16px 24px 0px #00000026;
-      }
-
-      .col-header {
-        text-decoration: none;
-        margin: 0;
-        white-space: nowrap;
-        font-weight: bold;
-        color: #777777;
-        padding: 0;
-        font-size: 14px;
-      }
-
-      @media (prefers-color-scheme: light) {
-        header {
-          color: black;
-        }
-      }
-
-      ${xSmallBreakPoint(css`
-        header {
-          padding-left: 8px;
-          padding-right: 8px;
-        }
-
-        header img {
-          width: 60px;
-        }
-
-        nav {
-          width: auto;
-          gap: 0.5em;
-        }
-
-        .nav_link span {
-          font-size: 16px;
-        }
-      `)}
-
-      ${smallBreakPoint(css`
-
-      `)}
-
-      ${mediumBreakPoint(css`
-        header nav {
-          display: initial;
-        }
-
-        #desktop-nav {
-          display: flex;
-        }
-
-      `)}
-
-
-      ${largeBreakPoint(css`
-        #desktop-nav {
-          display: flex;
-        }
-
-      `)}
-
-      ${xLargeBreakPoint(css`
-        header {
-          padding-left: 1em;
-          padding-right: 1em;
-        }
-      `)}
-
-      ${xxLargeBreakPoint(css`
-        header {
-          padding-left: 3em;
-          padding-right: 3em;
-        }
-      `)}
-
-      ${xxxLargeBreakPoint(css`
-        header {
-          background-color: white;
-        }
-      `)}
-    `;
-  }
+  static styles = [appHeaderStyles];
 
   constructor() {
     super();
@@ -264,19 +34,18 @@ export class AppHeader extends LitElement {
   }
 
   showMenu(){
-    let menu = this.shadowRoot!.querySelector("sl-dropdown");
+    let menu = this.shadowRoot!.querySelector("wa-dropdown");
     if(menu!.open){
       recordPWABuilderProcessStep(`header.community_dropdown_closed`, AnalyticsBehavior.ProcessCheckpoint)
-      menu!.hide()
+      menu!.open = false;
     } else {
       recordPWABuilderProcessStep(`header.community_dropdown_expanded`, AnalyticsBehavior.ProcessCheckpoint)
-      menu!.show();
-
+      menu!.open = true;
     }
   }
 
   // hacky work around for clicking links with keyboard that are nested in menu items
-  // in the future, shoelace may make <sl-menu-item href> a thing but for now this works.
+  // in the future, Web Awesome may make <wa-dropdown-item href> a thing but for now this works.
   handleClickingLink(linkTag: string, analyticsString: string){
     const anchor: HTMLAnchorElement = this.shadowRoot!.querySelector('[data-tag="' + linkTag + '"]')!;
     anchor.click();
@@ -318,12 +87,11 @@ export class AppHeader extends LitElement {
           ` : null
         }
           
-          <sl-dropdown distance="5">
+            <wa-dropdown distance="5">
             <button slot="trigger" type="button" @mouseover=${() => this.showMenu()} class="nav_link nav_button"><span class="hover-color">Community</span></button>
-            
-            <sl-menu>
+
                 <p class="col-header">Follow us on</p>
-                <sl-menu-item @click=${() => this.handleClickingLink("github_link", "header.github_clicked")}>
+                <wa-dropdown-item @click=${() => this.handleClickingLink("github_link", "header.github_clicked")}>
                   <a 
                     class="link" 
                     href="https://github.com/pwa-builder/PWABuilder"
@@ -334,8 +102,8 @@ export class AppHeader extends LitElement {
                   >
                     Github
                   </a>
-                </sl-menu-item>
-                <sl-menu-item @click=${() => this.handleClickingLink("twitter_link", "header.twitter_clicked")}>
+                </wa-dropdown-item>
+                <wa-dropdown-item @click=${() => this.handleClickingLink("twitter_link", "header.twitter_clicked")}>
                   <a 
                     class="link" 
                     href="https://x.com/pwabuilder"
@@ -346,8 +114,8 @@ export class AppHeader extends LitElement {
                   >
                     X
                   </a>
-                </sl-menu-item>
-                <sl-menu-item @click=${() => this.handleClickingLink("discord_link", "header.discord_clicked")}>
+                </wa-dropdown-item>
+                <wa-dropdown-item @click=${() => this.handleClickingLink("discord_link", "header.discord_clicked")}>
                   <a 
                     class="link" 
                     href="https://aka.ms/pwabuilderdiscord"
@@ -358,9 +126,8 @@ export class AppHeader extends LitElement {
                   >
                     Discord
                   </a>
-                </sl-menu-item>
-            </sl-menu>
-          </sl-dropdown>
+                </wa-dropdown-item>
+          </wa-dropdown>
         </nav>
       </header>
     `;

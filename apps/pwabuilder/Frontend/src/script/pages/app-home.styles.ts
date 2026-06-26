@@ -9,11 +9,11 @@ import {
 
 export const homeStyles = css`
   :host {
-    --sl-focus-ring-width: 3px;
-    --sl-input-focus-ring-color: #595959;
-    --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-    --sl-input-border-color-focus: #4F3FB6ac;
-    --sl-color-primary-300: var(--primary-color);
+    --wa-input-focus-ring-width: 3px;
+    --wa-input-focus-ring-color: #595959;
+    --wa-input-focus-ring: 0 0 0 var(--wa-input-focus-ring-width) var(--wa-input-focus-ring-color);
+    --wa-input-border-color-focus: #4F3FB6ac;
+    --wa-color-brand-50: var(--primary-color);
   }
 
   #home-block::before {
@@ -145,7 +145,7 @@ export const homeStyles = css`
     width: 100%;
   }
   #input-box::part(input) {
-    -webkit-text-fill-color: var(--sl-input-color);
+    -webkit-text-fill-color: var(--wa-color-text-normal);
   }
   #start-button {
     grid-area: 1 / 5 / auto / auto;
@@ -158,10 +158,10 @@ export const homeStyles = css`
     transform: scale(1.01);
     outline: 1px solid #000000;
   }
-  #input-form sl-input {
+  #input-form wa-input {
     margin-right: 10px;
   }
-  #input-form sl-input::part(base) {
+  #input-form wa-input::part(base) {
     border: 1px solid #e5e5e5;
     border-radius: var(--input-border-radius);
     color: var(--font-color);
@@ -171,16 +171,16 @@ export const homeStyles = css`
     height: 3em;
   }
 
-  #input-form sl-input::part(input) {
+  #input-form wa-input::part(input) {
     height: 3em;
   }
 
   #input-form .error::part(base){
     border-color: #eb5757;
-    --sl-input-focus-ring-color: #eb575770;
-    --sl-focus-ring-width: 3px;
-    --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-    --sl-input-border-color-focus: #eb5757ac;
+    --wa-input-focus-ring-color: #eb575770;
+    --wa-input-focus-ring-width: 3px;
+    --wa-input-focus-ring: 0 0 0 var(--wa-input-focus-ring-width) var(--wa-input-focus-ring-color);
+    --wa-input-border-color-focus: #eb5757ac;
   }
 
   .error-message {
@@ -279,11 +279,11 @@ export const homeStyles = css`
       margin-right: 10px;
       width: 100%;
     }
-    sl-input {
+    wa-input {
       width: 100%;
       margin-right: 10px;
     }
-    #input-form sl-input::part(base){
+    #input-form wa-input::part(base){
       width: 100%;
     }
     #input-form {
@@ -361,7 +361,7 @@ export const homeStyles = css`
         width: 100%;
         margin-right: 0;
       }
-      #input-form sl-input::part(base) {
+      #input-form wa-input::part(base) {
         width: 100%;
       }
       #input-form {
@@ -468,7 +468,7 @@ export const homeStyles = css`
         width: 100%;
         margin-right: 0;
       }
-      #input-form sl-input::part(base) {
+      #input-form wa-input::part(base) {
         width: 100%;
         min-width: 0;
         font-size: 13px;

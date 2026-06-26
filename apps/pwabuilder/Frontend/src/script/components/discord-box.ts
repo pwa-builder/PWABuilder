@@ -1,67 +1,15 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 
 import { customElement, state } from 'lit/decorators.js';
+import { discordBoxStyles } from './discord-box.styles';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
 
 @customElement('discord-box')
 export class DiscordBox extends LitElement {
   @state() show = true;
 
-  static get styles() {
-    return css`
-      #discord-box {
-        display: flex;
-        align-items: flex-start;
-        position: fixed;
-        z-index: 1;
-        bottom: 0;
-        right: 0;
-        width: 200px;
-        height: 30px;
-        background-color: #F5F7FA;
-        padding: 10px;
-        border-top-left-radius: var(--card-border-radius);
-        column-gap: 10px;
-        align-items: center;
-      }
-
-      #discord-box #logo {
-        height: 29px;
-        width: 29px;
-      }
-
-      #discord-box #close {
-        height: 13px;
-        width: 13px;
-        align-self: flex-start;
-      }
-
-      #discord-box p {
-        font-size: 14px;
-        line-height: 14px;
-        color: black;
-        font-weight: bold;
-      }
-      #discord-box a {
-        text-decoration: none;
-        color: black;
-        border-bottom: 1px solid black;
-        display: inline-block;
-        height: 12px;
-      }
-      #discord-box a:visited{
-        color: black;
-      }
-      #close-wrapper {
-        border: none;
-        background-color: transparent;
-      }
-      #close:hover {
-        cursor: pointer;
-      }
-    `;
-  }
+  static styles = [discordBoxStyles];
 
   constructor() {
     super();
@@ -81,7 +29,7 @@ export class DiscordBox extends LitElement {
         <div id="discord-box">
           <img id="logo" src="/assets/images/discord_logo.svg" alt="discord logo"/>
           <p>Want to chat? Join us on <a @click=${() => recordPWABuilderProcessStep("discord_box_link_clicked", AnalyticsBehavior.ProcessCheckpoint)} href="https://aka.ms/pwabuilderdiscord" target="_blank" rel="noopener" aria-label="Click to join us on Discord">Discord</a></p>
-          <button id="close-wrapper" @click=${() => this.close()} aria-label="discord modal close" type="button"><sl-icon id="close" name="x-lg"></sl-icon></button>
+          <button id="close-wrapper" @click=${() => this.close()} aria-label="discord modal close" type="button"><wa-icon id="close" name="x-lg"></wa-icon></button>
         </div>`
         : null}
     `;

@@ -1,16 +1,19 @@
-import { required_fields, validateSingleField, singleFieldValidation, Manifest, Icon } from '@pwabuilder/manifest-validation';
-import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
+import type { singleFieldValidation } from '../../models/single-field-validation';
+import { required_fields } from '../../models/manifest-fields';
+import type { Manifest, Icon } from '../../models/manifest';
+import { LitElement, html, PropertyValueMap, TemplateResult } from 'lit';
 import { repeat } from "lit/directives/repeat.js";
 import { customElement, property, state } from 'lit/decorators.js';
+import { manifestIconsFormStyles } from "./manifest-icons-form.styles";
 import { classMap } from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
-import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import { Lazy } from "../../utils/interfaces";
 import { errorInTab, insertAfter } from "../../utils/helpers";
 import { resolveUrl } from "../../utils/url";
+import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
+import '@awesome.me/webawesome/dist/components/tooltip/tooltip.js';
 
 let manifestInitialized = false;
 
@@ -56,215 +59,7 @@ export class ManifestIconsForm extends LitElement {
     private validationPromise: Promise<void> | undefined;
     private errorCount: number = 0;
 
-    static get styles() {
-        return css`
-
-    :host {
-      --sl-input-font-family: Hind, sans-serif;
-    }
-    
-
-      sl-checkbox::part(base),
-      sl-checkbox::part(control),
-      sl-button::part(base) {
-        --sl-button-font-size-medium: 14px;
-        --sl-input-font-size-medium: 16px;
-        --sl-toggle-size: 16px;
-      }
-      #form-holder {
-        display: flex;
-        flex-direction: column;
-        row-gap: 1em;
-      }
-      .form-field {
-        width: 50%;
-        row-gap: .25em;
-        display: flex;
-        flex-direction: column;
-      }
-      .form-field {
-        display: flex;
-        column-gap: 1em;
-        width: 100%;
-      }
-      .form-field h3 {
-        font-size: 18px;
-        margin: 0;
-      }
-      .form-field p:not(.toolTip) {
-        font-size: 14px;
-        margin: 0;
-        color: #717171;
-      }
-
-      .field-header{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        column-gap: 10px;
-      }
-
-      .header-left{
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-      
-      .toolTip {
-        font-size: 14px;
-        visibility: hidden;
-        width: 150px;
-        background: black;
-        color: white;
-        font-weight: 500;
-        text-align: center;
-        border-radius: 6px;
-        padding: .75em;
-        /* Position the tooltip */
-        position: absolute;
-        top: 20px;
-        left: -25px;
-        z-index: 1;
-        box-shadow: 0px 2px 20px 0px #0000006c;
-      }
-      .field-header a {
-        display: flex;
-        align-items: center;
-        position: relative;
-        color: black;
-      }
-      a:hover .toolTip {
-        visibility: visible;
-      }
-      a:visited, a:focus {
-        color: black;
-      }
-      #icon-section {
-        display: flex;
-        flex-direction: column;
-        margin: 10px 0;
-      }
-      #input-file {
-        display: none;
-      }
-      .icon {
-        max-width: 115px;
-      }
-      .icon-gallery {
-        display: flex;
-        gap: 7px;
-        flex-wrap: wrap;
-      }
-      .icon-box {
-        display: flex;
-        flex-direction: column;
-      }
-      .icon-box p {
-        margin: 0 10px;
-      }
-      #icon-options {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr .25fr;
-        place-items: center;
-        gap: .5em;
-      }
-
-      #icon-options sl-button {
-        grid-column: 2;
-      }
-
-      #selected-icon {
-        max-width: 115px;
-      }
-      #platforms-to-generate {
-        display: flex;
-        flex-direction: column;
-        row-gap: 5px;
-      }
-      .error {
-        color: #292c3a;
-      }
-
-      sl-button::part(base):hover {
-        background-color: rgba(79, 63, 182, 0.06);
-        border-color: rgba(79, 63, 182, 0.46);
-        color: rgb(79, 63, 182);
-      }
-
-      sl-checkbox[checked]::part(control) {
-        background-color: #4f3fb6;
-        border-color: #4f3fb6;
-        color: #ffffff;
-      }
-
-      .focus {
-        color: #4f3fb6;
-      }
-
-      .center_text {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        font-size: 16px;
-      }
-
-      @media(max-width: 765px){
-        sl-checkbox::part(base),
-        sl-checkbox::part(control) {
-          --sl-input-font-size-medium: 14px;
-          --sl-toggle-size: 14px;
-        }
-      }
-
-      @media(max-width: 600px){
-        .icon {
-            max-width: 90px;
-        }
-
-        #icon-options {
-          grid-template-columns: .25fr 1fr;
-        }
-
-        #selected-icon {
-          max-width: 90px;
-        }
-        
-      }
-
-      @media(max-width: 480px){
-
-        sl-button::part(base) {
-          --sl-button-font-size-medium: 12px;
-        }
-
-        .form-field p {
-          font-size: 12px;
-        }
-
-        .form-field h3 {
-          font-size: 16px;
-        }
-
-        #selected-icon {
-          max-width: 70px;
-        }
-
-        .field-header a:after {
-          content: "";
-          position: absolute;
-          left: -13px;
-          top: -13px;
-          z-index: -1;
-          width: 40px;
-          height: 40px;
-        }
-        
-      }
-
-    `;
-    }
+    static styles = [manifestIconsFormStyles];
 
     constructor() {
         super();
@@ -300,6 +95,7 @@ export class ManifestIconsForm extends LitElement {
         let field = "icons";
 
         if (this.manifest[field]) {
+            const { validateSingleField } = await import('@pwabuilder/manifest-validation');
             const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
 
             let passed = validation!.valid;
@@ -556,7 +352,7 @@ export class ManifestIconsForm extends LitElement {
           <h3>Generate Icons</h3>
           <p>We suggest at least one image 512x512 or larger.</p>
           <div id="icon-section">
-            <sl-button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</sl-button>
+            <wa-button class="image-buttons" @click=${() => this.enterFileSystem()} >Upload</wa-button>
             <input
               id="input-file"
               class="file-input hidden"
@@ -573,11 +369,12 @@ export class ManifestIconsForm extends LitElement {
             <div id="platforms-to-generate">
               <p>Select the platforms to generate images for:</p>
               ${platformsData.map((plat: PlatformInformation) =>
-                    html`<sl-checkbox value=${plat.value} @sl-change=${(e: any) => this.handlePlatformChange(e, plat)} checked>${plat.label}</sl-checkbox>`)}
+                    html`<wa-checkbox value=${plat.value} @change=${(e: any) => this.handlePlatformChange(e, plat)} checked>${plat.label}</wa-checkbox>`)}
             </div>
             ${this.canWeGenerate ?
-                        html`<sl-button @click=${this.generateZip} ?loading=${this.generatingZip}>${!this.zipGenerated ? html`Generate Zip` : html`Zip Generated!`}</sl-button>` :
-                        html`<sl-tooltip content="Upload a new icon to generate another zip."><sl-button @click=${this.generateZip} disabled>Generate Zip</sl-button></sl-tooltip>`
+                        html`<wa-button @click=${this.generateZip} ?loading=${this.generatingZip}>${!this.zipGenerated ? html`Generate Zip` : html`Zip Generated!`}</wa-button>` :
+                        html`<wa-button id="generate-zip-button" @click=${this.generateZip} disabled>Generate Zip</wa-button>
+                        <wa-tooltip for="generate-zip-button">Upload a new icon to generate another zip.</wa-tooltip>`
                     }
           </div>` : html``}
         </div>
@@ -588,7 +385,7 @@ export class ManifestIconsForm extends LitElement {
     renderIcons(): TemplateResult {
         if (this.srcList.length === 0) {
             return html`
-        <div class="center_text"><sl-icon name="card-image"></sl-icon> There are no icons in your manifest</div>
+        <div class="center_text"><wa-icon name="card-image"></wa-icon> There are no icons in your manifest</div>
       `;
         }
 

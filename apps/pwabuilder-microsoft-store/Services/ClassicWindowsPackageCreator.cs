@@ -39,10 +39,10 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="webManifest">The web manifest for the PWA.</param>
         /// <returns></returns>
         public async Task<ClassicWindowsPackageResult> Create(
-            WindowsAppPackageOptions options, 
-            WebAppManifestContext webManifest, 
-            ImageGeneratorResult appImages, 
-            string outputDirectory, 
+            WindowsAppPackageOptions options,
+            WebAppManifestContext webManifest,
+            ImageGeneratorResult appImages,
+            string outputDirectory,
             string? edgeAppId)
         {
             this.edgeAppId = edgeAppId;
@@ -65,7 +65,7 @@ namespace PWABuilder.MicrosoftStore
         {
             await base.UpdateAppxManifest(xmlDoc, options, appVersion, webManifest, publisher);
 
-            // Append a "created by PWABuilder" metadata node. This helps the Windows Partner Center team
+            // Append a "created by PWABuilder" metadata node. This helps the Microsoft Partner Center team
             // greenlight such apps for quick approval.
             AddPwaBuilderNode(xmlDoc);
 
@@ -98,7 +98,7 @@ namespace PWABuilder.MicrosoftStore
         protected override async Task UpdateProjectFiles(string outputDirectory, string projectDirectory, Version version, WindowsAppPackageOptions options, WebAppManifestContext webManifest, Publisher publisher, ImageGeneratorResult appImages)
         {
             await base.UpdateProjectFiles(outputDirectory, projectDirectory, version, options, webManifest, publisher, appImages);
-            
+
             // Create the pwa.json file used in our pwainstaller.exe, which instructs Edge to install the PWA.
             await CreatePwaJson(options, webManifest, projectDirectory, edgeAppId);
         }

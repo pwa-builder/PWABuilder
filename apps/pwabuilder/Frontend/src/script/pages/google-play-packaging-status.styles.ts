@@ -19,12 +19,12 @@ export const googlePlayPackagingStatusStyles = css`
         gap: 16px;
         padding: 0 6px;
 
-        sl-icon[name="check-circle-fill"] {
-            color: var(--sl-color-success-600);
+        wa-icon[name="check-circle-fill"] {
+            color: var(--wa-color-success-50);
         }
 
-        sl-icon[name="exclamation-octagon"] {
-            color: var(--sl-color-danger-600);
+        wa-icon[name="exclamation-octagon"] {
+            color: var(--wa-color-danger-50);
         }   
     }
 
@@ -40,7 +40,7 @@ export const googlePlayPackagingStatusStyles = css`
         }
     }
 
-    sl-card {
+    wa-card {
         width: 100%;
     }
 
@@ -69,7 +69,7 @@ export const googlePlayPackagingStatusStyles = css`
 
         p {
             margin: 0;
-            color: var(--sl-color-neutral-600);
+            color: var(--wa-color-neutral-40);
             font-size: 0.8em;
 
             @media (max-width: 535px) {
@@ -86,7 +86,7 @@ export const googlePlayPackagingStatusStyles = css`
         display: flex;
         flex-direction: column;
         gap: 4px;
-        background-color: var(--sl-color-neutral-200);
+        background-color: var(--wa-color-neutral-90);
         max-height: 400px;
         height: 400px;
         overflow: auto;
@@ -100,15 +100,15 @@ export const googlePlayPackagingStatusStyles = css`
             font-family: monospace;
 
             &:hover {
-                background-color: var(--sl-color-neutral-300);
+                background-color: var(--wa-color-neutral-80);
             }
 
             &.warn {
-                color: var(--sl-color-warning-600);
+                color: var(--wa-color-warning-50);
             }
 
             &.error {
-                color: var(--sl-color-danger-600);
+                color: var(--wa-color-danger-50);
             }
         }
     }

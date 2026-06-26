@@ -1,165 +1,13 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 
 import { customElement } from 'lit/decorators.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
-import {
-  xSmallBreakPoint,
-  smallBreakPoint,
-  mediumBreakPoint,
-  xxxLargeBreakPoint,
-} from '../utils/css/breakpoints';
+import { appFooterStyles } from './app-footer.styles';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
 
 @customElement('app-footer')
 export class AppFooter extends LitElement {
-  static get styles() {
-    return css`
-      footer {
-        /*temp color*/
-        background: var(--font-color);
-        color: #ffffff;
-        fill: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-top: 16px;
-        padding-bottom: 16px;
-        padding-left: 37px;
-        padding-right: 37px;
-        font-weight: 700;
-        font-size: var(--footer-font-size);
-      }
-
-
-      sl-icon {
-        font-size: var(--font-size);
-        color: #ffffff;
-        pointer-events: none;
-      }
-
-      span {
-        max-width: 672px;
-        display: block;
-      }
-
-      #icons {
-        width: 8em;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      #links {
-        margin-top: 8px;
-      }
-
-      #links a {
-        margin-right: 12px;
-        color: #ffffff;
-      }
-
-      #links a:visited {
-        color: #ffffff;
-      }
-
-      @media screen and (-ms-high-contrast: black-on-white) {
-          /* All high contrast styling rules */
-          sl-icon {
-            color: var(--font-color);
-          }
-      } 
-
-      ${xxxLargeBreakPoint(
-        css`
-          footer {
-            justify-content: center;
-          }
-
-          /* 30em here to line up with rest of
-          layout at this size */
-          #footer-top {
-            margin-right: 30em;
-          }
-        `
-      )}
-
-      ${mediumBreakPoint(
-        css`
-          footer {
-            flex-direction: column;
-          }
-
-          #footer-top {
-            align-items: center;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-          }
-
-          #links {
-            margin-top: 30px;
-            margin-bottom: 30px;
-          }
-
-          #icons {
-            color: #ffffff;
-            width: 10em;
-          }
-
-          #icons a {
-            margin-right: 46px;
-          }
-
-          #icons sl-icon {
-            font-size: 27px;
-            color: #ffffff;
-          }
-        `
-      )}
-
-      ${xSmallBreakPoint(css`
-        footer {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          text-align: center;
-          padding: 12px 10px;
-          font-size: 10px;
-        }
-
-        #icons {
-          margin-top: 8px;
-        }
-
-        #footer-top span {
-          font-size: 10px;
-          line-height: 1.4;
-        }
-
-        #links {
-          margin-top: 8px;
-        }
-
-        #links a {
-          font-size: 10px;
-          margin: 0 6px;
-        }
-      `)}
-
-      ${smallBreakPoint(css`
-        footer {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          text-align: center;
-        }
-
-        #icons {
-          margin-top: 10px;
-        }
-      `)}
-    `;
-  }
+  static styles = [appFooterStyles];
 
   constructor() {
     super();
@@ -208,7 +56,7 @@ export class AppFooter extends LitElement {
             aria-label="Contribute to our Github, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`footer.github_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <span title="Contribute to our Github"><sl-icon name="github" role="presentation"></sl-icon></span>
+            <span title="Contribute to our Github"><wa-icon name="github" role="presentation"></wa-icon></span>
           </a>
 
           <a
@@ -219,7 +67,7 @@ export class AppFooter extends LitElement {
             aria-label="Follow us on X, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`footer.twitter_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <span title="Follow us on X"><sl-icon name="twitter-x" role="presentation"></sl-icon></span>
+            <span title="Follow us on X"><wa-icon name="twitter-x" role="presentation"></wa-icon></span>
           </a>
 
           <a
@@ -230,7 +78,7 @@ export class AppFooter extends LitElement {
             aria-label="Subscribe to our Youtube, will open in separate tab"
             @click=${() => recordPWABuilderProcessStep(`footer.youtube_clicked`, AnalyticsBehavior.ProcessCheckpoint)}
           >
-            <span title="Subscribe to our Youtube"><sl-icon name="youtube" role="presentation"></sl-icon></span>
+            <span title="Subscribe to our Youtube"><wa-icon name="youtube" role="presentation"></wa-icon></span>
           </a>
         </div>
       </footer>

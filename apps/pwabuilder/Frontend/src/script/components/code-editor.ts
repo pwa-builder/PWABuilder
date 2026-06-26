@@ -1,11 +1,13 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { codeEditorStyles } from './code-editor.styles';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { Lazy, CodeEditorEvents, CodeEditorSyncEvent, increment } from '../utils/helpers';
 import { emitter, getEditorState } from "../utils/codemirror";
 import { debounce } from "../utils/debounce";
 import { resizeObserver } from "../utils/events";
+import '@awesome.me/webawesome/dist/components/button/button.js';
 
 @customElement('code-editor')
 export class CodeEditor extends LitElement {
@@ -30,33 +32,7 @@ export class CodeEditor extends LitElement {
 
     protected static editorIdGenerator = increment();
 
-    static get styles() {
-        return [
-            css`
-
-        :host {
-          position: relative;
-        }
-
-        sl-button::part(base) {
-          --sl-button-font-size-medium: 14px;
-        }
-        
-        #copy-block {
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 10px;
-          position: sticky;
-          top: 0;
-          z-index: 1;
-        }
-
-        .editor-container {
-          font-size: 14px;
-        }
-      `,
-        ];
-    }
+    static styles = [codeEditorStyles];
 
     constructor() {
         super();
@@ -132,12 +108,12 @@ export class CodeEditor extends LitElement {
         return html`
       <div id="copy-block">
         <slot>
-          <sl-button
+          <wa-button
             ?disabled="${this.copied}"
             @click="${() => this.copyCode()}"
             class="copy-button"
           >
-            ${this.copyText}</sl-button
+            ${this.copyText}</wa-button
           >
         </slot>
       </div>

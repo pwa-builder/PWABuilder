@@ -1,13 +1,12 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 
 import { customElement, property, state, query } from 'lit/decorators.js';
 
-import { hidden } from '../utils/css/hidden';
-import { fastButtonCss } from '../utils/css/fast-elements';
 import { FileInputDetails, Lazy } from '../utils/interfaces';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { FileInputElement } from '../utils/interfaces.components';
-import '@shoelace-style/shoelace/dist/components/button/button.js';
+import { appFileInputStyles } from './app-file-input.styles';
+import '@awesome.me/webawesome/dist/components/button/button.js';
 
 @customElement('app-file-input')
 export class FileInput extends LitElement implements FileInputElement {
@@ -17,20 +16,7 @@ export class FileInput extends LitElement implements FileInputElement {
 
     @state() buttonText = 'Choose File';
 
-    static get styles() {
-        return [
-            css`
-        [appearance='lightweight'] {
-          box-shadow: none;
-        }
-        :hover {
-          background-color: transparent;
-        }
-      `,
-            hidden,
-            fastButtonCss,
-        ];
-    }
+    static styles = [appFileInputStyles];
 
     get input(): any {
         return this.fileInput;
@@ -51,12 +37,12 @@ export class FileInput extends LitElement implements FileInputElement {
     render() {
         return html`
       <div>
-        <sl-button
+        <wa-button
           variant="default"
           @click=${this.clickModalInput}
         >
           ${this.buttonText}
-        </sl-button>
+        </wa-button>
         <input
           id="${ifDefined(this.inputId)}"
           class="file-input hidden"

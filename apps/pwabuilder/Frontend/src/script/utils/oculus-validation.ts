@@ -1,4 +1,4 @@
-import { Manifest } from "@pwabuilder/manifest-validation";
+import type { Manifest } from "../models/manifest";
 import { validateAndroidPackageId } from "./android-validation";
 import { PackageOptions } from "./interfaces";
 
