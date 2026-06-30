@@ -90,60 +90,54 @@ export class ManifestSettingsForm extends LitElement {
 
     async validateAllFields() {
 
+        const { validateSingleField } = await import('@pwabuilder/manifest-validation');
+
         for (let i = 0; i < settingsFields.length; i++) {
             let field = settingsFields[i];
+            let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+
+            // Clear any previous error state for this field first so re-validation is
+            // idempotent: a field that has since become valid (e.g. start_url that was
+            // missing while the manifest was still loading) sheds its stale error.
+            input?.classList.remove("error");
+            let existingErrorDiv = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            if (existingErrorDiv) {
+                existingErrorDiv.parentElement!.removeChild(existingErrorDiv);
+            }
+            delete this.errorMap[field];
+
+            let invalid = false;
+            let errors: string[] = [];
 
             if (field in this.manifest) {
-                const { validateSingleField } = await import('@pwabuilder/manifest-validation');
                 const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
-                let passed = validation!.valid;
-
-                if (!passed) {
-                    let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-                    input!.classList.add("error");
-
-                    if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
-                        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-                        error_div!.parentElement!.removeChild(error_div!);
-                    }
-
-                    // update error list
-                    if (validation.errors) {
-                        let div = document.createElement('div');
-                        div.classList.add(`${field}-error-div`);
-                        this.errorMap[field] = 0;
-                        validation.errors.forEach((error: string) => {
-                            let p = document.createElement('p');
-                            p.innerText = error;
-                            p.style.color = "#eb5757";
-                            p.setAttribute('aria-live', 'polite');
-                            div.append(p);
-                            this.errorMap[field]++;
-                        });
-                        insertAfter(div, input!.parentNode!.lastElementChild);
-                    }
+                if (!validation!.valid) {
+                    invalid = true;
+                    errors = validation.errors ?? [];
                 }
-            } else {
-                /* This handles the case where the field is not in the manifest.. 
+            } else if (required_fields.includes(field)) {
+                /* This handles the case where the field is not in the manifest..
                 we only want to make it red if its REQUIRED. */
-                if (required_fields.includes(field)) {
-                    let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-                    input!.classList.add("error");
+                invalid = true;
+                errors = [`${field} is required and is missing from your manifest.`];
+            }
 
-                    if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
-                        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-                        error_div!.parentElement!.removeChild(error_div!);
-                    }
-                    this.errorMap[field] = 0;
-                    let div = document.createElement('div');
-                    div.classList.add(`${field}-error-div`);
+            if (invalid) {
+                input?.classList.add("error");
+
+                let div = document.createElement('div');
+                div.classList.add(`${field}-error-div`);
+                this.errorMap[field] = 0;
+                errors.forEach((error: string) => {
                     let p = document.createElement('p');
-                    p.innerText = `${field} is required and is missing from your manifest.`;
+                    p.innerText = error;
                     p.style.color = "#eb5757";
+                    p.setAttribute('aria-live', 'polite');
                     div.append(p);
                     this.errorMap[field]++;
-                    insertAfter(div, input!.parentNode!.lastElementChild);
-
+                });
+                if (input) {
+                    insertAfter(div, input.parentNode!.lastElementChild);
                 }
             }
         }
