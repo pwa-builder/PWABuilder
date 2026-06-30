@@ -85,9 +85,18 @@ public class Startup
 
     static ApplicationInsightsServiceOptions setUpAppInsights(IConfigurationSection appSettings)
     {
+        // Prefer the connection string from AppSettings, but fall back to the platform-provided
+        // APPLICATIONINSIGHTS_CONNECTION_STRING environment variable that Azure App Service injects.
+        // Without this fallback the app sent no telemetry in Production, where AppSettings leaves it blank.
         var connectionString = appSettings["ApplicationInsightsConnectionString"];
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            connectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING");
+        }
+
         var aiOptions = new ApplicationInsightsServiceOptions();
-        aiOptions.EnableRequestTrackingTelemetryModule = false;
+        // Enable request tracking so failed requests (5xx) and their server-side exceptions surface in App Insights.
+        aiOptions.EnableRequestTrackingTelemetryModule = true;
         aiOptions.EnableDependencyTrackingTelemetryModule = true;
         aiOptions.EnableHeartbeat = false;
         aiOptions.EnableAzureInstanceMetadataTelemetryModule = false;
