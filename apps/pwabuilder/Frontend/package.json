@@ -10,9 +10,6 @@
     "stop": "npm run kill-dev-server",
     "kill-dev-server": "kill-port 5173",
     "test": "playwright test",
-    "copy-icons": "node scripts/copy-icons.mjs",
-    "predev": "npm run copy-icons",
-    "prebuild": "npm run copy-icons",
     "preinstall": "node ../../../scripts/setupDeps.js"
   },
   "author": "",
@@ -51,7 +48,6 @@
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
     "@web/dev-server": "^0.4.6",
-    "bootstrap-icons": "^1.13.1",
     "chai": "^4.3.4",
     "concurrently": "^6.0.0",
     "cross-env": "^7.0.3",
