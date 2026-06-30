@@ -45,7 +45,7 @@ public class Startup
         });
 
         var appSettings = Configuration.GetSection("AppSettings");
-        var aiOptions = setUpAppInsights(appSettings);
+        var appInsightsOptions = setUpAppInsights(appSettings);
 
         services.AddTransient<PwaBuilderWrapper>();
         services.AddTransient<WindowsAppPackageCreator>();
@@ -66,7 +66,7 @@ public class Startup
         services.AddTransient<Analytics>();
         services.AddSingleton<ZombieProcessKiller>();
         services.AddTransient<ProcessRunner>();
-        services.AddApplicationInsightsTelemetry(aiOptions);
+        services.AddApplicationInsightsTelemetry(appInsightsOptions);
         services.AddHttpClient();
         services
             .AddHttpClient(
