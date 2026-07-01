@@ -130,6 +130,15 @@ export const appPackageFormBaseStyles = css`
 		align-items: center;
 	}
 
+	/* Same fix for radios: the label text and its trailing info-circle-tooltip
+         are slotted into wa-radio's "label" part (display:inline by default),
+         which lets the flex-based tooltip drop onto its own line. Lay the label
+         part out as an inline row so the label and tooltip stay on one line. */
+	.form-check wa-radio::part(label) {
+		display: inline-flex;
+		align-items: center;
+	}
+
 	.form-check label {
 		font-weight: normal;
 		margin-left: 8px;

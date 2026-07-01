@@ -13,6 +13,7 @@ import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
 import "@awesome.me/webawesome/dist/components/checkbox/checkbox.js";
 import { appPackageFormBaseStyles } from './app-package-form-base.styles';
 import '@awesome.me/webawesome/dist/components/radio-group/radio-group.js';
+import '@awesome.me/webawesome/dist/components/radio/radio.js';
 
 
 /**
@@ -48,16 +49,6 @@ export class AppPackageFormBase extends LitElement {
         // Checkboxes render as a WebAwesome checkbox with the label slotted inside.
         if (formInput.type === 'checkbox') {
             return this.renderFormCheckbox(formInput);
-        }
-
-        // Radio inputs intentionally remain native <input type="radio">: WebAwesome
-        // radios require a <wa-radio-group> ancestor to behave as a mutually-exclusive
-        // group, but these forms group radios manually via a shared name attribute.
-        if (formInput.type === 'radio') {
-            return html`
-                ${this.renderFormInputRadio(formInput)}
-                ${this.renderFormInputLabel(formInput)}
-            `;
         }
 
         if (formInput.type === 'color') {
@@ -156,28 +147,27 @@ export class AppPackageFormBase extends LitElement {
             : checkbox;
     }
 
-    private renderFormInputRadio(formInput: FormInput): TemplateResult {
-        const allInputClasses = 'form-check-input' + (formInput.classes ? ` ${formInput.classes}` : '');
-
-        const input = html`
-      <input id="${formInput.inputId}"
-        class="${allInputClasses}"
-        placeholder="${formInput.placeholder || ''}"
-        value="${ifDefined(formInput.value as string)}"
-        type="radio"
-        ?required="${formInput.required}"
-        name="${ifDefined(formInput.name)}"
-        ?checked="${formInput.checked}"
-        ?readonly="${formInput.readonly}"
-        ?disabled=${formInput.disabled}
-        @input="${(e: UIEvent) => this.onInput(e, formInput)}"
-        @change="${(e: UIEvent) => this.onChange(e, formInput)}"
-        @invalid=${this.inputInvalid} />
+    /**
+     * Renders a set of mutually-exclusive options as a WebAwesome radio group.
+     * The <wa-radio-group> owns selection state and keyboard navigation; its change
+     * event reports the selected value, which is forwarded to valueChangedHandler.
+     */
+    protected renderFormRadioGroup(radioGroup: FormRadioGroup): TemplateResult {
+        return html`
+      <wa-radio-group
+        name="${ifDefined(radioGroup.name)}"
+        .value=${radioGroup.value}
+        ?disabled=${radioGroup.disabled}
+        @change=${(e: Event) => radioGroup.valueChangedHandler((e.target as HTMLInputElement).value)}
+        @wa-invalid=${this.inputInvalid}>
+        ${radioGroup.radios.map(radio => html`
+          <wa-radio value="${radio.value}">
+            ${radio.label}
+            ${this.renderTooltip({ label: radio.label, inputId: radio.inputId ?? '', tooltip: radio.tooltip, tooltipLink: radio.tooltipLink })}
+          </wa-radio>
+        `)}
+      </wa-radio-group>
     `;
-
-        return formInput.disabled
-            ? html`${input}<wa-tooltip for="${formInput.inputId}">${formInput.disabledTooltipText || ""}</wa-tooltip>`
-            : input;
     }
 
 
@@ -327,4 +317,26 @@ export interface FormInput {
     disabledTooltipText?: string;
     inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
     changedHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
+}
+
+/**
+ * A group of mutually-exclusive radio options rendered via <wa-radio-group>.
+ */
+export interface FormRadioGroup {
+    name?: string;
+    value: string;
+    disabled?: boolean;
+    valueChangedHandler: (value: string) => void;
+    radios: FormRadio[];
+}
+
+/**
+ * A single option within a {@link FormRadioGroup}.
+ */
+export interface FormRadio {
+    label: string;
+    value: string;
+    tooltip?: string;
+    tooltipLink?: string;
+    inputId?: string;
 }
