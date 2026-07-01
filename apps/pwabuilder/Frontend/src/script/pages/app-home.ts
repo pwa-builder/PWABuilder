@@ -23,129 +23,129 @@ import '@awesome.me/webawesome/dist/components/input/input.js';
 
 @customElement('app-home')
 export class AppHome extends LitElement {
-  @state() siteURL: Lazy<string>;
-  @state() gettingManifest = false;
-  @state() errorGettingURL = false;
-  @state() errorMessage: string | undefined;
+    @state() siteURL: Lazy<string>;
+    @state() gettingManifest = false;
+    @state() errorGettingURL = false;
+    @state() errorMessage: string | undefined;
 
-  @state() disableStart = true;
+    @state() disableStart = true;
 
-  static styles = homeStyles;
+    static styles = homeStyles;
 
-  constructor() {
-    super();
-  }
-
-  async firstUpdated() {
-    // Resetting for a new url, keep referrer value
-    const referrer = sessionStorage.getItem('ref');
-    sessionStorage.clear();
-    if (referrer) {
-      sessionStorage.setItem('ref', referrer);
-    }
-    resetInitialManifest();
-
-    const search = new URLSearchParams(location.search);
-    const site = search.get('site');
-
-    if (site) {
-      this.siteURL = site.trim();
-      await this.analyzeSite();
+    constructor() {
+        super();
     }
 
-    recordPWABuilderProcessStep('landing-page-loaded', AnalyticsBehavior.StartProcess);
-
-    /*
-    Step 1: Start the process on home page load
-    Step 2: Track any button presses a checkpoint
-    Step 3: end the process when the user packages
-    timer for first action
-    */
-  }
-
-  handleURL(inputEvent: InputEvent) {
-    if (inputEvent) {
-      this.siteURL = (inputEvent.target as HTMLInputElement).value.trim();
-    }
-
-    if (isValidURL(this.siteURL as string)) {
-      this.disableStart = false;
-    } else {
-      this.disableStart = true;
-    }
-  }
-
-  async start(inputEvent: InputEvent) {
-    inputEvent.preventDefault();
-
-    await this.analyzeSite();
-  }
-
-  async analyzeSite() {
-    if (this.siteURL !== demoURL) {
-      sessionStorage.setItem('demoURL', JSON.stringify(false));
-    }
-
-    let isValidUrl = false;
-    if (this.siteURL) {
-      this.gettingManifest = true;
-      try {
-        this.siteURL = cleanUrl(this.siteURL);
-        isValidUrl = isValidURL(this.siteURL);
-      } catch (error) {
-        isValidUrl = false;
-      }
-
-      recordPWABuilderProcessStep('top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
-        {
-          url: this.siteURL,
-          valid: isValidUrl
-        });
-
-      if (isValidUrl) {
-        // ensures we get a new unique id everytime we enter a new url
-        // for platform tracking purposes
-        if (sessionStorage.getItem('uid')) {
-          sessionStorage.removeItem('uid');
+    async firstUpdated() {
+        // Resetting for a new url, keep referrer value
+        const referrer = sessionStorage.getItem('ref');
+        sessionStorage.clear();
+        if (referrer) {
+            sessionStorage.setItem('ref', referrer);
         }
-        Router.go(`/reportcard?site=${this.siteURL}`);
-      } else {
-        this.errorMessage = localeStrings.input.home.error.invalidURL;
-        this.errorGettingURL = true;
+        resetInitialManifest();
 
-        await this.updateComplete;
+        const search = new URLSearchParams(location.search);
+        const site = search.get('site');
 
-        (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
-      }
+        if (site) {
+            this.siteURL = site.trim();
+            await this.analyzeSite();
+        }
 
-      // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
-      // this.gettingManifest = false;
-      // To fix this, we've found that putting that call in a 100ms timeout fixes the issue.
-      setTimeout(() => this.gettingManifest = false, 100);
+        recordPWABuilderProcessStep('landing-page-loaded', AnalyticsBehavior.StartProcess);
+
+        /*
+        Step 1: Start the process on home page load
+        Step 2: Track any button presses a checkpoint
+        Step 3: end the process when the user packages
+        timer for first action
+        */
     }
-  }
 
+    handleURL(inputEvent: InputEvent) {
+        if (inputEvent) {
+            this.siteURL = (inputEvent.target as HTMLInputElement).value.trim();
+        }
 
-  updateProgress(progressData: ProgressList) {
-    if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
-      progressData.progress[0].items[0].done = Status.DONE;
-      const newProgress = progressData;
-      setProgress(newProgress);
+        if (isValidURL(this.siteURL as string)) {
+            this.disableStart = false;
+        } else {
+            this.disableStart = true;
+        }
     }
-  }
 
-  placeDemoURL() {
-    sessionStorage.setItem('demoURL', JSON.stringify(true));
-    recordPWABuilderProcessStep("top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
-    this.siteURL = demoURL;
-    let box = this.shadowRoot!.getElementById("input-box");
-    (box as HTMLInputElement)!.value = this.siteURL;
-    this.analyzeSite();
-  }
+    async start(inputEvent: InputEvent) {
+        inputEvent.preventDefault();
+
+        await this.analyzeSite();
+    }
+
+    async analyzeSite() {
+        if (this.siteURL !== demoURL) {
+            sessionStorage.setItem('demoURL', JSON.stringify(false));
+        }
+
+        let isValidUrl = false;
+        if (this.siteURL) {
+            this.gettingManifest = true;
+            try {
+                this.siteURL = cleanUrl(this.siteURL);
+                isValidUrl = isValidURL(this.siteURL);
+            } catch (error) {
+                isValidUrl = false;
+            }
+
+            recordPWABuilderProcessStep('top.entered_link_testing_started', AnalyticsBehavior.ProcessCheckpoint,
+                {
+                    url: this.siteURL,
+                    valid: isValidUrl
+                });
+
+            if (isValidUrl) {
+                // ensures we get a new unique id everytime we enter a new url
+                // for platform tracking purposes
+                if (sessionStorage.getItem('uid')) {
+                    sessionStorage.removeItem('uid');
+                }
+                Router.go(`/reportcard?site=${this.siteURL}`);
+            } else {
+                this.errorMessage = localeStrings.input.home.error.invalidURL;
+                this.errorGettingURL = true;
+
+                await this.updateComplete;
+
+                (this.shadowRoot?.querySelector('.error-message') as HTMLSpanElement)?.focus();
+            }
+
+            // HACK: Lit 2.0 crashes on Safari 14 desktop on the following line:
+            // this.gettingManifest = false;
+            // To fix this, we've found that putting that call in a 100ms timeout fixes the issue.
+            setTimeout(() => this.gettingManifest = false, 100);
+        }
+    }
 
 
-  render() {
-    return html`
+    updateProgress(progressData: ProgressList) {
+        if (progressData && progressData.progress[0] && progressData.progress[0].items[0]) {
+            progressData.progress[0].items[0].done = Status.DONE;
+            const newProgress = progressData;
+            setProgress(newProgress);
+        }
+    }
+
+    placeDemoURL() {
+        sessionStorage.setItem('demoURL', JSON.stringify(true));
+        recordPWABuilderProcessStep("top.DemoURL_clicked", AnalyticsBehavior.ProcessCheckpoint);
+        this.siteURL = demoURL;
+        let box = this.shadowRoot!.getElementById("input-box");
+        (box as HTMLInputElement)!.value = this.siteURL;
+        this.analyzeSite();
+    }
+
+
+    render() {
+        return html`
       <app-header part="header" .page=${"home"}></app-header>
       <main>
         <div id="home-block">
@@ -186,13 +186,13 @@ export class AppHome extends LitElement {
                 </div>
                 <div id="input-area">
                   <div id="input-and-error">
-                    <wa-input slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input"
+                    <wa-input slot="input-container" type="text" id="input-box" placeholder="Enter the URL to your PWA" name="url-input" autofocus
                       class="${classMap({ error: this.errorGettingURL })}" aria-labelledby="input-header" @input="${(e: InputEvent) => this.handleURL(e)}">
                     </wa-input>
 
                     ${this.errorMessage && this.errorMessage.length > 0
-        ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
-        : null}
+                ? html`<span role="alert" aria-live="polite" class="error-message">${this.errorMessage}</span>`
+                : null}
                   </div>
 
                   <wa-button
@@ -216,7 +216,7 @@ export class AppHome extends LitElement {
         <community-hub></community-hub>
       </main>
     `;
-  }
+    }
 }
 
 const demoURL: string = "https://webboard.app";

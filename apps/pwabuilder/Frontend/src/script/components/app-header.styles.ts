@@ -71,7 +71,7 @@ export const appHeaderStyles = css`
 	}
 
 	nav wa-icon {
-		font-size: 2em;
+		font-size: 1.15em;
 	}
 
 	.nav_link:visited {
@@ -97,9 +97,6 @@ export const appHeaderStyles = css`
 		flex-direction: column;
 		background-color: white;
 		font-size: 16px;
-		border-radius: 5px;
-		height: fit-content;
-		padding: 16px 22px;
 	}
 
 	wa-dropdown-item::part(checkmark), wa-dropdown-item::part(submenu-icon) {
@@ -116,18 +113,17 @@ export const appHeaderStyles = css`
 
 	wa-dropdown-item:focus-visible, wa-dropdown-item:hover {
 		background-color: transparent;
+		outline: none;
 	}
 
 	wa-dropdown-item:focus-visible::part(label), wa-dropdown-item:hover::part(label) {
 		color: var(--primary-color);
 		background-color: transparent;
-		font-weight: 700;
 	}
 
 	wa-dropdown-item:focus-visible .link, wa-dropdown-item:hover .link {
 		color: var(--primary-color);
 		background-color: transparent;
-		font-weight: 700;
 	}
 
 	wa-dropdown {
