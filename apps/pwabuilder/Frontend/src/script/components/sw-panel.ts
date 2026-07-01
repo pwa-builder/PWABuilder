@@ -1,42 +1,15 @@
-import { LitElement, TemplateResult, css, html } from 'lit';
+import { LitElement, TemplateResult, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import '../components/lazy-load';
 
+import { swPanelStyles } from "./sw-panel.styles";
 @customElement('sw-panel')
 export class SWPanel extends LitElement {
 
     @property({ type: Object }) sw: any = {};
 
 
-    static get styles() {
-        return css`
-
-      .panel-holder {
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-      }
-
-      .panel-holder h2 {
-        margin: 0;
-        font-size: 22px;
-      }
-
-      .panel-holder p {
-        margin: 0;
-        font-size: 14px;
-        color: #808080;
-      }
-
-      .panel-desc .code-block {
-        display: flex;
-        flex-direction: column;
-        gap: .75em;
-      }
-
-
-    `;
-    }
+    static styles = [swPanelStyles];
 
     constructor() {
         super();

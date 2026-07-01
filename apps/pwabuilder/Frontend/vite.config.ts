@@ -7,6 +7,14 @@ export default defineConfig(async () => {
 
     return {
         base: "/",
+        // Pre-bundle @pwabuilder/manifest-validation in dev. It is now only
+        // referenced via a dynamic import (lazy-loaded for production code
+        // splitting). Without this, Vite discovers the dependency on the first
+        // runtime import and triggers a full-page reload to re-optimize, which
+        // would interrupt in-progress edits (e.g. live manifest field validation).
+        optimizeDeps: {
+            include: ["@pwabuilder/manifest-validation"]
+        },
         server: {
             host: "0.0.0.0",
             port: 5173,

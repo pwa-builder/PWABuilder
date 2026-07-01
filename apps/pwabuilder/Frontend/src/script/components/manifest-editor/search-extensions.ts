@@ -1,10 +1,11 @@
-import { LitElement, PropertyValueMap, css, html } from 'lit';
+import { LitElement, PropertyValueMap, html } from 'lit';
+import { searchExtensionsStyles } from "./search-extensions.styles";
 import { property, customElement, state } from 'lit/decorators.js';
-import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/tag/tag.js';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
+import type WaInput from '@awesome.me/webawesome/dist/components/input/input.js';
 import { extensions } from "../../utils/extensions";
+import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
+import '@awesome.me/webawesome/dist/components/tag/tag.js';
 
 @customElement('search-extensions')
 export class SearchExtensions extends LitElement {
@@ -18,202 +19,7 @@ export class SearchExtensions extends LitElement {
 
     private errorCount: number = 0;
 
-    static get styles() {
-        return css`
-
-      :host {
-        --sl-focus-ring-width: 3px;
-        --sl-input-focus-ring-color: #4f3fb670;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #4F3FB6ac;
-        --sl-input-font-family: Hind, sans-serif;
-      }
-
-      sl-input::part(base) {
-        --sl-input-font-size-medium: 16px;
-        --sl-font-size-medium: 16px;
-        --sl-font-size-small: 14px;
-        --sl-input-height-medium: 3em;
-        --sl-toggle-size: 16px;
-        --sl-toggle-size-small: 16px;
-        --sl-input-font-size-small: 16px;
-        --sl-button-font-size-medium: 14px;
-      }
-      sl-input::part(base){
-        background-color: #fbfbfb;
-      }
-      .error::part(base){
-        border-color: #eb5757;
-        --sl-input-focus-ring-color: #eb575770;
-        --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #eb5757ac;
-      }
-
-      .error::part(control){
-        border-color: #eb5757;
-      }
-
-      .error-message {
-        color: #eb5757;
-        margin: 5px 0;
-        font-size: 14px;
-        display: none;
-      }
-
-      .form-row {
-        display: flex;
-        column-gap: 1em;
-      }
-      .long .form-field {
-        width: 100%;
-      }
-      
-      .type-box {
-        max-width: 265px;
-        min-height: 40px;
-        border: 1px solid #d4d4d8;
-        border-radius: .25rem;
-        padding: 2px;
-        transition: all .1s ease-in-out;
-        display: flex;
-        gap: 5px;
-        flex-wrap: wrap;
-        align-items: center;
-        position: relative;
-      }
-
-      .type-box input {
-        border: none;
-        font-size: 16px;
-        width: 2ch;
-      }
-
-      .type-box input:focus, input:active, input:focus-visible {
-        border: none;
-        outline: none;
-      }
-
-      .type-box:hover {
-        border: 1px solid #a1a1aa;
-      }
-
-      .focused {
-        border: 1px solid #4F3FB6ac;
-        outline: 3px solid #4f3fb670;
-      }
-
-      .form-field p {
-        font-size: 14px;
-      }
-      
-      .suggestions {
-        display: none;
-        position: absolute;
-        top: 105%;
-        height: fit-content;
-        max-height: 200px;
-        width: 100%;
-        border-radius: 8px;
-        z-index: 1;
-        overflow-y: scroll;
-        flex-direction: column;
-        gap: 10px;
-        border: 1px solid #C5C5C5;
-        background-color: #ffffff;
-      }
-
-      .suggestion:first-child{
-        margin-top: 5px;
-      }
-
-      .suggestions p {
-        font-size: 16px;
-        margin: 0;
-        padding: 11px 22px;
-      }
-
-      .suggestions p:hover {
-        cursor: pointer;
-        background-color: #4f3fb6;
-        color: #ffffff;
-      }
-
-      .file-holder {
-        background: #FBFBFB;
-        border: 1px solid #C0C0C0;
-        border-radius: 8px;
-        padding: 10px;
-        position: relative;
-      }
-
-      .sub {
-        font-size: 18px;
-        margin: 0;
-        color: #757575;
-      }
-
-      .form-field {
-        width: 50%;
-        row-gap: .25em;
-        display: flex;
-        flex-direction: column;
-      }
-     
-      .field-header{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        column-gap: 5px;
-      }
-      .header-left{
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-      
-      .remove-file {
-        position: absolute;
-        top: 0;
-        right: 0;
-      }
-
-      .remove-file::part(base):hover {
-        color: #4f3fb6;
-      }
-
-      .error:not(sl-input){
-        border: 1px solid #eb5757ac;
-      }
-
-      .focused.error  {
-        border: 1px solid #eb5757ac;
-        outline: 3px solid #eb575770;
-      }
-
-      .error-message {
-        color: #eb5757;
-        margin: 5px 0;
-        font-size: 14px;
-        display: none;
-      }
-
-      @media(max-width: 600px){
-        .form-row {
-          flex-direction: column;
-          gap: 10px;
-        }
-        .form-field {
-          width: 100%;
-        }
-        .type-box{
-          max-width: unset;
-          width: 100%;
-        }
-      }
-      
-    `;
-    }
+    static styles = [searchExtensionsStyles];
 
     constructor() {
         super();
@@ -274,10 +80,10 @@ export class SearchExtensions extends LitElement {
     }
 
     createTag(value: string) {
-        let tag = document.createElement('sl-tag');
+        let tag = document.createElement('wa-tag');
         tag.innerHTML = value;
         tag.setAttribute('removable', 'true');
-        tag.setAttribute('size', 'small');
+        tag.setAttribute('size', 's');
         return tag;
     }
 
@@ -323,7 +129,7 @@ export class SearchExtensions extends LitElement {
     }
 
     renderTags(type: string) {
-        return html`<sl-tag size="small" removable @sl-remove=${() => this.removeAcceptEntry(type)}>${type}</sl-tag>`
+        return html`<wa-tag size="s" removable @wa-remove=${() => this.removeAcceptEntry(type)}>${type}</wa-tag>`
     }
 
     removeAcceptEntry(type: string) {
@@ -332,10 +138,10 @@ export class SearchExtensions extends LitElement {
     }
 
     handleTagChange() {
-        let name_input = (this.shadowRoot!.querySelector(`[data-field="share_target.params.files.name"]`) as unknown as SlInput);
+        let name_input = (this.shadowRoot!.querySelector(`[data-field="share_target.params.files.name"]`) as unknown as WaInput);
 
         // check if name field is filled out, if not add error.
-        if (name_input.value.length === 0) {
+        if ((name_input.value ?? '').length === 0) {
             // add error border 
             name_input.classList.add("error");
 
@@ -349,7 +155,7 @@ export class SearchExtensions extends LitElement {
 
         // remove our own errors
         // remove error border 
-        let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as SlInput);
+        let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as WaInput);
         file_input.classList.remove("error");
 
         // remove error message
@@ -374,12 +180,12 @@ export class SearchExtensions extends LitElement {
     }
 
     handleNameChange() {
-        let input = (this.shadowRoot!.querySelector(`[data-field="share_target.params.files.name"]`) as unknown as SlInput);
+        let input = (this.shadowRoot!.querySelector(`[data-field="share_target.params.files.name"]`) as unknown as WaInput);
         this.file.name = input.value;
 
         if (this.file.accept.length === 0) {
             // add error border 
-            let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as SlInput);
+            let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as WaInput);
             file_input.classList.add("error");
 
             // add error message
@@ -391,7 +197,7 @@ export class SearchExtensions extends LitElement {
         }
 
         // remove error border from tags if necessary
-        let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as SlInput);
+        let file_input = (this.shadowRoot!.querySelector(`.type-box`) as unknown as WaInput);
         file_input.classList.remove("error");
 
         // remove error message
@@ -459,7 +265,7 @@ export class SearchExtensions extends LitElement {
               <manifest-field-tooltip .field=${"share_target.params.files.name"}></manifest-field-tooltip>
             </div>
           </div>
-          <sl-input name="params.files.name" placeholder="Add file name" value=${this.file.name || ""} data-field="share_target.params.files.name" @sl-change=${() => this.handleNameChange()}></sl-input>
+          <wa-input name="params.files.name" placeholder="Add file name" value=${this.file.name || ""} data-field="share_target.params.files.name" @change=${() => this.handleNameChange()}></wa-input>
         </div>
         <div class="form-field">
           <div class="field-header">
@@ -483,7 +289,7 @@ export class SearchExtensions extends LitElement {
           </div>
         </div>
       </div>
-      <sl-icon-button name="x-lg" class="remove-file" label="close" style="font-size: .65rem;" @click=${() => this.removeFile()}></sl-icon-button>
+      <wa-button name="x-lg" class="remove-file icon-close" appearance="plain" aria-label="close" style="font-size: .65rem;" @click=${() => this.removeFile()}><wa-icon name="x-lg"></wa-icon></wa-button>
       <p class="accept-error-message error-message">Be sure to specify which file types your share target accepts</p>
       <p class="name-error-message error-message">Be sure to specify the name of the form field used to share files.</p>
     </div>

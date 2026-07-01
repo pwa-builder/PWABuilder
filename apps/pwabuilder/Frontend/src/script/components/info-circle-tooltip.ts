@@ -1,5 +1,6 @@
-import { css, html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { infoCircleTooltipStyles } from "./info-circle-tooltip.styles";
 import { ifDefined } from "lit/directives/if-defined.js";
 import "../components/hoist-tooltip";
 
@@ -11,37 +12,9 @@ import "../components/hoist-tooltip";
 export class InfoCircleTooltip extends LitElement {
   @property({ type: String }) text = "";
   @property({ type: String }) link = "";
+  @property({ type: Boolean }) disabled = false;
   readonly circleId = Math.random().toString(36).replace("0.", "info-circle-");
-
-  static get styles() {
-    return css`
-      .holder {
-        display: flex;
-        height: fit-content;
-      }
-      .info-circle-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        align-items: center;
-      }
-      .info-circle-btn:focus-visible {
-        outline: 2px solid var(--primary-color, #4f3fb6);
-        outline-offset: 2px;
-        border-radius: 50%;
-      }
-      .info-circle-img {
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        padding: 4px;
-        margin-left: 6px;
-      }
-    `;
-  }
+  static styles = [infoCircleTooltipStyles];
 
   constructor() {
     super();
@@ -53,6 +26,7 @@ export class InfoCircleTooltip extends LitElement {
         class="holder"
         text=${this.text}
         link="${ifDefined(this.link)}"
+        ?disabled=${this.disabled}
       >
         <button
           id="${this.circleId}"

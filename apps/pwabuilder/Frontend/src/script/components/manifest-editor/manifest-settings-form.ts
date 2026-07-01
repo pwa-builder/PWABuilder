@@ -1,18 +1,20 @@
-import { LitElement, css, html, PropertyValueMap } from 'lit';
+import { LitElement, html, PropertyValueMap } from 'lit';
+import { manifestSettingsFormStyles } from "./manifest-settings-form.styles";
 import { customElement, property, state } from 'lit/decorators.js';
-import { required_fields, validateSingleField, singleFieldValidation, Manifest } from '@pwabuilder/manifest-validation';
+import type { singleFieldValidation } from '../../models/single-field-validation';
+import { required_fields } from '../../models/manifest-fields';
+import type { Manifest } from '../../models/manifest';
 import { classMap } from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
-import '@shoelace-style/shoelace/dist/components/option/option.js';
-import '@shoelace-style/shoelace/dist/components/details/details.js';
-import '@shoelace-style/shoelace/dist/components/menu/menu.js';
-import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
-import '@shoelace-style/shoelace/dist/components/divider/divider.js';
-import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 import { errorInTab, insertAfter } from "../../utils/helpers";
 import { langCodes, languageCodes } from "../../../locales";
+import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
+import '@awesome.me/webawesome/dist/components/details/details.js';
+import '@awesome.me/webawesome/dist/components/divider/divider.js';
+import '@awesome.me/webawesome/dist/components/dropdown-item/dropdown-item.js';
+import '@awesome.me/webawesome/dist/components/input/input.js';
+import '@awesome.me/webawesome/dist/components/option/option.js';
+import '@awesome.me/webawesome/dist/components/select/select.js';
 
 const settingsFields = ["start_url", "scope", "orientation", "lang", "dir", "display", "display_override"];
 const displayOptions: Array<string> = ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
@@ -42,267 +44,7 @@ export class ManifestSettingsForm extends LitElement {
 
 
 
-    static get styles() {
-        return css`
-
-      :host {
-        --sl-focus-ring-width: 3px;
-        --sl-input-focus-ring-color: #4f3fb670;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #4F3FB6ac;
-        --sl-input-font-family: Hind, sans-serif;
-      }
-
-      sl-input::part(base),
-      sl-select::part(form-control),
-      sl-menu-item::part(base),
-      sl-option::part(base),
-      sl-menu-label::part(base),
-      sl-checkbox::part(base) {
-        --sl-input-font-size-medium: 16px;
-        --sl-font-size-medium: 16px;
-        --sl-font-size-small: 14px;
-        --sl-input-height-medium: 3em;
-        --sl-toggle-size: 16px;
-        --sl-toggle-size-small: 16px;
-        --sl-input-font-size-small: 16px;
-      }
-      sl-input::part(base),
-      sl-select::part(combobox),
-      sl-details::part(base){
-        background-color: #fbfbfb;
-      }
-      #form-holder {
-        display: flex;
-        flex-direction: column;
-        row-gap: 1em;
-      }
-      .form-row {
-        display: flex;
-        column-gap: 1em;
-      }
-      .form-row h3 {
-        font-size: 18px;
-        margin: 0;
-      }
-      .field-desc {
-        font-size: 14px;
-        margin: 0;
-        color: #717171;
-      }
-      sl-input::part(input), 
-      sl-select::part(display-input), 
-      sl-details::part(summary){
-        color: #717171;
-      }
-      .long .form-field {
-        width: 100%;
-      }
-      .form-field {
-        width: 50%;
-        row-gap: .25em;
-        display: flex;
-        flex-direction: column;
-      }
-      .form-field p {
-        font-size: 14px;
-      }
-      .field-header{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        column-gap: 5px;
-      }
-
-      .header-left{
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-      .color_field {
-        display: flex;
-        flex-direction: column;
-      }
-      .color-holder {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-      .toolTip {
-        font-size: 14px;
-        visibility: hidden;
-        width: 150px;
-        background: black;
-        color: white;
-        font-weight: 500;
-        text-align: center;
-        border-radius: 6px;
-        padding: .75em;
-        /* Position the tooltip */
-        position: absolute;
-        top: 20px;
-        left: -25px;
-        z-index: 1;
-        box-shadow: 0px 2px 20px 0px #0000006c;
-      }
-      .field-header a {
-        display: flex;
-        align-items: center;
-        position: relative;
-        color: black;
-      }
-      a:hover .toolTip {
-        visibility: visible;
-      }
-      a:visited, a:focus {
-        color: black;
-      }
-      sl-menu {
-        width: 100%;
-      }
-
-      .error::part(base){
-        border-color: #eb5757;
-        --sl-input-focus-ring-color: ##eb575770;
-        --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #eb5757ac;
-      }
-
-      .error::part(control){
-        border-color: #eb5757;
-      }
-
-      #override-list {
-        display: flex;
-        flex-direction: column;
-        row-gap: 5px;
-      }
-      #override-item {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-
-      #override-item::part(label){
-        font-size: 16px;
-      }
-
-      sl-details {
-        width: 100%;
-      }
-      sl-details::part(base){
-        width: 100%;
-        max-height: fit-content
-      }
-      sl-details::part(header){
-        padding: 10px 15px;
-        font-size: 16px;
-      }
-
-      sl-details:focus {
-        outline: 5px solid var(--sl-input-focus-ring-color);
-        border-radius: 5px;
-      }
-
-      sl-details.error:focus {
-        outline: 5px solid #eb575770;
-        border-radius: 5px;
-      }
-
-      .menu-prefix {
-        padding: 0 .5em;
-        font-weight: 600;
-        padding-top: 3px;
-        font-size: 14px;
-        margin: 0;
-      }
-
-      #override-options-grid{
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        gap: .25em .5em;
-      }
-
-      #override-options-grid sl-checkbox::part(label) {
-        font-size: 16px;
-        line-height: 16px;
-        margin-left: .25em;
-      }
-
-      .focus {
-        color: #4f3fb6;
-      }
-
-      sl-menu-item:focus-within::part(base) {
-        color: #ffffff;
-        background-color: #4F3FB6;
-      }
-      
-      sl-menu-item::part(base):hover {
-        color: #ffffff;
-        background-color: #4F3FB6;
-      }
-
-      sl-option:focus-within::part(base) {
-        color: #ffffff;
-        background-color: #4F3FB6;
-      }
-      
-      sl-option::part(base):hover {
-        color: #ffffff;
-        background-color: #4F3FB6;
-      }
-
-      sl-checkbox[checked]::part(control) {
-        background-color: #4f3fb6;
-        border-color: #4f3fb6;
-        color: #ffffff;
-      }
-
-
-      @media(max-width: 765px){
-        .form-row {
-          flex-direction: column;
-          row-gap: 1em;
-        }
-        .form-field {
-          width: 100%;
-        }
-      }
-
-      @media(max-width: 480px){
-        sl-input::part(base),
-        sl-select::part(control),
-        sl-menu-item::part(base),
-        sl-option::part(base) {
-          --sl-input-font-size-medium: 14px;
-          --sl-font-size-medium: 14px;
-          --sl-input-height-medium: 2.5em;
-        }
-
-        .form-row p {
-          font-size: 12px;
-        }
-
-        .form-row h3 {
-          font-size: 16px;
-        }
-        .field-header a:after {
-          content: "";
-          position: absolute;
-          left: -13px;
-          top: -13px;
-          z-index: -1;
-          width: 40px;
-          height: 40px;
-          border-radius: 7px;
-        }
-      }
-    `;
-    }
+    static styles = [manifestSettingsFormStyles];
 
     constructor() {
         super();
@@ -348,59 +90,54 @@ export class ManifestSettingsForm extends LitElement {
 
     async validateAllFields() {
 
+        const { validateSingleField } = await import('@pwabuilder/manifest-validation');
+
         for (let i = 0; i < settingsFields.length; i++) {
             let field = settingsFields[i];
+            let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
+
+            // Clear any previous error state for this field first so re-validation is
+            // idempotent: a field that has since become valid (e.g. start_url that was
+            // missing while the manifest was still loading) sheds its stale error.
+            input?.classList.remove("error");
+            let existingErrorDiv = this.shadowRoot!.querySelector(`.${field}-error-div`);
+            if (existingErrorDiv) {
+                existingErrorDiv.parentElement!.removeChild(existingErrorDiv);
+            }
+            delete this.errorMap[field];
+
+            let invalid = false;
+            let errors: string[] = [];
 
             if (field in this.manifest) {
                 const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
-                let passed = validation!.valid;
-
-                if (!passed) {
-                    let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-                    input!.classList.add("error");
-
-                    if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
-                        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-                        error_div!.parentElement!.removeChild(error_div!);
-                    }
-
-                    // update error list
-                    if (validation.errors) {
-                        let div = document.createElement('div');
-                        div.classList.add(`${field}-error-div`);
-                        this.errorMap[field] = 0;
-                        validation.errors.forEach((error: string) => {
-                            let p = document.createElement('p');
-                            p.innerText = error;
-                            p.style.color = "#eb5757";
-                            p.setAttribute('aria-live', 'polite');
-                            div.append(p);
-                            this.errorMap[field]++;
-                        });
-                        insertAfter(div, input!.parentNode!.lastElementChild);
-                    }
+                if (!validation!.valid) {
+                    invalid = true;
+                    errors = validation.errors ?? [];
                 }
-            } else {
-                /* This handles the case where the field is not in the manifest.. 
+            } else if (required_fields.includes(field)) {
+                /* This handles the case where the field is not in the manifest..
                 we only want to make it red if its REQUIRED. */
-                if (required_fields.includes(field)) {
-                    let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
-                    input!.classList.add("error");
+                invalid = true;
+                errors = [`${field} is required and is missing from your manifest.`];
+            }
 
-                    if (this.shadowRoot!.querySelector(`.${field}-error-div`)) {
-                        let error_div = this.shadowRoot!.querySelector(`.${field}-error-div`);
-                        error_div!.parentElement!.removeChild(error_div!);
-                    }
-                    this.errorMap[field] = 0;
-                    let div = document.createElement('div');
-                    div.classList.add(`${field}-error-div`);
+            if (invalid) {
+                input?.classList.add("error");
+
+                let div = document.createElement('div');
+                div.classList.add(`${field}-error-div`);
+                this.errorMap[field] = 0;
+                errors.forEach((error: string) => {
                     let p = document.createElement('p');
-                    p.innerText = `${field} is required and is missing from your manifest.`;
+                    p.innerText = error;
                     p.style.color = "#eb5757";
+                    p.setAttribute('aria-live', 'polite');
                     div.append(p);
                     this.errorMap[field]++;
-                    insertAfter(div, input!.parentNode!.lastElementChild);
-
+                });
+                if (input) {
+                    insertAfter(div, input.parentNode!.lastElementChild);
                 }
             }
         }
@@ -443,6 +180,7 @@ export class ManifestSettingsForm extends LitElement {
         });
         this.dispatchEvent(fieldChangeAttempted);
 
+        const { validateSingleField } = await import('@pwabuilder/manifest-validation');
         const validation: singleFieldValidation = await validateSingleField(fieldName!, updatedValue);
         let passed = validation!.valid;
 
@@ -515,7 +253,7 @@ export class ManifestSettingsForm extends LitElement {
         });
         this.dispatchEvent(fieldChangeAttempted);
 
-        let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`sl-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`sl-menu-item[value="${label}"]`);
+        let checkbox = origin === "checkbox" ? this.shadowRoot!.querySelector(`wa-checkbox[value="${label}"]`) : this.shadowRoot!.querySelector(`wa-dropdown-item[value="${label}"]`);
 
         let active = !(checkbox as HTMLInputElement)!.checked;
 
@@ -541,6 +279,7 @@ export class ManifestSettingsForm extends LitElement {
         }
 
         let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+        const { validateSingleField } = await import('@pwabuilder/manifest-validation');
         const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
         let passed = validation!.valid;
 
@@ -606,14 +345,14 @@ export class ManifestSettingsForm extends LitElement {
           <div class="form-field">
             <div class="field-header">
               <div class="header-left">
-                <h3 class=${classMap(this.decideFocus("start_url"))}>Start URL</h3>
+                <h3 class=${classMap(this.decideFocus("start_url"))}>Start URL<span class="required-asterisk">*</span></h3>
                 <manifest-field-tooltip .field=${"start_url"}></manifest-field-tooltip>
               </div>
 
               <p class="field-desc">(required)</p>
             </div>
             <p class="field-desc">The URL that loads when your PWA starts</p>
-            <sl-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @sl-change=${this.handleInputChange} required></sl-input>
+            <wa-input placeholder="PWA Start URL" value=${this.manifest.start_url! || ""} data-field="start_url" @change=${this.handleInputChange} required></wa-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -623,9 +362,9 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The text direction of your PWA</p>
-            <sl-select placeholder="Select a Direction" data-field="dir" ?hoist=${true} value=${this.manifest.dir! || ""} @sl-change=${this.handleInputChange}>
-              ${dirOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
-            </sl-select>
+            <wa-select placeholder="Select a Direction" data-field="dir" ?hoist=${true} value=${this.manifest.dir! || ""} @change=${this.handleInputChange}>
+              ${dirOptions.map((option: string) => html`<wa-option value=${option}>${option}</wa-option>`)}
+            </wa-select>
           </div>
         </div>
         <div class="form-row">
@@ -637,7 +376,7 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">Which URLs can load within your app</p>
-            <sl-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @sl-change=${this.handleInputChange}></sl-input>
+            <wa-input placeholder="PWA Scope" data-field="scope" value=${this.manifest.scope! || ""} @change=${this.handleInputChange}></wa-input>
           </div>
           
           <div class="form-field">
@@ -648,9 +387,9 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The primary language of your app</p>
-            <sl-select placeholder="Select a Language" data-field="lang" ?hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @sl-change=${this.handleInputChange}>
-              ${languageCodes.map((lang: langCodes) => html`<sl-option value=${lang.code}>${lang.formatted}</sl-option>`)}
-            </sl-select>
+            <wa-select placeholder="Select a Language" data-field="lang" ?hoist=${true} value=${this.parseLangCode(this.manifest.lang!) || ""} @change=${this.handleInputChange}>
+              ${languageCodes.map((lang: langCodes) => html`<wa-option value=${lang.code}>${lang.formatted}</wa-option>`)}
+            </wa-select>
           </div>
         </div>
         <div class="form-row">
@@ -662,9 +401,9 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The default screen orientation of your app</p>
-            <sl-select placeholder="Select an Orientation" data-field="orientation" ?hoist=${true} value=${this.manifest.orientation! || ""} @sl-change=${this.handleInputChange}>
-              ${orientationOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
-            </sl-select>
+            <wa-select placeholder="Select an Orientation" data-field="orientation" ?hoist=${true} value=${this.manifest.orientation! || ""} @change=${this.handleInputChange}>
+              ${orientationOptions.map((option: string) => html`<wa-option value=${option}>${option}</wa-option>`)}
+            </wa-select>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -674,9 +413,9 @@ export class ManifestSettingsForm extends LitElement {
               </div>
             </div>
             <p class="field-desc">The appearance of your app window</p>
-            <sl-select placeholder="Select a Display" data-field="display" ?hoist=${true} value=${this.manifest.display! || ""} @sl-change=${this.handleInputChange}>
-              ${displayOptions.map((option: string) => html`<sl-option value=${option}>${option}</sl-option>`)}
-            </sl-select>
+            <wa-select placeholder="Select a Display" data-field="display" ?hoist=${true} value=${this.manifest.display! || ""} @change=${this.handleInputChange}>
+              ${displayOptions.map((option: string) => html`<wa-option value=${option}>${option}</wa-option>`)}
+            </wa-select>
           </div>
         </div>
         <div class="form-row long">
@@ -689,30 +428,30 @@ export class ManifestSettingsForm extends LitElement {
             </div>
             <p class="field-desc">Used to determine the preferred display mode</p>
             <div id="override-list">
-            <sl-details summary="Click to edit display override" data-field="display_override">
-              <sl-menu>
-                <sl-menu-label>Active Override Items</sl-menu-label>
+            <wa-details summary="Click to edit display override" data-field="display_override">
+              <div class="override-menu">
+                <div class="override-menu-label">Active Override Items</div>
                 ${this.activeOverrideItems.length != 0 ?
                 this.activeOverrideItems.map((item: string, index: number) =>
                     html`
-                    <sl-menu-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, "menu-item")}>
-                      <p slot="prefix" class="menu-prefix">${index + 1}</p>
+                    <wa-dropdown-item class="override-item" value=${item} @click=${() => this.toggleOverrideList(item, "menu-item")}>
+                      <p slot="icon" class="menu-prefix">${index + 1}</p>
                       ${item}
-                    </sl-menu-item>
+                    </wa-dropdown-item>
                   `) :
-                html`<sl-menu-item disabled>-</sl-menu-item>`
+                html`<wa-dropdown-item disabled>-</wa-dropdown-item>`
             }
-                <sl-divider></sl-divider>
+                <wa-divider></wa-divider>
                 <div id="override-options-grid">
                   ${overrideOptions.map((item: string) =>
                 html`
-                        <sl-checkbox class="override-item" size="small" value=${item} @sl-change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
+                        <wa-checkbox class="override-item" size="s" value=${item} @change=${() => this.toggleOverrideList(item, "checkbox")} ?checked=${this.activeOverrideItems.includes(item)}>
                           ${item}
-                        </sl-checkbox>
+                        </wa-checkbox>
                       `)}
                   </div>
-              </sl-menu>
-            </sl-details>
+              </div>
+            </wa-details>
             </div>
           </div>
         </div>

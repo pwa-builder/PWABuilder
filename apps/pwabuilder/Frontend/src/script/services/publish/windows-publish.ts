@@ -1,8 +1,7 @@
-import { Manifest } from '@pwabuilder/manifest-validation';
+import type { Manifest } from '../../models/manifest';
 import { env } from '../../utils/environment';
 import { findBestAppIcon } from '../../utils/icons';
 import {
-    generateWindowsPackageId,
     validateWindowsOptions,
     WindowsPackageOptions,
 } from '../../utils/win-validation';
@@ -101,7 +100,10 @@ export function createWindowsPackageOptionsFromManifest(
     }
 
     const name = manifest.short_name || manifest.name || 'My PWA';
-    const packageID = generateWindowsPackageId(new URL(pwaURL).hostname);
+    const appName = manifest.name || manifest.short_name || 'My PWA';
+    // Build a default Windows package ID of the form "MyCompany.<AppName>",
+    // stripping characters not allowed in a Windows package ID segment.
+    const packageID = `MyCompany.${appName.replace(/[^a-zA-Z0-9]/g, '')}`;
     const manifestIcons = manifest.icons || [];
 
     let languages: string[] = [];
@@ -124,7 +126,7 @@ export function createWindowsPackageOptionsFromManifest(
         version: '1.0.1',
         allowSigning: true,
         publisher: {
-            displayName: 'Contoso, Inc.',
+            displayName: 'My Company Inc',
             commonName: 'CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca',
         },
         generateModernPackage: true,
@@ -295,7 +297,7 @@ export const windowsLanguages = [
     { "codes": ["sd-arab", "sd-arab-pk", "sd-deva"], "name": "Sindhi" },
     { "codes": ["si", "si-lk"], "name": "Sinhala" },
     { "codes": ["sk", "sk-sk"], "name": "Slovak" },
-    { "codes": ["sl", "sl-si"], "name": "Slovenian" },
+    { "codes": ["sl", "wa-si"], "name": "Slovenian" },
     { "codes": ["es", "es-cl", "es-co", "es-es", "es-mx", "es-ar", "es-bo", "es-cr", "es-do", "es-ec", "es-gt", "es-hn", "es-ni", "es-pa", "es-pe", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "es-019", "es-419"], "name": "Spanish" },
     { "codes": ["sv", "sv-se", "sv-fi"], "name": "Swedish" },
     { "codes": ["tg-arab", "tg-cyrl", "tg-cyrl-tj", "tg-latn"], "name": "Tajik (Cyrillic)" },

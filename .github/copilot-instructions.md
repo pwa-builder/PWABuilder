@@ -1,28 +1,31 @@
 ---
-description: 'Guidelines for building C# and TypeScript applications'
-applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
+description: "Guidelines for building C# and TypeScript applications"
+applyTo: "**/*.cs, **/*.ts, **/*.js, **/*.css"
 ---
 
 # Project Context
+
 - This repository contains PWABuilder, a website for software developers that helps web devs create progressive web apps (PWAs) and publish them to app stores.
-- The main repository is for PWABuilder.com, the web app. Its code is located in `apps/pwabuilder`. It is a C# web app using ASP.NET Core. It serves a SPA frontend, located in `apps/pwabuilder/Frontend`, which is built with TypeScript, Lit, and Shoelace. The frontend uses the Vite build system. It communicates with the backend via a REST API.
+- The main repository is for PWABuilder.com, the web app. Its code is located in `apps/pwabuilder`. It is a C# web app using ASP.NET Core. It serves a SPA frontend, located in `apps/pwabuilder/Frontend`, which is built with TypeScript, Lit, and WebAwesome. The frontend uses the Vite build system. It communicates with the backend via a REST API.
 - The repository also contains some PWABuilder-related tooling. For example, `/apps/cli` contains the PWABuilder command line app, `/apps/pwabuilder-vscode` contains VSCode tooling for PWABuilder, `/docs` contains the documentation web site (docs.pwabuilder.com) for PWABuilder.
 - Frontend is built with Typescript for type safety
 - Frontend uses Lit web components for custom elements and SPA pages.
-- Frontend uses the extrnal Shoelace library for prebuilt, styled components.
+- Frontend uses the extrnal [WebAwesome library](https://webawesome.com/docs) for prebuilt, styled components.
 
 ## Typescript Development
+
 - Enable strict mode in tsconfig.json for maximum type safety
 - Define types for method returns
 - Implement generic components and composables where applicable
 - New web components should inherit from LitElement
-- Where possible, prefer to use existing web components from the Shoelace library
+- Where possible, prefer to use existing web components from the [WebAwesome library](https://webawesome.com/docs/components)
 - Adhere to the single responsibility principle for components
 - For TypeScript files, use kebab-case for file names.
 - For custom web components built with Lit, keep them small and focused on one concern.
 - All TypeScript classes should be PascalCase.
 
 ## C# Development
+
 - When writing C#, always use the latest version C#, currently C# 13 features.
 - Write clear and concise comments for each function.
 - Use file-scoped namespaces and single-line using directives.
@@ -42,10 +45,11 @@ applyTo: '**/*.cs, **/*.ts, **/*.js, **/*.css'
 - Do not use LINQ query syntax (e.g. `from x in y select x`). Always prefer LINQ method syntax (`.Select()`, `.Where()`, ...) for consistency and clarity.
 - Do not insert more than one consecutive empty line, keep whitespace intentional and minimal.
 - Avoid excessive comments. Only add comments when the logic is non-obvious or complex — clean code should explain itself.
-- All constructors, methods, events and properties must include XML documentation to support maintainability and developer tooling.  
+- All constructors, methods, events and properties must include XML documentation to support maintainability and developer tooling.
   - When the XML documentation is already defined in an interface or base class, use only `/// <inheritdoc/>` to inherit the documentation instead of duplicating it.
 
 ## General Instructions
+
 - Make only high confidence suggestions when reviewing code changes.
 - Write code with good maintainability practices, including comments on why certain design decisions were made.
 - Handle edge cases and write clear exception handling.

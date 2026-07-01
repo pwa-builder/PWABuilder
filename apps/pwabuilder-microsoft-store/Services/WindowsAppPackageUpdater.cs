@@ -16,7 +16,7 @@ namespace PWABuilder.MicrosoftStore
     /// and updates its package ID, publisher ID, and publisher display name.
     /// </summary>
     /// <remarks>
-    /// This is used by Windows Partner Center to automatically fill in PWA package information.
+    /// This is used by Microsoft Partner Center to automatically fill in PWA package information.
     /// </remarks>
     public class WindowsAppPackageUpdater : IDisposable
     {
