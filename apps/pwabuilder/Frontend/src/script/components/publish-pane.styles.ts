@@ -120,7 +120,6 @@ export const publishPaneStyles = css`
 	.platform-header {
 		display: flex;
 		align-items: center;
-		column-gap: .6em;
 	}
 
 	.platform-icon {
