@@ -8,14 +8,6 @@ import {
 } from '../utils/css/breakpoints';
 
 export const homeStyles = css`
-	:host {
-		--wa-input-focus-ring-width: 3px;
-		--wa-input-focus-ring-color: #595959;
-		--wa-input-focus-ring: 0 0 0 var(--wa-input-focus-ring-width) var(--wa-input-focus-ring-color);
-		--wa-input-border-color-focus: #4F3FB6ac;
-		--wa-color-brand-50: var(--primary-color);
-	}
-
 	#home-block::before {
 		content: "";
 	}

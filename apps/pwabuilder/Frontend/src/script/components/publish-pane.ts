@@ -667,7 +667,7 @@ export class PublishPane extends LitElement {
                   <img src="${this.storeMap[this.selectedStore].logo}" alt="${this.selectedStore} logo" />
                   <div id="pp-form-header-text">
                     <h1>${this.friendlyStoreName} Package Options</h1>
-                    <p>Customize your ${this.friendlyStoreName} package</p>
+                    <p>Customize your app for the app store</p>
                   </div>
                 </div>
               </div>

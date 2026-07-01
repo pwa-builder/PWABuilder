@@ -93,6 +93,32 @@
   /* Other */
   --placeholder-color: #a9a9a9;
 
+  /* WebAwesome theming
+     Point WebAwesome's focus color at our brand color so every <wa-*> element
+     (inputs, buttons, etc.) renders the same brand-purple focus ring. Every
+     component's focus outline resolves from --wa-color-focus, so overriding it
+     here (unlayered, thus beating the theme's layered default) applies globally. */
+  --wa-color-focus: var(--primary-color);
+
+  /* Remap WebAwesome's brand color palette from its default blue to our brand
+     purple so brand-colored states (checked radios/checkboxes, brand buttons,
+     links, etc.) are consistent with --primary-color. Semantic tokens derive
+     from these tints: --wa-color-brand-fill-loud (checked fill) = brand-50,
+     which we anchor to exactly #4f3fb6 (== --primary-color). The remaining
+     tints form a monotonic light-to-dark ramp on the same hue.
+     See https://webawesome.com/docs/customizing/#color-palettes */
+  --wa-color-brand-95: #f1f2ff;
+  --wa-color-brand-90: #e1e3ff;
+  --wa-color-brand-80: #c0c2ff;
+  --wa-color-brand-70: #9e9ef8;
+  --wa-color-brand-60: #756ede;
+  --wa-color-brand-50: #4f3fb6;
+  --wa-color-brand-40: #412f9e;
+  --wa-color-brand-30: #31217f;
+  --wa-color-brand-20: #21125e;
+  --wa-color-brand-10: #11073b;
+  --wa-color-brand-05: #080225;
+
   font-variant-ligatures: no-common-ligatures;
 }
 

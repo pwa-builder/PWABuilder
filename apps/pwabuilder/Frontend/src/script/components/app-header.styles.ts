@@ -1,12 +1,12 @@
 import { css } from "lit";
 import {
-  xxxLargeBreakPoint,
-  xxLargeBreakPoint,
-  xLargeBreakPoint,
-  largeBreakPoint,
-  mediumBreakPoint,
-  smallBreakPoint,
-  xSmallBreakPoint,
+    xxxLargeBreakPoint,
+    xxLargeBreakPoint,
+    xLargeBreakPoint,
+    largeBreakPoint,
+    mediumBreakPoint,
+    smallBreakPoint,
+    xSmallBreakPoint,
 } from '../utils/css/breakpoints';
 
 export const appHeaderStyles = css`
@@ -96,12 +96,9 @@ export const appHeaderStyles = css`
 		display: flex;
 		flex-direction: column;
 		background-color: white;
-		gap: 5px;
-		color: #777777;
 		font-size: 16px;
 		border-radius: 5px;
 		height: fit-content;
-		width: 136px;
 		padding: 16px 22px;
 	}
 
@@ -110,7 +107,6 @@ export const appHeaderStyles = css`
 	}
 
 	wa-dropdown-item::part(label) {
-		color: #777777;
 		text-decoration: none;
 		border-bottom: none;
 		font-size: 14px;
