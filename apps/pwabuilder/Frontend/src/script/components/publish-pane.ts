@@ -568,6 +568,15 @@ export class PublishPane extends LitElement {
         return `${getURL()}-${this.selectedStore}-form-data`;
     }
 
+    private get friendlyStoreName(): string {
+        switch (this.selectedStore) {
+            case "Windows": return "Microsoft Store";
+            case "Android": return "Google Play Store";
+            case "iOS": return "Apple iOS App Store";
+            default: return this.selectedStore;
+        }
+    }
+
     // Save form data to IndexedDB
     async saveFormData() {
         try {
@@ -657,8 +666,8 @@ export class PublishPane extends LitElement {
                 <div id="pp-form-header-content">
                   <img src="${this.storeMap[this.selectedStore].logo}" alt="${this.selectedStore} logo" />
                   <div id="pp-form-header-text">
-                    <h1>${this.selectedStore} Package Options</h1>
-                    <p>Customize your ${this.selectedStore} app below!</p>
+                    <h1>${this.friendlyStoreName} Package Options</h1>
+                    <p>Customize your ${this.friendlyStoreName} package</p>
                   </div>
                 </div>
               </div>
