@@ -712,7 +712,6 @@ export class WindowsForm extends AppPackageFormBase {
       </label>
       <div id="multiSelectBox">
         <div class="multi-wrap">
-          <p class="sub-multi">Select Multiple Languages</p>
           <wa-select id="languageDrop"
             placeholder="Select one or more languages"
             @change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
@@ -744,7 +743,6 @@ export class WindowsForm extends AppPackageFormBase {
       </label>
       <div id="iconColorPicker">
         <div class="color-wrap">
-          <p class="sub-multi">Select your Windows icons background color</p>
           <wa-radio-group
             id="icon-bg-radio-group"
             .value=${'transparent'}
