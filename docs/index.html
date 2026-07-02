@@ -114,6 +114,13 @@
           function (hook) {
             // Rewrite the sidebar toggle button so it works with Windows narrator.
             hook.doneEach(function () {
+              const mainElement = document.querySelector(
+                'main[role="presentation"]'
+              );
+              if (mainElement) {
+                mainElement.removeAttribute("role");
+              }
+
               const sidebarToggleBtn =
                 document.querySelector(".sidebar-toggle");
               if (sidebarToggleBtn) {
