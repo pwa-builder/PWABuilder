@@ -137,3 +137,62 @@ test('Ensure Windows Download Package button has visible focus indicator', async
 
   expect(outlineWidth).toBe('2px');
 });
+
+test('Package for Stores dialog locks scrolling and closes on backdrop click', async ({ page }) => {
+  const demoButton = page.locator('id=demo-action');
+
+  await demoButton.click();
+  await page.waitForLoadState('networkidle');
+  await expect(page.url()).toContain('/reportcard');
+  await page.waitForLoadState('networkidle');
+
+  await page.evaluate(() => window.scrollTo(0, 500));
+  const initialScrollPosition = await page.evaluate(() => window.scrollY);
+
+  await page.evaluate(() => {
+    const appReport = document.querySelector('app-index')?.shadowRoot?.querySelector('app-report') as {
+      openPublishModal?: () => void;
+    } | null;
+
+    appReport?.openPublishModal?.();
+  });
+
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const appReport = document.querySelector('app-index')?.shadowRoot?.querySelector('app-report');
+      const dialog = appReport?.shadowRoot
+        ?.querySelector('publish-pane')
+        ?.shadowRoot
+        ?.querySelector('.dialog') as { open?: boolean } | null;
+
+      return dialog?.open ?? false;
+    });
+  }).toBe(true);
+
+  await expect.poll(async () => {
+    return page.evaluate(() => document.documentElement.style.overflowY);
+  }).toBe('hidden');
+
+  await page.mouse.wheel(0, 500);
+  await expect.poll(async () => {
+    return page.evaluate(() => window.scrollY);
+  }).toBe(initialScrollPosition);
+
+  await page.mouse.click(20, 20);
+
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const appReport = document.querySelector('app-index')?.shadowRoot?.querySelector('app-report');
+      const dialog = appReport?.shadowRoot
+        ?.querySelector('publish-pane')
+        ?.shadowRoot
+        ?.querySelector('.dialog') as { open?: boolean } | null;
+
+      return dialog?.open ?? false;
+    });
+  }).toBe(false);
+
+  await expect.poll(async () => {
+    return page.evaluate(() => document.documentElement.style.overflowY);
+  }).toBe('initial');
+});

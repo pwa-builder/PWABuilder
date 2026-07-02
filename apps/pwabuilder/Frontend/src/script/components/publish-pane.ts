@@ -24,6 +24,7 @@ import { AndroidPackageOptions } from "../utils/android-validation";
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { Router } from '@vaadin/router';
 import { AppStore, packagingCompleted, packagingFailed, packagingStarted } from '../pages/app-report.api';
+import { turnOffScroll, turnOnScroll } from '../utils/dom-utils';
 import '@awesome.me/webawesome/dist/components/button/button.js';
 import '@awesome.me/webawesome/dist/components/callout/callout.js';
 import '@awesome.me/webawesome/dist/components/dialog/dialog.js';
@@ -469,7 +470,7 @@ export class PublishPane extends LitElement {
             this.feedbackMessages = [];
             dialog!.open = false;
             recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
-            document.body.style.height = "unset";
+            turnOnScroll();
             this.cardsOrForm = true;
         }
     }
@@ -644,6 +645,8 @@ export class PublishPane extends LitElement {
       <wa-dialog
         label="Dialog"
         class=${classMap({ noX: this.preventClosing, dialog: true })}
+        .lightDismiss=${!this.preventClosing}
+        @wa-show=${() => turnOffScroll()}
         @wa-hide=${(e: any) => this.hideDialog(e)}
         @wa-request-close=${(e: any) => this.handleRequestClose(e)}
       >
