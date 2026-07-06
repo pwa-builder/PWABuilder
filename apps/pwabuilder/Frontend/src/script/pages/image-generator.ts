@@ -1,5 +1,6 @@
-import { LitElement, css, html, TemplateResult } from "lit";
+import { LitElement, html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { imageGeneratorStyles } from "./image-generator.styles";
 import { localeStrings } from "../../locales";
 
 import "../components/app-header";
@@ -7,8 +8,8 @@ import "../components/app-file-input";
 import { FileInputDetails, Lazy } from "../utils/interfaces";
 
 import { recordProcessStep, AnalyticsBehavior } from "../utils/analytics";
+import '@awesome.me/webawesome/dist/components/button/button.js';
 
-import "@shoelace-style/shoelace/dist/components/button/button.js";
 
 interface PlatformInformation {
     label: string;
@@ -53,111 +54,7 @@ export class ImageGenerator extends LitElement {
 
     @state() error: Lazy<string>;
 
-    static get styles() {
-        return [
-            css`
-        :host {
-          --loader-size: 1.8em;
-          --sl-input-height-medium: 1.5rem;
-        }
-
-        h1 {
-          font-size: var(--xlarge-font-size);
-          line-height: 48px;
-          letter-spacing: -0.015em;
-          margin: 0;
-        }
-
-        h2 {
-          font-size: var(--large-font-size);
-        }
-
-        p {
-          font-size: var(--font-size);
-        }
-
-        small {
-          display: block;
-          font-size: 10px;
-        }
-
-        sl-button {
-          height: 24px;
-          padding: 8px 0;
-        }
-
-        sl-button::part(base) {
-          margin: 0 16px;
-        }
-
-        #image-generator-card {
-          background: #ffffff;
-          padding: 16px;
-        }
-
-        #submit {
-          margin-top: 8px;
-        }
-
-        #submit sl-button::part(base) {
-          background-color: var(--primary-color);
-          border-color: var(--primary-color);
-        }
-
-        .background {
-          background-color: var(--primary-color);
-          color: var(--font-color);
-        }
-
-        .main {
-          padding: 32px;
-        }
-
-        input[type="number"] {
-          width: 30%;
-          font-size: 22px;
-        }
-        small {
-          margin-top: 10px;
-        }
-        .color-radio, .platform-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .color-radio >*, .platform-list >* {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        input[type="radio"] {
-          border: 0px;
-          width: 22px;
-          height: 22px;
-          margin: 0;
-          accent-color: var(--primary-color);
-        }
-
-        input[type="radio"]:hover {
-          cursor: pointer;
-        }
-
-        input[type="checkbox"] {
-          border: 0px;
-          width: 22px;
-          height: 22px;
-          margin: 0;
-          accent-color: var(--primary-color);
-        }
-
-        input[type="checkbox"]:hover {
-          cursor: pointer;
-        }
-      `,
-        ];
-    }
+    static styles = [imageGeneratorStyles];
 
     constructor() {
         super();
@@ -224,12 +121,12 @@ export class ImageGenerator extends LitElement {
                 </div>
               </section>
               <section id="submit" class="form-bottom">
-                <sl-button id="generateButton" variant="primary" ?disabled=${!this.generateEnabled || this.generating}
+                <wa-button id="generateButton" variant="brand" ?disabled=${!this.generateEnabled || this.generating}
                   @click=${this.generateZip}
                   ?loading=${this.generating}>
                   ${localeStrings.button.generate}
 
-                </sl-button>
+                </wa-button>
 
                 ${this.renderError()}
               </section>

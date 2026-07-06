@@ -46,9 +46,10 @@ Your zip file [contains 2 app packages](/docs/what-is-a-classic-package/):
 - `{app name}.msixbundle` - the main app package
 - `{app name}.classic.appxbundle` - app package that allows users on older versions of Windows (below 10.0.19041, May 2020 Update) to run your app. See our [classic app package explainer](/docs/what-is-a-classic-package/) for details.
 
-Both packages can be submitted directly to the Microsoft Store through the [Windows Partner Center](https://partner.microsoft.com/dashboard)
+Both packages can be submitted directly to the Microsoft Store through the [Microsoft Partner Center](https://partner.microsoft.com/dashboard)
 
 When you're ready to publish to the Store, you can either
+
 - [Publish a new app in the Store](/docs/publish-a-new-app-to-the-microsoft-store/) 
 - [Update an existing app in the Store](/docs/update-an-existing-app-in-the-microsoft-store/)
 

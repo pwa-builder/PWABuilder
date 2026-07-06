@@ -22,7 +22,7 @@ This guide shows how to publish your PWA as an update to an existing app in the 
 
 ## Choose the app you want to update
 
-Login to [Windows Partner Center](https://partner.microsoft.com/dashboard), then go to `Windows & Xbox` -> `Overview`. Your existing apps will be listed:
+Login to [Microsoft Partner Center](https://partner.microsoft.com/dashboard), then go to `Windows & Xbox` -> `Overview`. Your existing apps will be listed:
 
 <img loading="lazy" alt="A screenshot that shows your existing apps list" src="/docs/windows/update-existing-app/existing-apps.png" width="350px" />
 

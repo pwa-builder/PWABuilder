@@ -2,7 +2,7 @@
 
 This project contains the source code for PWABuilder frontend [pwabuilder.com](https://www.pwabuilder.com) and backend API. 
 
-The backend API is built using ASP.NET Core and the frontend is built using Lit web components, Shoelace web component library, Vite build system, and TypeScript.
+The backend API is built using ASP.NET Core and the frontend is built using Lit web components, [WebAwesome](https://webawesome.com/docs) web component library, Vite build system, and TypeScript.
 
 The backend uses Redis atomic lists for storing PWA analysis tasks to be processed. It uses Redis cache in Azure for storing the results of PWA analyses.
 

@@ -60,12 +60,17 @@ public class ViteEntryPointProvider
 
         var jsPath = jsRegexResult.Groups[1].Value;
 
+        // Match the bundled stylesheet link, tolerating any additional attributes
+        // between rel="stylesheet" and href (e.g. the `crossorigin` attribute Vite
+        // emits). A stricter regex that required href immediately after rel silently
+        // failed once Vite started adding crossorigin, leaving EntryPointCss empty and
+        // shipping the app with no Web Awesome theme tokens (transparent form controls).
         var cssRegex = new Regex(
-            "<link\\s+rel=['|\"]stylesheet['|\"]\\s+href=['|\"](/code/index-[a-z0-9]+\\.css)['|\"]",
+            "<link\\s+[^>]*?rel=['\"]stylesheet['\"][^>]*?href=['\"](/code/index-[a-zA-Z0-9_-]+\\.css)['\"]",
             RegexOptions.IgnoreCase
         );
         var cssRegexResult = cssRegex.Match(fileContents);
-        if (cssRegexResult.Success && cssRegexResult.Groups.Count < 2)
+        if (!cssRegexResult.Success)
         {
             throw new InvalidOperationException(
                 $"Unable to find the CSS entry point in {indexHtmlPath}. Has the format of the file been changed?"

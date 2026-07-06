@@ -24,12 +24,12 @@ In order to publish your PWA in the Microsoft Store, you'll need three things:
 2. `Publisher ID`
 3. `Publisher display name`
 
-To get this information, go to [Windows Partner Center](https://partner.microsoft.com/dashboard) and click on your app.
+To get this information, go to [Microsoft Partner Center](https://partner.microsoft.com/dashboard) and click on your app.
 
 Choose `Product Management` -> `Product Identity`:
 
 <div class="docs-image">
-     <img src="/assets/builder/faq/required-data-from-partner-center.png" alt="The partner center showing the required data" width=600>
+     <img src="/assets/builder/faq/required-data-from-partner-center.png" alt=" Microsoft Partner Center showing the required data" width=600>
 </div>
 
 You'll see the Package ID, Publisher ID, and publisher display name. You'll need all three of these to publish in the Store.
@@ -47,7 +47,7 @@ This means the app name you used when generating your app package on PWABuilder 
 The app name that you chose in in Partner Center:
 
 <div class="docs-image">
-     <img src="/assets/builder/faq/app-name.png" alt="The app name in partner center" width=500>
+     <img src="/assets/builder/faq/app-name.png" alt="The app name in Microsoft Partner Center" width=500>
 </div>
 
 Has to match the app name you used on PWABuilder:

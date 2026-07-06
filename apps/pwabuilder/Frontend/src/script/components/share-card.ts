@@ -1,11 +1,11 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { smallBreakPoint } from '../utils/css/breakpoints';
 import { draw } from '../utils/share-card-helper';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
+import { shareCardStyles } from "./share-card.styles";
+import '@awesome.me/webawesome/dist/components/dialog/dialog.js';
 @customElement('share-card')
 export class ShareCard extends LitElement {
 
@@ -25,153 +25,7 @@ export class ShareCard extends LitElement {
   canvas!: HTMLCanvasElement;
 
 
-  static get styles() {
-    return css`
-      .dialog::part(header){
-        margin-bottom: 20px;
-      }
-      .dialog::part(body){
-        padding: 0;
-        width: 100%;
-      }
-      .dialog::part(title){
-        display: none;
-      }
-      .dialog::part(panel) {
-        width: 460px !important;
-        height: auto;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border-radius: 10px;
-      }
-      .dialog::part(overlay){
-        backdrop-filter: blur(10px);
-      }
-      .dialog::part(close-button__base){
-        position: absolute;
-        padding: 0;
-        top: 5px;
-        right: 5px;
-        z-index: 1000;
-        color: #000000;
-      }
-      .dialog::part(close-button__base):focus-visible {
-        outline: 2px solid #4f3fb6;
-        outline-offset: 2px;
-      }
-      .dialog_header {
-        height: 12px !important;
-      }
-      .share-modal-header {
-        font-weight: 600;
-        font-size: 16px;
-        line-height: 22px;
-        text-align: center;
-        color: #292C3A;
-      }
-      #frame-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        padding: 0 20px;
-      }
-      #frame-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-      }
-
-      #canvas-holder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #myCanvas {
-        width: 413px;
-        height: 322px;
-        margin: 20px 0;
-      }
-
-      #share-actions {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 15px;
-        gap: 10px;
-        text-align: center;
-      }
-      .standard-button {
-        padding: 12px 40px;
-        white-space: nowrap;
-        width: 80px;
-        height: 45px;
-        font-size: var(--button-font-size);
-        font-weight: bold;
-        border-radius: var(--button-border-radius);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-      }
-
-      #share-button {
-        padding: 12px 30px;
-      }
-
-      .standard-button-label {
-        font-size: 14px;
-        font-weight: bold;
-        color: #292C3A;
-      }
-
-      .standard-button:hover {
-        cursor: pointer;
-        box-shadow: var(--button-box-shadow);
-      }
-      .standard-button:focus-visible {
-        outline: 2px solid #4f3fb6;
-        outline-offset: 2px;
-      }
-      .primary {
-        background-color: var(--font-color);
-        border-color: var(--font-color);
-        color: var(--primary-color);
-      }
-
-      .secondary {
-        border: 1px solid var(--primary-color);
-        color: var(--primary-color);
-        background-color: transparent;
-      }
-
-      .actions-icons {
-        width: 25px;
-        height: auto;
-      }
-
-      ${smallBreakPoint(css`
-
-        #myCanvas {
-          width: 313px;
-          height: auto;
-        }
-
-        #share-actions {
-          justify-content: space-evenly;
-        }
-
-        .standard-button {
-          margin-bottom: 8px;
-        }
-
-      `)}
-    `
-  }
+  static styles = [shareCardStyles];
 
   async setup(){
     this.canvas = (this.shareCanvas.value as HTMLCanvasElement);
@@ -249,7 +103,7 @@ export class ShareCard extends LitElement {
 
   hideDialog(){
     let dialog: any = this.shadowRoot!.querySelector(".dialog");
-    dialog!.hide();
+    dialog!.open = false;
   }
 
   handleRequestClose(e: Event){
@@ -260,7 +114,7 @@ export class ShareCard extends LitElement {
 
   render() {
     return html`
-      <sl-dialog class="dialog" @sl-show=${() => this.setup()} @sl-hide=${() => this.hideDialog()} noHeader>
+      <wa-dialog class="dialog" @wa-show=${() => this.setup()} @wa-hide=${() => this.hideDialog()}>
         <div class="share-modal-header">Share your PWA score with the community!</div>
         <div id="frame-wrapper">
           <div id="frame-content">
@@ -287,7 +141,7 @@ export class ShareCard extends LitElement {
             </div>
           </div>
         </div>
-      </sl-dialog>
+      </wa-dialog>
     `
   }
 }

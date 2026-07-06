@@ -1,4 +1,4 @@
-import { Manifest } from '@pwabuilder/manifest-validation';
+import type { Manifest } from '../models/manifest';
 import { LitElement } from 'lit';
 
 export type Lazy<T> = T | undefined;
