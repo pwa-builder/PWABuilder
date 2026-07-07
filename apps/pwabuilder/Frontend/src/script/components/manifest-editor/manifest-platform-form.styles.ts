@@ -189,6 +189,8 @@ export const manifestPlatformFormStyles = css`
 	.field-holder {
 		display: flex;
 		flex-direction: column;
+        gap: 12px;
+        padding: 6px;
 	}
 
 	.shortcut-header{
@@ -208,8 +210,7 @@ export const manifestPlatformFormStyles = css`
 	}
 
 	.field-holder wa-button {
-		width: 50%;
-		align-self: flex-end;
+		align-self: flex-start;
 	}
 
 	.long-items {
@@ -236,8 +237,8 @@ export const manifestPlatformFormStyles = css`
 	.items-holder {
 		display: flex;
 		align-items: flex-start;
+        flex-direction: column;
 		column-gap: 10px;
-		overflow-x: scroll;
 		padding-bottom: 10px;
 	}
 
