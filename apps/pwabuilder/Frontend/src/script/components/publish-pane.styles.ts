@@ -312,6 +312,7 @@ export const publishPaneStyles = css`
 		width: 100%;
 		overflow: auto;
 		position: relative;
+        padding-top: 12px;
 	}
 
 	#form-area[data-store="Android"] {

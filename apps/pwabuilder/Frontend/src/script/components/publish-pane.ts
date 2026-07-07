@@ -8,7 +8,7 @@ import {
 } from '../utils/analytics';
 import { getURL } from '../services/app-info';
 import { generatePackage, Platform } from '../services/publish';
-import { showToast } from '../services/toasts';
+import { showToast } from '../services/toast-service';
 
 
 import './windows-form';
@@ -344,7 +344,7 @@ export class PublishPane extends LitElement {
 
         if (err.message === "Failed to fetch") {
             title = err.message;
-            quick_desc = "Our service was unable to package your PWA.";
+            quick_desc = `We couldn't package your PWA for the store`;
             hyperlinkText = "Open an issue on GitHub";
             hyperlinkUrl = "https://github.com/pwa-builder/PWABuilder/issues/new/choose";
             stack_trace += "No stack trace available";
@@ -376,7 +376,7 @@ export class PublishPane extends LitElement {
         }
         // Show the error as a toast (rendered outside the publish pane) and close
         // the dialog so the message isn't hidden behind / overlapping the pane.
-        showToast(title || "Error generating package", quick_desc, "danger", "exclamation-octagon", 10000, "rtl", hyperlinkText, hyperlinkUrl);
+        showToast({ title: title || "Error generating package", details: quick_desc, variant: "danger", icon: "exclamation-octagon", countdown: true, hyperlinkText, hyperlinkUrl });
         console.error("Error generating package", { title, quick_desc, stack_trace });
         this.closePane();
     }
