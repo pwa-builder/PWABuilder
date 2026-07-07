@@ -85,7 +85,7 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
-                return await ValidateFetchedImageAsync(imageUrl, headResponse.Content.Headers.ContentType?.MediaType, headResponse.Headers.Server?.ToString());
+                return await ValidateFetchedImageAsync(imageUrl, headResponse.Content.Headers.ContentType?.MediaType);
             }
         }
         catch (Exception headException)
@@ -105,7 +105,7 @@ public class ImageValidationService : IImageValidationService
 
             if (response.IsSuccessStatusCode)
             {
-                return await ValidateFetchedImageAsync(imageUrl, response.Content.Headers.ContentType?.MediaType, response.Headers.Server?.ToString());
+                return await ValidateFetchedImageAsync(imageUrl, response.Content.Headers.ContentType?.MediaType);
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
@@ -328,7 +328,7 @@ public class ImageValidationService : IImageValidationService
     /// <param name="contentType">The content type returned by the server, if any.</param>
     /// <param name="server">The value of the response's Server header, if any.</param>
     /// <returns>True if the image is valid, otherwise an error describing the problem.</returns>
-    private async Task<Result<bool>> ValidateFetchedImageAsync(Uri imageUrl, string? contentType, string? server)
+    private async Task<Result<bool>> ValidateFetchedImageAsync(Uri imageUrl, string? contentType)
     {
         // Ensure the content type is an image.
         var contentTypeCheck = EnsureImageContentType(imageUrl, contentType);
@@ -337,35 +337,19 @@ public class ImageValidationService : IImageValidationService
             return contentTypeCheck;
         }
 
-        // Vercel-hosted, Netlify-hosted, and *.run.app images always return HTTP 200, even when the
-        // image doesn't exist. For those hosts we must decode the bytes to know whether it's really there.
-        var isServerThatReturns200ForMissingImages =
-            string.Equals(server, "Vercel", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(server, "Netlify", StringComparison.OrdinalIgnoreCase)
-            || imageUrl.Host.EndsWith(".run.app", StringComparison.OrdinalIgnoreCase);
-
-        // Even on well-behaved hosts, an image can be served with a valid image content type but be
-        // corrupt. When it claims to be a decodable raster format, verify we can actually read it.
-        var claimsDecodableRasterImage = IsDecodableRasterImageType(imageUrl, contentType);
-
-        if (isServerThatReturns200ForMissingImages || claimsDecodableRasterImage)
+        // An image can exist and be served with a valid image content type but still be corrupt, or the
+        // host can return HTTP 200 for a missing image (e.g. Vercel, Netlify, *.run.app). When the image
+        // claims to be a decodable raster format, fetch and decode its bytes to confirm it's really a
+        // valid, existing image.
+        if (IsDecodableRasterImageType(imageUrl, contentType))
         {
+            // Only block when we actually fetched the bytes and they couldn't be decoded (i.e. the image
+            // is genuinely corrupt or doesn't exist). A transient fetch failure shouldn't fail an
+            // otherwise-valid PWA.
             var decodeResult = await TryDecodeImageAsync(imageUrl);
-            if (decodeResult is not ImageDecodeResult.Valid)
+            if (decodeResult is ImageDecodeResult.Undecodable)
             {
-                // For hosts that return 200 for missing images, a non-valid result most likely means
-                // the image doesn't exist.
-                if (isServerThatReturns200ForMissingImages)
-                {
-                    return new HttpRequestException($"Your PWA's web manifest refers to an image that doesn't exist: {imageUrl}.", null, System.Net.HttpStatusCode.NotFound);
-                }
-
-                // Otherwise, only block when we actually fetched the bytes and they couldn't be decoded
-                // (i.e. genuinely corrupt). A transient fetch failure shouldn't fail an otherwise-valid PWA.
-                if (decodeResult is ImageDecodeResult.Undecodable)
-                {
-                    return new HttpRequestException($"Your PWA's web manifest refers to an image that appears to be corrupt or invalid: {imageUrl}. The server returned it as {contentType ?? "an image"}, but its contents couldn't be read as an image. Try re-exporting and re-uploading the image.", null, System.Net.HttpStatusCode.UnprocessableEntity);
-                }
+                return new HttpRequestException($"Your PWA's web manifest refers to an image that appears to be corrupt or invalid: {imageUrl}. The server returned it as {contentType ?? "an image"}, but its contents couldn't be read as an image. Try re-exporting and re-uploading the image.", null, System.Net.HttpStatusCode.UnprocessableEntity);
             }
         }
 
