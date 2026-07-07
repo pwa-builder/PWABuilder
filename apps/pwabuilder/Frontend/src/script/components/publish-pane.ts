@@ -568,6 +568,22 @@ export class PublishPane extends LitElement {
         return `${getURL()}-${this.selectedStore}-form-data`;
     }
 
+    private async focusInitialWindowsField() {
+        if (this.selectedStore !== "Windows" || this.cardsOrForm) {
+            return;
+        }
+
+        const windowsForm = this.shadowRoot?.querySelector('windows-form#packaging-form') as (AppPackageFormBase & { updateComplete: Promise<unknown> }) | null;
+        if (!windowsForm) {
+            return;
+        }
+
+        await windowsForm.updateComplete;
+
+        const packageIdInput = windowsForm.shadowRoot?.getElementById('package-id-input') as HTMLElement | null;
+        packageIdInput?.focus();
+    }
+
     private get friendlyStoreName(): string {
         switch (this.selectedStore) {
             case "Windows": return "Microsoft Store";
@@ -636,6 +652,10 @@ export class PublishPane extends LitElement {
         if (changedProps.has('cardsOrForm') && !this.cardsOrForm) {
             // COMMENTED OUT: this was causing all kinds of unintended problems.
             // setTimeout(() => this.loadFormData(), 0);
+        }
+
+        if ((changedProps.has('cardsOrForm') || changedProps.has('selectedStore')) && !this.cardsOrForm) {
+            void this.focusInitialWindowsField();
         }
     }
 
