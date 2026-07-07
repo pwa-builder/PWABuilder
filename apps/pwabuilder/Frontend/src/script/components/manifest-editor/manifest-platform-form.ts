@@ -289,7 +289,10 @@ export class ManifestPlatformForm extends LitElement {
             this.shortcutHTML.push(
                 html`
           <form @submit=${(e: any) => this.addShortcutToManifest(e)} class="field-holder">
-            <h4 class="shortcut-header">Shortcut #${this.manifest.shortcuts ? this.manifest.shortcuts.length + 1 : 1}</h4>
+            <div class="editable">
+              <h4 class="shortcut-header">Shortcut #${this.manifest.shortcuts ? this.manifest.shortcuts.length + 1 : 1}</h4>
+              <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" @click="${() => this.shortcutHTML = []}"><wa-icon name="x-lg"></wa-icon></wa-button>
+            </div>
             <wa-input class="field-input" name="name" placeholder="Shortcut name" /></wa-input>
             <wa-input class="field-input" name="url" placeholder="Shortcut url" /></wa-input>
             <wa-input class="field-input" name="desc" placeholder="Shortcut description" /></wa-input>
@@ -301,7 +304,10 @@ export class ManifestPlatformForm extends LitElement {
             this.protocolHTML.push(
                 html`
           <form class="field-holder" @submit=${(e: any) => this.addProtocolToManifest(e)}>
-            <h4 class="shortcut-header">Protocol Handler #${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.length + 1 : 1}</h4>
+            <div class="editable">
+              <h4 class="shortcut-header">Protocol Handler #${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.length + 1 : 1}</h4>
+              <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" @click="${() => this.protocolHTML = []}"><wa-icon name="x-lg"></wa-icon></wa-button>
+            </div>
             <wa-input class="field-input" name="protocol" placeholder="Protocol" /></wa-input>
             <wa-input class="field-input" name="url" placeholder="URL" /></wa-input>
             <wa-button type="submit">Add to Manifest</wa-button>
@@ -312,7 +318,10 @@ export class ManifestPlatformForm extends LitElement {
             this.relatedAppsHTML!.push(
                 html`
           <form class="field-holder" @submit=${(e: any) => this.addRelatedAppToManifest(e)}>
-            <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
+            <div class="editable">
+              <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
+              <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" @click="${() => this.relatedAppsHTML = []}"><wa-icon name="x-lg"></wa-icon></wa-button>
+            </div>
             <wa-select placeholder="Select a Platform" ?hoist=${true} placement="bottom">
               ${platformOptions.map((_, i: number) => html`<wa-option value=${platformOptions[i]}>${platformText[i]}</wa-option>`)}
             </wa-select>
@@ -573,6 +582,8 @@ export class ManifestPlatformForm extends LitElement {
         } else {
             return console.error(`${field} not an accepted value for this function`);
         }
+
+        this.requestUpdate();
     }
 
     updateExistingData(tag: string) {
