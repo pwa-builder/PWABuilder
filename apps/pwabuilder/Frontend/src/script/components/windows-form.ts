@@ -1,4 +1,4 @@
-import { css, html, TemplateResult } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { getManifestContext, getManifestUrl } from '../services/app-info';
 import {
@@ -9,23 +9,20 @@ import {
 import { WindowsPackageOptions } from '../utils/win-validation';
 import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import { fetchOrCreateManifest } from '../services/manifest';
-import {
-    AnalyticsBehavior,
-    recordPWABuilderProcessStep,
-} from '../utils/analytics';
 import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
 import '../components/arrow-link';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
-import '@shoelace-style/shoelace/dist/components/option/option.js';
-import '@shoelace-style/shoelace/dist/components/radio/radio.js';
-import '@shoelace-style/shoelace/dist/components/radio-group/radio-group.js';
-import '@shoelace-style/shoelace/dist/components/details/details.js';
-
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
-
 import { classMap } from 'lit/directives/class-map.js';
+import { windowsFormStyles } from "./windows-form.styles";
+import "@awesome.me/webawesome/dist/components/details/details.js";
+import "@awesome.me/webawesome/dist/components/select/select.js";
+import "@awesome.me/webawesome/dist/components/button/button.js";
+import "@awesome.me/webawesome/dist/components/radio-group/radio-group.js";
+import "@awesome.me/webawesome/dist/components/radio/radio.js";
+import "@awesome.me/webawesome/dist/components/option/option.js";
+import '@awesome.me/webawesome/dist/components/color-picker/color-picker.js';
 
 const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
@@ -87,401 +84,7 @@ export class WindowsForm extends AppPackageFormBase {
     static get styles() {
         return [
             ...super.styles,
-            css`
-        .d-none {
-          display: none;
-        }
-
-        #windows-options-form {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-
-        }
-        .flipper-button {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .form-generate-button {
-          width: 135px;
-          height: 40px;
-        }
-        .basic-settings, .adv-settings {
-          display: flex;
-          flex-direction: column;
-          gap: .75em;
-        }
-        #form-layout {
-          flex-grow: 1;
-          display: flex;
-          overflow: auto;
-          flex-direction: column;
-        }
-        .form-check:hover input:disabled {
-          color: green;
-        }
-
-        .form-check:hover input:disabled {
-          color: green;
-        }
-
-        sl-details {
-          margin-top: 1em;
-        }
-
-        sl-details::part(base){
-          border: none;
-        }
-
-        sl-details::part(summary-icon){
-          display: none;
-        }
-
-        .dropdown_icon {
-          transform: rotate(0deg);
-          transition: transform .5s;
-          height: 30px;
-        }
-
-        sl-details::part(header){
-          padding: 0 10px;
-        }
-
-        sl-details::part(header):focus-visible {
-          outline: 2px solid #000000;
-          outline-offset: -2px;
-        }
-
-        .details-summary {
-          display: flex;
-          align-items: center;
-          width: 100%;
-        }
-
-        .details-summary p {
-          margin: 0;
-          font-size: 18px;
-          font-weight: bold;
-        }
-
-        .sub-multi {
-          font-size: var(--body-font-size);
-          margin: 0;
-          color: rgba(0,0,0,.5);
-        }
-
-        arrow-link {
-          margin: 10px 0;
-        }
-
-        :host{
-          --sl-focus-ring-width: 3px;
-          --sl-input-focus-ring-color: #4f3fb670;
-          --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-          --sl-input-border-color-focus: #4F3FB6ac;
-          --sl-input-font-size-small: 22px;
-
-        }
-
-        #languageDrop::part(display-input){
-          min-height: 40px;
-        }
-
-        #languageDrop::part(tag){
-          font-size: var(--body-font-size);
-          color: #757575;
-          background-color: #f0f0f0;
-          border-radius: var(--input-border-radius);
-        }
-
-        #languageDrop::part(listbox){
-          background-color: #ffffff;
-          height: 200px;
-          overflow-y: scroll;
-          border-radius: var(--input-border-radius);
-          border: 1px solid #c5c5c5;
-          margin-top: 3px;
-        }
-
-        #languageDrop sl-option::part(base){
-          font-size: var(--body-font-size);
-          color: #757575;
-        }
-
-        #languageDrop sl-option:focus-within::part(base) {
-          color: #ffffff;
-          background-color: #4F3FB6;
-        }
-
-        #languageDrop sl-option::part(base):hover{
-          color: #ffffff;
-          background-color: #4F3FB6;
-        }
-
-        #languageDrop::part(display-label){
-          font-size: var(--body-font-size);
-          color: #757575;
-        }
-
-        sl-color-picker {
-          --grid-width: 315px;
-          height: 25px;
-        }
-
-        sl-color-picker::part(trigger){
-          border-radius: 0;
-          height: 25px;
-          width: 75px;
-          display: flex;
-        }
-
-        .color-radio::part(control--checked){
-          background-color: var(--primary-color);
-          border-color: var(--primary-color);
-        }
-
-        #ai-hub-label {
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-        }
-
-        #ai-hub-text {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: flex-start;
-        }
-
-        #ai-hub-text p {
-          margin: 0;
-          color: #7f7f7f;
-          font-size: 14px;
-        }
-
-        .actions-error {
-          border-color: var(--error-color) !important;
-        }
-
-        .actions-error-message {
-          font-size: var(--font-size);
-        }
-
-        .custom-entities-error-message {
-          color: #eb5757;
-          margin: 5px 0;
-          font-size: 14px;
-        }
-
-        .actions-nested-content {
-          margin-left: 1.5em;
-          margin-top: 0.5em;
-        }
-
-        .actions-nested-content .form-check {
-          margin-top: 1em;
-        }
-
-        .actions-nested-content #actions-file-picker {
-          width: 100%;
-          box-sizing: border-box;
-          padding: 2em !important;
-        }
-
-        .actions-file-upload-zone {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          padding: 6px;
-          border: 2px dashed #c5c5c5;
-          border-radius: var(--input-border-radius);
-          background-color: #fafafa;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          text-align: center;
-          width: fit-content;
-        }
-
-        .actions-file-upload-zone:hover {
-          border-color: #4F3FB6;
-          background-color: #f0f8ff;
-        }
-
-        .actions-file-upload-zone.has-file {
-          border-color: #28a745;
-          background-color: #f8fff9;
-        }
-
-        .upload-icon {
-          font-size: 24px;
-          margin-right: 8px;
-        }
-
-        .upload-text {
-          color: #4F3FB6;
-          font-size: 14px;
-          font-weight: 500;
-          margin-right: 4px;
-        }
-
-        .actions-file-upload-zone:hover .upload-text {
-          color: #3730a3;
-        }
-
-        .actions-file-upload-zone.has-file .upload-text {
-          color: #28a745;
-          font-weight: 500;
-        }
-
-        .actions-file-upload-zone.has-file:hover {
-          border-color: #218838;
-          background-color: #f1fff4;
-        }
-
-        .actions-file-upload-zone.has-error {
-          border-color: #dc3545;
-          background-color: #fff5f5;
-        }
-
-        .actions-file-upload-zone.has-error .upload-text {
-          color: #dc3545;
-          font-weight: 500;
-        }
-
-        .actions-file-upload-zone.has-error:hover {
-          border-color: #c82333;
-          background-color: #ffeaea;
-        }
-
-        .custom-entity-uploads {
-          margin-top: 1em;
-          margin-left: 1em;
-          padding: 1em;
-          border: 1px solid #e0e0e0;
-          border-radius: var(--input-border-radius);
-          background-color: #f9f9f9;
-          font-size: 14px;
-        }
-
-        .custom-entity-uploads .form-group {
-          margin-bottom: 1em;
-        }
-
-        .custom-entity-uploads .form-group:last-child {
-          margin-bottom: 1em;
-        }
-
-        .custom-entity-uploads label {
-          display: block;
-          margin-bottom: 0.5em;
-          font-weight: normal;
-          font-size: 16px;
-        }
-
-        .custom-entity-uploads input[type="file"] {
-          border: 1px solid #c5c5c5;
-          border-radius: var(--input-border-radius);
-          background-color: #ffffff;
-          font-size: 12px;
-        }
-
-        .folder-picker-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .file-picker-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .file-picker-wrapper.has-file .file-picker-text,
-        .folder-picker-wrapper.has-file .folder-picker-text {
-          color: #28a745;
-          font-weight: 500;
-        }
-
-        .file-picker-wrapper.has-error .file-picker-text,
-        .folder-picker-wrapper.has-error .folder-picker-text {
-          color: #dc3545;
-          font-weight: 500;
-        }
-
-        .folder-picker-button,
-        .file-picker-button {
-          padding: 10px 18px;
-          background-color: #ffffff;
-          border: 1px solid #c5c5c5;
-          border-radius: var(--input-border-radius);
-          font-size: 12px;
-          cursor: pointer;
-          color: #333;
-        }
-
-        .folder-picker-button:hover,
-        .file-picker-button:hover {
-          background-color: #f5f5f5;
-          border-color: #999;
-        }
-
-        .folder-picker-text,
-        .file-picker-text {
-          font-size: 12px;
-          color: #666;
-          font-style: italic;
-        }
-
-        .localized-entities-errors {
-          margin-top: 1em;
-          padding: 1em;
-          background-color: #fff5f5;
-          border: 1px solid #dc3545;
-          border-radius: var(--input-border-radius);
-          max-height: 300px;
-          overflow-y: auto;
-        }
-
-        .localized-entities-errors h4 {
-          margin: 0 0 0.5em 0;
-          color: #dc3545;
-          font-size: 14px;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 0.5em;
-        }
-
-        .localized-entities-errors h4::before {
-          content: "⚠️";
-          font-size: 16px;
-        }
-
-        .localized-entities-errors ul {
-          margin: 0;
-          padding-left: 1.2em;
-        }
-
-        .localized-entities-errors li {
-          color: #dc3545;
-          font-size: 12px;
-          margin-bottom: 0.5em;
-          line-height: 1.4;
-          background-color: #fff;
-          padding: 0.5em;
-          border-radius: 4px;
-          border: 1px solid #dc3545;
-        }
-
-        .localized-entities-errors li::marker {
-          color: #dc3545;
-        }
-
-    `
+            windowsFormStyles
         ];
     }
 
@@ -508,7 +111,7 @@ export class WindowsForm extends AppPackageFormBase {
         if (manifestContext?.manifest.background_color) {
             this.initialBgColor = manifestContext!.manifest.background_color;
         } else {
-            this.initialBgColor = "#000000;"
+            this.initialBgColor = "#000000";
         }
     }
 
@@ -544,16 +147,15 @@ export class WindowsForm extends AppPackageFormBase {
     }
 
     checkValidityForDeviceFamily() {
-        const checkboxes = this.shadowRoot?.querySelector(
+        const container = this.shadowRoot?.querySelector(
             '#target-device-families'
         );
-        const checkedCheckboxes = checkboxes?.querySelectorAll(
-            'input[type="checkbox"]:checked'
-        );
+        const checkboxes = Array.from(container?.querySelectorAll('wa-checkbox') ?? []);
+        const checkedCheckboxes = checkboxes.filter(cb => (cb as unknown as { checked: boolean }).checked);
         const desktopCheckbox = this.shadowRoot?.querySelector(
             '#device-family-input-desktop'
-        ) as HTMLInputElement;
-        if (checkedCheckboxes !== undefined && checkedCheckboxes?.length === 0) {
+        ) as unknown as { setCustomValidity(message: string): void };
+        if (checkedCheckboxes.length === 0) {
             desktopCheckbox.setCustomValidity(
                 'Please select at least one device family'
             );
@@ -1094,18 +696,6 @@ export class WindowsForm extends AppPackageFormBase {
         this.localizedEntitiesErrors = errors;
     }
 
-    rotateZero() {
-        recordPWABuilderProcessStep("windows_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
-        let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-        icon!.style.transform = "rotate(0deg)";
-    }
-
-    rotateNinety() {
-        recordPWABuilderProcessStep("windows_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
-        let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-        icon!.style.transform = "rotate(90deg)";
-    }
-
     public getPackageOptions(): PackageOptions {
         return this.packageOptions;
     }
@@ -1122,25 +712,24 @@ export class WindowsForm extends AppPackageFormBase {
       </label>
       <div id="multiSelectBox">
         <div class="multi-wrap">
-          <p class="sub-multi">Select Multiple Languages</p>
-          <sl-select id="languageDrop"
+          <wa-select id="languageDrop"
             placeholder="Select one or more languages"
-            @sl-change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
+            @change=${(e: any) => this.packageOptions.resourceLanguage = e.target.value}
             value=${this.packageOptions.resourceLanguage!}
             multiple
             .maxOptionsVisible=${5}
-            size="small"
+            size="s"
           >
           ${windowsLanguages.map((lang: any) =>
             html`
               ${lang.codes.map((code: string) =>
                 html`
-                  <sl-option value=${code}>${lang.name} - ${code}</sl-option>
+                  <wa-option value=${code}>${lang.name} - ${code}</wa-option>
                 `
             )}
             `
         )}
-          </sl-select>
+          </wa-select>
         </div>
       </div>
     `;
@@ -1154,15 +743,14 @@ export class WindowsForm extends AppPackageFormBase {
       </label>
       <div id="iconColorPicker">
         <div class="color-wrap">
-          <p class="sub-multi">Select your Windows icons background color</p>
-          <sl-radio-group
+          <wa-radio-group
             id="icon-bg-radio-group"
             .value=${'transparent'}
-            @sl-change=${() => this.toggleIconBgRadios()}
+            @change=${() => this.toggleIconBgRadios()}
           >
-            <sl-radio class="color-radio" size="small" value="transparent">Transparent</sl-radio>
-            <sl-radio class="color-radio" size="small" value="custom">Custom Color</sl-radio>
-          </sl-radio-group>
+            <wa-radio class="color-radio" size="s" value="transparent">Transparent</wa-radio>
+            <wa-radio class="color-radio" size="s" value="custom">Custom Color</wa-radio>
+          </wa-radio-group>
           ${this.customSelected ? html`
             ${this.renderFormInput(formInput)}
           ` : null}
@@ -1201,16 +789,17 @@ export class WindowsForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
             label: 'Package ID',
-            tooltip: `The Package ID uniquely identifying your app in the Microsoft Store. Get this value from Windows Partner Center.`,
+            tooltip: `The Package ID uniquely identifying your app in the Microsoft Store. Get this value from Microsoft Partner Center.`,
             tooltipLink:
                 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
             inputId: 'package-id-input',
             required: true,
             placeholder: 'MyCompany.MyApp',
+            value: this.packageOptions.packageId,
             minLength: 3,
             maxLength: 50,
             spellcheck: false,
-            pattern: '[a-zA-Z0-9.-]*$',
+            pattern: '[a-zA-Z0-9.\\-]*$',
             validationErrorMessage:
                 'Package ID must contain only letters, numbers, period, or hyphen.',
             inputHandler: (val: string) =>
@@ -1220,11 +809,12 @@ export class WindowsForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
             label: 'Publisher ID',
-            tooltip: `The ID of your app's publisher. Get this value from Windows Partner Center.`,
+            tooltip: `The ID of your app's publisher. Get this value from Microsoft Partner Center.`,
             tooltipLink:
                 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
             inputId: 'publisher-id-input',
             placeholder: 'CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca',
+            value: this.packageOptions.publisher.commonName,
             validationErrorMessage:
                 'Publisher ID must be in the format CN=XXXX. Get your publisher ID from Partner Center.',
             pattern: 'CN=.+',
@@ -1238,234 +828,216 @@ export class WindowsForm extends AppPackageFormBase {
             <div class="form-group">
               ${this.renderFormInput({
             label: 'Publisher display name',
-            tooltip: `The display name of your app's publisher. Gets this value from Windows Partner Center.`,
+            tooltip: `The display name of your app's publisher. Gets this value from Microsoft Partner Center.`,
             tooltipLink:
                 'https://blog.pwabuilder.com/docs/finding-your-windows-publisher-info/',
             inputId: 'publisher-display-name-input',
             required: true,
             minLength: 3,
             spellcheck: false,
+            value: this.packageOptions.publisher.displayName,
             validationErrorMessage:
-                'Publisher display name must be at least 3 characters. Get this value from Windows Partner Center.',
+                'Publisher display name must be at least 3 characters. Get this value from Microsoft Partner Center.',
             placeholder: 'Contoso Inc',
-            inputHandler: (val: string) =>
-                (this.packageOptions.publisher.displayName = val),
+            inputHandler: (val: string) => this.packageOptions.publisher.displayName = val,
         })}
-            </div>
-            <div class="form-group" id="ai-hub">
-              <div id="ai-hub-label">
-                <label>Does your app use AI?</label>
-                <info-circle-tooltip
-                  text="AI Hub is a new curated section in the Microsoft Store that navigates Windows users to the best AI experiences built by the developer community and Microsoft."
-                  link="https://blogs.windows.com/windowsdeveloper/2023/05/23/welcoming-ai-to-the-microsoft-store-on-windows/"
-                  @click=${() => {
-                recordPWABuilderProcessStep("ai_hub_read_more_link_click", AnalyticsBehavior.ProcessCheckpoint)
-            }
-            }
-                  ></info-circle-tooltip>
-              </div>
-              <div id="ai-hub-text">
-                <p>We will promote the best AI experiences built by the developer community on our Microsoft Store's AI Hub.</p>
-                <arrow-link .text=${"Join Us"} .link=${"https://aka.ms/MicrosoftStoreAIHub"}></arrow-link>
-              </div>
             </div>
           </div>
           <!-- "all settings" section of the modal -->
-          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+          <wa-details>
             <div class="details-summary" slot="summary">
-              <p>All Settings</p>
-              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              All Settings
             </div>
             <div class="adv-settings">
               <div class="form-group">
                 ${this.renderFormInput({
-                label: 'App name',
-                tooltip: `The name of your app. This is displayed to users in the Store.`,
-                tooltipLink:
-                    'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-displayname',
-                inputId: 'app-name-input',
-                required: true,
-                minLength: 1,
-                maxLength: 256,
-                value: this.packageOptions.name,
-                placeholder: 'My Awesome PWA',
-                pattern: AppNameInputPattern,
-                validationErrorMessage:
-                    'App name must not include special characters and be between 1 and 256 characters',
-                inputHandler: (val: string) =>
-                    (this.packageOptions.name = val),
-            })}
+            label: 'App name',
+            tooltip: `The name of your app. This is displayed to users in the Store.`,
+            tooltipLink:
+                'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-displayname',
+            inputId: 'app-name-input',
+            required: true,
+            minLength: 1,
+            maxLength: 256,
+            value: this.packageOptions.name,
+            placeholder: 'My Awesome PWA',
+            pattern: AppNameInputPattern,
+            validationErrorMessage:
+                'App name must not include special characters and be between 1 and 256 characters',
+            inputHandler: (val: string) =>
+                (this.packageOptions.name = val),
+        })}
               </div>
               <div class="form-group">
                 ${this.renderFormInput({
-                label: 'App version',
-                tooltip: `Your app version in the form of '1.0.0'. It must not start with zero and must be greater than classic package version. For new apps, this should be set to 1.0.1`,
-                tooltipLink:
-                    'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
-                inputId: 'version-input',
-                required: true,
-                minLength: 5,
-                value: this.packageOptions.version,
-                placeholder: '1.0.1',
-                spellcheck: false,
-                pattern: '^[^0]+\\d*.\\d+.\\d+$',
-                validationErrorMessage:
-                    "Version must be in the form of '1.0.0', cannot start with zero, and must be greater than classic version",
-                inputHandler: (val: string) =>
-                    (this.packageOptions.version = val),
-            })}
+            label: 'App version',
+            tooltip: `Your app version in the form of '1.0.0'. It must not start with zero and must be greater than classic package version. For new apps, this should be set to 1.0.1`,
+            tooltipLink:
+                'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
+            inputId: 'version-input',
+            required: true,
+            minLength: 5,
+            value: this.packageOptions.version,
+            placeholder: '1.0.1',
+            spellcheck: false,
+            pattern: '^[^0]+\\d*.\\d+.\\d+$',
+            validationErrorMessage:
+                "Version must be in the form of '1.0.0', cannot start with zero, and must be greater than classic version",
+            inputHandler: (val: string) =>
+                (this.packageOptions.version = val),
+        })}
               </div>
               <div class="form-group">
                 ${this.renderFormInput({
-                label: 'Classic app version',
-                tooltip: `The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0', it cannot start with zero, and must be less than app version. For new apps, this should be set to 1.0.0`,
-                tooltipLink:
-                    'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
-                inputId: 'classic-version-input',
-                required: true,
-                minLength: 5,
-                value: this.packageOptions.classicPackage?.version,
-                placeholder: '1.0.0',
-                pattern: '^[^0]+\\d*.\\d+.\\d+$',
-                validationErrorMessage:
-                    "Classic app version must be in the form of '1.0.0', cannot start with zero, and must be less than than app version",
-                inputHandler: (val: string) =>
-                    (this.packageOptions.classicPackage!.version = val),
-            })}
+            label: 'Classic app version',
+            tooltip: `The version of your app that runs on older versions of Windows. Must be in the form of '1.0.0', it cannot start with zero, and must be less than app version. For new apps, this should be set to 1.0.0`,
+            tooltipLink:
+                'https://blog.pwabuilder.com/docs/what-is-a-classic-package/',
+            inputId: 'classic-version-input',
+            required: true,
+            minLength: 5,
+            value: this.packageOptions.classicPackage?.version,
+            placeholder: '1.0.0',
+            pattern: '^[^0]+\\d*.\\d+.\\d+$',
+            validationErrorMessage:
+                "Classic app version must be in the form of '1.0.0', cannot start with zero, and must be less than than app version",
+            inputHandler: (val: string) =>
+                (this.packageOptions.classicPackage!.version = val),
+        })}
               </div>
               <div class="form-group">
                 ${this.renderFormInput({
-                label: 'Icon URL',
-                tooltip: `The URL of an icon to use for your app. This should be a 512x512 or larger, square PNG image. Additional Windows image sizes will be fetched from your manifest, and any missing Windows image sizes will be generated by PWABuilder. The URL can be an absolute path or relative to your manifest.`,
-                tooltipLink:
-                    'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/',
-                inputId: 'icon-url-input',
-                required: true,
-                type: 'text', // NOTE: can't use URL here, because we allow relative paths.
-                minLength: 2,
-                validationErrorMessage:
-                    'Must be an absolute URL or a URL relative to your manifest',
-                value: this.packageOptions.images?.baseImage || '',
-                placeholder: '/images/512x512.png',
-                inputHandler: (val: string) =>
-                    (this.packageOptions.images!.baseImage = val),
-            })}
+            label: 'Icon URL',
+            tooltip: `The URL of an icon to use for your app. This should be a 512x512 or larger, square PNG image. Additional Windows image sizes will be fetched from your manifest, and any missing Windows image sizes will be generated by PWABuilder. The URL can be an absolute path or relative to your manifest.`,
+            tooltipLink:
+                'https://blog.pwabuilder.com/docs/image-recommendations-for-windows-pwa-packages/',
+            inputId: 'icon-url-input',
+            required: true,
+            type: 'text', // NOTE: can't use URL here, because we allow relative paths.
+            minLength: 2,
+            validationErrorMessage:
+                'Must be an absolute URL or a URL relative to your manifest',
+            value: this.packageOptions.images?.baseImage || '',
+            placeholder: '/images/512x512.png',
+            inputHandler: (val: string) =>
+                (this.packageOptions.images!.baseImage = val),
+        })}
               </div>
               <div class="form-group">
                 ${this.renderColorToggle({
-                label: 'Icon Background Color',
-                tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
-                tooltipLink:
-                    'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
-                inputId: 'icon-bg-color-input',
-                type: 'color',
-                value: this.packageOptions.images?.backgroundColor!,
-                placeholder: 'transparent',
-                inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
-            })}
+            label: 'Icon Background Color',
+            tooltip: `Optional. The background color of the Windows icons that will be generated with your .msix.`,
+            tooltipLink:
+                'https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-design#color-contrast',
+            inputId: 'icon-bg-color-input',
+            type: 'color',
+            value: this.packageOptions.images?.backgroundColor!,
+            placeholder: 'transparent',
+            inputHandler: (val: string) => this.packageOptions.images!.backgroundColor = val,
+        })}
               </div>
               <div class="form-group">
                 ${this.renderMultiSelect({
-                label: 'Language',
-                tooltip: `Optional. Select as many languages as your app supports. Additional languages can be specified in Windows Partner Center. If empty, EN-US will be used.`,
-                tooltipLink:
-                    'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
-                inputId: 'language-input',
-                value: this.packageOptions.resourceLanguage,
-                placeholder: 'EN-US',
-                inputHandler: (val: string) =>
-                    (this.packageOptions.resourceLanguage = val),
-            })}
+            label: 'Language',
+            tooltip: `Optional. Select as many languages as your app supports. Additional languages can be specified in Microsoft Partner Center. If empty, EN-US will be used.`,
+            tooltipLink:
+                'https://docs.microsoft.com/en-us/windows/uwp/publish/supported-languages',
+            inputId: 'language-input',
+            value: this.packageOptions.resourceLanguage,
+            placeholder: 'EN-US',
+            inputHandler: (val: string) =>
+                (this.packageOptions.resourceLanguage = val),
+        })}
               </div>
               <div class="form-group" id="target-device-families">
                 <label>Target device families</label>
                 <div class="form-check">
                   ${this.renderFormInput({
-                label: 'Desktop',
-                value: 'Desktop',
-                tooltip:
-                    'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
-                tooltipLink:
-                    'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                inputId: 'device-family-input-desktop',
-                type: 'checkbox',
-                checked: true,
-                inputHandler: (val: string, checked: boolean) => {
-                    this.addOrRemoveDeviceFamily(val, checked);
-                },
-            })}
+            label: 'Desktop',
+            value: 'Desktop',
+            tooltip:
+                'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+            tooltipLink:
+                'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+            inputId: 'device-family-input-desktop',
+            type: 'checkbox',
+            checked: true,
+            inputHandler: (val: string, checked: boolean) => {
+                this.addOrRemoveDeviceFamily(val, checked);
+            },
+        })}
                 </div>
                 <div class="form-check">
                   ${this.renderFormInput({
-                label: 'Holographic (HoloLens)',
-                value: 'Holographic',
-                tooltip:
-                    'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
-                tooltipLink:
-                    'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                inputId: 'device-family-input-holographic',
-                type: 'checkbox',
-                checked: true,
-                inputHandler: (val: string, checked: boolean) => {
-                    this.addOrRemoveDeviceFamily(val, checked);
-                },
-            })}
+            label: 'Holographic (HoloLens)',
+            value: 'Holographic',
+            tooltip:
+                'Identifies the device family that your package targets. Both Desktop and Holographic are enabled by default',
+            tooltipLink:
+                'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+            inputId: 'device-family-input-holographic',
+            type: 'checkbox',
+            checked: true,
+            inputHandler: (val: string, checked: boolean) => {
+                this.addOrRemoveDeviceFamily(val, checked);
+            },
+        })}
                 </div>
                 <div class="form-check">
                   ${this.renderFormInput({
-                label: 'Surface Hub (Team)',
-                value: 'Team',
-                tooltip:
-                    'Identifies the device family that your package targets.',
-                tooltipLink:
-                    'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
-                inputId: 'device-family-input-team',
-                type: 'checkbox',
-                checked: false,
-                inputHandler: (val: string, checked: boolean) => {
-                    this.addOrRemoveDeviceFamily(val, checked);
-                },
-            })}
+            label: 'Surface Hub (Team)',
+            value: 'Team',
+            tooltip:
+                'Identifies the device family that your package targets.',
+            tooltipLink:
+                'https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-targetdevicefamily',
+            inputId: 'device-family-input-team',
+            type: 'checkbox',
+            checked: false,
+            inputHandler: (val: string, checked: boolean) => {
+                this.addOrRemoveDeviceFamily(val, checked);
+            },
+        })}
                 </div>
               </div>
               <div class="form-group" id="widgets-picker">
                 <label>Widgets</label>
                 <div class="form-check">
                   ${this.renderFormInput({
-                label: 'Enable Widgets',
-                value: 'Widgets',
-                tooltip:
-                    'Enables your Windows package to serve the widgets listed in your web manifest to the Widgets Panel.',
-                tooltipLink:
-                    'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
-                inputId: 'widget-checkbox',
-                type: 'checkbox',
-                checked: this.packageOptions.enableWebAppWidgets,
-                disabled: !this.packageOptions.enableWebAppWidgets,
-                disabledTooltipText: "You must have widgets set up in your web manifest to enable Widgets for your Windows package.",
-                inputHandler: (_val: string, checked: boolean) =>
-                    (this.packageOptions.enableWebAppWidgets = checked),
-            })}
+            label: 'Enable Widgets',
+            value: 'Widgets',
+            tooltip:
+                'Enables your Windows package to serve the widgets listed in your web manifest to the Widgets Panel.',
+            tooltipLink:
+                'https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets',
+            inputId: 'widget-checkbox',
+            type: 'checkbox',
+            checked: this.packageOptions.enableWebAppWidgets,
+            disabled: !this.packageOptions.enableWebAppWidgets,
+            disabledTooltipText: "You must have widgets set up in your web manifest to enable Widgets for your Windows package.",
+            inputHandler: (_val: string, checked: boolean) =>
+                (this.packageOptions.enableWebAppWidgets = checked),
+        })}
                 </div>
               </div>
               <div class="form-group" id="actions-picker">
                 <label>Actions</label>
                 <div class="form-check">
                   ${this.renderFormInput({
-                classes: "no-form-data-restoration",
-                label: 'Enable Actions',
-                value: 'Actions',
-                tooltip:
-                    'Enables your Windows package to serve the actions listed in your ActionsManifest.json.',
-                tooltipLink:
-                    'https://aka.ms/pwa-winaction',
-                inputId: 'actions-checkbox',
-                type: 'checkbox',
-                checked: this.showUploadActionsFile,
-                disabled: (!this.packageOptions.manifest?.share_target || !this.packageOptions.manifest?.protocol_handlers),
-                disabledTooltipText: "You must have both share_target and protocol_handlers set up in your web manifest to enable Actions.",
-                inputHandler: (_val: string, checked: boolean) => this.updateActionsSelection(checked),
-            })}
+            classes: "no-form-data-restoration",
+            label: 'Enable Actions',
+            value: 'Actions',
+            tooltip:
+                'Enables your Windows package to serve the actions listed in your ActionsManifest.json.',
+            tooltipLink:
+                'https://aka.ms/pwa-winaction',
+            inputId: 'actions-checkbox',
+            type: 'checkbox',
+            checked: this.showUploadActionsFile,
+            disabled: (!this.packageOptions.manifest?.share_target || !this.packageOptions.manifest?.protocol_handlers),
+            disabledTooltipText: "You must have both share_target and protocol_handlers set up in your web manifest to enable Actions.",
+            inputHandler: (_val: string, checked: boolean) => this.updateActionsSelection(checked),
+        })}
                 </div>
                 ${this.showUploadActionsFile ?
                 html`
@@ -1498,7 +1070,7 @@ export class WindowsForm extends AppPackageFormBase {
                             <div class="form-group">
                               <label for="custom-entities-file-picker">Upload JSON file for CustomEntities:</label>
                               <div class="file-picker-wrapper">
-                                <button type="button" class="file-picker-button" @click=${this.openCustomEntitiesPicker}>Choose File</button>
+                                <wa-button type="button" appearance="outlined" size="s" class="file-picker-button" @click=${this.openCustomEntitiesPicker}>Choose File</wa-button>
                                 <input id="custom-entities-file-picker" class="no-form-data-restoration" type="file" accept=".json" @change=${(e: Event) => this.customEntitiesFileChanged(e)} style="display: none;"/>
                                 <span class="file-picker-text" id="custom-entities-picker-text">No file chosen</span>
                               </div>
@@ -1507,7 +1079,7 @@ export class WindowsForm extends AppPackageFormBase {
                             <div class="form-group">
                               <label for="localized-entities-folder-picker">Upload localized custom entities files (optional):</label>
                               <div class="folder-picker-wrapper">
-                                <button type="button" class="folder-picker-button" @click=${this.openFolderPicker}>Select Folder</button>
+                                <wa-button type="button" appearance="outlined" size="s" class="folder-picker-button" @click=${this.openFolderPicker}>Select Folder</wa-button>
                                 <input id="localized-entities-folder-picker" class="no-form-data-restoration" type="file" webkitdirectory multiple @change=${(e: Event) => this.localizedEntitiesFolderChanged(e)} style="display: none;"/>
                                 <span class="folder-picker-text" id="folder-picker-text">No folder selected</span>
                               </div>
@@ -1532,7 +1104,6 @@ export class WindowsForm extends AppPackageFormBase {
                 null
             }
               </div>
-            </div>
               <div class="form-group" id="app-uri-handler-picker">
                 <label>App URI Handler</label>
                 <div class="form-check">
@@ -1551,7 +1122,8 @@ export class WindowsForm extends AppPackageFormBase {
             })}
                 </div>
               </div>
-          </sl-details>
+            </div>
+          </wa-details>
         </div>
       </form>
     </div>

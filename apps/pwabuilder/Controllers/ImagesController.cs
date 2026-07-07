@@ -231,13 +231,13 @@ public class ImagesController : ControllerBase
         {
             logger.LogWarning("Image validation failed for proxied image with content type {contentType}. Error: {error}", contentType, imageStatus.Error);
             memStream.Dispose();
-            return BadRequest($"You didn't pass a valid image endpoint.");
+            return BadRequest($"The image URL appears to be an invalid image. Error: {imageStatus.Error}");
         }
         if (imageStatus.Value == false)
         {
             logger.LogWarning("Image validation failed for proxied image with content type {contentType}. The stream is not a valid image.", contentType);
             memStream.Dispose();
-            return BadRequest($"You didn't pass a valid image endpoint.");
+            return BadRequest("The image URL appears to be an invalid image.");
         }
 
         memStream.Position = 0;

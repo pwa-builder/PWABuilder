@@ -1,4 +1,5 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
+import { pwaManifestEditorStyles } from "./pwa-manifest-editor.styles";
 import { property, customElement, state } from 'lit/decorators.js';
 
 import "./manifest-info-form"
@@ -11,15 +12,13 @@ import "./manifest-code-form"
 
 import { ManifestInfoForm } from './manifest-info-form';
 import { ManifestPlatformForm } from './manifest-platform-form';
-import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import SlTabGroup from '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
-import '@shoelace-style/shoelace/dist/components/tab/tab.js';
-import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
-import { Manifest } from "@pwabuilder/manifest-validation";
+import type WaDropdown from '@awesome.me/webawesome/dist/components/dropdown/dropdown.js';
+import type WaTabGroup from '@awesome.me/webawesome/dist/components/tab-group/tab-group.js';
+import type { Manifest } from "../../models/manifest";
 import "./manifest-share-form";
 import { prettyString } from "../../utils/prettyJson";
+import '@awesome.me/webawesome/dist/components/tab/tab.js';
+import '@awesome.me/webawesome/dist/components/tab-panel/tab-panel.js';
 /* import { recordPWABuilderProcessStep } from '@pwabuilder/site-analyrics'; */
 
 /**
@@ -65,59 +64,9 @@ export class PWAManifestEditor extends LitElement {
 
     @state() manifest: Manifest = {};
     @state() selectedTab: string = "info";
-    @state() openTooltips: SlDropdown[] = [];
+    @state() openTooltips: WaDropdown[] = [];
 
-    static get styles() {
-        return css`
-      
-      sl-tab::part(base) {
-        --sl-font-size-small: 14px;
-        --sl-spacing-medium: .75rem;
-        --sl-space-large: 1rem;
-        position: relative;
-      }
-      .error-indicator {
-        position: absolute;
-        right: 1.25em;
-      }
-      sl-tab-group {
-        --indicator-color: #4F3FB6;
-      }
-      sl-tab::part(base):hover {
-        color: #4F3FB6;
-      }
-      sl-tab::part(base):focus-visible{
-        color: #4F3FB6;
-        outline: 1px solid black;
-      }
-      sl-tab[active]::part(base) {
-        color: #4F3FB6;
-        font-weight: bold;
-      }
-      sl-tab-panel::part(base){
-        overflow-y: auto;
-        overflow-x: hidden;
-        /* height: 500px; */
-        padding: 1em .5em .5em .5em;
-      }
-
-      @media(max-width: 765px){
-
-      }
-
-      @media(max-width: 600px){
-
-      }
-
-      @media(max-width: 480px){
-        sl-tab::part(base) {
-          --sl-font-size-small: 12px;
-          --sl-spacing-medium: .5rem;
-          --sl-space-large: .75em;
-        }
-      }
-    `;
-    }
+    static styles = [pwaManifestEditorStyles];
 
     constructor() {
         super();
@@ -125,7 +74,7 @@ export class PWAManifestEditor extends LitElement {
 
     async updated() {
         //console.log(await validateRequiredFields(this._initialManifest))
-        (this.shadowRoot?.querySelector('sl-tab-group') as unknown as SlTabGroup).show(this.startingTab);
+        (this.shadowRoot?.querySelector('wa-tab-group') as unknown as WaTabGroup).active = this.startingTab;
     }
 
     private removeEmptyFields(manifest: Manifest): Manifest {
@@ -206,7 +155,7 @@ export class PWAManifestEditor extends LitElement {
     }
 
     errorInTab(e: CustomEvent) {
-        let tabs = this.shadowRoot!.querySelectorAll('sl-tab');
+        let tabs = this.shadowRoot!.querySelectorAll('wa-tab');
         let tab = tabs[0];
 
         let panel = e.detail.panel;
@@ -280,7 +229,7 @@ export class PWAManifestEditor extends LitElement {
         if (e.detail.entering) {
 
             if (this.openTooltips.length > 0) {
-                this.openTooltips[0].hide();
+                this.openTooltips[0].open = false;
                 this.openTooltips = [];
             }
 
@@ -295,37 +244,37 @@ export class PWAManifestEditor extends LitElement {
 
     render() {
         return html`
-      <sl-tab-group 
+      <wa-tab-group 
         id="editor-tabs" 
-        @sl-tab-show=${(e: any) => this.setSelectedTab(e)}
+        @wa-tab-show=${(e: any) => this.setSelectedTab(e)}
         @manifestUpdated=${(e: any) => this.updateManifest(e)}
         @errorInTab=${(e: CustomEvent) => this.errorInTab(e)}
         @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e)}
       >
-        <sl-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</sl-tab>
-        <sl-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</sl-tab>
-        <sl-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</sl-tab>
-        <sl-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</sl-tab>
-        <sl-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</sl-tab>
-        <sl-tab slot="nav" panel="share" ?active=${this.startingTab === "share"}>Share Target</sl-tab>
-        <sl-tab slot="nav" panel="code">Code</sl-tab>
-        <sl-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-info-form></sl-tab-panel>
-        <sl-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-settings-form></sl-tab-panel>
-        <sl-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-platform-form></sl-tab-panel>
-        <sl-tab-panel name="icons">
+        <wa-tab slot="nav" panel="info" ?active=${this.startingTab === "info"}>Info</wa-tab>
+        <wa-tab slot="nav" panel="settings" ?active=${this.startingTab === "settings"}>Settings</wa-tab>
+        <wa-tab slot="nav" panel="platform" ?active=${this.startingTab === "platform"}>Platform</wa-tab>
+        <wa-tab slot="nav" panel="icons" ?active=${this.startingTab === "icons"}>Icons</wa-tab>
+        <wa-tab slot="nav" panel="screenshots" ?active=${this.startingTab === "screenshots"}>Screenshots</wa-tab>
+        <wa-tab slot="nav" panel="share" ?active=${this.startingTab === "share"}>Share Target</wa-tab>
+        <wa-tab slot="nav" panel="code">Code</wa-tab>
+        <wa-tab-panel name="info"><manifest-info-form id="info-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-info-form></wa-tab-panel>
+        <wa-tab-panel name="settings"><manifest-settings-form .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-settings-form></wa-tab-panel>
+        <wa-tab-panel name="platform"><manifest-platform-form id="platform-tab" .manifest=${this.manifest} .focusOn=${this.focusOn}></manifest-platform-form></wa-tab-panel>
+        <wa-tab-panel name="icons">
           <manifest-icons-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)} imageProxyUrl=${this.imageProxyUrl} analysisId=${this.analysisId}></manifest-icons-form>
-        </sl-tab-panel>
-        <sl-tab-panel name="screenshots">
+        </wa-tab-panel>
+        <wa-tab-panel name="screenshots">
             <manifest-screenshots-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)} .baseURL=${this.cleanUrl(this.baseURL)}></manifest-screenshots-form>
-        </sl-tab-panel>
-        <sl-tab-panel name="share">
+        </wa-tab-panel>
+        <wa-tab-panel name="share">
             <manifest-share-form .manifest=${this.manifest} .focusOn=${this.focusOn} .manifestURL=${this.cleanUrl(this.manifestURL)}></manifest-share-form>
-        </sl-tab-panel>
-        <sl-tab-panel name="code">
+        </wa-tab-panel>
+        <wa-tab-panel name="code">
             <manifest-code-form .manifest=${this.manifest}></manifest-code-form>
-        </sl-tab-panel>
+        </wa-tab-panel>
 
-      </sl-tab-group>
+      </wa-tab-group>
     `;
     }
 }

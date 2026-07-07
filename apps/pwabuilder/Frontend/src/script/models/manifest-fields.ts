@@ -1,3 +1,12 @@
+// Required manifest members per PWABuilder criteria.
+// Copied from @pwabuilder/manifest-validation to drop the runtime dependency.
+export const required_fields = [
+    "icons",
+    "name",
+    "short_name",
+    "start_url"
+];
+
 export interface infoPanel {
     description: String[];
     purpose?: string | null;

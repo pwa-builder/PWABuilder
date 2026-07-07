@@ -7,13 +7,12 @@ import { env } from "../utils/environment";
 import { googlePlayPackagingStatusStyles } from "./google-play-packaging-status.styles";
 import { AnalyticsBehavior, recordProcessStep } from "@pwabuilder/site-analytics";
 import { repeat } from "lit/directives/repeat.js";
-import "@shoelace-style/shoelace/dist/components/textarea/textarea.js";
-import "@shoelace-style/shoelace/dist/components/card/card.js";
-import "@shoelace-style/shoelace/dist/components/button/button.js";
-import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
-import "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import { Router } from "@vaadin/router";
 import { packagingCompleted, packagingFailed } from "./app-report.api";
+import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/card/card.js';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
+import '@awesome.me/webawesome/dist/components/spinner/spinner.js';
 
 /**
  * A page that shows the status of a Google Play packaging job.
@@ -26,7 +25,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     @state() job: GooglePlayPackageJob | null = null;
     @state() isRetrying = false;
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
-    private readonly maxWaitTimeMs = 15 * 60 * 1000; // Max wait time of 15 minutes
+    private readonly maxWaitTimeMs = 30 * 60 * 1000; // Max wait time of 30 minutes
     private jobTimeoutHandle = 0;
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
@@ -64,13 +63,13 @@ export class GooglePlayPackagingStatus extends LitElement {
             <app-header page="report"></app-header>
             <div class="content">
                 ${this.renderTitle()}
-                <sl-card>
+                <wa-card>
                     ${this.renderHeader()}
                     <div class="logs">
                         ${repeat(this.logs, l => this.renderLog(l))}
                     </div>
                     ${this.renderFooter()}
-                </sl-card>
+                </wa-card>
             </div>
         `;
     }
@@ -79,7 +78,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         if (this.hasFailed) {
             return html`
                 <h2 class="page-title">
-                    <sl-icon name="exclamation-octagon"></sl-icon>
+                    <wa-icon name="exclamation-octagon"></wa-icon>
                     Unable to create Google Play package
                 </h2>
             `;
@@ -88,7 +87,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         if (!this.job) {
             return html`
             <h2 class="page-title">
-                <sl-spinner></sl-spinner>
+                <wa-spinner></wa-spinner>
                 Checking Google Play package status...
             </h2>
             `;
@@ -97,7 +96,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         if (this.job.status === "Queued") {
             return html`
                 <h2 class="page-title">
-                    <sl-spinner></sl-spinner> 
+                    <wa-spinner></wa-spinner> 
                     Waiting for agent to pick up job...
                 </h2>
             `;
@@ -106,7 +105,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         if (this.job.status === "Failed") {
             return html`
                 <h2 class="page-title">
-                    <sl-icon name="exclamation-octagon"></sl-icon>
+                    <wa-icon name="exclamation-octagon"></wa-icon>
                     Unable to create Google Play package
                 </h2>
             `;
@@ -115,7 +114,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         if (this.job.status === "Completed") {
             return html`
                 <h2 class="page-title">
-                    <sl-icon name="check-circle-fill"></sl-icon>
+                    <wa-icon name="check-circle-fill"></wa-icon>
                     Package created successfully
                 </h2>
             `;
@@ -123,7 +122,7 @@ export class GooglePlayPackagingStatus extends LitElement {
 
         return html`
             <h2 class="page-title">
-                <sl-spinner></sl-spinner> 
+                <wa-spinner></wa-spinner> 
                 Creating your Google Play package...
             </h2>
         `;
@@ -159,8 +158,8 @@ export class GooglePlayPackagingStatus extends LitElement {
             const body = encodeURIComponent(`I received the [following error](https://pwabuilder.com/google-play-packaging-status?jobId=${this.job?.id || this.jobId}) when creating a Google Play package for ${this.job?.packageOptions.pwaUrl || "[empty]"}.\n\n> ${lastErrorLog}`);
             return html`
                 <div class="card-footer" slot="footer">
-                    <sl-button @click="${this.retryJob}">Retry</sl-button>
-                    <sl-button target="_blank" href="https://github.com/pwa-builder/PWABuilder/issues/new?&labels=bug%20%3Abug%3A,android-platform&title=${title}&body=${body}">Report a bug</sl-button>
+                    <wa-button @click="${this.retryJob}">Retry</wa-button>
+                    <wa-button target="_blank" href="https://github.com/pwa-builder/PWABuilder/issues/new?&labels=bug%20%3Abug%3A,android-platform&title=${title}&body=${body}">Report a bug</wa-button>
                 </div>
             `;
         }

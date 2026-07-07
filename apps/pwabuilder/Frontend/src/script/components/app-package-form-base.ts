@@ -1,4 +1,4 @@
-import { css, html, LitElement, TemplateResult } from 'lit';
+import { html, LitElement, TemplateResult } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 //@ts-ignore
 import style from '../../../styles/form-styles.css';
@@ -7,8 +7,14 @@ import ModalStyles from '../../../styles/modal-styles.css';
 import '../components/info-circle-tooltip';
 import { customElement } from 'lit/decorators.js';
 import { PackageOptions } from '../utils/interfaces';
-import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
-import SlColorPicker from '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
+import '@awesome.me/webawesome/dist/components/color-picker/color-picker.js';
+import "@awesome.me/webawesome/dist/components/input/input.js";
+import "@awesome.me/webawesome/dist/components/tooltip/tooltip.js";
+import "@awesome.me/webawesome/dist/components/checkbox/checkbox.js";
+import { appPackageFormBaseStyles } from './app-package-form-base.styles';
+import '@awesome.me/webawesome/dist/components/radio-group/radio-group.js';
+import '@awesome.me/webawesome/dist/components/radio/radio.js';
+
 
 /**
  * Base class for app package forms, e.g. the Windows package form, the Android package form, the iOS package form, etc.
@@ -17,158 +23,7 @@ import SlColorPicker from '@shoelace-style/shoelace/dist/components/color-picker
 @customElement('app-package-form-base')
 export class AppPackageFormBase extends LitElement {
 
-    static get styles() {
-        const localStyles = css`
-      #form-layout input {
-        border: 1px solid rgba(194, 201, 209, 1);
-        border-radius: var(--input-border-radius);
-        color: var(--font-color);
-      }
-
-      #form-layout input:not([type='color']) {
-        padding: 10px;
-      }
-
-      input::placeholder {
-        color: var(--placeholder-color);
-        font-style: italic;
-      }
-
-      #form-extras sl-button::part(base) {
-        background-color: var(--font-color);
-        color: #ffffff;
-        font-size: 14px;
-        height: 3em;
-        width: 25%;
-        border-radius: var(--button-border-radius);
-      }
-
-      #form-extras sl-button::part(label){
-        display: flex;
-        align-items: center;
-      }
-
-      #form-layout {
-        overflow-y: auto;
-        padding: 0em 1.5em 0 1em;
-      }
-
-      .tooltip {
-        margin-left: 10px;
-      }
-
-      .form-group .tooltip a {
-        color: #fff;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .form-group label {
-        font-size: var(--small-medium-font-size);
-        font-weight: bold;
-        line-height: 40px;
-        display: flex;
-        align-items: center;
-      }
-
-      .form-group label a {
-        text-decoration: none;
-        color: var(--font-color);
-      }
-
-      #form-options-actions {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: .25em;
-      }
-
-      #form-details-block {
-        display: flex;
-        align-items: flex-start;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 55%;
-        gap: .25em;
-      }
-
-      #form-details-block p {
-        font-weight: 300;
-        font-size: 14px;
-        color: #808080;
-        margin: 0;
-      }
-
-      .select-group {
-        display: flex;
-        margin-bottom: 10px;
-        padding-left: 2em;
-      }
-
-      #all-settings-header {
-        color: var(--font-color);
-        font-weight: var(--font-bold);
-        font-size: 18px;
-
-        display: flex;
-        align-items: center;
-      }
-
-      .form-check {
-        display: flex;
-        align-items: center;
-      }
-
-      .form-check label {
-        font-weight: normal;
-        margin-left: 8px;
-      }
-
-      #form-layout input:invalid {
-        color: var(--error-color);
-        border: 1px solid var(--error-color);
-      }
-
-      input:disabled {
-        cursor: no-drop;
-      }
-
-      sl-color-picker {
-        --grid-width: 315px;
-        height: 25px;
-      }
-
-      sl-color-picker::part(trigger){
-        border-radius: 0;
-        height: 25px;
-        width: 75px;
-        display: flex;
-      }
-
-      .colorPickerAndValue {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .colorPickerAndValue p {
-        margin: 0;
-        color: var(--secondary-font-color);
-      }
-
-
-      @media (min-height: 760px) and (max-height: 1000px) {
-        form {
-          width: 100%;
-        }
-      }
-    `
-        return [localStyles];
-    }
+    static styles = [appPackageFormBaseStyles];
 
     constructor() {
         super();
@@ -183,36 +38,41 @@ export class AppPackageFormBase extends LitElement {
     }
 
     protected renderFormInput(formInput: FormInput): TemplateResult {
-        // If it's a checkbox or radio, the label comes after the check
-        if (formInput.type === 'checkbox' || formInput.type === 'radio') {
-            return html`
-        ${this.renderFormInputTextbox(formInput)}
-        ${this.renderFormInputLabel(formInput)}
-      `;
+        // Ensure a stable id so the <label for> association and any disabled-state
+        // <wa-tooltip for> can reference this control. WebAwesome tooltips anchor to
+        // their trigger via the `for` attribute (resolved by getElementById), so the
+        // id must exist before the label and tooltip are rendered.
+        if (!formInput.inputId) {
+            formInput.inputId = Math.random().toString(36).replace('0.', 'form-input-');
+        }
+
+        // Checkboxes render as a WebAwesome checkbox with the label slotted inside.
+        if (formInput.type === 'checkbox') {
+            return this.renderFormCheckbox(formInput);
         }
 
         if (formInput.type === 'color') {
             return html`
-        ${this.renderFormInputLabel(formInput)}
-        ${this.renderFormColorPicker(formInput)}
-      `;
+                ${this.renderFormInputLabel(formInput)}
+                ${this.renderFormColorPicker(formInput)}
+            `;
         }
 
         // For all others, the label comes first.
         return html`
-      ${this.renderFormInputLabel(formInput)}
-      ${this.renderFormInputTextbox(formInput)}
-    `;
+            ${this.renderFormInputLabel(formInput)}
+            ${this.renderFormInputTextbox(formInput)}
+        `;
     }
 
     private renderFormColorPicker(formInput: FormInput) {
         return html`
     <div class="colorPickerAndValue">
-      <sl-color-picker
+      <wa-color-picker
               id="${formInput.inputId}"
               class="form-control"
               placeholder="${formInput.placeholder || ''}"
-              value="${(ifDefined(formInput.value) as string)}"
+              .value="${(formInput.value as string) ?? ''}"
               type="color"
               ?required="${formInput.required}"
               name="${ifDefined(formInput.name)}"
@@ -226,51 +86,98 @@ export class AppPackageFormBase extends LitElement {
               ?readonly="${formInput.readonly}"
               custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
               ?disabled=${formInput.disabled}
-              @sl-change="${(e: UIEvent) => this.colorChanged(e, formInput)}"
-              @sl-invalid=${this.inputInvalid}
-            ></sl-color-picker>
+              @change="${(e: UIEvent) => this.colorChanged(e, formInput)}"
+              @wa-invalid=${this.inputInvalid}
+            ></wa-color-picker>
             <p>${formInput.value}</p>
   </div>`;
     }
 
     private renderFormInputTextbox(formInput: FormInput): TemplateResult {
         const inputType = formInput.type || 'text';
-        const inputClass = formInput.type === 'radio' ? 'form-check-input' : 'form-control';
-        const allInputClasses = inputClass + (formInput.classes ? ` ${formInput.classes}` : '');
+        const allInputClasses = 'form-control' + (formInput.classes ? ` ${formInput.classes}` : '');
 
         const input = html`
-      <input id="${formInput.inputId}"
+            <wa-input id="${formInput.inputId}"
+                class="${allInputClasses}"
+                placeholder="${formInput.placeholder || ''}"
+                value="${ifDefined(formInput.value as string)}"
+                type="${inputType}"
+                ?required="${formInput.required}"
+                name="${ifDefined(formInput.name)}"
+                minlength="${ifDefined(formInput.minLength)}"
+                maxlength="${ifDefined(formInput.maxLength)}"
+                min=${ifDefined(formInput.minValue)}
+                max="${ifDefined(formInput.maxValue)}"
+                pattern="${ifDefined(formInput.pattern)}"
+                spellcheck="${ifDefined(formInput.spellcheck)}"
+                ?readonly="${formInput.readonly}"
+                ?disabled=${formInput.disabled}
+                @input="${(e: UIEvent) => this.onInput(e, formInput)}"
+                @change="${(e: UIEvent) => this.onChange(e, formInput)}"
+                @wa-invalid=${this.inputInvalid}></wa-input>
+        `;
+
+        return formInput.disabled
+            ? html`${input}<wa-tooltip for="${formInput.inputId}">${formInput.disabledTooltipText || ""}</wa-tooltip>`
+            : input;
+    }
+
+    private renderFormCheckbox(formInput: FormInput): TemplateResult {
+        const allInputClasses = 'form-check-input' + (formInput.classes ? ` ${formInput.classes}` : '');
+
+        const checkbox = html`
+      <wa-checkbox id="${formInput.inputId}"
         class="${allInputClasses}"
-        placeholder="${formInput.placeholder || ''}"
-        value="${ifDefined(formInput.value as string)}"
-        type="${inputType}"
-        ?required="${formInput.required}"
         name="${ifDefined(formInput.name)}"
-        minlength="${ifDefined(formInput.minLength)}"
-        maxlength="${ifDefined(formInput.maxLength)}"
-        min=${ifDefined(formInput.minValue)}
-        max="${ifDefined(formInput.maxValue)}"
-        pattern="${ifDefined(formInput.pattern)}"
-        spellcheck="${ifDefined(formInput.spellcheck)}"
+        value="${ifDefined(formInput.value as string)}"
         ?checked="${formInput.checked}"
-        ?readonly="${formInput.readonly}"
-        custom-validation-error-message="${ifDefined(formInput.validationErrorMessage)}"
+        ?required="${formInput.required}"
         ?disabled=${formInput.disabled}
         @input="${(e: UIEvent) => this.onInput(e, formInput)}"
         @change="${(e: UIEvent) => this.onChange(e, formInput)}"
-        @invalid=${this.inputInvalid} />
+        @wa-invalid=${this.inputInvalid}>
+        ${formInput.label}
+        ${this.renderTooltip(formInput)}
+      </wa-checkbox>
     `;
 
         return formInput.disabled
-            ? html`<sl-tooltip content="${formInput.disabledTooltipText || ""}">${input}</sl-tooltip>`
-            : input;
+            ? html`${checkbox}<wa-tooltip for="${formInput.inputId}">${formInput.disabledTooltipText || ""}</wa-tooltip>`
+            : checkbox;
+    }
+
+    /**
+     * Renders a set of mutually-exclusive options as a WebAwesome radio group.
+     * The <wa-radio-group> owns selection state and keyboard navigation; its change
+     * event reports the selected value, which is forwarded to valueChangedHandler.
+     */
+    protected renderFormRadioGroup(radioGroup: FormRadioGroup): TemplateResult {
+        return html`
+      <wa-radio-group
+        name="${ifDefined(radioGroup.name)}"
+        .value=${radioGroup.value}
+        ?disabled=${radioGroup.disabled}
+        @change=${(e: Event) => radioGroup.valueChangedHandler((e.target as HTMLInputElement).value)}
+        @wa-invalid=${this.inputInvalid}>
+        ${radioGroup.radios.map(radio => html`
+          <wa-radio value="${radio.value}">
+            ${radio.label}
+            ${this.renderTooltip({ label: radio.label, inputId: radio.inputId ?? '', tooltip: radio.tooltip, tooltipLink: radio.tooltipLink })}
+          </wa-radio>
+        `)}
+      </wa-radio-group>
+    `;
     }
 
 
     private renderFormInputLabel(formInput: FormInput): TemplateResult {
+        // We render the required asterisk inline next to our own label text (rather than
+        // letting wa-input render it on its empty internal label, which appears on a new
+        // line). wa-input's built-in indicator is suppressed via component styles.
         return html`
       <label for="${formInput.inputId}">
-        ${formInput.label}
+        ${formInput.label}${formInput.required ? html`<span class="required-indicator">*</span>` : ''}
         ${this.renderTooltip(formInput)}
       </label>
     `;
@@ -288,17 +195,14 @@ export class AppPackageFormBase extends LitElement {
         }
 
         return html`
-      <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}">
+      <info-circle-tooltip text="${formInput.tooltip}" link="${ifDefined(formInput.tooltipLink)}" ?disabled=${formInput.disabled}>
       </info-circle-tooltip>
     `;
     }
 
     private colorChanged(e: UIEvent, formInput: FormInput) {
-        interface HTMLSlColorPicker extends HTMLInputElement, SlColorPicker {
-            size: any;
-            form: any;
-            addEventListener: any;
-            removeEventListener: any;
+        interface HTMLSlColorPicker extends HTMLInputElement {
+            getFormattedValue(format?: 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsv' | 'hsva'): string;
         }
         const inputElement = e.target as HTMLSlColorPicker;
 
@@ -413,4 +317,26 @@ export interface FormInput {
     disabledTooltipText?: string;
     inputHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
     changedHandler?: (val: string, checked: boolean, input: HTMLInputElement) => void;
+}
+
+/**
+ * A group of mutually-exclusive radio options rendered via <wa-radio-group>.
+ */
+export interface FormRadioGroup {
+    name?: string;
+    value: string;
+    disabled?: boolean;
+    valueChangedHandler: (value: string) => void;
+    radios: FormRadio[];
+}
+
+/**
+ * A single option within a {@link FormRadioGroup}.
+ */
+export interface FormRadio {
+    label: string;
+    value: string;
+    tooltip?: string;
+    tooltipLink?: string;
+    inputId?: string;
 }

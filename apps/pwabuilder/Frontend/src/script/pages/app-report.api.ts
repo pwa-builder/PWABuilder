@@ -1,4 +1,4 @@
-import { Validation } from '@pwabuilder/manifest-validation';
+import type { Validation } from '../models/validation';
 import { env } from '../utils/environment';
 import { getHeaders } from '../utils/platformTrackingHeaders';
 import { TestResult } from '../utils/interfaces';

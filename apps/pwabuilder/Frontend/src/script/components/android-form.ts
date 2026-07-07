@@ -1,4 +1,4 @@
-import { css, html, PropertyValueMap, TemplateResult } from 'lit';
+import { html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { fetchOrCreateManifest } from '../services/manifest';
 import {
@@ -9,10 +9,11 @@ import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { localeStrings } from '../../locales';
 import { AppPackageFormBase } from './app-package-form-base';
 import { getManifestContext } from '../services/app-info';
-import { maxSigningKeySizeInBytes, validateAndroidPackageId } from '../utils/android-validation';
+import { maxSigningKeySizeInBytes, validateAndroidPackageId, AndroidPackageOptions } from '../utils/android-validation';
 import { recordPWABuilderProcessStep, AnalyticsBehavior } from '../utils/analytics';
 import { AppNameInputPattern, DnameInputPattern } from '../utils/constants';
-import '@shoelace-style/shoelace/dist/components/details/details.js';
+import { androidFormStyles } from './android-form.styles';
+import "@awesome.me/webawesome/dist/components/details/details.js";
 
 @customElement('android-form')
 
@@ -25,87 +26,7 @@ export class AndroidForm extends AppPackageFormBase {
     @state() manifestContext: ManifestContext | undefined = getManifestContext();
 
     static get styles() {
-
-        const localStyles = css`
-      :host {
-        width: 100%;
-      }
-
-      #android-options-form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .signing-key-fields {
-        margin-left: 30px;
-      }
-
-      #signing-key-file-input {
-        border: none;
-      }
-
-      .flipper-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .form-generate-button {
-        width: 135px;
-        height: 40px;
-      }
-
-      .basic-settings, .adv-settings {
-        display: flex;
-        flex-direction: column;
-        gap: .75em;
-      }
-      #form-layout {
-        flex-grow: 1;
-        display: flex;
-        overflow: auto;
-        flex-direction: column;
-      }
-
-      sl-details {
-        margin-top: 1em;
-      }
-
-      sl-details::part(base){
-        border: none;
-      }
-
-      sl-details::part(summary-icon){
-        display: none;
-      }
-
-      .dropdown_icon {
-        transform: rotate(0deg);
-        transition: transform .5s;
-        height: 30px;
-      }
-
-      sl-details::part(header){
-        padding: 0 10px;
-      }
-      .details-summary {
-        display: flex;
-        align-items: center;
-        width: 100%;
-      }
-      .details-summary p {
-        margin: 0;
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-    `;
-
-        return [
-            ...super.styles,
-            localStyles
-        ];
+        return [...super.styles, androidFormStyles];
     }
 
     constructor() {
@@ -240,13 +161,13 @@ export class AndroidForm extends AppPackageFormBase {
     rotateZero() {
         recordPWABuilderProcessStep("android_form_all_settings_expanded", AnalyticsBehavior.ProcessCheckpoint);
         let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-        icon!.style.transform = "rotate(0deg)";
+        icon?.style && (icon.style.transform = "rotate(0deg)");
     }
 
     rotateNinety() {
         recordPWABuilderProcessStep("android_form_all_settings_collapsed", AnalyticsBehavior.ProcessCheckpoint);
         let icon: any = this.shadowRoot!.querySelector('.dropdown_icon');
-        icon!.style.transform = "rotate(90deg)";
+        icon?.style && (icon.style.transform = "rotate(90deg)");
     }
 
     public getPackageOptions(): PackageOptions {
@@ -325,27 +246,12 @@ export class AndroidForm extends AppPackageFormBase {
             inputHandler: (val: string) => this.packageOptions.launcherName = val
         })}
             </div>
-
-            <div class="form-group">
-              <label>${localeStrings.text.android.titles.source_code}</label>
-              <div class="form-check">
-                ${this.renderFormInput({
-            label: 'Enable',
-            tooltip: 'If enabled, your download will include the source code for your Android app.',
-            inputId: 'include-src-input',
-            type: 'checkbox',
-            checked: this.packageOptions.includeSourceCode === true,
-            inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
-        })}
-              </div>
-            </div>
           </div>
 
           <!-- The "all settings" section of the options dialog -->
-          <sl-details @sl-show=${() => this.rotateNinety()} @sl-hide=${() => this.rotateZero()}>
+          <wa-details @wa-show=${() => this.rotateNinety()} @wa-hide=${() => this.rotateZero()}>
             <div class="details-summary" slot="summary">
-              <p>All Settings</p>
-              <img class="dropdown_icon" src="/assets/new/dropdownIcon.svg" alt="dropdown toggler"/>
+              All Settings
             </div>
               <div class="adv-settings">
                 <div class="form-group">
@@ -566,44 +472,46 @@ export class AndroidForm extends AppPackageFormBase {
                 </div>
 
                 <div class="form-group">
+                  <label>${localeStrings.text.android.titles.source_code}</label>
+                  <div class="form-check">
+                    ${this.renderFormInput({
+            label: 'Enable',
+            tooltip: 'If enabled, your download will include the source code for your Android app.',
+            inputId: 'include-src-input',
+            type: 'checkbox',
+            checked: this.packageOptions.includeSourceCode === true,
+            inputHandler: (_, checked) => this.packageOptions.includeSourceCode = checked
+        })}
+                  </div>
+                </div>
+
+                <div class="form-group">
                   <label>${localeStrings.text.android.titles.display_mode}</label>
                   <div class="form-check">
-                    ${this.renderFormInput({
-            label: 'Standalone',
-            tooltip: 'Recommended for most apps. The Android status bar and navigation bar will be shown while your app is running.',
-            tooltipLink: 'https://developer.android.com/training/system-ui/immersive',
-            inputId: 'display-standalone-input',
-            type: 'radio',
+                    ${this.renderFormRadioGroup({
             name: 'displayMode',
-            value: 'standalone',
-            checked: this.packageOptions.display === 'standalone',
-            inputHandler: () => this.packageOptions.display = 'standalone'
-        })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-            label: 'Fullscreen',
-            tooltip: `The Android status bar and navigation bar will be hidden while your app is running. Suitable for immersive experiences such as games or media apps.`,
-            tooltipLink: 'https://developer.android.com/training/system-ui/immersive#immersive',
-            inputId: 'display-fullscreen-input',
-            type: 'radio',
-            name: 'displayMode',
-            value: 'fullscreen',
-            checked: this.packageOptions.display === 'fullscreen',
-            inputHandler: () => this.packageOptions.display = 'fullscreen'
-        })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
-            label: 'Fullscreen sticky',
-            tooltip: `The Android status bar and navigation bar will be hidden while your app is running, and if the user swipes from the edge of the Android device, the system bars will be semi-transparent, and the touch gesture will be passed to your app. Recommended for drawing apps, and games that require lots of swiping.`,
-            tooltipLink: 'https://developer.android.com/training/system-ui/immersive#sticky-immersive',
-            inputId: 'display-fullscreen-sticky-input',
-            type: 'radio',
-            name: 'displayMode',
-            value: 'fullscreen-sticky',
-            checked: this.packageOptions.display === 'fullscreen-sticky',
-            inputHandler: () => this.packageOptions.display = 'fullscreen-sticky'
+            value: this.packageOptions.display ?? 'standalone',
+            valueChangedHandler: (value) => this.packageOptions.display = value as AndroidPackageOptions['display'],
+            radios: [
+                {
+                    label: 'Standalone',
+                    value: 'standalone',
+                    tooltip: 'Recommended for most apps. The Android status bar and navigation bar will be shown while your app is running.',
+                    tooltipLink: 'https://developer.android.com/training/system-ui/immersive'
+                },
+                {
+                    label: 'Fullscreen',
+                    value: 'fullscreen',
+                    tooltip: `The Android status bar and navigation bar will be hidden while your app is running. Suitable for immersive experiences such as games or media apps.`,
+                    tooltipLink: 'https://developer.android.com/training/system-ui/immersive#immersive'
+                },
+                {
+                    label: 'Fullscreen sticky',
+                    value: 'fullscreen-sticky',
+                    tooltip: `The Android status bar and navigation bar will be hidden while your app is running, and if the user swipes from the edge of the Android device, the system bars will be semi-transparent, and the touch gesture will be passed to your app. Recommended for drawing apps, and games that require lots of swiping.`,
+                    tooltipLink: 'https://developer.android.com/training/system-ui/immersive#sticky-immersive'
+                }
+            ]
         })}
                   </div>
                 </div>
@@ -669,40 +577,28 @@ export class AndroidForm extends AppPackageFormBase {
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.signing_key}</label>
                   <div class="form-check">
-                    ${this.renderFormInput({
+                    ${this.renderFormRadioGroup({
+            name: 'signingMode',
+            value: this.packageOptions.signingMode ?? 'new',
+            valueChangedHandler: (value) => this.androidSigningModeChanged(value as 'mine' | 'new' | 'none'),
+            radios: [
+                {
                     label: 'New',
-                    tooltip: `Recommended for new apps in Google Play. PWABuilder will generate a new signing key for you and sign your package with it. Your download will contain the new signing details.`,
-                    inputId: 'signing-new-input',
-                    name: 'signingMode',
                     value: 'new',
-                    type: 'radio',
-                    checked: this.packageOptions.signingMode === 'new',
-                    inputHandler: () => this.androidSigningModeChanged('new')
-                })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
+                    tooltip: `Recommended for new apps in Google Play. PWABuilder will generate a new signing key for you and sign your package with it. Your download will contain the new signing details.`
+                },
+                {
                     label: 'Use mine',
-                    tooltip: 'Recommended for existing apps in Google Play. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.',
-                    inputId: 'signing-mine-input',
-                    name: 'signingMode',
                     value: 'mine',
-                    type: 'radio',
-                    checked: this.packageOptions.signingMode === 'mine',
-                    inputHandler: () => this.androidSigningModeChanged('mine')
-                })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
+                    tooltip: 'Recommended for existing apps in Google Play. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play.'
+                },
+                {
                     label: 'None',
-                    tooltip: 'PWABuilder will generate a raw, unsigned APK. Raw, unsigned APKs cannot be uploaded to the Google Play Store.',
-                    inputId: 'signing-none-input',
-                    name: 'signingMode',
                     value: 'none',
-                    type: 'radio',
-                    checked: this.packageOptions.signingMode === 'none',
-                    inputHandler: () => this.androidSigningModeChanged('none')
-                })}
+                    tooltip: 'PWABuilder will generate a raw, unsigned APK. Raw, unsigned APKs cannot be uploaded to the Google Play Store.'
+                }
+            ]
+        })}
                   </div>
                 </div>
 
@@ -745,34 +641,29 @@ export class AndroidForm extends AppPackageFormBase {
                 <div class="form-group">
                   <label>${localeStrings.text.android.titles.fallback}</label>
                   <div class="form-check">
-                    ${this.renderFormInput({
+                    ${this.renderFormRadioGroup({
+            name: 'fallbackType',
+            value: this.packageOptions.fallbackType ?? 'customtabs',
+            valueChangedHandler: (value) => this.packageOptions.fallbackType = value as AndroidPackageOptions['fallbackType'],
+            radios: [
+                {
                     label: 'Custom Tabs',
-                    tooltip: `When Trusted Web Activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback to run your app.`,
-                    tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
-                    inputId: 'chrome-custom-tab-fallback-input',
-                    type: 'radio',
-                    name: 'fallbackType',
                     value: 'customtabs',
-                    checked: this.packageOptions.fallbackType === 'customtabs',
-                    inputHandler: () => this.packageOptions.fallbackType = 'customtabs'
-                })}
-                  </div>
-                  <div class="form-check">
-                    ${this.renderFormInput({
+                    tooltip: `When Trusted Web Activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback to run your app.`,
+                    tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/'
+                },
+                {
                     label: 'Web View',
-                    tooltip: `When Trusted Web Activity (TWA) is unavailable, use a web view as a fallback to run your app.`,
-                    tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/',
-                    inputId: 'web-view-fallback-input',
-                    type: 'radio',
-                    name: 'fallbackType',
                     value: 'webview',
-                    checked: this.packageOptions.fallbackType === 'webview',
-                    inputHandler: () => this.packageOptions.fallbackType = 'webview'
-                })}
+                    tooltip: `When Trusted Web Activity (TWA) is unavailable, use a web view as a fallback to run your app.`,
+                    tooltipLink: 'https://developer.chrome.com/docs/android/custom-tabs/'
+                }
+            ]
+        })}
                   </div>
                 </div>
               </div>
-          </sl-details>
+          </wa-details>
         </div>
       </form>
     </div>

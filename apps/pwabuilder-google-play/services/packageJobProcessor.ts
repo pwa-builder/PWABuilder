@@ -4,7 +4,7 @@ import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import { PackageJobLogger } from "../models/packageJobLogger.js";
 import { blobStorage } from "./azureStorageBlobService.js";
 import { redisService } from "./redisService.js";
-import { azureQueue } from "./azureQueueService.js";
+import { azureQueue, AzureQueueService } from "./azureQueueService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
 
 /**
@@ -16,6 +16,7 @@ export class PackageJobProcessor {
 
     private readonly jobCheckIntervalMs = 2000;
     private readonly maxRetryCount = 2;
+    private readonly maxJobAgeMs = 60000 * 30; // 30 minutes
 
     /**
      * Begins the background job processor that periodically checks for Google Play packaging jobs and processes them.
@@ -43,8 +44,17 @@ export class PackageJobProcessor {
         try {
             job = await packageJobQueue.dequeue();
             if (job) {
-                jobLogger = new PackageJobLogger(job);
-                await this.processJob(job, jobLogger);
+                // Skip stale jobs — users won't be waiting for results after 15 minutes.
+                // Discarding these prevents the queue from staying backed up with dead work.
+                if (this.isJobStale(job)) {
+                    console.info(`Discarding stale job ${job.id} (created ${job.createdAt}). Job exceeded max age of ${this.maxJobAgeMs / 60000} minutes.`);
+                    job.errors.push(`Discarding job due to exceeding max age of ${this.maxJobAgeMs / 60000} minutes.`);
+                    job.status = "Failed";
+                    await redisService.save(job.id, job);
+                } else {
+                    jobLogger = new PackageJobLogger(job);
+                    await this.processJob(job, jobLogger);
+                }
             }
         } catch (jobError) {
             hadError = true;
@@ -82,6 +92,14 @@ export class PackageJobProcessor {
     }
 
     private async retryJobOrMarkAsFailed(job: GooglePlayPackageJob, jobError: any, logger: PackageJobLogger): Promise<void> {
+        // Don't retry stale jobs — the user has already moved on
+        if (this.isJobStale(job)) {
+            logger.error(`Job expired after ${this.maxJobAgeMs / 60000} minutes. Marking as failed without retry.`, jobError);
+            job.status = "Failed";
+            await redisService.save(job.id, job);
+            return;
+        }
+
         if (job.retryCount < this.maxRetryCount) {
             job.retryCount++;
             logger.info("Retrying job", { attempt: job.retryCount + 1, maxAttempts: this.maxRetryCount + 1 });
@@ -93,6 +111,15 @@ export class PackageJobProcessor {
             job.status = "Failed";
             await redisService.save(job.id, job);
         }
+    }
+
+    /**
+     * Checks if a job has exceeded the maximum allowed age.
+     * Stale jobs are discarded because the user is no longer waiting for results.
+     */
+    private isJobStale(job: GooglePlayPackageJob): boolean {
+        const createdAt = new Date(job.createdAt).getTime();
+        return Date.now() - createdAt > this.maxJobAgeMs;
     }
 
     async jobProgressed(e: PackageCreationProgress, job: GooglePlayPackageJob, logger: PackageJobLogger) {

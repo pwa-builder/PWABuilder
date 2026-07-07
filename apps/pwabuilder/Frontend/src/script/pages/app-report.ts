@@ -2,7 +2,7 @@ import { LitElement, TemplateResult, html } from 'lit';
 import { repeat } from "lit/directives/repeat.js";
 import { customElement, state } from 'lit/decorators.js';
 import { getManifestContext, setManifestContext } from '../services/app-info';
-import { Manifest } from '@pwabuilder/manifest-validation';
+import type { Manifest } from '../models/manifest';
 
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -17,32 +17,25 @@ import '../components/share-card';
 import '../components/manifest-info-card'
 import '../components/sw-info-card'
 import '../components/arrow-link'
-
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-import '@shoelace-style/shoelace/dist/components/button-group/button-group.js';
-import '@shoelace-style/shoelace/dist/components/skeleton/skeleton.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
-import '@shoelace-style/shoelace/dist/components/details/details.js';
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-import '@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js';
-import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
-import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
-import '@shoelace-style/shoelace/dist/components/copy-button/copy-button.js';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-
+import type WaDropdown from '@awesome.me/webawesome/dist/components/dropdown/dropdown.js';
+import type WaDialog from '@awesome.me/webawesome/dist/components/dialog/dialog.js';
 import { Icon, ManifestContext } from '../utils/interfaces';
 import { resolveUrl } from '../utils/url';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
-//@ts-ignore
-import Color from "../../../node_modules/colorjs.io/dist/color";
 import { enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapabilityStatus, PwaCapabilityLevel } from './app-report.api';
 import { appReportStyles } from './app-report.styles';
 import { createManifestContextFromEmpty } from '../services/manifest';
 import { ManifestEditorFrame } from '../components/manifest-editor-frame';
 import { manifest_fields } from "../models/manifest-fields";
+import "@awesome.me/webawesome/dist/components/button/button.js";
+import '@awesome.me/webawesome/dist/components/copy-button/copy-button.js';
+import '@awesome.me/webawesome/dist/components/details/details.js';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
+import '@awesome.me/webawesome/dist/components/progress-ring/progress-ring.js';
+import '@awesome.me/webawesome/dist/components/skeleton/skeleton.js';
+import '@awesome.me/webawesome/dist/components/spinner/spinner.js';
+import '@awesome.me/webawesome/dist/components/textarea/textarea.js';
+import '@awesome.me/webawesome/dist/components/tooltip/tooltip.js';
 
 const valid_src = "/assets/new/valid.svg";
 const yield_src = "/assets/new/yield.svg";
@@ -70,7 +63,7 @@ export class AppReport extends LitElement {
     @state() createdManifest: boolean = false;
     @state() manifestContext: ManifestContext | undefined;
     @state() todoFilters: PwaCapabilityLevel[] = ["Required", "Recommended", "Optional", "Feature"];
-    @state() openTooltips: SlDropdown[] = [];
+    @state() openTooltips: WaDropdown[] = [];
     @state() stopShowingNotificationTooltip: boolean = false;
     @state() closeOpenTooltips: boolean = true;
     @state() darkMode: boolean = false;
@@ -207,25 +200,6 @@ export class AppReport extends LitElement {
         return imgPromise;
     }
 
-    // Looks at the brackground color from the sites manifest
-    // If its darker, returns lightColor for the background of app card
-    // If its lighter, returns darkColor for the background of app card
-    pickTextColorBasedOnBgColorAdvanced(bgColor: string, lightColor: string, darkColor: string): string {
-
-        //@ts-ignore:next-line
-        var colors: any = new Color(bgColor).coords;
-
-        var c = colors.map((num: number) => {
-            if (num <= 0.03928) {
-                return num / 12.92;
-            }
-            return Math.pow((num + 0.055) / 1.055, 2.4);
-        });
-        var L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
-        let chosenColor = (L > 0.3) ? darkColor : lightColor;
-        return chosenColor
-    }
-
     private async applyManifestContext(url: string, manifestUrl?: string, manifestRaw?: string) {
         this.isAppCardInfoLoading = false;
         this.manifestContext = await this.processManifest(url, manifestUrl, manifestRaw);
@@ -345,7 +319,7 @@ export class AppReport extends LitElement {
         if (comingFromConfirmation) {
             await this.delay(3000)
         }
-        (this.shadowRoot!.querySelector(".dialog") as any)!.hide();
+
         if (this.siteUrl) {
             this.resetData();
             this.runAllTests(this.siteUrl);
@@ -366,7 +340,7 @@ export class AppReport extends LitElement {
         this.lastTested = "Last tested seconds ago"
 
         // hide the detail lists
-        let details = this.shadowRoot!.querySelectorAll('sl-details');
+        let details = this.shadowRoot!.querySelectorAll('wa-details');
 
         details.forEach((detail: any) => {
             detail.hide();
@@ -382,7 +356,7 @@ export class AppReport extends LitElement {
         this.closeOpenTooltips = false;
         let dialog: any = this.shadowRoot!.querySelector("share-card")!.shadowRoot!.querySelector(".dialog");
 
-        await dialog!.show();
+        dialog!.open = true;
         recordPWABuilderProcessStep("share_card_opened", AnalyticsBehavior.ProcessCheckpoint);
     }
 
@@ -406,7 +380,7 @@ export class AppReport extends LitElement {
         this.closeOpenTooltips = false;
         let dialog: any = this.shadowRoot!.querySelector("sw-selector")!.shadowRoot!.querySelector(".dialog");
 
-        await dialog.show()
+        dialog.open = true;
         recordPWABuilderProcessStep("sw_selector_opened", AnalyticsBehavior.ProcessCheckpoint);
     }
 
@@ -415,7 +389,7 @@ export class AppReport extends LitElement {
         this.closeOpenTooltips = false;
         let dialog: any = this.shadowRoot!.querySelector("publish-pane")!.shadowRoot!.querySelector(".dialog");
 
-        await dialog.show()
+        dialog.open = true;
         recordPWABuilderProcessStep("publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     }
 
@@ -424,7 +398,7 @@ export class AppReport extends LitElement {
         this.closeOpenTooltips = false;
         let dialog: any = this.shadowRoot!.querySelector("test-publish-pane")!.shadowRoot!.querySelector(".dialog");
 
-        await dialog.show()
+        dialog.open = true;
         recordPWABuilderProcessStep("test_publish_modal_opened", AnalyticsBehavior.ProcessCheckpoint);
     }
 
@@ -555,12 +529,12 @@ export class AppReport extends LitElement {
 
                 case "Open Manifest Modal":
                     frame = this.shadowRoot!.querySelector("manifest-editor-frame");
-                    (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+                    (frame?.shadowRoot!.querySelector(".dialog")! as any).open = true;
                     return;
 
                 case "Open SW Modal":
                     frame = this.shadowRoot!.querySelector("sw-selector");
-                    (frame?.shadowRoot!.querySelector(".dialog")! as any).show();
+                    (frame?.shadowRoot!.querySelector(".dialog")! as any).open = true;
                     return;
             }
         }
@@ -573,11 +547,11 @@ export class AppReport extends LitElement {
 
         let icon: HTMLImageElement = this.shadowRoot!.querySelector('[data-card="' + card + '"]')!;
         let target: Node = (e!.target as unknown as Node);
-        let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
+        let collapsable: NodeList = this.shadowRoot!.querySelectorAll("wa-details");
         let allowed: boolean = false;
 
-        // added this code because the tooltips that exist on the action items emit the sl-show and
-        // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
+        // added this code because the tooltips that exist on the action items emit the wa-show and
+        // wa-hide events. This causes this function to trigger since its nested and the event bubbles.
         // so this ensures that the target for rotating is a detail card and not a tooltip.
         for (let i = 0; i < collapsable.length; i++) {
             if (collapsable[i].isEqualNode(target!)) {
@@ -603,11 +577,11 @@ export class AppReport extends LitElement {
         }
 
         let target: Node = (e!.target as unknown as Node);
-        let collapsable: NodeList = this.shadowRoot!.querySelectorAll("sl-details");
+        let collapsable: NodeList = this.shadowRoot!.querySelectorAll("wa-details");
         let allowed: boolean = false;
 
-        // added this code because the tooltips that exist on the action items emit the sl-show and
-        // sl-hide events. This causes this function to trigger since its nested and the event bubbles.
+        // added this code because the tooltips that exist on the action items emit the wa-show and
+        // wa-hide events. This causes this function to trigger since its nested and the event bubbles.
         // so this ensures that the target for rotating is a detail card and not a tooltip.
         for (let i = 0; i < collapsable.length; i++) {
             if (collapsable[i].isEqualNode(target!)) {
@@ -681,7 +655,7 @@ export class AppReport extends LitElement {
 
         if (e.detail.entering) {
             if (this.openTooltips.length > 0) {
-                this.openTooltips[0].hide();
+                this.openTooltips[0].open = false;
                 this.openTooltips = [];
             }
 
@@ -695,7 +669,7 @@ export class AppReport extends LitElement {
 
     closeTooltipOnScroll() {
         if (this.openTooltips.length > 0) {
-            this.openTooltips[0].hide();
+            this.openTooltips[0].open = false;
             this.openTooltips = [];
         }
     }
@@ -704,8 +678,8 @@ export class AppReport extends LitElement {
         var dialogContent = html`
       <p>Have you added your new ${this.thingToAdd} to your site?</p>
       <div id="confirmationButtons">
-        <sl-button @click=${() => this.retest(true)}> Yes </sl-button>
-        <sl-button @click=${() => this.readDenied = true}> No </sl-button>
+        <wa-button @click=${() => this.retest(true)}> Yes </wa-button>
+        <wa-button @click=${() => this.readDenied = true}> No </wa-button>
       </div>
     `
 
@@ -728,15 +702,15 @@ export class AppReport extends LitElement {
             return html`
         <div id="app-card" class="flex-col skeleton-effects">
           <div id="app-card-header" class="skeleton">
-            <sl-skeleton id="app-image-skeleton" effect="pulse"></sl-skeleton>
+            <wa-skeleton id="app-image-skeleton" effect="pulse"></wa-skeleton>
             <div id="card-info" class="flex-col">
-              <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
-                  <sl-skeleton class="app-info-skeleton" effect="pulse"></sl-skeleton>
+              <wa-skeleton class="app-info-skeleton" effect="pulse"></wa-skeleton>
+                  <wa-skeleton class="app-info-skeleton" effect="pulse"></wa-skeleton>
                 </div>
-                <!-- <sl-skeleton class="app-info-skeleton skeleton-desc" effect="pulse"></sl-skeleton> -->
+                <!-- <wa-skeleton class="app-info-skeleton skeleton-desc" effect="pulse"></wa-skeleton> -->
               </div>
               <div id="app-card-footer">
-                <sl-skeleton class="app-info-skeleton-half" effect="pulse"></sl-skeleton>
+                <wa-skeleton class="app-info-skeleton-half" effect="pulse"></wa-skeleton>
               </div>
             </div>
         `;
@@ -799,26 +773,26 @@ export class AppReport extends LitElement {
     renderAppCardFooter(): TemplateResult {
         if (this.runningTests) {
             return html`
-        <div id="test" class="in-progress">
-            <span>testing in progress</span>
-            <div class="loader-round"></div>
-          </div>
-      `;
+                <div id="test" class="in-progress">
+                    <span>testing in progress</span>
+                    <div class="loader-round"></div>
+                </div>
+            `;
         }
 
         return html`
-      <div id="test" style=${styleMap(this.CardStyles)}>
-          <p id="last-edited" style=${styleMap(this.LastEditedStyles)}>
-            ${this.lastTested}
-            <sl-button class="view-log-btn" variant="text" size="small" @click="${this.showAnalysisLog}">
-              View log
-            </sl-button>
-          </p>
-          <button type="button" id="retest" @click="${() => this.retest(false)}">
-            <img src=${this.getThemedIcon('/assets/new/retest-icon.svg')} alt="retest site" />
-          </button>
-      </div>
-    `;
+            <div id="test" style=${styleMap(this.CardStyles)}>
+                <div id="last-edited" style=${styleMap(this.LastEditedStyles)}>
+                    ${this.lastTested}
+                    <wa-button class="view-log-btn" appearance="plain" size="xs" @click="${this.showAnalysisLog}">
+                        View log
+                    </wa-button>
+                </div>
+                <button type="button" id="retest" @click="${() => this.retest(false)}">
+                    <img src=${this.getThemedIcon('/assets/new/retest-icon.svg')} alt="retest site" />
+                </button>
+            </div>
+        `;
     }
 
     renderPackageForStores(): TemplateResult {
@@ -831,18 +805,18 @@ export class AppReport extends LitElement {
         }
 
         return html`
-      <sl-tooltip class="mani-tooltip">
+      <button
+        type="button"
+        id="pfs-disabled"
+        aria-disabled="true">
+          ${this.renderPackageSpinner()}
+          Package For Stores
+      </button>
+      <wa-tooltip class="mani-tooltip" for="pfs-disabled">
         ${this.runningTests ?
-                html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
-                html`<div slot="content" class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check Action Items below and fix the missing requirements.</p></div>`}
-            <button
-              type="button"
-              id="pfs-disabled"
-              aria-disabled="true">
-                ${this.renderPackageSpinner()}
-                Package For Stores
-            </button>
-      </sl-tooltip>
+                html`<div class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> <p>Running tests...</p></div>` :
+                html`<div class="mani-tooltip-content"><img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /><p>Your PWA is not store ready! Check Action Items below and fix the missing requirements.</p></div>`}
+      </wa-tooltip>
     `;
     }
 
@@ -867,13 +841,13 @@ export class AppReport extends LitElement {
 
     private renderTodoTooltip(): TemplateResult {
         return html`
-      <sl-tooltip class="mani-tooltip" id="notifications" ?open=${this.closeOpenTooltips}>
-        <div slot="content" class="mani-tooltip-content">
+      ${this.renderTodoFilters()}
+      <wa-tooltip class="mani-tooltip" id="notifications" for="indicators-holder" ?open=${this.closeOpenTooltips}>
+        <div class="mani-tooltip-content">
           <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" />
           <p class="mani-tooltip-p"> Filter through notifications <br> as and when you need! </p>
         </div>
-        ${this.renderTodoFilters()}
-      </sl-tooltip>
+      </wa-tooltip>
     `;
     }
 
@@ -892,7 +866,7 @@ export class AppReport extends LitElement {
           <div id="todo-summary">
             <div id="todo-summary-left">
               <h2>Action Items</h2>
-              <sl-spinner class="${spinnerClass}"></sl-spinner>
+              <wa-spinner class="${spinnerClass}"></wa-spinner>
             </div>
             <div id="todo-indicators">
                 ${indicatorOrTooltipOrEmpty}
@@ -935,9 +909,9 @@ export class AppReport extends LitElement {
     renderManifestDetails(): TemplateResult {
         const isLoading = !this.analysis || this.analysis.capabilities.filter(c => c.category === "WebAppManifest").some(c => c.status === "InProgress");
         return html`
-      <sl-details id="mani-details" class="details" ?disabled=${isLoading} @sl-show=${(e: Event) => this.rotateNinety("mani-details", e)} @sl-hide=${(e: Event) => this.rotateZero("mani-details", e)}>
+      <wa-details id="mani-details" class="details" ?disabled=${isLoading} @wa-show=${(e: Event) => this.rotateNinety("mani-details", e)} @wa-hide=${(e: Event) => this.rotateZero("mani-details", e)}>
         ${this.renderManifestDetailsChecklist()}
-      </sl-details>
+      </wa-details>
     `;
     }
 
@@ -947,7 +921,7 @@ export class AppReport extends LitElement {
         if (isLoading) {
             return html`
         <div slot="summary">
-          <sl-skeleton class="summary-skeleton" effect="pulse"></sl-skeleton>
+          <wa-skeleton class="summary-skeleton" effect="pulse"></wa-skeleton>
         </div>
       `;
         }
@@ -991,12 +965,12 @@ export class AppReport extends LitElement {
         const icon = html`<img src=${iconUrl} alt=""/>`;
 
         if (tooltipText) {
+            const fieldAnchorId = `field-check-${field.replace(/[^a-zA-Z0-9_-]/g, '-')}`;
             return html`
-        <div class="test-result" data-field=${field}>
-          <sl-tooltip content=${tooltipText} placement="top">
-            ${icon}
-            <p>${field}</p>
-          </sl-tooltip>
+        <div class="test-result" data-field=${field} id=${fieldAnchorId}>
+          ${icon}
+          <p>${field}</p>
+          <wa-tooltip for=${fieldAnchorId} placement="top">${tooltipText}</wa-tooltip>
         </div>
       `;
         }
@@ -1015,8 +989,8 @@ export class AppReport extends LitElement {
         if (isLoading) {
             return html`
         <div class="flex-col gap">
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
         </div>
       `;
         }
@@ -1030,12 +1004,12 @@ export class AppReport extends LitElement {
 
         if (this.createdManifest) {
             return html`
-        <sl-tooltip class="mani-tooltip" ?open=${this.closeOpenTooltips}>
-          <div slot="content" class="mani-tooltip-content">
+        <button type="button" class="alternate" id="edit-manifest-button" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
+        <wa-tooltip class="mani-tooltip" for="edit-manifest-button" ?open=${this.closeOpenTooltips}>
+          <div class="mani-tooltip-content">
             <img src="/assets/new/waivingMani.svg" alt="Waiving Mani" /> 
             <p>We did not find a manifest on your site before our tests timed out so we have created a manifest for you! <br> Click here to customize it!</p></div>
-          <button type="button" class="alternate" @click=${() => this.openManifestEditorModal()}>Edit Your Manifest</button>
-        </sl-tooltip>
+        </wa-tooltip>
         ${manifestDocsLink}
       `;
         }
@@ -1052,8 +1026,8 @@ export class AppReport extends LitElement {
         if (isLoading) {
             return html`
         <div class="flex-col gap">
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
         </div>
       `;
         }
@@ -1078,12 +1052,12 @@ export class AppReport extends LitElement {
             html`<img src="assets/new/macro_error.svg" class="macro_error" alt="missing manifest requirements" />` :
             html`<div>${validCount} / ${manifestCapabilities.length}</div>`;
         return html`
-      <sl-progress-ring
+      <wa-progress-ring
         id="manifestProgressRing"
         class=${classMap(this.decideColor("manifest"))}
         value="${this.createdManifest ? 0 : (parseFloat(JSON.stringify(validCount)) / manifestCapabilities.length) * 100}">
           ${manifestChecksPassedOrError}
-      </sl-progress-ring>
+      </wa-progress-ring>
     `;
     }
 
@@ -1158,9 +1132,9 @@ export class AppReport extends LitElement {
         </div>
       </div>
 
-      <sl-dialog class="dialog" ?open=${this.showRetestConfirmationModal} @sl-hide=${() => { this.showRetestConfirmationModal = false; this.readDenied = false; }} noHeader>
+      <wa-dialog class="dialog" ?open=${this.showRetestConfirmationModal} @wa-hide=${() => { this.showRetestConfirmationModal = false; this.readDenied = false; }} without-header>
         ${this.renderReadDialog()}
-      </sl-dialog>
+      </wa-dialog>
 
       ${this.renderShareScore()}
 
@@ -1225,8 +1199,8 @@ export class AppReport extends LitElement {
         if (showLoading) {
             return html`
         <div class="flex-col gap">
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
         </div>
       `;
         }
@@ -1249,12 +1223,12 @@ export class AppReport extends LitElement {
 
         const passedCount = swCaps.filter(c => c.status === "Passed").length;
         return html`
-      <sl-progress-ring
+      <wa-progress-ring
         id="swProgressRing"
         class="counterRing"
         value="${passedCount > 0 ? 100 : 0}"
         >+${passedCount}
-      </sl-progress-ring>
+      </wa-progress-ring>
     `;
     }
 
@@ -1273,8 +1247,8 @@ export class AppReport extends LitElement {
         const swDataLoading = !this.analysis || this.analysis.capabilities.filter(c => c.category === "ServiceWorker").every(c => c.status === "InProgress");
         if (swDataLoading) {
             return html`
-        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-        <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+        <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
+        <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
       `;
         }
 
@@ -1293,7 +1267,7 @@ export class AppReport extends LitElement {
         const passedCheckIcon = capability.status === "Passed"
             ? html`<img class="valid-marker" src="${valid_src}" alt="valid result indicator" />`
             : capability.status === "InProgress"
-                ? html`<sl-spinner class="in-progress-marker"></sl-spinner>`
+                ? html`<wa-spinner class="in-progress-marker"></wa-spinner>`
                 : null;
         return html`
       <div class="icon-and-name"  @trigger-hover=${(e: CustomEvent) => this.handleShowingTooltip(e, "service_worker", capability.id || "")}>
@@ -1337,8 +1311,8 @@ export class AppReport extends LitElement {
         if (isLoading) {
             return html`
         <div class="flex-col gap">
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
-          <sl-skeleton class="desc-skeleton" effect="pulse"></sl-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
+          <wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>
         </div>
       `;
         }
@@ -1358,7 +1332,7 @@ export class AppReport extends LitElement {
         }
 
         const featureScore = features.reduce((acc, v) => acc + (v.status === "Passed" ? 1 : 0), 0);
-        return html`<sl-progress-ring class="counterRing" value="${featureScore > 0 ? 100 : 0}">+${featureScore}</sl-progress-ring>`;
+        return html`<wa-progress-ring class="counterRing" value="${featureScore > 0 ? 100 : 0}">+${featureScore}</wa-progress-ring>`;
     }
 
     renderAppCapabilitiesCards(): TemplateResult {
@@ -1397,7 +1371,7 @@ export class AppReport extends LitElement {
     renderPackageSpinner(): TemplateResult {
         const visibleClass = this.runningTests ? '' : 'd-none';
         return html`
-      <sl-spinner class="${visibleClass}"></sl-spinner>
+      <wa-spinner class="${visibleClass}"></wa-spinner>
     `;
     }
 
@@ -1422,21 +1396,21 @@ export class AppReport extends LitElement {
         }
 
         return html`
-            <sl-dialog class="analysis-logs-dialog" label="Analysis Logs">
+            <wa-dialog class="analysis-logs-dialog" label="Analysis Logs">
                 <h3>
                     Logs
-                    <sl-copy-button value="Shoelace rocks!" from="logs-text-area.value"></sl-copy-button>
+                    <wa-copy-button value="" from="logs-text-area.value"></wa-copy-button>
                 </h3>
-                <sl-textarea id="logs-text-area" rows="4" readonly value="${this.analysis.logs.join("\r\n")}"></sl-textarea>
+                <wa-textarea id="logs-text-area" rows="4" readonly value="${this.analysis.logs.join("\r\n")}"></wa-textarea>
 
                 <br >
                 <hr />
                 <h3>
                     JSON
-                    <sl-copy-button from="logs-json.value"></sl-copy-button>
+                    <wa-copy-button value="" from="logs-json.value"></wa-copy-button>
                 </h3>
-                <sl-textarea id="logs-json" rows="4" readonly value="${JSON.stringify(this.analysis, null, 2)}"></sl-textarea>
-            </sl-dialog>
+                <wa-textarea id="logs-json" rows="4" readonly value="${JSON.stringify(this.analysis, null, 2)}"></wa-textarea>
+            </wa-dialog>
         `;
     }
 
@@ -1448,7 +1422,7 @@ export class AppReport extends LitElement {
         const errorInfo = `${this.analysis.url} failed due to an internal error.\r\n\r\n> ${this.analysis.error}\r\n\r\nId: ${this.analysis.id}\r\n\r\nLogs:\r\n> ${this.analysis.logs.join("\r\n")}`;
         const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(errorInfo.substring(0, 4000))}`;
         return html`
-      <sl-dialog label="Error" class="analysis-error-dialog">
+      <wa-dialog label="Error" class="analysis-error-dialog">
         <p>
           😵 Oh no, PWABuilder was unable to analyze your web app due to an error.
         </p>
@@ -1458,22 +1432,24 @@ export class AppReport extends LitElement {
         </details>
         
         <div slot="footer">
-          <sl-button variant="primary" size="small" @click="${() => this.retest(false)}">
-            <sl-icon slot="prefix" name="arrow-repeat"></sl-icon>
+          <wa-button variant="brand" size="s" @click="${() => this.retest(false)}">
+            <wa-icon slot="start" name="arrow-repeat"></wa-icon>
             <span>Try again</span>
-          </sl-button>
-          <sl-button variant="default" size="small" href="${bugLink}" target="_blank">
-            <sl-icon slot="prefix" name="github"></sl-icon>
+          </wa-button>
+          <wa-button variant="default" size="s" href="${bugLink}" target="_blank">
+            <wa-icon slot="start" name="github"></wa-icon>
             <span>File a bug</span>
-          </sl-button>
+          </wa-button>
         </div>        
-      </sl-dialog>
+      </wa-dialog>
     `;
     }
 
     showAnalysisErrorDialog(): void {
-        const dialog = this.shadowRoot?.querySelector(".analysis-error-dialog") as SlDialog | null;
-        dialog?.show();
+        const dialog = this.shadowRoot?.querySelector(".analysis-error-dialog") as WaDialog | null;
+        if (dialog) {
+            dialog.open = true;
+        }
     }
 
     toggleTodoFilter(level: PwaCapabilityLevel) {
@@ -1487,8 +1463,10 @@ export class AppReport extends LitElement {
     }
 
     showAnalysisLog(): void {
-        const dialog = this.shadowRoot?.querySelector(".analysis-logs-dialog") as SlDialog | null;
-        dialog?.show();
+        const dialog = this.shadowRoot?.querySelector(".analysis-logs-dialog") as WaDialog | null;
+        if (dialog) {
+            dialog.open = true;
+        }
     }
 
     sortActionItems(a: PwaCapability, b: PwaCapability): number {

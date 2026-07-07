@@ -4,10 +4,10 @@ import { customElement, property, state } from 'lit/decorators.js';
 import './manifest-info-card'
 import './sw-info-card'
 import { todoListItemStyles } from './todo-list-item.styles';
-import "@shoelace-style/shoelace/dist/components/details/details.js";
-import "@shoelace-style/shoelace/dist/components/button/button.js";
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from "../utils/analytics";
 import { manifest_fields } from "../models/manifest-fields";
+import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/details/details.js';
 
 @customElement('todo-item')
 export class TodoItem extends LitElement {
@@ -64,7 +64,7 @@ export class TodoItem extends LitElement {
 
     render(): TemplateResult {
         return html`
-            <sl-details>
+            <wa-details>
                 <div class="summary" slot="summary">
                     ${this.renderIcon()}
                     ${this.fix}
@@ -75,7 +75,7 @@ export class TodoItem extends LitElement {
                     ${this.renderLearnMore()}
                     ${this.renderEditInManifest()}
                 </div>
-            </sl-details>  
+            </wa-details>  
         `;
     }
 
@@ -95,7 +95,7 @@ export class TodoItem extends LitElement {
         }
 
         return html`
-            <sl-button href="${this.docsUrl}" target="_blank" variant="text" size="small">Learn more</sl-button>
+            <wa-button href="${this.docsUrl}" target="_blank" appearance="outlined" size="xs">Learn more</wa-button>
         `;
     }
 
@@ -105,7 +105,7 @@ export class TodoItem extends LitElement {
         }
 
         return html`
-            <sl-button @click=${this.openManifestEditor} variant="text" size="small">Edit in manifest</sl-button>
+            <wa-button @click=${this.openManifestEditor} appearance="outlined" size="xs">Edit in manifest</wa-button>
         `;
     }
 
@@ -114,7 +114,7 @@ export class TodoItem extends LitElement {
         recordPWABuilderProcessStep(`manifest_tooltip.open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
         recordPWABuilderProcessStep(`manifest_tooltip.${this.field}_open_editor_clicked`, AnalyticsBehavior.ProcessCheckpoint);
 
-        // (this.shadowRoot!.querySelector(".tooltip") as unknown as SlDropdown).hide()
+        // (this.shadowRoot!.querySelector(".tooltip") as unknown as WaDropdown).hide()
         let tab: string = manifest_fields[this.field]?.location || "info";
         let event: CustomEvent = new CustomEvent('open-manifest-editor', {
             detail: {

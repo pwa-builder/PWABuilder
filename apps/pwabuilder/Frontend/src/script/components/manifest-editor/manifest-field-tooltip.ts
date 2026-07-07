@@ -1,7 +1,6 @@
 import { LitElement, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
+import type WaDropdown from '@awesome.me/webawesome/dist/components/dropdown/dropdown.js';
 import { manifestFieldTooltipStyles } from "./manifest-field-tooltip.styles";
 import { manifest_fields } from "../../models/manifest-fields";
 
@@ -27,7 +26,7 @@ export class ManifestFieldTooltip extends LitElement {
     handleHover(entering: boolean) {
         this.trackTooltipOpened();
         this.currentlyHovering = entering;
-        let tooltip = (this.shadowRoot!.querySelector("sl-dropdown") as unknown as SlDropdown)
+        let tooltip = (this.shadowRoot!.querySelector("wa-dropdown") as unknown as WaDropdown)
         let myEvent = new CustomEvent('trigger-hover',
             {
                 detail: {
@@ -54,7 +53,7 @@ export class ManifestFieldTooltip extends LitElement {
     render() {
         return html`
       <div class="mic-wrapper" @mouseenter=${() => this.handleHover(true)} @mouseleave=${() => this.handleHover(false)}>
-        <sl-dropdown distance="10" placement="right" class="tooltip">
+        <wa-dropdown distance="10" placement="right" class="tooltip">
           <button slot="trigger" type="button" class="right" class="nav_link nav_button" @click=${() => this.trackTooltipOpened()} aria-label="Required field">
             <img src="assets/tooltip.svg" alt="info symbol, additional information available on hover" />
           </button>
@@ -70,7 +69,7 @@ export class ManifestFieldTooltip extends LitElement {
             }
             
           </div>
-        </sl-dropdown>
+        </wa-dropdown>
       </div>
     `;
     }

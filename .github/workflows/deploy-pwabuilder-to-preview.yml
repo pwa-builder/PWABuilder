@@ -1,8 +1,9 @@
 name: Deploy PWABuilder web app to staging
 
 on:
-  push:
+  pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened]
     paths:
       - "apps/pwabuilder/**"
       - "Dockerfile.production"

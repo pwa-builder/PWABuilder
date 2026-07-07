@@ -1,17 +1,19 @@
-import { LitElement, css, html, PropertyValueMap, TemplateResult } from 'lit';
+import { LitElement, html, PropertyValueMap, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem, singleFieldValidation, validateSingleField } from '@pwabuilder/manifest-validation';
+import { manifestPlatformFormStyles } from "./manifest-platform-form.styles";
+import type { singleFieldValidation } from '../../models/single-field-validation';
+import type { Manifest, ProtocolHandler, RelatedApplication, ShortcutItem } from '../../models/manifest';
 import { classMap } from 'lit/directives/class-map.js';
 import "./manifest-field-tooltip";
-import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
-import '@shoelace-style/shoelace/dist/components/option/option.js';
-import '@shoelace-style/shoelace/dist/components/details/details.js';
-import '@shoelace-style/shoelace/dist/components/icon/icon.js';
-import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import { errorInTab, insertAfter } from "../../utils/helpers";
 import { standardCategories } from "../../../locales/categories";
+import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
+import '@awesome.me/webawesome/dist/components/details/details.js';
+import '@awesome.me/webawesome/dist/components/icon/icon.js';
+import '@awesome.me/webawesome/dist/components/input/input.js';
+import '@awesome.me/webawesome/dist/components/option/option.js';
+import '@awesome.me/webawesome/dist/components/select/select.js';
 
 const platformOptions: Array<string> = ["windows", "chrome_web_store", "play", "itunes", "webapp", "f-droid", "amazon"]
 const platformText: Array<string> = ["Windows Store", "Google Chrome Web Store", "Google Play Store", "Apple App Store", "Web apps", "F-droid", "Amazon App Store"]
@@ -43,311 +45,7 @@ export class ManifestPlatformForm extends LitElement {
     private shouldValidateAllFields: boolean = true;
     private validationPromise: Promise<void> | undefined;
 
-    static get styles() {
-        return css`
-
-      :host {
-        --sl-focus-ring-width: 3px;
-        --sl-input-focus-ring-color: #4f3fb670;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #4F3FB6ac;
-        --sl-input-font-family: Hind, sans-serif;
-      }
-
-      sl-input::part(base),
-      sl-select::part(form-control),
-      sl-option::part(base),
-      sl-button::part(base),
-      sl-checkbox::part(base),
-      sl-checkbox::part(control),
-      sl-details::part(base) {
-        --sl-input-font-size-medium: 16px;
-        --sl-button-font-size-medium: 12px;
-        --sl-font-size-medium: 16px;
-        --sl-input-height-medium: 3em;
-        --sl-toggle-size: 16px;
-        --sl-toggle-size-small: 16px;
-        --sl-input-font-size-small: 16px;
-      }
-      sl-details::part(base), sl-select::part(combobox), sl-input::part(base){
-        background-color: #fbfbfb;
-      }
-      #form-holder {
-        display: flex;
-        flex-direction: column;
-        row-gap: 1em;
-      }
-      .form-row {
-        display: flex;
-        column-gap: 1em;
-      }
-      .form-row h3 {
-        font-size: 18px;
-        margin: 0;
-      }
-      .form-row p:not(.toolTip) {
-        font-size: 14px;
-        margin: 0;
-        color: #717171;
-      }
-      sl-input::part(input), 
-      sl-select::part(display-input), 
-      sl-details::part(summary){
-        color: #717171;
-      }
-      .form-field {
-        width: 50%;
-        row-gap: .25em;
-        display: flex;
-        flex-direction: column;
-      }
-      .form-field p {
-        font-size: 14px;
-      }
-      .field-header{
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-      .color_field {
-        display: flex;
-        flex-direction: column;
-      }
-      .color-holder {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-      }
-      .toolTip {
-        font-size: 14px;
-        visibility: hidden;
-        width: 150px;
-        background: black;
-        color: white;
-        font-weight: 500;
-        text-align: center;
-        border-radius: 6px;
-        padding: .75em;
-        /* Position the tooltip */
-        position: absolute;
-        top: 20px;
-        left: -25px;
-        z-index: 1;
-        box-shadow: 0px 2px 20px 0px #0000006c;
-      }
-      .special-tip {
-        left: -120px;
-      }
-      .field-header a {
-        display: flex;
-        align-items: center;
-        position: relative;
-        color: black;
-      }
-      a:hover .toolTip {
-        visibility: visible;
-      }
-      a:visited, a:focus {
-        color: black;
-      }
-      sl-menu {
-         width: 100%;
-      }
-      sl-option:focus-within::part(base) {
-        color: #ffffff;
-        background-color: #4F3FB6;
-      }
-
-      sl-option::part(base):hover{
-        color: #ffffff;
-        background-color: #4F3FB6;
-      }
-      #cat-field {
-        display: grid;
-        grid-template-rows: repeat(7, auto);
-        grid-auto-flow: column;
-        column-gap: 10px;
-        padding: 0 1em 1em 1em;
-        background: white;
-      }
-      #cat-field.error {
-        border: 1px solid #eb5757;
-        border-radius: 5px;
-        padding: 1em;
-      }
-      
-      sl-details {
-        width: 100%;
-      }
-      sl-details::part(base){
-        width: 100%;
-        max-height: fit-content
-      }
-      sl-details::part(header){
-        padding: 10px 15px;
-        font-size: 16px;
-      }
-
-      sl-details:focus {
-        outline: 5px solid var(--sl-input-focus-ring-color);
-        border-radius: 5px;
-      }
-
-      sl-details.error:focus {
-        outline: 5px solid #eb575770;
-        border-radius: 5px;
-      }
-
-      .field-holder {
-        display: flex;
-        flex-direction: column;
-      }
-      .shortcut-header{
-        padding: .5em 0;
-        margin: 0;
-        font-size: 16px;
-      }
-      sl-icon-button::part(base){
-        padding: 0;
-      }
-      .field-details::part(content){
-        display: flex;
-        flex-direction: column;
-        row-gap: 10px;
-      }
-      .field-holder sl-button {
-        width: 50%;
-        align-self: flex-end;
-      }
-      .long-items {
-        display: flex;
-        flex-direction: column;
-        row-gap: 10px;
-      }
-      .long-items h3 {
-        font-size: 18px;
-        margin: 0;
-      }
-      .long-items p:not(.toolTip){
-        font-size: 14px;
-        margin: 0;
-        color: #717171;
-      }
-      .long-items .form-field {
-        width: 100%;
-      }
-      .items-holder {
-        display: flex;
-        align-items: flex-start;
-        column-gap: 10px;
-        overflow-x: scroll;
-        padding-bottom: 10px;
-      }
-      .editable {
-        display: flex;
-        align-items:center;
-        justify-content: space-between;
-      }
-
-      .error::part(base){
-        border-color: #eb5757;
-        --sl-input-focus-ring-color: #eb575770;
-        --sl-focus-ring-width: 3px;
-        --sl-focus-ring: 0 0 0 var(--sl-focus-ring-width) var(--sl-input-focus-ring-color);
-        --sl-input-border-color-focus: #eb5757ac;
-      }
-
-      .error::part(control){
-        border-color: #eb5757;
-      }
-
-      sl-menu-label::part(base) {
-        font-size: 16px;
-      }
-
-      sl-button::part(base):hover {
-        background-color: rgba(79, 63, 182, 0.06);
-        border-color: rgba(79, 63, 182, 0.46);
-        color: rgb(79, 63, 182);
-      }
-
-      sl-checkbox[checked]::part(control) {
-        background-color: #4f3fb6;
-        border-color: #4f3fb6;
-        color: #ffffff;
-      }
-
-      .focus {
-        color: #4f3fb6;
-      }
-
-      @media(max-width: 765px){
-        .form-row {
-          flex-direction: column;
-          row-gap: 1em;
-        }
-        .form-field {
-          width: 100%;
-        }
-        #cat-field {
-          grid-template-columns: repeat(4, auto);
-          grid-auto-flow: unset;
-        }
-        .special-tip {
-          left: -25px;
-        }
-      }
-
-      @media(max-width: 650px){
-        #cat-field {
-          grid-template-columns: repeat(3, auto);
-        }
-      }
-
-      @media(max-width: 480px){
-        sl-input::part(base),
-        sl-select::part(form-control),
-        sl-option::part(base),
-        sl-button::part(base),
-        sl-checkbox::part(base),
-        sl-checkbox::part(control) {
-          --sl-input-font-size-medium: 14px;
-          --sl-font-size-medium: 14px;
-          --sl-input-height-medium: 2.5em;
-          --sl-button-font-size-medium: 10px;
-          --sl-toggle-size: 14px;
-        }
-
-        sl-details::part(header) {
-          padding: 5px 10px;
-          font-size: 14px;
-        }
-
-        .form-row p, .long-items p {
-          font-size: 12px;
-        }
-
-        .form-row h3, .long-items h3 {
-          font-size: 16px;
-        }
-
-        #cat-field {
-          grid-template-columns: repeat(2, auto);
-        }
-
-        .field-header a:after {
-          content: "";
-          position: absolute;
-          left: -13px;
-          top: -13px;
-          z-index: -1;
-          width: 40px;
-          height: 40px;
-        }
-        
-      }
-    `;
-    }
+    static styles = [manifestPlatformFormStyles];
 
     constructor() {
         super();
@@ -401,6 +99,7 @@ export class ManifestPlatformForm extends LitElement {
             let field = platformFields[i];
 
             if (this.manifest[field]) {
+                const { validateSingleField } = await import('@pwabuilder/manifest-validation');
                 const validation: singleFieldValidation = await validateSingleField(field, this.manifest[field]);
                 let passed = validation!.valid;
                 let input = this.shadowRoot!.querySelector('[data-field="' + field + '"]');
@@ -530,6 +229,7 @@ export class ManifestPlatformForm extends LitElement {
             useOV = true;
         }
 
+        const { validateSingleField } = await import('@pwabuilder/manifest-validation');
         const validation: singleFieldValidation = await validateSingleField(fieldName!, useOV ? objectValue : updatedValue)
         let passed = validation!.valid;
 
@@ -589,11 +289,14 @@ export class ManifestPlatformForm extends LitElement {
             this.shortcutHTML.push(
                 html`
           <form @submit=${(e: any) => this.addShortcutToManifest(e)} class="field-holder">
-            <h4 class="shortcut-header">Shortcut #${this.manifest.shortcuts ? this.manifest.shortcuts.length + 1 : 1}</h4>
-            <sl-input class="field-input" name="name" placeholder="Shortcut name" /></sl-input>
-            <sl-input class="field-input" name="url" placeholder="Shortcut url" /></sl-input>
-            <sl-input class="field-input" name="desc" placeholder="Shortcut description" /></sl-input>
-            <sl-button type="submit">Add to Manifest</sl-button>
+            <div class="editable">
+              <h4 class="shortcut-header">Shortcut #${this.manifest.shortcuts ? this.manifest.shortcuts.length + 1 : 1}</h4>
+              <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" @click="${() => this.shortcutHTML = []}"><wa-icon name="x-lg"></wa-icon></wa-button>
+            </div>
+            <wa-input class="field-input" name="name" placeholder="Shortcut name" /></wa-input>
+            <wa-input class="field-input" name="url" placeholder="Shortcut url" /></wa-input>
+            <wa-input class="field-input" name="desc" placeholder="Shortcut description" /></wa-input>
+            <wa-button type="submit">Add to Manifest</wa-button>
           </form>
         `
             );
@@ -601,10 +304,13 @@ export class ManifestPlatformForm extends LitElement {
             this.protocolHTML.push(
                 html`
           <form class="field-holder" @submit=${(e: any) => this.addProtocolToManifest(e)}>
-            <h4 class="shortcut-header">Protocol Handler #${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.length + 1 : 1}</h4>
-            <sl-input class="field-input" name="protocol" placeholder="Protocol" /></sl-input>
-            <sl-input class="field-input" name="url" placeholder="URL" /></sl-input>
-            <sl-button type="submit">Add to Manifest</sl-button>
+            <div class="editable">
+              <h4 class="shortcut-header">Protocol Handler #${this.manifest.protocol_handlers ? this.manifest.protocol_handlers.length + 1 : 1}</h4>
+              <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" @click="${() => this.protocolHTML = []}"><wa-icon name="x-lg"></wa-icon></wa-button>
+            </div>
+            <wa-input class="field-input" name="protocol" placeholder="Protocol" /></wa-input>
+            <wa-input class="field-input" name="url" placeholder="URL" /></wa-input>
+            <wa-button type="submit">Add to Manifest</wa-button>
           </form>
         `
             );
@@ -612,13 +318,16 @@ export class ManifestPlatformForm extends LitElement {
             this.relatedAppsHTML!.push(
                 html`
           <form class="field-holder" @submit=${(e: any) => this.addRelatedAppToManifest(e)}>
-            <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
-            <sl-select placeholder="Select a Platform" ?hoist=${true} placement="bottom">
-              ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>`)}
-            </sl-select>
-            <sl-input class="field-input" name="url" placeholder="App URL" /></sl-input>
-            <sl-input class="field-input" name="id" placeholder="App ID" /></sl-input>
-            <sl-button type="submit">Add to Manifest</sl-button>
+            <div class="editable">
+              <h4 class="shortcut-header">Related App #${this.manifest.related_applications ? this.manifest.related_applications.length + 1 : 1}</h4>
+              <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" @click="${() => this.relatedAppsHTML = []}"><wa-icon name="x-lg"></wa-icon></wa-button>
+            </div>
+            <wa-select placeholder="Select a Platform" ?hoist=${true} placement="bottom">
+              ${platformOptions.map((_, i: number) => html`<wa-option value=${platformOptions[i]}>${platformText[i]}</wa-option>`)}
+            </wa-select>
+            <wa-input class="field-input" name="url" placeholder="App URL" /></wa-input>
+            <wa-input class="field-input" name="id" placeholder="App ID" /></wa-input>
+            <wa-button type="submit">Add to Manifest</wa-button>
           </form>
         `
             );
@@ -639,7 +348,7 @@ export class ManifestPlatformForm extends LitElement {
         this.dispatchEvent(fieldChangeAttempted);
 
         this.shortcutHTML = [];
-        const inputs = [...e.target.querySelectorAll('sl-input')];
+        const inputs = [...e.target.querySelectorAll('wa-input')];
 
         this.updateShortcutsInManifest(inputs, true);
     }
@@ -684,7 +393,7 @@ export class ManifestPlatformForm extends LitElement {
         this.dispatchEvent(fieldChangeAttempted);
 
         this.protocolHTML = [];
-        const inputs = [...e.target.querySelectorAll('sl-input')];
+        const inputs = [...e.target.querySelectorAll('wa-input')];
 
         this.updateProtocolsInManifest(inputs, true);
     }
@@ -717,8 +426,8 @@ export class ManifestPlatformForm extends LitElement {
     addRelatedAppToManifest(e: any) {
         e.preventDefault();
         this.relatedAppsHTML = [];
-        const inputs = [...e.target.querySelectorAll('sl-input')];
-        const select = e.target.querySelector('sl-select');
+        const inputs = [...e.target.querySelectorAll('wa-input')];
+        const select = e.target.querySelector('wa-select');
 
         let fieldChangeAttempted = new CustomEvent('fieldChangeAttempted', {
             detail: {
@@ -788,6 +497,7 @@ export class ManifestPlatformForm extends LitElement {
         }
 
         let input = this.shadowRoot!.querySelector(`[data-field=${field}]`);
+        const { validateSingleField } = await import('@pwabuilder/manifest-validation');
         const validation: singleFieldValidation = await validateSingleField(field, updatedValue);
         let passed = validation!.valid;
 
@@ -872,6 +582,8 @@ export class ManifestPlatformForm extends LitElement {
         } else {
             return console.error(`${field} not an accepted value for this function`);
         }
+
+        this.requestUpdate();
     }
 
     updateExistingData(tag: string) {
@@ -879,8 +591,8 @@ export class ManifestPlatformForm extends LitElement {
         const field = split_tag[0]
         const i = parseInt(split_tag[1]);
 
-        const inputs = [...this.shadowRoot!.querySelectorAll('sl-input[data-tag="' + tag + '"]')];
-        const select = this.shadowRoot!.querySelector('sl-select[data-tag="' + tag + '"]');
+        const inputs = [...this.shadowRoot!.querySelectorAll('wa-input[data-tag="' + tag + '"]')];
+        const select = this.shadowRoot!.querySelector('wa-select[data-tag="' + tag + '"]');
 
         if (field === "shortcuts") {
 
@@ -960,7 +672,7 @@ export class ManifestPlatformForm extends LitElement {
               <manifest-field-tooltip .field=${"iarc_rating_id"}></manifest-field-tooltip>
             </div>
             <p>Displays the suitable ages for your PWA</p>
-            <sl-input placeholder="PWA IARC Rating ID" value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @sl-change=${this.handleInputChange}></sl-input>
+            <wa-input placeholder="PWA IARC Rating ID" value=${this.manifest.iarc_rating_id! || ""} data-field="iarc_rating_id" @change=${this.handleInputChange}></wa-input>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -968,10 +680,10 @@ export class ManifestPlatformForm extends LitElement {
               <manifest-field-tooltip .field=${"prefer_related_applications"}></manifest-field-tooltip>
             </div>
             <p>Should a user prefer a related app to this one</p>
-            <sl-select placeholder="Select an option" data-field="prefer_related_applications" ?hoist=${true} @sl-change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
-              <sl-option value="true">true</sl-option>
-              <sl-option value="false">false</sl-option>
-            </sl-select>
+            <wa-select placeholder="Select an option" data-field="prefer_related_applications" ?hoist=${true} @change=${this.handleInputChange} value=${JSON.stringify(this.manifest.prefer_related_applications!) || ""}>
+              <wa-option value="true">true</wa-option>
+              <wa-option value="false">false</wa-option>
+            </wa-select>
           </div>
         </div>
         <div class="long-items">
@@ -981,27 +693,27 @@ export class ManifestPlatformForm extends LitElement {
               <manifest-field-tooltip .field=${"related_applications"}></manifest-field-tooltip>
             </div>
             <p>Applications that provide similar functionality to your PWA</p>
-            <sl-details class="field-details" summary="Click to edit related apps" data-field="related_applications">
-              <sl-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</sl-button>
+            <wa-details class="field-details" summary="Click to edit related apps" data-field="related_applications">
+              <wa-button @click=${() => this.addFieldToHTML("related_applications")} ?disabled=${this.relatedAppsHTML.length != 0}>Add App</wa-button>
               <div class="items-holder">
                 ${this.manifest.related_applications && Array.isArray(this.manifest.related_applications) ? this.manifest.related_applications.map((app: any, i: number) =>
             html`
                     <div class="field-holder">
                       <div class="editable">
                         <h4 class="shortcut-header">Related App #${i + 1}</h4>
-                        <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.removeData("related " + i.toString())}></sl-icon-button>
+                        <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" data-tag=${"related " + i.toString()} @click=${() => this.removeData("related " + i.toString())}><wa-icon name="x-lg"></wa-icon></wa-button>
                       </div>
-                      <sl-select placeholder="Select a Platform" placement="bottom" ?hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}>
-                        ${platformOptions.map((_, i: number) => html`<sl-option value=${platformOptions[i]}>${platformText[i]}</sl-option>`)}
-                      </sl-select>
-                      <sl-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>
-                      <sl-input class="field-input" placeholder="App ID" value=${app.id || ""} name="id" data-tag=${"related " + i.toString()} @sl-change=${() => this.updateExistingData("related " + i.toString())}></sl-input>
+                      <wa-select placeholder="Select a Platform" placement="bottom" ?hoist=${true} value=${app.platform || ""} name="platform" data-tag=${"related " + i.toString()} @change=${() => this.updateExistingData("related " + i.toString())}>
+                        ${platformOptions.map((_, i: number) => html`<wa-option value=${platformOptions[i]}>${platformText[i]}</wa-option>`)}
+                      </wa-select>
+                      <wa-input class="field-input" placeholder="App URL" value=${app.url || ""} name="url" data-tag=${"related " + i.toString()} @change=${() => this.updateExistingData("related " + i.toString())}></wa-input>
+                      <wa-input class="field-input" placeholder="App ID" value=${app.id || ""} name="id" data-tag=${"related " + i.toString()} @change=${() => this.updateExistingData("related " + i.toString())}></wa-input>
                     </div>
                   `
         ) : html``}
                 ${this.relatedAppsHTML ? this.relatedAppsHTML.map((ele: TemplateResult) => ele) : html``}
               </div>
-            </sl-details>
+            </wa-details>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -1009,25 +721,25 @@ export class ManifestPlatformForm extends LitElement {
               <manifest-field-tooltip .field=${"shortcuts"}></manifest-field-tooltip>
             </div>
             <p>Links to key tasks or pages within your PWA</p>
-            <sl-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts">
-              <sl-button @click=${() => this.addFieldToHTML("shortcuts")} ?disabled=${this.shortcutHTML.length != 0}>Add Shortcut</sl-button>
+            <wa-details class="field-details" summary="Click to edit shortcuts" data-field="shortcuts">
+              <wa-button @click=${() => this.addFieldToHTML("shortcuts")} ?disabled=${this.shortcutHTML.length != 0}>Add Shortcut</wa-button>
               <div class="items-holder">
                 ${this.manifest.shortcuts && Array.isArray(this.manifest.shortcuts) ? this.manifest.shortcuts!.map((sc: any, i: number) =>
             html`
                     <div class="field-holder">
                       <div class="editable">
                         <h4 class="shortcut-header">Shortcut #${i + 1}</h4>
-                        <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"shortcuts " + i.toString()} @click=${() => this.removeData("shortcuts " + i.toString())}></sl-icon-button>                      
+                        <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" data-tag=${"shortcuts " + i.toString()} @click=${() => this.removeData("shortcuts " + i.toString())}><wa-icon name="x-lg"></wa-icon></wa-button>                      
                       </div>
-                      <sl-input class="field-input" name="name" placeholder="Shortcut name" value=${sc.name || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
-                      <sl-input class="field-input" name="url" placeholder="Shortcut url" value=${sc.url || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
-                      <sl-input class="field-input" name="desc" placeholder="Shortcut description" value=${sc.description || ""} data-tag=${"shortcuts " + i.toString()} @sl-change=${() => this.updateExistingData("shortcuts " + i.toString())}></sl-input>
+                      <wa-input class="field-input" name="name" placeholder="Shortcut name" value=${sc.name || ""} data-tag=${"shortcuts " + i.toString()} @change=${() => this.updateExistingData("shortcuts " + i.toString())}></wa-input>
+                      <wa-input class="field-input" name="url" placeholder="Shortcut url" value=${sc.url || ""} data-tag=${"shortcuts " + i.toString()} @change=${() => this.updateExistingData("shortcuts " + i.toString())}></wa-input>
+                      <wa-input class="field-input" name="desc" placeholder="Shortcut description" value=${sc.description || ""} data-tag=${"shortcuts " + i.toString()} @change=${() => this.updateExistingData("shortcuts " + i.toString())}></wa-input>
                     </div>
                   `
         ) : html``}
                 ${this.shortcutHTML.map((ele: TemplateResult) => ele)}
                 </div>
-            </sl-details>
+            </wa-details>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -1035,24 +747,24 @@ export class ManifestPlatformForm extends LitElement {
               <manifest-field-tooltip .field=${"protocol_handlers"}></manifest-field-tooltip>
             </div>
             <p>Protocols this web app can register and handle</p>
-            <sl-details class="field-details" summary="Click to edit protocol handlers" data-field="protocol_handlers">
-              <sl-button @click=${() => this.addFieldToHTML("protocol_handlers")} ?disabled=${this.protocolHTML.length != 0}>Add Protocol</sl-button>
+            <wa-details class="field-details" summary="Click to edit protocol handlers" data-field="protocol_handlers">
+              <wa-button @click=${() => this.addFieldToHTML("protocol_handlers")} ?disabled=${this.protocolHTML.length != 0}>Add Protocol</wa-button>
               <div class="items-holder">
                 ${this.manifest.protocol_handlers && Array.isArray(this.manifest.protocol_handlers) ? this.manifest.protocol_handlers.map((p: any, i: number) =>
             html`
                     <div class="field-holder">
                       <div class="editable">
                         <h4 class="shortcut-header">Protocol Handler #${i + 1}</h4>
-                        <sl-icon-button name="x-lg" label="close" style="font-size: 1rem;" data-tag=${"protocol " + i.toString()} @click=${() => this.removeData("protocol " + i.toString())}></sl-icon-button>                      
+                        <wa-button class="icon-close" appearance="plain" aria-label="close" style="font-size: 1rem;" data-tag=${"protocol " + i.toString()} @click=${() => this.removeData("protocol " + i.toString())}><wa-icon name="x-lg"></wa-icon></wa-button>                      
                       </div>
-                      <sl-input class="field-input" name="protocol" placeholder="Protocol" value=${p.protocol || ""} data-tag=${"protocol " + i.toString()} @sl-change=${() => this.updateExistingData("protocol " + i.toString())}></sl-input>
-                      <sl-input class="field-input" name="url" placeholder="URL" value=${p.url || ""} data-tag=${"protocol " + i.toString()} @sl-change=${() => this.updateExistingData("protocol " + i.toString())}></sl-input>
+                      <wa-input class="field-input" name="protocol" placeholder="Protocol" value=${p.protocol || ""} data-tag=${"protocol " + i.toString()} @change=${() => this.updateExistingData("protocol " + i.toString())}></wa-input>
+                      <wa-input class="field-input" name="url" placeholder="URL" value=${p.url || ""} data-tag=${"protocol " + i.toString()} @change=${() => this.updateExistingData("protocol " + i.toString())}></wa-input>
                     </div>
                   `
         ) : html``}
                 ${this.protocolHTML.map((ele: TemplateResult) => ele)}
                 </div>
-            </sl-details>
+            </wa-details>
           </div>
           <div class="form-field">
             <div class="field-header">
@@ -1062,7 +774,7 @@ export class ManifestPlatformForm extends LitElement {
             <p>The categories your PWA belongs to</p>
               <div id="cat-field"  data-field="categories">
                 ${standardCategories.map((cat: string) =>
-            html`<sl-checkbox class="cat-check" size="small" @sl-change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</sl-checkbox>`
+            html`<wa-checkbox class="cat-check" size="s" @change=${() => this.updateCategories()} value=${cat} ?checked=${this.manifest.categories?.includes(cat)}>${cat}</wa-checkbox>`
         )}
                     
               </div>
@@ -1074,12 +786,12 @@ export class ManifestPlatformForm extends LitElement {
                 <manifest-field-tooltip .field=${"edge_side_panel"}></manifest-field-tooltip>
               </div>
               <p>Indicates whether your PWA supports the side panel in Microsoft Edge</p>
-              <sl-input 
+              <wa-input 
                 type="number"
                 placeholder="Preferred Width" 
                 value=${this.manifest.edge_side_panel?.preferred_width ?? ""} 
                 data-field="edge_side_panel" 
-                @sl-change=${this.handleInputChange}></sl-input>
+                @change=${this.handleInputChange}></wa-input>
             </div>
           </div>
         </div>

@@ -238,7 +238,7 @@ Shown in the start menu when the user sets your app's tile to large size.
 ### Store logo
 <img loading="lazy" alt="The store logo icon" src="/docs/windows/image-recommendations/windows-image-store-logo.png" />
 
-Shown in app installer, Windows Partner Center, the "Report an app" option in the Store, and the "Write a review" option in the Store. 
+Shown in app installer, Microsoft Partner Center, the "Report an app" option in the Store, and the "Write a review" option in the Store. 
 
 - 50x50
 - 63x63 (1.25x scale)
