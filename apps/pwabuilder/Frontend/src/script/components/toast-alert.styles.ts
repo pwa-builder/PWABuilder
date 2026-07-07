@@ -87,4 +87,16 @@ export const toastAlertStyles = css`
         .close-ring .close {
             margin: 0;
         }
+
+        /* Shrink the button so it (and its hover background) fits inside the
+           ring's hole instead of overlapping and hiding the ring. wa-button
+           sizes itself via ::part(base), so override that rather than the host. */
+        .close-ring .close::part(base) {
+            width: 1.5rem;
+            height: 1.5rem;
+            min-height: 0;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 0.8rem;
+        }
     `;

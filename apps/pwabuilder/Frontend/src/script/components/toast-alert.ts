@@ -1,5 +1,5 @@
 import { LitElement, html, nothing, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { ToastEvent, ToastVariant } from '../models/toast-event';
 import { toastAlertStyles } from './toast-alert.styles';
@@ -37,6 +37,12 @@ export class ToastAlert extends LitElement {
 
     /** The toast to display. */
     @property({ attribute: false }) toast!: ToastEvent;
+
+    /**
+     * Current countdown progress ring value (0-100). Reactive so the ring
+     * re-renders automatically as the countdown ticks. Starts full.
+     */
+    @state() private countdownValue = 100;
 
     /** Total auto-dismiss duration, in ms. Resolved once in firstUpdated. */
     private duration = 0;
@@ -91,7 +97,7 @@ export class ToastAlert extends LitElement {
         // is active it's wrapped in a progress ring whose value tracks the
         // remaining time, depleting from full as the toast ages.
         const closeButton = html`
-            <wa-button appearance="plain" type="button" class="close" @click=${this.dismiss}>
+            <wa-button appearance="plain" type="button" class="close" @click=${() => this.dismiss()}>
                 <wa-icon name="x-lg" aria-label="Close"></wa-icon>
             </wa-button>
         `;
@@ -102,13 +108,13 @@ export class ToastAlert extends LitElement {
                 variant="neutral"
                 role="status"
                 style=${styleMap({ "--toast-accent": accent })}
-                @mouseenter=${this.pauseTimer}
-                @mouseleave=${this.resumeTimer}>
+                @mouseenter=${() => this.pauseTimer()}
+                @mouseleave=${() => this.resumeTimer()}>
                 <div class="header">
                     ${toast.icon ? html`<wa-icon class="header-icon" name=${toast.icon}></wa-icon>` : nothing}
                     ${toast.title ? html`<strong class="title">${toast.title}</strong>` : nothing}
                     ${showCountdown
-                        ? html`<wa-progress-ring class="close-ring" value="100">${closeButton}</wa-progress-ring>`
+                        ? html`<wa-progress-ring class="close-ring" value=${this.countdownValue}>${closeButton}</wa-progress-ring>`
                         : closeButton}
                 </div>
                 ${this.renderBody()}
@@ -172,20 +178,20 @@ export class ToastAlert extends LitElement {
     }
 
     /** Fades the toast out, then asks the host to remove it. */
-    private dismiss = (): void => {
+    private dismiss(): void {
         window.clearTimeout(this.dismissTimer);
         this.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: "forwards" })
             .finished.then(() => {
                 this.dispatchEvent(new CustomEvent("toast-dismiss", { bubbles: true, composed: true }));
             });
-    };
+    }
 
     /** Starts (or restarts) the auto-dismiss countdown from the remaining time. */
     private startTimer(): void {
         this.resumedAt = Date.now();
-        this.dismissTimer = window.setTimeout(this.dismiss, this.remaining);
+        this.dismissTimer = window.setTimeout(() => this.dismiss(), this.remaining);
         if (this.showCountdown) {
-            this.rafId = requestAnimationFrame(this.updateCountdownRing);
+            this.rafId = requestAnimationFrame(() => this.updateCountdownRing());
         }
     }
 
@@ -194,43 +200,35 @@ export class ToastAlert extends LitElement {
      * it won't auto-dismiss out from under the user. The ring is restored to
      * full; the timer resumes from the full duration on mouse leave.
      */
-    private pauseTimer = (): void => {
+    private pauseTimer(): void {
         window.clearTimeout(this.dismissTimer);
         cancelAnimationFrame(this.rafId);
         this.remaining = this.duration;
-        const ring = this.shadowRoot?.querySelector<HTMLElement & { value: number }>('.close-ring');
-        if (ring) {
-            ring.value = 100;
-        }
-    };
+        this.countdownValue = 100;
+    }
 
     /** Resumes the countdown from the full duration when the pointer leaves. */
-    private resumeTimer = (): void => {
+    private resumeTimer(): void {
         if (this.showCountdown) {
             this.startTimer();
         }
-    };
+    }
 
     /**
      * Drives the progress ring each frame to reflect the remaining time. The
      * ring depletes from full as the toast ages; the loop stops once the
      * countdown reaches zero (the dismiss timeout handles removal).
      */
-    private updateCountdownRing = (): void => {
+    private updateCountdownRing(): void {
         const elapsed = Date.now() - this.resumedAt;
         const currentRemaining = Math.max(0, this.remaining - elapsed);
         const remainingFraction = this.duration > 0 ? currentRemaining / this.duration : 0;
-        const value = remainingFraction * 100;
-
-        const ring = this.shadowRoot?.querySelector<HTMLElement & { value: number }>('.close-ring');
-        if (ring) {
-            ring.value = value;
-        }
+        this.countdownValue = remainingFraction * 100;
 
         if (currentRemaining > 0) {
-            this.rafId = requestAnimationFrame(this.updateCountdownRing);
+            this.rafId = requestAnimationFrame(() => this.updateCountdownRing());
         }
-    };
+    }
 }
 
 declare global {
