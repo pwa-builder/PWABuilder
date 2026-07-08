@@ -170,8 +170,8 @@ test('Package for Stores dialog locks scrolling and closes on backdrop click', a
   }).toBe(true);
 
   await expect.poll(async () => {
-    return page.evaluate(() => document.documentElement.style.overflowY);
-  }).toBe('hidden');
+    return page.evaluate(() => document.documentElement.classList.contains('wa-scroll-lock'));
+  }).toBe(true);
 
   await page.mouse.wheel(0, 500);
   await expect.poll(async () => {
@@ -193,6 +193,6 @@ test('Package for Stores dialog locks scrolling and closes on backdrop click', a
   }).toBe(false);
 
   await expect.poll(async () => {
-    return page.evaluate(() => document.documentElement.style.overflowY);
-  }).toBe('initial');
+    return page.evaluate(() => document.documentElement.classList.contains('wa-scroll-lock'));
+  }).toBe(false);
 });

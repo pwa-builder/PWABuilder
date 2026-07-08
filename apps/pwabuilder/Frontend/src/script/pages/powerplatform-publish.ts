@@ -53,7 +53,7 @@ export class AppReport extends LitElement {
       </div>
       </div>
 
-      <publish-pane .preventClosing=${true}></publish-pane>
+      <publish-pane></publish-pane>
     `;
   }
 }

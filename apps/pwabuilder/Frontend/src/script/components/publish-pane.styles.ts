@@ -319,10 +319,6 @@ export const publishPaneStyles = css`
 		flex-direction: column;
 	}
 
-	.noX::part(close-button) {
-		display: none;
-	}
-
 	.dialog::part(body){
 		padding: 0;
 		width: 100%;
