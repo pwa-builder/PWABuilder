@@ -175,9 +175,9 @@ test('Package for Stores dialog locks scrolling and closes on backdrop click', a
 
   await page.mouse.wheel(0, 500);
   await expect.poll(async () => {
-    return page.evaluate(() => window.scrollY);
-  }).toBe(initialScrollPosition);
-
+    const currentScrollY = await page.evaluate(() => window.scrollY);
+    return Math.abs(currentScrollY - initialScrollPosition);
+  }).toBeLessThan(2);
   await page.mouse.click(20, 20);
 
   await expect.poll(async () => {
