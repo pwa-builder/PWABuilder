@@ -50,6 +50,19 @@ public interface IImageValidationService
 /// </summary>
 public class ImageValidationService : IImageValidationService
 {
+    // Raster image formats that ImageSharp can decode. When an image claims (via content type or file
+    // extension) to be one of these but can't be decoded, it's treated as corrupt/invalid rather than
+    // as an unsupported-but-valid format (e.g. SVG or ICO), which we intentionally allow through.
+    private static readonly string[] decodableRasterContentTypes =
+    {
+        "image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif", "image/bmp", "image/tiff"
+    };
+
+    private static readonly string[] decodableRasterExtensions =
+    {
+        ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tif", ".tiff"
+    };
+
     private readonly HttpClient httpClient;
     private readonly ILogger<ImageValidationService> logger;
 
@@ -72,17 +85,7 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
-                // Vercel-hosted, Netlify-hosted, and run.app images will always return 200! Even if they don't exist. 
-                // Check for that here: If it's one of these images, we must be able to load it as a real image.
-                var isVercelOrNetlifyOrRunDotApp = headResponse.Headers.Server?.ToString() == "Vercel" || headResponse.Headers.Server?.ToString() == "Netlify" || imageUrl.Host.EndsWith(".run.app");
-                var isInvalidImage = isVercelOrNetlifyOrRunDotApp && await TryLoadImage(imageUrl) == false;
-                if (isInvalidImage)
-                {
-                    return new HttpRequestException($"Your PWA's web manifest refers to an image that doesn't exist: {imageUrl}.", null, System.Net.HttpStatusCode.NotFound);
-                }
-
-                // Ensure the content type is an image
-                return EnsureImageContentType(imageUrl, headResponse.Content.Headers.ContentType?.MediaType);
+                return await ValidateFetchedImageAsync(imageUrl, headResponse.Content.Headers.ContentType?.MediaType);
             }
         }
         catch (Exception headException)
@@ -102,7 +105,7 @@ public class ImageValidationService : IImageValidationService
 
             if (response.IsSuccessStatusCode)
             {
-                return EnsureImageContentType(imageUrl, response.Content.Headers.ContentType?.MediaType);
+                return await ValidateFetchedImageAsync(imageUrl, response.Content.Headers.ContentType?.MediaType);
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
@@ -315,49 +318,128 @@ public class ImageValidationService : IImageValidationService
         return new Exception($"Fetching image {imageUrl} returned with Content-Type {contentType}. Expected an image content type, such as image/png, image/jpeg, or image/webp");
     }
 
-    private async Task<bool> TryLoadImage(Uri imageUri)
+    /// <summary>
+    /// Validates a fetched image: confirms it has an image content type and, when it claims to be a
+    /// decodable raster format, that its bytes can actually be read as an image. This catches images
+    /// that exist and are served with an image content type but are corrupt (e.g. a PNG whose bytes
+    /// were mangled by a text-encoding conversion).
+    /// </summary>
+    /// <param name="imageUrl">The URL of the image.</param>
+    /// <param name="contentType">The content type returned by the server, if any.</param>
+    /// <param name="server">The value of the response's Server header, if any.</param>
+    /// <returns>True if the image is valid, otherwise an error describing the problem.</returns>
+    private async Task<Result<bool>> ValidateFetchedImageAsync(Uri imageUrl, string? contentType)
     {
+        // Ensure the content type is an image.
+        var contentTypeCheck = EnsureImageContentType(imageUrl, contentType);
+        if (contentTypeCheck.Error is not null)
+        {
+            return contentTypeCheck;
+        }
+
+        // An image can exist and be served with a valid image content type but still be corrupt, or the
+        // host can return HTTP 200 for a missing image (e.g. Vercel, Netlify, *.run.app). When the image
+        // claims to be a decodable raster format, fetch and decode its bytes to confirm it's really a
+        // valid, existing image.
+        if (IsDecodableRasterImageType(imageUrl, contentType))
+        {
+            // Only block when we actually fetched the bytes and they couldn't be decoded (i.e. the image
+            // is genuinely corrupt or doesn't exist). A transient fetch failure shouldn't fail an
+            // otherwise-valid PWA.
+            var decodeResult = await TryDecodeImageAsync(imageUrl);
+            if (decodeResult is ImageDecodeResult.Undecodable)
+            {
+                return new HttpRequestException($"Your PWA's web manifest refers to an image that appears to be corrupt or invalid: {imageUrl}. The server returned it as {contentType ?? "an image"}, but its contents couldn't be read as an image. Try re-exporting and re-uploading the image.", null, System.Net.HttpStatusCode.UnprocessableEntity);
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Determines whether the image claims, via its content type or file extension, to be a raster
+    /// image format that ImageSharp can decode.
+    /// </summary>
+    /// <param name="imageUrl">The URL of the image.</param>
+    /// <param name="contentType">The content type returned by the server, if any.</param>
+    /// <returns>True if the image claims to be a decodable raster format, otherwise false.</returns>
+    private static bool IsDecodableRasterImageType(Uri imageUrl, string? contentType)
+    {
+        var normalizedContentType = contentType?.Trim();
+        if (!string.IsNullOrEmpty(normalizedContentType)
+            && decodableRasterContentTypes.Contains(normalizedContentType, StringComparer.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var path = imageUrl.AbsolutePath;
+        return decodableRasterExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// Attempts to fetch and decode an image, distinguishing a genuinely corrupt/unreadable image from
+    /// a transient fetch failure.
+    /// </summary>
+    /// <param name="imageUri">The URI of the image to fetch and decode.</param>
+    /// <returns>The outcome of the fetch-and-decode attempt.</returns>
+    private async Task<ImageDecodeResult> TryDecodeImageAsync(Uri imageUri)
+    {
+        HttpResponseMessage response;
         try
         {
-            using var response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead);
+            response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead);
+        }
+        catch (Exception fetchError)
+        {
+            logger.LogWarning(fetchError, "Failed to fetch image {imageUri} for decode validation.", imageUri);
+            return ImageDecodeResult.FetchFailed;
+        }
+
+        using (response)
+        {
             if (!response.IsSuccessStatusCode)
             {
-                return false;
+                return ImageDecodeResult.FetchFailed;
             }
-
-            using var imageStream = await response.Content.ReadAsStreamAsync();
 
             try
             {
-                // Use IdentifyAsync to read image metadata (format/dimensions) without
-                // fully decoding the image. This is faster and uses less memory.
+                using var imageStream = await response.Content.ReadAsStreamAsync();
+
+                // Use IdentifyAsync to read image metadata (format/dimensions) without fully decoding
+                // the image. This is faster and uses less memory, and still fails on corrupt images.
                 var info = await Image.IdentifyAsync(imageStream);
-                if (info == null)
+                if (info is null)
                 {
-                    logger.LogWarning("Could not identify image for {imageUri}.", imageUri);
-                    return false;
+                    logger.LogWarning("Could not identify image {imageUri}; it may be corrupt.", imageUri);
+                    return ImageDecodeResult.Undecodable;
                 }
 
-                return true;
+                return ImageDecodeResult.Valid;
             }
-            catch (UnknownImageFormatException uif)
+            catch (UnknownImageFormatException unknownFormatError)
             {
-                logger.LogWarning(uif, "Unsupported image format for {imageUri}.", imageUri);
-                return false;
+                logger.LogWarning(unknownFormatError, "Image {imageUri} is not in a recognized format; it may be corrupt.", imageUri);
+                return ImageDecodeResult.Undecodable;
             }
-            catch (Exception loadEx)
+            catch (Exception decodeError)
             {
-                // Any failure while decoding the image should result in a false return
-                // — do not let exceptions escape this helper.
-                logger.LogWarning(loadEx, "Failed to load image {imageUri} with ImageSharp.", imageUri);
-                return false;
+                logger.LogWarning(decodeError, "Failed to decode image {imageUri}; it may be corrupt.", imageUri);
+                return ImageDecodeResult.Undecodable;
             }
         }
-        catch (Exception fetchEx)
-        {
-            // Any network/fetching error should not throw to callers — return false.
-            logger.LogWarning(fetchEx, "Failed to fetch image {imageUri} for loading.", imageUri);
-            return false;
-        }
+    }
+
+    /// <summary>
+    /// The outcome of attempting to fetch and decode an image.
+    /// </summary>
+    private enum ImageDecodeResult
+    {
+        /// <summary>The image was fetched and successfully decoded.</summary>
+        Valid,
+        /// <summary>The image was fetched but its bytes couldn't be read as an image (corrupt/invalid).</summary>
+        Undecodable,
+        /// <summary>The image couldn't be fetched (network error or non-success status).</summary>
+        FetchFailed
     }
 }
