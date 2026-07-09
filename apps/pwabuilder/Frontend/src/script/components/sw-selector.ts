@@ -28,7 +28,6 @@ export class SWSelector extends LitElement {
     if(e.target === dialog){
       dialog!.open = false;
       recordPWABuilderProcessStep("sw_selector_closed", AnalyticsBehavior.ProcessCheckpoint);
-      document.body.style.height = "unset";
     }
   }
 
@@ -63,7 +62,7 @@ export class SWSelector extends LitElement {
 
   render() {
     return html`
-      <wa-dialog class="dialog" @wa-show=${() => document.body.style.height = "100vh"} @wa-hide=${(e: any) => this.hideDialog(e)}>
+      <wa-dialog class="dialog" light-dismiss @wa-hide=${(e: any) => this.hideDialog(e)}>
         <div id="selector-header">
           <h1>Download a Service Worker</h1>
           <p>Download one of our pre-built Service Workers package that utilize Workbox to make building your offline experience easy.</p>

@@ -235,13 +235,12 @@ export class TestPublishPane extends LitElement {
             this.generating = false;
             dialog!.open = false;
             recordPWABuilderProcessStep("test_publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
-            document.body.style.height = "unset";
         }
     }
 
     render() {
         return html`
-      <wa-dialog class="dialog" @wa-show=${() => document.body.style.height = "100vh"} @wa-hide=${(e: any) => this.hideDialog(e)}>
+      <wa-dialog class="dialog" light-dismiss @wa-hide=${(e: any) => this.hideDialog(e)}>
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
             <div id="pp-frame-header">
