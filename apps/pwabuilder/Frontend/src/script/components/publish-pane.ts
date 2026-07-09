@@ -16,7 +16,6 @@ import './android-form';
 import './ios-form';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
-import { classMap } from 'lit/directives/class-map.js';
 import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
 import { GooglePlayPackageError } from "../models/google-play-package-error";
 import { enqueueGooglePlayPackageJob } from "../services/publish/android-publish";
@@ -50,8 +49,6 @@ export class PublishPane extends LitElement {
     @state() testBlob: Blob | File | null | undefined;
     @state() downloadFileName: string | null = null;
     @state() feedbackMessages: TemplateResult[] = [];
-
-    @property({ type: Boolean }) preventClosing = false;
 
     @state() storeMap: any = {
         "Windows":
@@ -469,14 +466,7 @@ export class PublishPane extends LitElement {
             this.feedbackMessages = [];
             dialog!.open = false;
             recordPWABuilderProcessStep("publish_pane_closed", AnalyticsBehavior.ProcessCheckpoint);
-            document.body.style.height = "unset";
             this.cardsOrForm = true;
-        }
-    }
-
-    handleRequestClose(e: Event) {
-        if (this.preventClosing) {
-            e.preventDefault();
         }
     }
 
@@ -663,9 +653,9 @@ export class PublishPane extends LitElement {
         return html`
       <wa-dialog
         label="Dialog"
-        class=${classMap({ noX: this.preventClosing, dialog: true })}
+        class="dialog"
+        light-dismiss
         @wa-hide=${(e: any) => this.hideDialog(e)}
-        @wa-request-close=${(e: any) => this.handleRequestClose(e)}
       >
         <div id="pp-frame-wrapper">
           <div id="pp-frame-content">
