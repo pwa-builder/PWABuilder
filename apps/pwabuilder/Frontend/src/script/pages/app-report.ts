@@ -1132,7 +1132,7 @@ export class AppReport extends LitElement {
         </div>
       </div>
 
-      <wa-dialog class="dialog" ?open=${this.showRetestConfirmationModal} @wa-hide=${() => { this.showRetestConfirmationModal = false; this.readDenied = false; }} without-header>
+      <wa-dialog class="dialog" light-dismiss ?open=${this.showRetestConfirmationModal} @wa-hide=${() => { this.showRetestConfirmationModal = false; this.readDenied = false; }} without-header>
         ${this.renderReadDialog()}
       </wa-dialog>
 
@@ -1396,7 +1396,7 @@ export class AppReport extends LitElement {
         }
 
         return html`
-            <wa-dialog class="analysis-logs-dialog" label="Analysis Logs">
+            <wa-dialog class="analysis-logs-dialog" label="Analysis Logs" light-dismiss>
                 <h3>
                     Logs
                     <wa-copy-button value="" from="logs-text-area.value"></wa-copy-button>
@@ -1422,7 +1422,7 @@ export class AppReport extends LitElement {
         const errorInfo = `${this.analysis.url} failed due to an internal error.\r\n\r\n> ${this.analysis.error}\r\n\r\nId: ${this.analysis.id}\r\n\r\nLogs:\r\n> ${this.analysis.logs.join("\r\n")}`;
         const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(errorInfo.substring(0, 4000))}`;
         return html`
-      <wa-dialog label="Error" class="analysis-error-dialog">
+      <wa-dialog label="Error" class="analysis-error-dialog" light-dismiss>
         <p>
           😵 Oh no, PWABuilder was unable to analyze your web app due to an error.
         </p>

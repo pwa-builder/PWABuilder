@@ -137,3 +137,259 @@ test('Ensure Windows Download Package button has visible focus indicator', async
 
   expect(outlineWidth).toBe('2px');
 });
+
+test('Package for Stores dialog locks scrolling and closes on backdrop click', async ({ page }) => {
+  const demoButton = page.locator('id=demo-action');
+
+  await demoButton.click();
+  await page.waitForLoadState('networkidle');
+  await expect(page.url()).toContain('/reportcard');
+  await page.waitForLoadState('networkidle');
+
+  await page.evaluate(() => window.scrollTo(0, 500));
+  const initialScrollPosition = await page.evaluate(() => window.scrollY);
+
+  await page.evaluate(() => {
+    const appReport = document.querySelector('app-index')?.shadowRoot?.querySelector('app-report') as {
+      openPublishModal?: () => void;
+    } | null;
+
+    appReport?.openPublishModal?.();
+  });
+
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const appReport = document.querySelector('app-index')?.shadowRoot?.querySelector('app-report');
+      const dialog = appReport?.shadowRoot
+        ?.querySelector('publish-pane')
+        ?.shadowRoot
+        ?.querySelector('.dialog') as { open?: boolean } | null;
+
+      return dialog?.open ?? false;
+    });
+  }).toBe(true);
+
+  await expect.poll(async () => {
+    return page.evaluate(() => document.documentElement.classList.contains('wa-scroll-lock'));
+  }).toBe(true);
+
+  await page.mouse.wheel(0, 500);
+  await expect.poll(async () => {
+    const currentScrollY = await page.evaluate(() => window.scrollY);
+    return Math.abs(currentScrollY - initialScrollPosition);
+  }).toBeLessThan(2);
+  await page.mouse.click(20, 20);
+
+  await expect.poll(async () => {
+    return page.evaluate(() => {
+      const appReport = document.querySelector('app-index')?.shadowRoot?.querySelector('app-report');
+      const dialog = appReport?.shadowRoot
+        ?.querySelector('publish-pane')
+        ?.shadowRoot
+        ?.querySelector('.dialog') as { open?: boolean } | null;
+
+      return dialog?.open ?? false;
+    });
+  }).toBe(false);
+
+  await expect.poll(async () => {
+    return page.evaluate(() => document.documentElement.classList.contains('wa-scroll-lock'));
+  }).toBe(false);
+});
+
+test('Ensure Windows package dialog back button focus does not span the close button', async ({ page }) => {
+  const headerMetrics = await page.evaluate(async () => {
+    sessionStorage.setItem('current_url', 'https://example.com');
+    sessionStorage.setItem(
+      'PWABuilderManifest',
+      JSON.stringify({
+        siteUrl: 'https://example.com',
+        manifestUrl: 'https://example.com/manifest.webmanifest',
+        manifest: {
+          dir: 'auto',
+          display: 'standalone',
+          name: 'Example App',
+          short_name: 'Example',
+          start_url: '/',
+          scope: '/',
+          lang: 'en',
+          description: 'Example description',
+          theme_color: '#000000',
+          background_color: '#ffffff',
+          icons: [],
+          screenshots: []
+        },
+        initialManifest: {
+          dir: 'auto',
+          display: 'standalone',
+          name: 'Example App',
+          short_name: 'Example',
+          start_url: '/',
+          scope: '/',
+          lang: 'en',
+          description: 'Example description',
+          theme_color: '#000000',
+          background_color: '#ffffff',
+          icons: [],
+          screenshots: []
+        },
+        isGenerated: false,
+        isEdited: false
+      })
+    );
+
+    document.body.innerHTML = '<publish-pane></publish-pane>';
+    await import('/src/script/components/publish-pane.ts');
+    await customElements.whenDefined('publish-pane');
+
+    const publishPane = document.querySelector('publish-pane') as HTMLElement & {
+      selectedStore: string;
+      cardsOrForm: boolean;
+      updateComplete: Promise<void>;
+    } | null;
+
+    if (!publishPane) {
+      return null;
+    }
+
+    publishPane.selectedStore = 'Windows';
+    publishPane.cardsOrForm = false;
+    await publishPane.updateComplete;
+
+    const shadowRoot = publishPane.shadowRoot;
+    const backButton = shadowRoot?.querySelector('#pp-form-header > button') as HTMLButtonElement | null;
+    const dialog = shadowRoot?.querySelector('wa-dialog') as HTMLElement & {
+      open: boolean;
+      shadowRoot: ShadowRoot;
+    } | null;
+    const closeButton = dialog?.shadowRoot?.querySelector('[part~="close-button"]') as HTMLElement & {
+      shadowRoot: ShadowRoot;
+    } | null;
+    const closeButtonBase = closeButton?.shadowRoot?.querySelector('[part~="base"]') as HTMLElement | null;
+
+    if (!backButton || !dialog || !closeButtonBase || !shadowRoot) {
+      return null;
+    }
+
+    dialog.open = true;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    backButton.focus();
+
+    const backRect = backButton.getBoundingClientRect();
+    const closeRect = closeButtonBase.getBoundingClientRect();
+
+    return {
+      backButtonFocused: shadowRoot.activeElement === backButton,
+      backRect: {
+        left: backRect.left,
+        right: backRect.right,
+        width: backRect.width
+      },
+      closeRect: {
+        left: closeRect.left
+      }
+    };
+  });
+
+  expect(headerMetrics).not.toBeNull();
+  expect(headerMetrics?.backButtonFocused).toBe(true);
+  expect(headerMetrics!.backRect.right).toBeLessThan(headerMetrics!.closeRect.left);
+  expect(headerMetrics!.backRect.width).toBeLessThan(100);
+});
+
+test('Ensure Windows package dialog initially focuses the Package ID field', async ({ page }) => {
+  const focusState = await page.evaluate(async () => {
+    sessionStorage.setItem('current_url', 'https://example.com');
+    sessionStorage.setItem(
+      'PWABuilderManifest',
+      JSON.stringify({
+        siteUrl: 'https://example.com',
+        manifestUrl: 'https://example.com/manifest.webmanifest',
+        manifest: {
+          dir: 'auto',
+          display: 'standalone',
+          name: 'Example App',
+          short_name: 'Example',
+          start_url: '/',
+          scope: '/',
+          lang: 'en',
+          description: 'Example description',
+          theme_color: '#000000',
+          background_color: '#ffffff',
+          icons: [],
+          screenshots: []
+        },
+        initialManifest: {
+          dir: 'auto',
+          display: 'standalone',
+          name: 'Example App',
+          short_name: 'Example',
+          start_url: '/',
+          scope: '/',
+          lang: 'en',
+          description: 'Example description',
+          theme_color: '#000000',
+          background_color: '#ffffff',
+          icons: [],
+          screenshots: []
+        },
+        isGenerated: false,
+        isEdited: false
+      })
+    );
+
+    document.body.innerHTML = '<publish-pane></publish-pane>';
+    await import('/src/script/components/publish-pane.ts');
+    await customElements.whenDefined('publish-pane');
+
+    const publishPane = document.querySelector('publish-pane') as HTMLElement & {
+      selectedStore: string;
+      cardsOrForm: boolean;
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    } | null;
+
+    if (!publishPane) {
+      return null;
+    }
+
+    const dialog = publishPane.shadowRoot?.querySelector('wa-dialog') as HTMLElement & {
+      open: boolean;
+    } | null;
+
+    if (!dialog) {
+      return null;
+    }
+
+    dialog.open = true;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    publishPane.selectedStore = 'Windows';
+    publishPane.cardsOrForm = false;
+    await publishPane.updateComplete;
+
+    const windowsForm = publishPane.shadowRoot?.querySelector('windows-form#packaging-form') as HTMLElement & {
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    } | null;
+
+    if (!windowsForm) {
+      return null;
+    }
+
+    await windowsForm.updateComplete;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    const packageIdInput = windowsForm.shadowRoot?.getElementById('package-id-input') as HTMLElement & {
+      shadowRoot?: ShadowRoot;
+    } | null;
+    const internalInput = packageIdInput?.shadowRoot?.querySelector('input') as HTMLInputElement | null;
+
+    return {
+      packageIdFocused: packageIdInput?.matches(':focus') ?? false,
+      internalInputFocused: internalInput === packageIdInput?.shadowRoot?.activeElement
+    };
+  });
+  expect(focusState).not.toBeNull();
+  expect(focusState?.packageIdFocused || focusState?.internalInputFocused).toBe(true);
+});

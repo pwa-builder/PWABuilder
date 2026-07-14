@@ -66,12 +66,10 @@ export class ManifestEditorFrame extends LitElement {
         if (e.target === dialog) {
             dialog!.open = false;
             recordPWABuilderProcessStep("manifest_editor_closed", AnalyticsBehavior.ProcessCheckpoint);
-            document.body.style.height = "unset";
         }
     }
 
     async openDialog() {
-        document.body.style.height = "100vh"
         const dialog = this.shadowRoot!.querySelector(".dialog");
 
         dialog?.removeEventListener('wa-request-close', () => { });
@@ -120,7 +118,7 @@ export class ManifestEditorFrame extends LitElement {
 
     render() {
         return html`
-      <wa-dialog class="dialog" @wa-show=${() => this.openDialog()} @wa-hide=${(e: any) => this.hideDialog(e)}>
+      <wa-dialog class="dialog" light-dismiss @wa-show=${() => this.openDialog()} @wa-hide=${(e: any) => this.hideDialog(e)}>
         <div id="frame-wrapper">
           <div id="frame-content">
             <div id="frame-header">

@@ -262,13 +262,16 @@ export const publishPaneStyles = css`
 
 	#pp-form-header > button {
 		all: unset;
+		align-self: flex-start;
+		display: inline-flex;
+		width: fit-content;
 	}
 
 	#pp-form-header > button:hover {
 		cursor: pointer;
 	}
 
-	#pp-form-header > button:focus {
+	#pp-form-header > button:focus-visible {
 		outline: 2px solid #000000;
 		outline-offset: 2px;
 		border-radius: 4px;
@@ -318,10 +321,6 @@ export const publishPaneStyles = css`
 	#form-area[data-store="Android"] {
 		padding-top: 0;
 		flex-direction: column;
-	}
-
-	.noX::part(close-button) {
-		display: none;
 	}
 
 	.dialog::part(body){

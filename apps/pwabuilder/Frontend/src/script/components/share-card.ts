@@ -9,7 +9,6 @@ import '@awesome.me/webawesome/dist/components/dialog/dialog.js';
 @customElement('share-card')
 export class ShareCard extends LitElement {
 
-  @property() preventClosing = false;
   @property() manifestData = "";
   @property() swData = "";
   @property() enhancementsData = "";
@@ -106,15 +105,9 @@ export class ShareCard extends LitElement {
     dialog!.open = false;
   }
 
-  handleRequestClose(e: Event){
-    if (this.preventClosing) {
-      e.preventDefault();
-    }
-  }
-
   render() {
     return html`
-      <wa-dialog class="dialog" @wa-show=${() => this.setup()} @wa-hide=${() => this.hideDialog()}>
+      <wa-dialog class="dialog" light-dismiss @wa-show=${() => this.setup()} @wa-hide=${() => this.hideDialog()}>
         <div class="share-modal-header">Share your PWA score with the community!</div>
         <div id="frame-wrapper">
           <div id="frame-content">
