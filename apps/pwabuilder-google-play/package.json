@@ -52,7 +52,7 @@
         "tmp": "^0.2.7",
         "ts-node": "^10.9.2",
         "ts-node-dev": "^2.0.0",
-        "typescript": "^5.9.3"
+        "typescript": "^7.0.2"
     },
     "devDependencies": {
         "cross-env": "^10.1.0"

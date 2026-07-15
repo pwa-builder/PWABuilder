@@ -1,4 +1,5 @@
-import { LitElement, html, css, customElement, property, TemplateResult } from 'lit-element';
+import { LitElement, html, css, TemplateResult } from 'lit-element';
+import { customElement, property } from 'lit-element/decorators.js';
 import { SignInResult } from './signin-result';
 import { SignInProvider } from './signin-provider';
 import { FederatedCredential } from './federated-credential';
@@ -29,6 +30,7 @@ export interface PwaAuth {
 
 export type ProviderName = "Microsoft" | "Google" | "Facebook" | "Apple";
 type StoredAccessToken = { token: string | null; expiration: Date | null, providerData: Object | null | undefined };
+type FederatedCredentialConstructor = new (data: { id: string; provider: string; name: string; iconURL: string }) => FederatedCredential;
 
 @customElement('pwa-auth')
 export class PwaAuthImpl extends LitElement implements PwaAuth {
@@ -488,7 +490,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
     private tryStoreCredential(signIn: SignInResult) {
         // Use the new Credential Management API to store the credential, allowing for automatic sign-in next time the user visits the page.
         // https://developers.google.com/web/fundamentals/security/credential-management/
-        const federatedCredentialCtor = window["FederatedCredential"];
+        const federatedCredentialCtor = this.getFederatedCredentialConstructor();
         if (signIn.email && federatedCredentialCtor) {
             try {
                 const cred = new federatedCredentialCtor({
@@ -509,7 +511,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
         // https://developers.google.com/web/fundamentals/security/credential-management/
 
         // Bail if we don't support Credential Management
-        if (!window["FederatedCredential"]) {
+        if (!this.getFederatedCredentialConstructor()) {
             return null;
         }
 
@@ -550,7 +552,7 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
 
     private getStoredCredential(mediation: string, providerUrls: string[]): Promise<FederatedCredential | null> {
         // Bail if we don't support Credential Management
-        if (!window["FederatedCredential"]) {
+        if (!this.getFederatedCredentialConstructor()) {
             return Promise.resolve(null);
         }
 
@@ -578,6 +580,10 @@ export class PwaAuthImpl extends LitElement implements PwaAuth {
             error: null,
             provider: this.getProviderNameFromUrl(cred.provider!) as ProviderName
         };
+    }
+
+    private getFederatedCredentialConstructor(): FederatedCredentialConstructor | undefined {
+        return (window as Window & { FederatedCredential?: FederatedCredentialConstructor }).FederatedCredential;
     }
 
     private getProviderNameFromUrl(url: string): ProviderName {

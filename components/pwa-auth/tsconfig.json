@@ -7,7 +7,7 @@
       "ES2018"
     ],
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "es2018",
     "outDir": "build",
     "declaration": true,
@@ -15,7 +15,13 @@
     "sourceMap": true,
     "rootDir": "src",
     "strictNullChecks": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "types": [
+      "apple-signin-api",
+      "facebook-js-sdk",
+      "gapi",
+      "gapi.auth2"
+    ]
   },
 
   "exclude": [
