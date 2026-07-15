@@ -2,7 +2,7 @@ import type { Validation } from '../models/validation';
 import { env } from '../utils/environment';
 import { getHeaders } from '../utils/platformTrackingHeaders';
 import { TestResult } from '../utils/interfaces';
-import { showToast } from '../services/toasts';
+import { showToast } from '../services/toast-service';
 
 export type ReportAudit = {
     manifestValidations: Validation[],
@@ -180,7 +180,17 @@ export async function enqueueAnalysis(site: string): Promise<string> {
         const analysisId = await enqueueResult.text();
         return analysisId;
     } catch (error) {
-        showToast("Unable to analyze your web app", `${error}`.substring(0, 100), "danger", "exclamation-octagon");
+        const linkText = "Open an issue on GitHub";
+        const linkUrl = "https://github.com/pwa-builder/PWABuilder/issues/new/choose";
+        showToast({
+            title: "Unable to analyze your web app",
+            details: error instanceof Error ? error : `${error}`,
+            variant: "danger",
+            icon: "exclamation-octagon",
+            countdown: true,
+            hyperlinkText: linkText,
+            hyperlinkUrl: linkUrl
+        });
         throw error;
     }
 }
@@ -206,7 +216,7 @@ export async function getAnalysis(id: string): Promise<Analysis | null> {
         const jsonResult = await fetchResult.json();
         return jsonResult;
     } catch (error) {
-        showToast("Unable to check the status of your web app's PWA features", `${error}`.substring(0, 100), "danger", "exclamation-octagon");
+        showToast({ title: "Unable to check the status of your web app's PWA features", details: `${error}`.substring(0, 100), variant: "danger", icon: "exclamation-octagon" });
         throw error;
     }
 }
