@@ -175,9 +175,9 @@ export class PackageCreator {
         } catch (error) {
             const errorMessage = (error as Error)?.message || `${error}`;
 
-            // Is it a 403 Forbidden, a timeout, or a wrong content-type error?
+            // Is it a 403 Forbidden, a timeout, a wrong content-type error, or an unrecognized image MIME type?
             // If so, try using our PWABuilder image proxy, which can get around some of these issues.
-            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden, timeout, or wrong content-type error. " + errorMessage, "warn");
+            this.dispatchProgressEvent("Unable to generate app package due to error. Checking if error is 403 Forbidden, timeout, wrong content-type, or invalid image MIME error. " + errorMessage, "warn");
             const is403Error =
                 (error as any)?.status === 403 ||
                 (error as any)?.response?.status === 403 ||
@@ -187,12 +187,15 @@ export class PackageCreator {
             const isTimeout = errorMessage.includes('ETIMEDOUT') || errorMessage.includes('ESOCKETTIMEDOUT');
             const isWrongContentType = errorMessage.includes('with invalid Content-Type'); // Some AI app generation sites will put your web app to sleep while not in use. Then PWAbuilder access an image, and the site serves HTML loading screen instead of image, resulting in invalid Content-Type. In that case, we'll use our image proxy to see if we can access it. See https://github.com/pwa-builder/PWABuilder/issues/5937
             const isRunDotAppManifestError = options.pwaUrl.indexOf("run.app/") && errorMessage.includes("Unexpected token"); // Sites on run.app spin up when you access them, rendering a loading screen. This is problematic when fetching resources like web manifest, which expects JSON, not HTML. See https://github.com/pwa-builder/PWABuilder/issues/5380
-            if (is403Error || isTimeout || isRunDotAppManifestError || isWrongContentType) {
+            const isInvalidImageMime = errorMessage.includes('Could not find MIME for Buffer'); // Images that are missing or corrupt (e.g. HTML served where a PNG is expected) cause Bubblewrap to fail. Retry using our image proxy, which validates images and can provide a clearer error. See https://github.com/pwa-builder/PWABuilder/issues/6127
+            if (is403Error || isTimeout || isRunDotAppManifestError || isWrongContentType || isInvalidImageMime) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
                 const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
                 if (isCloudflare) {
                     this.dispatchProgressEvent("Cloudflare is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable Cloudflare's \"Bot fight mode\" while you're packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
+                } else if (isInvalidImageMime) {
+                    this.dispatchProgressEvent("One or more images in your web manifest appear to be missing or invalid. PWABuilder will retry using its image proxy service, which may provide a clearer error message.", "warn");
                 } else {
                     this.dispatchProgressEvent("Your web app is blocking PWABuilder from accessing your app's images, serving 403 Forbidden errors to PWABuilder. If the problem persists, please temporarily disable your firewall, CDN, or Cloudflare while packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
                 }
