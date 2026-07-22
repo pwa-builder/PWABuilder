@@ -85,7 +85,7 @@ public class ImageValidationService : IImageValidationService
             using var headResponse = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl), cancelToken);
             if (headResponse.IsSuccessStatusCode)
             {
-                return await ValidateFetchedImageAsync(imageUrl, headResponse.Content.Headers.ContentType?.MediaType);
+                return await ValidateFetchedImageAsync(imageUrl, headResponse.Content.Headers.ContentType?.MediaType, cancelToken);
             }
         }
         catch (Exception headException)
@@ -105,7 +105,7 @@ public class ImageValidationService : IImageValidationService
 
             if (response.IsSuccessStatusCode)
             {
-                return await ValidateFetchedImageAsync(imageUrl, response.Content.Headers.ContentType?.MediaType);
+                return await ValidateFetchedImageAsync(imageUrl, response.Content.Headers.ContentType?.MediaType, cancelToken);
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
@@ -326,9 +326,9 @@ public class ImageValidationService : IImageValidationService
     /// </summary>
     /// <param name="imageUrl">The URL of the image.</param>
     /// <param name="contentType">The content type returned by the server, if any.</param>
-    /// <param name="server">The value of the response's Server header, if any.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>True if the image is valid, otherwise an error describing the problem.</returns>
-    private async Task<Result<bool>> ValidateFetchedImageAsync(Uri imageUrl, string? contentType)
+    private async Task<Result<bool>> ValidateFetchedImageAsync(Uri imageUrl, string? contentType, CancellationToken cancelToken = default)
     {
         // Ensure the content type is an image.
         var contentTypeCheck = EnsureImageContentType(imageUrl, contentType);
@@ -338,15 +338,15 @@ public class ImageValidationService : IImageValidationService
         }
 
         // An image can exist and be served with a valid image content type but still be corrupt, or the
-        // host can return HTTP 200 for a missing image (e.g. Vercel, Netlify, *.run.app). When the image
-        // claims to be a decodable raster format, fetch and decode its bytes to confirm it's really a
-        // valid, existing image.
+        // host can return HTTP 200 for a missing image (e.g. Vercel, Netlify, *.run.app, Render.com with
+        // SPA routing). When the image claims to be a decodable raster format, fetch and decode its bytes
+        // to confirm it's really a valid, existing image.
         if (IsDecodableRasterImageType(imageUrl, contentType))
         {
             // Only block when we actually fetched the bytes and they couldn't be decoded (i.e. the image
             // is genuinely corrupt or doesn't exist). A transient fetch failure shouldn't fail an
             // otherwise-valid PWA.
-            var decodeResult = await TryDecodeImageAsync(imageUrl);
+            var decodeResult = await TryDecodeImageAsync(imageUrl, cancelToken);
             if (decodeResult is ImageDecodeResult.Undecodable)
             {
                 return new HttpRequestException($"Your PWA's web manifest refers to an image that appears to be corrupt or invalid: {imageUrl}. The server returned it as {contentType ?? "an image"}, but its contents couldn't be read as an image. Try re-exporting and re-uploading the image.", null, System.Net.HttpStatusCode.UnprocessableEntity);
@@ -381,13 +381,14 @@ public class ImageValidationService : IImageValidationService
     /// a transient fetch failure.
     /// </summary>
     /// <param name="imageUri">The URI of the image to fetch and decode.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
     /// <returns>The outcome of the fetch-and-decode attempt.</returns>
-    private async Task<ImageDecodeResult> TryDecodeImageAsync(Uri imageUri)
+    private async Task<ImageDecodeResult> TryDecodeImageAsync(Uri imageUri, CancellationToken cancelToken = default)
     {
         HttpResponseMessage response;
         try
         {
-            response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead);
+            response = await httpClient.GetAsync(imageUri, HttpCompletionOption.ResponseHeadersRead, cancelToken);
         }
         catch (Exception fetchError)
         {
@@ -402,13 +403,29 @@ public class ImageValidationService : IImageValidationService
                 return ImageDecodeResult.FetchFailed;
             }
 
+            // Check that the server is serving a valid image content type. Some hosting platforms (e.g.
+            // Vercel, Netlify, Render.com with SPA routing enabled) return the app's index.html with HTTP 200
+            // for any missing resource path. When a server returns a non-image content type (like text/html)
+            // for a URL ending in .png, the image file almost certainly doesn't exist.
+            var responseContentType = response.Content.Headers.ContentType?.MediaType;
+            if (!string.IsNullOrEmpty(responseContentType)
+                && !responseContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)
+                && responseContentType != "application/octet-stream")
+            {
+                logger.LogWarning(
+                    "Image {imageUri} was fetched but has an unexpected content-type: {contentType}. Expected an image content-type.",
+                    imageUri,
+                    responseContentType);
+                return ImageDecodeResult.Undecodable;
+            }
+
             try
             {
-                using var imageStream = await response.Content.ReadAsStreamAsync();
+                using var imageStream = await response.Content.ReadAsStreamAsync(cancelToken);
 
                 // Use IdentifyAsync to read image metadata (format/dimensions) without fully decoding
                 // the image. This is faster and uses less memory, and still fails on corrupt images.
-                var info = await Image.IdentifyAsync(imageStream);
+                var info = await Image.IdentifyAsync(imageStream, cancelToken);
                 if (info is null)
                 {
                     logger.LogWarning("Could not identify image {imageUri}; it may be corrupt.", imageUri);
