@@ -1,5 +1,5 @@
 import './webawesome';
-import { LitElement, css, html } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Router, Route } from '@vaadin/router';
 
@@ -7,85 +7,24 @@ import './script/components/app-footer';
 import './script/components/app-button';
 //import './script/components/cookie-banner';
 import './script/components/discord-box';
+import './script/components/toast-alert';
+import { ToastEvent, SHOW_TOAST_EVENT_NAME } from './script/models/toast-event';
 import { recordPageView, storeQueryParam } from './script/utils/analytics';
+import { appIndexStyles } from './app-index.styles';
 
 @customElement('app-index')
 export class AppIndex extends LitElement {
 
     @state() pageName: string = '';
 
-    static get styles() {
-        return css`
-      #router-outlet > * {
-        width: 100% !important;
-      }
+    // Active toasts rendered in the top-right stack, each paired with a unique
+    // id so they can be individually removed once dismissed.
+    @state() private toasts: Array<{ id: number; toast: ToastEvent }> = [];
 
-      #router-outlet > .leaving {
-        animation: 160ms fadeOut ease-in-out;
-      }
+    // Monotonic counter used to give each toast a stable key for removal.
+    private toastCounter = 0;
 
-      #router-outlet > .entering {
-        animation: 160ms fadeIn linear;
-      }
-
-      #router-outlet {
-        position: relative;
-      }
-
-      #wrapper {
-        display: flex;
-        min-height: 100vh;
-        flex-direction: column;
-      }
-
-      #content {
-        flex: 1;
-        background-color: rgb(242, 243, 251);
-      }
-
-      @media (min-width: 1920px) {
-        #router-outlet {
-          background: var(--primary-purple);
-        }
-      }
-
-      @keyframes fadeOut {
-        from {
-          opacity: 1;
-        }
-
-        to {
-          opacity: 0;
-        }
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0.2;
-        }
-
-        to {
-          opacity: 1;
-        }
-      }
-      /* To handle sidebar & main */
-      .container {
-        display: grid;
-        grid-template-columns: minmax(280px, auto);
-        grid-template-areas: 'sidebar main';
-        margin: 0 auto;
-        height: 100%;
-        position: relative;
-      }
-      .container > .main {
-        width: calc(100vw - 280px);
-        grid-area: main;
-      }
-      .container > .sidebar {
-        grid-area: sidebar;
-      }
-    `;
-    }
+    static styles = [appIndexStyles];
 
     constructor() {
         super();
@@ -106,12 +45,25 @@ export class AppIndex extends LitElement {
         super.connectedCallback();
         window.addEventListener('DOMContentLoaded', this.handlePageChange);
         window.addEventListener('popstate', this.handlePageChange);
+        window.addEventListener(SHOW_TOAST_EVENT_NAME, this.handleShowToast);
     }
 
     disconnectedCallback() {
         window.removeEventListener('DOMContentLoaded', this.handlePageChange);
         window.removeEventListener('popstate', this.handlePageChange);
+        window.removeEventListener(SHOW_TOAST_EVENT_NAME, this.handleShowToast);
         super.disconnectedCallback();
+    }
+
+    // Adds a toast to the stack when a "show-toast" event is dispatched.
+    private handleShowToast = (event: WindowEventMap[typeof SHOW_TOAST_EVENT_NAME]) => {
+        const id = this.toastCounter++;
+        this.toasts = [...this.toasts, { id, toast: event.detail }];
+    };
+
+    // Removes a toast from the stack once it has been dismissed.
+    private removeToast(id: number) {
+        this.toasts = this.toasts.filter(entry => entry.id !== id);
     }
 
     handlePageChange = () => {
@@ -213,17 +165,24 @@ export class AppIndex extends LitElement {
 
     render() {
         return html`
-      <div id="wrapper">
-        <!-- cookie banner not required so long as we only have essential cookies -->
-        <!-- <cookie-banner></cookie-banner> -->
+            <div id="wrapper">
+                <!-- cookie banner not required so long as we only have essential cookies -->
+                <!-- <cookie-banner></cookie-banner> -->
 
-        <main id="content">
-          <div id="router-outlet"></div>
-        </main>
-        ${this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
-        <app-footer></app-footer>
-      </div>
+                <main id="content">
+                <div id="router-outlet"></div>
+                </main>
+                ${this.pageName === "congratulations" ? null : html`<discord-box></discord-box>`}
+                <app-footer></app-footer>
+            </div>
 
-    `;
+            <div class="toast-stack">
+                ${this.toasts.map(({ id, toast }) => html`
+                <toast-alert
+                    .toast=${toast}
+                    @toast-dismiss=${() => this.removeToast(id)}></toast-alert>
+                `)}
+            </div>
+        `;
     }
 }
