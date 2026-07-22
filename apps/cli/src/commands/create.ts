@@ -1,9 +1,8 @@
 import type { Arguments, CommandBuilder} from "yargs";
-import * as prompts from "@clack/prompts";
 import { replaceInFileList, doesFileExist, fetchZipAndDecompress, removeDirectory, renameDirectory, removeAll, FETCHED_ZIP_NAME_STRING, DECOMPRESSED_NAME_STRING } from "../util/fileUtil";
 import { outputMessage, promisifiedExecWrapper } from "../util/util";
 import { trackCreateEventWrapper, trackErrorWrapper } from "../analytics/usage-analytics";
-import { promptsCancel, runSpinnerGroup, spinnerItem } from "../util/promptUtil";
+import { promptsCancel, runSpinnerGroup, type spinnerItem } from "../util/promptUtil";
 import { formatCodeSnippet, formatEmphasis, formatErrorEmphasisStrong, formatErrorEmphasisWeak, formatSuccessEmphasis } from "../util/textUtil";
 import { WHISPER_CAMPAIGN, handleCampaign } from "../util/campaignUtil";
 
@@ -134,12 +133,12 @@ async function handleCreateCommand(argv: Arguments<CreateOptions>) {
   const { resolvedName, resolvedTemplate} = await resolveCreateArguments(argv);
   trackCreateEventWrapper({template: resolvedTemplate});
   await fetchAndPrepareTemplate(resolvedName, resolvedTemplate);
-  finalOutput(resolvedName);
+  await finalOutput(resolvedName);
 }
 
 async function resolveCreateArguments(argv: Arguments<CreateOptions>): Promise<ResolvedCreateOptions> {
   const {name, template, list} = argv;
-  handleTemplateListFlag(list);
+  await handleTemplateListFlag(list);
   const resolvedTemplate= await resolveTemplateArgument(template, ('template' in argv));
   const resolvedName = await resolveNameArgument(name);
   return {resolvedName, resolvedTemplate};
@@ -177,11 +176,13 @@ async function installTask(resolvedName: string): Promise<void> {
   await prepDirectoryForDevelopment(resolvedName);
 }
 
-function finalOutput(resolvedName: string) {
+async function finalOutput(resolvedName: string): Promise<void> {
+  const prompts = await import("@clack/prompts");
   prompts.outro(FINAL_OUTPUT_STRING(resolvedName));
 }
 
 async function resolveNameArgument(nameArg: string | undefined): Promise<string> {
+  const prompts = await import("@clack/prompts");
   let name: string = DEFAULT_NAME;
 
   if(!nameArg || !validateName(nameArg)) {
@@ -197,7 +198,7 @@ async function resolveNameArgument(nameArg: string | undefined): Promise<string>
     }) as string;
 
     if(prompts.isCancel(name)) {
-      promptsCancel();
+      await promptsCancel();
     }
   } else {
     name = nameArg;
@@ -212,7 +213,7 @@ async function resolveTemplateArgument(templateArg: string | undefined, template
   if(templateArg && validateTemplate(templateArg)) {
     template = templateArg;
   } else if (templateProvided) {
-    promptsCancel(INVALID_TEMPLATE_ERROR_STRING);
+    await promptsCancel(INVALID_TEMPLATE_ERROR_STRING);
   }
 
   return template;
@@ -256,12 +257,12 @@ async function prepDirectoryForDevelopment(newName: string): Promise<void> {
 
     await promisifiedExecWrapper('npm i', true, newName);
   } catch (err) {
-    promptsCancel();
+    await promptsCancel();
   }
   
 }
 
-function handleTemplateListFlag(listFlag: boolean | undefined): void {
+async function handleTemplateListFlag(listFlag: boolean | undefined): Promise<void> {
   if(listFlag) {
     outputMessage(TEMPLATE_LIST_OUTPUT_STRING);
     process.exit(0);

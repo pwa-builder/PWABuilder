@@ -1,4 +1,3 @@
-import * as prompts from "@clack/prompts";
 import { HandlerSignature, removeProcessEventListeners, replaceProcessEventListeners } from "./util";
 
 export interface spinnerItem {
@@ -13,6 +12,7 @@ const SPINNER_EVENT_NAME_LIST: string[] = ['SIGINT', 'SIGTERM', 'exit'];
 const DEFAULT_CANCEL_MESSAGE: string = `Command failed due to error.`;
 
 export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage: string) {
+  const prompts = await import("@clack/prompts");
   const promptSpinner = prompts.spinner();
 
   for(const spinnerItem of spinnerItems) {
@@ -23,7 +23,7 @@ export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage
         spinnerItem.onCancel();
       }
       promptSpinner.stop(spinnerItem.stopMessage);
-      promptsCancel(cancelMessage);
+      void promptsCancel(cancelMessage);
     });
 
     await spinnerItem.functionToRun();
@@ -33,7 +33,8 @@ export async function runSpinnerGroup(spinnerItems: spinnerItem[], cancelMessage
   removeProcessEventListeners(SPINNER_EVENT_NAME_LIST);
 }
 
-export function promptsCancel(message?: string): void {
+export async function promptsCancel(message?: string): Promise<never> {
+  const prompts = await import("@clack/prompts");
   const _message = message ?? DEFAULT_CANCEL_MESSAGE;
   prompts.cancel(_message);
   process.exit(0);

@@ -4,12 +4,12 @@ import { Manifest } from "../interfaces/manifest";
 import { classMap } from "lit/directives/class-map.js";
 import { getManifestInfo } from "../checks/manifest";
 
-import "@shoelace-style/shoelace/dist/components/color-picker/color-picker";
-import '@shoelace-style/shoelace/dist/components/divider/divider';
-import '@shoelace-style/shoelace/dist/components/button/button';
-import '@shoelace-style/shoelace/dist/components/select/select';
-import '@shoelace-style/shoelace/dist/components/menu-item/menu-item';
-import '@shoelace-style/shoelace/dist/components/textarea/textarea';
+import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js";
+import '@shoelace-style/shoelace/dist/components/divider/divider.js';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import '@shoelace-style/shoelace/dist/components/textarea/textarea.js';
 
 interface InputItem {
   title: string;
