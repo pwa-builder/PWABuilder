@@ -26,9 +26,11 @@ export class GooglePlayPackagingStatus extends LitElement {
     @state() isRetrying = false;
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
     private readonly maxWaitTimeMs = 30 * 60 * 1000; // Max wait time of 30 minutes
+    private readonly pollQueryRetryDelayMs = 10000; // Wait 10 seconds before retrying a failed query
     private jobTimeoutHandle = 0;
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
+    private pollQueryErrorCount = 0; // Number of consecutive errors when querying for job status
 
     static styles = [googlePlayPackagingStatusStyles];
 
@@ -183,9 +185,16 @@ export class GooglePlayPackagingStatus extends LitElement {
         let job: GooglePlayPackageJob;
         try {
             job = await getGooglePlayPackageJob(jobId);
+            this.pollQueryErrorCount = 0; // Reset on successful query
             this.job = job;
         } catch (error) {
-            this.pollJobFailed(jobId, error);
+            if (this.pollQueryErrorCount < 1) {
+                // First failure: wait 10 seconds and try again before showing the error.
+                this.pollQueryErrorCount++;
+                setTimeout(() => this.pollJob(jobId), this.pollQueryRetryDelayMs);
+            } else {
+                this.pollJobFailed(jobId, error);
+            }
             return;
         }
 
