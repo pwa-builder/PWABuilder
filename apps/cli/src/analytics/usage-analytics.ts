@@ -106,7 +106,8 @@ export function createUserDataAndWrite(path: string): PWABuilderData {
   
 function addUserIDtoTelemetry(id: string): void {
   defaultClient.addTelemetryProcessor((envelope, context) => {
-    envelope["tags"]['ai.user.id'] = id;
+    envelope.tags ??= {};
+    envelope.tags['ai.user.id'] = id;
     return true;
   });
 }

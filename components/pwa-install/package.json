@@ -34,7 +34,7 @@
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.7.3"
+    "typescript": "^7.0.2"
   },
   "repository": {
     "type": "git",

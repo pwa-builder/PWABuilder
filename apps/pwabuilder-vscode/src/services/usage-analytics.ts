@@ -1,5 +1,5 @@
 // import { setup, defaultClient } from 'applicationinsights';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { getFlag } from '../flags';
 
 import * as vscode from 'vscode';
@@ -51,7 +51,11 @@ export function trackEvent(name: string, properties: any) {
 export function trackException(err: Error) {
   try {
     if (getFlag("analytics") === true) {
-      reporter?.sendTelemetryException(err, { sessionId: getSessionID() });
+      reporter?.sendTelemetryErrorEvent(err.name || "Error", {
+        message: err.message,
+        stack: err.stack,
+        sessionId: getSessionID()
+      });
     }
   }
   catch (err) {
