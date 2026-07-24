@@ -198,7 +198,12 @@ export const manifestInfoFormStyles = css`
 
 	wa-input::part(input),
 	wa-textarea::part(textarea) {
-		color: #717171;
+		color: rgb(27, 29, 38);
+	}
+
+	wa-input::part(input)::placeholder,
+	wa-textarea::part(textarea)::placeholder {
+		color: #9b9b9b;
 	}
 
 	.focus {
