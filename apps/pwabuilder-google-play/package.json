@@ -24,7 +24,7 @@
     "homepage": "https://github.com/pwa-builder/pwabuilder-google-play/",
     "dependencies": {
         "@azure/identity": "^4.13.0",
-        "@azure/monitor-opentelemetry": "^1.7.0",
+        "@azure/monitor-opentelemetry": "^1.18.2",
         "@azure/storage-blob": "^12.29.0",
         "@azure/storage-queue": "^12.29.0",
         "@bubblewrap/core": "^1.24.1",
@@ -39,7 +39,7 @@
         "@types/fs-extra": "^11.0.4",
         "@types/tmp": "^0.2.6",
         "archiver": "^5.3.2",
-        "body-parser": "^1.20.5",
+        "body-parser": "^1.20.6",
         "cors": "^2.8.5",
         "del": "^7.1.0",
         "dotenv": "^16.6.1",
