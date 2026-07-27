@@ -1,8 +1,8 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
 FROM --platform=linux/amd64 ubuntu:24.04  AS ubuntu
 
-ARG ANDROID_SDK_TOOLS_VERSION="11076708"
-ARG NODE_VERSION="20.x"
+ARG ANDROID_SDK_TOOLS_VERSION="14742923"
+ARG NODE_VERSION="24.x"
 ARG JENV_RELEASE="0.5.6"
 
 ARG DIRWORK="/tmp"
@@ -77,9 +77,9 @@ RUN mkdir -p "$ANDROID_HOME"/.android && \
 
 FROM pre-minimal AS node-final
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
-    apt-get update -qq && apt-get install -qq nodejs yarn && \
-    npm install -g npm@latest && \
-    npm install -g bower cordova eslint gulp-cli @ionic/cli mocha node-gyp
+    apt-get update -qq && \
+    apt-get install -qq nodejs yarn && \
+    rm -rf /var/lib/apt/lists/*
 
 FROM node-final AS builder
 WORKDIR /app
@@ -88,19 +88,19 @@ COPY package*.json tsconfig.json ./
 COPY . .
 
 ENV NODE_ENV=development
-RUN npm install
+RUN npm ci --ignore-scripts
 RUN npm run build
 RUN ls -la /app/server.*
 
 FROM builder AS app
 WORKDIR /app
 
-COPY --from=builder /app/package*.json ./
-RUN npm install --omit=dev --ignore-scripts
+RUN npm prune --omit=dev --ignore-scripts && \
+    npm_root="$(npm root -g)" && \
+    rm -rf "$npm_root/npm" /usr/bin/npm /usr/bin/npx
 
-COPY --from=builder /app .
-
+ENV NODE_ENV=production
 ENV PORT=5858
 EXPOSE 5858
 
-CMD npm start
+CMD ["node", "./server.js"]
