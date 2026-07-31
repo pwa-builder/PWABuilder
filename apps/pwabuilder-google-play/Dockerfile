@@ -54,6 +54,7 @@ RUN wget --quiet -O sdk-tools.zip \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-31" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" && \
+    echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;36.1.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" && \
     echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
