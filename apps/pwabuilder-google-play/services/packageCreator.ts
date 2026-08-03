@@ -6,7 +6,7 @@ import { BubbleWrapper } from './bubbleWrapper.js';
 import { join } from "path";
 import fs from 'fs-extra';
 import { base64ToBuffer } from "../utils/base64ToBuffer.js";
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 import { deleteAsync } from 'del';
 import { AnalyticsInfo, trackEvent } from './analytics.js';
 import { msToFriendly } from "../utils/msToFriendly.js";
@@ -370,7 +370,7 @@ export class PackageCreator {
 
         return new Promise((resolve, reject) => {
             try {
-                const archive = archiver('zip', {
+                const archive = new ZipArchive({
                     zlib: { level: 5 },
                 });
 
