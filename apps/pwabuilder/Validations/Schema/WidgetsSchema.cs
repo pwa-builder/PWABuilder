@@ -79,10 +79,18 @@ namespace PWABuilder.Validations.Schema
 			  }
 		}";
 
-        public static bool ValidateWidgetSchema(string jObject)
+        // The `widgets` member of the manifest is a JSON array, so we parse it as
+        // a JToken (which accepts both arrays and objects). The previous
+        // implementation called JObject.Parse, which throws for arrays with
+        // "Error reading JObject from JsonReader. Current JsonReader item is not
+        // an object: StartArray." That exception bubbled up to
+        // ManifestAnalyzer.AnalyzeAsync's try/catch and marked the Widgets
+        // capability as Skipped for every PWA that declared a valid widgets
+        // array, making the Widgets check unpassable.
+        public static bool ValidateWidgetSchema(string widgetsJson)
         {
-            var jSchema = JSchema.Parse(Schema);
-            return JObject.Parse(jObject).IsValid(jSchema);
+            var schema = JSchema.Parse(Schema);
+            return JToken.Parse(widgetsJson).IsValid(schema);
         }
     }
 }
