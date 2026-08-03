@@ -49,32 +49,23 @@ export function findSuitableIcon(
 export function findBestAppIcon(icons: Icon[] | null | undefined): Icon | null {
     const iconInfos = (icons || []).map(i => new IconInfo(i));
     return findSuitableIcon(iconInfos, 'any', 512, 512, 'image/png') ||
-        findSuitableIcon(iconInfos, 'any', 192, 192, 'image/png') ||
-        findSuitableIcon(iconInfos, 'any', 512, 512, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'any', 192, 192, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'any', 512, 512, undefined) ||
-        findSuitableIcon(iconInfos, 'any', 192, 192, undefined) ||
-        findSuitableIcon(iconInfos, 'any', 0, 0, 'image/png') ||
-        findSuitableIcon(iconInfos, 'any', 0, 0, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'any', 0, 0, undefined) ||
         findSuitableIcon(iconInfos, 'maskable', 512, 512, 'image/png') ||
+        findSuitableIcon(iconInfos, 'any', 192, 192, 'image/png') ||
         findSuitableIcon(iconInfos, 'maskable', 192, 192, 'image/png') ||
+        findSuitableIcon(iconInfos, 'any', 512, 512, 'image/jpeg') ||
         findSuitableIcon(iconInfos, 'maskable', 512, 512, 'image/jpeg') ||
+        findSuitableIcon(iconInfos, 'any', 192, 192, 'image/jpeg') ||
         findSuitableIcon(iconInfos, 'maskable', 192, 192, 'image/jpeg') ||
+        findSuitableIcon(iconInfos, 'any', 512, 512, undefined) ||
         findSuitableIcon(iconInfos, 'maskable', 512, 512, undefined) ||
+        findSuitableIcon(iconInfos, 'any', 192, 192, undefined) ||
         findSuitableIcon(iconInfos, 'maskable', 192, 192, undefined) ||
+        findSuitableIcon(iconInfos, 'any', 0, 0, 'image/png') ||
         findSuitableIcon(iconInfos, 'maskable', 0, 0, 'image/png') ||
+        findSuitableIcon(iconInfos, 'any', 0, 0, 'image/jpeg') ||
         findSuitableIcon(iconInfos, 'maskable', 0, 0, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'maskable', 0, 0, undefined) ||
-        findSuitableIcon(iconInfos, 'monochrome', 512, 512, 'image/png') ||
-        findSuitableIcon(iconInfos, 'monochrome', 192, 192, 'image/png') ||
-        findSuitableIcon(iconInfos, 'monochrome', 512, 512, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'monochrome', 192, 192, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'monochrome', 512, 512, undefined) ||
-        findSuitableIcon(iconInfos, 'monochrome', 192, 192, undefined) ||
-        findSuitableIcon(iconInfos, 'monochrome', 0, 0, 'image/png') ||
-        findSuitableIcon(iconInfos, 'monochrome', 0, 0, 'image/jpeg') ||
-        findSuitableIcon(iconInfos, 'monochrome', 0, 0, undefined);
+        findSuitableIcon(iconInfos, 'any', 0, 0, undefined) ||
+        findSuitableIcon(iconInfos, 'maskable', 0, 0, undefined);
 }
 
 function isIconInfos(icons: Icon[] | IconInfo[]): icons is IconInfo[] {

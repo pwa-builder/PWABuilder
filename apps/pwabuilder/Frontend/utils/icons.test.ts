@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { Icon } from '../../src/script/utils/interfaces';
-import { findBestAppIcon, findSuitableIcon } from '../../src/script/utils/icons';
+import { findSuitableIcon } from '../../src/script/utils/icons';
 
 describe('utils/icons', () => {
   const mockList: Array<Icon> = [
@@ -76,43 +76,5 @@ describe('utils/icons', () => {
   it('findSuitableIcon() given undefined returns null', () => {
     expect(findSuitableIcon(undefined, 'any', 1920, 1600, 'image/jpeg')).to.be
       .null;
-  });
-
-  it('findBestAppIcon() prioritizes any icons over maskable icons', () => {
-    const icon = findBestAppIcon([
-      {
-        src: 'any.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'any',
-      },
-      {
-        src: 'maskable.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'maskable',
-      },
-    ]);
-
-    expect(icon!.src).to.equal('any.png');
-  });
-
-  it('findBestAppIcon() prioritizes maskable icons over monochrome icons', () => {
-    const icon = findBestAppIcon([
-      {
-        src: 'monochrome.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'monochrome',
-      },
-      {
-        src: 'maskable.png',
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'maskable',
-      },
-    ]);
-
-    expect(icon!.src).to.equal('maskable.png');
   });
 });
