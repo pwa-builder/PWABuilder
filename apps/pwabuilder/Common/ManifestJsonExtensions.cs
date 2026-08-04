@@ -34,7 +34,10 @@ public static class ManifestJsonExtensions
             .ThenByDescending(i => i.Width)
             .ThenByDescending(i => i.IsPng)
             .ThenByDescending(i => i.IsWebp)
-            .ThenByDescending(i => i.Purpose == "any" || i.Purpose == "");
+            .ThenBy(i => i.IsAnyPurpose() ? 0
+                : i.GetPurposes().Contains("maskable", StringComparer.InvariantCultureIgnoreCase) ? 1
+                : i.GetPurposes().Contains("monochrome", StringComparer.InvariantCultureIgnoreCase) ? 2
+                : 3);
     }
     
     private static WebManifestIcon ParseIcon(JsonElement icon)
