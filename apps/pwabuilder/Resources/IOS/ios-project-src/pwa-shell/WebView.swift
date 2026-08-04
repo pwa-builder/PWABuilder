@@ -120,6 +120,17 @@ extension ViewController: WKUIDelegate, WKDownloadDelegate {
         }
 
         if let requestUrl = navigationAction.request.url{
+            // Schemes that should always be handed off to the system/other apps rather than
+            // being processed as in-app navigation (e.g. phone calls, email, maps, FaceTime, etc.)
+            let externalSchemes = ["tel", "telprompt", "mailto", "facetime", "facetime-audio", "fb", "fb-messenger", "sms", "itms-services", "itms-apps", "itms", "maps"]
+            if let requestScheme = requestUrl.scheme?.lowercased(), externalSchemes.contains(requestScheme) {
+                decisionHandler(.cancel)
+                if UIApplication.shared.canOpenURL(requestUrl) {
+                    UIApplication.shared.open(requestUrl)
+                }
+                return
+            }
+
             if let requestHost = requestUrl.host {
                 // NOTE: Match auth origin first, because host origin may be a subset of auth origin and may therefore always match
                 let matchingAuthOrigin = authOrigins.first(where: { requestHost.range(of: $0) != nil })
@@ -168,20 +179,13 @@ extension ViewController: WKUIDelegate, WKDownloadDelegate {
                 }
             } else {
                 decisionHandler(.cancel)
-                if (navigationAction.request.url?.scheme == "tel" || navigationAction.request.url?.scheme == "mailto" ){
-                    if (UIApplication.shared.canOpenURL(requestUrl)) {
-                        UIApplication.shared.open(requestUrl)
-                    }
+                if requestUrl.isFileURL {
+                    // not tested
+                    downloadAndOpenFile(url: requestUrl.absoluteURL)
                 }
-                else {
-                    if requestUrl.isFileURL {
-                        // not tested
-                        downloadAndOpenFile(url: requestUrl.absoluteURL)
-                    }
-                    // if (requestUrl.absoluteString.contains("base64")){
-                    //     downloadAndOpenBase64File(base64String: requestUrl.absoluteString)
-                    // }
-                }
+                // if (requestUrl.absoluteString.contains("base64")){
+                //     downloadAndOpenBase64File(base64String: requestUrl.absoluteString)
+                // }
             }
         }
         else {
