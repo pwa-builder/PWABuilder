@@ -171,7 +171,8 @@ export class BubbleWrapper {
             return outputFile;
         } catch (signingError) {
             const signingErrorStr = `${signingError}`;
-            if (signingErrorStr.includes("toDerInputStream rejects tag type 75")) {
+            if (signingErrorStr.includes("toDerInputStream rejects tag type 75") ||
+                signingErrorStr.includes("DerValue.getBigIntegerInternal, not expected 6")) {
                 this.dispatchProgressEvent("Error signing the app bundle due to what appears to be an invalid signing key file.", "error");
             } else {
                 this.dispatchProgressEvent("Error signing the app bundle.", "error");
