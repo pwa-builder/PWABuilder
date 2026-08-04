@@ -28,6 +28,14 @@ public interface IImageValidationService
     Task<Result<bool>> TryValidateImageTypeAsync(Uri imageUri, string? declaredType, CancellationToken cancelToken);
 
     /// <summary>
+    /// Detects the actual type of the image by inspecting its bytes, rather than trusting the type declared in the manifest or the image's file extension.
+    /// </summary>
+    /// <param name="imageUri">The URI of the image to check.</param>
+    /// <param name="cancelToken">The cancellation token.</param>
+    /// <returns>The actual mime type of the image, e.g. "image/png". If the type can't be determined, such as for .ico and .svg images, the result value will be null.</returns>
+    Task<Result<string?>> TryDetectImageTypeAsync(Uri imageUri, CancellationToken cancelToken);
+
+    /// <summary>
     /// Validates that the image matches the declared dimensions in the manifest.
     /// </summary>
     /// <param name="imageUri">The URI of the image to check.</param>
@@ -149,6 +157,34 @@ public class ImageValidationService : IImageValidationService
             return true; // ImageSharp doesn't handle svg files. We'll skip those and assume all is well.
         }
 
+        var (actualMimeType, detectionError) = await TryDetectImageTypeAsync(imageUri, cancelToken);
+        if (detectionError is not null)
+        {
+            // Surface HTTP errors as-is so callers can inspect the status code. Wrap other errors for context.
+            return detectionError is HttpRequestException httpError
+                ? httpError
+                : new Exception($"Error loading image {imageUri} for type validation.", detectionError);
+        }
+
+        if (string.IsNullOrWhiteSpace(actualMimeType))
+        {
+            return true; // Allow the user to specify types not supported by ImageSharp.
+        }
+
+        // Compare declared type with actual detected type (case-insensitive)
+        var isExpectedImageType = string.Equals(declaredType.Trim(), actualMimeType.Trim(), StringComparison.OrdinalIgnoreCase);
+        if (!isExpectedImageType)
+        {
+            logger.LogInformation("Image type mismatch for {imageUri}: declared type {declaredType}, actual type {actualMimeType}.", imageUri, declaredType, actualMimeType);
+            return new Exception($"Your web manifest declares {imageUri} to be of type {declaredType}, but it's actually {actualMimeType}.");
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Result<string?>> TryDetectImageTypeAsync(Uri imageUri, CancellationToken cancelToken)
+    {
         try
         {
             using var response = await httpClient.GetAsync(imageUri, cancelToken);
@@ -159,40 +195,32 @@ public class ImageValidationService : IImageValidationService
 
             using var imageStream = await response.Content.ReadAsStreamAsync(cancelToken);
 
-            // Use ImageSharp to detect the actual image format
+            // Use ImageSharp to detect the actual image format.
             var detectedFormat = await Image.DetectFormatAsync(imageStream, cancelToken);
-            if (detectedFormat == null)
+            if (detectedFormat is null)
             {
                 logger.LogWarning("Could not detect image format for {imageUri}.", imageUri);
-                return true; // Allow the user to specify types not supported by ImageSharp.
+                return new Result<string?>(null); // The image is in a format ImageSharp can't detect, such as .ico or .svg.
             }
 
             var actualMimeType = detectedFormat.DefaultMimeType;
             if (string.IsNullOrWhiteSpace(actualMimeType))
             {
                 logger.LogWarning("Detected image format for {imageUri} but has no mime type.", imageUri);
-                return true; // Allow the user to specify types not supported by ImageSharp.
+                return new Result<string?>(null);
             }
 
-            // Compare declared type with actual detected type (case-insensitive)
-            var isExpectedImageType = string.Equals(declaredType.Trim(), actualMimeType.Trim(), StringComparison.OrdinalIgnoreCase);
-            if (!isExpectedImageType)
-            {
-                logger.LogInformation("Image type mismatch for {imageUri}: declared type {declaredType}, actual type {actualMimeType}.", imageUri, declaredType, actualMimeType);
-                return new Exception($"Your web manifest declares {imageUri} to be of type {declaredType}, but it's actually {actualMimeType}.");
-            }
-
-            return true;
+            return new Result<string?>(actualMimeType);
         }
         catch (UnknownImageFormatException unknownFormatError)
         {
             logger.LogWarning(unknownFormatError, "Unsupported image format for {imageUri}.", imageUri);
-            return true; // Allow the test to pass for unsupported formats.
+            return new Result<string?>(null); // The image is in a format ImageSharp can't detect, such as .ico or .svg.
         }
         catch (Exception error)
         {
-            logger.LogError(error, "Image type validation failed for {imageUri} due to an error.", imageUri);
-            return new Exception($"Error loading image {imageUri} for type validation.", error);
+            logger.LogError(error, "Image type detection failed for {imageUri} due to an error.", imageUri);
+            return error;
         }
     }
 
