@@ -20,7 +20,7 @@ import '../components/arrow-link'
 import type WaDropdown from '@awesome.me/webawesome/dist/components/dropdown/dropdown.js';
 import type WaDialog from '@awesome.me/webawesome/dist/components/dialog/dialog.js';
 import { Icon, ManifestContext } from '../utils/interfaces';
-import { resolveUrl } from '../utils/url';
+import { cleanUrl, resolveUrl } from '../utils/url';
 import { AnalyticsBehavior, recordPWABuilderProcessStep } from '../utils/analytics';
 import { enqueueAnalysis, Analysis, getAnalysis, PwaCapability, PwaCapabilityStatus, PwaCapabilityLevel } from './app-report.api';
 import { appReportStyles } from './app-report.styles';
@@ -95,8 +95,14 @@ export class AppReport extends LitElement {
         const search = new URLSearchParams(location.search);
         const site = search.get('site');
         if (site) {
-            this.siteUrl = site;
-            this.runAllTests(site);
+            let httpsSite = site;
+            try {
+                httpsSite = cleanUrl(site);
+            } catch (error) {
+                console.error('Unable to clean site URL', error);
+            }
+            this.siteUrl = httpsSite;
+            this.runAllTests(httpsSite);
             sessionStorage.setItem('last_tested', JSON.stringify(new Date()));
         }
 
