@@ -31,7 +31,6 @@ export const appPackageFormBaseStyles = css`
 	}
 
 	#form-layout {
-		overflow-y: auto;
 		padding: 0em 1.5em 0 1em;
 	}
 

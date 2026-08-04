@@ -4,7 +4,6 @@ import { doesFileExist } from '../util/fileUtil';
 import { PWABuilderData, createUserDataAndWrite, trackMessageShowEventWrapper } from '../analytics/usage-analytics';
 import { outputMessage } from './util';
 import { formatCodeSnippet, formatEmphasis, formatEmphasisStrong } from './textUtil';
-import * as prompts from "@clack/prompts";
 
 const whisperDisplayText: string = formatCodeSnippet(`${formatEmphasis("Want to start using AI on the web?")} We just added a new starter template!
 The new whisper template includes a Whisper transcription model to get you started with building AI-empowered progressive web apps!

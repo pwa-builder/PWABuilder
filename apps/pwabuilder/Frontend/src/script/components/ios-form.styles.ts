@@ -28,7 +28,6 @@ export const iosFormStyles = css`
 	#form-layout {
 		flex-grow: 1;
 		display: flex;
-		overflow: auto;
 		flex-direction: column;
 	}
 

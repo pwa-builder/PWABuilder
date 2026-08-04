@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": ["esnext.array", "esnext", "es2017", "dom"],
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,

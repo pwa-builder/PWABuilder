@@ -1,5 +1,5 @@
 import resolve from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import replace from "@rollup/plugin-replace";
 import strip from "@rollup/plugin-strip";
 import copy from "rollup-plugin-copy";
@@ -19,7 +19,8 @@ export default {
         process.env.NODE_ENV || "production"
       ),
       '../assets': 'https://raw.githubusercontent.com/pwa-builder/pwabuilder/main/components/manifest-previewer/assets',
-      delimiters: ['', '']
+      delimiters: ['', ''],
+      preventAssignment: true
     }),
     litcss(),
     terser(),

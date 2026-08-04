@@ -1,10 +1,10 @@
 import { LitElement, html, css, CSSResultGroup } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import "@shoelace-style/shoelace/dist/components/progress-ring/progress-ring";
-import "@shoelace-style/shoelace/dist/components/badge/badge";
-import "@shoelace-style/shoelace/dist/components/spinner/spinner";
-import "@shoelace-style/shoelace/dist/components/details/details";
+import "@shoelace-style/shoelace/dist/components/progress-ring/progress-ring.js";
+import "@shoelace-style/shoelace/dist/components/badge/badge.js";
+import "@shoelace-style/shoelace/dist/components/spinner/spinner.js";
+import "@shoelace-style/shoelace/dist/components/details/details.js";
 
 import { runManifestChecks } from "../utils/manifest";
 import { TestResult } from "../interfaces/manifest";

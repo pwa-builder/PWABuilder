@@ -4,9 +4,9 @@ import { windowsEndpoint } from "../endpoints";
 import { WindowsOptions } from "../interfaces/windowsOptions";
 import { SiteData } from "../interfaces/validation";
 
-import "@shoelace-style/shoelace/dist/components/input/input";
-import '@shoelace-style/shoelace/dist/components/button/button';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip';
+import "@shoelace-style/shoelace/dist/components/input/input.js";
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 @customElement("package-windows")
 export class PackageWindows extends LitElement {

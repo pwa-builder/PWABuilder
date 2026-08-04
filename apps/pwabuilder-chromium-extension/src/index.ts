@@ -5,9 +5,9 @@ import './components/package-windows';
 // import './components/manifest-designer';
 // import '@pwabuilder/manifest-editor';
 
-import "@shoelace-style/shoelace/dist/components/tab-group/tab-group";
-import "@shoelace-style/shoelace/dist/components/tab/tab";
-import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel";
+import "@shoelace-style/shoelace/dist/components/tab-group/tab-group.js";
+import "@shoelace-style/shoelace/dist/components/tab/tab.js";
+import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js";
 import { getManifestInfo } from "./checks/manifest";
 import { SiteData } from "./interfaces/validation";
 import { getSwInfo } from "./checks/sw";

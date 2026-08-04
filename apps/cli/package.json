@@ -13,7 +13,7 @@
     "prepublishOnly": "tsc && cpx \".\\README.md\" \".\\dist\\README.md\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run clean && tsc && npm link",
-    "clean": "rm -rf dist"
+    "clean": "shx rm -rf dist"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,7 @@
     "@types/node": "^18.19.33",
     "@types/yargs": "^17.0.15",
     "shx": "^0.3.4",
-    "typescript": "^4.9.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",

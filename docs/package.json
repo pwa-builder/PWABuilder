@@ -14,6 +14,6 @@
     "rimraf": "^3.0.2",
     "cpx": "^1.5.0",
     "docsify-cli": "^4.4.4",
-    "typescript": "^5.5.4"
+    "typescript": "^7.0.2"
   }
 }

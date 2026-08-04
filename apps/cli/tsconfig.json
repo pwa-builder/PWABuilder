@@ -4,9 +4,9 @@
 
   "compilerOptions": {
     "lib": ["es2021", "DOM"],
-    "module": "commonjs",
+    "module": "node16",
     "target": "es2021",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -16,6 +16,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
 
+    "rootDir": "src",
     "outDir": "dist"
   },
   "ts-node": {

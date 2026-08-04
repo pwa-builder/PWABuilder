@@ -138,6 +138,17 @@ body {
   overflow-x: hidden; /* Prevent horizontal scrolling at high zoom */
 }
 
+/*
+ * WebAwesome locks page scrolling by adding the `wa-scroll-lock` class to
+ * <html> while a dialog is open, but its bundled rule only targets <body>
+ * (`.wa-scroll-lock body { overflow: hidden }`). PWABuilder scrolls on <html>,
+ * so that rule is a no-op here. Mirror it on <html> so WA's built-in scroll
+ * lock works for every dialog without any per-dialog JavaScript.
+ */
+html.wa-scroll-lock {
+  overflow: hidden !important;
+}
+
 /* Ensure all text wraps properly */
 * {
   word-wrap: break-word;

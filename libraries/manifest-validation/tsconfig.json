@@ -3,9 +3,10 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
+    "rootDir": "./src" /* Specify the root folder within your source files. */,
     "removeComments": true /* Disable emitting comments. */,
     "moduleResolution": "nodenext",
     // "esModuleInterop": true,
-    "module": "ES2020"
+    "module": "nodenext"
   }
 }
