@@ -107,7 +107,16 @@
 
 /* Home Nav CSS END */
 
-wa-dropdown-item {
+.sidebar-tree {
+    --indent-guide-width: 1px;
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 10px;
+    background: linear-gradient(to right, #f9f4ff, #e7f6fa);
+}
+
+.sidebar-tree wa-tree-item::part(item) {
+    min-height: 44px;
     color: #491576;
     margin-left: 2px;
     margin-right: 2px;
@@ -116,35 +125,35 @@ wa-dropdown-item {
     border: 1px solid transparent;
 }
 
-wa-dropdown-item[checked] {
+.sidebar-tree wa-tree-item[selected]::part(item) {
     background: #e7e2ee;
     border:#ada6b4 1px solid;
 }
 
-.top-level-nav {
+.sidebar-tree a {
+    display: flex;
+    align-items: center;
     width: 100%;
-    border-radius: 10px;
-    background: linear-gradient(to right, #f9f4ff, #e7f6fa);
+    min-width: 44px;
+    min-height: 44px;
+    color: inherit;
+    text-decoration: none;
 }
 
-wa-dropdown-item:hover, wa-dropdown-item:focus-within {
+.sidebar-tree wa-tree-item::part(item):hover,
+.sidebar-tree wa-tree-item::part(item):focus-within {
     background: #4F3FB6;
     color: white;
     border: 1px solid white;
     outline: 2px solid black;
 }
 
-wa-dropdown-item:focus {
+.sidebar-tree wa-tree-item::part(item):focus-within {
     background: #4F3FB6;
     color: white;
     border: 2px solid white;
     outline: 3px solid black;
     outline-offset: 1px;
-}
-
-.top-level-nav {
-    padding-bottom: 10px;
-    width: 100%;
 }
 
 /* High Contrast Mode Support for Focus Indicators */
@@ -160,9 +169,8 @@ wa-dropdown-item:focus {
         outline-offset: 2px;
     }
     
-    wa-dropdown-item:focus,
-    wa-dropdown-item:hover,
-    wa-dropdown-item:focus-within {
+    .sidebar-tree wa-tree-item::part(item):focus-within,
+    .sidebar-tree wa-tree-item::part(item):hover {
         outline: 4px solid CanvasText;
         outline-offset: 2px;
         border: 3px solid CanvasText;
@@ -226,9 +234,8 @@ wa-dropdown-item:focus {
     max-width: 100%;
 }
 
-.sidebar-nav .top-level-nav {
+.sidebar-nav .sidebar-tree {
     margin: 0;
-    padding: 10px;
 }
 
 .sidebar-toggle-button {
@@ -289,6 +296,10 @@ wa-callout::part(icon) {
 
 /* Search Input */
 
+.sidebar .search input[type=search] {
+    min-height: 44px;
+}
+
 .sidebar .search input[type=search]::placeholder {
     color: rgba(0, 0, 0, 0.886);
 }
@@ -318,7 +329,7 @@ wa-callout::part(icon) {
     min-height: 44px;
 }
 
-/* wa-dropdown-item */
+/* wa-tree */
 
 /* Copy-to-clipboard button on code blocks */
 .docsify-copy-code-button {

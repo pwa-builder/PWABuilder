@@ -236,23 +236,10 @@ export const parentMenuData: ParentMenu = {
 export const topLevelNavEntries: string[][] = [
   ["Home", "/#"],
   ["PWABuilder","/#/builder/quick-start"],
-  ["PWA Starter","/#/builder/quick-start"],
+  ["PWA Starter","/#/starter/quick-start"],
   ["PWABuilder Studio", "/#/studio/quick-start"]
 ];
 
 export const headerHTMLString: string = `<div align=center>
   <img src="assets/icons/pwa-builder.png" alt="PWABuilder Logo">
 </div>`;
-
-export const quickMenuListenerScriptString: string = `
-<script>
-  const menu = document.querySelector('.top-level-nav');
-  menu.addEventListener('click', event => {
-    const href = event.target.dataset.href;
-    console.log("event recieved");
-    console.log(href);
-    if (href) {
-      location.href = href;
-    }
-  });
-</script>`;
