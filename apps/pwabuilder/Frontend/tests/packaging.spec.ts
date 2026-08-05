@@ -390,6 +390,71 @@ test('Ensure Windows package dialog initially focuses the Package ID field', asy
       internalInputFocused: internalInput === packageIdInput?.shadowRoot?.activeElement
     };
   });
+
   expect(focusState).not.toBeNull();
   expect(focusState?.packageIdFocused || focusState?.internalInputFocused).toBe(true);
+});
+
+test('App URI Handler is disabled by default for URLs containing double hyphens', async ({ page }) => {
+  const appUriHandlerEnabled = await page.evaluate(async () => {
+    const siteUrl = 'https://studio--studio-2987697784-ae82f.us-central1.hosted.app';
+    const manifestContext = {
+      siteUrl,
+      manifestUrl: `${siteUrl}/manifest.webmanifest`,
+      manifest: {
+        dir: 'auto',
+        display: 'standalone',
+        name: 'Example App',
+        short_name: 'Example',
+        start_url: '/',
+        scope: '/',
+        lang: 'en',
+        description: 'Example description',
+        theme_color: '#000000',
+        background_color: '#ffffff',
+        icons: [],
+        screenshots: []
+      },
+      initialManifest: {
+        dir: 'auto',
+        display: 'standalone',
+        name: 'Example App',
+        short_name: 'Example',
+        start_url: '/',
+        scope: '/',
+        lang: 'en',
+        description: 'Example description',
+        theme_color: '#000000',
+        background_color: '#ffffff',
+        icons: [],
+        screenshots: []
+      },
+      isGenerated: false,
+      isEdited: false
+    };
+
+    sessionStorage.setItem('current_url', siteUrl);
+    sessionStorage.setItem('PWABuilderManifest', JSON.stringify(manifestContext));
+    await import('/src/script/components/windows-form.ts');
+    await customElements.whenDefined('windows-form');
+
+    document.body.innerHTML = '<windows-form></windows-form>';
+    const windowsForm = document.querySelector('windows-form') as HTMLElement & {
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    } | null;
+
+    if (!windowsForm) {
+      return null;
+    }
+
+    await windowsForm.updateComplete;
+    const checkbox = windowsForm.shadowRoot?.querySelector('#app-uri-handler-checkbox') as {
+      checked: boolean;
+    } | null;
+
+    return checkbox?.checked ?? null;
+  });
+
+  expect(appUriHandlerEnabled).toBe(false);
 });
