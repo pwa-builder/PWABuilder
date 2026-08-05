@@ -68,24 +68,24 @@ function constructHeaderLineString(childMenu: ChildMenu): string {
 }
 
 function constructTopLevelNavString(activeHeader: string): string {
-    var topLevelNavHTMLString: string = `\n<sl-menu>`;
+    var topLevelNavHTMLString: string = `\n<wa-menu>`;
 
     for (var entry of topLevelNavEntries) {
         topLevelNavHTMLString = topLevelNavHTMLString + constructTopLevelNavEntryString(entry, activeHeader);
     }
 
-    topLevelNavHTMLString = topLevelNavHTMLString + `\n</sl-menu>`;
+    topLevelNavHTMLString = topLevelNavHTMLString + `\n</wa-menu>`;
 
     return topLevelNavHTMLString;
 }
 
 function constructTopLevelNavEntryString(entry: string[], header: string): string {
     return `
-  <sl-menu-item type="checkbox" onClick="(function (event) {
+  <wa-menu-item type="checkbox" onClick="(function (event) {
     location.href = '${entry[1]}';
   })();" ${entry[0] == header ? " checked" : ""}>
     ${entry[0]}
-  </sl-menu-item>`;
+  </wa-menu-item>`;
 }
 
 function removeFile(path: string): void {

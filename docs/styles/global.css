@@ -74,12 +74,12 @@
         width: 100%;
     }
 }
-.home-nav-container sl-button::part(base) {
+.home-nav-container wa-button::part(base) {
     background: #4F3FB6 ;
     color: white;
 }
 
-.home-nav-container sl-button::part(base):hover {
+.home-nav-container wa-button::part(base):hover {
     border: 1px solid white;
     outline: 2px solid black;
 }
@@ -101,13 +101,13 @@
     height: 100%;
 }
 
-.home-nav-card sl-button {
+.home-nav-card wa-button {
     margin-top: 10px;
 }
 
 /* Home Nav CSS END */
 
-sl-menu-item::part(base) {
+wa-menu-item::part(base) {
     color: #491576;
     margin-left: 2px;
     margin-right: 2px;
@@ -116,25 +116,25 @@ sl-menu-item::part(base) {
     border: 1px solid transparent;
 }
 
-sl-menu-item[checked]::part(base) {
+wa-menu-item[checked]::part(base) {
     background: #e7e2ee;
     border:#ada6b4 1px solid;
 }
 
-sl-menu {
+wa-menu {
     width: 100%;
     border-radius: 10px;
     background: linear-gradient(to right, #f9f4ff, #e7f6fa);
 }
 
-sl-menu-item:hover::part(base), sl-menu-item:focus-within::part(base) {
+wa-menu-item:hover::part(base), wa-menu-item:focus-within::part(base) {
     background: #4F3FB6;
     color: white;
     border: 1px solid white;
     outline: 2px solid black;
 }
 
-sl-menu-item:focus::part(base) {
+wa-menu-item:focus::part(base) {
     background: #4F3FB6;
     color: white;
     border: 2px solid white;
@@ -142,7 +142,7 @@ sl-menu-item:focus::part(base) {
     outline-offset: 1px;
 }
 
-sl-menu {
+wa-menu {
     padding-bottom: 10px;
     width: 100%;
 }
@@ -160,9 +160,9 @@ sl-menu {
         outline-offset: 2px;
     }
     
-    sl-menu-item:focus::part(base),
-    sl-menu-item:hover::part(base), 
-    sl-menu-item:focus-within::part(base) {
+    wa-menu-item:focus::part(base),
+    wa-menu-item:hover::part(base),
+    wa-menu-item:focus-within::part(base) {
         outline: 4px solid CanvasText;
         outline-offset: 2px;
         border: 3px solid CanvasText;
@@ -226,7 +226,7 @@ sl-menu {
     max-width: 100%;
 }
 
-.sidebar-nav sl-menu {
+.sidebar-nav wa-menu {
     margin: 0;
     padding: 10px;
 }
@@ -259,7 +259,7 @@ sl-menu {
     }
 }
 
-sl-button {
+wa-button {
     width: 100%;
 }
 
@@ -267,21 +267,21 @@ sl-button {
     padding-bottom: 15px;
 }
 
-sl-alert sl-button::part(base) {
+wa-alert wa-button::part(base) {
     background: #4F3FB6;
     color: white;
 }
 
-sl-alert sl-button::part(base):hover {
+wa-alert wa-button::part(base):hover {
     border: 1px solid white;
     outline: 2px solid black;
 }
 
-sl-alert::part(base) {
+wa-alert::part(base) {
     border-top-color: #9C8DAB;
 }
 
-sl-alert::part(icon) {
+wa-alert::part(icon) {
     color: #491576;
 }
 
@@ -307,7 +307,7 @@ sl-alert::part(icon) {
     outline-offset: 2px;
 }
 
-/* sl-menu-item */
+/* wa-menu-item */
 
 /* Copy-to-clipboard button on code blocks */
 .docsify-copy-code-button {

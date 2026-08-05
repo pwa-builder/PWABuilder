@@ -246,7 +246,7 @@ export const headerHTMLString: string = `<div align=center>
 
 export const quickMenuListenerScriptString: string = `
 <script>
-  const menu = document.querySelector('sl-menu');
+  const menu = document.querySelector('wa-menu');
   menu.addEventListener('click', event => {
     const href = event.target.dataset.href;
     console.log("event recieved");
