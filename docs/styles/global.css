@@ -233,6 +233,7 @@ wa-dropdown-item:focus {
 
 .sidebar-toggle-button {
     top: calc(50% - 40px);
+    min-width: 44px;
 }
 
 /* High contrast support for sidebar links */
@@ -261,6 +262,7 @@ wa-dropdown-item:focus {
 
 wa-button {
     width: 100%;
+    min-height: 44px;
 }
 
 .logo-img {
@@ -302,9 +304,18 @@ wa-callout::part(icon) {
     border-radius: 50%;
 }
 
+.sidebar .search .clear-button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
 .sidebar .search .clear-button:focus {
     outline: 3px solid #4F3FB6;
     outline-offset: 2px;
+}
+
+#skip-to-content {
+    min-height: 44px;
 }
 
 /* wa-dropdown-item */
