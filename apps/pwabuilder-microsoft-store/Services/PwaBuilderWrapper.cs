@@ -115,7 +115,10 @@ namespace PWABuilder.MicrosoftStore.Services
             WebAppManifestContext webManifest)
         {
             var pwabuilderCLIArgs = CreateCommandLineArgs(options, appImages, webManifest, actionFiles, outputDirectory);
-            var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}", $"CLI args: {pwabuilderCLIArgs}");
+            // Read whatever AppxManifest pwa_builder.exe generated (if any). This is invaluable for diagnosing
+            // "invalid manifest" failures (error 0x80080204), where the generated AppxManifest violates the Appx schema.
+            var appxManifest = TryReadGeneratedAppxManifest(outputDirectory);
+            var formattedMessage = string.Join(Environment.NewLine + Environment.NewLine, message, $"Output directory: {outputDirectory}", $"Standard output: {standardOutput}", $"Standard error: {standardErrorOutput}", $"CLI args: {pwabuilderCLIArgs}", $"Generated AppxManifest: {appxManifest ?? "(no AppxManifest was generated)"}");
             var toolFailedError = new ProcessException(formattedMessage, innerException, standardOutput, standardErrorOutput);
             toolFailedError.Data.Add("StandardOutput", standardOutput);
             toolFailedError.Data.Add("StandardError", standardErrorOutput);
@@ -124,8 +127,42 @@ namespace PWABuilder.MicrosoftStore.Services
             toolFailedError.Data.Add("url", options.Url);
             toolFailedError.Data.Add("appImagesCount", appImages.ImagePaths.Count);
             toolFailedError.Data.Add("appImages", appImages.ImagePaths);
-            logger.LogError(toolFailedError, toolFailedError.Message);
+            toolFailedError.Data.Add("appxManifest", appxManifest);
+            toolFailedError.Data.Add("webManifest", options.Manifest?.RootElement.GetRawText());
+            // Log the AppxManifest as a structured property so it's captured in App Insights customDimensions.
+            logger.LogError(toolFailedError, "pwa_builder.exe failed to create the Windows app package. {ErrorMessage} Generated AppxManifest: {AppxManifest}", toolFailedError.Message, appxManifest ?? "(no AppxManifest was generated)");
             return toolFailedError;
+        }
+
+        /// <summary>
+        /// Attempts to read the AppxManifest (.xml) that pwa_builder.exe generated in the output directory.
+        /// pwa_builder.exe writes the AppxManifest before it packs and closes the .msix, so the file is
+        /// typically present even when packaging fails with an invalid-manifest error.
+        /// </summary>
+        /// <param name="outputDirectory">The output directory pwa_builder.exe was told to write to.</param>
+        /// <returns>The AppxManifest XML contents, or null if none could be read.</returns>
+        private string? TryReadGeneratedAppxManifest(string outputDirectory)
+        {
+            try
+            {
+                if (!Directory.Exists(outputDirectory))
+                {
+                    return null;
+                }
+
+                // The AppxManifest is written as an .xml file in the output directory, or in an architecture
+                // subdirectory when building widget packages, so search recursively.
+                var appxManifestFile = Directory
+                    .EnumerateFiles(outputDirectory, "*.xml", SearchOption.AllDirectories)
+                    .FirstOrDefault();
+                return appxManifestFile is not null ? File.ReadAllText(appxManifestFile) : null;
+            }
+            catch (Exception readError)
+            {
+                // Never let diagnostics reading mask the original pwa_builder.exe failure.
+                logger.LogWarning(readError, "Unable to read the generated AppxManifest from {outputDirectory} while handling a pwa_builder.exe failure.", outputDirectory);
+                return null;
+            }
         }
 
         private string GetRequiredFile(string extension, string directory, string cliOutput, string cliErrorOutput)
