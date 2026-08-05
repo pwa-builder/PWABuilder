@@ -99,13 +99,13 @@
           // Insert a banner about a new post.
           function (hook) {
             var summitBanner = [
-              "<wa-alert open>",
-              '<wa-icon slot="icon" name="bookmark-heart"></wa-icon>',
+              "<wa-callout>",
+              '<wa-icon slot="icon" name="bookmark"></wa-icon>',
               "<div>",
               "<strong> New blog post! See how to enable in-app purchases on iOS in your PWA! </strong><br />",
               'Our latest post, <a href="https://blog.pwabuilder.com/posts/you-won\'t-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/"><b>You Won\’t Believe How We Enabled In-App Purchases for PWAs on iOS</b></a>, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!',
               "</div>",
-              "</wa-alert>",
+              "</wa-callout>",
             ].join("");
 
             hook.afterEach(function (html) {

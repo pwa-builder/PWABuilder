@@ -107,7 +107,7 @@
 
 /* Home Nav CSS END */
 
-wa-menu-item::part(base) {
+wa-dropdown-item {
     color: #491576;
     margin-left: 2px;
     margin-right: 2px;
@@ -116,25 +116,25 @@ wa-menu-item::part(base) {
     border: 1px solid transparent;
 }
 
-wa-menu-item[checked]::part(base) {
+wa-dropdown-item[checked] {
     background: #e7e2ee;
     border:#ada6b4 1px solid;
 }
 
-wa-menu {
+.top-level-nav {
     width: 100%;
     border-radius: 10px;
     background: linear-gradient(to right, #f9f4ff, #e7f6fa);
 }
 
-wa-menu-item:hover::part(base), wa-menu-item:focus-within::part(base) {
+wa-dropdown-item:hover, wa-dropdown-item:focus-within {
     background: #4F3FB6;
     color: white;
     border: 1px solid white;
     outline: 2px solid black;
 }
 
-wa-menu-item:focus::part(base) {
+wa-dropdown-item:focus {
     background: #4F3FB6;
     color: white;
     border: 2px solid white;
@@ -142,7 +142,7 @@ wa-menu-item:focus::part(base) {
     outline-offset: 1px;
 }
 
-wa-menu {
+.top-level-nav {
     padding-bottom: 10px;
     width: 100%;
 }
@@ -160,9 +160,9 @@ wa-menu {
         outline-offset: 2px;
     }
     
-    wa-menu-item:focus::part(base),
-    wa-menu-item:hover::part(base),
-    wa-menu-item:focus-within::part(base) {
+    wa-dropdown-item:focus,
+    wa-dropdown-item:hover,
+    wa-dropdown-item:focus-within {
         outline: 4px solid CanvasText;
         outline-offset: 2px;
         border: 3px solid CanvasText;
@@ -226,7 +226,7 @@ wa-menu {
     max-width: 100%;
 }
 
-.sidebar-nav wa-menu {
+.sidebar-nav .top-level-nav {
     margin: 0;
     padding: 10px;
 }
@@ -267,21 +267,21 @@ wa-button {
     padding-bottom: 15px;
 }
 
-wa-alert wa-button::part(base) {
+wa-callout wa-button::part(base) {
     background: #4F3FB6;
     color: white;
 }
 
-wa-alert wa-button::part(base):hover {
+wa-callout wa-button::part(base):hover {
     border: 1px solid white;
     outline: 2px solid black;
 }
 
-wa-alert::part(base) {
+wa-callout {
     border-top-color: #9C8DAB;
 }
 
-wa-alert::part(icon) {
+wa-callout::part(icon) {
     color: #491576;
 }
 
@@ -307,7 +307,7 @@ wa-alert::part(icon) {
     outline-offset: 2px;
 }
 
-/* wa-menu-item */
+/* wa-dropdown-item */
 
 /* Copy-to-clipboard button on code blocks */
 .docsify-copy-code-button {

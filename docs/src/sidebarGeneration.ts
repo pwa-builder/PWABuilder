@@ -68,24 +68,24 @@ function constructHeaderLineString(childMenu: ChildMenu): string {
 }
 
 function constructTopLevelNavString(activeHeader: string): string {
-    var topLevelNavHTMLString: string = `\n<wa-menu>`;
+    var topLevelNavHTMLString: string = `\n<nav class="top-level-nav" aria-label="PWABuilder tools">`;
 
     for (var entry of topLevelNavEntries) {
         topLevelNavHTMLString = topLevelNavHTMLString + constructTopLevelNavEntryString(entry, activeHeader);
     }
 
-    topLevelNavHTMLString = topLevelNavHTMLString + `\n</wa-menu>`;
+    topLevelNavHTMLString = topLevelNavHTMLString + `\n</nav>`;
 
     return topLevelNavHTMLString;
 }
 
 function constructTopLevelNavEntryString(entry: string[], header: string): string {
     return `
-  <wa-menu-item type="checkbox" onClick="(function (event) {
+  <wa-dropdown-item type="checkbox" onClick="(function (event) {
     location.href = '${entry[1]}';
   })();" ${entry[0] == header ? " checked" : ""}>
     ${entry[0]}
-  </wa-menu-item>`;
+  </wa-dropdown-item>`;
 }
 
 function removeFile(path: string): void {
