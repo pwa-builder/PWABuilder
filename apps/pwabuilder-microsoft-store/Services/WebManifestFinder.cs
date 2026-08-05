@@ -40,7 +40,12 @@ namespace PWABuilder.MicrosoftStore
 
             try
             {
-                var jsonString = JsonSerializer.Serialize(options.Manifest);
+                // Sanitize the manifest before handing it to pwa_builder.exe. For example, wildcard scope_extensions
+                // origins must be collapsed to a valid host, otherwise pwa_builder.exe emits an invalid AppxManifest
+                // (error 0x80080204). See https://github.com/pwa-builder/PWABuilder/issues/6104.
+                var jsonString = options.Manifest is JsonDocument manifest
+                    ? WebManifestSanitizer.Sanitize(manifest)
+                    : JsonSerializer.Serialize(options.Manifest);
                 using (StreamWriter writer = new StreamWriter(manifestFilePath))
                 {
                     await writer.WriteAsync(jsonString);
