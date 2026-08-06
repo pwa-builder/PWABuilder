@@ -65,6 +65,8 @@
     </script>
 
     <script>
+      let pendingSidebarFocusRoute = null;
+
       function getPageName() {
         var pageName = "docs-home-about";
         try {
@@ -113,8 +115,38 @@
         return (hash || "#").split("?")[0];
       }
 
+      function restoreSidebarFocus() {
+        const focusRoute = pendingSidebarFocusRoute;
+        pendingSidebarFocusRoute = null;
+
+        if (focusRoute === getDocsifyRoute(document.location.hash)) {
+          const selectedItem = document.querySelector(
+            ".sidebar-tree wa-tree-item[selected]"
+          );
+          requestAnimationFrame(() => selectedItem?.focus());
+        }
+      }
+
       function wireSidebarSelectionNavigation() {
         const tree = document.querySelector(".sidebar-tree");
+
+        tree?.addEventListener(
+          "keydown",
+          function (event) {
+            if (event.key !== "Enter" && event.key !== " ") {
+              return;
+            }
+
+            const focusedItem = document.activeElement;
+            const focusedLink = focusedItem?.querySelector(":scope > a");
+            if (focusedItem?.tagName === "WA-TREE-ITEM" && focusedLink) {
+              pendingSidebarFocusRoute = getDocsifyRoute(
+                new URL(focusedLink.href, document.location.origin).hash
+              );
+            }
+          },
+          true
+        );
 
         tree?.addEventListener("wa-selection-change", function (event) {
           const selectedItem = event.detail.selection.at(-1);
@@ -132,7 +164,9 @@
             getDocsifyRoute(destination.hash) !==
             getDocsifyRoute(document.location.hash)
           ) {
-            document.location.href = destination.href;
+            document.location.hash = destination.hash;
+          } else {
+            pendingSidebarFocusRoute = null;
           }
         });
       }
@@ -172,6 +206,7 @@
             // Rewrite the sidebar toggle button so it works with Windows narrator.
             hook.doneEach(function () {
               updateSidebarSelection();
+              restoreSidebarFocus();
               wireSidebarSelectionNavigation();
 
               const mainElement = document.querySelector(
