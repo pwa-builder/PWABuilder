@@ -85,12 +85,14 @@
         const treeItems = document.querySelectorAll(
           ".sidebar-tree wa-tree-item"
         );
-        const currentRoute = (document.location.hash || "#").split("?")[0];
+        const currentRoute = getDocsifyRoute(document.location.hash);
         const matchingLinks = Array.from(
           document.querySelectorAll(".sidebar-tree a")
         ).filter(
           (link) =>
-            new URL(link.href, document.location.origin).hash.split("?")[0] ===
+            getDocsifyRoute(
+              new URL(link.href, document.location.origin).hash
+            ) ===
             currentRoute
         );
         const selectedLink =
@@ -105,6 +107,34 @@
         selectedItem?.parentElement
           ?.closest("wa-tree-item")
           ?.setAttribute("expanded", "");
+      }
+
+      function getDocsifyRoute(hash) {
+        return (hash || "#").split("?")[0];
+      }
+
+      function wireSidebarSelectionNavigation() {
+        const tree = document.querySelector(".sidebar-tree");
+
+        tree?.addEventListener("wa-selection-change", function (event) {
+          const selectedItem = event.detail.selection.at(-1);
+          const selectedLink = selectedItem?.querySelector(":scope > a");
+
+          if (!selectedLink) {
+            return;
+          }
+
+          const destination = new URL(
+            selectedLink.href,
+            document.location.origin
+          );
+          if (
+            getDocsifyRoute(destination.hash) !==
+            getDocsifyRoute(document.location.hash)
+          ) {
+            document.location.href = destination.href;
+          }
+        });
       }
 
       window.$docsify = {
@@ -142,6 +172,7 @@
             // Rewrite the sidebar toggle button so it works with Windows narrator.
             hook.doneEach(function () {
               updateSidebarSelection();
+              wireSidebarSelectionNavigation();
 
               const mainElement = document.querySelector(
                 'main[role="presentation"]'
