@@ -81,6 +81,32 @@
         return pageName;
       }
 
+      function updateSidebarSelection() {
+        const treeItems = document.querySelectorAll(
+          ".sidebar-tree wa-tree-item"
+        );
+        const currentRoute = (document.location.hash || "#").split("?")[0];
+        const matchingLinks = Array.from(
+          document.querySelectorAll(".sidebar-tree a")
+        ).filter(
+          (link) =>
+            new URL(link.href, document.location.origin).hash.split("?")[0] ===
+            currentRoute
+        );
+        const selectedLink =
+          matchingLinks.find(
+            (link) =>
+              link.closest("wa-tree-item")?.parentElement?.closest("wa-tree-item")
+          ) || matchingLinks[0];
+        const selectedItem = selectedLink?.closest("wa-tree-item");
+
+        treeItems.forEach((item) => item.removeAttribute("selected"));
+        selectedItem?.setAttribute("selected", "");
+        selectedItem?.parentElement
+          ?.closest("wa-tree-item")
+          ?.setAttribute("expanded", "");
+      }
+
       window.$docsify = {
         repo: "https://github.com/pwa-builder/PWABuilder",
         loadSidebar: true,
@@ -115,6 +141,8 @@
           function (hook) {
             // Rewrite the sidebar toggle button so it works with Windows narrator.
             hook.doneEach(function () {
+              updateSidebarSelection();
+
               const mainElement = document.querySelector(
                 'main[role="presentation"]'
               );

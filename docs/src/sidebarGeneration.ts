@@ -110,7 +110,7 @@ function constructTopLevelNavEntryString(entry: string[], header: string, childM
     const isActive = entry[0] === header;
     const articles = childMenu?.articles ?? [];
     var entryString = `
-  <wa-tree-item${isActive ? " selected" : ""}${isActive && articles.length > 0 ? " expanded" : ""}>
+  <wa-tree-item${isActive && articles.length > 0 ? " expanded" : ""}>
     <a href="${entry[1]}">${entry[0]}</a>`;
 
     for (var article of articles) {
