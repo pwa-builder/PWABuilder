@@ -108,27 +108,12 @@
 /* Home Nav CSS END */
 
 .sidebar-tree {
-    --indent-guide-width: 1px;
     width: 100%;
-    padding: 10px 0;
-    border-radius: 10px;
-    background: linear-gradient(to right, #f9f4ff, #e7f6fa);
 }
 
 .sidebar-tree wa-tree-item::part(item) {
     min-height: 44px;
-    color: #491576;
     cursor: pointer;
-    margin-left: 2px;
-    margin-right: 2px;
-    border-radius: 20px;
-    font-weight: 500;
-    border: 1px solid transparent;
-}
-
-.sidebar-tree wa-tree-item[selected]::part(item) {
-    background: #e7e2ee;
-    border:#ada6b4 1px solid;
 }
 
 .sidebar-tree wa-tree-item::part(label) {
@@ -148,32 +133,6 @@
     text-decoration: none;
 }
 
-.sidebar-tree wa-tree-item::part(item):hover,
-.sidebar-tree wa-tree-item::part(item):focus-within {
-    background: #4F3FB6;
-    color: white;
-    border: 1px solid white;
-    outline: 2px solid black;
-}
-
-.sidebar-tree wa-tree-item:hover > a,
-.sidebar-tree wa-tree-item:focus-within > a {
-    color: white;
-}
-
-.sidebar-tree wa-tree-item:has(> wa-tree-item:hover) > a,
-.sidebar-tree wa-tree-item:has(> wa-tree-item:focus-within) > a {
-    color: #491576;
-}
-
-.sidebar-tree wa-tree-item::part(item):focus-within {
-    background: #4F3FB6;
-    color: white;
-    border: 2px solid white;
-    outline: 3px solid black;
-    outline-offset: 1px;
-}
-
 /* High Contrast Mode Support for Focus Indicators */
 @media (prefers-contrast: high), (forced-colors: active) {
     .sidebar .search input[type=search]:focus {
@@ -185,15 +144,6 @@
     .sidebar .search .clear-button:focus {
         outline: 4px solid CanvasText;
         outline-offset: 2px;
-    }
-    
-    .sidebar-tree wa-tree-item::part(item):focus-within,
-    .sidebar-tree wa-tree-item::part(item):hover {
-        outline: 4px solid CanvasText;
-        outline-offset: 2px;
-        border: 3px solid CanvasText;
-        background: Canvas;
-        color: CanvasText;
     }
 }
 
