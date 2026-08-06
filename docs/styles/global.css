@@ -156,9 +156,14 @@
     outline: 2px solid black;
 }
 
-.sidebar-tree wa-tree-item > a:hover,
-.sidebar-tree wa-tree-item > a:focus-visible {
+.sidebar-tree wa-tree-item:hover > a,
+.sidebar-tree wa-tree-item:focus-within > a {
     color: white;
+}
+
+.sidebar-tree wa-tree-item:has(> wa-tree-item:hover) > a,
+.sidebar-tree wa-tree-item:has(> wa-tree-item:focus-within) > a {
+    color: #491576;
 }
 
 .sidebar-tree wa-tree-item::part(item):focus-within {
