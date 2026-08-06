@@ -148,6 +148,11 @@
     outline: 2px solid black;
 }
 
+.sidebar-tree wa-tree-item:hover > a,
+.sidebar-tree wa-tree-item:focus-within > a {
+    color: white;
+}
+
 .sidebar-tree wa-tree-item::part(item):focus-within {
     background: #4F3FB6;
     color: white;
