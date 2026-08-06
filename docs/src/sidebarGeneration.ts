@@ -76,8 +76,12 @@ function writeMainMenu(childMenus: ChildMenu[]) {
 function constructArticleTreeItem(article: Article): string {
     return `
     <wa-tree-item>
-      <a href="${article.path}" title="${article.pageTitle}">${article.menuTitle}</a>
+      <a href="${constructDocsifyPath(article.path)}" title="${article.pageTitle}">${article.menuTitle}</a>
     </wa-tree-item>`;
+}
+
+function constructDocsifyPath(path: string): string {
+    return `/#${path.trim()}`;
 }
 
 function constructChildMenuStart(childMenu: ChildMenu): string {
