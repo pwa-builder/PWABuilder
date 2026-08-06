@@ -108,12 +108,17 @@
 /* Home Nav CSS END */
 
 .sidebar-tree {
+    --wa-color-brand-fill-loud: #4f3fb6;
     width: 100%;
 }
 
 .sidebar-tree wa-tree-item::part(item) {
     min-height: 44px;
     cursor: pointer;
+}
+
+.sidebar-tree wa-tree-item:hover:not(:has(> wa-tree-item:hover))::part(item) {
+    background: var(--wa-color-neutral-fill-quiet);
 }
 
 .sidebar-tree wa-tree-item::part(label) {
