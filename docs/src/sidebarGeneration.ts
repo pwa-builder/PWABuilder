@@ -9,17 +9,18 @@ var mainMenu: ParentMenu = {
 export function writeMenusFromParentMenu(parentMenu: ParentMenu) {
 
     for (var childMenu of parentMenu.childMenus) {
-        var condensedChildMenu: ChildMenu = writeChildMenu(childMenu);
+        var condensedChildMenu: ChildMenu = writeChildMenu(childMenu, parentMenu.childMenus);
         mainMenu.childMenus = mainMenu.childMenus.concat(condensedChildMenu);
     }
 
-    writeMainMenu();
+    writeMainMenu(parentMenu.childMenus);
 }
 
-function writeChildMenu(child: ChildMenu): ChildMenu {
+function writeChildMenu(child: ChildMenu, childMenus: ChildMenu[]): ChildMenu {
 
     const path: string = process.cwd() + child.path + "_sidebar.md";
-    var writeString = headerHTMLString + constructTreeStart(child.header, child);
+    const isTopLevel = isTopLevelMenu(child);
+    var writeString = headerHTMLString + constructTreeStart(child.header, childMenus);
     var condensedChildMenu: ChildMenu = {
         header: child.header,
         path: child.path,
@@ -30,11 +31,23 @@ function writeChildMenu(child: ChildMenu): ChildMenu {
         removeFile(path);
     }
 
+    if (!isTopLevel) {
+        writeString = writeString + constructChildMenuStart(child);
+    }
+
     for (var article of child.articles) {
+        if (!isTopLevel) {
+            writeString = writeString + constructArticleTreeItem(article);
+        }
         if (article.includeOnHomePage) {
             condensedChildMenu.articles = condensedChildMenu.articles.concat(article);
         }
     }
+
+    if (!isTopLevel) {
+        writeString = writeString + constructChildMenuEnd();
+    }
+
     writeString = writeString + constructTreeEnd();
 
     fs.writeFileSync(path, writeString);
@@ -42,13 +55,12 @@ function writeChildMenu(child: ChildMenu): ChildMenu {
     return condensedChildMenu;
 }
 
-function writeMainMenu() {
+function writeMainMenu(childMenus: ChildMenu[]) {
     const path: string = process.cwd() + "/_sidebar.md";
-    const homeMenu = mainMenu.childMenus.find(childMenu => childMenu.header === "Home");
-    var writeString = headerHTMLString + constructTreeStart("Home", homeMenu);
+    var writeString = headerHTMLString + constructTreeStart("Home", childMenus);
 
     for (var childMenu of mainMenu.childMenus) {
-        if (childMenu.header !== "Home" && childMenu.articles.length > 0) {
+        if (!isTopLevelMenu(childMenu) && childMenu.articles.length > 0) {
             writeString = writeString + constructChildMenuStart(childMenu);
             for (var article of childMenu.articles) {
                 writeString = writeString + constructArticleTreeItem(article);
@@ -79,21 +91,22 @@ function constructChildMenuEnd(): string {
   </wa-tree-item>`;
 }
 
-function constructTreeStart(activeHeader: string, activeMenu?: ChildMenu): string {
+function constructTreeStart(activeHeader: string, childMenus: ChildMenu[]): string {
     var treeHTMLString: string = `\n<wa-tree class="sidebar-tree" aria-label="PWABuilder documentation">`;
 
     for (var entry of topLevelNavEntries) {
-        treeHTMLString = treeHTMLString + constructTopLevelNavEntryString(entry, activeHeader, activeMenu);
+        const childMenu = childMenus.find(menu => menu.header === entry[0]);
+        treeHTMLString = treeHTMLString + constructTopLevelNavEntryString(entry, activeHeader, childMenu);
     }
 
     return treeHTMLString;
 }
 
-function constructTopLevelNavEntryString(entry: string[], header: string, activeMenu?: ChildMenu): string {
+function constructTopLevelNavEntryString(entry: string[], header: string, childMenu?: ChildMenu): string {
     const isActive = entry[0] === header;
-    const articles = isActive ? activeMenu?.articles ?? [] : [];
+    const articles = childMenu?.articles ?? [];
     var entryString = `
-  <wa-tree-item${isActive ? " selected" : ""}${articles.length > 0 ? " expanded" : ""}>
+  <wa-tree-item${isActive ? " selected" : ""}${isActive && articles.length > 0 ? " expanded" : ""}>
     <a href="${entry[1]}">${entry[0]}</a>`;
 
     for (var article of articles) {
@@ -102,6 +115,10 @@ function constructTopLevelNavEntryString(entry: string[], header: string, active
 
     return entryString + `
   </wa-tree-item>`;
+}
+
+function isTopLevelMenu(childMenu: ChildMenu): boolean {
+    return topLevelNavEntries.some(entry => entry[0] === childMenu.header);
 }
 
 function constructTreeEnd(): string {

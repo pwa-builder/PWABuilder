@@ -118,6 +118,7 @@
 .sidebar-tree wa-tree-item::part(item) {
     min-height: 44px;
     color: #491576;
+    cursor: pointer;
     margin-left: 2px;
     margin-right: 2px;
     border-radius: 20px;
@@ -130,8 +131,15 @@
     border:#ada6b4 1px solid;
 }
 
+.sidebar-tree wa-tree-item::part(label) {
+    flex: 1;
+    align-self: stretch;
+}
+
 .sidebar-tree a {
     display: flex;
+    flex: 1;
+    align-self: stretch;
     align-items: center;
     width: 100%;
     min-width: 44px;
@@ -148,8 +156,8 @@
     outline: 2px solid black;
 }
 
-.sidebar-tree wa-tree-item:hover > a,
-.sidebar-tree wa-tree-item:focus-within > a {
+.sidebar-tree wa-tree-item > a:hover,
+.sidebar-tree wa-tree-item > a:focus-visible {
     color: white;
 }
 
