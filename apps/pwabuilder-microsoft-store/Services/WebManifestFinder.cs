@@ -44,7 +44,7 @@ namespace PWABuilder.MicrosoftStore
                 // origins must be collapsed to a valid host, otherwise pwa_builder.exe emits an invalid AppxManifest
                 // (error 0x80080204). See https://github.com/pwa-builder/PWABuilder/issues/6104.
                 var jsonString = options.Manifest is JsonDocument manifest
-                    ? WebManifestSanitizer.Sanitize(manifest, options.EnableWebAppWidgets == true)
+                    ? WebManifestSanitizer.Sanitize(manifest)
                     : JsonSerializer.Serialize(options.Manifest);
                 using (StreamWriter writer = new StreamWriter(manifestFilePath))
                 {

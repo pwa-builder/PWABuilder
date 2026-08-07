@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -219,9 +220,9 @@ namespace PWABuilder.MicrosoftStore.Services
                 { "web-action-localized-custom-entities-files", actionsFiles?.CustomEntitiesLocalizationDirectoryPath?.Path },
             };
 
-            // COMMENTED OUT 3/16/26: We now always supply the manifest file path unless widgets are enabled. For widgets, we need the real manifest.
+            // Widget packages must use the live manifest. pwa_builder.exe rejects local manifest files that contain widgets.
             // Previously, we only supplied the manifest file path as a fallback if the packaging failed. But this didn't work when pwa_buidler.exe would timeout fetching the manifest, e.g. for replit.com.
-            if (options.ManifestFilePath != null && options.EnableWebAppWidgets != true)
+            if (options.ManifestFilePath != null && !ManifestContainsWidgets(options.Manifest))
             {
                 args.Add("manifest-file", options.ManifestFilePath);
             }
@@ -279,6 +280,15 @@ namespace PWABuilder.MicrosoftStore.Services
             }
 
             return builder.ToString();
+        }
+
+        /// <summary>
+        /// Determines whether a web app manifest declares the widgets member.
+        /// </summary>
+        private static bool ManifestContainsWidgets(JsonDocument? manifest)
+        {
+            return manifest?.RootElement.ValueKind is JsonValueKind.Object
+                && manifest.RootElement.TryGetProperty("widgets", out _);
         }
 
         // Windows package options will contain languages separated by comma. But pwa_builder.exe expects languages separated by semicolon.

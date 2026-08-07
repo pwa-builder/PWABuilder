@@ -16,17 +16,15 @@ public static class WebManifestSanitizer
     /// Produces a JSON string for the manifest with any values that would generate an invalid AppxManifest fixed up or removed.
     /// </summary>
     /// <remarks>
-    /// This strips widget definitions when widget packaging is disabled because pwa_builder.exe rejects local manifest files
-    /// that contain them. It also strips wildcard labels from <c>scope_extensions</c> origins. The Windows <c>windows.appUriHandler</c>
+    /// Currently this strips wildcard labels from <c>scope_extensions</c> origins. The Windows <c>windows.appUriHandler</c>
     /// <c>Host Name</c> element requires a fully-qualified domain name and rejects wildcards such as "*.example.com".
     /// When PWABuilder passes the "appurihandler" extension, pwa_builder.exe turns each scope_extensions origin into a
     /// <c>uap3:Host</c> entry, so a wildcard origin produces an invalid manifest and pwa_builder.exe fails with error 0x80080204.
     /// See https://github.com/pwa-builder/PWABuilder/issues/6104.
     /// </remarks>
     /// <param name="manifest">The raw web app manifest.</param>
-    /// <param name="includeWidgets">Whether widget definitions should remain in the manifest.</param>
     /// <returns>A JSON string of the sanitized manifest.</returns>
-    public static string Sanitize(JsonDocument manifest, bool includeWidgets)
+    public static string Sanitize(JsonDocument manifest)
     {
         ArgumentNullException.ThrowIfNull(manifest);
 
@@ -38,11 +36,6 @@ public static class WebManifestSanitizer
         }
 
         SanitizeScopeExtensions(manifestObject);
-        if (!includeWidgets)
-        {
-            manifestObject.Remove("widgets");
-        }
-
         return manifestObject.ToJsonString();
     }
 
