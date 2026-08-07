@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore
@@ -60,16 +61,26 @@ namespace PWABuilder.MicrosoftStore
                 procKiller.KillProcessAfter(cliProc, killTime.Value);
             }
 
-            var cliOutput = await cliProc.StandardOutput.ReadToEndAsync();
-            var cliErrorOutput = await cliProc.StandardError.ReadToEndAsync();
-            var cliExitedSuccessfully = cliProc.WaitForExit((int)(killTime ?? TimeSpan.FromMinutes(30)).TotalMilliseconds);
-            if (!cliExitedSuccessfully)
+            var cliOutputTask = cliProc.StandardOutput.ReadToEndAsync();
+            var cliErrorOutputTask = cliProc.StandardError.ReadToEndAsync();
+            var processTimeout = killTime ?? TimeSpan.FromMinutes(30);
+            using var timeoutCancellation = new CancellationTokenSource(processTimeout);
+
+            try
             {
-                var noExitError = CreateCliError($"The {processFileName} process timed out.", cliOutput, cliErrorOutput, processPath, processArgs);
-                TryKillProcess(cliProc, processPath); // We don't want zombie processes running.
+                await cliProc.WaitForExitAsync(timeoutCancellation.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                TryKillProcess(cliProc, processPath);
+                var timedOutOutput = await cliOutputTask;
+                var timedOutErrorOutput = await cliErrorOutputTask;
+                var noExitError = CreateCliError($"The {processFileName} process timed out.", timedOutOutput, timedOutErrorOutput, processPath, processArgs);
                 throw noExitError;
             }
 
+            var cliOutput = await cliOutputTask;
+            var cliErrorOutput = await cliErrorOutputTask;
             if (cliProc.ExitCode != 0)
             {
                 var toolFailedError = CreateCliError($"The {processFileName} process exited with exit code {cliProc.ExitCode}.", cliOutput, cliErrorOutput, processPath, processArgs);
@@ -104,7 +115,7 @@ namespace PWABuilder.MicrosoftStore
         {
             try
             {
-                process.Kill();
+                process.Kill(entireProcessTree: true);
             }
             catch (Exception killProcError)
             {
