@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html
+  lang="en"
+  class="wa-theme-shoelace wa-palette-shoelace wa-light"
+>
   <head>
     <meta charset="UTF-8" />
     <title>PWABuilder Suite Documentation - test</title>
@@ -30,14 +33,12 @@
 
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/dist/themes/light.css"
-      integrity="sha384-VNjXcWTFgkXi1VXtuRlXBLNB44AvISAfti9WbOPCBCiNPnUpJ6dHx1Y3XmTii9pB"
+      href="https://ka-f.webawesome.com/webawesome@3.11.0/styles/webawesome.css"
       crossorigin="anonymous"
     />
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"
-      integrity="sha384-of8LXlkyMCAT14b4mQEBHRclQhowQAA+z328bANMFZBR6em9yjBEmyaeq59nXe/x"
+      src="https://ka-f.webawesome.com/webawesome@3.11.0/webawesome.loader.js"
       crossorigin="anonymous"
     ></script>
 
@@ -47,7 +48,12 @@
   </head>
 
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <main id="main-content">
+        <h1>PWABuilder Suite Documentation</h1>
+        <p>Loading documentation...</p>
+      </main>
+    </div>
 
     <script
       type="text/javascript"
@@ -64,6 +70,8 @@
     </script>
 
     <script>
+      let pendingSidebarFocusRoute = null;
+
       function getPageName() {
         var pageName = "docs-home-about";
         try {
@@ -78,6 +86,94 @@
         }
 
         return pageName;
+      }
+
+      function updateSidebarSelection() {
+        const treeItems = document.querySelectorAll(
+          ".sidebar-tree wa-tree-item"
+        );
+        const currentRoute = getDocsifyRoute(document.location.hash);
+        const matchingLinks = Array.from(
+          document.querySelectorAll(".sidebar-tree a")
+        ).filter(
+          (link) =>
+            getDocsifyRoute(
+              new URL(link.href, document.location.origin).hash
+            ) ===
+            currentRoute
+        );
+        const selectedLink =
+          matchingLinks.find(
+            (link) =>
+              link.closest("wa-tree-item")?.parentElement?.closest("wa-tree-item")
+          ) || matchingLinks[0];
+        const selectedItem = selectedLink?.closest("wa-tree-item");
+
+        treeItems.forEach((item) => item.removeAttribute("selected"));
+        selectedItem?.setAttribute("selected", "");
+        selectedItem?.parentElement
+          ?.closest("wa-tree-item")
+          ?.setAttribute("expanded", "");
+      }
+
+      function getDocsifyRoute(hash) {
+        return (hash || "#").split("?")[0];
+      }
+
+      function restoreSidebarFocus() {
+        const focusRoute = pendingSidebarFocusRoute;
+        pendingSidebarFocusRoute = null;
+
+        if (focusRoute === getDocsifyRoute(document.location.hash)) {
+          const selectedItem = document.querySelector(
+            ".sidebar-tree wa-tree-item[selected]"
+          );
+          requestAnimationFrame(() => selectedItem?.focus());
+        }
+      }
+
+      function wireSidebarSelectionNavigation() {
+        const tree = document.querySelector(".sidebar-tree");
+
+        tree?.addEventListener(
+          "keydown",
+          function (event) {
+            if (event.key !== "Enter" && event.key !== " ") {
+              return;
+            }
+
+            const focusedItem = document.activeElement;
+            const focusedLink = focusedItem?.querySelector(":scope > a");
+            if (focusedItem?.tagName === "WA-TREE-ITEM" && focusedLink) {
+              pendingSidebarFocusRoute = getDocsifyRoute(
+                new URL(focusedLink.href, document.location.origin).hash
+              );
+            }
+          },
+          true
+        );
+
+        tree?.addEventListener("wa-selection-change", function (event) {
+          const selectedItem = event.detail.selection.at(-1);
+          const selectedLink = selectedItem?.querySelector(":scope > a");
+
+          if (!selectedLink) {
+            return;
+          }
+
+          const destination = new URL(
+            selectedLink.href,
+            document.location.origin
+          );
+          if (
+            getDocsifyRoute(destination.hash) !==
+            getDocsifyRoute(document.location.hash)
+          ) {
+            document.location.hash = destination.hash;
+          } else {
+            pendingSidebarFocusRoute = null;
+          }
+        });
       }
 
       window.$docsify = {
@@ -98,13 +194,13 @@
           // Insert a banner about a new post.
           function (hook) {
             var summitBanner = [
-              "<sl-alert open>",
-              '<sl-icon slot="icon" name="bookmark-heart"></sl-icon>',
+              "<wa-callout>",
+              '<wa-icon slot="icon" name="bookmark"></wa-icon>',
               "<div>",
               "<strong> New blog post! See how to enable in-app purchases on iOS in your PWA! </strong><br />",
               'Our latest post, <a href="https://blog.pwabuilder.com/posts/you-won\'t-believe-how-we-enabled-in-app-purchases-for-pwas-on-ios/"><b>You Won\’t Believe How We Enabled In-App Purchases for PWAs on iOS</b></a>, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!',
               "</div>",
-              "</sl-alert>",
+              "</wa-callout>",
             ].join("");
 
             hook.afterEach(function (html) {
@@ -114,6 +210,10 @@
           function (hook) {
             // Rewrite the sidebar toggle button so it works with Windows narrator.
             hook.doneEach(function () {
+              updateSidebarSelection();
+              restoreSidebarFocus();
+              wireSidebarSelectionNavigation();
+
               const mainElement = document.querySelector(
                 'main[role="presentation"]'
               );

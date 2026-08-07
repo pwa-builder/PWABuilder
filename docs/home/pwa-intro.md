@@ -117,11 +117,11 @@ Lastly, let's take a look at an example web capability: push notifications.
 
 Before we can send notifications, we need to request permission from the user. This button will trigger the permission prompt:
 
-<sl-button id="permission-button"> Request Permission to Display Notifications </sl-button>
+<wa-button id="permission-button"> Request Permission to Display Notifications </wa-button>
 
 After permission is granted, trigger a notification:
 
-<sl-button id="notification-button"> Display a Notification </sl-button>
+<wa-button id="notification-button"> Display a Notification </wa-button>
 
 <script>
    const permissionButton = document.querySelector('#permission-button');
@@ -148,4 +148,3 @@ The PWA Starter is a template that comes with a service worker and manifest buil
 
 
 Head over to the [PWA Starter Quick Start](/starter/quick-start) to learn more.
-
