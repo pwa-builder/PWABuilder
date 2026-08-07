@@ -7,6 +7,7 @@ using Newtonsoft.Json.Serialization;
 using PWABuilder.Services;
 using PWABuilder.Common;
 using PWABuilder.IOS.Services;
+using PWABuilder.MacOS.Services;
 using PWABuilder.Models;
 using PWABuilder.Utils;
 using PWABuilder.Validations.Services;
@@ -39,6 +40,8 @@ builder.Services.AddSingleton<IPuppeteerService, PuppeteerService>();
 builder.Services.AddTransient<TempDirectory>();
 builder.Services.AddTransient<IOSImageWriter>();
 builder.Services.AddTransient<IOSPackageCreator>();
+builder.Services.AddTransient<MacOSImageWriter>();
+builder.Services.AddTransient<MacOSPackageCreator>();
 if (builder.Environment.IsDevelopment())
 {
     // In development, we use an in-memory queue for analysis jobs and store package jobs. This prevents issues around using Azure Managed Identity authentication locally.

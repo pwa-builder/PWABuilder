@@ -3,6 +3,7 @@ import { GooglePlayPackageJob } from "../../models/google-play-package-job";
 import { AndroidPackageOptions } from '../../utils/android-validation';
 import { PackageOptions } from '../../utils/interfaces';
 import { IOSAppPackageOptions } from '../../utils/ios-validation';
+import { MacOSAppPackageOptions } from '../../utils/macos-validation';
 import { WindowsPackageOptions } from '../../utils/win-validation';
 import {
     downloadGooglePlayPackageZip,
@@ -10,11 +11,12 @@ import {
     getGooglePlayPackageJob,
 } from './android-publish';
 import { generateIOSPackage } from './ios-publish';
+import { generateMacOSPackage } from './macos-publish';
 import {
     generateWindowsPackage,
 } from './windows-publish';
 
-export type Platform = 'windows' | 'android' | 'other-android' | 'ios' | 'meta';
+export type Platform = 'windows' | 'android' | 'other-android' | 'ios' | 'macos' | 'meta';
 
 type PackageInfo = {
     appName: string;
@@ -34,6 +36,8 @@ export async function generatePackage(
             return await tryGenerateAndroidPackage(packageOptions as AndroidPackageOptions);
         case 'ios':
             return await tryGenerateIOSPackage(packageOptions as IOSAppPackageOptions);
+        case 'macos':
+            return await tryGenerateMacOSPackage(packageOptions as MacOSAppPackageOptions);
         default:
             throw new Error(
                 `A platform type must be passed, ${type} is not a valid platform.`
@@ -43,6 +47,15 @@ export async function generatePackage(
 
 async function tryGenerateIOSPackage(options: IOSAppPackageOptions): Promise<PackageInfo | null> {
     const result = await generateIOSPackage(options);
+    return {
+        appName: options.name,
+        blob: result,
+        type: "store"
+    };
+}
+
+async function tryGenerateMacOSPackage(options: MacOSAppPackageOptions): Promise<PackageInfo | null> {
+    const result = await generateMacOSPackage(options);
     return {
         appName: options.name,
         blob: result,
