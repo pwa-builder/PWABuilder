@@ -72,6 +72,7 @@ export class WindowsForm extends AppPackageFormBase {
     @state() initialBgColor: string = '';
     @state() currentSelectedColor: string = '';
     @state() packageOptions: WindowsPackageOptions = emptyWindowsPackageOptions();
+    @state() hasWebAppWidgets = false;
     @state() activeLanguages: string[] = [];
     @state() activeLanguageCodes: string[] = [];
     @state() userBackgroundColor: string = "";
@@ -100,9 +101,10 @@ export class WindowsForm extends AppPackageFormBase {
             manifestContext = await fetchOrCreateManifest();
         }
 
-        this.packageOptions = createWindowsPackageOptionsFromManifest(
-            manifestContext!.manifest
-        );
+        const manifest = manifestContext!.manifest;
+        this.packageOptions = createWindowsPackageOptionsFromManifest(manifest);
+        this.hasWebAppWidgets =
+            Array.isArray(manifest.widgets) && manifest.widgets.length > 0;
 
         this.packageOptions.targetDeviceFamilies = ['Desktop', 'Holographic'];
 
@@ -1013,7 +1015,7 @@ export class WindowsForm extends AppPackageFormBase {
             inputId: 'widget-checkbox',
             type: 'checkbox',
             checked: this.packageOptions.enableWebAppWidgets,
-            disabled: !this.packageOptions.enableWebAppWidgets,
+            disabled: !this.hasWebAppWidgets,
             disabledTooltipText: "You must have widgets set up in your web manifest to enable Widgets for your Windows package.",
             inputHandler: (_val: string, checked: boolean) =>
                 (this.packageOptions.enableWebAppWidgets = checked),

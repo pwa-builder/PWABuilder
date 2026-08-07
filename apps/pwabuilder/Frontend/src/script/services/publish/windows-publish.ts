@@ -146,7 +146,7 @@ export function createWindowsPackageOptionsFromManifest(
             padding: 0.0,
         },
         resourceLanguage: languages,
-        enableWebAppWidgets: Object.keys(manifest).includes("widgets"),
+        enableWebAppWidgets: false,
         extensions: pwaURL.includes('--') ? undefined : 'appurihandler',
     };
 
