@@ -21,11 +21,6 @@ export const imageGeneratorStyles = css`
 		font-size: var(--font-size);
 	}
 
-	small {
-		display: block;
-		font-size: 10px;
-	}
-
 	wa-button {
 		height: 24px;
 		padding: 8px 0;
@@ -58,24 +53,10 @@ export const imageGeneratorStyles = css`
 		padding: 32px;
 	}
 
-	input[type="number"] {
-		width: 30%;
-		font-size: 22px;
-	}
-
-	small {
-		margin-top: 10px;
-	}
-
 	.color-radio, .platform-list {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-	}
-
-	.platform-list {
-		flex-direction: row;
-		flex-wrap: wrap;
 	}
 
 	wa-radio-group#colorOption {
@@ -86,5 +67,9 @@ export const imageGeneratorStyles = css`
 		font-size: var(--large-font-size);
 		font-weight: bold;
 		color: var(--font-color);
+	}
+
+	#padding {
+		width: 30%;
 	}
 `;

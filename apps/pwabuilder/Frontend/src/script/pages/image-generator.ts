@@ -12,6 +12,7 @@ import '@awesome.me/webawesome/dist/components/button/button.js';
 import '@awesome.me/webawesome/dist/components/radio-group/radio-group.js';
 import '@awesome.me/webawesome/dist/components/radio/radio.js';
 import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
+import '@awesome.me/webawesome/dist/components/number-input/number-input.js';
 
 
 interface PlatformInformation {
@@ -83,17 +84,16 @@ export class ImageGenerator extends LitElement {
                   <app-file-input accept="image/png, image/svg+xml, image/jpeg, image/webp, image/gif, image/tiff, image/bmp" @input-change="${this.handleInputChange}"></app-file-input>
                 </div>
                 <div class="padding-section">
-                  <label for="padding"><h2>${loc.padding}</h2></label>
-                  <input 
+                  <wa-number-input
                     id="padding"
-                    name="padding" 
-                    type="number" 
-                    max="1" 
-                    min="0" 
-                    step="0.1" 
+                    name="padding"
+                    label="${loc.padding}"
+                    max="1"
+                    min="0"
+                    step="0.1"
                     value=${this.padding}
-                    @change=${this.handlePaddingChange} required></input>
-                  <small>${loc.padding_text}</small>
+                    hint="${loc.padding_text}"
+                    @change=${this.handlePaddingChange} required></wa-number-input>
                 </div>
                 <div class="color-section">
                   <wa-radio-group
