@@ -3,31 +3,24 @@ import { css } from "lit";
 export const imageGeneratorStyles = css`
 	:host {
 		--loader-size: 1.8em;
-		--wa-input-height-medium: 1.5rem;
+		--heading-font-size: var(--large-font-size, 1.5em);
+		--heading-font-weight: bold;
 	}
 
 	h1 {
-		font-size: var(--xlarge-font-size);
+		font-size: var(--xlarge-font-size, 2em);
 		line-height: 48px;
 		letter-spacing: -0.015em;
 		margin: 0;
 	}
 
 	h2 {
-		font-size: var(--large-font-size);
+		font-size: var(--heading-font-size);
+		font-weight: var(--heading-font-weight);
 	}
 
 	p {
 		font-size: var(--font-size);
-	}
-
-	wa-button {
-		height: 24px;
-		padding: 8px 0;
-	}
-
-	wa-button::part(base) {
-		margin: 0 16px;
 	}
 
 	#image-generator-card {
@@ -35,8 +28,16 @@ export const imageGeneratorStyles = css`
 		padding: 16px;
 	}
 
-	#submit {
-		margin-top: 8px;
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.form-left {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
 	}
 
 	#submit wa-button::part(base) {
@@ -59,17 +60,32 @@ export const imageGeneratorStyles = css`
 		gap: 10px;
 	}
 
-	wa-radio-group#colorOption {
-		margin-top: 8px;
+	.color-section, .padding-section, .image-section, .platforms-section {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	wa-radio-group#colorOption::part(form-control-label) {
-		font-size: var(--large-font-size);
-		font-weight: bold;
+		font-size: var(--heading-font-size);
+		font-weight: var(--heading-font-weight);
+		color: var(--font-color);
+	}
+
+	wa-number-input#padding::part(form-control-label) {
+		font-size: var(--heading-font-size);
+		font-weight: var(--heading-font-weight);
+		color: var(--font-color);
+	}
+
+	wa-number-input#padding::part(hint) {
+		font-size: var(--font-size);
+		font-weight: normal;
 		color: var(--font-color);
 	}
 
 	#padding {
 		width: 30%;
+		min-width: 220px;
 	}
 `;
