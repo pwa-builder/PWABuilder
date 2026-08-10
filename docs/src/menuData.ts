@@ -145,12 +145,6 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: false
         },
         {
-          pageTitle: "PWABuilder - Meta Quest",
-          menuTitle: "Meta Quest",
-          path: "/builder/meta",
-          includeOnHomePage: false
-        },
-        {
           pageTitle: "PWABuilder - Packaging for the App Store",
           menuTitle: "iOS App Store",
           path: "/builder/app-store",
