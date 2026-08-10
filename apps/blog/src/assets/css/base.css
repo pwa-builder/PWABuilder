@@ -82,6 +82,9 @@ body {
     padding: 0;
     margin: 0;
     scroll-behavior: smooth;
+    /* Prevent a horizontal scrollbar from appearing when the page is reflowed
+       at narrow widths (e.g. 320px, as when zoomed to 400%). */
+    overflow-x: hidden;
     @apply antialiased;
 }
 
