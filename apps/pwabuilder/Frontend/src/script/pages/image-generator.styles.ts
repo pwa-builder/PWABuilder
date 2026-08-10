@@ -73,33 +73,18 @@ export const imageGeneratorStyles = css`
 		gap: 10px;
 	}
 
-	.color-radio >*, .platform-list >* {
-		display: flex;
-		align-items: center;
-		gap: 10px;
+	.platform-list {
+		flex-direction: row;
+		flex-wrap: wrap;
 	}
 
-	input[type="radio"] {
-		border: 0px;
-		width: 22px;
-		height: 22px;
-		margin: 0;
-		accent-color: var(--primary-color);
+	wa-radio-group#colorOption {
+		margin-top: 8px;
 	}
 
-	input[type="radio"]:hover {
-		cursor: pointer;
-	}
-
-	input[type="checkbox"] {
-		border: 0px;
-		width: 22px;
-		height: 22px;
-		margin: 0;
-		accent-color: var(--primary-color);
-	}
-
-	input[type="checkbox"]:hover {
-		cursor: pointer;
+	wa-radio-group#colorOption::part(form-control-label) {
+		font-size: var(--large-font-size);
+		font-weight: bold;
+		color: var(--font-color);
 	}
 `;

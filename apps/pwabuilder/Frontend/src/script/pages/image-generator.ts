@@ -9,6 +9,9 @@ import { FileInputDetails, Lazy } from "../utils/interfaces";
 
 import { recordProcessStep, AnalyticsBehavior } from "../utils/analytics";
 import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/radio-group/radio-group.js';
+import '@awesome.me/webawesome/dist/components/radio/radio.js';
+import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
 
 
 interface PlatformInformation {
@@ -93,30 +96,23 @@ export class ImageGenerator extends LitElement {
                   <small>${loc.padding_text}</small>
                 </div>
                 <div class="color-section">
-                  <h2>${loc.background_color}</h2>
-                  <div class="color-radio">
-                    <div class="radio-div">
-                      <input type="radio" id="best-guess-radio" name="colorOption" value="best guess" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "best guess"} />
-                      <label for="best-guess-radio">${loc.best_guess}</label>
-                    </div>
-
-                    <div class="radio-div">
-                      <input type="radio" id="transparent-radio" name="colorOption" value="transparent" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "transparent"} />
-                      <label for="transparent-radio">${loc.transparent}</label>
-                    </div>
-
-                    <div class="radio-div">
-                      <input type="radio" id="custom-radio" name="colorOption" value="custom" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "custom"} />
-                      <label for="custom-radio">${loc.custom_color}</label>
-                    </div>
-                  </div>
+                  <wa-radio-group
+                    id="colorOption"
+                    name="colorOption"
+                    label="${loc.background_color}"
+                    .value=${this.colorOption}
+                    @change=${this.handleBackgroundRadioChange}>
+                    <wa-radio value="best guess">${loc.best_guess}</wa-radio>
+                    <wa-radio value="transparent">${loc.transparent}</wa-radio>
+                    <wa-radio value="custom">${loc.custom_color}</wa-radio>
+                  </wa-radio-group>
                   ${this.renderColorPicker()}
                 </div>
               </section>
               <section class="form-right platforms-section">
-                <h2>${loc.platforms}</h2>
+                <h2 id="platforms-heading">${loc.platforms}</h2>
                 <p>${loc.platforms_text}</p>
-                <div role="group" class="platform-list">
+                <div role="group" aria-labelledby="platforms-heading" class="platform-list">
                   ${this.renderPlatformList()}
                 </div>
               </section>
@@ -140,17 +136,13 @@ export class ImageGenerator extends LitElement {
     renderPlatformList() {
         return platformsData.map(
             (platform, i) => html`
-            <div class="checkbox-div">
-                <input 
-                type="checkbox"
-                name="platform" 
+            <wa-checkbox
+                name="platform"
                 id="${`${platform.value}-checkbox`}"
-                value="${platform.value}" 
+                value="${platform.value}"
                 ?checked=${this.platformSelected[i]}
-                @change=${this.handleCheckbox} 
-                data-index=${i} />
-                <label for="${platform.value}-checkbox">${platform.label}</label>
-            </div>
+                @change=${this.handleCheckbox}
+                data-index=${i}>${platform.label}</wa-checkbox>
             `
         );
     }
