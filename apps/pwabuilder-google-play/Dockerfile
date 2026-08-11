@@ -82,7 +82,7 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     rm -rf /var/lib/apt/lists/*
 
 FROM node-final AS builder
-ARG NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+ARG NPM_CONFIG_REGISTRY=https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
 ARG NPM_CONFIG_REPLACE_REGISTRY_HOST=always
 WORKDIR /app
 
