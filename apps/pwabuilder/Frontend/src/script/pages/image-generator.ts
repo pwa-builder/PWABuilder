@@ -162,7 +162,7 @@ export class ImageGenerator extends LitElement {
   <wa-color-picker
     id="theme-custom-color"
     name="color"
-    label="${localeStrings.values.custom}"
+    label="${loc.select_color}"
     format="hex"
     size="s"
     without-format-toggle
