@@ -145,7 +145,7 @@ export const imageGeneratorStyles = css`
 		width: 100%;
 	}
 
-	wa-radio::part(base),
+	wa-radio,
 	wa-checkbox::part(base) {
 		align-items: center;
 	}
