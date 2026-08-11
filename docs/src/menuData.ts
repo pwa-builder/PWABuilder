@@ -109,6 +109,12 @@ export const parentMenuData: ParentMenu = {
           includeOnHomePage: false
         },
         {
+          pageTitle: "PWABuilder bot",
+          menuTitle: "PWABuilder bot",
+          path: "/builder/pwabuilder-bot",
+          includeOnHomePage: false
+        },
+        {
           pageTitle: "PWABuilder - Using PWABuilder Features",
           menuTitle: "Using PWABuilder Features",
           path: "/builder/using-pwabuilder-features ",
@@ -136,12 +142,6 @@ export const parentMenuData: ParentMenu = {
           pageTitle: "PWABuilder - Creating Android Packages",
           menuTitle: "Other Android",
           path: "/builder/other-android",
-          includeOnHomePage: false
-        },
-        {
-          pageTitle: "PWABuilder - Meta Quest",
-          menuTitle: "Meta Quest",
-          path: "/builder/meta",
           includeOnHomePage: false
         },
         {

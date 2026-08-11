@@ -121,6 +121,4 @@ After you've successfully published your app to the Microsoft Store, you can pac
 
 - [How to Package for the App Store](/builder/app-store)
 
-- [How to Package for Meta Quest](/builder/meta)
-
 - [How to Package for the Google Play Store](/builder/android)

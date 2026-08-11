@@ -60,7 +60,7 @@ Clicking install is all you need to access your PWA from the OS!
 
 Depending on the platform, PWAs are now able to be installed from various app stores.
 
-The Microsoft, Google Play, and Meta Quest stores all natively support PWAs, and the install process is the same as it would be for any app. Just search for it in the store of choice and click install.
+The Microsoft and Google Play stores natively support PWAs, and the install process is the same as it would be for any app. Just search for it in the store of choice and click install.
 
 Other platforms, such as iOS, don't natively support PWAs, but PWAs can sometimes be wrapped in native frameworks to allow publishing to stores.
 
