@@ -73,7 +73,6 @@ There are a ton of options you can configure when packaging for Android. Here's 
 | **Google Play billing** | If enabled, your PWA can sell in-app purchases and subscriptions via the Digital Goods API. |
 | **Signing key** | How the APK app package will be digitally signed: <br><br> `New`: Recommended for new apps in Google Play. PWABuilder will generate a new signing key for you and sign your package with it. Your download will contain the new signing details. <br><br> `Mine`: Recommended for existing apps in Google Play. Use this option if you already have a signing key and you want to publish a new version of an existing app in Google Play. <br><br> `None`: PWABuilder will generate a raw, unsigned APK. Raw, unsigned APKs cannot be uploaded to the Google Play Store. |
 | **ChromeOS only** | If enabled, your Android package will only run on ChromeOS devices. |
-| **Meta Quest compatible** | If enabled, your Android package will be compatible with Meta Quest devices. |
 | **Fallback behavior** | `Custom Tabs` When Trusted Web Activity (TWA) is unavailable, use Chrome Custom Tabs as a fallback to run your app. [Reference](https://developer.chrome.com/docs/android/custom-tabs/) <br><br> `Web View` When Trusted Web Activity (TWA) is unavailable, use a web view as a fallback to run your app. |
   
 ## Publish
@@ -173,7 +172,5 @@ Progressive web apps are cross-platform and can be used anywhere!
 After you've successfully published your app to the Google Play Store, you can package and publish for other platforms:
 
 - [How to Package for Microsoft Store](/builder/windows)
-
-- [How to Package for Meta Quest](/builder/meta)
 
 - [How to Package for the App Store](/builder/app-store)

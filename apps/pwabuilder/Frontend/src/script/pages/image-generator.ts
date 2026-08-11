@@ -6,9 +6,15 @@ import { localeStrings } from "../../locales";
 import "../components/app-header";
 import "../components/app-file-input";
 import { FileInputDetails, Lazy } from "../utils/interfaces";
+import type WaColorPicker from '@awesome.me/webawesome/dist/components/color-picker/color-picker.js';
 
 import { recordProcessStep, AnalyticsBehavior } from "../utils/analytics";
 import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/color-picker/color-picker.js';
+import '@awesome.me/webawesome/dist/components/radio-group/radio-group.js';
+import '@awesome.me/webawesome/dist/components/radio/radio.js';
+import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
+import '@awesome.me/webawesome/dist/components/number-input/number-input.js';
 
 
 interface PlatformInformation {
@@ -68,58 +74,57 @@ export class ImageGenerator extends LitElement {
         return html`
       <div>
         <app-header></app-header>
-        <main id="main" class="main background">
+        <div id="main" class="main background">
           <div id="image-generator-card">
-            <h1>${loc.image_generator}</h1>
-            <p>${loc.image_generator_text}</p>
+            <header class="page-intro">
+              <h1>${loc.image_generator}</h1>
+              <p>${loc.image_generator_text}</p>
+            </header>
             <form id="imageFileInputForm" enctype="multipart/form-data" class="form">
-              <section class="form-left">
-                <div class="image-section">
-                  <h2>${loc.input_image}</h2>
-                  <p>${loc.input_image_help}</p>
-                  <app-file-input accept="image/png, image/svg+xml, image/jpeg, image/webp, image/gif, image/tiff, image/bmp" @input-change="${this.handleInputChange}"></app-file-input>
+              <div class="form-grid">
+                <div class="form-left">
+                  <div class="form-group image-section" role="group" aria-labelledby="base-image-label">
+                    <div id="base-image-label" class="form-label">${loc.input_image}</div>
+                    <p class="form-help">${loc.input_image_help}</p>
+                    <app-file-input accept="image/png, image/svg+xml, image/jpeg, image/webp, image/gif, image/tiff, image/bmp" @input-change="${this.handleInputChange}"></app-file-input>
+                  </div>
+                  <div class="form-group padding-section">
+                    <wa-number-input
+                      id="padding"
+                      name="padding"
+                      label="${loc.padding}"
+                      size="s"
+                      max="1"
+                      min="0"
+                      step="0.1"
+                      value=${this.padding}
+                      hint="${loc.padding_text}"
+                      @change=${this.handlePaddingChange} required></wa-number-input>
+                  </div>
+                  <div class="form-group color-section">
+                    <wa-radio-group
+                      id="colorOption"
+                      name="colorOption"
+                      label="${loc.background_color}"
+                      .value=${this.colorOption}
+                      @change=${this.handleBackgroundRadioChange}>
+                      <wa-radio value="best guess">${loc.best_guess}</wa-radio>
+                      <wa-radio value="transparent">${loc.transparent}</wa-radio>
+                      <wa-radio value="custom">${loc.custom_color}</wa-radio>
+                    </wa-radio-group>
+                    ${this.renderColorPicker()}
+                  </div>
                 </div>
-                <div class="padding-section">
-                  <label for="padding"><h2>${loc.padding}</h2></label>
-                  <input 
-                    id="padding"
-                    name="padding" 
-                    type="number" 
-                    max="1" 
-                    min="0" 
-                    step="0.1" 
-                    value=${this.padding}
-                    @change=${this.handlePaddingChange} required></input>
-                  <small>${loc.padding_text}</small>
-                </div>
-                <div class="color-section">
-                  <h2>${loc.background_color}</h2>
-                  <div class="color-radio">
-                    <div class="radio-div">
-                      <input type="radio" id="best-guess-radio" name="colorOption" value="best guess" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "best guess"} />
-                      <label for="best-guess-radio">${loc.best_guess}</label>
-                    </div>
-
-                    <div class="radio-div">
-                      <input type="radio" id="transparent-radio" name="colorOption" value="transparent" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "transparent"} />
-                      <label for="transparent-radio">${loc.transparent}</label>
-                    </div>
-
-                    <div class="radio-div">
-                      <input type="radio" id="custom-radio" name="colorOption" value="custom" @change=${this.handleBackgroundRadioChange} ?checked=${this.colorOption === "custom"} />
-                      <label for="custom-radio">${loc.custom_color}</label>
+                <div class="form-right">
+                  <div class="form-group platforms-section" role="group" aria-labelledby="platforms-label">
+                    <div id="platforms-label" class="form-label">${loc.platforms}</div>
+                    <p class="form-help">${loc.platforms_text}</p>
+                    <div class="platform-list">
+                      ${this.renderPlatformList()}
                     </div>
                   </div>
-                  ${this.renderColorPicker()}
                 </div>
-              </section>
-              <section class="form-right platforms-section">
-                <h2>${loc.platforms}</h2>
-                <p>${loc.platforms_text}</p>
-                <div role="group" class="platform-list">
-                  ${this.renderPlatformList()}
-                </div>
-              </section>
+              </div>
               <section id="submit" class="form-bottom">
                 <wa-button id="generateButton" variant="brand" ?disabled=${!this.generateEnabled || this.generating}
                   @click=${this.generateZip}
@@ -132,7 +137,7 @@ export class ImageGenerator extends LitElement {
               </section>
             </form>
           </div>
-        </main>
+        </div>
       </div>
     `;
     }
@@ -140,17 +145,13 @@ export class ImageGenerator extends LitElement {
     renderPlatformList() {
         return platformsData.map(
             (platform, i) => html`
-            <div class="checkbox-div">
-                <input 
-                type="checkbox"
-                name="platform" 
+            <wa-checkbox
+                name="platform"
                 id="${`${platform.value}-checkbox`}"
-                value="${platform.value}" 
+                value="${platform.value}"
                 ?checked=${this.platformSelected[i]}
-                @change=${this.handleCheckbox} 
-                data-index=${i} />
-                <label for="${platform.value}-checkbox">${platform.label}</label>
-            </div>
+                @change=${this.handleCheckbox}
+                data-index=${i}>${platform.label}</wa-checkbox>
             `
         );
     }
@@ -158,9 +159,16 @@ export class ImageGenerator extends LitElement {
     renderColorPicker() {
         if (this.colorOption === "custom") {
             return html`<div class="custom-color-block">
-  <label for="theme-custom-color">${localeStrings.values.custom}</label>
-  <input type="color" id="theme-custom-color" name="color" .value=${this.color}
-    @change=${this.handleThemeColorInputChange} />
+  <wa-color-picker
+    id="theme-custom-color"
+    name="color"
+    label="${loc.select_color}"
+    format="hex"
+    size="s"
+    without-format-toggle
+    .value=${this.color}
+    @change=${this.handleThemeColorInputChange}>
+  </wa-color-picker>
 </div>`;
         }
 
@@ -207,8 +215,8 @@ export class ImageGenerator extends LitElement {
     }
 
     handleThemeColorInputChange(event: Event) {
-        const input = event.target as HTMLInputElement;
-        this.color = input.value;
+        const input = event.target as WaColorPicker;
+        this.color = input.value ?? this.color;
         this.checkGenerateEnabled();
     }
 
