@@ -3,7 +3,7 @@ import { css } from "lit";
 export const imageGeneratorStyles = css`
 	:host {
 		--loader-size: 1.8em;
-		--form-label-size: var(--body-font-size, 16px);
+		--form-label-size: 18px;
 		--form-label-weight: var(--font-bold, 700);
 		--divider-color: #e2e4ea;
 	}
