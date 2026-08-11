@@ -82,6 +82,8 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     rm -rf /var/lib/apt/lists/*
 
 FROM node-final AS builder
+ARG NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+ARG NPM_CONFIG_REPLACE_REGISTRY_HOST=always
 WORKDIR /app
 
 COPY package*.json tsconfig.json ./
