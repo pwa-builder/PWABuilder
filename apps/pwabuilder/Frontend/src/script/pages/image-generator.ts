@@ -72,50 +72,56 @@ export class ImageGenerator extends LitElement {
         return html`
       <div>
         <app-header></app-header>
-        <main id="main" class="main background">
+        <div id="main" class="main background">
           <div id="image-generator-card">
-            <h1>${loc.image_generator}</h1>
-            <p>${loc.image_generator_text}</p>
+            <header class="page-intro">
+              <h1>${loc.image_generator}</h1>
+              <p>${loc.image_generator_text}</p>
+            </header>
             <form id="imageFileInputForm" enctype="multipart/form-data" class="form">
-              <section class="form-left">
-                <div class="image-section">
-                  <h2>${loc.input_image}</h2>
-                  <p>${loc.input_image_help}</p>
-                  <app-file-input accept="image/png, image/svg+xml, image/jpeg, image/webp, image/gif, image/tiff, image/bmp" @input-change="${this.handleInputChange}"></app-file-input>
+              <div class="form-grid">
+                <div class="form-left">
+                  <div class="form-group image-section" role="group" aria-labelledby="base-image-label">
+                    <div id="base-image-label" class="form-label">${loc.input_image}</div>
+                    <p class="form-help">${loc.input_image_help}</p>
+                    <app-file-input accept="image/png, image/svg+xml, image/jpeg, image/webp, image/gif, image/tiff, image/bmp" @input-change="${this.handleInputChange}"></app-file-input>
+                  </div>
+                  <div class="form-group padding-section">
+                    <wa-number-input
+                      id="padding"
+                      name="padding"
+                      label="${loc.padding}"
+                      max="1"
+                      min="0"
+                      step="0.1"
+                      value=${this.padding}
+                      hint="${loc.padding_text}"
+                      @change=${this.handlePaddingChange} required></wa-number-input>
+                  </div>
+                  <div class="form-group color-section">
+                    <wa-radio-group
+                      id="colorOption"
+                      name="colorOption"
+                      label="${loc.background_color}"
+                      .value=${this.colorOption}
+                      @change=${this.handleBackgroundRadioChange}>
+                      <wa-radio value="best guess">${loc.best_guess}</wa-radio>
+                      <wa-radio value="transparent">${loc.transparent}</wa-radio>
+                      <wa-radio value="custom">${loc.custom_color}</wa-radio>
+                    </wa-radio-group>
+                    ${this.renderColorPicker()}
+                  </div>
                 </div>
-                <div class="padding-section">
-                  <wa-number-input
-                    id="padding"
-                    name="padding"
-                    label="${loc.padding}"
-                    max="1"
-                    min="0"
-                    step="0.1"
-                    value=${this.padding}
-                    hint="${loc.padding_text}"
-                    @change=${this.handlePaddingChange} required></wa-number-input>
+                <div class="form-right">
+                  <div class="form-group platforms-section" role="group" aria-labelledby="platforms-label">
+                    <div id="platforms-label" class="form-label">${loc.platforms}</div>
+                    <p class="form-help">${loc.platforms_text}</p>
+                    <div class="platform-list">
+                      ${this.renderPlatformList()}
+                    </div>
+                  </div>
                 </div>
-                <div class="color-section">
-                  <wa-radio-group
-                    id="colorOption"
-                    name="colorOption"
-                    label="${loc.background_color}"
-                    .value=${this.colorOption}
-                    @change=${this.handleBackgroundRadioChange}>
-                    <wa-radio value="best guess">${loc.best_guess}</wa-radio>
-                    <wa-radio value="transparent">${loc.transparent}</wa-radio>
-                    <wa-radio value="custom">${loc.custom_color}</wa-radio>
-                  </wa-radio-group>
-                  ${this.renderColorPicker()}
-                </div>
-              </section>
-              <section class="form-right platforms-section">
-                <h2 id="platforms-heading">${loc.platforms}</h2>
-                <p>${loc.platforms_text}</p>
-                <div role="group" aria-labelledby="platforms-heading" class="platform-list">
-                  ${this.renderPlatformList()}
-                </div>
-              </section>
+              </div>
               <section id="submit" class="form-bottom">
                 <wa-button id="generateButton" variant="brand" ?disabled=${!this.generateEnabled || this.generating}
                   @click=${this.generateZip}
@@ -128,7 +134,7 @@ export class ImageGenerator extends LitElement {
               </section>
             </form>
           </div>
-        </main>
+        </div>
       </div>
     `;
     }
