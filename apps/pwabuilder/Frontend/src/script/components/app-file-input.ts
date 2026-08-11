@@ -39,7 +39,7 @@ export class FileInput extends LitElement implements FileInputElement {
       <div>
         <wa-button
           variant="default"
-          size="small"
+          size="s"
           @click=${this.clickModalInput}
         >
           ${this.buttonText}
