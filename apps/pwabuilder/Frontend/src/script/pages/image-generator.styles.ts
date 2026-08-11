@@ -20,7 +20,7 @@ export const imageGeneratorStyles = css`
 	}
 
 	p {
-		font-size: var(--font-size);
+		font-size: var(--body-font-size, 16px);
 	}
 
 	#image-generator-card {
@@ -128,14 +128,8 @@ export const imageGeneratorStyles = css`
 		color: var(--font-color);
 	}
 
-	wa-number-input#padding::part(base),
-	wa-number-input#padding::part(input),
-	wa-number-input#padding::part(stepper) {
-		min-height: 44px;
-	}
-
 	wa-number-input#padding::part(hint) {
-		font-size: var(--font-size);
+		font-size: var(--body-font-size, 16px);
 		font-weight: normal;
 		color: var(--secondary-font-color);
 	}
@@ -152,7 +146,7 @@ export const imageGeneratorStyles = css`
 
 	wa-radio::part(label),
 	wa-checkbox::part(label) {
-		font-size: var(--font-size);
+		font-size: var(--body-font-size, 16px);
 	}
 
 	.custom-color-block {
@@ -163,7 +157,7 @@ export const imageGeneratorStyles = css`
 	}
 
 	.custom-color-block label {
-		font-size: var(--font-size);
+		font-size: var(--body-font-size, 16px);
 		font-weight: var(--form-label-weight);
 	}
 

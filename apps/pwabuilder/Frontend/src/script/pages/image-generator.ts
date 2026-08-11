@@ -91,6 +91,7 @@ export class ImageGenerator extends LitElement {
                       id="padding"
                       name="padding"
                       label="${loc.padding}"
+                      size="s"
                       max="1"
                       min="0"
                       step="0.1"
