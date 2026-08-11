@@ -159,6 +159,10 @@ export const imageGeneratorStyles = css`
 		--grid-width: min(315px, calc(100vw - 48px));
 	}
 
+	.custom-color-block wa-color-picker::part(form-control-label) {
+		font-size: var(--body-font-size, 16px);
+	}
+
 	@media (max-width: 760px) {
 		.form-grid {
 			grid-template-columns: 1fr;
