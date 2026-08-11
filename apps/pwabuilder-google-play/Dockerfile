@@ -1,7 +1,7 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
 FROM --platform=linux/amd64 ubuntu:24.04  AS ubuntu
 
-ARG ANDROID_SDK_TOOLS_VERSION="11076708"
+ARG ANDROID_SDK_TOOLS_VERSION="15641748"
 ARG NODE_VERSION="24.x"
 ARG JENV_RELEASE="0.5.6"
 
@@ -34,10 +34,9 @@ RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jd
     echo . /etc/jdk.env >> /etc/bash.bashrc && echo . /etc.jdk.env >> /etc/profile && \
     apt-get update -qq && \
     apt-get install -qq --no-install-recommends \
-    apt-utils locales unzip curl git git-lfs build-essential openjdk-11-jdk openjdk-17-jdk \
-    wget zip zipalign ruby-full python3-pip tzdata && \
+    apt-utils locales unzip curl git build-essential openjdk-11-jdk openjdk-17-jdk \
+    wget zip zipalign ruby-full tzdata && \
     locale-gen $LANG && \
-    git lfs install && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     rm -rf /var/lib/apt/lists/*
 
