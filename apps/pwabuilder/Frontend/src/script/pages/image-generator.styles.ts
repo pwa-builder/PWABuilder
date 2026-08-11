@@ -152,18 +152,11 @@ export const imageGeneratorStyles = css`
 	.custom-color-block {
 		align-items: center;
 		display: flex;
-		gap: 12px;
 		margin-top: 12px;
 	}
 
-	.custom-color-block label {
-		font-size: var(--body-font-size, 16px);
-		font-weight: var(--form-label-weight);
-	}
-
-	.custom-color-block input {
-		height: 44px;
-		width: 56px;
+	.custom-color-block wa-color-picker {
+		--grid-width: min(315px, calc(100vw - 48px));
 	}
 
 	@media (max-width: 760px) {

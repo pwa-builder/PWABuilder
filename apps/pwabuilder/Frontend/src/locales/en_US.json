@@ -277,6 +277,6 @@
         "transparent": "Transparent",
         "custom_color": "Custom color",
         "platforms": "Platforms",
-        "platforms_text": "Select the platforms to generate images for."
+        "platforms_text": "Select the app stores to generate images for."
     }
 }

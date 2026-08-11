@@ -6,9 +6,11 @@ import { localeStrings } from "../../locales";
 import "../components/app-header";
 import "../components/app-file-input";
 import { FileInputDetails, Lazy } from "../utils/interfaces";
+import type WaColorPicker from '@awesome.me/webawesome/dist/components/color-picker/color-picker.js';
 
 import { recordProcessStep, AnalyticsBehavior } from "../utils/analytics";
 import '@awesome.me/webawesome/dist/components/button/button.js';
+import '@awesome.me/webawesome/dist/components/color-picker/color-picker.js';
 import '@awesome.me/webawesome/dist/components/radio-group/radio-group.js';
 import '@awesome.me/webawesome/dist/components/radio/radio.js';
 import '@awesome.me/webawesome/dist/components/checkbox/checkbox.js';
@@ -157,9 +159,16 @@ export class ImageGenerator extends LitElement {
     renderColorPicker() {
         if (this.colorOption === "custom") {
             return html`<div class="custom-color-block">
-  <label for="theme-custom-color">${localeStrings.values.custom}</label>
-  <input type="color" id="theme-custom-color" name="color" .value=${this.color}
-    @change=${this.handleThemeColorInputChange} />
+  <wa-color-picker
+    id="theme-custom-color"
+    name="color"
+    label="${localeStrings.values.custom}"
+    format="hex"
+    size="s"
+    without-format-toggle
+    .value=${this.color}
+    @change=${this.handleThemeColorInputChange}>
+  </wa-color-picker>
 </div>`;
         }
 
@@ -206,8 +215,8 @@ export class ImageGenerator extends LitElement {
     }
 
     handleThemeColorInputChange(event: Event) {
-        const input = event.target as HTMLInputElement;
-        this.color = input.value;
+        const input = event.target as WaColorPicker;
+        this.color = input.value ?? this.color;
         this.checkGenerateEnabled();
     }
 
