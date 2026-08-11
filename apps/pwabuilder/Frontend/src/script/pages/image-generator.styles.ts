@@ -152,7 +152,7 @@ export const imageGeneratorStyles = css`
 
 	wa-radio::part(label),
 	wa-checkbox::part(label) {
-		font-size: 0.75em;
+		font-size: var(--font-size);
 	}
 
 	.custom-color-block {
