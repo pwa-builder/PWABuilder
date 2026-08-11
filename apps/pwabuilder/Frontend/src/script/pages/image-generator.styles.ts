@@ -145,15 +145,14 @@ export const imageGeneratorStyles = css`
 		width: 100%;
 	}
 
-	wa-radio,
-	wa-checkbox {
-		min-height: 44px;
-	}
-
 	wa-radio::part(base),
 	wa-checkbox::part(base) {
 		align-items: center;
-		min-height: 44px;
+	}
+
+	wa-radio::part(label),
+	wa-checkbox::part(label) {
+		font-size: 0.75em;
 	}
 
 	.custom-color-block {
