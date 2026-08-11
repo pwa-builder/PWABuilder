@@ -11,10 +11,6 @@ export const appFileInputStyles = css`
 		background-color: transparent;
 	}
 
-	wa-button::part(base) {
-		min-height: 44px;
-	}
-
 	${hidden}
 
 	${fastButtonCss}
