@@ -62,11 +62,9 @@ RUN npm run build
 
 # Build lighthouse custom audits
 WORKDIR /src/apps/pwabuilder/node-scripts
-RUN npm install
+RUN npm ci
 RUN npm run build
-
-# Force fix any NPM vulnerabilities
-RUN npm audit fix --force
+RUN npm prune --omit=dev --ignore-scripts
 
 # Build backend
 WORKDIR /src/apps/pwabuilder
@@ -105,10 +103,8 @@ COPY --from=publish /app/publish .
 ENV ASPNETCORE_DETAILEDERRORS=true
 ENV Logging__LogLevel__Default=Information
 
-# Copy Node.js binary and npm
+# Copy the Node.js runtime and Lighthouse scripts
 COPY --from=build /usr/bin/node /usr/bin/node
-COPY --from=build /usr/bin/npm /usr/bin/npm
-COPY --from=build /usr/lib/node_modules /usr/lib/node_modules
 COPY --from=build /src/apps/pwabuilder/node-scripts /app/node-scripts
 # Node path
 ENV NODE_BIN=/usr/bin/node
