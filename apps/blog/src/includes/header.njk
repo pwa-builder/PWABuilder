@@ -1,9 +1,9 @@
-<header class="header flex items-center justify-between px-8 xl:px-12" role="banner">
+<header class="header flex flex-wrap items-center justify-between px-8 xl:px-12" role="banner">
   <a id="pwa-logo-link" aria-label="Pwa Logo" href="https://www.pwabuilder.com" rel="home" class="text-lg font-bold leading-tight" >
     <img aria-labelledby="pwa-logo-link" loading="lazy" class="w-20" src="/PWAColorLogo.svg" role="img"
 /></a>
-  <nav aria-label="Navigation" class="w-full h-12" role="navigation" tabindex="-1">
-    <ul class="w-full h-full flex justify-between items-center headerUl">
+  <nav aria-label="Navigation" class="h-12 headerNav" role="navigation" tabindex="-1">
+    <ul class="w-full h-full flex flex-wrap justify-end items-center headerUl">
       <li class="ml-auto mr-3 font-bold">
         <a class="headerA" href="https://blog.pwabuilder.com"> Blog </a>
       </li>
@@ -26,6 +26,12 @@
 <style>
   .header {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    row-gap: 0.5rem;
+  }
+
+  .headerNav {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .headerA {
@@ -49,10 +55,29 @@
   .headerUl {
     list-style: none;
     margin-top: 0;
+    row-gap: 0.25rem;
   }
 
   .headerUl li {
     list-style: none;
+  }
+
+  @media (max-width: 400px) {
+    .header {
+      justify-content: center;
+    }
+
+    .headerNav {
+      width: 100%;
+    }
+
+    .headerUl {
+      justify-content: center;
+    }
+
+    .headerUl li.ml-auto {
+      margin-left: 0;
+    }
   }
 
   .dropdown-li {

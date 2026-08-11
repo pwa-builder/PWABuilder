@@ -5,7 +5,7 @@ permalink: "{% if path %}{{ path | slug }}{% else %}{{'/docs/'}}{{ title | slug 
 {% extends 'layouts/basedoc.njk' %}
 {% block body %}
   <div class="flex flex-col justify-center items-start">
-    <div class="w-full flex justify-between items-center">
+    <div class="w-full flex flex-wrap justify-between items-center">
       <div>
         <h1>
           {{title}}</h1>
@@ -29,7 +29,7 @@ permalink: "{% if path %}{{ path | slug }}{% else %}{{'/docs/'}}{{ title | slug 
       {{ content | safe }}
     </div>
 
-    <div class="flex items-center mb-8">
+    <div class="flex flex-wrap items-center mb-8">
       {% if tags %}
         <div>
           {% for tag in tags %}
@@ -46,7 +46,7 @@ permalink: "{% if path %}{{ path | slug }}{% else %}{{'/docs/'}}{{ title | slug 
       <button class="share bg-primary capitalize px-5 py-1 shadow rounded-full font-bold">Share</button>
     </div>
     <hr class="opacity-10">
-    <div class="w-full flex items-center justify-between">
+    <div class="w-full flex flex-wrap items-center justify-between">
       <div>
         {%- set nextPost = collections['docsWithoutDrafts'] |
   getNextCollectionItem(page) %}
