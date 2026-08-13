@@ -20,6 +20,7 @@ import { redactSigningSecrets } from "../utils/error";
  */
 @customElement("google-play-packaging-status")
 export class GooglePlayPackagingStatus extends LitElement {
+    private readonly forbiddenAnalysisHelpUrl = "https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging";
     @property({ attribute: "job-id" }) jobId: string | null = null;
     @state() hasFailed = false;
     @state() logs: string[] = [];
@@ -79,10 +80,11 @@ export class GooglePlayPackagingStatus extends LitElement {
 
     renderTitle(): TemplateResult {
         if (this.hasFailed) {
+            const failureTitle = this.hasForbiddenAnalysisFailure() ? "Your web host is blocking PWABuilder" : "Unable to create Google Play package";
             return html`
                 <h2 class="page-title">
                     <wa-icon name="exclamation-octagon"></wa-icon>
-                    Unable to create Google Play package
+                    ${failureTitle}
                 </h2>
             `;
         }
@@ -106,10 +108,11 @@ export class GooglePlayPackagingStatus extends LitElement {
         }
 
         if (this.job.status === "Failed") {
+            const failureTitle = this.hasForbiddenAnalysisFailure() ? "Your web host is blocking PWABuilder" : "Unable to create Google Play package";
             return html`
                 <h2 class="page-title">
                     <wa-icon name="exclamation-octagon"></wa-icon>
-                    Unable to create Google Play package
+                    ${failureTitle}
                 </h2>
             `;
         }
@@ -159,6 +162,14 @@ export class GooglePlayPackagingStatus extends LitElement {
             const title = encodeURIComponent("Error creating Google Play package");
             const lastErrorLog = this.getErrorLogForGitHubIssue(this.logs).replaceAll("\n", "\n> ");
             const body = encodeURIComponent(`I received the [following error](https://pwabuilder.com/google-play-packaging-status?jobId=${this.job?.id || this.jobId}) when creating a Google Play package for ${this.job?.packageOptions.pwaUrl || "[empty]"}.\n\n> ${lastErrorLog}`);
+            if (this.hasForbiddenAnalysisFailure()) {
+                return html`
+                    <div class="card-footer" slot="footer">
+                        <wa-button @click="${this.retryJob}">Retry</wa-button>
+                        <wa-button target="_blank" href="${this.forbiddenAnalysisHelpUrl}">Show me how to fix this</wa-button>
+                    </div>
+                `;
+            }
             return html`
                 <div class="card-footer" slot="footer">
                     <wa-button @click="${this.retryJob}">Retry</wa-button>
@@ -330,6 +341,14 @@ export class GooglePlayPackagingStatus extends LitElement {
                 behavior: "smooth"
             });
         }
+    }
+
+    private hasForbiddenAnalysisFailure(): boolean {
+        if (!(this.job?.status === "Failed" || this.hasFailed)) {
+            return false;
+        }
+
+        return this.logs.some(log => log.includes(this.forbiddenAnalysisHelpUrl));
     }
 
     private async retryJob(): Promise<void> {
