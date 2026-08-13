@@ -21,6 +21,7 @@ import { redactSigningSecrets } from "../utils/error";
 @customElement("google-play-packaging-status")
 export class GooglePlayPackagingStatus extends LitElement {
     private readonly forbiddenAnalysisHelpUrl = "https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging";
+    private readonly forbiddenAnalysisFailureMessage = "Your web app is blocking PWABuilder from accessing your app's images, serving 403 Forbidden errors to PWABuilder. If the problem persists, please temporarily disable your firewall, CDN, or Cloudflare while packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging";
     @property({ attribute: "job-id" }) jobId: string | null = null;
     @state() hasFailed = false;
     @state() logs: string[] = [];
@@ -214,6 +215,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         if (job.status === "Completed") {
             await this.jobCompleted(job);
         } else if (job.status === "Failed") {
+            this.appendForbiddenAnalysisFailureLog();
             this.jobFailed(job);
         } else {
             // Otherwise, it's queued or processing. Poll again after a delay.
@@ -349,6 +351,14 @@ export class GooglePlayPackagingStatus extends LitElement {
         }
 
         return this.logs.some(log => log.includes(this.forbiddenAnalysisHelpUrl));
+    }
+
+    private appendForbiddenAnalysisFailureLog(): void {
+        if (!this.hasForbiddenAnalysisFailure() || this.logs.some(log => log.includes(this.forbiddenAnalysisFailureMessage))) {
+            return;
+        }
+
+        this.appendLog(`${new Date().toISOString()} [error]: ${this.forbiddenAnalysisFailureMessage}`);
     }
 
     private async retryJob(): Promise<void> {

@@ -480,6 +480,7 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
     statusPage.logs = [
       '[warn]: For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging'
     ];
+    (statusPage as any).appendForbiddenAnalysisFailureLog();
     await statusPage.updateComplete;
 
     const pageTitle = statusPage.shadowRoot?.querySelector('.page-title')?.textContent?.trim() ?? '';
@@ -490,7 +491,8 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
     return {
       pageTitle,
       reportBugButtonExists,
-      helpButtonHref: helpButton?.getAttribute('href') ?? ''
+      helpButtonHref: helpButton?.getAttribute('href') ?? '',
+      hasBlockingErrorLog: statusPage.logs.some(log => log.includes("Your web app is blocking PWABuilder from accessing your app's images"))
     };
   });
 
@@ -500,4 +502,5 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
   expect(hostBlockingState?.helpButtonHref).toBe(
     'https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging'
   );
+  expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
 });
