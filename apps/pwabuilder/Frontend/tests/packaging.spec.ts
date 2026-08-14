@@ -458,3 +458,49 @@ test('App URI Handler is disabled by default for URLs containing double hyphens'
 
   expect(appUriHandlerEnabled).toBe(false);
 });
+
+test('Google Play packaging status shows host blocking help for 403 analysis failures', async ({ page }) => {
+  const hostBlockingState = await page.evaluate(async () => {
+    document.body.innerHTML = '<google-play-packaging-status></google-play-packaging-status>';
+    await import('/src/script/pages/google-play-packaging-status.ts');
+    await customElements.whenDefined('google-play-packaging-status');
+
+    const statusPage = document.querySelector('google-play-packaging-status') as HTMLElement & {
+      hasFailed: boolean;
+      logs: string[];
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    } | null;
+
+    if (!statusPage) {
+      return null;
+    }
+
+    statusPage.hasFailed = true;
+    statusPage.logs = [
+      '[warn]: For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging'
+    ];
+    (statusPage as any).appendForbiddenAnalysisFailureLog();
+    await statusPage.updateComplete;
+
+    const pageTitle = statusPage.shadowRoot?.querySelector('.page-title')?.textContent?.trim() ?? '';
+    const footerButtons = Array.from(statusPage.shadowRoot?.querySelectorAll('.card-footer wa-button') ?? []);
+    const reportBugButtonExists = footerButtons.some(button => button.textContent?.trim() === 'Report a bug');
+    const helpButton = footerButtons.find(button => button.textContent?.trim() === 'Show me how to fix this');
+
+    return {
+      pageTitle,
+      reportBugButtonExists,
+      helpButtonHref: helpButton?.getAttribute('href') ?? '',
+      hasBlockingErrorLog: statusPage.logs.some(log => log.includes("Your web app is blocking PWABuilder from accessing your app's images"))
+    };
+  });
+
+  expect(hostBlockingState).not.toBeNull();
+  expect(hostBlockingState?.pageTitle).toBe('Your web host is blocking PWABuilder');
+  expect(hostBlockingState?.reportBugButtonExists).toBe(false);
+  expect(hostBlockingState?.helpButtonHref).toBe(
+    'https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging'
+  );
+  expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
+});
