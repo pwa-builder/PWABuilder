@@ -64,7 +64,12 @@ RUN npm run build
 WORKDIR /src/apps/pwabuilder/node-scripts
 RUN npm ci
 RUN npm run build
-RUN npm prune --omit=dev --ignore-scripts
+RUN npm prune --omit=dev --ignore-scripts \
+    && rm -rf node_modules/typescript node_modules/@typescript \
+    && rm -f node_modules/.bin/tsc \
+    && test ! -e node_modules/typescript \
+    && test ! -e node_modules/@typescript \
+    && test ! -e node_modules/.bin/tsc
 
 # Build backend
 WORKDIR /src/apps/pwabuilder
