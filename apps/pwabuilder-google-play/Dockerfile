@@ -43,14 +43,18 @@ RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jd
 
 FROM pre-base AS base
 
-# Install the Android SDK, then strip the Android Lint payload bundled inside
-# cmdline-tools. CloudAPK builds APK/AABs via Bubblewrap + Gradle and never runs
-# `lint`, so this tree is dead weight at runtime. It ships known-vulnerable
-# third-party jars (protobuf-java, jline-remote-telnet, commons-lang3, guava, ...)
-# that container scanners flag, and Google's cmdline-tools releases keep bundling
-# them, so a version bump alone doesn't clear the findings. Deleting the whole
-# external maven tree removes the current findings and prevents future recurrences
-# without affecting sdkmanager, platform-tools, build-tools, or the Gradle build.
+# Install the Android SDK, then remediate the vulnerable jars that ship inside the
+# Android Lint payload bundled in cmdline-tools. Container scanners keep flagging
+# these and Google's cmdline-tools releases keep bundling them, so a version bump
+# alone doesn't clear the findings.
+#   * lib/external/lint-psi bundles an old protobuf-java (2.6.1) and
+#     jline-remote-telnet (3.24.1) inside its Kotlin compiler. It is only used by
+#     `lint`, which CloudAPK (Bubblewrap + Gradle) never runs, so we delete it.
+#     sdkmanager keeps its own protobuf-java 3.25.5 elsewhere in lib/external.
+#   * commons-lang3 3.16.0 is referenced by sdkmanager's Class-Path manifest, so we
+#     overwrite it in place with the patched 3.18.0 (API-compatible). The 3.16.0
+#     filename is kept intentionally so every bundled *-classpath.jar manifest still
+#     resolves it; scanners read the jar's internal metadata and see 3.18.0.
 RUN wget --quiet -O sdk-tools.zip \
     "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip" && \
     mkdir -p "$ANDROID_HOME/cmdline-tools" && \
@@ -65,7 +69,9 @@ RUN wget --quiet -O sdk-tools.zip \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" && \
     echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses && \
-    rm -rf "$ANDROID_HOME/cmdline-tools/latest/lib/external"
+    rm -rf "$ANDROID_HOME/cmdline-tools/latest/lib/external/lint-psi" && \
+    wget --quiet -O "$ANDROID_HOME/cmdline-tools/latest/lib/external/org/apache/commons/commons-lang3/3.16.0/commons-lang3-3.16.0.jar" \
+    "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar"
 
 
 FROM base AS jenv-base
