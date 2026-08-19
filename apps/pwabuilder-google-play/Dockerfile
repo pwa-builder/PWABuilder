@@ -43,6 +43,14 @@ RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jd
 
 FROM pre-base AS base
 
+# Install the Android SDK, then strip the Android Lint payload bundled inside
+# cmdline-tools. CloudAPK builds APK/AABs via Bubblewrap + Gradle and never runs
+# `lint`, so this tree is dead weight at runtime. It ships known-vulnerable
+# third-party jars (protobuf-java, jline-remote-telnet, commons-lang3, guava, ...)
+# that container scanners flag, and Google's cmdline-tools releases keep bundling
+# them, so a version bump alone doesn't clear the findings. Deleting the whole
+# external maven tree removes the current findings and prevents future recurrences
+# without affecting sdkmanager, platform-tools, build-tools, or the Gradle build.
 RUN wget --quiet -O sdk-tools.zip \
     "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip" && \
     mkdir -p "$ANDROID_HOME/cmdline-tools" && \
@@ -56,7 +64,8 @@ RUN wget --quiet -O sdk-tools.zip \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;36.1.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" && \
-    echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
+    echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses && \
+    rm -rf "$ANDROID_HOME/cmdline-tools/latest/lib/external"
 
 
 FROM base AS jenv-base
