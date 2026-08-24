@@ -221,6 +221,21 @@
                 mainElement.removeAttribute("role");
               }
 
+              // Docsify marks the sidebar as presentational (role="none") while
+              // still making it focusable (tabindex="-1") for its own focus
+              // management. That combination is invalid, so drop the role and
+              // let the <aside> keep its implicit landmark semantics.
+              const sidebarElement = document.querySelector(
+                '#__sidebar[role="none"], #__sidebar[role="presentation"]'
+              );
+              if (sidebarElement) {
+                sidebarElement.removeAttribute("role");
+                sidebarElement.setAttribute(
+                  "aria-label",
+                  "Documentation navigation"
+                );
+              }
+
               const sidebarToggleBtn =
                 document.querySelector(".sidebar-toggle");
               if (sidebarToggleBtn) {
