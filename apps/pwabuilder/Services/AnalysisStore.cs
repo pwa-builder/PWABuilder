@@ -128,7 +128,9 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
             return analysis;
         }
 
-        logger.LogWarning("The manifest at {manifestUrl} for analysis {id} contains base64-encoded images. The manifest contents won't be stored in Cosmos DB.", analysis.WebManifest.Url, analysis.Id);
+        // Strip newlines from the manifest URL to prevent log forging.
+        var sanitizedManifestUrl = analysis.WebManifest.Url.ToString().Replace("\r", string.Empty).Replace("\n", string.Empty);
+        logger.LogWarning("The manifest at {manifestUrl} for analysis {id} contains base64-encoded images. The manifest contents won't be stored in Cosmos DB.", sanitizedManifestUrl, analysis.Id);
 
         // Copy the analysis so that we don't modify the in-memory analysis that's still being processed.
         // If new members are added to Analysis, they should be copied here as well.
