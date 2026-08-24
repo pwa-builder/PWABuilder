@@ -207,7 +207,7 @@ public class ManifestDetector
 
         if (HasBase64EncodedImages(manifest))
         {
-            logger.LogWarning("Manifest at {manifestUrl} contains inline base64-encoded images. Images in a manifest must be external URLs.", manifestUrl);
+            logger.LogWarning("Detected inline base64-encoded images in a web manifest for host {manifestHost}. Images in a manifest must be external URLs.", manifestUrl.Host);
             return null;
         }
 
