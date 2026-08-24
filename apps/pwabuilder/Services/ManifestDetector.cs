@@ -205,12 +205,39 @@ public class ManifestDetector
             return null;
         }
 
+        if (HasBase64EncodedImages(manifest))
+        {
+            logger.LogWarning("Manifest at {manifestUrl} contains inline base64-encoded images. Images in a manifest must be external URLs.", manifestUrl);
+            return null;
+        }
+
         return new ManifestDetection
         {
             Url = manifestUrl,
             Manifest = manifest,
             ManifestRaw = manifestJson
         };
+    }
+
+    private static bool HasBase64EncodedImages(JsonElement manifest)
+    {
+        return manifest.ValueKind switch
+        {
+            JsonValueKind.Object => manifest.EnumerateObject().Any(property =>
+                (property.NameEquals("src")
+                 && property.Value.ValueKind == JsonValueKind.String
+                 && IsBase64EncodedImage(property.Value.GetString()))
+                || HasBase64EncodedImages(property.Value)),
+            JsonValueKind.Array => manifest.EnumerateArray().Any(HasBase64EncodedImages),
+            _ => false
+        };
+    }
+
+    private static bool IsBase64EncodedImage(string? value)
+    {
+        return !string.IsNullOrWhiteSpace(value)
+            && value.StartsWith("data:image/", StringComparison.OrdinalIgnoreCase)
+            && value.Contains(";base64,", StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task<string?> TryGetHtmlPage(Uri appUrl, ILogger logger, CancellationToken cancelToken)
