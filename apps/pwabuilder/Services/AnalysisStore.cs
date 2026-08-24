@@ -58,6 +58,7 @@ public sealed class InMemoryAnalysisStore : IAnalysisStore
 public sealed class CosmosAnalysisStore : IAnalysisStore
 {
     private static readonly int DefaultExpirationInSeconds = (int)TimeSpan.FromDays(14).TotalSeconds;
+    private static readonly string Base64ImagesManifestMessage = "The web manifest contains base64-encoded images, making it too large to store. The manifest contents were omitted from this analysis. Use links to external image files in your manifest rather than base64-encoded images.";
 
     private readonly ILogger<CosmosAnalysisStore> logger;
     private readonly Task<Container> containerTask;
@@ -102,7 +103,7 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
             var container = await containerTask;
             analysis.LastModifiedAt = DateTimeOffset.UtcNow;
 
-            var document = AnalysisCosmosDocument.Create(analysis, expiration.HasValue ? (int)expiration.Value.TotalSeconds : DefaultExpirationInSeconds);
+            var document = AnalysisCosmosDocument.Create(CreateStorableAnalysis(analysis), expiration.HasValue ? (int)expiration.Value.TotalSeconds : DefaultExpirationInSeconds);
             await container.UpsertItemAsync(document, new PartitionKey(document.Id), cancellationToken: cancellationToken);
             logger.LogInformation("Saved analysis {id} to Cosmos DB.", analysis.Id);
         }
@@ -111,6 +112,42 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
             logger.LogError(ex, "Error saving analysis {id} to Cosmos DB.", analysis.Id);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Creates the analysis to store in Cosmos. Manifests containing base64-encoded images can be many megabytes in size,
+    /// exceeding Cosmos DB's maximum document size and causing the analysis to fail with RequestEntityTooLarge (413).
+    /// For such manifests, we store everything about the analysis except the manifest contents.
+    /// </summary>
+    /// <param name="analysis">The analysis to store.</param>
+    /// <returns>The original analysis, or a copy without the manifest contents if the manifest contains base64-encoded images.</returns>
+    private Analysis CreateStorableAnalysis(Analysis analysis)
+    {
+        if (analysis.WebManifest?.ContainsBase64EncodedImages() != true)
+        {
+            return analysis;
+        }
+
+        logger.LogWarning("The manifest at {manifestUrl} for analysis {id} contains base64-encoded images. The manifest contents won't be stored in Cosmos DB.", analysis.WebManifest.Url, analysis.Id);
+
+        // Copy the analysis so that we don't modify the in-memory analysis that's still being processed.
+        // If new members are added to Analysis, they should be copied here as well.
+        return new Analysis
+        {
+            Id = analysis.Id,
+            Url = analysis.Url,
+            CreatedAt = analysis.CreatedAt,
+            LastModifiedAt = analysis.LastModifiedAt,
+            Duration = analysis.Duration,
+            Status = analysis.Status,
+            Error = analysis.Error,
+            WebManifest = analysis.WebManifest.WithoutManifestContents(),
+            ServiceWorker = analysis.ServiceWorker,
+            LighthouseReport = analysis.LighthouseReport,
+            Logs = [.. analysis.Logs, Base64ImagesManifestMessage],
+            AppStorePackages = [.. analysis.AppStorePackages],
+            Capabilities = [.. analysis.Capabilities]
+        };
     }
 
     /// <summary>
