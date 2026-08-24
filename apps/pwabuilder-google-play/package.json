@@ -70,6 +70,7 @@
         "async": ">=3.2.2",
         "file-type": "21.3.4",
         "minimatch": ">=3.0.2",
-        "tar": ">=7.5.20"
+        "tar": ">=7.5.20",
+        "@opentelemetry/propagator-jaeger": ">=2.9.0"
     }
 }
