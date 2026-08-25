@@ -72,7 +72,7 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
     private const int MaxTextLength = 1_000;
 
     private const string TruncationSuffix = "… (truncated because it was too large to store)";
-    private static readonly string Base64ImagesManifestMessage = "The web manifest contains base64-encoded images, making it too large to store. The manifest contents were omitted from this analysis. Use links to external image files in your manifest rather than base64-encoded images.";
+    private static readonly string Base64ImagesManifestMessage = "The web manifest contains base64-encoded images, making it too large to store. Those images were replaced with \"" + ManifestDetection.OmittedDataUri + "\" in this analysis. Use links to external image files in your manifest rather than base64-encoded images.";
     private static readonly string LargeManifestMessage = "The web manifest is too large to store, so its contents were omitted from this analysis.";
     private static readonly JsonSerializerOptions CosmosJsonSerializerOptions = new()
     {
@@ -153,11 +153,12 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
         // Copy the analysis so that we don't modify the in-memory analysis that's still being processed.
         var storable = CloneAnalysis(analysis);
 
-        // Drop the manifest contents. Manifests with base64-encoded images can be several megabytes on their own.
-        if (storable.WebManifest is not null)
+        // Replace the manifest's base64-encoded images with a placeholder, keeping the rest of the manifest intact.
+        // Manifests with base64-encoded images can be several megabytes on their own.
+        if (storable.WebManifest is not null && hasBase64Images)
         {
-            storable.WebManifest = storable.WebManifest.WithoutManifestContents();
-            storable.Logs.Add(hasBase64Images ? Base64ImagesManifestMessage : LargeManifestMessage);
+            storable.WebManifest = storable.WebManifest.WithoutBase64EncodedImages();
+            storable.Logs.Add(Base64ImagesManifestMessage);
         }
 
         // Data URIs from the manifest are echoed back inside capability error messages, e.g. "Fetching image data:image/png;base64,... failed".
@@ -175,6 +176,13 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
         if (storable.ServiceWorker is not null && GetJsonSizeInBytes(storable) > MaxAnalysisSizeInBytes)
         {
             storable.ServiceWorker = new ServiceWorkerDetection { Url = storable.ServiceWorker.Url, Raw = string.Empty };
+        }
+
+        // Still too large? Drop the manifest contents entirely.
+        if (storable.WebManifest is not null && GetJsonSizeInBytes(storable) > MaxAnalysisSizeInBytes)
+        {
+            storable.WebManifest = storable.WebManifest.WithoutManifestContents();
+            storable.Logs.Add(LargeManifestMessage);
         }
 
         // Last resort: drop the Lighthouse report, which contains its own copy of the raw manifest.
