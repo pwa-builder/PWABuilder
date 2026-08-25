@@ -189,6 +189,18 @@ public class ManifestDetector
             logger.LogWarning("Detected inline base64-encoded images in a web manifest for host {manifestHost}. Images in a manifest must be external URLs.", manifestUrl.Host);
         }
 
+        // A manifest can be served from an inline data: URI (for example, a base64-encoded manifest injected into the page at
+        // runtime). Such URLs can be many megabytes, which bloats the stored analysis and causes Cosmos to reject the document
+        // with a 413. We can neither store nor meaningfully display a multi-megabyte URL, so replace it with a compact placeholder
+        // and treat it like the base64 image case: flag it so analysis surfaces the error and halts instead of persisting the value.
+        var storedManifestUrl = manifestUrl;
+        if (string.Equals(manifestUrl.Scheme, "data", StringComparison.OrdinalIgnoreCase))
+        {
+            logger.LogWarning("A web manifest was served from an inline data: URI. Replacing the manifest URL with a placeholder to avoid storing megabytes of inline base64 data.");
+            storedManifestUrl = OmittedManifestUrl;
+            hasBase64EncodedImages = true;
+        }
+
         // We can't have more than 2.5m characters in the manifest (roughly 10MB)
         // This is to prevent very large manifests that encode the entire images inside the manifest.
         if (sanitizedManifestJson.Length > 2_500_000)
@@ -218,7 +230,7 @@ public class ManifestDetector
 
         return new ManifestDetection
         {
-            Url = manifestUrl,
+            Url = storedManifestUrl,
             Manifest = manifest,
             ManifestRaw = sanitizedManifestJson,
             HasBase64EncodedImages = hasBase64EncodedImages
@@ -253,6 +265,12 @@ public class ManifestDetector
     /// The placeholder value that replaces inline base64-encoded image data URLs stripped from a manifest.
     /// </summary>
     private const string Base64ImagePlaceholder = "data:[omitted-by-pwabuilder]";
+
+    /// <summary>
+    /// The placeholder manifest URL stored when the real manifest was served from an oversized inline <c>data:</c> URI.
+    /// Storing the original multi-megabyte data URI would bloat the analysis document and cause Cosmos to reject it (413).
+    /// </summary>
+    private static readonly Uri OmittedManifestUrl = new(Base64ImagePlaceholder);
 
     /// <summary>
     /// Matches inline base64-encoded image data URLs such as <c>data:image/png;base64,AAAA...</c>.
