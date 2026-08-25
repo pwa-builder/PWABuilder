@@ -2,6 +2,7 @@ using PuppeteerSharp;
 using PWABuilder.Common;
 using PWABuilder.Models;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace PWABuilder.Services;
 
@@ -57,29 +58,29 @@ public class ManifestDetector
         // See if we can get the manifest contents, either from HTTP GET or Puppeteer.
         if (manifestUrl != null)
         {
-            // First try HTTP GET.
-            var manifestContents = (await TryFetchManifest(manifestUrl, logger, cancelToken))?.ManifestRaw;
-            if (string.IsNullOrEmpty(manifestContents))
+            // First try HTTP GET. This already returns a fully-formed detection with any inline base64 images
+            // sanitized and HasBase64EncodedImages set, so return it directly. We must NOT extract its (already
+            // sanitized) raw and re-run detection: doing so would find no base64 and incorrectly clear the flag.
+            var manifestDetection = await TryFetchManifest(manifestUrl, logger, cancelToken);
+            if (manifestDetection != null)
             {
-                logger.LogWarning("Unable to fetch manifest contents for {manifestUrl} via HTTP GET. Falling back to Puppeteer to get manifest contents.", manifestUrl);
-                manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
-                if (manifestContents == null)
-                {
-                    logger.LogError("Unable to get manifest contents for {manifestUrl} via Puppeteer fallback. Manifest contents cannot be fetched.", manifestUrl);
-                    return null;
-                }
+                return manifestDetection;
             }
 
-            if (!string.IsNullOrWhiteSpace(manifestContents))
+            // HTTP GET didn't yield a manifest (e.g. the manifest link is a data: URL or is otherwise not fetchable
+            // outside the browser). Fall back to fetching the raw manifest contents through the open Puppeteer page.
+            logger.LogWarning("Unable to fetch manifest contents for {manifestUrl} via HTTP GET. Falling back to Puppeteer to get manifest contents.", manifestUrl);
+            var manifestContents = await TryGetWebManifestContentsFromPuppeteer(page, manifestUrl, logger, cancelToken);
+            if (string.IsNullOrWhiteSpace(manifestContents))
             {
-                // Update the web string cache with the manifest.
-                await webStringCache.UpdateAsync(manifestUrl, manifestContents, Constants.ManifestMimeTypes);
-                return CreateManifestDetection(manifestUrl, manifestContents, logger);
+                logger.LogError("Unable to get manifest contents for {manifestUrl} via Puppeteer fallback. Manifest contents cannot be fetched.", manifestUrl);
+                return null;
             }
-            else
-            {
-                logger.LogWarning("Manifest URL {manifestUrl} was found via Puppeteer but returned empty content when fetched through Puppeteer.", manifestUrl);
-            }
+
+            // Cache the raw (unsanitized) manifest and run detection exactly once so base64 images are sanitized
+            // and HasBase64EncodedImages is set correctly.
+            await webStringCache.UpdateAsync(manifestUrl, manifestContents, Constants.ManifestMimeTypes);
+            return CreateManifestDetection(manifestUrl, manifestContents, logger);
         }
 
         // See if we can fetch and parse the manifest.
@@ -178,26 +179,36 @@ public class ManifestDetector
 
     private static ManifestDetection? CreateManifestDetection(Uri manifestUrl, string manifestJson, ILogger logger)
     {
+        // Strip any inline base64-encoded image data URLs before doing anything else. These payloads can bloat a manifest to
+        // many megabytes, which both breaks analysis storage (Cosmos rejects oversized documents with a 413) and isn't supported
+        // by app stores, which require images to be external URLs. We surface this to the user as a failed capability check, so
+        // we keep analyzing the (now-lightweight) manifest rather than discarding it. See https://github.com/pwa-builder/PWABuilder/issues/6300.
+        var sanitizedManifestJson = RemoveBase64EncodedImages(manifestJson, out var hasBase64EncodedImages);
+        if (hasBase64EncodedImages)
+        {
+            logger.LogWarning("Detected inline base64-encoded images in a web manifest for host {manifestHost}. Images in a manifest must be external URLs.", manifestUrl.Host);
+        }
+
         // We can't have more than 2.5m characters in the manifest (roughly 10MB)
         // This is to prevent very large manifests that encode the entire images inside the manifest.
-        if (manifestJson.Length > 2_500_000)
+        if (sanitizedManifestJson.Length > 2_500_000)
         {
-            logger.LogWarning("Manifest at {manifestUrl} is too large at {length} characters).", manifestUrl, manifestJson.Length);
+            logger.LogWarning("Manifest at {manifestUrl} is too large at {length} characters).", manifestUrl, sanitizedManifestJson.Length);
             return null;
         }
 
         // Make sure the JSON doesn't start with `<`, which indicates an HTML page (probably a 404). This tends to happen often with apps that
         // have a manifest link but the link is broken. e.g. https://github.com/pwa-builder/PWABuilder/issues/5094
-        if (manifestJson.TrimStart().StartsWith('<'))
+        if (sanitizedManifestJson.TrimStart().StartsWith('<'))
         {
-            logger.LogWarning("Manifest at {manifestUrl} appears to be HTML, not JSON. {manifestJsonResponse}", manifestUrl, manifestJson);
+            logger.LogWarning("Manifest at {manifestUrl} appears to be HTML, not JSON. {manifestJsonResponse}", manifestUrl, sanitizedManifestJson);
             return null;
         }
 
         JsonElement manifest;
         try
         {
-            manifest = JsonSerializer.Deserialize<JsonElement>(manifestJson);
+            manifest = JsonSerializer.Deserialize<JsonElement>(sanitizedManifestJson);
         }
         catch (Exception jsonError)
         {
@@ -205,40 +216,50 @@ public class ManifestDetector
             return null;
         }
 
-        if (HasBase64EncodedImages(manifest))
-        {
-            logger.LogWarning("Detected inline base64-encoded images in a web manifest for host {manifestHost}. Images in a manifest must be external URLs.", manifestUrl.Host);
-            return null;
-        }
-
         return new ManifestDetection
         {
             Url = manifestUrl,
             Manifest = manifest,
-            ManifestRaw = manifestJson
+            ManifestRaw = sanitizedManifestJson,
+            HasBase64EncodedImages = hasBase64EncodedImages
         };
     }
 
-    private static bool HasBase64EncodedImages(JsonElement manifest)
+    /// <summary>
+    /// Removes inline base64-encoded image data URLs (e.g. <c>data:image/png;base64,AAAA...</c>) from the raw manifest JSON,
+    /// replacing each with a short placeholder so the surrounding JSON structure stays intact. This keeps the manifest small
+    /// enough to store in Cosmos DB, which rejects oversized documents.
+    /// </summary>
+    /// <param name="manifestJson">The raw manifest JSON.</param>
+    /// <param name="hadBase64EncodedImages">Set to <c>true</c> if any base64-encoded image data URL was found and removed.</param>
+    /// <returns>The manifest JSON with base64 image data removed.</returns>
+    private static string RemoveBase64EncodedImages(string manifestJson, out bool hadBase64EncodedImages)
     {
-        return manifest.ValueKind switch
+        // The base64 payload lives inside a JSON string value, so it never contains an unescaped double quote. Because the base64
+        // alphabet ([A-Za-z0-9+/=]) excludes the double quote, matching up to the next non-base64 character safely stops at the
+        // closing quote and captures the entire (potentially multi-megabyte) payload without over-matching.
+        var foundBase64Image = false;
+        var sanitized = Base64ImageDataUrlRegex.Replace(manifestJson, _ =>
         {
-            JsonValueKind.Object => manifest.EnumerateObject().Any(property =>
-                (property.NameEquals("src")
-                 && property.Value.ValueKind == JsonValueKind.String
-                 && IsBase64EncodedImage(property.Value.GetString()))
-                || HasBase64EncodedImages(property.Value)),
-            JsonValueKind.Array => manifest.EnumerateArray().Any(HasBase64EncodedImages),
-            _ => false
-        };
+            foundBase64Image = true;
+            return Base64ImagePlaceholder;
+        });
+
+        hadBase64EncodedImages = foundBase64Image;
+        return sanitized;
     }
 
-    private static bool IsBase64EncodedImage(string? value)
-    {
-        return !string.IsNullOrWhiteSpace(value)
-            && value.StartsWith("data:image/", StringComparison.OrdinalIgnoreCase)
-            && value.Contains(";base64,", StringComparison.OrdinalIgnoreCase);
-    }
+    /// <summary>
+    /// The placeholder value that replaces inline base64-encoded image data URLs stripped from a manifest.
+    /// </summary>
+    private const string Base64ImagePlaceholder = "data:[omitted-by-pwabuilder]";
+
+    /// <summary>
+    /// Matches inline base64-encoded image data URLs such as <c>data:image/png;base64,AAAA...</c>.
+    /// </summary>
+    private static readonly Regex Base64ImageDataUrlRegex = new(
+        @"data:image/[a-zA-Z0-9.+-]+;base64,[a-zA-Z0-9+/=_-]*",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private async Task<string?> TryGetHtmlPage(Uri appUrl, ILogger logger, CancellationToken cancelToken)
     {
