@@ -185,7 +185,9 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
             storableSize = GetJsonSizeInBytes(storable);
         }
 
-        logger.LogWarning("Analysis {id} was too large to store in Cosmos DB, so parts of it were omitted. Its size is now {size} bytes. Manifest contains base64-encoded images: {hasBase64Images}.", analysis.Id, storableSize, hasBase64Images);
+        // Strip newlines from the analysis ID, which is derived from a user-provided URL, to prevent log forging.
+        var sanitizedId = analysis.Id.Replace("\r", string.Empty).Replace("\n", string.Empty);
+        logger.LogWarning("Analysis {id} was too large to store in Cosmos DB, so parts of it were omitted. Its size is now {size} bytes. Manifest contains base64-encoded images: {hasBase64Images}.", sanitizedId, storableSize, hasBase64Images);
         return storable;
     }
 
