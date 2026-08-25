@@ -41,6 +41,7 @@ public enum PwaCapabilityId
     IconTypesAreValid,
     IconSizesAreValid,
     IconTypesAreNotIcos,
+    ImagesAreNotBase64Encoded,
     HasSquare192x192PngAnyPurposeIcon,
     HasSquare512x512PngAnyPurposeIcon,
     ScreenshotsAreFetchable,

@@ -25,6 +25,13 @@ public class ManifestDetection
     public string? ManifestRaw { get; set; }
 
     /// <summary>
+    /// Indicates whether the manifest contained inline base64-encoded image data URLs (e.g. <c>data:image/png;base64,...</c>).
+    /// Such images are stripped from <see cref="Manifest"/> and <see cref="ManifestRaw"/> during detection because they bloat the
+    /// manifest (which breaks analysis storage) and aren't supported by app stores, which require external image URLs.
+    /// </summary>
+    public bool HasBase64EncodedImages { get; set; }
+
+    /// <summary>
     /// Gets the URL of a reasonable app icon from the manifest.
     /// </summary>
     public Uri? AppIcon => this.GetAppIcon();
