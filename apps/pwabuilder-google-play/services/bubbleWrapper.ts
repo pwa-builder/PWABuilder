@@ -18,6 +18,7 @@ import { KeyTool, CreateKeyOptions } from '@bubblewrap/core/dist/lib/jdk/KeyTool
 import { WebManifestShortcutJson } from '@bubblewrap/core/dist/lib/types/WebManifest.js';
 import { LocalKeyFileSigningOptions } from '../models/signingOptions.js';
 import { GeneratedAppPackage } from '../models/generatedAppPackage.js';
+import { redactSecretsFromError } from '../utils/redactSecrets.js';
 import { TwaManifestJson } from '@bubblewrap/core/dist/lib/TwaManifest.js';
 import { fetchUtils } from '@bubblewrap/core';
 import { FetchEngine } from '@bubblewrap/core/dist/lib/FetchUtils.js';
@@ -170,7 +171,15 @@ export class BubbleWrapper {
             );
             return outputFile;
         } catch (signingError) {
-            const signingErrorStr = `${signingError}`;
+            // Redact the key alias and passwords before logging or rethrowing, as the underlying
+            // error may include the full signing command - including these secrets - in its
+            // message, cmd, stdout, or stderr properties. See https://github.com/pwa-builder/PWABuilder/issues/6311
+            const redactedSigningError = redactSecretsFromError(signingError, [
+                signingInfo.storePassword,
+                signingInfo.alias,
+                signingInfo.keyPassword,
+            ]);
+            const signingErrorStr = `${redactedSigningError}`;
             if (signingErrorStr.includes("toDerInputStream rejects tag type 75") ||
                 signingErrorStr.includes("DerValue.getBigIntegerInternal, not expected 6")) {
                 this.dispatchProgressEvent("Error signing the app bundle due to what appears to be an invalid signing key file.", "error");
@@ -178,8 +187,8 @@ export class BubbleWrapper {
                 this.dispatchProgressEvent("Error signing the app bundle.", "error");
             }
 
-            console.error("Error signing the app bundle", signingError);
-            throw signingError;
+            console.error("Error signing the app bundle", redactedSigningError);
+            throw redactedSigningError;
         }
     }
 
@@ -260,14 +269,25 @@ export class BubbleWrapper {
 
         const outputFile = `${this.projectDirectory}/app-release-signed.apk`;
         this.dispatchProgressEvent('Signing the app package...');
-        await this.androidSdkTools.apksigner(
-            signingInfo.keyFilePath,
-            `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`, // Escape the store password with double quotes, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
-            `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
-            `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`, // Escape the key password for the same reason.
-            apkFilePath,
-            outputFile
-        );
+        try {
+            await this.androidSdkTools.apksigner(
+                signingInfo.keyFilePath,
+                `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`, // Escape the store password with double quotes, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
+                `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
+                `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`, // Escape the key password for the same reason.
+                apkFilePath,
+                outputFile
+            );
+        } catch (signingError) {
+            // Redact the key alias and passwords before rethrowing, as the underlying error may
+            // include the full apksigner command - including these secrets - in its message,
+            // cmd, stdout, or stderr properties. See https://github.com/pwa-builder/PWABuilder/issues/6311
+            throw redactSecretsFromError(signingError, [
+                signingInfo.storePassword,
+                signingInfo.alias,
+                signingInfo.keyPassword,
+            ]);
+        }
         this.dispatchProgressEvent('App package signed successfully');
         return outputFile;
     }
