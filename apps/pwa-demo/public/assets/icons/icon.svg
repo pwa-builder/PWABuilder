@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Nimbus">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/>
+      <stop offset="0.55" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e6f6ff"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0b3a86" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Full-bleed background so the icon is safe as a maskable icon too. -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Subtle highlight -->
+  <circle cx="150" cy="120" r="150" fill="#ffffff" opacity="0.10"/>
+
+  <!-- Cloud mark, kept within the maskable safe zone (~80% of the canvas). -->
+  <g filter="url(#soft)">
+    <path fill="url(#cloud)" d="M176 328
+      a72 72 0 0 1 6-143
+      a92 92 0 0 1 176 24
+      a64 64 0 0 1 -10 127
+      z"/>
+  </g>
+
+  <!-- Spark / nimbus accent -->
+  <path fill="#facc15" d="M300 300 l16 44 44 16 -44 16 -16 44 -16 -44 -44 -16 44 -16 z" opacity="0.95"/>
+</svg>

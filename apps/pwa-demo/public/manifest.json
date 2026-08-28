@@ -1,0 +1,125 @@
+{
+  "id": "/",
+  "scope": "/",
+  "name": "Nimbus — Offline-First Pocket Studio",
+  "short_name": "Nimbus",
+  "description": "Capture notes, sketch ideas, snap photos, and explore what the modern web platform can do. An offline-first, installable PWA built with PWABuilder.",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "orientation": "any",
+  "theme_color": "#2563eb",
+  "background_color": "#0d1117",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities", "photo"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 420
+  },
+  "handle_links": "preferred",
+  "icons": [
+    {
+      "src": "assets/icons/icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/maskable_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/maskable_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon_48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon_24.png",
+      "sizes": "24x24",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Nimbus on the desktop"
+    },
+    {
+      "src": "assets/screenshots/narrow.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Nimbus on mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Note",
+      "short_name": "Note",
+      "description": "Jump straight into a new note",
+      "url": "/notes?new=1",
+      "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Sketch",
+      "short_name": "Sketch",
+      "description": "Open the drawing canvas",
+      "url": "/sketch",
+      "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Superpowers",
+      "short_name": "Powers",
+      "description": "Explore web platform capabilities",
+      "url": "/powers",
+      "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+    }
+  ],
+  "share_target": {
+    "action": "/notes",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/notes",
+      "accept": {
+        "text/plain": [".txt"],
+        "text/markdown": [".md"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+nimbus",
+      "url": "/notes?protocol=%s"
+    }
+  ]
+}
