@@ -127,7 +127,9 @@ export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest 
             body.signing,
             validationErrors
         );
-        if (signing) {
+        if (signingMode === 'none') {
+            options.signing = null;
+        } else if (signing) {
             validateSigningOptions(signingMode, signing, validationErrors);
             options.signing = normalizeSigningOptions(signing);
         }

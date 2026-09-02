@@ -235,6 +235,20 @@ test('request validation has no service or server dependencies', async () => {
     );
 });
 
+test('request validation discards signing input for unsigned packages', () => {
+    const body = createValidRequestBody();
+    body.signingMode = 'none';
+    Reflect.set(body, 'signing', {
+        keyFilePath: 'client-supplied.keystore',
+        unexpectedOption: 'unexpected-value',
+    });
+
+    const result = validateAndroidOptionsRequest(body);
+
+    assert.deepEqual(result.validationErrors, []);
+    assert.equal(result.options?.signing, null);
+});
+
 test('request validation allowlists new-key signing options and preserves generated passwords', () => {
     const signing = { ...validSigningOptions };
     Reflect.deleteProperty(signing, 'keyPassword');
