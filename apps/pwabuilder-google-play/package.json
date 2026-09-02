@@ -8,6 +8,7 @@
         "start": "node ./server.js",
         "postinstall": "tsc",
         "dev": "cross-env NODE_ENV=development node --inspect=5858 --loader ts-node/esm ./server.ts",
+        "test": "node --loader ts-node/esm --test ./tests/signing-options-validation.test.ts ./tests/safe-key-tool.test.ts",
         "prebuild": "node ./scripts/patch-jimp-file-type.mjs",
         "build": "tsc --noEmitOnError",
         "docker:build": "npm run build && docker build -t cloud-apk .",

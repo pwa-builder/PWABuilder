@@ -15,6 +15,7 @@ import { packageJobQueue } from "../services/packageJobQueue.js";
 import { redisService } from "../services/redisService.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
+import { validateNewKeySigningOptions } from '../utils/signing-options-validation.js';
 
 const router = express.Router();
 
@@ -485,7 +486,6 @@ function validateAndroidOptionsRequest(request: express.Request): AppPackageRequ
 
     // Validate signing option fields
     if (options.signingMode !== 'none' && options.signing) {
-        console.log("options.signing", options.signing);
         // If we don't have a key password or store password, create one now.
         const passToUse = generatePassword(12, false);
 
@@ -510,6 +510,9 @@ function validateAndroidOptionsRequest(request: express.Request): AppPackageRequ
                 'fullName',
                 'organization',
                 'organizationalUnit'
+            );
+            validationErrors.push(
+                ...validateNewKeySigningOptions(options.signing)
             );
         }
 
