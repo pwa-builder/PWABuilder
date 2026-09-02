@@ -7,18 +7,98 @@ import { validateNewKeySigningOptions } from './signing-options-validation.js';
 const malformedOptionsError =
     "Malformed argument. Coudn't find AndroidPackageOptions in body";
 
+const requiredStringFields = [
+    'appVersion',
+    'backgroundColor',
+    'host',
+    'iconUrl',
+    'launcherName',
+    'navigationColor',
+    'startUrl',
+    'themeColor',
+] as const;
+
+const displayValues = [
+    'standalone',
+    'fullscreen',
+    'fullscreen-sticky',
+] as const;
+const fallbackTypeValues = ['customtabs', 'webview'] as const;
+const signingModeValues = ['new', 'none', 'mine'] as const;
+
+type SigningMode = (typeof signingModeValues)[number];
+
 /**
  * Validates the untrusted request body for an Android package operation.
  */
 export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest {
-    const validationErrors: string[] = [];
-    const options = tryParseOptionsFromBody(body);
-    if (!options) {
+    if (!isNonArrayObject(body)) {
         return {
             options: null,
             validationErrors: [malformedOptionsError],
         };
     }
+
+    const validationErrors: string[] = [];
+    const packageId = validateRequiredStringField(
+        body,
+        'packageId',
+        validationErrors
+    );
+    if (packageId === null) {
+        return {
+            options: null,
+            validationErrors,
+        };
+    }
+
+    const options = body as unknown as AndroidPackageOptions;
+
+    for (const field of requiredStringFields) {
+        validateRequiredStringField(body, field, validationErrors);
+    }
+
+    validateRequiredFiniteNumberField(
+        body,
+        'appVersionCode',
+        validationErrors
+    );
+    validateEnumeratedField(
+        body,
+        'display',
+        displayValues,
+        validationErrors
+    );
+    validateEnumeratedField(
+        body,
+        'fallbackType',
+        fallbackTypeValues,
+        validationErrors
+    );
+    const signingMode = validateEnumeratedField(
+        body,
+        'signingMode',
+        signingModeValues,
+        validationErrors
+    );
+    const webManifestUrl = validateRequiredStringField(
+        body,
+        'webManifestUrl',
+        validationErrors
+    );
+    const isMetaQuest = validateOptionalBooleanField(
+        body,
+        'isMetaQuest',
+        validationErrors
+    );
+    const fullScopeUrl =
+        isMetaQuest === true
+            ? validateRequiredStringField(
+                  body,
+                  'fullScopeUrl',
+                  validationErrors
+              )
+            : undefined;
 
     // Coerce enableNotifications to a proper boolean to prevent Gradle build failures.
     // If the client sends undefined/null/empty, Bubblewrap generates invalid Groovy syntax.
@@ -26,39 +106,9 @@ export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest 
         options.enableNotifications = Boolean(options.enableNotifications);
     }
 
-    const requiredFields: Array<keyof AndroidPackageOptions> = [
-        'appVersion',
-        'appVersionCode',
-        'backgroundColor',
-        'display',
-        'fallbackType',
-        'host',
-        'iconUrl',
-        'launcherName',
-        'navigationColor',
-        'packageId',
-        'signingMode',
-        'startUrl',
-        'themeColor',
-        'webManifestUrl',
-    ];
-
-    if (options.isMetaQuest) {
-        requiredFields.push('fullScopeUrl');
-    }
-
-    validationErrors.push(
-        ...requiredFields
-            .filter((field) => !options[field])
-            .map((field) => `${field as string} is required`)
-    );
-
-    if (options.webManifestUrl) {
+    if (webManifestUrl !== null && fullScopeUrl !== null) {
         try {
-            const manifestUrl = new URL(
-                options.webManifestUrl,
-                options.fullScopeUrl
-            );
+            const manifestUrl = new URL(webManifestUrl, fullScopeUrl);
             if (manifestUrl.protocol !== 'https:') {
                 validationErrors.push(
                     'webManifestUrl must be an absolute HTTPS URL'
@@ -71,9 +121,15 @@ export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest 
         }
     }
 
-    const signing = getSigningOptions(options, validationErrors);
-    if (signing) {
-        validateSigningOptions(options.signingMode, signing, validationErrors);
+    if (signingMode !== null) {
+        const signing = getSigningOptions(
+            signingMode,
+            body.signing,
+            validationErrors
+        );
+        if (signing) {
+            validateSigningOptions(signingMode, signing, validationErrors);
+        }
     }
 
     return {
@@ -82,40 +138,32 @@ export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest 
     };
 }
 
-function tryParseOptionsFromBody(body: unknown): AndroidPackageOptions | null {
-    if (!isNonArrayObject(body) || !body.packageId) {
-        return null;
-    }
-
-    return body as AndroidPackageOptions;
-}
-
 function getSigningOptions(
-    options: AndroidPackageOptions,
+    signingMode: SigningMode,
+    signingValue: unknown,
     validationErrors: string[]
 ): SigningOptions | null {
-    if (options.signingMode === 'none') {
+    if (signingMode === 'none') {
         return null;
     }
 
-    const signing: unknown = options.signing;
-    if (signing === undefined) {
+    if (signingValue === undefined) {
         validationErrors.push(
-            `Signing options are required when signing mode = '${options.signingMode}'`
+            `Signing options are required when signing mode = '${signingMode}'`
         );
         return null;
     }
 
-    if (!isNonArrayObject(signing)) {
+    if (!isNonArrayObject(signingValue)) {
         validationErrors.push('Signing options must be an object');
         return null;
     }
 
-    return signing as unknown as SigningOptions;
+    return signingValue as unknown as SigningOptions;
 }
 
 function validateSigningOptions(
-    signingMode: AndroidPackageOptions['signingMode'],
+    signingMode: SigningMode,
     signing: SigningOptions,
     validationErrors: string[]
 ): void {
@@ -133,7 +181,7 @@ function validateSigningOptions(
         }
     }
 
-    validateRequiredStringField(signing, 'alias', validationErrors);
+    validateRequiredSigningStringField(signing, 'alias', validationErrors);
 
     if (signingMode === 'new') {
         validationErrors.push(...validateNewKeySigningOptions(signing));
@@ -185,7 +233,64 @@ function validateExistingKeySigningOptions(
     }
 }
 
-function validateRequiredStringField(
+function validateEnumeratedField<const T extends string>(
+    options: Record<string, unknown>,
+    field: string,
+    supportedValues: readonly T[],
+    validationErrors: string[]
+): T | null {
+    const value = options[field];
+    if (value === undefined || value === '') {
+        validationErrors.push(`${field} is required`);
+        return null;
+    }
+
+    if (!isSupportedValue(value, supportedValues)) {
+        validationErrors.push(`${field} has an unsupported value`);
+        return null;
+    }
+
+    return value;
+}
+
+function validateOptionalBooleanField(
+    options: Record<string, unknown>,
+    field: string,
+    validationErrors: string[]
+): boolean | undefined {
+    const value = options[field];
+    if (value === undefined) {
+        return undefined;
+    }
+
+    if (typeof value !== 'boolean') {
+        validationErrors.push(`${field} must be a boolean`);
+        return undefined;
+    }
+
+    return value;
+}
+
+function validateRequiredFiniteNumberField(
+    options: Record<string, unknown>,
+    field: string,
+    validationErrors: string[]
+): number | null {
+    const value = options[field];
+    if (value === undefined || value === '') {
+        validationErrors.push(`${field} is required`);
+        return null;
+    }
+
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+        validationErrors.push(`${field} must be a finite number`);
+        return null;
+    }
+
+    return value;
+}
+
+function validateRequiredSigningStringField(
     signing: SigningOptions,
     field: 'alias',
     validationErrors: string[]
@@ -196,6 +301,33 @@ function validateRequiredStringField(
     } else if (typeof value !== 'string') {
         validationErrors.push(`Signing option ${field} must be a string`);
     }
+}
+
+function validateRequiredStringField(
+    options: Record<string, unknown>,
+    field: string,
+    validationErrors: string[]
+): string | null {
+    const value = options[field];
+    if (value === undefined || value === '') {
+        validationErrors.push(`${field} is required`);
+        return null;
+    } else if (typeof value !== 'string') {
+        validationErrors.push(`${field} must be a string`);
+        return null;
+    }
+
+    return value;
+}
+
+function isSupportedValue<T extends string>(
+    value: unknown,
+    supportedValues: readonly T[]
+): value is T {
+    return (
+        typeof value === 'string' &&
+        supportedValues.some((supportedValue) => supportedValue === value)
+    );
 }
 
 function isNonArrayObject(value: unknown): value is Record<string, unknown> {

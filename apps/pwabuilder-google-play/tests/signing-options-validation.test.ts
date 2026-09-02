@@ -57,6 +57,65 @@ const malformedFileValues: readonly unknown[] = [
     false,
 ];
 
+const requiredStringFields = [
+    'appVersion',
+    'backgroundColor',
+    'host',
+    'iconUrl',
+    'launcherName',
+    'navigationColor',
+    'packageId',
+    'startUrl',
+    'themeColor',
+    'webManifestUrl',
+] as const;
+
+const malformedRequiredStringValues: readonly unknown[] = [
+    { untrusted: 'object-value' },
+    ['array-value'],
+    42,
+    false,
+];
+
+const enumeratedFields = [
+    'display',
+    'fallbackType',
+    'signingMode',
+] as const;
+
+const malformedEnumeratedValues: readonly unknown[] = [
+    { untrusted: 'object-value' },
+    ['array-value'],
+    42,
+    false,
+    'unsupported-value',
+];
+
+const malformedVersionCodeValues: readonly unknown[] = [
+    { untrusted: 'object-value' },
+    ['array-value'],
+    '1',
+    false,
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+];
+
+const malformedMetaQuestValues: readonly unknown[] = [
+    { untrusted: 'object-value' },
+    ['array-value'],
+    1,
+    'true',
+    null,
+];
+
+const malformedFullScopeUrlValues: readonly unknown[] = [
+    { untrusted: 'object-value' },
+    ['array-value'],
+    42,
+    false,
+];
+
 const unsupportedCharacters = [
     '"',
     ',',
@@ -131,7 +190,7 @@ function assertRequestValidationError(
 
     assert.deepEqual(errors, expectedErrors);
     const submittedRepresentations = [
-        String(submittedValue),
+        typeof submittedValue === 'string' ? submittedValue : undefined,
         JSON.stringify(submittedValue),
     ].filter((value): value is string => Boolean(value));
     assert.equal(
@@ -214,13 +273,142 @@ for (const malformedBody of [
     ['array-body-value'],
     42,
     'untrusted-body-value',
-    { untrusted: 'object-body-value' },
 ] as const) {
     test(`request validation rejects a malformed body (${JSON.stringify(malformedBody)}) without throwing`, () => {
         assertRequestValidationError(
             malformedBody,
             ["Malformed argument. Coudn't find AndroidPackageOptions in body"],
             malformedBody
+        );
+    });
+}
+
+test('request validation rejects an object body without packageId', () => {
+    const malformedBody = { untrusted: 'object-body-value' };
+    assertRequestValidationError(
+        malformedBody,
+        ['packageId is required'],
+        malformedBody
+    );
+});
+
+for (const field of requiredStringFields) {
+    for (const malformedValue of malformedRequiredStringValues) {
+        test(`request validation rejects malformed ${field} (${JSON.stringify(malformedValue)}) without throwing`, () => {
+            const body = createValidRequestBody();
+            Reflect.set(body, field, malformedValue);
+
+            assertRequestValidationError(
+                body,
+                [`${field} must be a string`],
+                malformedValue
+            );
+        });
+    }
+
+    for (const state of ['missing', 'empty'] as const) {
+        test(`request validation rejects a ${state} ${field}`, () => {
+            const body = createValidRequestBody();
+            if (state === 'missing') {
+                Reflect.deleteProperty(body, field);
+            } else {
+                Reflect.set(body, field, '');
+            }
+
+            assertRequestValidationError(
+                body,
+                [`${field} is required`],
+                state === 'missing' ? undefined : ''
+            );
+        });
+    }
+}
+
+for (const malformedValue of malformedVersionCodeValues) {
+    test(`request validation rejects malformed appVersionCode (${JSON.stringify(malformedValue)}) without throwing`, () => {
+        const body = createValidRequestBody();
+        Reflect.set(body, 'appVersionCode', malformedValue);
+
+        assertRequestValidationError(
+            body,
+            ['appVersionCode must be a finite number'],
+            malformedValue
+        );
+    });
+}
+
+for (const field of enumeratedFields) {
+    for (const malformedValue of malformedEnumeratedValues) {
+        test(`request validation rejects unsupported ${field} (${JSON.stringify(malformedValue)}) without throwing`, () => {
+            const body = createValidRequestBody();
+            Reflect.set(body, field, malformedValue);
+            if (field === 'signingMode') {
+                Reflect.deleteProperty(body, 'signing');
+            }
+
+            assertRequestValidationError(
+                body,
+                [`${field} has an unsupported value`],
+                malformedValue
+            );
+        });
+    }
+}
+
+test('request validation rejects a signingMode object with no toString without throwing', () => {
+    const malformedValue = { toString: null };
+    const body = createValidRequestBody();
+    Reflect.set(body, 'signingMode', malformedValue);
+    Reflect.deleteProperty(body, 'signing');
+
+    assertRequestValidationError(
+        body,
+        ['signingMode has an unsupported value'],
+        malformedValue
+    );
+});
+
+for (const malformedValue of malformedMetaQuestValues) {
+    test(`request validation rejects malformed isMetaQuest (${JSON.stringify(malformedValue)}) without throwing`, () => {
+        const body = createValidRequestBody();
+        Reflect.set(body, 'isMetaQuest', malformedValue);
+
+        assertRequestValidationError(
+            body,
+            ['isMetaQuest must be a boolean'],
+            malformedValue
+        );
+    });
+}
+
+for (const malformedValue of malformedFullScopeUrlValues) {
+    test(`request validation rejects malformed fullScopeUrl (${JSON.stringify(malformedValue)}) without throwing`, () => {
+        const body = createValidRequestBody();
+        Reflect.set(body, 'isMetaQuest', true);
+        Reflect.set(body, 'fullScopeUrl', malformedValue);
+
+        assertRequestValidationError(
+            body,
+            ['fullScopeUrl must be a string'],
+            malformedValue
+        );
+    });
+}
+
+for (const state of ['missing', 'empty'] as const) {
+    test(`request validation rejects a ${state} fullScopeUrl for Meta Quest`, () => {
+        const body = createValidRequestBody();
+        Reflect.set(body, 'isMetaQuest', true);
+        if (state === 'missing') {
+            Reflect.deleteProperty(body, 'fullScopeUrl');
+        } else {
+            Reflect.set(body, 'fullScopeUrl', '');
+        }
+
+        assertRequestValidationError(
+            body,
+            ['fullScopeUrl is required'],
+            state === 'missing' ? undefined : ''
         );
     });
 }
