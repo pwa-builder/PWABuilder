@@ -17,8 +17,15 @@ export function validateNewKeySigningOptions(
     const validationErrors: string[] = [];
 
     for (const field of subjectFields) {
-        const value = signing[field];
-        if (!value) {
+        const value: unknown = signing[field];
+        if (value === null || value === undefined || value === '') {
+            continue;
+        }
+
+        if (typeof value !== 'string') {
+            validationErrors.push(
+                `Signing option ${field} contains unsupported characters`
+            );
             continue;
         }
 
@@ -36,10 +43,14 @@ export function validateNewKeySigningOptions(
         }
     }
 
+    const countryCode: unknown = signing.countryCode;
     if (
-        signing.countryCode &&
-        (signing.countryCode.length !== 2 ||
-            !/^[A-Za-z]{2}$/u.test(signing.countryCode))
+        countryCode !== null &&
+        countryCode !== undefined &&
+        countryCode !== '' &&
+        (typeof countryCode !== 'string' ||
+            countryCode.length !== 2 ||
+            !/^[A-Za-z]{2}$/u.test(countryCode))
     ) {
         validationErrors.push(
             'Signing option countryCode must contain exactly two letters'

@@ -382,7 +382,9 @@ async function fetchResource(request: express.Request, response: express.Respons
     }
 }
 
-function validateAndroidOptionsRequest(request: express.Request): AppPackageRequest {
+export function validateAndroidOptionsRequest(
+    request: Pick<express.Request, 'body'>
+): AppPackageRequest {
     const validationErrors: string[] = [];
 
     // If we were unable to parse AndroidPackageOptions, there's no more validation to do.
@@ -530,7 +532,7 @@ function validateAndroidOptionsRequest(request: express.Request): AppPackageRequ
 }
 
 function tryParseOptionsFromRequest(
-    request: express.Request
+    request: Pick<express.Request, 'body'>
 ): AndroidPackageOptions | null {
     // See if the body is our options request.
     if (request.body['packageId']) {
