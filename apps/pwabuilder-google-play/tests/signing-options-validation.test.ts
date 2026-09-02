@@ -23,6 +23,16 @@ const subjectFields = [
     'organizationalUnit',
 ] as const;
 const signingSubjectFields = [...subjectFields, 'countryCode'] as const;
+const allowedSigningFields = [
+    'file',
+    'alias',
+    'fullName',
+    'organization',
+    'organizationalUnit',
+    'countryCode',
+    'keyPassword',
+    'storePassword',
+] as const;
 
 const malformedSubjectValues: readonly unknown[] = [
     { untrusted: 'object-value' },
@@ -223,6 +233,69 @@ test('request validation has no service or server dependencies', async () => {
             './signing-options-validation.js',
         ])
     );
+});
+
+test('request validation allowlists new-key signing options and preserves generated passwords', () => {
+    const signing = { ...validSigningOptions };
+    Reflect.deleteProperty(signing, 'keyPassword');
+    Reflect.deleteProperty(signing, 'storePassword');
+    Reflect.set(signing, 'keyFilePath', 'client-supplied.keystore');
+    Reflect.set(signing, 'unexpectedOption', 'unexpected-value');
+
+    const result = validateAndroidOptionsRequest(
+        createValidRequestBody(signing)
+    );
+    const normalizedSigning = result.options?.signing;
+
+    assert.deepEqual(result.validationErrors, []);
+    assert.ok(normalizedSigning);
+    assert.deepEqual(Object.keys(normalizedSigning), allowedSigningFields);
+    assert.equal(Reflect.has(normalizedSigning, 'keyFilePath'), false);
+    assert.equal(Reflect.has(normalizedSigning, 'unexpectedOption'), false);
+    assert.equal(normalizedSigning.keyPassword.length, 12);
+    assert.equal(normalizedSigning.storePassword.length, 12);
+    assert.equal(normalizedSigning.keyPassword, signing.keyPassword);
+    assert.equal(normalizedSigning.storePassword, signing.storePassword);
+    assert.deepEqual(normalizedSigning, {
+        file: validSigningOptions.file,
+        alias: validSigningOptions.alias,
+        fullName: validSigningOptions.fullName,
+        organization: validSigningOptions.organization,
+        organizationalUnit: validSigningOptions.organizationalUnit,
+        countryCode: validSigningOptions.countryCode,
+        keyPassword: signing.keyPassword,
+        storePassword: signing.storePassword,
+    });
+});
+
+test('request validation allowlists uploaded-key signing options', () => {
+    const signing: SigningOptions = {
+        ...validSigningOptions,
+        file: 'data:application/octet-stream;base64,AA==',
+    };
+    Reflect.set(signing, 'keyFilePath', 'client-supplied.keystore');
+    Reflect.set(signing, 'unexpectedOption', 'unexpected-value');
+    const body = createValidRequestBody(signing);
+    body.signingMode = 'mine';
+
+    const result = validateAndroidOptionsRequest(body);
+    const normalizedSigning = result.options?.signing;
+
+    assert.deepEqual(result.validationErrors, []);
+    assert.ok(normalizedSigning);
+    assert.deepEqual(Object.keys(normalizedSigning), allowedSigningFields);
+    assert.equal(Reflect.has(normalizedSigning, 'keyFilePath'), false);
+    assert.equal(Reflect.has(normalizedSigning, 'unexpectedOption'), false);
+    assert.deepEqual(normalizedSigning, {
+        file: 'data:application/octet-stream;base64,AA==',
+        alias: validSigningOptions.alias,
+        fullName: validSigningOptions.fullName,
+        organization: validSigningOptions.organization,
+        organizationalUnit: validSigningOptions.organizationalUnit,
+        countryCode: validSigningOptions.countryCode,
+        keyPassword: validSigningOptions.keyPassword,
+        storePassword: validSigningOptions.storePassword,
+    });
 });
 
 for (const field of signingSubjectFields) {

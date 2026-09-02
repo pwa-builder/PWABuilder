@@ -129,12 +129,48 @@ export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest 
         );
         if (signing) {
             validateSigningOptions(signingMode, signing, validationErrors);
+            options.signing = normalizeSigningOptions(signing);
         }
     }
 
     return {
         options,
         validationErrors,
+    };
+}
+
+function normalizeSigningOptions(signing: SigningOptions): SigningOptions {
+    return {
+        file:
+            typeof signing.file === 'string' || signing.file === null
+                ? signing.file
+                : null,
+        alias: typeof signing.alias === 'string' ? signing.alias : '',
+        fullName:
+            typeof signing.fullName === 'string' || signing.fullName === null
+                ? signing.fullName
+                : null,
+        organization:
+            typeof signing.organization === 'string' ||
+            signing.organization === null
+                ? signing.organization
+                : null,
+        organizationalUnit:
+            typeof signing.organizationalUnit === 'string' ||
+            signing.organizationalUnit === null
+                ? signing.organizationalUnit
+                : null,
+        countryCode:
+            typeof signing.countryCode === 'string' ||
+            signing.countryCode === null
+                ? signing.countryCode
+                : null,
+        keyPassword:
+            typeof signing.keyPassword === 'string' ? signing.keyPassword : '',
+        storePassword:
+            typeof signing.storePassword === 'string'
+                ? signing.storePassword
+                : '',
     };
 }
 

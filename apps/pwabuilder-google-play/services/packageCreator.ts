@@ -240,8 +240,8 @@ export class PackageCreator {
         }
 
         return {
-            keyFilePath: keyFilePath,
             ...apkSettings.signing,
+            keyFilePath,
         };
     }
 
