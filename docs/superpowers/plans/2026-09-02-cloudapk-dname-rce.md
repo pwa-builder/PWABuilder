@@ -18,7 +18,7 @@
 - Create `apps/pwabuilder-google-play/tests/safe-key-tool.test.ts`: argument-boundary, shell-option, overwrite, parsing, and redaction tests.
 - Modify `apps/pwabuilder-google-play/routes/project.ts`: invoke the validator for `signingMode: "new"`.
 - Modify `apps/pwabuilder-google-play/services/bubbleWrapper.ts`: use `SafeKeyTool` instead of Bubblewrap's `KeyTool`.
-- Modify `apps/pwabuilder-google-play/package.json`: add a deterministic test command using the existing `ts-node` loader.
+- Modify `apps/pwabuilder-google-play/package.json`: add a deterministic test command that builds TypeScript before running the emitted JavaScript tests.
 - Modify `docs/superpowers/specs/2026-09-02-cloudapk-dname-rce-design.md`: retain the clarified adapter-level error-redaction requirement.
 
 ### Task 1: Server-side certificate-subject validation
@@ -34,7 +34,7 @@
 Add this script to `apps/pwabuilder-google-play/package.json`:
 
 ```json
-"test": "node --loader ts-node/esm --test ./tests/signing-options-validation.test.ts ./tests/safe-key-tool.test.ts"
+"test": "npm run build && node --test ./tests/signing-options-validation.test.js ./tests/safe-key-tool.test.js"
 ```
 
 Until Task 2 creates the second test, run the first file explicitly rather than
@@ -136,10 +136,12 @@ Run:
 
 ```powershell
 Set-Location apps\pwabuilder-google-play
-node --loader ts-node/esm --test .\tests\signing-options-validation.test.ts
+npm run build
+node --test .\tests\signing-options-validation.test.js
 ```
 
-Expected: FAIL because `utils/signing-options-validation.ts` does not exist.
+Expected: FAIL—the build and subsequent emitted `.js` test cannot succeed because
+`utils/signing-options-validation.ts` does not exist.
 
 - [ ] **Step 4: Implement the validator**
 
@@ -216,11 +218,12 @@ Run:
 
 ```powershell
 Set-Location apps\pwabuilder-google-play
-node --loader ts-node/esm --test .\tests\signing-options-validation.test.ts
 npm run build
+node --test .\tests\signing-options-validation.test.js
 ```
 
-Expected: all four tests PASS and `tsc --noEmitOnError` exits successfully.
+Expected: `tsc --noEmitOnError` exits successfully, then all four emitted `.js`
+tests PASS.
 
 - [ ] **Step 7: Commit the validation layer**
 
@@ -368,10 +371,12 @@ Run:
 
 ```powershell
 Set-Location apps\pwabuilder-google-play
-node --loader ts-node/esm --test .\tests\safe-key-tool.test.ts
+npm run build
+node --test .\tests\safe-key-tool.test.js
 ```
 
-Expected: FAIL because `services/safe-key-tool.ts` does not exist.
+Expected: FAIL—the build and subsequent emitted `.js` test cannot succeed because
+`services/safe-key-tool.ts` does not exist.
 
 - [ ] **Step 3: Implement the adapter types and executor**
 
@@ -544,12 +549,13 @@ Run:
 
 ```powershell
 Set-Location apps\pwabuilder-google-play
-node --loader ts-node/esm --test .\tests\safe-key-tool.test.ts
+npm run build
+node --test .\tests\safe-key-tool.test.js
 npm test
 ```
 
-Expected: all adapter tests PASS, followed by all validator and adapter tests
-passing together.
+Expected: the build succeeds, the emitted `.js` adapter tests PASS, and
+`npm test` rebuilds before both emitted `.js` suites PASS together.
 
 - [ ] **Step 6: Commit the shell-free adapter**
 
@@ -610,10 +616,10 @@ Run:
 ```powershell
 Set-Location apps\pwabuilder-google-play
 npm test
-npm run build
 ```
 
-Expected: all tests PASS and TypeScript compilation succeeds.
+Expected: `npm test` completes the TypeScript build before both emitted `.js`
+test suites PASS.
 
 - [ ] **Step 5: Commit the integration**
 
@@ -645,10 +651,10 @@ Run:
 ```powershell
 Set-Location apps\pwabuilder-google-play
 npm test
-npm run build
 ```
 
-Expected: all tests PASS and TypeScript compilation succeeds.
+Expected: `npm test` completes the TypeScript build before both emitted `.js`
+test suites PASS.
 
 - [ ] **Step 3: Inspect the final diff for secret or payload leakage**
 
