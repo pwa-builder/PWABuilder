@@ -1,5 +1,3 @@
-import { SigningOptions } from '../models/signingOptions.js';
-
 const maxSubjectLength = 128;
 const supportedSubjectCharacters = /^[\p{L}\p{N} .'_()-]+$/u;
 const subjectFields = [
@@ -12,12 +10,12 @@ const subjectFields = [
  * Validates user-provided certificate subject fields for a new signing key.
  */
 export function validateNewKeySigningOptions(
-    signing: SigningOptions
+    signing: object
 ): string[] {
     const validationErrors: string[] = [];
 
     for (const field of subjectFields) {
-        const value: unknown = signing[field];
+        const value: unknown = Reflect.get(signing, field);
         if (value === null || value === undefined || value === '') {
             continue;
         }
@@ -43,7 +41,7 @@ export function validateNewKeySigningOptions(
         }
     }
 
-    const countryCode: unknown = signing.countryCode;
+    const countryCode: unknown = Reflect.get(signing, 'countryCode');
     if (
         countryCode !== null &&
         countryCode !== undefined &&

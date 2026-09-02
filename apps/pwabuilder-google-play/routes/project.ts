@@ -1,11 +1,7 @@
 import express from 'express';
 import escape from 'escape-html';
-import { AndroidPackageOptions as AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import tmp from 'tmp';
 import net from 'net';
-import { SigningOptions, } from '../models/signingOptions.js';
-import { AppPackageRequest } from '../models/appPackageRequest.js';
-import generatePassword from 'password-generator';
 import fetch, { Response } from 'node-fetch';
 import { AnalyticsInfo, trackEvent } from '../services/analytics.js';
 import { PackageCreator } from '../services/packageCreator.js';
@@ -15,7 +11,7 @@ import { packageJobQueue } from "../services/packageJobQueue.js";
 import { redisService } from "../services/redisService.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
-import { validateNewKeySigningOptions } from '../utils/signing-options-validation.js';
+import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
 
 const router = express.Router();
 
@@ -109,7 +105,7 @@ router.get('/fetch', async (request, response) => await fetchResource(request, r
 
 async function generatePackageZip(request: express.Request, response: express.Response): Promise<void> {
     console.info("Received app package request");
-    const apkRequest = validateAndroidOptionsRequest(request);
+    const apkRequest = validateAndroidOptionsRequest(request.body);
     const platformId = request.headers['platform-identifier'];
     const platformIdVersion = request.headers['platform-identifier-version'];
     const correlationId = request.headers['correlation-id'];
@@ -216,7 +212,7 @@ async function getPackageJob(request: express.Request, response: express.Respons
 async function enqueuePackage(request: express.Request, response: express.Response): Promise<void> {
     // Validate the request
     console.info("Received app package request");
-    const apkRequest = validateAndroidOptionsRequest(request);
+    const apkRequest = validateAndroidOptionsRequest(request.body);
     const platformId = request.headers['platform-identifier'];
     const platformIdVersion = request.headers['platform-identifier-version'];
     const correlationId = request.headers['correlation-id'];
@@ -380,166 +376,6 @@ async function fetchResource(request: express.Request, response: express.Respons
                 `Unable to fetch result from ${escape(url)} using type ${escape(type)}. Error: ${escape(String(getResultError))}`
             );
     }
-}
-
-export function validateAndroidOptionsRequest(
-    request: Pick<express.Request, 'body'>
-): AppPackageRequest {
-    const validationErrors: string[] = [];
-
-    // If we were unable to parse AndroidPackageOptions, there's no more validation to do.
-    let options: AndroidPackageOptions | null =
-        tryParseOptionsFromRequest(request);
-    if (!options) {
-        validationErrors.push(
-            "Malformed argument. Coudn't find AndroidPackageOptions in body"
-        );
-        return {
-            options: null,
-            validationErrors,
-        };
-    }
-
-    // Coerce enableNotifications to a proper boolean to prevent Gradle build failures.
-    // If the client sends undefined/null/empty, Bubblewrap generates invalid Groovy syntax
-    // (e.g. "enableNotifications: ," instead of "enableNotifications: false,").
-    if (typeof options.enableNotifications !== 'boolean') {
-        options.enableNotifications = !!options.enableNotifications;
-    }
-
-    // Ensure we have required fields.
-    const requiredFields: Array<keyof AndroidPackageOptions> = [
-        'appVersion',
-        'appVersionCode',
-        'backgroundColor',
-        'display',
-        'fallbackType',
-        'host',
-        'iconUrl',
-        'launcherName',
-        'navigationColor',
-        'packageId',
-        'signingMode',
-        'startUrl',
-        'themeColor',
-        'webManifestUrl',
-    ];
-
-    // The "fullScopeUrl" field is required only for Meta Quest devices.
-    if (options.isMetaQuest) {
-        requiredFields.push('fullScopeUrl');
-    }
-
-    validationErrors.push(
-        ...requiredFields.filter((f) => !options![f]).map((f) => `${f as string} is required`)
-    );
-
-    // Ensure webManifestUrl is an absolute HTTPS URL.
-    if (options.webManifestUrl) {
-        try {
-            const manifestUrl = new URL(options.webManifestUrl, options.fullScopeUrl);
-            if (manifestUrl.protocol !== 'https:') {
-                validationErrors.push('webManifestUrl must be an absolute HTTPS URL');
-            }
-        } catch (manifestUrlError) {
-            validationErrors.push('webManifestUrl must be an absolute HTTPS URL');
-        }
-    }
-
-    // We must have signing options if the signing is enabled.
-    if (options.signingMode !== 'none' && !options.signing) {
-        validationErrors.push(
-            `Signing options are required when signing mode = '${options.signingMode}'`
-        );
-    }
-
-    // If the user is supplying their own signing key, we have some additional requirements:
-    // - A signing key file must be specified
-    // - The signing key file must be a base64 encoded string.
-    // - A store password must be supplied
-    // - A key password must be supplied
-    if (options.signingMode === 'mine' && options.signing) {
-        // We must have a keystore file uploaded if the signing mode is use existing.
-        if (!options.signing.file) {
-            validationErrors.push(
-                "You must supply a signing key file when signing mode = 'mine'"
-            );
-        }
-
-        // Signing file must be a base 64 encoded string.
-        if (options.signing.file && !options.signing.file.startsWith('data:')) {
-            validationErrors.push(
-                'Signing file must be a base64 encoded string containing the Android keystore file'
-            );
-        }
-
-        if (!options.signing.storePassword) {
-            validationErrors.push(
-                "You must supply a store password when signing mode = 'mine'"
-            );
-        }
-
-        if (!options.signing.keyPassword) {
-            validationErrors.push(
-                "You must supply a key password when signing mode = 'mine'"
-            );
-        }
-    }
-
-    // Validate signing option fields
-    if (options.signingMode !== 'none' && options.signing) {
-        // If we don't have a key password or store password, create one now.
-        const passToUse = generatePassword(12, false);
-
-        if (!options.signing.keyPassword) {
-            options.signing.keyPassword = passToUse;
-        }
-        if (!options.signing.storePassword) {
-            options.signing.storePassword = passToUse;
-        }
-
-        // Verify we have the required signing options.
-        const requiredSigningOptions: Array<keyof SigningOptions> = [
-            'alias',
-            'keyPassword',
-            'storePassword',
-        ];
-
-        // If we're creating a new key, we require additional info.
-        if (options.signingMode === 'new') {
-            requiredSigningOptions.push(
-                'countryCode',
-                'fullName',
-                'organization',
-                'organizationalUnit'
-            );
-            validationErrors.push(
-                ...validateNewKeySigningOptions(options.signing)
-            );
-        }
-
-        validationErrors.push(
-            ...requiredSigningOptions
-                .filter((f) => !options?.signing![f])
-                .map((f) => `Signing option ${f as string} is required`)
-        );
-    }
-
-    return {
-        options: options,
-        validationErrors,
-    };
-}
-
-function tryParseOptionsFromRequest(
-    request: Pick<express.Request, 'body'>
-): AndroidPackageOptions | null {
-    // See if the body is our options request.
-    if (request.body['packageId']) {
-        return request.body as AndroidPackageOptions;
-    }
-
-    return null;
 }
 
 function packageCreationProgress(e: PackageCreationProgress) {

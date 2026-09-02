@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import type { AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import type { SigningOptions } from '../models/signingOptions.js';
-import { validateAndroidOptionsRequest } from '../routes/project.js';
+import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
 import { validateNewKeySigningOptions } from '../utils/signing-options-validation.js';
 
 const validSigningOptions: SigningOptions = {
@@ -27,6 +28,32 @@ const malformedSubjectValues: readonly unknown[] = [
     { untrusted: 'object-value' },
     ['array-value'],
     0,
+    false,
+];
+
+const malformedSigningValues: readonly unknown[] = [
+    42,
+    'untrusted-signing-value',
+    ['array-signing-value'],
+    null,
+];
+
+const truthyMalformedSigningFieldValues: readonly unknown[] = [
+    { untrusted: 'object-value' },
+    ['array-value'],
+    42,
+    true,
+];
+
+const malformedCredentialValues: readonly unknown[] = [
+    ...truthyMalformedSigningFieldValues,
+    null,
+    0,
+    false,
+];
+
+const malformedFileValues: readonly unknown[] = [
+    ...truthyMalformedSigningFieldValues,
     false,
 ];
 
@@ -63,8 +90,80 @@ function withMalformedSubjectValue(
     return signingOptions;
 }
 
+function createValidRequestBody(
+    signing: SigningOptions = { ...validSigningOptions }
+): AndroidPackageOptions {
+    return {
+        analysisId: null,
+        appVersion: '1.0.0',
+        appVersionCode: 1,
+        backgroundColor: '#ffffff',
+        display: 'standalone',
+        enableNotifications: true,
+        fallbackType: 'customtabs',
+        host: 'example.com',
+        iconUrl: 'https://example.com/icon.png',
+        includeSourceCode: false,
+        launcherName: 'Example',
+        name: 'Example',
+        navigationColor: '#000000',
+        packageId: 'com.example.app',
+        pwaUrl: 'https://example.com/',
+        signing,
+        signingMode: 'new',
+        splashScreenFadeOutDuration: 0,
+        startUrl: '/',
+        themeColor: '#ffffff',
+        webManifestUrl: 'https://example.com/manifest.json',
+    };
+}
+
+function assertRequestValidationError(
+    body: unknown,
+    expectedErrors: readonly string[],
+    submittedValue: unknown
+): void {
+    let errors: string[] = [];
+
+    assert.doesNotThrow(() => {
+        errors = validateAndroidOptionsRequest(body).validationErrors;
+    });
+
+    assert.deepEqual(errors, expectedErrors);
+    const submittedRepresentations = [
+        String(submittedValue),
+        JSON.stringify(submittedValue),
+    ].filter((value): value is string => Boolean(value));
+    assert.equal(
+        errors.some((error) =>
+            submittedRepresentations.some((value) => error.includes(value))
+        ),
+        false
+    );
+}
+
 test('accepts supported certificate subject characters and Unicode letters', () => {
     assert.deepEqual(validateNewKeySigningOptions(validSigningOptions), []);
+});
+
+test('request validation has no service or server dependencies', async () => {
+    const moduleSource = await readFile(
+        new URL('../utils/android-options-validation.js', import.meta.url),
+        'utf8'
+    );
+    const runtimeImports = new Set(
+        [...moduleSource.matchAll(/\bfrom\s+['"]([^'"]+)['"]/gu)].map(
+            (match) => match[1]
+        )
+    );
+
+    assert.deepEqual(
+        runtimeImports,
+        new Set([
+            'password-generator',
+            './signing-options-validation.js',
+        ])
+    );
 });
 
 for (const field of signingSubjectFields) {
@@ -95,7 +194,7 @@ for (const field of signingSubjectFields) {
     }
 }
 
-test('route validation rejects a non-string DName value without throwing', () => {
+test('request validation rejects a non-string DName value without throwing', () => {
     const malformedValue = {
         untrusted: 'route-value',
     };
@@ -103,43 +202,98 @@ test('route validation rejects a non-string DName value without throwing', () =>
         'fullName',
         malformedValue
     );
-    const body: AndroidPackageOptions = {
-        analysisId: null,
-        appVersion: '1.0.0',
-        appVersionCode: 1,
-        backgroundColor: '#ffffff',
-        display: 'standalone',
-        enableNotifications: true,
-        fallbackType: 'customtabs',
-        host: 'example.com',
-        iconUrl: 'https://example.com/icon.png',
-        includeSourceCode: false,
-        launcherName: 'Example',
-        name: 'Example',
-        navigationColor: '#000000',
-        packageId: 'com.example.app',
-        pwaUrl: 'https://example.com/',
-        signing: signingOptions,
-        signingMode: 'new',
-        splashScreenFadeOutDuration: 0,
-        startUrl: '/',
-        themeColor: '#ffffff',
-        webManifestUrl: 'https://example.com/manifest.json',
-    };
-    let errors: string[] = [];
-
-    assert.doesNotThrow(() => {
-        errors = validateAndroidOptionsRequest({ body }).validationErrors;
-    });
-
-    assert.deepEqual(errors, [
-        'Signing option fullName contains unsupported characters',
-    ]);
-    assert.equal(
-        errors.some((error) => error.includes(JSON.stringify(malformedValue))),
-        false
+    assertRequestValidationError(
+        createValidRequestBody(signingOptions),
+        ['Signing option fullName contains unsupported characters'],
+        malformedValue
     );
 });
+
+for (const malformedBody of [
+    null,
+    ['array-body-value'],
+    42,
+    'untrusted-body-value',
+    { untrusted: 'object-body-value' },
+] as const) {
+    test(`request validation rejects a malformed body (${JSON.stringify(malformedBody)}) without throwing`, () => {
+        assertRequestValidationError(
+            malformedBody,
+            ["Malformed argument. Coudn't find AndroidPackageOptions in body"],
+            malformedBody
+        );
+    });
+}
+
+for (const malformedSigning of malformedSigningValues) {
+    test(`request validation rejects malformed signing options (${JSON.stringify(malformedSigning)}) without throwing`, () => {
+        const body = createValidRequestBody();
+        Reflect.set(body, 'signing', malformedSigning);
+
+        assertRequestValidationError(
+            body,
+            ['Signing options must be an object'],
+            malformedSigning
+        );
+    });
+}
+
+for (const malformedFile of malformedFileValues) {
+    test(`request validation rejects a non-string signing file (${JSON.stringify(malformedFile)}) without throwing`, () => {
+        const signing = { ...validSigningOptions };
+        Reflect.set(signing, 'file', malformedFile);
+        const body = createValidRequestBody(signing);
+        body.signingMode = 'mine';
+
+        assertRequestValidationError(
+            body,
+            ['Signing file must be a string'],
+            malformedFile
+        );
+    });
+}
+
+for (const field of ['alias', 'keyPassword', 'storePassword'] as const) {
+    for (const malformedValue of malformedCredentialValues) {
+        test(`request validation rejects a non-string ${field} (${JSON.stringify(malformedValue)}) without throwing`, () => {
+            const signing = { ...validSigningOptions };
+            Reflect.set(signing, field, malformedValue);
+
+            assertRequestValidationError(
+                createValidRequestBody(signing),
+                [`Signing option ${field} must be a string`],
+                malformedValue
+            );
+        });
+    }
+}
+
+for (const passwordState of ['absent', 'empty'] as const) {
+    test(`request validation generates passwords when they are ${passwordState}`, () => {
+        const signing = { ...validSigningOptions };
+        if (passwordState === 'absent') {
+            Reflect.deleteProperty(signing, 'keyPassword');
+            Reflect.deleteProperty(signing, 'storePassword');
+        } else {
+            signing.keyPassword = '';
+            signing.storePassword = '';
+        }
+
+        const result = validateAndroidOptionsRequest(
+            createValidRequestBody(signing)
+        );
+
+        assert.deepEqual(result.validationErrors, []);
+        assert.equal(typeof result.options?.signing?.keyPassword, 'string');
+        assert.equal(typeof result.options?.signing?.storePassword, 'string');
+        assert.equal(result.options?.signing?.keyPassword.length, 12);
+        assert.equal(result.options?.signing?.storePassword.length, 12);
+        assert.equal(
+            result.options?.signing?.keyPassword,
+            result.options?.signing?.storePassword
+        );
+    });
+}
 
 for (const field of subjectFields) {
     for (const character of unsupportedCharacters) {
