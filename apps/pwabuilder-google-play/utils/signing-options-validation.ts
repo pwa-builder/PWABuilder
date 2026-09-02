@@ -25,11 +25,11 @@ export function validateNewKeySigningOptions(
         const trimmedValue = value.trim();
         if (!trimmedValue) {
             validationErrors.push(`Signing option ${field} must not be blank`);
-        } else if ([...trimmedValue].length > maxSubjectLength) {
+        } else if ([...value].length > maxSubjectLength) {
             validationErrors.push(
                 `Signing option ${field} must contain at most ${maxSubjectLength} characters`
             );
-        } else if (!supportedSubjectCharacters.test(trimmedValue)) {
+        } else if (!supportedSubjectCharacters.test(value)) {
             validationErrors.push(
                 `Signing option ${field} contains unsupported characters`
             );

@@ -63,6 +63,24 @@ for (const field of subjectFields) {
         });
     }
 
+    test(`rejects a leading tab in ${field}`, () => {
+        assert.deepEqual(
+            validateNewKeySigningOptions(
+                withSubjectValue(field, '\tCertificate subject')
+            ),
+            [`Signing option ${field} contains unsupported characters`]
+        );
+    });
+
+    test(`rejects a trailing newline in ${field}`, () => {
+        assert.deepEqual(
+            validateNewKeySigningOptions(
+                withSubjectValue(field, 'Certificate subject\n')
+            ),
+            [`Signing option ${field} contains unsupported characters`]
+        );
+    });
+
     test(`rejects a whitespace-only ${field}`, () => {
         assert.deepEqual(
             validateNewKeySigningOptions(withSubjectValue(field, ' \t ')),
@@ -74,6 +92,24 @@ for (const field of subjectFields) {
         assert.deepEqual(
             validateNewKeySigningOptions(withSubjectValue(field, 'a'.repeat(129))),
             [`Signing option ${field} must contain at most 128 characters`]
+        );
+    });
+
+    test(`rejects ${field} values with 128 letters and one ASCII space`, () => {
+        assert.deepEqual(
+            validateNewKeySigningOptions(
+                withSubjectValue(field, `${'a'.repeat(128)} `)
+            ),
+            [`Signing option ${field} must contain at most 128 characters`]
+        );
+    });
+
+    test(`accepts ${field} values containing exactly 128 code points`, () => {
+        assert.deepEqual(
+            validateNewKeySigningOptions(
+                withSubjectValue(field, `${'a'.repeat(127)} `)
+            ),
+            []
         );
     });
 }
