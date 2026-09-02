@@ -77,9 +77,10 @@ executable, arguments, and options without starting `keytool`.
 ## Error Handling
 
 Validation failures will use the existing package-request error path and name
-the invalid field without reflecting its submitted value. Process failures will
-continue through the existing error-redaction path. The adapter will not log
-passwords or complete process arguments.
+the invalid field without reflecting its submitted value. The adapter will
+redact passwords, aliases, paths, and subject values from process failures
+before rethrowing them into the existing error path. It will not log complete
+process arguments.
 
 ## Testing
 
