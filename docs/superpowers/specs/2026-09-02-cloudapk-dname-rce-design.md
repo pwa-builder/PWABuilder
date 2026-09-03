@@ -37,9 +37,16 @@ A focused validation utility will validate certificate subject values used when
 `signingMode` is `new`.
 
 - `fullName`, `organization`, and `organizationalUnit` must be non-empty after
-  trimming, contain at most 128 Unicode code points, and contain only Unicode
-  letters and numbers, ASCII spaces, periods, apostrophes, hyphens, underscores,
-  and parentheses.
+  trimming and contain at most 128 Unicode code points. Trimming is used only to
+  detect blank values; validation and length checks inspect the complete input.
+- A subject value is rejected when it matches
+  `/[,=+<>#;"\\\p{Cc}\p{Cf}\u2028\u2029]/u`: X.500 DName delimiters and
+  escape-sensitive characters, Unicode control and format characters, and the
+  Unicode line and paragraph separators are not accepted.
+- All other characters are accepted, including ampersands, colons, curly
+  apostrophes, emoji, combining marks, and shell metacharacters. They are safe
+  because `execFile` with `shell: false` preserves the DName as one argument
+  instead of allowing a shell to interpret its contents.
 - `countryCode` must contain exactly two ASCII letters.
 - Invalid fields produce ordinary request validation errors before package work
   begins.
@@ -86,9 +93,10 @@ process arguments.
 
 Node's built-in test runner will cover:
 
-- Valid internationalized subject names and valid country codes.
-- Empty, oversized, control-character, DName-delimiter, quote, backtick, dollar,
-  and shell-operator inputs.
+- Common and internationalized subject names, combining marks, emoji, inert
+  shell metacharacters, and valid country codes.
+- Empty, oversized, X.500 DName delimiter, escape-sensitive, C0/C1 control,
+  Unicode format, and line-separator inputs.
 - Validation of each DName field and the country code.
 - Direct argument construction for key creation and key listing.
 - `shell: false` and one-argument preservation for every untrusted value.

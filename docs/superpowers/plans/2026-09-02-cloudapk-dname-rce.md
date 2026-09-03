@@ -67,37 +67,53 @@ const nameFields = [
     'organizationalUnit',
 ] as const;
 
-test('accepts valid certificate subject values', () => {
-    const signing = {
-        ...validSigning,
-            fullName: "Jos\u00e9 O'Connor",
-        organization: 'Example (Europe)',
-            organizationalUnit: '\u00c9quipe Num\u00e9ro 2',
-    };
-
-    assert.deepEqual(validateNewKeySigningOptions(signing), []);
-});
-
-test('rejects unsafe characters in every certificate name field', () => {
-    const unsafeValues = [
-        'quote"value',
-        'comma,value',
-        'equals=value',
-        'shell;value',
-        'pipe|value',
-        'ampersand&value',
-        'dollar$value',
-        'backtick`value',
-        'line\nbreak',
-        'tab\tvalue',
-        'backslash\\value',
+test('accepts common, international, and shell-metacharacter subject text', () => {
+    const acceptedValues = [
+        "Ben & Jerry's",
+        'Acme: Home',
+        'Bob\u2019s Burgers',
+        'Rocket \u{1F680}',
+        'Cafe\u0301',
+        '\u6771\u4EAC',
+        '\u0634\u0631\u0643\u0629 \u062A\u0642\u0646\u064A\u0629',
+        '\u0928\u092E\u0938\u094D\u0924\u0947',
+        'Dollar $value',
+        'Backtick `value',
+        'Pipe | value',
+        'Ampersand & value',
     ];
 
     for (const field of nameFields) {
-        for (const value of unsafeValues) {
+        for (const value of acceptedValues) {
+            assert.deepEqual(
+                validateNewKeySigningOptions({
+                    ...validSigning,
+                    [field]: value,
+                }),
+                [],
+            );
+        }
+    }
+});
+
+test('rejects X.500 delimiters and Unicode control characters', () => {
+    const invalidCharacters = [
+        ',', '=', '+', '<', '>', '#', ';', '"', '\\',
+        ...Array.from({ length: 0x20 }, (_, codePoint) =>
+            String.fromCodePoint(codePoint)
+        ),
+        ...Array.from({ length: 0x21 }, (_, offset) =>
+            String.fromCodePoint(0x7f + offset)
+        ),
+        '\u200B', '\u200E', '\u202A', '\u202E', '\u2066', '\u2069',
+        '\uFEFF', '\u2028', '\u2029',
+    ];
+
+    for (const field of nameFields) {
+        for (const character of invalidCharacters) {
             const errors = validateNewKeySigningOptions({
                 ...validSigning,
-                [field]: value,
+                [field]: `before${character}after`,
             });
 
             assert.deepEqual(errors, [
@@ -148,40 +164,59 @@ Expected: FAIL—the build and subsequent emitted `.js` test cannot succeed beca
 Create `apps/pwabuilder-google-play/utils/signing-options-validation.ts`:
 
 ```ts
-import { SigningOptions } from '../models/signingOptions.js';
-
-const maxDNameValueLength = 128;
-const validDNameValuePattern = /^[\p{L}\p{N} .'_()-]+$/u;
-const dNameFields = [
+const maxSubjectLength = 128;
+const invalidDNameValuePattern = /[,=+<>#;"\\\p{Cc}\p{Cf}\u2028\u2029]/u;
+const subjectFields = [
     'fullName',
     'organization',
     'organizationalUnit',
 ] as const;
 
-export function validateNewKeySigningOptions(signing: SigningOptions): string[] {
-    const errors: string[] = [];
+export function validateNewKeySigningOptions(signing: object): string[] {
+    const validationErrors: string[] = [];
 
-    for (const field of dNameFields) {
-        const value = signing[field];
-        if (!value) {
+    for (const field of subjectFields) {
+        const value: unknown = Reflect.get(signing, field);
+        if (value === null || value === undefined || value === '') {
+            continue;
+        }
+
+        if (typeof value !== 'string') {
+            validationErrors.push(
+                `Signing option ${field} contains unsupported characters`
+            );
             continue;
         }
 
         const trimmedValue = value.trim();
         if (!trimmedValue) {
-            errors.push(`Signing option ${field} must not be blank`);
-        } else if ([...trimmedValue].length > maxDNameValueLength) {
-            errors.push(`Signing option ${field} must contain at most 128 characters`);
-        } else if (!validDNameValuePattern.test(trimmedValue)) {
-            errors.push(`Signing option ${field} contains unsupported characters`);
+            validationErrors.push(`Signing option ${field} must not be blank`);
+        } else if ([...value].length > maxSubjectLength) {
+            validationErrors.push(
+                `Signing option ${field} must contain at most ${maxSubjectLength} characters`
+            );
+        } else if (invalidDNameValuePattern.test(value)) {
+            validationErrors.push(
+                `Signing option ${field} contains unsupported characters`
+            );
         }
     }
 
-    if (signing.countryCode && !/^[A-Za-z]{2}$/.test(signing.countryCode)) {
-        errors.push('Signing option countryCode must contain exactly two letters');
+    const countryCode: unknown = Reflect.get(signing, 'countryCode');
+    if (
+        countryCode !== null &&
+        countryCode !== undefined &&
+        countryCode !== '' &&
+        (typeof countryCode !== 'string' ||
+            countryCode.length !== 2 ||
+            !/^[A-Za-z]{2}$/u.test(countryCode))
+    ) {
+        validationErrors.push(
+            'Signing option countryCode must contain exactly two letters'
+        );
     }
 
-    return errors;
+    return validationErrors;
 }
 ```
 

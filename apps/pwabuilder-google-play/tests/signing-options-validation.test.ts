@@ -126,18 +126,46 @@ const malformedFullScopeUrlValues: readonly unknown[] = [
     false,
 ];
 
-const unsupportedCharacters = [
-    '"',
+const acceptedSubjectValues = [
+    "Ben & Jerry's",
+    'Acme: Home',
+    'Bob\u2019s Burgers',
+    'Rocket \u{1F680}',
+    'Cafe\u0301',
+    '\u6771\u4EAC',
+    '\u0634\u0631\u0643\u0629 \u062A\u0642\u0646\u064A\u0629',
+    '\u0928\u092E\u0938\u094D\u0924\u0947',
+    'Dollar $value',
+    'Backtick `value',
+    'Pipe | value',
+    'Ampersand & value',
+] as const;
+
+const invalidDNameCharacters = [
     ',',
     '=',
+    '+',
+    '<',
+    '>',
+    '#',
     ';',
-    '|',
-    '&',
-    '$',
-    '`',
-    '\n',
-    '\t',
+    '"',
     '\\',
+    ...Array.from({ length: 0x20 }, (_, codePoint) =>
+        String.fromCodePoint(codePoint)
+    ),
+    ...Array.from({ length: 0x21 }, (_, offset) =>
+        String.fromCodePoint(0x7f + offset)
+    ),
+    '\u200B',
+    '\u200E',
+    '\u202A',
+    '\u202E',
+    '\u2066',
+    '\u2069',
+    '\uFEFF',
+    '\u2028',
+    '\u2029',
 ] as const;
 
 function withSubjectValue(
@@ -211,8 +239,15 @@ function assertRequestValidationError(
     );
 }
 
-test('accepts supported certificate subject characters and Unicode letters', () => {
-    assert.deepEqual(validateNewKeySigningOptions(validSigningOptions), []);
+test('accepts common, international, and shell-metacharacter subject text', () => {
+    for (const field of subjectFields) {
+        for (const value of acceptedSubjectValues) {
+            assert.deepEqual(
+                validateNewKeySigningOptions(withSubjectValue(field, value)),
+                []
+            );
+        }
+    }
 });
 
 test('request validation has no service or server dependencies', async () => {
@@ -571,8 +606,8 @@ for (const passwordState of ['absent', 'empty'] as const) {
 }
 
 for (const field of subjectFields) {
-    for (const character of unsupportedCharacters) {
-        test(`rejects an unsupported character in ${field}`, () => {
+    test(`rejects X.500 delimiters and Unicode control characters in ${field}`, () => {
+        for (const character of invalidDNameCharacters) {
             const submittedValue = `before${character}after`;
             const errors = validateNewKeySigningOptions(
                 withSubjectValue(field, submittedValue)
@@ -582,8 +617,8 @@ for (const field of subjectFields) {
                 `Signing option ${field} contains unsupported characters`,
             ]);
             assert.equal(errors.some((error) => error.includes(submittedValue)), false);
-        });
-    }
+        }
+    });
 
     test(`rejects a leading tab in ${field}`, () => {
         assert.deepEqual(
@@ -612,7 +647,9 @@ for (const field of subjectFields) {
 
     test(`rejects ${field} values longer than 128 code points`, () => {
         assert.deepEqual(
-            validateNewKeySigningOptions(withSubjectValue(field, 'a'.repeat(129))),
+            validateNewKeySigningOptions(
+                withSubjectValue(field, '\u{1F680}'.repeat(129))
+            ),
             [`Signing option ${field} must contain at most 128 characters`]
         );
     });
@@ -629,7 +666,7 @@ for (const field of subjectFields) {
     test(`accepts ${field} values containing exactly 128 code points`, () => {
         assert.deepEqual(
             validateNewKeySigningOptions(
-                withSubjectValue(field, `${'a'.repeat(127)} `)
+                withSubjectValue(field, '\u{1F680}'.repeat(128))
             ),
             []
         );

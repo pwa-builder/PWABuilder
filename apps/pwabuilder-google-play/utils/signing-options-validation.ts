@@ -1,5 +1,5 @@
 const maxSubjectLength = 128;
-const supportedSubjectCharacters = /^[\p{L}\p{N} .'_()-]+$/u;
+const invalidDNameValuePattern = /[,=+<>#;"\\\p{Cc}\p{Cf}\u2028\u2029]/u;
 const subjectFields = [
     'fullName',
     'organization',
@@ -34,7 +34,7 @@ export function validateNewKeySigningOptions(
             validationErrors.push(
                 `Signing option ${field} must contain at most ${maxSubjectLength} characters`
             );
-        } else if (!supportedSubjectCharacters.test(value)) {
+        } else if (invalidDNameValuePattern.test(value)) {
             validationErrors.push(
                 `Signing option ${field} contains unsupported characters`
             );
