@@ -11,13 +11,13 @@ import {
     SigningKeyInfo,
 } from '@bubblewrap/core';
 import { ShortcutInfo } from '@bubblewrap/core/dist/lib/ShortcutInfo.js';
-import { escapeDoubleQuotedShellString, findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
+import { findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
 import { AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import fs from 'fs-extra';
 import { WebManifestShortcutJson } from '@bubblewrap/core/dist/lib/types/WebManifest.js';
 import { LocalKeyFileSigningOptions } from '../models/signingOptions.js';
 import { GeneratedAppPackage } from '../models/generatedAppPackage.js';
-import { redactSecretsFromError } from '../utils/redactSecrets.js';
+import { createSigningCommandCredentials } from '../utils/signing-command-credentials.js';
 import { CreateKeyOptions, SafeKeyTool } from './safe-key-tool.js';
 import { TwaManifestJson } from '@bubblewrap/core/dist/lib/TwaManifest.js';
 import { fetchUtils } from '@bubblewrap/core';
@@ -153,19 +153,17 @@ export class BubbleWrapper {
         //const outputFile = './app-release-signed.aab';
         const outputFile = `${this.projectDirectory}/${appBundleDir}/app-release-signed.aab`;
         const jarSigner = new JarSigner(this.jdkHelper);
+        const signingCommandCredentials = createSigningCommandCredentials(signingInfo);
         const jarSigningInfo: SigningKeyInfo = {
             path: signingInfo.keyFilePath,
-            alias: `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
+            alias: signingCommandCredentials.alias,
         };
 
-        // Escape the store password, otherwise passwords with special characters will break. See https://github.com/pwa-builder/PWABuilder/issues/5017
-        const storePassword = `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`;
-        const keyPassword = `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`;
         try {
             await jarSigner.sign(
                 jarSigningInfo,
-                storePassword,
-                keyPassword,
+                signingCommandCredentials.storePassword,
+                signingCommandCredentials.keyPassword,
                 inputFile,
                 outputFile
             );
@@ -174,11 +172,7 @@ export class BubbleWrapper {
             // Redact the key alias and passwords before logging or rethrowing, as the underlying
             // error may include the full signing command - including these secrets - in its
             // message, cmd, stdout, or stderr properties. See https://github.com/pwa-builder/PWABuilder/issues/6311
-            const redactedSigningError = redactSecretsFromError(signingError, [
-                signingInfo.storePassword,
-                signingInfo.alias,
-                signingInfo.keyPassword,
-            ]);
+            const redactedSigningError = signingCommandCredentials.redactError(signingError);
             const signingErrorStr = `${redactedSigningError}`;
             if (signingErrorStr.includes("toDerInputStream rejects tag type 75") ||
                 signingErrorStr.includes("DerValue.getBigIntegerInternal, not expected 6")) {
@@ -268,13 +262,14 @@ export class BubbleWrapper {
         }
 
         const outputFile = `${this.projectDirectory}/app-release-signed.apk`;
+        const signingCommandCredentials = createSigningCommandCredentials(signingInfo);
         this.dispatchProgressEvent('Signing the app package...');
         try {
             await this.androidSdkTools.apksigner(
                 signingInfo.keyFilePath,
-                `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`, // Escape the store password with double quotes, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
-                `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
-                `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`, // Escape the key password for the same reason.
+                signingCommandCredentials.storePassword,
+                signingCommandCredentials.alias,
+                signingCommandCredentials.keyPassword,
                 apkFilePath,
                 outputFile
             );
@@ -282,11 +277,7 @@ export class BubbleWrapper {
             // Redact the key alias and passwords before rethrowing, as the underlying error may
             // include the full apksigner command - including these secrets - in its message,
             // cmd, stdout, or stderr properties. See https://github.com/pwa-builder/PWABuilder/issues/6311
-            throw redactSecretsFromError(signingError, [
-                signingInfo.storePassword,
-                signingInfo.alias,
-                signingInfo.keyPassword,
-            ]);
+            throw signingCommandCredentials.redactError(signingError);
         }
         this.dispatchProgressEvent('App package signed successfully');
         return outputFile;
