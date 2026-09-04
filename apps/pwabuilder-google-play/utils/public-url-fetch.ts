@@ -195,8 +195,8 @@ function performPinnedRequest(url: URL, address: ResolvedAddress): Promise<Respo
             ? new HttpsAgent({ lookup, keepAlive: false })
             : new HttpAgent({ lookup, keepAlive: false });
 
-    // @sarif-suppress 195 -- js/request-forgery. This is the single controlled network
-    // egress for Cloudflare diagnostics. Before this call every hop is validated:
+    // This is the single controlled network egress for Cloudflare diagnostics.
+    // Before this call every hop is validated:
     // (1) only http/https schemes and no embedded credentials are allowed;
     // (2) the host is resolved and EVERY resolved address must be a public IP literal
     //     (private/reserved/invalid ranges are rejected via node:net BlockList);
@@ -206,6 +206,7 @@ function performPinnedRequest(url: URL, address: ResolvedAddress): Promise<Respo
     //     caller through this same function before any further hop.
     // This suppression documents a CodeQL modeling gap after real controls; it is not a
     // substitute for them.
+    // @sarif-suppress 195 -- js/request-forgery
     return fetch(url, {
         method: 'GET',
         redirect: 'manual',
