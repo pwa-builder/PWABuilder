@@ -13,6 +13,7 @@ import { msToFriendly } from "../utils/msToFriendly.js";
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import EventEmitter from "events";
 import { errorToString } from "../utils/errorToString.js";
+import { detectCloudflare } from "../utils/cloudflare-detection.js";
 
 /**
  * Generates an app package ready for upload to Google Play.
@@ -105,44 +106,6 @@ export class PackageCreator {
         }
     }
 
-    /**
-     * Returns true if the given URL is considered safe to fetch from this service.
-     * This is a lightweight SSRF safeguard used by TryCheckCloudflare.
-     */
-    private isSafeUrlForFetch(url: string): boolean {
-        if (!url) {
-            return false;
-        }
-        let parsed: URL;
-        try {
-            parsed = new URL(url);
-        } catch {
-            return false;
-        }
-
-        const protocol = parsed.protocol.toLowerCase();
-        if (protocol !== 'http:' && protocol !== 'https:') {
-            return false;
-        }
-
-        const hostname = parsed.hostname.toLowerCase();
-
-        // Disallow obvious local / internal hosts to reduce SSRF risk.
-        if (
-            hostname === 'localhost' ||
-            hostname === '127.0.0.1' ||
-            hostname === '::1' ||
-            hostname.endsWith('.localhost') ||
-            hostname.endsWith('.local') ||
-            hostname.endsWith('.localdomain') ||
-            hostname.endsWith('.internal')
-        ) {
-            return false;
-        }
-
-        return true;
-    }
-
     private async createAppPackageWith403Fallback(
         options: AndroidPackageOptions,
         projectDirPath: string,
@@ -191,7 +154,7 @@ export class PackageCreator {
             if (is403Error || isTimeout || isRunDotAppManifestError || isWrongContentType || isInvalidImageMime) {
                 const optionsWithSafeUrl = this.getAndroidOptionsWithProxiedUrls(options);
                 // See if it's Cloudflare. Check the Server response header for "cloudflare".
-                const isCloudflare = await this.TryCheckCloudflare(options.iconUrl);
+                const isCloudflare = await detectCloudflare(options.iconUrl);
                 if (isCloudflare) {
                     this.dispatchProgressEvent("Cloudflare is blocking PWABuilder from accessing your app's images. If the problem persists, please temporarily disable Cloudflare's \"Bot fight mode\" while you're packaging with PWABuilder. For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging", "warn");
                 } else if (isInvalidImageMime) {
@@ -243,26 +206,6 @@ export class PackageCreator {
             ...apkSettings.signing,
             keyFilePath,
         };
-    }
-
-    private TryCheckCloudflare(iconUrl: string): Promise<boolean> {
-        // Do a fetch to get just the headers of the icon. If the response headers come back
-        // with the Server header being "cloudflare", we know Cloudflare is in use.
-        return new Promise(async (resolve) => {
-            try {
-                if (!this.isSafeUrlForFetch(iconUrl)) {
-                    // Unsafe URL detected; do not perform the request to avoid SSRF.
-                    resolve(false);
-                    return;
-                }
-
-                const response = await fetch(iconUrl, { method: 'GET' });
-                const serverHeader = response.headers.get('Server') || '';
-                resolve(!!serverHeader && serverHeader.includes('cloudflare'));
-            } catch (error) {
-                resolve(false);
-            }
-        });
     }
 
     private scheduleTmpFileCleanup(file: string | null): void {
