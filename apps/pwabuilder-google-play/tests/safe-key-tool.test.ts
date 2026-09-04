@@ -255,9 +255,12 @@ test('createSigningKey redacts key and certificate values from executor errors',
             options.fullName,
             options.organization,
             options.organizationalUnit,
-            options.country,
         ];
-        const executionError = new KeyToolTestError(protectedValues);
+        // Country is public certificate subject metadata, not a secret, so it's reflected
+        // in the diagnostic (as it would be in the real -dname certificate fragment) but is
+        // deliberately excluded from protectedValues above/redaction.
+        const certificateFragment = `C=${options.country}`;
+        const executionError = new KeyToolTestError([...protectedValues, certificateFragment]);
         const executor: KeyToolExecutor = async () => {
             throw executionError;
         };
@@ -266,6 +269,64 @@ test('createSigningKey redacts key and certificate values from executor errors',
         await assert.rejects(keyTool.createSigningKey(options, false), error => {
             assert.strictEqual(error, executionError);
             assertValuesRedacted(executionError, protectedValues);
+            assert.equal(
+                executionError.message.includes(certificateFragment),
+                true,
+                'country certificate fragment should remain visible because it is not a secret'
+            );
+            return true;
+        });
+    });
+});
+
+test('createSigningKey does not let a country code corrupt ordinary diagnostic words', async () => {
+    await withTemporaryDirectory(async directory => {
+        // Regression test: a two-letter country code such as "in" must not be treated as a
+        // secret, because redactSecretsFromError performs global substring replacement, and
+        // "in" is a substring of ordinary words like "signing" and "using". Country is public
+        // certificate subject metadata, not a secret, so it must never corrupt diagnostics.
+        const options: CreateKeyOptions = {
+            path: path.join(directory, 'protected-path.keystore'),
+            alias: 'protected-alias',
+            keypassword: 'protected-key-password',
+            password: 'protected-store-password',
+            fullName: 'Protected Full Name',
+            organization: 'Protected Organization',
+            organizationalUnit: 'Protected Unit',
+            country: 'in',
+        };
+        const diagnosticMessage =
+            'keytool error: failed while signing using keytool during key generation; verify your keystore configuration.';
+        const executionError = Object.assign(new Error(diagnosticMessage), {
+            cmd: diagnosticMessage,
+            stdout: diagnosticMessage,
+            stderr: diagnosticMessage,
+        });
+        executionError.stack = diagnosticMessage;
+        const executor: KeyToolExecutor = async () => {
+            throw executionError;
+        };
+        const keyTool = new SafeKeyTool(() => ({}), executor);
+
+        await assert.rejects(keyTool.createSigningKey(options, false), error => {
+            assert.strictEqual(error, executionError);
+            const fields = [
+                executionError.message,
+                executionError.cmd,
+                executionError.stdout,
+                executionError.stderr,
+                executionError.stack ?? '',
+            ];
+            for (const [fieldIndex, field] of fields.entries()) {
+                assert.equal(field.includes('signing'), true, `field ${fieldIndex} corrupted "signing"`);
+                assert.equal(field.includes('using'), true, `field ${fieldIndex} corrupted "using"`);
+                assert.equal(field.includes('generation'), true, `field ${fieldIndex} corrupted "generation"`);
+                assert.equal(
+                    field.includes('***REDACTED***'),
+                    false,
+                    `field ${fieldIndex} was redacted even though it contains no protected values, only a country-code bigram`
+                );
+            }
             return true;
         });
     });

@@ -156,9 +156,11 @@ export class SafeKeyTool {
             options.organization.trim(),
             options.organizationalUnit,
             options.organizationalUnit.trim(),
-            options.country,
-            options.country.trim(),
-            options.country.trim().toUpperCase(),
+            // Note: country is intentionally excluded. It is public certificate subject
+            // metadata (not a secret) and is logged elsewhere. Treating a two-character
+            // country code as a secret causes redactSecretsFromError's global substring
+            // replacement to corrupt ordinary words that happen to contain that bigram
+            // (e.g. country "in" corrupting "signing" and "using").
         ];
     }
 

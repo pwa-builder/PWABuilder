@@ -46,12 +46,15 @@ test('SafeKeyTool redacts protected values from ENOENT spawn arguments', async (
         options.fullName,
         options.organization,
         options.organizationalUnit,
-        options.country,
     ];
+    // Country is public certificate subject metadata, not a secret, so the `C=<country>`
+    // fragment in the -dname argument remains visible and is intentionally excluded from
+    // protectedValues/redaction below.
+    const certificateFragment = `C=${options.country}`;
     const spawnargs = [
         '-genkeypair',
         '-dname',
-        `CN=${options.fullName}, OU=${options.organizationalUnit}, O=${options.organization}, C=${options.country}`,
+        `CN=${options.fullName}, OU=${options.organizationalUnit}, O=${options.organization}, ${certificateFragment}`,
         '-alias',
         options.alias,
         '-keypass',
@@ -85,6 +88,11 @@ test('SafeKeyTool redacts protected values from ENOENT spawn arguments', async (
             assert.equal(serializedError.includes(protectedValue), false, `serialized error leaked ${protectedValue}`);
         }
         assert.equal(executionError.spawnargs.some(arg => arg.includes('***REDACTED***')), true);
+        assert.equal(
+            executionError.spawnargs.some(arg => arg.includes(certificateFragment)),
+            true,
+            'country certificate fragment should remain visible because it is not a secret'
+        );
         return true;
     });
 });
