@@ -673,15 +673,15 @@ Get-ChildItem apps\pwabuilder-google-play -Recurse -Filter *.ts |
 
 Expected: no matches.
 
-- [ ] **Step 3: Confirm the suppression is limited to the hardened sink**
+- [ ] **Step 3: Record the first CodeQL result**
 
 ```powershell
-Get-ChildItem apps\pwabuilder-google-play -Recurse -Filter *.ts |
-    Select-String -Pattern '@sarif-suppress 195'
+gh pr checks 6327 --repo pwa-builder/PWABuilder --watch --interval 15
 ```
 
-Expected: the new DNS-pinned request plus the pre-existing `/fetch` endpoint
-suppression are the only matches.
+Expected: `js/loop-bound-injection` is gone. Alert 65 still reports
+`js/request-forgery` at `utils/public-url-fetch.ts` because GitHub Code Scanning
+does not recognize `@sarif-suppress` as an inline CodeQL suppression.
 
 - [ ] **Step 4: Review and push**
 
@@ -696,8 +696,281 @@ git push
 Expected: diff check succeeds, status is clean, and the existing PR branch is
 updated.
 
-- [ ] **Step 5: Verify PR checks**
+- [ ] **Step 5: Inspect the remaining alert**
 
-Wait for PR #6327's CodeQL check to complete. The check must have no annotations
-for `js/request-forgery` in `packageCreator.ts` or `js/loop-bound-injection` in
-`hashCode.ts`.
+Run:
+
+```powershell
+gh api repos/pwa-builder/PWABuilder/check-runs/100865990048/annotations
+```
+
+Expected: the old `js/loop-bound-injection` alert is absent. The only annotation
+is alert 65, `js/request-forgery`, at the guarded `fetch` in
+`utils/public-url-fetch.ts`.
+
+### Task 4: Make the validated IP the native request target
+
+**Files:**
+- Modify: `apps/pwabuilder-google-play/utils/public-url-fetch.ts:1-6,181-246`
+- Modify: `apps/pwabuilder-google-play/tests/public-url-fetch.test.ts:1-12,403`
+
+- [ ] **Step 1: Write failing native-target tests**
+
+Add these imports to `apps/pwabuilder-google-play/tests/public-url-fetch.test.ts`:
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+```
+
+Add `createPinnedRequestDescriptor` to the existing import from
+`../utils/public-url-fetch.js`, then append:
+
+```ts
+test('createPinnedRequestDescriptor targets the validated IPv4 address and preserves HTTPS routing', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://example.com:8443/icons/app.png?size=192#ignored'),
+        { address: '93.184.216.34', family: 4 }
+    );
+
+    assert.equal(descriptor.target.href, 'https://93.184.216.34/');
+    assert.equal(descriptor.options.method, 'GET');
+    assert.equal(descriptor.options.path, '/icons/app.png?size=192');
+    assert.equal(descriptor.options.port, 8443);
+    assert.deepEqual(descriptor.options.headers, { host: 'example.com:8443' });
+    assert.equal(descriptor.options.servername, 'example.com');
+    assert.ok(descriptor.options.signal instanceof AbortSignal);
+});
+
+test('createPinnedRequestDescriptor brackets IPv6 targets and omits SNI for an IP-literal URL', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://[2606:4700:4700::1111]/icon.png'),
+        { address: '2606:4700:4700::1111', family: 6 }
+    );
+
+    assert.equal(descriptor.target.href, 'https://[2606:4700:4700::1111]/');
+    assert.equal(descriptor.options.path, '/icon.png');
+    assert.deepEqual(descriptor.options.headers, { host: '[2606:4700:4700::1111]' });
+    assert.equal(descriptor.options.servername, undefined);
+});
+
+test('production public URL requests use native HTTP clients without a user-derived fetch sink', async () => {
+    const sourcePath = fileURLToPath(new URL('../utils/public-url-fetch.ts', import.meta.url));
+    const source = await readFile(sourcePath, 'utf8');
+
+    assert.doesNotMatch(source, /\bfetch\s*\(/u);
+    assert.doesNotMatch(source, /@sarif-suppress/u);
+    assert.match(source, /httpRequest\(target,\s*options/u);
+    assert.match(source, /httpsRequest\(target,\s*options/u);
+});
+```
+
+- [ ] **Step 2: Run the tests to verify they fail**
+
+Run:
+
+```powershell
+Set-Location apps\pwabuilder-google-play
+npm run build
+```
+
+Expected: TypeScript fails because `createPinnedRequestDescriptor` is not
+exported and the source still contains `fetch(...)`.
+
+- [ ] **Step 3: Replace the fetch/agent imports**
+
+Replace the first six imports in
+`apps/pwabuilder-google-play/utils/public-url-fetch.ts` with:
+
+```ts
+import { lookup as dnsLookup } from 'node:dns/promises';
+import {
+    request as httpRequest,
+    type IncomingHttpHeaders,
+    type IncomingMessage,
+} from 'node:http';
+import { request as httpsRequest, type RequestOptions } from 'node:https';
+import { BlockList, isIP } from 'node:net';
+import { Readable } from 'node:stream';
+import { Headers, Response } from 'node-fetch';
+```
+
+This removes the default `node-fetch` request function, agents, and custom
+`LookupFunction`. `node-fetch` remains only as an in-memory response wrapper.
+
+- [ ] **Step 4: Add the pure native request descriptor**
+
+Insert this interface after `ResolvedAddress`:
+
+```ts
+/**
+ * The native target and options for a request whose connection endpoint is a
+ * pre-validated IP address.
+ */
+export interface PinnedRequestDescriptor {
+    readonly target: URL;
+    readonly options: RequestOptions;
+}
+```
+
+Replace `performPinnedRequest` with:
+
+```ts
+/**
+ * Builds a native request whose target contains only the validated IP address.
+ * The original URL contributes routing metadata, not the connection hostname.
+ */
+export function createPinnedRequestDescriptor(
+    url: URL,
+    address: ResolvedAddress
+): PinnedRequestDescriptor {
+    assertUrlPolicy(url);
+
+    const normalizedAddress = stripBrackets(address.address);
+    const authority =
+        address.family === 6 ? `[${normalizedAddress}]` : normalizedAddress;
+    const target =
+        url.protocol === 'https:'
+            ? new URL(`https://${authority}/`)
+            : new URL(`http://${authority}/`);
+    const originalHostname = stripBrackets(url.hostname);
+    const options: RequestOptions = {
+        method: 'GET',
+        path: `${url.pathname}${url.search}`,
+        port: url.port === '' ? undefined : Number(url.port),
+        headers: { host: url.host },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    };
+
+    if (url.protocol === 'https:' && isIP(originalHostname) === 0) {
+        options.servername = originalHostname;
+    }
+
+    return { target, options };
+}
+```
+
+The target URL is constructed from the already-validated address. The request
+options preserve the original path, query, port, Host header, and domain SNI.
+Fragments are intentionally omitted, matching normal HTTP URL behavior.
+
+- [ ] **Step 5: Implement the native response boundary**
+
+Add:
+
+```ts
+function createResponseHeaders(
+    headers: IncomingHttpHeaders
+): Headers {
+    const entries = Object.entries(headers)
+        .filter((entry): entry is [string, string | string[]] => entry[1] !== undefined)
+        .map<readonly [string, string]>(([name, value]) => [
+            name,
+            Array.isArray(value) ? value.join(', ') : value,
+        ]);
+    return new Headers(entries);
+}
+
+function performPinnedRequest(url: URL, address: ResolvedAddress): Promise<Response> {
+    const { target, options } = createPinnedRequestDescriptor(url, address);
+
+    return new Promise<Response>((resolve, reject) => {
+        const handleResponse = (incomingResponse: IncomingMessage): void => {
+            const status = incomingResponse.statusCode;
+            if (status === undefined) {
+                incomingResponse.destroy();
+                reject(new Error('The diagnostic request returned no HTTP status.'));
+                return;
+            }
+
+            resolve(new Response(incomingResponse, {
+                status,
+                headers: createResponseHeaders(incomingResponse.headers),
+            }));
+        };
+        const outgoingRequest =
+            url.protocol === 'https:'
+                ? httpsRequest(target, options, handleResponse)
+                : httpRequest(target, options, handleResponse);
+
+        outgoingRequest.once('error', reject);
+        outgoingRequest.end();
+    });
+}
+```
+
+The native request follows no redirects. The existing loop continues to destroy
+redirect bodies, resolve `Location`, validate every address, and issue the next
+native request. Request and timeout errors continue to reject and are converted
+to `false` by `detectCloudflare`.
+
+- [ ] **Step 6: Update request-boundary documentation**
+
+Update the comments on `PublicUrlDependencies`, `productionDependencies`, and
+`fetchPublicUrl` so they describe a native request to a validated IP rather than
+an agent-pinned `fetch`. Remove the unsupported `@sarif-suppress` comment.
+
+- [ ] **Step 7: Run focused and full tests**
+
+Run:
+
+```powershell
+Set-Location apps\pwabuilder-google-play
+npm test -- --test-name-pattern="createPinnedRequestDescriptor|public URL requests"
+npm test
+npm run build
+```
+
+Expected: the three new tests pass, all CloudAPK tests pass, and TypeScript
+compiles without errors.
+
+- [ ] **Step 8: Verify the modeled sink is gone**
+
+Run from the repository root:
+
+```powershell
+git grep -n -E 'fetch\(|@sarif-suppress' -- apps/pwabuilder-google-play/utils/public-url-fetch.ts
+git diff --check
+```
+
+Expected: the grep has no matches and the diff check succeeds.
+
+- [ ] **Step 9: Commit the native transport**
+
+```powershell
+git add apps\pwabuilder-google-play\utils\public-url-fetch.ts apps\pwabuilder-google-play\tests\public-url-fetch.test.ts
+git commit -m "fix: make validated IP the request target" -m "Co-authored-by: Copilot App <223556219+Copilot@users.noreply.github.com>" -m "Copilot-Session: 83102b33-f950-4f02-93ca-73300288c495"
+```
+
+### Task 5: Verify the native boundary in CodeQL
+
+- [ ] **Step 1: Review the focused change**
+
+Confirm that the native request target contains only the validated IP; request
+path, port, Host header, and TLS server name preserve the original URL; response
+bodies and errors retain the previous behavior; and no automatic redirect path
+exists.
+
+- [ ] **Step 2: Run the final local gate**
+
+```powershell
+Set-Location apps\pwabuilder-google-play
+npm test
+npm run build
+Set-Location ..\..
+git diff --check
+git status --short
+```
+
+Expected: all tests and the build pass, the diff check succeeds, and the
+worktree is clean.
+
+- [ ] **Step 3: Push and wait for CodeQL**
+
+```powershell
+git push origin HEAD
+gh pr checks 6327 --repo pwa-builder/PWABuilder --watch --interval 15
+```
+
+Expected: `Analyze (javascript)` and the `CodeQL` policy check both pass with no
+`js/request-forgery` or `js/loop-bound-injection` annotations.
