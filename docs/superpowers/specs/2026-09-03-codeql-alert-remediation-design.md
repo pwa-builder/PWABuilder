@@ -20,7 +20,7 @@ tainted data flow and provide better uniqueness.
 This change will:
 
 - Preserve Cloudflare-specific error guidance.
-- Route the diagnostic request through a public-only, DNS-pinned fetch helper.
+- Route the diagnostic request through a public-only, DNS-pinned request helper.
 - Validate every redirect before following it.
 - Replace request-derived queue hashes with full random UUIDs.
 - Remove the unused hash helper.
@@ -32,8 +32,8 @@ storage, or the keytool remediation.
 ## Public-only Fetch Boundary
 
 A focused utility will accept an HTTP(S) URL and dependencies for DNS resolution
-and fetching. Production dependencies use Node DNS, `http.Agent` or
-`https.Agent`, and `node-fetch`; tests inject deterministic fakes.
+and requesting. Production dependencies use Node DNS and the native `http` or
+`https` client; tests inject deterministic fakes.
 
 For each request hop, the helper will:
 
@@ -50,9 +50,10 @@ For each request hop, the helper will:
    `64:ff9b:1::/48`, `100::/64`, `2001::/23`, `2001:db8::/32`,
    `2002::/16`, `3fff::/20`, `5f00::/16`, `fc00::/7`, `fe80::/10`, and
    `ff00::/8`.
-4. Select one validated public address and pin the request agent's lookup
-   callback to that address. The URL hostname remains unchanged for the Host
-   header and TLS server-name validation.
+4. Select one validated public address and construct the native request target
+   from only that IP address. Pass the original path, port, `Host` header, and
+   HTTPS server name separately so HTTP routing and TLS certificate validation
+   retain the original URL semantics without another DNS lookup.
 5. Request with redirects disabled and a five-second timeout.
 6. For HTTP redirect statuses, resolve a relative `Location` header against the
    current URL and repeat the complete validation process. At most three
@@ -62,10 +63,18 @@ The helper returns the final response after the caller can inspect its headers.
 Response bodies will be destroyed after Cloudflare detection because their
 contents are not needed.
 
-The guarded `fetch` sink will carry a narrow SARIF suppression with a
-justification describing complete address validation, DNS pinning, and redirect
-revalidation. The suppression documents a static-analysis modeling gap; it does
-not replace the runtime controls.
+The first implementation used `node-fetch` with a custom pinned agent and an
+`@sarif-suppress` source comment. GitHub Code Scanning does not support that
+comment as an inline CodeQL suppression, so alert 65 remained open even though
+the runtime controls were present. The native transport makes the actual
+validated IP the network endpoint and removes the user-derived full-URL sink.
+No source suppression is required.
+
+The native response stream will be wrapped in the existing `node-fetch`
+`Response` type. This preserves the public helper interface, redirect handling,
+Cloudflare detector, and network-free dependency injection while replacing only
+the production egress implementation. Native HTTP clients do not follow
+redirects automatically.
 
 ## Cloudflare Detection
 
@@ -74,7 +83,7 @@ not replace the runtime controls.
 response header case-insensitively.
 
 Blocked destinations, DNS failures, timeouts, malformed redirects, excessive
-redirects, and fetch failures will all produce `false`. Package generation will
+redirects, and request failures will all produce `false`. Package generation will
 continue to display the existing generic CDN/firewall guidance, preserving the
 diagnostic's best-effort behavior without exposing internal error details.
 
@@ -96,16 +105,19 @@ risk.
 
 ## Testing
 
-Public-only fetch tests will use injected DNS and fetch functions and will never
-open a socket. They will cover:
+Public-only fetch tests will use injected DNS and request functions and will
+never open a socket. They will cover:
 
 - HTTP(S) acceptance and scheme/credential rejection.
 - Public IPv4 and IPv6 resolution.
 - Direct and DNS-resolved non-public addresses across every denied range.
 - Mixed public and non-public DNS responses.
-- DNS pinning passed to the request agent.
+- DNS pinning passed to the request boundary.
+- Pure construction of native IPv4 and IPv6 targets from the validated address.
+- Preservation of the original path, port, `Host` header, and HTTPS server name.
+- Structural absence of a direct `fetch` sink in the production boundary.
 - Relative and absolute redirects, including redirect-to-private rejection.
-- Missing locations, redirect limits, DNS failures, timeouts, and fetch errors.
+- Missing locations, redirect limits, DNS failures, timeouts, and request errors.
 - Cloudflare header detection and generic fallback behavior.
 
 Queue ID tests will verify:
