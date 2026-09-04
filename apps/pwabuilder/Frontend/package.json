@@ -51,7 +51,7 @@
     "chai": "^4.3.4",
     "concurrently": "^6.0.0",
     "cross-env": "^7.0.3",
-    "danger": "^13.0.5",
+    "danger": "^13.0.8",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-import": "^2.22.1",
