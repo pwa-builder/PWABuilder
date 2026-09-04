@@ -1,6 +1,6 @@
 import { AndroidPackageOptions } from "../models/androidPackageOptions.js";
 import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
-import { createHash } from "../utils/hashCode.js";
+import { createPackageJobId } from "../utils/package-job-id.js";
 import { redisService } from "./redisService.js";
 import { azureQueue } from "./azureQueueService.js";
 
@@ -135,9 +135,7 @@ export class PackageJobQueue {
     }
 
     private createJobFromPackageArgs(packageArgs: AndroidPackageOptions): GooglePlayPackageJob {
-        const hash = createHash(packageArgs).toString() + createHash(Date.now());
-        const pwaUri = new URL(packageArgs.pwaUrl);
-        const id = `googleplaypackagejob:${pwaUri.host}:${hash.slice(-6)}`;
+        const id = createPackageJobId(packageArgs.pwaUrl);
         return {
             id: id,
             pwaUrl: packageArgs.pwaUrl,
