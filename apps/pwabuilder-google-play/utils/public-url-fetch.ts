@@ -1,7 +1,7 @@
-import fetch, { type Response } from 'node-fetch';
-import { Agent as HttpAgent } from 'node:http';
-import { Agent as HttpsAgent } from 'node:https';
-import { BlockList, isIP, type LookupFunction } from 'node:net';
+import { Headers, Response } from 'node-fetch';
+import { request as httpRequest, type IncomingHttpHeaders, type IncomingMessage } from 'node:http';
+import { request as httpsRequest, type RequestOptions } from 'node:https';
+import { BlockList, isIP } from 'node:net';
 import { lookup as dnsLookup } from 'node:dns/promises';
 import { Readable } from 'node:stream';
 
@@ -179,39 +179,98 @@ function destroyResponseBody(response: Response): void {
 }
 
 /**
- * Performs a GET request pinned to a single, pre-validated address while preserving
- * the original hostname for the Host header and TLS SNI. The connection's DNS lookup
- * is overridden so the socket can only reach the validated address.
+ * A native request target and the options that pin it. {@link PinnedRequestDescriptor.target}
+ * always points at the validated IP literal (never the original hostname or path), while
+ * {@link PinnedRequestDescriptor.options} carries the original path, authority Host header,
+ * explicit port, timeout signal, and (for HTTPS domain names) the SNI servername.
+ */
+export interface PinnedRequestDescriptor {
+    readonly target: URL;
+    readonly options: RequestOptions;
+}
+
+/** Error message used when an upstream response omits a status code. Never reflects the target. */
+const MISSING_STATUS_MESSAGE = 'The diagnostic response did not include a status code.';
+
+/**
+ * Builds the native request descriptor for a single, pre-validated address. The connection
+ * endpoint is the validated IP literal itself: the target URL is composed from a constant
+ * http/https scheme branch plus only the selected address, so neither the original hostname
+ * nor path can influence where the socket connects. The original authority is preserved via
+ * the Host header, the original path/search via {@link RequestOptions.path}, and — for HTTPS
+ * requests to a domain name — the original hostname via {@link RequestOptions.servername} so
+ * certificate validation targets the intended host. HTTPS requests to an IP literal omit
+ * servername so certificate validation remains bound to the IP. Reserved characters, ports,
+ * and fragments are handled by not reusing the original URL for the connection at all.
+ */
+export function createPinnedRequestDescriptor(url: URL, address: ResolvedAddress): PinnedRequestDescriptor {
+    assertUrlPolicy(url);
+
+    const isHttps = url.protocol === 'https:';
+    const scheme = isHttps ? 'https:' : 'http:';
+    const literal = stripBrackets(address.address);
+    const selected = address.family === 6 ? `[${literal}]` : literal;
+    const target = new URL(`${scheme}//${selected}/`);
+
+    const port = url.port === '' ? undefined : Number(url.port);
+    const originalHost = stripBrackets(url.hostname);
+    const servername = isHttps && isIP(originalHost) === 0 ? url.hostname : undefined;
+
+    const options: RequestOptions = {
+        method: 'GET',
+        path: `${url.pathname}${url.search}`,
+        port,
+        headers: { host: url.host },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        servername,
+    };
+
+    return { target, options };
+}
+
+/**
+ * Converts Node's {@link IncomingHttpHeaders} into a node-fetch {@link Headers} instance
+ * without any casts. Array-valued headers are joined with ", " and undefined values are
+ * dropped so the resulting init is a strict list of string pairs.
+ */
+function normalizeIncomingHeaders(headers: IncomingHttpHeaders): Headers {
+    const entries = Object.entries(headers)
+        .filter((entry): entry is [string, string | string[]] => entry[1] !== undefined)
+        .map<readonly [string, string]>(([name, value]) => [name, Array.isArray(value) ? value.join(', ') : value]);
+    return new Headers(entries);
+}
+
+/**
+ * Performs a GET request whose network endpoint is the validated IP literal. The request is
+ * issued with the native http/https client (which never follows redirects), so a redirecting
+ * response is returned as-is to the caller for re-validation. The incoming response stream is
+ * wrapped in a node-fetch {@link Response} purely as an in-memory reader; node-fetch is not
+ * used to make the request. A missing status code is treated as a hard error and the incoming
+ * stream is destroyed to avoid leaking sockets.
  */
 function performPinnedRequest(url: URL, address: ResolvedAddress): Promise<Response> {
-    // Pin every connection attempt to the exact validated address. @types/node types
-    // LookupFunction with the "all" callback form, which matches Node's happy-eyeballs
-    // (autoSelectFamily) path used by the agents below.
-    const lookup: LookupFunction = (_hostname, _options, callback) => {
-        callback(null, [{ address: address.address, family: address.family }]);
-    };
-    const agent =
-        url.protocol === 'https:'
-            ? new HttpsAgent({ lookup, keepAlive: false })
-            : new HttpAgent({ lookup, keepAlive: false });
+    const { target, options } = createPinnedRequestDescriptor(url, address);
 
-    // This is the single controlled network egress for Cloudflare diagnostics.
-    // Before this call every hop is validated:
-    // (1) only http/https schemes and no embedded credentials are allowed;
-    // (2) the host is resolved and EVERY resolved address must be a public IP literal
-    //     (private/reserved/invalid ranges are rejected via node:net BlockList);
-    // (3) the socket lookup is pinned to that validated address, so the connection
-    //     cannot be re-pointed at an internal host via DNS;
-    // (4) redirects are disabled here (redirect: 'manual') and are re-validated by the
-    //     caller through this same function before any further hop.
-    // This suppression documents a CodeQL modeling gap after real controls; it is not a
-    // substitute for them.
-    // @sarif-suppress 195 -- js/request-forgery
-    return fetch(url, {
-        method: 'GET',
-        redirect: 'manual',
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-        agent,
+    return new Promise<Response>((resolve, reject) => {
+        const handleResponse = (incomingResponse: IncomingMessage): void => {
+            const status = incomingResponse.statusCode;
+            if (status === undefined) {
+                incomingResponse.destroy();
+                reject(new Error(MISSING_STATUS_MESSAGE));
+                return;
+            }
+            const headers = normalizeIncomingHeaders(incomingResponse.headers);
+            resolve(new Response(incomingResponse, { status, headers }));
+        };
+
+        // The single controlled network egress for Cloudflare diagnostics. The connection
+        // target is the already-validated public IP literal (see fetchPublicUrl), and TLS
+        // verification (rejectUnauthorized) remains at its secure default of true.
+        const clientRequest = url.protocol === 'https:'
+            ? httpsRequest(target, options, handleResponse)
+            : httpRequest(target, options, handleResponse);
+        clientRequest.once('error', reject);
+        clientRequest.end();
     });
 }
 
@@ -242,7 +301,7 @@ export const productionDependencies: PublicUrlDependencies = {
  * and the request is pinned to it. Redirects (301/302/303/307/308) are followed
  * manually up to {@link MAX_REDIRECTS}; their bodies are destroyed and the Location is
  * re-validated. Missing Location headers, non-public redirect targets, and excess
- * redirects raise {@link PublicUrlBlockedError}. Ordinary DNS/fetch/timeout errors are
+ * redirects raise {@link PublicUrlBlockedError}. Ordinary DNS/request/timeout errors are
  * propagated unchanged so the caller can treat them as "not Cloudflare".
  */
 export async function fetchPublicUrl(

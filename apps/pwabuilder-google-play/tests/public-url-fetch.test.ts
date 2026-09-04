@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { Readable } from 'node:stream';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { Response } from 'node-fetch';
 import {
+    createPinnedRequestDescriptor,
     fetchPublicUrl,
     isPublicIpAddress,
     PublicUrlBlockedError,
@@ -399,4 +402,95 @@ test('PublicUrlBlockedError uses a constant message that never reflects the URL 
     for (const secret of ['user', 'pass', '10.0.0.1', '9999', 'secret-path']) {
         assert.equal(message.includes(secret), false, `message leaked ${secret}`);
     }
+});
+
+// --- createPinnedRequestDescriptor: native request targeting -----------------
+
+test('createPinnedRequestDescriptor targets the validated IPv4 address for an HTTPS domain URL', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://example.com:8443/icons/app.png?size=192#ignored'),
+        { address: '93.184.216.34', family: 4 }
+    );
+    assert.equal(descriptor.target.href, 'https://93.184.216.34/');
+    assert.equal(descriptor.options.method, 'GET');
+    assert.equal(descriptor.options.path, '/icons/app.png?size=192');
+    assert.equal(descriptor.options.port, 8443);
+    assert.deepEqual(descriptor.options.headers, { host: 'example.com:8443' });
+    assert.equal(descriptor.options.servername, 'example.com');
+    assert.ok(descriptor.options.signal instanceof AbortSignal, 'expected a timeout AbortSignal');
+});
+
+test('createPinnedRequestDescriptor brackets an IPv6 target while keeping the domain servername', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://example.com/icon.png'),
+        { address: '2606:4700:4700::1111', family: 6 }
+    );
+    assert.equal(descriptor.target.href, 'https://[2606:4700:4700::1111]/');
+    assert.equal(descriptor.options.servername, 'example.com');
+    assert.deepEqual(descriptor.options.headers, { host: 'example.com' });
+});
+
+test('createPinnedRequestDescriptor omits servername for an HTTPS IPv6 literal URL and keeps the bracketed authority', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://[2606:4700:4700::1111]/icon.png'),
+        { address: '2606:4700:4700::1111', family: 6 }
+    );
+    assert.equal(descriptor.target.href, 'https://[2606:4700:4700::1111]/');
+    assert.equal(descriptor.options.servername, undefined);
+    assert.deepEqual(descriptor.options.headers, { host: '[2606:4700:4700::1111]' });
+    assert.equal(descriptor.options.path, '/icon.png');
+});
+
+test('createPinnedRequestDescriptor omits servername for an HTTPS IPv4 literal URL', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://93.184.216.34/icon.png'),
+        { address: '93.184.216.34', family: 4 }
+    );
+    assert.equal(descriptor.options.servername, undefined);
+    assert.deepEqual(descriptor.options.headers, { host: '93.184.216.34' });
+});
+
+test('createPinnedRequestDescriptor uses an http target, omits servername, and leaves the port undefined by default', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('http://example.com/a/b?q=1'),
+        { address: '93.184.216.34', family: 4 }
+    );
+    assert.equal(descriptor.target.href, 'http://93.184.216.34/');
+    assert.equal(descriptor.options.servername, undefined);
+    assert.equal(descriptor.options.port, undefined);
+    assert.equal(descriptor.options.path, '/a/b?q=1');
+    assert.deepEqual(descriptor.options.headers, { host: 'example.com' });
+});
+
+test('createPinnedRequestDescriptor defaults the path to "/" when the URL has none', () => {
+    const descriptor = createPinnedRequestDescriptor(
+        new URL('https://example.com'),
+        { address: '93.184.216.34', family: 4 }
+    );
+    assert.equal(descriptor.options.path, '/');
+});
+
+test('createPinnedRequestDescriptor enforces the URL policy for schemes and credentials', () => {
+    assert.throws(
+        () => createPinnedRequestDescriptor(new URL('ftp://example.com/x'), { address: '93.184.216.34', family: 4 }),
+        PublicUrlBlockedError
+    );
+    const credentialUrl = new URL('https://example.com/x');
+    credentialUrl.username = 'u';
+    credentialUrl.password = 'p';
+    assert.throws(
+        () => createPinnedRequestDescriptor(credentialUrl, { address: '93.184.216.34', family: 4 }),
+        PublicUrlBlockedError
+    );
+});
+
+// --- structural source regression: native transport, no fetch/suppression ---
+
+test('public-url-fetch source uses native request call sites without fetch or suppression comments', async () => {
+    const sourcePath = fileURLToPath(new URL('../utils/public-url-fetch.ts', import.meta.url));
+    const source = await readFile(sourcePath, 'utf8');
+    assert.equal(/\bfetch\s*\(/.test(source), false, 'source must not call fetch(...)');
+    assert.equal(source.includes('@sarif-suppress'), false, 'source must not contain @sarif-suppress');
+    assert.ok(/\bhttpsRequest\(target, options,/.test(source), 'source must call httpsRequest(target, options, ...)');
+    assert.ok(/\bhttpRequest\(target, options,/.test(source), 'source must call httpRequest(target, options, ...)');
 });
