@@ -47,9 +47,14 @@ public class PwaBuilderMsStorePackage
     public bool IsDevPackage { get; set; }
 
     /// <summary>
-    /// The package ID, e.g. MyCompany.MyPWA_1.0.0.0_neutral__2weykb3d8dbew.
+    /// The package identity name, e.g. MyCompany.MyPWA.
     /// </summary>
     public string? PackageId { get; set; }
+
+    /// <summary>
+    /// The Microsoft Store product ID matched to this package, or null if no published product has been found.
+    /// </summary>
+    public string? ProductId { get; set; }
 
     /// <summary>
     /// The publisher display name of the package, e.g. Contoso Inc.

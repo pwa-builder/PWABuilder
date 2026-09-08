@@ -19,6 +19,14 @@ To run locally:
 
 In deployed staging and production environments, this project is a Windows-based docker image that has the necessary Windows SDK components to run the package generation process. The docker image is built using GitHub Actions and pushed to the PWABuilder container registry.
 
+### Store publication tracking
+
+The packaging service runs `StorePwaService` five minutes after startup and every 24 hours thereafter. It pages through the SFEdge PWA catalog in the US market, fetches each product's details, and matches the identity name in each `PackageFamilyNames` entry to stored `packageId` values. All SFEdge requests use `User-Agent: StoreWeb PWABuilder`.
+
+Matching documents in the `PWABuilderPackages` container receive the Store ID in `productId` (`PwaBuilderMsStorePackage.ProductId`). Matching is case-insensitive and updates every matching package record, including older records without a `productId`. Only this field is patched; unchanged matches are not rewritten, and previously found IDs are not cleared when a product is absent from the catalog.
+
+The job reuses `AppSettings.CosmosDbEndpoint`, `CosmosDbDatabaseName`, `CosmosDbContainerName`, and `AzureManagedIdentityApplicationId`. The managed identity needs query/read and item-write access to the package container. Without CosmosDB configuration the job logs a warning and does not call SFEdge. Individual product failures are logged and retried on the next daily scan. Catalog or managed identity authentication failures defer the scan until the next daily run without stopping the packaging host; shutdown cancels pending work. Runs do not overlap within a service instance. Each deployed instance runs its own timer, so the host must remain running for scheduled scans.
+
 ## Modern, Classic, and Spartan packages
 
 This project can generate 3 types of packages for the Microsoft Store.
