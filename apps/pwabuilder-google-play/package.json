@@ -6,10 +6,12 @@
     "type": "module",
     "scripts": {
         "start": "node ./server.js",
-        "postinstall": "tsc",
+        "postinstall": "npm run build",
+        "prestart": "node ./scripts/patch-bubblewrap-gradle.mjs",
+        "predev": "node ./scripts/patch-bubblewrap-gradle.mjs",
         "dev": "cross-env NODE_ENV=development node --inspect=5858 --loader ts-node/esm ./server.ts",
-        "test": "npm run build && node --test ./tests/signing-options-validation.test.js ./tests/safe-key-tool.test.js ./tests/redact-secrets.test.js ./tests/key-tool-integration.test.js ./tests/signing-command-credentials.test.js ./tests/public-url-fetch.test.js ./tests/cloudflare-detection.test.js ./tests/package-job-id.test.js",
-        "prebuild": "node ./scripts/patch-jimp-file-type.mjs",
+        "test": "npm run build && node --test ./tests/signing-options-validation.test.js ./tests/gradle-injection.test.js ./tests/bubblewrap-gradle-patch.test.mjs ./tests/android-package-routes.test.mjs ./tests/safe-key-tool.test.js ./tests/redact-secrets.test.js ./tests/key-tool-integration.test.js ./tests/signing-command-credentials.test.js ./tests/public-url-fetch.test.js ./tests/cloudflare-detection.test.js ./tests/package-job-id.test.js",
+        "prebuild": "node ./scripts/patch-jimp-file-type.mjs && node ./scripts/patch-bubblewrap-gradle.mjs",
         "build": "tsc --noEmitOnError",
         "docker:build": "npm run build && docker build -t cloud-apk .",
         "docker:run": "docker run -p 5779:5858 -e NODE_ENV=development cloud-apk"
