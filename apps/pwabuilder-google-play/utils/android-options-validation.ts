@@ -3,6 +3,7 @@ import type { AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import type { AppPackageRequest } from '../models/appPackageRequest.js';
 import type { SigningOptions } from '../models/signingOptions.js';
 import { validateNewKeySigningOptions } from './signing-options-validation.js';
+import { normalizeAndroidHost } from './android-host.js';
 
 const malformedOptionsError =
     "Malformed argument. Coudn't find AndroidPackageOptions in body";
@@ -25,6 +26,10 @@ const displayValues = [
 ] as const;
 const fallbackTypeValues = ['customtabs', 'webview'] as const;
 const signingModeValues = ['new', 'none', 'mine'] as const;
+const orientationValues = [
+    'default', 'any', 'natural', 'landscape', 'portrait',
+    'portrait-primary', 'portrait-secondary', 'landscape-primary', 'landscape-secondary',
+] as const;
 
 type SigningMode = (typeof signingModeValues)[number];
 
@@ -58,11 +63,34 @@ export function validateAndroidOptionsRequest(body: unknown): AppPackageRequest 
         validateRequiredStringField(body, field, validationErrors);
     }
 
-    validateRequiredFiniteNumberField(
+    if (packageId.trim() !== packageId || !/^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)+$/iu.test(packageId)) {
+        validationErrors.push('packageId must be a valid Android application ID');
+    }
+
+    if (typeof body.host === 'string' && body.host !== '') {
+        const host = normalizeAndroidHost(body.host);
+        if (host === null) {
+            validationErrors.push('host must contain a valid DNS hostname, optionally with an HTTPS prefix, port, and path');
+        } else {
+            options.host = host;
+        }
+    }
+
+    const appVersionCode = validateRequiredFiniteNumberField(
         body,
         'appVersionCode',
         validationErrors
     );
+    if (appVersionCode !== null && (!Number.isSafeInteger(appVersionCode) || appVersionCode < 1)) {
+        validationErrors.push('appVersionCode must be a positive safe integer');
+    }
+    validateNonNegativeIntegerField(body, 'splashScreenFadeOutDuration', false, validationErrors);
+    validateNonNegativeIntegerField(body, 'minSdkVersion', true, validationErrors);
+    validateOptionalBooleanField(body, 'enableSiteSettingsShortcut', validationErrors);
+    validateOptionalBooleanField(body, 'isChromeOSOnly', validationErrors);
+    if (body.orientation !== undefined) {
+        validateEnumeratedField(body, 'orientation', orientationValues, validationErrors);
+    }
     validateEnumeratedField(
         body,
         'display',
@@ -326,6 +354,21 @@ function validateRequiredFiniteNumberField(
     }
 
     return value;
+}
+
+function validateNonNegativeIntegerField(
+    options: Record<string, unknown>,
+    field: string,
+    optional: boolean,
+    validationErrors: string[]
+): void {
+    const value = options[field];
+    if (optional && value === undefined) {
+        return;
+    }
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) {
+        validationErrors.push(`${field} must be a non-negative safe integer`);
+    }
 }
 
 function validateRequiredSigningStringField(

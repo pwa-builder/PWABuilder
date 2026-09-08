@@ -40,3 +40,34 @@ Once a Google Play app package has been generated, follow the steps on [Next Ste
 ## Deploy
 
 Deploys are automatically pushed to cloudapk/staging slot. To deploy to production, swap staging and production.
+
+### Android build input security
+
+Packaging options are untrusted, including options loaded from queued jobs. The
+HTTP validator checks DNS hosts (also accepting HTTPS prefixes, ports, IDNs, and
+legacy path prefixes) and the runtime types of Gradle scalar inputs. The worker
+revalidates before project generation and only forwards supported manifest fields
+and features to Bubblewrap.
+
+`scripts/patch-bubblewrap-gradle.mjs` patches Bubblewrap 1.25.0's Gradle template
+and shortcut URL serializer. Strings are encoded as single-quoted Groovy literals,
+not interpolated GStrings; numbers and booleans are type-checked at the template
+boundary. The patch checks the dependency version and complete source hashes and
+fails closed on unreviewed changes. Remove it only after an upstream release
+secures the same sinks and the regression tests pass.
+
+The patch runs during installation, build, and npm start/dev. Docker deliberately
+installs with `--ignore-scripts`, then applies it through `npm run build`. Do not
+deploy an install made with `--ignore-scripts` without running the build. Run
+`npm test` for validation, real-template rendering, patch lifecycle, and isolated
+HTTP-route regressions; these do not execute Gradle or contact production.
+
+This code fix does not isolate the build process from the service's identity,
+other jobs, or signing material. Following a reported production code execution,
+pause packaging and involve incident response: replace affected workers, review
+queued jobs and build artifacts, investigate identity/storage access, and rotate
+potentially exposed credentials and signing material as appropriate. Deploy the
+patched image to every slot/worker before resuming. Separately move builds into
+per-job, non-root sandboxes without backend credentials or managed-identity access;
+keep signing and artifact publication outside those sandboxes. Running as non-root
+alone does not remove managed-identity access.
