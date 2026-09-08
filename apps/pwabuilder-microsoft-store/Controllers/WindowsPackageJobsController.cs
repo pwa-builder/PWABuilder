@@ -9,7 +9,9 @@ using PWABuilder.MicrosoftStore.Models;
 
 namespace PWABuilder.MicrosoftStore.Controllers;
 
-/// <summary>Optional asynchronous packaging API; legacy MSIX endpoints remain unchanged.</summary>
+/// <summary>
+/// Optional asynchronous packaging API; legacy MSIX endpoints remain unchanged.
+/// </summary>
 [ApiController]
 [Route("msix")]
 public sealed class WindowsPackageJobsController(
@@ -18,7 +20,9 @@ public sealed class WindowsPackageJobsController(
     TimeProvider clock,
     IWindowsPackageJobStore? store = null) : ControllerBase
 {
-    /// <summary>Durably accepts a Windows package job without holding the HTTP connection open.</summary>
+    /// <summary>
+    /// Durably accepts a Windows package job without holding the HTTP connection open.
+    /// </summary>
     [HttpPost("enqueuePackageJob")]
     [RequestSizeLimit(2 * 1024 * 1024)]
     public async Task<IActionResult> EnqueuePackageJob(WindowsAppPackageOptions packageOptions, CancellationToken token)
@@ -66,7 +70,9 @@ public sealed class WindowsPackageJobsController(
         return Accepted($"{Request.PathBase}/msix/getPackageJob?id={job.Id}", ToStatus(job));
     }
 
-    /// <summary>Returns safe job status. Random job IDs are bearer capabilities.</summary>
+    /// <summary>
+    /// Returns safe job status. Random job IDs are bearer capabilities.
+    /// </summary>
     [HttpGet("getPackageJob")]
     public async Task<IActionResult> GetPackageJob(string id, CancellationToken token)
     {
@@ -88,7 +94,9 @@ public sealed class WindowsPackageJobsController(
         return Ok(ToStatus(job));
     }
 
-    /// <summary>Streams an unexpired completed ZIP without buffering it in application memory.</summary>
+    /// <summary>
+    /// Streams an unexpired completed ZIP without buffering it in application memory.
+    /// </summary>
     [HttpGet("downloadPackageZip")]
     public async Task<IActionResult> DownloadPackageZip(string id, CancellationToken token)
     {
@@ -119,7 +127,9 @@ public sealed class WindowsPackageJobsController(
         return File(stream, "application/zip", "windows-package.zip");
     }
 
-    /// <summary>Maps durable metadata to the public polling contract.</summary>
+    /// <summary>
+    /// Maps durable metadata to the public polling contract.
+    /// </summary>
     private WindowsPackageJobStatus ToStatus(WindowsPackageJob job)
     {
         var expired = job.ExpiresAt <= clock.GetUtcNow();
@@ -135,7 +145,9 @@ public sealed class WindowsPackageJobsController(
                 ? $"{Request.PathBase}/msix/downloadPackageZip?id={job.Id}" : null);
     }
 
-    /// <summary>Reports the disabled feature without constructing storage dependencies.</summary>
+    /// <summary>
+    /// Reports the disabled feature without constructing storage dependencies.
+    /// </summary>
     private ObjectResult Unavailable() =>
         StatusCode(StatusCodes.Status503ServiceUnavailable, new { error = "Queued Windows packaging is not enabled." });
 }

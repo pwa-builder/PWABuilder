@@ -9,7 +9,9 @@ using Microsoft.Extensions.Options;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Bounded consumers and a recoverable outbox dispatcher, owned by the host.</summary>
+/// <summary>
+/// Bounded consumers and a recoverable outbox dispatcher, owned by the host.
+/// </summary>
 public sealed class WindowsPackageJobWorker(
     IServiceScopeFactory scopes,
     IWindowsPackageJobQueue queue,
@@ -29,7 +31,9 @@ public sealed class WindowsPackageJobWorker(
             .Append(RunLoopAsync(true, stoppingToken)));
     }
 
-    /// <summary>Creates a fresh scope for each delivery so temporary build files are isolated.</summary>
+    /// <summary>
+    /// Creates a fresh scope for each delivery so temporary build files are isolated.
+    /// </summary>
     private async Task RunLoopAsync(bool dispatch, CancellationToken token)
     {
         while (!token.IsCancellationRequested)

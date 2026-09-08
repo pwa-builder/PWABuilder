@@ -20,17 +20,25 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Persists private packaging inputs and artifacts in Blob Storage and job state in Cosmos DB.</summary>
-/// <remarks>Requires pre-provisioned resources. Register as a singleton so the dedicated Cosmos client is reused and disposed.</remarks>
+/// <summary>
+/// Persists private packaging inputs and artifacts in Blob Storage and job state in Cosmos DB.
+/// </summary>
+/// <remarks>
+/// Requires pre-provisioned resources. Register as a singleton so the dedicated Cosmos client is reused and disposed.
+/// </remarks>
 public sealed class AzureWindowsPackageJobStore : IWindowsPackageJobStore, IDisposable
 {
     private static readonly JsonSerializerOptions InputJsonOptions = new(JsonSerializerDefaults.Web);
 
     private readonly CosmosClient cosmosClient;
+
     private readonly Container jobs;
+
     private readonly BlobContainerClient blobs;
 
-    /// <summary>Connects to pre-provisioned resources using the configured managed identity.</summary>
+    /// <summary>
+    /// Connects to pre-provisioned resources using the configured managed identity.
+    /// </summary>
     public AzureWindowsPackageJobStore(IOptions<WindowsPackageJobOptions> options, IOptions<AppSettings> appSettings)
     {
         var settings = appSettings.Value;
@@ -47,7 +55,9 @@ public sealed class AzureWindowsPackageJobStore : IWindowsPackageJobStore, IDisp
         jobs = cosmosClient.GetContainer(settings.CosmosDbDatabaseName, configuration.CosmosContainerName);
     }
 
-    /// <summary>Uses supplied SDK clients, taking ownership of the dedicated Cosmos client.</summary>
+    /// <summary>
+    /// Uses supplied SDK clients, taking ownership of the dedicated Cosmos client.
+    /// </summary>
     internal AzureWindowsPackageJobStore(CosmosClient cosmosClient, BlobContainerClient blobs, string databaseName, string containerName)
     {
         this.cosmosClient = cosmosClient;
@@ -164,20 +174,28 @@ public sealed class AzureWindowsPackageJobStore : IWindowsPackageJobStore, IDisp
     /// <inheritdoc/>
     public void Dispose() => cosmosClient.Dispose();
 
-    /// <summary>Keeps Cosmos' Newtonsoft serializer and the job contract's JSON attributes authoritative.</summary>
+    /// <summary>
+    /// Keeps Cosmos' Newtonsoft serializer and the job contract's JSON attributes authoritative.
+    /// </summary>
     internal static CosmosClientOptions CreateCosmosClientOptions() => new()
     {
         SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
     };
 
-    /// <summary>Projects Cosmos' system ETag separately from the job's ignored ETag property.</summary>
+    /// <summary>
+    /// Projects Cosmos' system ETag separately from the job's ignored ETag property.
+    /// </summary>
     private sealed class DispatchRecord
     {
-        /// <summary>Gets the job selected by the outbox query.</summary>
+        /// <summary>
+        /// Gets the job selected by the outbox query.
+        /// </summary>
         [JsonProperty("job")]
         public required WindowsPackageJob Job { get; init; }
 
-        /// <summary>Gets the persisted revision for a conditional outbox update.</summary>
+        /// <summary>
+        /// Gets the persisted revision for a conditional outbox update.
+        /// </summary>
         [JsonProperty("_etag")]
         public required string ETag { get; init; }
     }

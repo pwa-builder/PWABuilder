@@ -358,14 +358,19 @@ public sealed class PackagingPipelineTests
     {
         /// <inheritdoc/>
         public string ApplicationName { get; set; } = "PackagingTests";
+
         /// <inheritdoc/>
         public string EnvironmentName { get; set; } = "Development";
+
         /// <inheritdoc/>
         public string ContentRootPath { get; set; } = root;
+
         /// <inheritdoc/>
         public string WebRootPath { get; set; } = root;
+
         /// <inheritdoc/>
         public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
+
         /// <inheritdoc/>
         public IFileProvider WebRootFileProvider { get; set; } = new NullFileProvider();
     }
@@ -373,8 +378,11 @@ public sealed class PackagingPipelineTests
     private sealed class PipelineFixture : IDisposable
     {
         private readonly ServiceProvider provider;
+
         private readonly HttpClient http;
+
         private readonly ZombieProcessKiller killer;
+
         private readonly TelemetryConfiguration telemetry;
 
         /// <summary>
@@ -427,31 +435,69 @@ public sealed class PackagingPipelineTests
             };
         }
 
-        /// <summary>Gets the owned artifact root.</summary>
+        /// <summary>
+        /// Gets the owned artifact root.
+        /// </summary>
         public string Root { get; }
-        /// <summary>Gets the build settings.</summary>
+
+        /// <summary>
+        /// Gets the build settings.
+        /// </summary>
         public AppSettings Settings { get; }
-        /// <summary>Gets the disposable build scope.</summary>
+
+        /// <summary>
+        /// Gets the disposable build scope.
+        /// </summary>
         public IServiceScope Scope { get; }
-        /// <summary>Gets the scoped temporary-file owner.</summary>
+
+        /// <summary>
+        /// Gets the scoped temporary-file owner.
+        /// </summary>
         public TempDirectory Temp { get; }
-        /// <summary>Gets the locally captured telemetry.</summary>
+
+        /// <summary>
+        /// Gets the locally captured telemetry.
+        /// </summary>
         public TelemetryChannel Channel { get; }
-        /// <summary>Gets the package entry point.</summary>
+
+        /// <summary>
+        /// Gets the package entry point.
+        /// </summary>
         public WindowsAppPackageCreator Creator { get; }
-        /// <summary>Gets the package options.</summary>
+
+        /// <summary>
+        /// Gets the package options.
+        /// </summary>
         public WindowsAppPackageOptions PackageOptions { get; }
-        /// <summary>Gets the SDK packager.</summary>
+
+        /// <summary>
+        /// Gets the SDK packager.
+        /// </summary>
         public MakeAppxWrapper MakeAppx { get; }
-        /// <summary>Gets the SDK resource generator.</summary>
+
+        /// <summary>
+        /// Gets the SDK resource generator.
+        /// </summary>
         public MakePriWrapper MakePri { get; }
-        /// <summary>Gets the classic package generator.</summary>
+
+        /// <summary>
+        /// Gets the classic package generator.
+        /// </summary>
         public ClassicWindowsPackageCreator Classic { get; }
-        /// <summary>Gets the EdgeHTML package generator.</summary>
+
+        /// <summary>
+        /// Gets the EdgeHTML package generator.
+        /// </summary>
         public SpartanWindowsPackageCreator Spartan { get; }
-        /// <summary>Gets the modern package generator.</summary>
+
+        /// <summary>
+        /// Gets the modern package generator.
+        /// </summary>
         public ModernWindowsPackageCreator Modern { get; }
-        /// <summary>Gets the native PWABuilder tool.</summary>
+
+        /// <summary>
+        /// Gets the native PWABuilder tool.
+        /// </summary>
         public PwaBuilderWrapper PwaBuilder { get; }
 
         /// <inheritdoc/>

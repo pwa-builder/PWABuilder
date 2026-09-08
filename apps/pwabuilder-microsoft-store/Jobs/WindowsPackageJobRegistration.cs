@@ -8,10 +8,14 @@ using PWABuilder.MicrosoftStore.Models;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Registers the optional job API and validates its deployment prerequisites.</summary>
+/// <summary>
+/// Registers the optional job API and validates its deployment prerequisites.
+/// </summary>
 public static class WindowsPackageJobRegistration
 {
-    /// <summary>Registers durable job services only when explicitly enabled.</summary>
+    /// <summary>
+    /// Registers durable job services only when explicitly enabled.
+    /// </summary>
     public static IServiceCollection AddWindowsPackageJobs(this IServiceCollection services, IConfiguration configuration)
     {
         var section = configuration.GetSection("WindowsPackageJobs");
@@ -44,7 +48,9 @@ public static class WindowsPackageJobRegistration
         return services;
     }
 
-    /// <summary>Requires HTTPS service roots rather than signed URLs or credentials in configuration.</summary>
+    /// <summary>
+    /// Requires HTTPS service roots rather than signed URLs or credentials in configuration.
+    /// </summary>
     private static bool IsServiceUri(string value) =>
         Uri.TryCreate(value, UriKind.Absolute, out var uri)
         && uri.Scheme is "https"
@@ -53,7 +59,9 @@ public static class WindowsPackageJobRegistration
         && string.IsNullOrEmpty(uri.Query)
         && string.IsNullOrEmpty(uri.Fragment);
 
-    /// <summary>Checks Azure queue/container names, reserving room for the poison suffix.</summary>
+    /// <summary>
+    /// Checks Azure queue/container names, reserving room for the poison suffix.
+    /// </summary>
     private static bool IsStorageName(string name, int maxLength) =>
         name.Length >= 3 && name.Length <= maxLength
         && !name.Contains("--", StringComparison.Ordinal)

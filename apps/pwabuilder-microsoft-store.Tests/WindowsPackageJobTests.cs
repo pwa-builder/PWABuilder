@@ -224,9 +224,13 @@ public sealed class WindowsPackageJobTests
     internal sealed class Fixture
     {
         internal readonly List<string> Events = [];
+
         internal readonly FakeStore Store;
+
         internal readonly FakeQueue Queue;
+
         internal readonly FakeBuilder Builder;
+
         internal readonly WindowsPackageJobProcessor Processor;
 
         internal Fixture(WindowsPackageJobOptions? options = null)
@@ -252,8 +256,11 @@ public sealed class WindowsPackageJobTests
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(1),
             ETag = "0"
         };
+
         internal Exception? UploadError;
+
         internal bool RejectCompletion;
+
         internal WindowsPackageJobInput? SavedInput;
 
         public Task CreateAsync(WindowsPackageJob job, WindowsPackageJobInput input, CancellationToken token)
@@ -309,12 +316,19 @@ public sealed class WindowsPackageJobTests
     internal sealed class FakeQueue(List<string> events) : IWindowsPackageJobQueue
     {
         internal Exception? SendError;
+
         internal Exception? RenewError;
+
         internal Exception? PoisonError;
+
         internal string? SentJobId;
+
         internal Action? OnRenew;
+
         internal string? LatestReceipt;
+
         internal string? DeletedReceipt;
+
         internal Task<PackageJobMessage>? RenewResponse;
 
         public Task SendAsync(string jobId, CancellationToken token)
@@ -366,11 +380,17 @@ public sealed class WindowsPackageJobTests
     internal sealed class FakeBuilder(List<string> events) : IWindowsPackageJobBuilder
     {
         internal int Builds;
+
         internal WindowsPackageJobInput? Input;
+
         internal Exception? Error;
+
         internal Action? OnBuild;
+
         internal bool WaitForCancellation;
+
         internal bool WasCancelled;
+
         internal Task? WaitFor;
 
         public async Task<string> BuildAsync(WindowsPackageJobInput input, CancellationToken token)

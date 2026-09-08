@@ -17,16 +17,24 @@ internal sealed class PackageJobLease(
     TimeProvider clock) : IDisposable
 {
     private readonly SemaphoreSlim gate = new(1, 1);
+
     private WindowsPackageJob current = job;
+
     private bool released;
 
-    /// <summary>Latest queue receipt, including renewals.</summary>
+    /// <summary>
+    /// Latest queue receipt, including renewals.
+    /// </summary>
     public PackageJobMessage Message { get; private set; } = message;
 
-    /// <summary>Whether exclusive ownership was lost.</summary>
+    /// <summary>
+    /// Whether exclusive ownership was lost.
+    /// </summary>
     public bool Lost { get; private set; }
 
-    /// <summary>Renews the queue message and durable ownership until completion.</summary>
+    /// <summary>
+    /// Renews the queue message and durable ownership until completion.
+    /// </summary>
     public async Task RenewUntilStoppedAsync(CancellationTokenSource build, CancellationToken stop)
     {
         try
@@ -75,7 +83,9 @@ internal sealed class PackageJobLease(
         }
     }
 
-    /// <summary>Persists a state transition against the latest revision and releases ownership.</summary>
+    /// <summary>
+    /// Persists a state transition against the latest revision and releases ownership.
+    /// </summary>
     public async Task<WindowsPackageJob> FinishAsync(Func<WindowsPackageJob, WindowsPackageJob> transition, CancellationToken token)
     {
         await gate.WaitAsync(token);
@@ -98,7 +108,9 @@ internal sealed class PackageJobLease(
         }
     }
 
-    /// <summary>Refuses writes after the durable lease has expired.</summary>
+    /// <summary>
+    /// Refuses writes after the durable lease has expired.
+    /// </summary>
     private void EnsureOwnership()
     {
         if (Lost || current.LeaseExpiresAt <= clock.GetUtcNow())

@@ -4,7 +4,9 @@ using PWABuilder.MicrosoftStore.Services;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Adapts the existing Windows packaging pipeline to a scoped background job.</summary>
+/// <summary>
+/// Adapts the existing Windows packaging pipeline to a scoped background job.
+/// </summary>
 public sealed class WindowsPackageJobBuilder(WindowsAppPackageCreator creator) : IWindowsPackageJobBuilder
 {
     /// <inheritdoc/>

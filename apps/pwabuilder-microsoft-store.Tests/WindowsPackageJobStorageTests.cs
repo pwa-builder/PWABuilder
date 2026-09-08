@@ -14,13 +14,18 @@ using Xunit;
 
 namespace PWABuilder.MicrosoftStore.Tests;
 
-/// <summary>Exercises the Azure SDK providers without network access or Azure resources.</summary>
+/// <summary>
+/// Exercises the Azure SDK providers without network access or Azure resources.
+/// </summary>
 public sealed class WindowsPackageJobStorageTests
 {
     private const string JobId = "0123456789abcdef0123456789abcdef";
+
     private const string AttemptId = "fedcba9876543210fedcba9876543210";
 
-    /// <summary>Private inputs precede the outbox document and preserve raw manifests.</summary>
+    /// <summary>
+    /// Private inputs precede the outbox document and preserve raw manifests.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_PersistsImmutableInputBeforeCamelCaseJob()
     {
@@ -48,7 +53,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal($"[\"{JobId}\"]", writes[1].Headers["x-ms-documentdb-partitionkey"]);
     }
 
-    /// <summary>A failed input upload cannot create a dispatchable job.</summary>
+    /// <summary>
+    /// A failed input upload cannot create a dispatchable job.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_WhenInputUploadFails_DoesNotWriteJob()
     {
@@ -58,7 +65,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.DoesNotContain(fixture.Requests, request => request.Uri.Host == "cosmos.invalid" && request.Method == HttpMethod.Post);
     }
 
-    /// <summary>A failed metadata write leaves an orphan input for lifecycle cleanup.</summary>
+    /// <summary>
+    /// A failed metadata write leaves an orphan input for lifecycle cleanup.
+    /// </summary>
     [Fact]
     public async Task CreateAsync_WhenCosmosWriteFails_DoesNotDeleteInput()
     {
@@ -69,7 +78,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.DoesNotContain(fixture.Requests, request => request.Method == HttpMethod.Delete);
     }
 
-    /// <summary>Reads restore revisions from Cosmos response headers.</summary>
+    /// <summary>
+    /// Reads restore revisions from Cosmos response headers.
+    /// </summary>
     [Fact]
     public async Task GetAsync_ReturnsResponseETag()
     {
@@ -80,7 +91,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal("\"response-etag\"", job.ETag);
     }
 
-    /// <summary>Outbox results keep system revisions and use a bounded oldest-first query.</summary>
+    /// <summary>
+    /// Outbox results keep system revisions and use a bounded oldest-first query.
+    /// </summary>
     [Fact]
     public async Task GetPendingDispatchAsync_ReturnsProjectedETagFromBoundedQuery()
     {
@@ -101,7 +114,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Contains("c._etag", text);
     }
 
-    /// <summary>Continuation pages preserve each job's independent concurrency revision.</summary>
+    /// <summary>
+    /// Continuation pages preserve each job's independent concurrency revision.
+    /// </summary>
     [Fact]
     public async Task GetPendingDispatchAsync_ReadsContinuationPages()
     {
@@ -114,7 +129,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.NotEqual(pending[0].Id, pending[1].Id);
     }
 
-    /// <summary>A full batch does not continue draining the outbox.</summary>
+    /// <summary>
+    /// A full batch does not continue draining the outbox.
+    /// </summary>
     [Fact]
     public async Task GetPendingDispatchAsync_StopsAt50Records()
     {
@@ -125,7 +142,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Single(fixture.Requests, request => request.Headers.ContainsKey("x-ms-documentdb-isquery"));
     }
 
-    /// <summary>Only missing metadata is translated into a missing job.</summary>
+    /// <summary>
+    /// Only missing metadata is translated into a missing job.
+    /// </summary>
     [Theory]
     [InlineData(HttpStatusCode.NotFound)]
     [InlineData(HttpStatusCode.Forbidden)]
@@ -143,7 +162,9 @@ public sealed class WindowsPackageJobStorageTests
         }
     }
 
-    /// <summary>Updates fence ownership with the supplied ETag and return the new revision.</summary>
+    /// <summary>
+    /// Updates fence ownership with the supplied ETag and return the new revision.
+    /// </summary>
     [Fact]
     public async Task TryReplaceAsync_UsesIfMatchAndReturnsNewETag()
     {
@@ -155,7 +176,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal("\"response-etag\"", updated!.ETag);
     }
 
-    /// <summary>Unconditional metadata overwrites are not permitted.</summary>
+    /// <summary>
+    /// Unconditional metadata overwrites are not permitted.
+    /// </summary>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -168,7 +191,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.DoesNotContain(fixture.Requests, request => request.Method == HttpMethod.Put);
     }
 
-    /// <summary>Only failed optimistic concurrency checks represent lost ownership.</summary>
+    /// <summary>
+    /// Only failed optimistic concurrency checks represent lost ownership.
+    /// </summary>
     [Theory]
     [InlineData(HttpStatusCode.PreconditionFailed)]
     [InlineData(HttpStatusCode.Forbidden)]
@@ -187,7 +212,9 @@ public sealed class WindowsPackageJobStorageTests
         }
     }
 
-    /// <summary>Stored input JSON restores the manifest as a usable JsonDocument.</summary>
+    /// <summary>
+    /// Stored input JSON restores the manifest as a usable JsonDocument.
+    /// </summary>
     [Fact]
     public async Task ReadInputAsync_DeserializesWebJsonAndManifest()
     {
@@ -202,7 +229,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal("Partner", input.Analytics.PlatformId);
     }
 
-    /// <summary>Invalid input JSON never becomes a successful empty input.</summary>
+    /// <summary>
+    /// Invalid input JSON never becomes a successful empty input.
+    /// </summary>
     [Fact]
     public async Task ReadInputAsync_RejectsNullJson()
     {
@@ -211,7 +240,9 @@ public sealed class WindowsPackageJobStorageTests
         await Assert.ThrowsAsync<JsonException>(() => store.ReadInputAsync(JobId, CancellationToken.None));
     }
 
-    /// <summary>Artifacts use isolated, immutable attempt paths and streamed contents.</summary>
+    /// <summary>
+    /// Artifacts use isolated, immutable attempt paths and streamed contents.
+    /// </summary>
     [Fact]
     public async Task UploadArtifactAsync_UploadsFileToAttemptSpecificPath()
     {
@@ -234,7 +265,9 @@ public sealed class WindowsPackageJobStorageTests
         }
     }
 
-    /// <summary>Download streams remain open until the caller disposes them.</summary>
+    /// <summary>
+    /// Download streams remain open until the caller disposes them.
+    /// </summary>
     [Fact]
     public async Task OpenArtifactAsync_ReturnsReadableCallerOwnedStream()
     {
@@ -246,7 +279,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal(fixture.BlobBody, contents.ToArray());
     }
 
-    /// <summary>Messages contain only the raw reference and do not expire in the queue.</summary>
+    /// <summary>
+    /// Messages contain only the raw reference and do not expire in the queue.
+    /// </summary>
     [Fact]
     public async Task SendAsync_UsesRawJobIdAndInfiniteTtl()
     {
@@ -259,7 +294,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal("/jobs/messages", request.Uri.AbsolutePath);
     }
 
-    /// <summary>Receiving does not acknowledge, including malformed queue messages.</summary>
+    /// <summary>
+    /// Receiving does not acknowledge, including malformed queue messages.
+    /// </summary>
     [Theory]
     [InlineData(JobId)]
     [InlineData("invalid-job-reference")]
@@ -274,7 +311,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Contains("visibilitytimeout=120", request.Uri.Query);
     }
 
-    /// <summary>An empty queue is distinct from a storage failure.</summary>
+    /// <summary>
+    /// An empty queue is distinct from a storage failure.
+    /// </summary>
     [Fact]
     public async Task ReceiveAsync_EmptyQueueReturnsNull()
     {
@@ -282,7 +321,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Null(await fixture.CreateQueue().ReceiveAsync(CancellationToken.None));
     }
 
-    /// <summary>Renewals pass the latest receipt to subsequent acknowledgements.</summary>
+    /// <summary>
+    /// Renewals pass the latest receipt to subsequent acknowledgements.
+    /// </summary>
     [Fact]
     public async Task RenewAsync_ReturnsNewPopReceiptUsedForDelete()
     {
@@ -297,7 +338,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Contains("popreceipt=renewed-receipt", fixture.Requests.ElementAt(1).Uri.Query);
     }
 
-    /// <summary>Invalid or stale acknowledgement receipts surface to the processor.</summary>
+    /// <summary>
+    /// Invalid or stale acknowledgement receipts surface to the processor.
+    /// </summary>
     [Fact]
     public async Task DeleteAsync_PropagatesStaleReceiptError()
     {
@@ -306,7 +349,9 @@ public sealed class WindowsPackageJobStorageTests
         await Assert.ThrowsAsync<RequestFailedException>(() => queue.DeleteAsync(new("message-id", "stale", JobId, 4), CancellationToken.None));
     }
 
-    /// <summary>Poison messages are bounded references, without acknowledging their source.</summary>
+    /// <summary>
+    /// Poison messages are bounded references, without acknowledging their source.
+    /// </summary>
     [Fact]
     public async Task PoisonAsync_WritesSanitizedDiagnosticWithoutAcknowledging()
     {
@@ -327,7 +372,9 @@ public sealed class WindowsPackageJobStorageTests
         Assert.Equal(7, payload.RootElement.GetProperty("attempts").GetInt64());
     }
 
-    /// <summary>Cancelled operations cannot be accepted or acknowledged.</summary>
+    /// <summary>
+    /// Cancelled operations cannot be accepted or acknowledged.
+    /// </summary>
     [Theory]
     [InlineData("create")]
     [InlineData("get")]
@@ -368,7 +415,9 @@ public sealed class WindowsPackageJobStorageTests
             request.Uri.Host is "queue.invalid" or "blob.invalid" || request.Uri.AbsolutePath.Contains("/docs", StringComparison.Ordinal));
     }
 
-    /// <summary>Builds deterministic metadata for provider tests.</summary>
+    /// <summary>
+    /// Builds deterministic metadata for provider tests.
+    /// </summary>
     private static WindowsPackageJob CreateJob() => new()
     {
         Id = JobId,
@@ -378,27 +427,41 @@ public sealed class WindowsPackageJobStorageTests
         ETag = "\"old-etag\""
     };
 
-    /// <summary>Builds private input with optional manifest data.</summary>
+    /// <summary>
+    /// Builds private input with optional manifest data.
+    /// </summary>
     private static WindowsPackageJobInput CreateInput(JsonDocument? manifest = null) => new()
     {
         Options = new WindowsAppPackageOptions { Url = new Uri("https://example.com"), Manifest = manifest },
         Analytics = new PackageJobAnalytics { PlatformId = "Partner" }
     };
 
-    /// <summary>An SDK HTTP fixture whose transport never opens network connections.</summary>
+    /// <summary>
+    /// An SDK HTTP fixture whose transport never opens network connections.
+    /// </summary>
     private sealed class Fixture : HttpMessageHandler
     {
         private int outboxPage;
+
         internal readonly ConcurrentQueue<CapturedRequest> Requests = [];
+
         internal HttpStatusCode BlobStatus = HttpStatusCode.OK;
+
         internal HttpStatusCode CosmosStatus = HttpStatusCode.OK;
+
         internal HttpStatusCode QueueStatus = HttpStatusCode.OK;
+
         internal byte[] BlobBody = [];
+
         internal string? QueueBody = JobId;
+
         internal int OutboxPages = 1;
+
         internal int OutboxPageSize = 1;
 
-        /// <summary>Constructs the production store against an offline SDK transport.</summary>
+        /// <summary>
+        /// Constructs the production store against an offline SDK transport.
+        /// </summary>
         internal AzureWindowsPackageJobStore CreateStore()
         {
             var options = AzureWindowsPackageJobStore.CreateCosmosClientOptions();
@@ -412,7 +475,9 @@ public sealed class WindowsPackageJobStorageTests
             return new AzureWindowsPackageJobStore(cosmos, blobs, "database", "jobs");
         }
 
-        /// <summary>Constructs the production queue against an offline SDK transport.</summary>
+        /// <summary>
+        /// Constructs the production queue against an offline SDK transport.
+        /// </summary>
         internal AzureWindowsPackageJobQueue CreateQueue()
         {
             var options = new QueueClientOptions
@@ -448,7 +513,9 @@ public sealed class WindowsPackageJobStorageTests
             };
         }
 
-        /// <summary>Emulates Cosmos metadata discovery and point document operations.</summary>
+        /// <summary>
+        /// Emulates Cosmos metadata discovery and point document operations.
+        /// </summary>
         private HttpResponseMessage CosmosResponse(CapturedRequest request)
         {
             if (request.Uri.AbsolutePath is "/")
@@ -513,7 +580,9 @@ public sealed class WindowsPackageJobStorageTests
             throw new InvalidOperationException($"Unexpected Cosmos request: {request.Method} {request.Uri}");
         }
 
-        /// <summary>Emulates immutable uploads and streaming downloads.</summary>
+        /// <summary>
+        /// Emulates immutable uploads and streaming downloads.
+        /// </summary>
         private HttpResponseMessage BlobResponse(CapturedRequest request)
         {
             var response = new HttpResponseMessage(BlobStatus is HttpStatusCode.OK && request.Method == HttpMethod.Put ? HttpStatusCode.Created : BlobStatus)
@@ -527,7 +596,9 @@ public sealed class WindowsPackageJobStorageTests
             return response;
         }
 
-        /// <summary>Emulates queue receipts, sends, and explicit acknowledgements.</summary>
+        /// <summary>
+        /// Emulates queue receipts, sends, and explicit acknowledgements.
+        /// </summary>
         private HttpResponseMessage QueueResponse(CapturedRequest request)
         {
             if (QueueStatus is not HttpStatusCode.OK)
@@ -562,11 +633,15 @@ public sealed class WindowsPackageJobStorageTests
             return response;
         }
 
-        /// <summary>Creates a JSON response for the SDK.</summary>
+        /// <summary>
+        /// Creates a JSON response for the SDK.
+        /// </summary>
         private static HttpResponseMessage JsonResponse(HttpStatusCode status, string json) =>
             new(status) { Content = new StringContent(json, Encoding.UTF8, "application/json") };
     }
 
-    /// <summary>A captured outbound SDK request.</summary>
+    /// <summary>
+    /// A captured outbound SDK request.
+    /// </summary>
     private sealed record CapturedRequest(HttpMethod Method, Uri Uri, byte[] Body, Dictionary<string, string> Headers);
 }

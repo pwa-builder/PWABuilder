@@ -6,7 +6,9 @@ using Microsoft.Extensions.Options;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Crash-recoverable, at-least-once Windows packaging job lifecycle.</summary>
+/// <summary>
+/// Crash-recoverable, at-least-once Windows packaging job lifecycle.
+/// </summary>
 public sealed class WindowsPackageJobProcessor(
     IWindowsPackageJobStore store,
     IWindowsPackageJobQueue queue,
@@ -30,7 +32,9 @@ public sealed class WindowsPackageJobProcessor(
         }
     }
 
-    /// <summary>Processes one delivery, acknowledging only durable terminal outcomes.</summary>
+    /// <summary>
+    /// Processes one delivery, acknowledging only durable terminal outcomes.
+    /// </summary>
     public async Task ProcessAsync(PackageJobMessage message, CancellationToken stoppingToken)
     {
         if (!Guid.TryParseExact(message.JobId, "N", out _))
@@ -143,7 +147,9 @@ public sealed class WindowsPackageJobProcessor(
         }
     }
 
-    /// <summary>Records retries before allowing the unacknowledged message to reappear.</summary>
+    /// <summary>
+    /// Records retries before allowing the unacknowledged message to reappear.
+    /// </summary>
     private async Task RecordFailureAsync(PackageJobLease lease, CancellationToken token)
     {
         var updated = await lease.FinishAsync(j =>
@@ -170,13 +176,17 @@ public sealed class WindowsPackageJobProcessor(
         }
     }
 
-    /// <summary>Acknowledges only after terminal status (and any poison entry) is durable.</summary>
+    /// <summary>
+    /// Acknowledges only after terminal status (and any poison entry) is durable.
+    /// </summary>
     private Task AcknowledgeTerminalAsync(WindowsPackageJob job, PackageJobMessage message, CancellationToken token) =>
         job.Status is WindowsPackageJob.Failed
             ? PoisonAndDeleteAsync(message, job.Error ?? "Job failed.", token)
             : queue.DeleteAsync(message, token);
 
-    /// <summary>Poison delivery can itself duplicate after a crash; it is diagnostic, not executable work.</summary>
+    /// <summary>
+    /// Poison delivery can itself duplicate after a crash; it is diagnostic, not executable work.
+    /// </summary>
     private async Task PoisonAndDeleteAsync(PackageJobMessage message, string reason, CancellationToken token)
     {
         await queue.PoisonAsync(message, reason, token);

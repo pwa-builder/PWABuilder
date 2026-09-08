@@ -10,16 +10,22 @@ using PWABuilder.MicrosoftStore.Models;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Delivers job references through pre-provisioned Azure Storage queues.</summary>
+/// <summary>
+/// Delivers job references through pre-provisioned Azure Storage queues.
+/// </summary>
 public sealed class AzureWindowsPackageJobQueue : IWindowsPackageJobQueue
 {
     private static readonly TimeSpan InfiniteTimeToLive = TimeSpan.FromSeconds(-1);
 
     private readonly QueueClient queue;
+
     private readonly QueueClient poisonQueue;
+
     private readonly TimeSpan visibility;
 
-    /// <summary>Connects to the work and poison queues using the configured managed identity.</summary>
+    /// <summary>
+    /// Connects to the work and poison queues using the configured managed identity.
+    /// </summary>
     public AzureWindowsPackageJobQueue(IOptions<WindowsPackageJobOptions> options, IOptions<AppSettings> appSettings)
     {
         var configuration = options.Value;
@@ -35,7 +41,9 @@ public sealed class AzureWindowsPackageJobQueue : IWindowsPackageJobQueue
         visibility = TimeSpan.FromSeconds(configuration.VisibilitySeconds);
     }
 
-    /// <summary>Uses supplied SDK clients for queue delivery.</summary>
+    /// <summary>
+    /// Uses supplied SDK clients for queue delivery.
+    /// </summary>
     internal AzureWindowsPackageJobQueue(QueueClient queue, QueueClient poisonQueue, WindowsPackageJobOptions options)
     {
         this.queue = queue;
@@ -86,7 +94,9 @@ public sealed class AzureWindowsPackageJobQueue : IWindowsPackageJobQueue
         await poisonQueue.SendMessageAsync(diagnostic, timeToLive: InfiniteTimeToLive, cancellationToken: token);
     }
 
-    /// <summary>Bounds diagnostics and excludes control characters and arbitrary markup.</summary>
+    /// <summary>
+    /// Bounds diagnostics and excludes control characters and arbitrary markup.
+    /// </summary>
     private static string Sanitize(string value, int limit) =>
         new(value.Take(limit).Where(character => char.IsAsciiLetterOrDigit(character) || character is ' ' or '-' or '_' or '.').ToArray());
 }

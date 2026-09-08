@@ -2,7 +2,9 @@ using System;
 
 namespace PWABuilder.MicrosoftStore.Jobs;
 
-/// <summary>Public polling response; excludes inputs, internal errors, and storage/lease details.</summary>
+/// <summary>
+/// Public polling response; excludes inputs, internal errors, and storage/lease details.
+/// </summary>
 /// <param name="Id">Job capability ID.</param>
 /// <param name="Status">Queued, InProgress, Completed, Failed, or Expired.</param>
 /// <param name="CreatedAt">Submission time.</param>
