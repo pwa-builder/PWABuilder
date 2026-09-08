@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -37,6 +38,7 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="options">The package options.</param>
         /// <param name="outputDirectory">The directory to store the artifacts in.</param>
         /// <param name="webManifest">The web manifest of the PWA.</param>
+        /// <param name="cancelToken">Cancels extraction and packaging.</param>
         /// <returns>The path to the .appx file.</returns>
         protected async Task<UpdatedAppx> GenerateAppx(
             string appxTemplatePath, 
@@ -44,17 +46,20 @@ namespace PWABuilder.MicrosoftStore
             WindowsAppPackageOptions options, 
             WebAppManifestContext webManifest, 
             ImageGeneratorResult appImages, 
-            string outputDirectory)
+            string outputDirectory,
+            CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // Extract the project template .appx file (really, a .zip file) into a subdir of outputDirectory.
             var projectDirectory = ExtractAppx(appxTemplatePath, outputDirectory);
+            cancelToken.ThrowIfCancellationRequested();
 
             // Update the template with the real app information.
             var publisher = GetPublisher(options, webManifest);
-            await UpdateProjectFiles(outputDirectory, projectDirectory, appVersion, options, webManifest, publisher, appImages);
+            await UpdateProjectFiles(outputDirectory, projectDirectory, appVersion, options, webManifest, publisher, appImages, cancelToken);
 
             // Finally, repackage the appx from the unzipped files.
-            var appxFilePath = await makeAppx.Execute(projectDirectory, outputDirectory);
+            var appxFilePath = await makeAppx.Execute(projectDirectory, outputDirectory, cancelToken);
 
             return new UpdatedAppx
             {
@@ -73,6 +78,7 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="webManifest"></param>
         /// <param name="publisher"></param>
         /// <param name="appImages"></param>
+        /// <param name="cancelToken">Cancels file updates and resource generation.</param>
         /// <returns></returns>
         protected virtual async Task UpdateProjectFiles(
             string outputDirectory,
@@ -81,17 +87,20 @@ namespace PWABuilder.MicrosoftStore
             WindowsAppPackageOptions options,
             WebAppManifestContext webManifest,
             Publisher publisher,
-            ImageGeneratorResult appImages)
+            ImageGeneratorResult appImages,
+            CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // Update the AppManifest.xml file
             var appxManifestFilePath = Path.Combine(projectDirectory, "AppxManifest.xml");
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(appxManifestFilePath);
             await UpdateAppxManifest(xmlDoc, options, version, webManifest, publisher);
             xmlDoc.Save(appxManifestFilePath);
+            cancelToken.ThrowIfCancellationRequested();
 
             // Bring in the updated images.
-            await UpdateAppImages(outputDirectory, projectDirectory, appImages);
+            await UpdateAppImages(outputDirectory, projectDirectory, appImages, cancelToken);
         }
 
         protected virtual Task UpdateAppxManifest(
@@ -250,27 +259,30 @@ namespace PWABuilder.MicrosoftStore
             return strippedAndTrimmed;
         }
 
-        private async Task UpdateAppImages(string outputDirectory, string projectDirectory, ImageGeneratorResult appImages)
+        private async Task UpdateAppImages(string outputDirectory, string projectDirectory, ImageGeneratorResult appImages, CancellationToken cancelToken)
         {
-            CopyAppImages(appImages, Path.Combine(projectDirectory, "Images"));
+            CopyAppImages(appImages, Path.Combine(projectDirectory, "Images"), cancelToken);
 
-            await makePri.Execute(projectDirectory, outputDirectory);
+            await makePri.Execute(projectDirectory, outputDirectory, cancelToken);
         }
 
-        private void CopyAppImages(ImageGeneratorResult appImages, string targetDir)
+        private void CopyAppImages(ImageGeneratorResult appImages, string targetDir, CancellationToken cancelToken)
         {
             // Delete the placeholder images.
             var placeholderImages = Directory.EnumerateFiles(targetDir);
             foreach (var placeholder in placeholderImages)
             {
+                cancelToken.ThrowIfCancellationRequested();
                 File.Delete(placeholder);
             }
 
             // Copy in the app images.
             foreach (var sourceFilePath in appImages.ImagePaths)
             {
+                cancelToken.ThrowIfCancellationRequested();
                 var destinationFilePath = Path.Combine(targetDir, Path.GetFileName(sourceFilePath));
                 File.Copy(sourceFilePath, destinationFilePath);
+                cancelToken.ThrowIfCancellationRequested();
             }
         }
     }

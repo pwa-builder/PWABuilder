@@ -65,6 +65,29 @@ namespace PWABuilder.MicrosoftStore.Services
         /// <returns></returns>
         public async Task<WindowsAppPackageResult> CreateAppPackageAsync(WindowsAppPackageOptions options, AnalyticsInfo analyticsInfo, CancellationToken cancelToken)
         {
+            try
+            {
+                var package = await CreateAppPackageFileAsync(options, analyticsInfo, cancelToken);
+                var zipBytes = await File.ReadAllBytesAsync(package.FilePath, cancelToken);
+                return new WindowsAppPackageResult(package.ModernAppPackage, package.ClassicAppPackage, package.EdgeHtmlAppPackage, zipBytes);
+            }
+            finally
+            {
+                temp.CleanUp();
+            }
+        }
+
+        /// <summary>
+        /// Builds a ZIP package on disk without loading it into memory. The owning dependency-injection scope
+        /// must remain alive until the caller finishes reading or uploading the file.
+        /// </summary>
+        /// <param name="options">The Windows package options.</param>
+        /// <param name="analyticsInfo">The analytics context for this build.</param>
+        /// <param name="cancelToken">Cancels downloads, file operations, and native packaging tools.</param>
+        /// <returns>The generated ZIP path and modern package metadata.</returns>
+        public async Task<WindowsAppPackageFileResult> CreateAppPackageFileAsync(WindowsAppPackageOptions options, AnalyticsInfo analyticsInfo, CancellationToken cancelToken)
+        {
+            cancelToken.ThrowIfCancellationRequested();
             ValidateOptions(options);
 
             // COMMENTED OUT 2/25/2026 - This code had unintended consequences. For example, this code would detect https://app.eyegifs.com redirects to https://app.eyegifs.com/account/login. But if the user is logged in, we want the PWA to keep the original url and not redirect to login.
@@ -84,15 +107,11 @@ namespace PWABuilder.MicrosoftStore.Services
                 await analytics.RecordStorePackageSuccess(options, packageType, analyticsInfo);
                 return zipResult;
             }
-            catch (Exception error)
+            catch (Exception error) when (error is not OperationCanceledException)
             {
                 logger.LogError(error, "Error generating app package for {url}", options.Url);
                 await analytics.RecordStorePackageFailure(error, options, packageType, analyticsInfo);
                 throw;
-            }
-            finally
-            {
-                temp.CleanUp();
             }
         }
 
@@ -102,12 +121,13 @@ namespace PWABuilder.MicrosoftStore.Services
         /// <returns></returns>
         public async Task<MsixResult> CreateMsixAsync(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             ValidateOptions(options);
             try
             {
                 return await GenerateMsix(options, cancelToken);
             }
-            catch (Exception error)
+            catch (Exception error) when (error is not OperationCanceledException)
             {
                 logger.LogError(error, "Error generating MSIX for {url}", options.Url);
                 throw;
@@ -159,33 +179,38 @@ namespace PWABuilder.MicrosoftStore.Services
 
         private async Task<MsixResult> GenerateMsix(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
-            var manifest = await manifestFinder.Find(options);
-            var appImages = await GenerateImages(options, manifest);
+            var manifest = await manifestFinder.Find(options, cancelToken);
+            var appImages = await GenerateImages(options, manifest, cancelToken);
             var package = await this.CreateModernWindowsPackage(options, appImages, manifest, cancelToken);
             if (package == null)
             {
                 throw new InvalidOperationException("Attempted to generate MSIX file, but passed in options to skip generating the modern package.");
             }
 
-            var msixBytes = await File.ReadAllBytesAsync(package.StoreMsixFilePath);
+            var msixBytes = await File.ReadAllBytesAsync(package.StoreMsixFilePath, cancelToken);
             return new MsixResult(package, msixBytes);
         }
 
-        private async Task<WindowsAppPackageResult> GenerateZipAsync(WindowsAppPackageOptions options, CancellationToken cancelToken)
+        private async Task<WindowsAppPackageFileResult> GenerateZipAsync(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
-            var manifest = await manifestFinder.Find(options);
-            var appImages = await GenerateImages(options, manifest);
+            var manifest = await manifestFinder.Find(options, cancelToken);
+            var appImages = await GenerateImages(options, manifest, cancelToken);
             //Todo: instead of adding filepath to the options, pass it to the filepath directly
             var modernPackage = await this.CreateModernWindowsPackage(options, appImages, manifest, cancelToken);
-            var classicPackage = await CreateClassicWindowsPackage(options, manifest, appImages, modernPackage?.PackageInfo.GetAppId());
-            var spartanPackage = await CreateSpartanWindowsPackage(options, manifest, appImages);
-            var zipFilePath = await CreateZipPackage(options, modernPackage, classicPackage, spartanPackage);
-            var zipBytes = await File.ReadAllBytesAsync(zipFilePath);
-            return new WindowsAppPackageResult(modernPackage, classicPackage, spartanPackage, zipBytes);
+            var classicPackage = await CreateClassicWindowsPackage(options, manifest, appImages, modernPackage?.PackageInfo.GetAppId(), cancelToken);
+            var spartanPackage = await CreateSpartanWindowsPackage(options, manifest, appImages, cancelToken);
+            var zipFilePath = await CreateZipPackage(options, modernPackage, classicPackage, spartanPackage, cancelToken);
+            cancelToken.ThrowIfCancellationRequested();
+            return new WindowsAppPackageFileResult(zipFilePath, modernPackage)
+            {
+                ClassicAppPackage = classicPackage,
+                EdgeHtmlAppPackage = spartanPackage
+            };
         }
 
         private async Task<ModernWindowsPackageResult?> CreateModernWindowsPackage(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             if (options.GenerateModernPackage)
             {
                 var outputDirectory = temp.CreateDirectory("modernpackage-" + Guid.NewGuid());
@@ -195,31 +220,34 @@ namespace PWABuilder.MicrosoftStore.Services
             return null;
         }
 
-        private async Task<ClassicWindowsPackageResult?> CreateClassicWindowsPackage(WindowsAppPackageOptions options, WebAppManifestContext manifest, ImageGeneratorResult appImages, string? edgeAppId)
+        private async Task<ClassicWindowsPackageResult?> CreateClassicWindowsPackage(WindowsAppPackageOptions options, WebAppManifestContext manifest, ImageGeneratorResult appImages, string? edgeAppId, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             if (options.ClassicPackage?.Generate == true)
             {
                 var outputDirectory = temp.CreateDirectory("classic-package-" + Guid.NewGuid().ToString());
-                return await this.classicPackageCreator.Create(options, manifest, appImages, outputDirectory, edgeAppId);
+                return await this.classicPackageCreator.Create(options, manifest, appImages, outputDirectory, edgeAppId, cancelToken);
             }
 
             return null;
         }
 
-        private async Task<SpartanWindowsPackageResult?> CreateSpartanWindowsPackage(WindowsAppPackageOptions options, WebAppManifestContext webManifest, ImageGeneratorResult appImages)
+        private async Task<SpartanWindowsPackageResult?> CreateSpartanWindowsPackage(WindowsAppPackageOptions options, WebAppManifestContext webManifest, ImageGeneratorResult appImages, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             if (options.EdgeHtmlPackage?.Generate == true)
             {
                 var outputDirectory = temp.CreateDirectory("spartan-package-" + Guid.NewGuid().ToString());
-                return await this.spartanPackageCreator.Create(options, webManifest, appImages, outputDirectory);
+                return await this.spartanPackageCreator.Create(options, webManifest, appImages, outputDirectory, cancelToken);
             }
 
             return null;
         }
 
 
-        private async Task<string> CreateZipPackage(WindowsAppPackageOptions options, ModernWindowsPackageResult? modernPackage, ClassicWindowsPackageResult? classicPackage, SpartanWindowsPackageResult? spartanPackage)
+        private async Task<string> CreateZipPackage(WindowsAppPackageOptions options, ModernWindowsPackageResult? modernPackage, ClassicWindowsPackageResult? classicPackage, SpartanWindowsPackageResult? spartanPackage, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             var zipFilePath = temp.CreateFile();
             using var zipFile = File.Create(zipFilePath);
             using var zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create);
@@ -234,56 +262,70 @@ namespace PWABuilder.MicrosoftStore.Services
             if (modernPackage != null)
             {
                 var msixFileName = $"{appFileName}.msixbundle";
-                zipArchive.CreateEntryFromFile(modernPackage.StoreMsixFilePath, msixFileName);
+                AddFileToZip(zipArchive, modernPackage.StoreMsixFilePath, msixFileName, cancelToken);
 
                 // Append the sideload msix for developer testing on a Windows box.
                 var sideLoadMsixFileName = $"{appFileName}.sideload.msix";
-                zipArchive.CreateEntryFromFile(modernPackage.SideLoadMsixFilePath, sideLoadMsixFileName);
+                AddFileToZip(zipArchive, modernPackage.SideLoadMsixFilePath, sideLoadMsixFileName, cancelToken);
 
                 // Append the install.ps1 script for installing the sideload modern app package.
-                var powerShellInstallScriptTemplate = await File.ReadAllTextAsync(settings.InstallScriptPath);
+                var powerShellInstallScriptTemplate = await File.ReadAllTextAsync(settings.InstallScriptPath, cancelToken);
                 var powerShellInstallScript = MaterializePowershellTemplate(powerShellInstallScriptTemplate, appName, sideLoadMsixFileName);
                 await zipArchive.CreateEntryFromString(powerShellInstallScript, "install.ps1");
+                cancelToken.ThrowIfCancellationRequested();
 
                 // Append the pwainstaller.exe tool which the install.ps1 script uses to install the app locally.
                 var installerPath = Path.Combine(host.ContentRootPath, settings.PwaInstallerPath);
-                zipArchive.CreateEntryFromFile(installerPath, "utils\\pwainstaller.exe");
+                AddFileToZip(zipArchive, installerPath, "utils\\pwainstaller.exe", cancelToken);
 
                 // Append next-steps readme
-                zipArchive.CreateEntryFromFile(settings.ReadmePath, "readme.html");
+                AddFileToZip(zipArchive, settings.ReadmePath, "readme.html", cancelToken);
             }
 
             // Append the classic package.
             if (classicPackage != null)
             {
-                zipArchive.CreateEntryFromFile(classicPackage.AppxFilePath, $"{appFileName}.classic.appxbundle");
+                AddFileToZip(zipArchive, classicPackage.AppxFilePath, $"{appFileName}.classic.appxbundle", cancelToken);
             }
 
             // Append the EdgeHTML (Spartan) package.
             if (spartanPackage != null)
             {
                 // The package itself.
-                zipArchive.CreateEntryFromFile(spartanPackage.AppxPath, $"{appFileName}.edgehtml.appxbundle");
+                AddFileToZip(zipArchive, spartanPackage.AppxPath, $"{appFileName}.edgehtml.appxbundle", cancelToken);
 
                 // The directory used for sideloading the app.
                 zipArchive.CreateEntryFromDirectory(spartanPackage.AppxLooseFilesDirectory, "EdgeHTML-sideload");
+                cancelToken.ThrowIfCancellationRequested();
 
                 // The sideload install script.
-                var powerShellInstallScriptTemplate = await File.ReadAllTextAsync(settings.SpartanInstallScriptPath);
+                var powerShellInstallScriptTemplate = await File.ReadAllTextAsync(settings.SpartanInstallScriptPath, cancelToken);
                 var powerShellInstallScript = MaterializePowershellTemplate(powerShellInstallScriptTemplate, appName, string.Empty);
                 await zipArchive.CreateEntryFromString(powerShellInstallScript, "install-edgehtml.ps1");
+                cancelToken.ThrowIfCancellationRequested();
 
                 // The Spartan next steps readme.
-                zipArchive.CreateEntryFromFile(settings.SpartanReadmePath, options.GenerateModernPackage ? "readme-edgehtml.html" : "readme.html");
+                AddFileToZip(zipArchive, settings.SpartanReadmePath, options.GenerateModernPackage ? "readme-edgehtml.html" : "readme.html", cancelToken);
             }
 
             return zipFilePath;
         }
 
-        private Task<ImageGeneratorResult> GenerateImages(WindowsAppPackageOptions options, WebAppManifestContext manifest)
+        /// <summary>
+        /// Checks cancellation around synchronous ZIP compression.
+        /// </summary>
+        private static void AddFileToZip(ZipArchive archive, string sourcePath, string entryName, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
+            archive.CreateEntryFromFile(sourcePath, entryName);
+            cancelToken.ThrowIfCancellationRequested();
+        }
+
+        private Task<ImageGeneratorResult> GenerateImages(WindowsAppPackageOptions options, WebAppManifestContext manifest, CancellationToken cancelToken)
+        {
+            cancelToken.ThrowIfCancellationRequested();
             var imagesDir = temp.CreateDirectory("app-images-" + Guid.NewGuid());
-            return this.imageGenerator.Generate(options, manifest, imagesDir);
+            return this.imageGenerator.Generate(options, manifest, imagesDir, cancelToken);
         }
 
         private string MaterializePowershellTemplate(string powerShellTemplate, string appName, string msixFileName)

@@ -31,7 +31,7 @@ PWABuilder.com today calls the `/msix/generateZip` endpoint, which creates a mod
 
 ## The API
 
-The web API exposes 6 endpoints:
+The web API exposes these synchronous endpoints:
 
 - `/msix/generateZip` - generates a zip file containing the .msixbundle file that runs on newer versions of Windows, a classic .appx package that runs on older versions of Windows, and a .sideload.msix package that can run locally on a developer's machine. This is the API called by pwabuilder.com's frontend.
 - `/msix/generate` - generates a single .msix package
@@ -39,6 +39,8 @@ The web API exposes 6 endpoints:
 - `/msix/updatePackage` - updates the Package ID, Publisher ID, and Publisher Display Name of an existing PWA app package.
 - `/msix/bundle` - accepts a .appx or .msix and creates a bundle file from it.
 - `/msix/createPackageFromLoose` - accepts a .zip file containing loose layout app files (e.g. AppxManifest.xml, resources.pri, Images, etc.) and generates a .msix package from it.
+
+An opt-in asynchronous packaging API is described in [Queued Windows packaging](#queued-windows-packaging-opt-in).
 
 ## Usage
 
@@ -195,6 +197,72 @@ To call `create` or `createZip`, issue a HTTP POST to `/msix/generate` or `/msix
 The following fields are required: `version`, `url`, `packageId`. All other fields are optional.
 
 Note the `usePwaBuilderWithCustomManifest` flag can be used to use a different manifest than the one used by the PWA. This can be used for testing manifests for non-public websites or non-public manifests, or to force a different manifest for an existing site. If the flag is set to true, the package will be created using the manifest specified by `manifestUrl`, disregarding the manifest actually used by the site. This is discouraged as it can cause problems related to app identity - speak to Mustapaha Jaber for more details - but it can be useful in creating prototypes or test packages. It does this using the old v91 of pwa_builder.exe tool.
+
+### Queued Windows packaging (opt-in)
+
+The asynchronous API runs alongside `/msix/generateZip`; existing callers and response formats are unchanged. It is disabled by default. Enabling it requires provisioning Azure resources and configuring the service; deploying code alone does not enable it.
+
+#### Resources and configuration
+
+Use separate resources for production and staging even when both deployments set `ASPNETCORE_ENVIRONMENT=Production`. For example, provision the queues and Blob container in `pwabuildercommon`, and the job container in the existing Cosmos database:
+
+- Queues `windows-package-jobs-prod` and `windows-package-jobs-prod-poison`; use `-nonprod` and `-nonprod-poison` for staging.
+- A **private** Blob container `windows-package-jobs-prod` for `inputs/` and `artifacts/`.
+- A **dedicated** Cosmos container `windows-package-jobs-prod`, partition key `/id`, default TTL `-1` (TTL enabled with per-document expiration), in the database configured by `AppSettings.CosmosDbDatabaseName`. Keep the default indexing policy for outbox queries. Do not reuse the package analytics container.
+
+Grant the service's managed identity access to these specific resources: Storage Queue Data Contributor (including the poison queue), Storage Blob Data Contributor, and Cosmos DB Built-in Data Contributor for the job container. The existing `AppSettings.AzureManagedIdentityApplicationId` selects a user-assigned identity; omit it to use the system-assigned identity. Provision resources separately; workers do not create queues, Blob containers, or Cosmos containers.
+
+Configure this top-level section through deployment settings (double underscores for environment variables):
+
+```json
+{
+  "WindowsPackageJobs": {
+    "Enabled": true,
+    "QueueServiceUri": "https://pwabuildercommon.queue.core.windows.net",
+    "QueueName": "windows-package-jobs-prod",
+    "BlobServiceUri": "https://pwabuildercommon.blob.core.windows.net",
+    "BlobContainerName": "windows-package-jobs-prod",
+    "CosmosContainerName": "windows-package-jobs-prod",
+    "RunWorkers": true,
+    "WorkerCount": 1,
+    "MaxAttempts": 3,
+    "JobLifetimeHours": 168,
+    "AttemptTimeoutMinutes": 30,
+    "VisibilitySeconds": 120,
+    "RenewalSeconds": 30,
+    "PollSeconds": 2,
+    "RetryDelaySeconds": 30
+  }
+}
+```
+
+`AppSettings.CosmosDbEndpoint` and `AppSettings.CosmosDbDatabaseName` must also be configured. `RenewalSeconds` must be at most one third of `VisibilitySeconds`. Retention and attempt deadlines are configurable; jobs are not discarded merely because a browser stopped polling.
+
+Enable Blob lifecycle deletion for both `inputs/` and `artifacts/` after **at least `JobLifetimeHours / 24 + 1` days**, rounded up. This removes abandoned inputs, stale attempt artifacts, and completed downloads. Cosmos job TTL includes an additional day; the API enforces `ExpiresAt` independently of storage cleanup.
+
+#### Calling the API
+
+1. `POST /msix/enqueuePackageJob` with the same JSON options as `/msix/generateZip`. Optional `platform-identifier`, `platform-identifier-version`, `correlation-id`, and `?ref=` attribution are persisted with the job. A valid request returns **202 Accepted**, a job status body, a polling `Location`, and `Retry-After`.
+2. `GET /msix/getPackageJob?id=<id>` returns `Queued`, `InProgress`, `Completed`, `Failed`, or `Expired`, plus timestamps, attempt count, and a safe error description. It does not expose the input manifest, options, logs, or storage paths.
+3. `GET /msix/downloadPackageZip?id=<id>` streams the completed ZIP from private Blob Storage. It returns 409 if not completed, 410 if expired, or 404 for an unknown job.
+
+Requests to the asynchronous API return 503 while the feature is disabled. Invalid packaging options return 400 before any job is accepted. Enqueue requests have a 2 MiB body limit.
+
+Job IDs are random bearer capabilities: anyone with an ID can poll and download that job. Treat IDs and polling URLs as sensitive, use HTTPS, and do not publish them. The platform header is self-reported attribution, **not authentication**. Put partner authentication and rate limits at the gateway before enabling this for partner traffic. The API returns only safe error summaries; detailed failures remain in server logs.
+
+#### Delivery, recovery, and scaling
+
+Inputs are saved to Blob Storage, then a Cosmos job with a pending-dispatch flag is persisted before returning 202. A dispatcher retries pending records until their job-ID-only queue messages have been sent. A crash between sending and clearing the flag can duplicate delivery, but does not lose an accepted job.
+
+Workers receive messages **without deleting them**, claim jobs through Cosmos ETag conditional writes, and renew both queue visibility and job ownership while building. Ownership loss, shutdown, expiration, and attempt deadlines cancel builds and their native child processes. A fresh DI scope owns each build's temporary files.
+
+Artifacts are uploaded to attempt-specific Blob paths. The worker conditionally persists completion before acknowledging the latest queue receipt. Terminal redeliveries do not rebuild packages. This is **at-least-once**, not exactly-once execution: a crash can cause an unfinished attempt to run again. Failed attempts retry with bounded exponential delay; exhausted jobs are persisted as failed and copied to the poison queue before acknowledgement. Poison entries can duplicate and must not be automatically replayed without investigating the failure.
+
+Keep the returned job ID and poll it rather than resubmitting the POST. Each new POST currently creates a new job; the correlation ID is tracing metadata, not a deduplication key.
+
+Start with one queued build per Windows instance and tune against representative package sizes, widget builds, child-process memory/CPU, and temporary-disk usage. Scale on queue age/depth and resource usage. Legacy synchronous endpoints do not share this worker limit. For strict partner isolation, use a separate Windows deployment/compute plan. `RunWorkers=false` supports API-only instances; these still dispatch accepted jobs, while another enabled deployment with the same resource configuration must run workers.
+
+Monitor pending-dispatch records, queue age/depth, failed renewal logs, poison deliveries, and terminal jobs by `PlatformId`. Do not configure a busy-but-healthy worker to restart solely because its queue has a backlog. Keep Windows instances warm and allow graceful shutdown; interrupted jobs recover through visibility/ownership expiration.
 
 ### `/msix/isPwaPackage`
 
