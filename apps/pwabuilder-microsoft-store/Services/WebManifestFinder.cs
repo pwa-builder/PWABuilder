@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore
@@ -34,8 +35,9 @@ namespace PWABuilder.MicrosoftStore
             this.temp = temp;
         }
 
-        private async Task GenerateManifestFile(WindowsAppPackageOptions options)
+        private async Task GenerateManifestFile(WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             var manifestFilePath = temp.CreateFile(".json");
 
             try
@@ -48,11 +50,11 @@ namespace PWABuilder.MicrosoftStore
                     : JsonSerializer.Serialize(options.Manifest);
                 using (StreamWriter writer = new StreamWriter(manifestFilePath))
                 {
-                    await writer.WriteAsync(jsonString);
+                    await writer.WriteAsync(jsonString.AsMemory(), cancelToken);
                 }
                 options.ManifestFilePath = manifestFilePath;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
@@ -64,16 +66,18 @@ namespace PWABuilder.MicrosoftStore
         /// Gets the web app manifest for the PWA.
         /// </summary>
         /// <param name="options"></param>
+        /// <param name="cancelToken">Cancels manifest discovery, downloading, and writing.</param>
         /// <returns></returns>
-        public async Task<WebAppManifestContext> Find(WindowsAppPackageOptions options)
+        public async Task<WebAppManifestContext> Find(WindowsAppPackageOptions options, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // If we have a manifest and a manifest URL, use those.
             var manifestUri = options.ManifestUrl;
             if (options.Manifest == null && manifestUri != null)
             {
-                var rawManifest = await TryFetchManifestFrom(manifestUri, options);
+                var rawManifest = await TryFetchManifestFrom(manifestUri, options, cancelToken);
                 options.Manifest = rawManifest;
-                await GenerateManifestFile(options);
+                await GenerateManifestFile(options, cancelToken);
                 return WebAppManifestContext.From(options.Manifest!, manifestUri);
             }
 
@@ -81,7 +85,7 @@ namespace PWABuilder.MicrosoftStore
             if (options.Manifest != null && options.EnableWebAppWidgets != true)
             {
                 options.UsePWABuilderWithCustomManifest = true;
-                await GenerateManifestFile(options);
+                await GenerateManifestFile(options, cancelToken);
                 return WebAppManifestContext.From(options.Manifest, manifestUri != null ? manifestUri : options.Url);
             }
 
@@ -89,13 +93,13 @@ namespace PWABuilder.MicrosoftStore
             var pwaUri = options.Url;
 
             var apiUrl = webManifestFinderServiceUrl + $"?site={Uri.EscapeDataString(pwaUri.ToString())}";
-            var jsonResult = await InvokeManifestFinderService(apiUrl);
+            var jsonResult = await InvokeManifestFinderService(apiUrl, cancelToken);
             var manifestResult = DeserializeJson(jsonResult);
 
             if (manifestResult.content?.json != null && Uri.TryCreate(manifestResult.content.url, UriKind.Absolute, out var discoveredManifestUri))
             {
                 options.Manifest = manifestResult.content?.json;
-                await GenerateManifestFile(options);
+                await GenerateManifestFile(options, cancelToken);
                 return WebAppManifestContext.From(manifestResult.content!.json, discoveredManifestUri);
             }
 
@@ -123,35 +127,36 @@ namespace PWABuilder.MicrosoftStore
             }
         }
 
-        private async Task<string> InvokeManifestFinderService(string apiUrl)
+        private async Task<string> InvokeManifestFinderService(string apiUrl, CancellationToken cancelToken)
         {
             try
             {
                 using var httpGetMessage = new HttpRequestMessage(HttpMethod.Get, apiUrl);
                 httpGetMessage.Version = new Version(2, 0);
-                using var manifestResponse = await this.http.SendAsync(httpGetMessage);
+                using var manifestResponse = await this.http.SendAsync(httpGetMessage, cancelToken);
                 manifestResponse.EnsureSuccessStatusCode();
-                return await manifestResponse.Content.ReadAsStringAsync();
+                return await manifestResponse.Content.ReadAsStringAsync(cancelToken);
             }
-            catch (Exception httpError)
+            catch (Exception httpError) when (httpError is not OperationCanceledException)
             {
                 logger.LogError(httpError, "Unable to fetch manifest via manifest finder service. The call to {url} failed.", apiUrl);
                 throw new InvalidOperationException("Unable to fetch manifest via manifest finder service. The call to " + apiUrl + " failed");
             }
         }
 
-        private async Task<JsonDocument?> TryFetchManifestFrom(Uri manifestUrl, WindowsAppPackageOptions options)
+        private async Task<JsonDocument?> TryFetchManifestFrom(Uri manifestUrl, WindowsAppPackageOptions options, CancellationToken cancelToken)
         {
             try
             {
                 using var manifestFetchMessage = new HttpRequestMessage(HttpMethod.Get, manifestUrl);
                 manifestFetchMessage.Version = new Version(2, 0);
-                using var manifestResponse = await this.http.SendAsync(manifestFetchMessage);
+                using var manifestResponse = await this.http.SendAsync(manifestFetchMessage, cancelToken);
                 manifestResponse.EnsureSuccessStatusCode();
-                var manifestJson = await JsonDocument.ParseAsync(await manifestResponse.Content.ReadAsStreamAsync());
+                await using var stream = await manifestResponse.Content.ReadAsStreamAsync(cancelToken);
+                var manifestJson = await JsonDocument.ParseAsync(stream, cancellationToken: cancelToken);
                 return manifestJson;
             }
-            catch (Exception manifestFetchError)
+            catch (Exception manifestFetchError) when (manifestFetchError is not OperationCanceledException)
             {
                 logger.LogWarning(manifestFetchError, "Unable to fetch manifest using {url}", manifestUrl);
                 return null;

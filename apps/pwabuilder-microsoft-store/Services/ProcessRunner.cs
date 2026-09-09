@@ -15,21 +15,36 @@ namespace PWABuilder.MicrosoftStore
     public class ProcessRunner
     {
         private readonly ILogger<ProcessRunner> logger;
-        private readonly ZombieProcessKiller procKiller;
 
+        /// <summary>
+        /// Creates a runner for owned command-line processes.
+        /// </summary>
+        /// <param name="logger">The process logger.</param>
+        /// <param name="procKiller">Retained for constructor compatibility; each run now owns and disposes its timeout.</param>
         public ProcessRunner(ILogger<ProcessRunner> logger, ZombieProcessKiller procKiller)
         {
             this.logger = logger;
-            this.procKiller = procKiller;
         }
 
+        /// <summary>
+        /// Runs a tool, capturing both output streams and terminating its process tree on timeout or cancellation.
+        /// </summary>
+        /// <param name="processPath">The executable path.</param>
+        /// <param name="processArgs">The command-line arguments.</param>
+        /// <param name="killTime">The timeout, or thirty minutes when omitted.</param>
+        /// <param name="workingDirectory">The working directory for the process.</param>
+        /// <param name="outputEncoding">The optional encoding of the redirected output.</param>
+        /// <param name="cancellationToken">Cancels the process and its descendants.</param>
+        /// <returns>The captured standard output and error.</returns>
         public async Task<ProcessResult> Run(
             string processPath,
             string processArgs,
             TimeSpan? killTime = null,
             string workingDirectory = "",
-            Encoding? outputEncoding = null)
+            Encoding? outputEncoding = null,
+            CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!File.Exists(processPath))
             {
                 var pwaFileMissingError = new FileNotFoundException($"Unable to find {processPath}");
@@ -50,31 +65,45 @@ namespace PWABuilder.MicrosoftStore
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
             };
+            var processTimeout = killTime ?? TimeSpan.FromMinutes(30);
+            using var timeoutCancellation = new CancellationTokenSource(processTimeout);
+            using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCancellation.Token);
+            using var outputCancellation = new CancellationTokenSource();
+            cancellationToken.ThrowIfCancellationRequested();
             using var cliProc = Process.Start(processStartInfo);
-            if (cliProc == null)
+            if (cliProc is null)
             {
                 throw new InvalidOperationException("Couldn't start Process");
             }
 
-            if (killTime.HasValue)
-            {
-                procKiller.KillProcessAfter(cliProc, killTime.Value);
-            }
-
-            var cliOutputTask = cliProc.StandardOutput.ReadToEndAsync();
-            var cliErrorOutputTask = cliProc.StandardError.ReadToEndAsync();
-            var processTimeout = killTime ?? TimeSpan.FromMinutes(30);
-            using var timeoutCancellation = new CancellationTokenSource(processTimeout);
+            var cliOutputTask = cliProc.StandardOutput.ReadToEndAsync(outputCancellation.Token);
+            var cliErrorOutputTask = cliProc.StandardError.ReadToEndAsync(outputCancellation.Token);
 
             try
             {
-                await cliProc.WaitForExitAsync(timeoutCancellation.Token);
+                await Task.WhenAll(cliProc.WaitForExitAsync(linkedCancellation.Token), cliOutputTask, cliErrorOutputTask)
+                    .WaitAsync(linkedCancellation.Token);
+                cancellationToken.ThrowIfCancellationRequested();
             }
             catch (OperationCanceledException)
             {
                 TryKillProcess(cliProc, processPath);
-                var timedOutOutput = await cliOutputTask;
-                var timedOutErrorOutput = await cliErrorOutputTask;
+                // A descendant may retain an inherited pipe even after the parent exits.
+                // Bound both exit waiting and pipe draining so cancellation cannot hang a worker.
+                outputCancellation.CancelAfter(TimeSpan.FromSeconds(5));
+                try
+                {
+                    await Task.WhenAll(cliProc.WaitForExitAsync(outputCancellation.Token), cliOutputTask, cliErrorOutputTask)
+                        .WaitAsync(outputCancellation.Token);
+                }
+                catch (Exception cleanupError)
+                {
+                    logger.LogWarning(cleanupError, "Unable to finish draining CLI process for {procPath}", processPath);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                var timedOutOutput = cliOutputTask.IsCompletedSuccessfully ? cliOutputTask.Result : string.Empty;
+                var timedOutErrorOutput = cliErrorOutputTask.IsCompletedSuccessfully ? cliErrorOutputTask.Result : string.Empty;
                 var noExitError = CreateCliError($"The {processFileName} process timed out.", timedOutOutput, timedOutErrorOutput, processPath, processArgs);
                 throw noExitError;
             }
