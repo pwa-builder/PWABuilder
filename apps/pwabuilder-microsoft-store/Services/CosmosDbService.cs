@@ -4,7 +4,10 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PWABuilder.MicrosoftStore.Models;
+using PWABuilder.MicrosoftStore.Services;
 using System;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore;
@@ -13,12 +16,15 @@ namespace PWABuilder.MicrosoftStore;
 /// Provides access to CosmosDB using RBAC authentication via Azure Managed Identity.
 /// Supports both system-assigned and user-assigned managed identities.
 /// </summary>
-public sealed class CosmosDbService
+public sealed class CosmosDbService : IMsStorePackageStore
 {
     private readonly ILogger<CosmosDbService> logger;
     private readonly CosmosClient? cosmosClient;
     private readonly Container? container;
     private readonly bool isEnabled;
+
+    /// <inheritdoc/>
+    public bool IsEnabled => this.isEnabled;
 
     /// <inheritdoc/>
     public CosmosDbService(
@@ -74,6 +80,65 @@ public sealed class CosmosDbService
             this.logger.LogError(ex, "Failed to initialize CosmosDB service. Analytics will not be persisted to CosmosDB.");
             this.isEnabled = false;
         }
+    }
+
+    /// <summary>
+    /// Creates a service using an existing package container.
+    /// </summary>
+    internal CosmosDbService(Container container, ILogger<CosmosDbService> logger)
+    {
+        this.container = container;
+        this.logger = logger;
+        this.isEnabled = true;
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> UpdateProductIdAsync(string packageId, string productId, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(packageId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(productId);
+        if (!this.isEnabled || this.container is null)
+        {
+            throw new InvalidOperationException("CosmosDB is not enabled. Cannot update package publication information.");
+        }
+
+        // Package identity names are case-insensitive. Include older documents without productId,
+        // but avoid rewriting unchanged matches (writes also reset CosmosDB's TTL clock).
+        var query = new QueryDefinition("""
+            SELECT VALUE c.id FROM c
+            WHERE STRINGEQUALS(c.packageId, @packageId, true)
+            AND (NOT IS_DEFINED(c.productId) OR IS_NULL(c.productId) OR c.productId != @productId)
+            """)
+            .WithParameter("@packageId", packageId)
+            .WithParameter("@productId", productId);
+
+        using var results = this.container.GetItemQueryIterator<string>(query);
+        var updatedCount = 0;
+        while (results.HasMoreResults)
+        {
+            var page = await results.ReadNextAsync(cancellationToken);
+            foreach (var id in page)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                try
+                {
+                    // Analytics saves each document with its id as the partition key.
+                    await this.container.PatchItemAsync<PwaBuilderMsStorePackage>(
+                        id,
+                        new PartitionKey(id),
+                        [PatchOperation.Set("/productId", productId)],
+                        new PatchItemRequestOptions { EnableContentResponseOnWrite = false },
+                        cancellationToken);
+                    updatedCount++;
+                }
+                catch (CosmosException error) when (error.StatusCode is HttpStatusCode.NotFound)
+                {
+                    this.logger.LogInformation("Package {PackageDocumentId} expired or was removed before its product ID could be updated.", id);
+                }
+            }
+        }
+
+        return updatedCount;
     }
 
     /// <summary>
