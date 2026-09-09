@@ -25,6 +25,7 @@ import { FetchEngine } from '@bubblewrap/core/dist/lib/FetchUtils.js';
 import generatePassword from 'password-generator';
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import EventEmitter from "events";
+import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
 
 /*
  * Wraps Google's bubblewrap to build a signed APK from a PWA.
@@ -323,25 +324,12 @@ export class BubbleWrapper {
     }
 
     private createTwaManifest(pwaSettings: AndroidPackageOptions): TwaManifest {
-        // Bubblewrap expects a TwaManifest object.
-        // We create one using our ApkSettings and signing key info.
-
-        // Host without HTTPS: this is needed because the current version of Bubblewrap doesn't handle
-        // a host with protocol specified. Remove the protocol here. See https://github.com/GoogleChromeLabs/bubblewrap/issues/227
-        // NOTE: we cannot use new URL(pwaSettings.host).host, because this breaks PWAs located at subpaths, e.g. https://ics.hutton.ac.uk/gridscore
-        let hostWithoutHttps = pwaSettings.host;
-        const httpsProtocol = 'https://';
-        if (hostWithoutHttps.startsWith(httpsProtocol)) {
-            hostWithoutHttps = hostWithoutHttps.substring(httpsProtocol.length);
+        // Persisted jobs may predate HTTP validation. Revalidate before generating executable code.
+        const request = validateAndroidOptionsRequest(pwaSettings);
+        if (!request.options || request.validationErrors.length > 0) {
+            throw new Error('Invalid PWA settings: ' + request.validationErrors.join(', '));
         }
-
-        // Trim any trailing slash from the host. See https://github.com/pwa-builder/PWABuilder/issues/1221
-        if (hostWithoutHttps.endsWith('/')) {
-            hostWithoutHttps = hostWithoutHttps.substring(
-                0,
-                hostWithoutHttps.length - 1
-            );
-        }
+        pwaSettings = request.options;
 
         const signingKey = {
             path: this.signingKeyInfo?.keyFilePath || '',
@@ -354,8 +342,44 @@ export class BubbleWrapper {
             ? { enabled: true }
             : undefined;
         const manifestJson: TwaManifestJson = {
-            ...pwaSettings,
-            host: hostWithoutHttps,
+            // Do not spread untrusted JSON: undeclared Bubblewrap features can also emit build code.
+            packageId: pwaSettings.packageId,
+            host: pwaSettings.host,
+            name: pwaSettings.name,
+            launcherName: pwaSettings.launcherName,
+            appVersion: pwaSettings.appVersion,
+            appVersionCode: pwaSettings.appVersionCode,
+            startUrl: pwaSettings.startUrl,
+            display: pwaSettings.display,
+            orientation: pwaSettings.orientation,
+            themeColor: pwaSettings.themeColor,
+            themeColorDark: pwaSettings.themeColorDark,
+            backgroundColor: pwaSettings.backgroundColor,
+            navigationColor: pwaSettings.navigationColor,
+            navigationColorDark: pwaSettings.navigationColorDark,
+            navigationDividerColor: pwaSettings.navigationDividerColor,
+            navigationDividerColorDark: pwaSettings.navigationDividerColorDark,
+            iconUrl: pwaSettings.iconUrl,
+            maskableIconUrl: pwaSettings.maskableIconUrl,
+            monochromeIconUrl: pwaSettings.monochromeIconUrl,
+            splashScreenFadeOutDuration: pwaSettings.splashScreenFadeOutDuration,
+            enableNotifications: pwaSettings.enableNotifications,
+            enableSiteSettingsShortcut: pwaSettings.enableSiteSettingsShortcut,
+            isChromeOSOnly: pwaSettings.isChromeOSOnly,
+            isMetaQuest: pwaSettings.isMetaQuest,
+            minSdkVersion: pwaSettings.minSdkVersion,
+            webManifestUrl: pwaSettings.webManifestUrl,
+            fullScopeUrl: pwaSettings.fullScopeUrl,
+            fallbackType: pwaSettings.fallbackType,
+            shareTarget: pwaSettings.shareTarget,
+            additionalTrustedOrigins: pwaSettings.additionalTrustedOrigins,
+            serviceAccountJsonFile: pwaSettings.serviceAccountJsonFile,
+            features: {
+                appsFlyer: pwaSettings.features?.appsFlyer,
+                firstRunFlag: pwaSettings.features?.firstRunFlag,
+                locationDelegation: pwaSettings.features?.locationDelegation,
+                playBilling: pwaSettings.features?.playBilling,
+            },
             shortcuts: this.createShortcuts(
                 pwaSettings.shortcuts,
                 pwaSettings.webManifestUrl
