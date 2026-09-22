@@ -167,7 +167,7 @@ export type AndroidPackageOptions = {
      */
     fullScopeUrl?: string;
     /**
-     * The minimum [Android API Level](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels) required for the application to run. Defaults to `19`. Should be `23`, if `isMetaQuest` is `true`.
+     * The minimum [Android API Level](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels) required for the application to run. Defaults to `24` (Android 7.0) for Google Play automatic protection compatibility, including when `isMetaQuest` is `true`.
      */
     minSdkVersion?: number;
     /**
