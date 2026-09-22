@@ -6,6 +6,8 @@ We utilize [Google's Bubblewrap](https://github.com/googlechromelabs/bubblewrap)
 
 This tool generates a zip file containing both an `.apk` file (for testing) and an `.aab` file (for submission to Google Play Store).
 
+The minimum Android SDK defaults to API level 24 (Android 7.0), including for Meta Quest packages, to meet [Google Play automatic protection requirements](https://support.google.com/googleplay/android-developer/answer/10183279). API callers can explicitly supply `minSdkVersion`; values below 24 are not compatible with automatic protection.
+
 This app uses [PWABuilder's Android Build Box](https://github.com/pwa-builder/docker-android-build-box) docker image, which contains the necessary Android SDK Build Tools to execute Bubblewrap.
 
 ## Issues

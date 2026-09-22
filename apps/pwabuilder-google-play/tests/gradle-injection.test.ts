@@ -218,3 +218,23 @@ test('normal unsigned, signed, and Meta Quest manifests keep valid Gradle settin
         assert.match(source, /enableSiteSettingsShortcut: 'false'/u);
     }
 });
+
+for (const isMetaQuest of [false, true]) {
+    for (const minSdkVersion of [undefined, 23, 24, 28]) {
+        test(`packaging uses minimum SDK ${minSdkVersion ?? 24} when requested SDK is ${minSdkVersion} and Meta Quest is ${isMetaQuest}`, async () => {
+            const options = {
+                ...validOptions(),
+                isMetaQuest,
+                fullScopeUrl: 'https://example.com/',
+                minSdkVersion,
+            };
+            const wrapper = new BubbleWrapper(options, 'unused', null, 'node-fetch');
+            const twa = wrapper['createTwaManifest'](options);
+            const expectedMinSdkVersion = minSdkVersion ?? 24;
+
+            assert.equal(twa.minSdkVersion, expectedMinSdkVersion);
+            const source = await renderGradle(twa);
+            assert.match(source, new RegExp(`^\\s*minSdkVersion ${expectedMinSdkVersion}\\s*$`, 'm'));
+        });
+    }
+}

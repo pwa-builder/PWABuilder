@@ -367,7 +367,7 @@ export class BubbleWrapper {
             enableSiteSettingsShortcut: pwaSettings.enableSiteSettingsShortcut,
             isChromeOSOnly: pwaSettings.isChromeOSOnly,
             isMetaQuest: pwaSettings.isMetaQuest,
-            minSdkVersion: pwaSettings.minSdkVersion,
+            minSdkVersion: pwaSettings.minSdkVersion ?? 24,
             webManifestUrl: pwaSettings.webManifestUrl,
             fullScopeUrl: pwaSettings.fullScopeUrl,
             fallbackType: pwaSettings.fallbackType,
