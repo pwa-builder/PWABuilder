@@ -266,6 +266,7 @@ test('request validation has no service or server dependencies', async () => {
         new Set([
             'password-generator',
             './signing-options-validation.js',
+            './android-host.js',
         ])
     );
 });
@@ -413,6 +414,32 @@ test('request validation rejects an object body without packageId', () => {
         malformedBody
     );
 });
+
+test('request validation rejects a host that breaks out of a Gradle string', () => {
+    const body = createValidRequestBody();
+    body.signingMode = 'none';
+    body.host = "example.com', injected: (1 + 1), ignored: '";
+
+    assertRequestValidationError(
+        body,
+        ['host must contain a valid DNS hostname, optionally with an HTTPS prefix, port, and path'],
+        body.host
+    );
+});
+
+for (const field of ['splashScreenFadeOutDuration', 'minSdkVersion'] as const) {
+    test(`request validation rejects a Gradle expression in ${field}`, () => {
+        const body = createValidRequestBody();
+        body.signingMode = 'none';
+        Reflect.set(body, field, '(1 + 1)');
+
+        assertRequestValidationError(
+            body,
+            [`${field} must be a non-negative safe integer`],
+            '(1 + 1)'
+        );
+    });
+}
 
 for (const field of requiredStringFields) {
     for (const malformedValue of malformedRequiredStringValues) {

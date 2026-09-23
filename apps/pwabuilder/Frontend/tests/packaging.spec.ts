@@ -504,3 +504,130 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
   );
   expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
 });
+
+test('Windows, Android, and iOS app names allow ampersands and colons', async ({ page }) => {
+  const validationResults = await page.evaluate(async () => {
+    const siteUrl = 'https://example.com';
+    const manifest = {
+      dir: 'auto' as const,
+      display: 'standalone' as const,
+      name: 'Example App',
+      short_name: 'Example',
+      start_url: '/',
+      scope: '/',
+      lang: 'en',
+      description: 'Example description',
+      theme_color: '#000000',
+      background_color: '#ffffff',
+      icons: [
+        {
+          src: '/icon.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any'
+        }
+      ],
+      screenshots: []
+    };
+
+    const manifestContext = {
+      siteUrl,
+      manifestUrl: `${siteUrl}/manifest.webmanifest`,
+      manifest,
+      initialManifest: manifest,
+      isGenerated: false,
+      isEdited: false
+    };
+    const { setManifestContext } = await import('/src/script/services/app-info.ts');
+    setManifestContext(manifestContext);
+
+    const formDefinitions = [
+      {
+        store: 'Windows',
+        tagName: 'windows-form',
+        modulePath: '/src/script/components/windows-form.ts',
+        inputId: 'app-name-input'
+      },
+      {
+        store: 'Android',
+        tagName: 'android-form',
+        modulePath: '/src/script/components/android-form.ts',
+        inputId: 'app-name-input'
+      },
+      {
+        store: 'iOS',
+        tagName: 'ios-form',
+        modulePath: '/src/script/components/ios-form.ts',
+        inputId: 'appNameInput'
+      }
+    ] as const;
+
+    const results: Array<{
+      store: string;
+      acceptsCustomerName: boolean;
+      rejectsBlacklistedName: boolean;
+    }> = [];
+
+    for (const definition of formDefinitions) {
+      await import(definition.modulePath);
+      await customElements.whenDefined(definition.tagName);
+      document.body.innerHTML = `<${definition.tagName}></${definition.tagName}>`;
+
+      const form = document.querySelector(definition.tagName) as HTMLElement & {
+        updateComplete: Promise<void>;
+        shadowRoot: ShadowRoot;
+      } | null;
+
+      if (!form) {
+        throw new Error(`Unable to render the ${definition.store} packaging form.`);
+      }
+
+      await form.updateComplete;
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      const input = form.shadowRoot.getElementById(definition.inputId) as HTMLElement & {
+        value: string;
+        checkValidity(): boolean;
+        updateComplete: Promise<void>;
+      } | null;
+
+      if (!input) {
+        throw new Error(`Unable to find the ${definition.store} app-name input.`);
+      }
+
+      input.value = 'Fandango: Movies & Series';
+      await input.updateComplete;
+      const acceptsCustomerName = input.checkValidity();
+
+      input.value = 'Fandango | Movies';
+      await input.updateComplete;
+      const rejectsBlacklistedName = !input.checkValidity();
+
+      results.push({
+        store: definition.store,
+        acceptsCustomerName,
+        rejectsBlacklistedName
+      });
+    }
+
+    return results;
+  });
+
+  expect(validationResults).toEqual([
+    {
+      store: 'Windows',
+      acceptsCustomerName: true,
+      rejectsBlacklistedName: true
+    },
+    {
+      store: 'Android',
+      acceptsCustomerName: true,
+      rejectsBlacklistedName: true
+    },
+    {
+      store: 'iOS',
+      acceptsCustomerName: true,
+      rejectsBlacklistedName: true
+    }
+  ]);
+});
