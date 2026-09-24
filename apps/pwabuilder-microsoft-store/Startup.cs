@@ -63,6 +63,10 @@ public class Startup
         services.AddTransient<MakeAppxWrapper>();
         services.AddTransient<TempDirectory>();
         services.AddSingleton<CosmosDbService>();
+        services.AddSingleton<IMsStorePackageStore>(provider => provider.GetRequiredService<CosmosDbService>());
+        services.AddSingleton<SfEdgeClient>();
+        services.AddSingleton(TimeProvider.System);
+        services.AddHostedService<StorePwaService>();
         services.AddTransient<Analytics>();
         services.AddSingleton<ZombieProcessKiller>();
         services.AddTransient<ProcessRunner>();
