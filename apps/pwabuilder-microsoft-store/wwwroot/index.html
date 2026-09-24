@@ -25,7 +25,6 @@
         <div class="card-header d-flex align-items-center">
             <span class="text-muted">Presets:</span>
             <button id="simpleBtn" class="btn btn-link">Simple</button>
-            <button id="actionsBtn" class="btn btn-link">Actions</button>
             <button id="publisherBtn" class="btn btn-link">Publisher</button>
             <button id="imagesBtn" class="btn btn-link">Images</button>
             <button id="edgeHtmlBtn" class="btn btn-link">EdgeHTML</button>
@@ -37,24 +36,6 @@
         </textarea>
         </div>
         <div class="card-footer d-flex flex-column">
-            
-                <label class="text-muted">Optional: Windows Actions files</label>
-            <div class="input-group">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="actionManifestFile" accept=".json">
-                    <label class="custom-file-label" for="actionManifestFile">Choose ActionsManifest.json</label>
-                </div>
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="actionCustomEntitiesFile" accept=".json">
-                    <label class="custom-file-label" for="actionCustomEntitiesFile">Choose CustomEntities.json</label>
-                </div>
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="actionLocalizedCustomEntitiesFolder" webkitdirectory directory multiple>
-                    <label class="custom-file-label" for="actionLocalizedCustomEntitiesFolder">Choose localized entities folder</label>
-                </div>
-            </div>
-            <small id="fileStatus" class="form-text text-muted">No file selected</small>
-            <hr />
             <button id="submitBtn" class="btn btn-primary btn-lg">
                 <div class="spinner-border d-none" role="status">
                     <span class="sr-only">Loading...</span>
