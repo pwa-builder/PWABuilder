@@ -57,7 +57,7 @@ namespace PWABuilder.MicrosoftStore.Services
         /// <param name="webManifest">The web manifest of the PWA.</param>
         /// <param name="outputDirectory">The output directory to store the artifacts in.</param>
         /// <param name="processor"></param>
-        /// <param name="fallback"></param>
+        /// <param name="cancelToken">Cancels packaging and the native tool.</param>
         /// <returns></returns>
         public async Task<PwaBuilderCommandLineResult> Run(
             WindowsAppPackageOptions options,
@@ -65,24 +65,25 @@ namespace PWABuilder.MicrosoftStore.Services
             WebAppManifestContext webManifest,
             string outputDirectory,
             string processor,
-            CancellationToken cancelToken)
+            CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             var pwaBuilderFilePath = Path.Combine(host.ContentRootPath, PwaBuilderPath);
 
             var actionsFiles = await windowsActionService.GetWindowsActionsFilesAsync(options, outputDirectory, cancelToken);
             var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsFiles, outputDirectory, processor);
-            return await RunPwabuilderExe(options, appImages, webManifest, actionsFiles, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
+            return await RunPwabuilderExe(options, appImages, webManifest, actionsFiles, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs, cancelToken);
         }
 
-        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
+        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs, CancellationToken cancelToken)
         {
             ProcessResult procResult;
             try
             {
-                procResult = await procRunner.Run(pwaBuilderFilePath, pwaBuilderArgs, TimeSpan.FromMinutes(10));
+                procResult = await procRunner.Run(pwaBuilderFilePath, pwaBuilderArgs, TimeSpan.FromMinutes(10), cancellationToken: cancelToken);
                 logger.LogWarning("Raw args passed to pwa_builder {args}", pwaBuilderArgs);
             }
-            catch (Exception error)
+            catch (Exception error) when (error is not OperationCanceledException)
             {
                 var stdOut = (error as ProcessException)?.StandardOutput;
                 var stdErr = (error as ProcessException)?.StandardError;

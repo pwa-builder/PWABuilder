@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -33,17 +34,22 @@ namespace PWABuilder.MicrosoftStore
         /// Creates the classic Windows app package. Returns the file path to the generated app package.
         /// </summary>
         /// <param name="options">The package creation options.</param>
+        /// <param name="webManifest">The PWA manifest.</param>
+        /// <param name="appImages">The generated app images.</param>
+        /// <param name="outputDirectory">The package output directory.</param>
+        /// <param name="cancelToken">Cancels packaging and native tools.</param>
         /// <returns></returns>
-        public async Task<SpartanWindowsPackageResult> Create(WindowsAppPackageOptions options, WebAppManifestContext webManifest, ImageGeneratorResult appImages, string outputDirectory)
+        public async Task<SpartanWindowsPackageResult> Create(WindowsAppPackageOptions options, WebAppManifestContext webManifest, ImageGeneratorResult appImages, string outputDirectory, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             var appxTemplatePath = settings.SpartanWindowsAppPackagePath;
             var version = GetSpartanVersion(options).WithZeroRevision();
 
             // Create a new appx from the SpartanWindowsAppPackage.appx template.
-            var updatedAppxResult = await this.GenerateAppx(appxTemplatePath, version, options, webManifest, appImages, outputDirectory);
+            var updatedAppxResult = await this.GenerateAppx(appxTemplatePath, version, options, webManifest, appImages, outputDirectory, cancelToken);
 
             // Bundle it.
-            var appxBundlePath = await this.makeAppx.Bundle(updatedAppxResult.AppxFilePath, version);
+            var appxBundlePath = await this.makeAppx.Bundle(updatedAppxResult.AppxFilePath, version, cancelToken);
 
             return new SpartanWindowsPackageResult
             {

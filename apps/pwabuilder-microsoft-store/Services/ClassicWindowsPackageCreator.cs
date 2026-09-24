@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -37,23 +38,26 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="appImages">The app images.</param>
         /// <param name="outputDirectory">The output directory.</param>
         /// <param name="webManifest">The web manifest for the PWA.</param>
+        /// <param name="cancelToken">Cancels packaging and native tools.</param>
         /// <returns></returns>
         public async Task<ClassicWindowsPackageResult> Create(
             WindowsAppPackageOptions options,
             WebAppManifestContext webManifest,
             ImageGeneratorResult appImages,
             string outputDirectory,
-            string? edgeAppId)
+            string? edgeAppId,
+            CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             this.edgeAppId = edgeAppId;
             var appxPath = settings.ClassicWindowsAppPackagePath;
             var version = GetClassicAppVersion(options);
 
             // Make a new appx file from the ClassicWindowsAppPackage.appx template.
-            var updatedAppxResult = await this.GenerateAppx(appxPath, version, options, webManifest, appImages, outputDirectory);
+            var updatedAppxResult = await this.GenerateAppx(appxPath, version, options, webManifest, appImages, outputDirectory, cancelToken);
 
             // Bundle it into a .appxbundle
-            var appxBundleFilePath = await makeAppx.Bundle(updatedAppxResult.AppxFilePath, version.WithZeroRevision());
+            var appxBundleFilePath = await makeAppx.Bundle(updatedAppxResult.AppxFilePath, version.WithZeroRevision(), cancelToken);
 
             return new ClassicWindowsPackageResult
             {
@@ -95,12 +99,13 @@ namespace PWABuilder.MicrosoftStore
             }
         }
 
-        protected override async Task UpdateProjectFiles(string outputDirectory, string projectDirectory, Version version, WindowsAppPackageOptions options, WebAppManifestContext webManifest, Publisher publisher, ImageGeneratorResult appImages)
+        /// <inheritdoc/>
+        protected override async Task UpdateProjectFiles(string outputDirectory, string projectDirectory, Version version, WindowsAppPackageOptions options, WebAppManifestContext webManifest, Publisher publisher, ImageGeneratorResult appImages, CancellationToken cancelToken = default)
         {
-            await base.UpdateProjectFiles(outputDirectory, projectDirectory, version, options, webManifest, publisher, appImages);
+            await base.UpdateProjectFiles(outputDirectory, projectDirectory, version, options, webManifest, publisher, appImages, cancelToken);
 
             // Create the pwa.json file used in our pwainstaller.exe, which instructs Edge to install the PWA.
-            await CreatePwaJson(options, webManifest, projectDirectory, edgeAppId);
+            await CreatePwaJson(options, webManifest, projectDirectory, edgeAppId, cancelToken);
         }
 
         private void AddPwaBuilderNode(XmlDocument xmlDoc)
@@ -125,7 +130,7 @@ namespace PWABuilder.MicrosoftStore
             buildItem.ParentNode?.AppendChild(pwaBuilderNode);
         }
 
-        private Task CreatePwaJson(WindowsAppPackageOptions options, WebAppManifestContext webManifest, string outputDirectory, string? edgeAppId)
+        private Task CreatePwaJson(WindowsAppPackageOptions options, WebAppManifestContext webManifest, string outputDirectory, string? edgeAppId, CancellationToken cancelToken)
         {
             var jsonData = new
             {
@@ -134,7 +139,7 @@ namespace PWABuilder.MicrosoftStore
             };
             var jsonString = JsonSerializer.Serialize(jsonData);
             var filePath = Path.Combine(outputDirectory, "pwa.json");
-            return File.WriteAllTextAsync(filePath, jsonString);
+            return File.WriteAllTextAsync(filePath, jsonString, cancelToken);
         }
 
         private Version GetClassicAppVersion(WindowsAppPackageOptions options)

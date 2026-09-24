@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore
@@ -33,10 +34,11 @@ namespace PWABuilder.MicrosoftStore
         /// </summary>
         /// <param name="outputDirectory">The directory in which to create temporary files.</param>
         /// <param name="appxProjectDirectory">The unzipped appx or msix directory. It should contain AppxManifest.xml and an Images directory.</param>
+        /// <param name="cancelToken">Cancels packaging and the native tool.</param>
         /// <returns>The file path to the generated .appx file.</returns>
-        public Task<string> Execute(string appxProjectDirectory, string outputDirectory)
+        public Task<string> Execute(string appxProjectDirectory, string outputDirectory, CancellationToken cancelToken = default)
         {
-            return MakeAppx(appxProjectDirectory, outputDirectory);
+            return MakeAppx(appxProjectDirectory, outputDirectory, cancelToken);
         }
 
         /// <summary>
@@ -44,9 +46,11 @@ namespace PWABuilder.MicrosoftStore
         /// </summary>
         /// <param name="packageFilePath">The path to the .msix or .appx file.</param>
         /// <param name="version">The version of the app. This is needed to mark the bundle version.</param>
+        /// <param name="cancelToken">Cancels bundling and the native tool.</param>
         /// <returns></returns>
-        public async Task<string> Bundle(string packageFilePath, Version version)
+        public async Task<string> Bundle(string packageFilePath, Version version, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             var appxDirectory = Path.GetDirectoryName(packageFilePath);
             if (appxDirectory == null)
             {
@@ -58,11 +62,12 @@ namespace PWABuilder.MicrosoftStore
             Directory.CreateDirectory(bundleDirectory);
             var inputPath = Path.Combine(bundleDirectory, Path.GetFileName(packageFilePath));
             File.Copy(packageFilePath, inputPath);
+            cancelToken.ThrowIfCancellationRequested();
 
             var appxFileNameWithoutExt = Path.GetFileNameWithoutExtension(packageFilePath);
             var outputBundlePath = Path.Combine(bundleDirectory, appxFileNameWithoutExt + ".appxbundle");            
             var bundleArgs = $"bundle /bv {version} /d \"{bundleDirectory}\" /p \"{outputBundlePath}\"";
-            var procResult = await this.procRunner.Run(MakeAppxPath, bundleArgs, TimeSpan.FromMinutes(5));
+            var procResult = await this.procRunner.Run(MakeAppxPath, bundleArgs, TimeSpan.FromMinutes(5), cancellationToken: cancelToken);
 
             if (!File.Exists(outputBundlePath))
             {
@@ -80,12 +85,14 @@ namespace PWABuilder.MicrosoftStore
         /// When Widgets are enabled, we need to bundle all the platform MSIXs together.
         /// </summary>
         /// <param name="packageFilePaths"></param>
-        /// <param name="outputDirectory"></param>
+        /// <param name="appxDirectory">The package output directory.</param>
         /// <param name="version"></param>
+        /// <param name="cancelToken">Cancels bundling and the native tool.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<string> BundlePlatforms(List<string> packageFilePaths, string appxDirectory, Version version)
+        public async Task<string> BundlePlatforms(List<string> packageFilePaths, string appxDirectory, Version version, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             if (appxDirectory == null)
             {
                 throw new InvalidOperationException("Couldn't find the directory" + appxDirectory);
@@ -99,13 +106,13 @@ namespace PWABuilder.MicrosoftStore
             var outputBundlePath = Path.Combine(bundleDirectory, appxFileNameWithoutExt + ".appxbundle");
             foreach (string packageFilePath in packageFilePaths)
             {
-
+                cancelToken.ThrowIfCancellationRequested();
                 var inputPath = Path.Combine(bundleDirectory, Path.GetFileName(packageFilePath));
                 File.Copy(packageFilePath, inputPath);
-
+                cancelToken.ThrowIfCancellationRequested();
             }
             var bundleArgs = $"bundle /bv {version} /d \"{bundleDirectory}\" /p \"{outputBundlePath}\"";
-            var procResult = await this.procRunner.Run(MakeAppxPath, bundleArgs, TimeSpan.FromMinutes(5));
+            var procResult = await this.procRunner.Run(MakeAppxPath, bundleArgs, TimeSpan.FromMinutes(5), cancellationToken: cancelToken);
 
             if (!File.Exists(outputBundlePath))
             {
@@ -119,11 +126,11 @@ namespace PWABuilder.MicrosoftStore
             return outputBundlePath;
         }
 
-        private async Task<string> MakeAppx(string projectDirectory, string outputDirectory)
+        private async Task<string> MakeAppx(string projectDirectory, string outputDirectory, CancellationToken cancelToken)
         {
             var appxFilePath = Path.Combine(outputDirectory, $"{Guid.NewGuid()}.appx");
             var makeAppxArgs = $"pack /o /d \"{projectDirectory}\" /p \"{appxFilePath}\"";
-            var procResult = await procRunner.Run(MakeAppxPath, makeAppxArgs, TimeSpan.FromMinutes(5));
+            var procResult = await procRunner.Run(MakeAppxPath, makeAppxArgs, TimeSpan.FromMinutes(5), cancellationToken: cancelToken);
 
             if (!File.Exists(appxFilePath))
             {

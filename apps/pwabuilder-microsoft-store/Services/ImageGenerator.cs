@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore
@@ -44,19 +45,21 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="options">The package options.</param>
         /// <param name="manifest">The web app manifest containing one or more images.</param>
         /// <param name="outputDirectory">The directory to write the images to.</param>
+        /// <param name="cancelToken">Cancels image generation, downloads, and file writes.</param>
         /// <returns>An object containing the paths to the generated images.</returns>
-        public async Task<ImageGeneratorResult> Generate(WindowsAppPackageOptions options, WebAppManifestContext manifest, string outputDirectory)
+        public async Task<ImageGeneratorResult> Generate(WindowsAppPackageOptions options, WebAppManifestContext manifest, string outputDirectory, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // 1. Generate images using PWABuilder's image generation service. 
             // These will be used as a backup if the options and manifest are missing images.
             var imageOptions = options.Images ?? new WindowsImages();
-            using var generatedImagesZip = await InvokePwabuilderImageGeneratorService(imageOptions, manifest);
+            using var generatedImagesZip = await InvokePwabuilderImageGeneratorService(imageOptions, manifest, cancelToken);
 
             // 2. Assemble the image sources from the options, web manifest, and generated images zip.
             var imageSources = GetImageSources(imageOptions, manifest, generatedImagesZip);
 
             // 3. Write all the available images to the output directory.
-            var imagePaths = await TryWriteImageSourcesToDirectory(imageSources, outputDirectory);
+            var imagePaths = await TryWriteImageSourcesToDirectory(imageSources, outputDirectory, cancelToken);
             return new ImageGeneratorResult(imagePaths);
         }
 
@@ -67,13 +70,13 @@ namespace PWABuilder.MicrosoftStore
             return scaleSetImages.Concat(targetSizeImages);
         }
 
-        private async Task<ImageGeneratorServiceZipFile> InvokePwabuilderImageGeneratorService(WindowsImages imageOptions, WebAppManifestContext webManifest)
+        private async Task<ImageGeneratorServiceZipFile> InvokePwabuilderImageGeneratorService(WindowsImages imageOptions, WebAppManifestContext webManifest, CancellationToken cancelToken)
         {
-            var baseImageBytes = await GetBaseImage(imageOptions, webManifest);
-            return await CreateWindows11ImagesZip(baseImageBytes, imageOptions.Padding, imageOptions.BackgroundColor);
+            var baseImageBytes = await GetBaseImage(imageOptions, webManifest, cancelToken);
+            return await CreateWindows11ImagesZip(baseImageBytes, imageOptions.Padding, imageOptions.BackgroundColor, cancelToken);
         }
 
-        private async Task<byte[]> GetBaseImage(WindowsImages imageOptions, WebAppManifestContext webManifest)
+        private async Task<byte[]> GetBaseImage(WindowsImages imageOptions, WebAppManifestContext webManifest, CancellationToken cancelToken)
         {
             // Find a base image from which to generate all Windows package images.
             // Best: the user supplied an image.
@@ -103,10 +106,10 @@ namespace PWABuilder.MicrosoftStore
             {
                 if (source != null)
                 {
-                    using var stream = await TryDownloadImage(source);
+                    using var stream = await TryDownloadImage(source, cancelToken);
                     if (stream != null)
                     {
-                        var bytes = await TryReadStreamBytes(stream, $"{source}, {description}");
+                        var bytes = await TryReadStreamBytes(stream, $"{source}, {description}", cancelToken);
                         if (bytes != null)
                         {
                             return bytes;
@@ -121,7 +124,7 @@ namespace PWABuilder.MicrosoftStore
             throw new InvalidOperationException($"Couldn't find a suitable base image from which to generate all Windows package images. Please ensure your web app manifest has a square PNG image 512x512 or larger. Base image sources: {string.Join(", ", imageSourceDescriptions)}");
         }
 
-        private async Task<ImageGeneratorServiceZipFile> CreateWindows11ImagesZip(byte[] image, double padding, string? backgroundColor)
+        private async Task<ImageGeneratorServiceZipFile> CreateWindows11ImagesZip(byte[] image, double padding, string? backgroundColor, CancellationToken cancelToken)
         {
             // The image generation API documentation: https://github.com/pwa-builder/PWABuilder/blob/ac5aec8c3ad235cb7f2f54bfa64189ec73e947a6/apps/pwabuilder/Controllers/ImagesController.cs#L83
             // states the image generator takes the following parameters:
@@ -132,7 +135,7 @@ namespace PWABuilder.MicrosoftStore
             var memStream = new MemoryStream(image);
             using var fileContent = new StreamContent(memStream);
             fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
-            var imageGeneratorArgs = new MultipartFormDataContent
+            using var imageGeneratorArgs = new MultipartFormDataContent
             {
                 { fileContent, "BaseImage", "image.png" },
                 { new StringContent(padding.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Padding" },
@@ -140,17 +143,25 @@ namespace PWABuilder.MicrosoftStore
                 { new StringContent(backgroundColor ?? "transparent"), "BackgroundColor" }
             };
 
-            using var imagesResponse = await this.http.PostAsync(imageGeneratorServiceUrl, imageGeneratorArgs);
+            using var imagesResponse = await this.http.PostAsync(imageGeneratorServiceUrl, imageGeneratorArgs, cancelToken);
             imagesResponse.EnsureSuccessStatusCode();
 
             // Copy the response into a self-contained MemoryStream so that
             // the ZipArchive remains usable after the HTTP response is disposed.
             var zipMemoryStream = new MemoryStream();
-            await imagesResponse.Content.CopyToAsync(zipMemoryStream);
-            zipMemoryStream.Position = 0;
-
-            var zipArchive = new ZipArchive(zipMemoryStream, ZipArchiveMode.Read);
-            return new ImageGeneratorServiceZipFile(zipArchive);
+            try
+            {
+                await imagesResponse.Content.CopyToAsync(zipMemoryStream, cancelToken);
+                zipMemoryStream.Position = 0;
+                cancelToken.ThrowIfCancellationRequested();
+                var zipArchive = new ZipArchive(zipMemoryStream, ZipArchiveMode.Read);
+                return new ImageGeneratorServiceZipFile(zipArchive);
+            }
+            catch
+            {
+                zipMemoryStream.Dispose();
+                throw;
+            }
         }
 
         private IEnumerable<ImageSource> GetImageSourcesForTargetSizes(WindowsImages imageOptions, WebAppManifestContext webManifest, ImageGeneratorServiceZipFile generatedImagesZip)
@@ -171,12 +182,13 @@ namespace PWABuilder.MicrosoftStore
                    select ImageSource.From(set, scale, imageOptions, webManifest, generatedImagesZip);
         }
 
-        private async Task<List<string>> TryWriteImageSourcesToDirectory(IEnumerable<ImageSource> sources, string outputDirectory)
+        private async Task<List<string>> TryWriteImageSourcesToDirectory(IEnumerable<ImageSource> sources, string outputDirectory, CancellationToken cancelToken)
         {
             var imageFilePaths = new List<string>(40);
             foreach (var source in sources)
             {
-                var filePath = await TryWriteImageSourceToDirectory(source, outputDirectory);
+                cancelToken.ThrowIfCancellationRequested();
+                var filePath = await TryWriteImageSourceToDirectory(source, outputDirectory, cancelToken);
                 if (filePath != null)
                 {
                     imageFilePaths.Add(filePath);
@@ -186,7 +198,7 @@ namespace PWABuilder.MicrosoftStore
             return imageFilePaths;
         }
 
-        private async Task<string?> TryWriteImageSourceToDirectory(ImageSource source, string outputDirectory)
+        private async Task<string?> TryWriteImageSourceToDirectory(ImageSource source, string outputDirectory, CancellationToken cancelToken)
         {
             // Go through each source in the specified ImageSource and try to write it to a file.
             //
@@ -197,17 +209,18 @@ namespace PWABuilder.MicrosoftStore
 
             var streamOpeners = new (Func<Task<Stream?>> action, string? description)[]
             {
-                (action: () => TryDownloadImage(source.AppPackageOptionsSource), description: source.AppPackageOptionsSource?.ToString()),
-                (action: () => TryDownloadImage(source.WebManifestSource), description: source.WebManifestSource?.ToString()),
+                (action: () => TryDownloadImage(source.AppPackageOptionsSource, cancelToken), description: source.AppPackageOptionsSource?.ToString()),
+                (action: () => TryDownloadImage(source.WebManifestSource, cancelToken), description: source.WebManifestSource?.ToString()),
                 (action: () => TryOpenZipEntry(source.GeneratedImageSource), description: source.GeneratedImageSource?.FullName)
             };
 
             foreach (var (action, description) in streamOpeners)
             {
+                cancelToken.ThrowIfCancellationRequested();
                 using var stream = await action();
                 if (stream != null)
                 {
-                    var filePath = await TryWriteStreamToOutputDirectory(stream, source.TargetFileName, outputDirectory, description ?? string.Empty);
+                    var filePath = await TryWriteStreamToOutputDirectory(stream, source.TargetFileName, outputDirectory, description ?? string.Empty, cancelToken);
                     if (filePath != null)
                     {
                         return filePath;
@@ -218,8 +231,9 @@ namespace PWABuilder.MicrosoftStore
             return null;
         }
 
-        private async Task<Stream?> TryDownloadImage(Uri? imageUri)
+        private async Task<Stream?> TryDownloadImage(Uri? imageUri, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             if (imageUri == null)
             {
                 return null;
@@ -229,14 +243,15 @@ namespace PWABuilder.MicrosoftStore
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
-                imageFetch = await http.SendAsync(request);
+                imageFetch = await http.SendAsync(request, cancelToken);
                 if (!imageFetch.IsSuccessStatusCode)
                 {
                     logger.LogWarning("Attempted to fetch image at {url}, but download failed with status {code}, {reason}", imageUri, imageFetch.StatusCode, imageFetch.ReasonPhrase);
+                    imageFetch.Dispose();
                     return null;
                 }
             }
-            catch (Exception fetchError)
+            catch (Exception fetchError) when (fetchError is not OperationCanceledException)
             {
                 logger.LogWarning(fetchError, "Attempted to fetch image at {url}, but download failed with exception. Will try HTTP/2", imageUri);
             }
@@ -248,14 +263,15 @@ namespace PWABuilder.MicrosoftStore
                 {
                     using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
                     request.Version = HttpVersion.Version20;
-                    imageFetch = await http.SendAsync(request);
+                    imageFetch = await http.SendAsync(request, cancelToken);
                     if (!imageFetch.IsSuccessStatusCode)
                     {
                         logger.LogWarning("Attempted to fetch image at {url} with HTTP/2, but download failed with status {code}, {reason}", imageUri, imageFetch.StatusCode, imageFetch.ReasonPhrase);
+                        imageFetch.Dispose();
                         return null;
                     }
                 }
-                catch (Exception fetchError)
+                catch (Exception fetchError) when (fetchError is not OperationCanceledException)
                 {
                     logger.LogError(fetchError, "Attempted to fetch image at {url} with HTTP/2, but download failed with exception", imageUri);
                     return null;
@@ -264,26 +280,32 @@ namespace PWABuilder.MicrosoftStore
 
             try
             {
-                var imageStream = await imageFetch.Content.ReadAsStreamAsync();
+                var imageStream = await imageFetch.Content.ReadAsStreamAsync(cancelToken);
                 return new HttpMessageStream(imageStream, imageFetch);
+            }
+            catch (OperationCanceledException)
+            {
+                imageFetch.Dispose();
+                throw;
             }
             catch (Exception imageBytesError)
             {
+                imageFetch.Dispose();
                 logger.LogWarning(imageBytesError, "Unable to read image bytes from {url}", imageUri);
                 return null;
             }
         }
 
-        private async Task<byte[]?> TryReadStreamBytes(Stream stream, string streamDescription)
+        private async Task<byte[]?> TryReadStreamBytes(Stream stream, string streamDescription, CancellationToken cancelToken)
         {
             using var memoryStream = new MemoryStream();
             try
             {
-                await stream.CopyToAsync(memoryStream);
-                await memoryStream.FlushAsync();
+                await stream.CopyToAsync(memoryStream, cancelToken);
+                await memoryStream.FlushAsync(cancelToken);
                 return memoryStream.ToArray();
             }
-            catch (Exception streamError)
+            catch (Exception streamError) when (streamError is not OperationCanceledException)
             {
                 logger.LogWarning(streamError, "Unable to read bytes from stream {description}", streamDescription);
                 return null;
@@ -316,19 +338,21 @@ namespace PWABuilder.MicrosoftStore
         /// <param name="fileName">The desired file name to write the stream into.</param>
         /// <param name="outputDirectory">The output directory to write the file into.</param>
         /// <param name="sourceDescription">The description of the source stream. This can be a URL for an image from the web, or the zip entry name for an image from a zip file.</param>
+        /// <param name="cancelToken">Cancels copying the image stream.</param>
         /// <returns>The file path of the written file, if successful. Null if downloading the stream failed.</returns>
-        private async Task<string?> TryWriteStreamToOutputDirectory(Stream stream, string fileName, string outputDirectory, string sourceDescription)
+        private async Task<string?> TryWriteStreamToOutputDirectory(Stream stream, string fileName, string outputDirectory, string sourceDescription, CancellationToken cancelToken)
         {
             var filePath = "";
             try
             {
+                cancelToken.ThrowIfCancellationRequested();
                 filePath = Path.Combine(outputDirectory, fileName);
                 using var fileStream = File.Create(filePath);
-                await stream.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
+                await stream.CopyToAsync(fileStream, cancelToken);
+                await fileStream.FlushAsync(cancelToken);
                 return filePath;
             }
-            catch (Exception streamError)
+            catch (Exception streamError) when (streamError is not OperationCanceledException)
             {
                 logger.LogWarning(streamError, "Failed to download stream from {source} into {destination}", sourceDescription, filePath);
                 return null;

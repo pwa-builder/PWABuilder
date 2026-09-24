@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PWABuilder.MicrosoftStore.Common;
+using PWABuilder.MicrosoftStore.Jobs;
 using PWABuilder.MicrosoftStore.Models;
 using PWABuilder.MicrosoftStore.Services;
 
@@ -85,6 +86,7 @@ public class Startup
             );
 
         services.AddControllers();
+        services.AddWindowsPackageJobs(Configuration);
     }
 
     static ApplicationInsightsServiceOptions setUpAppInsights(IConfigurationSection appSettings)

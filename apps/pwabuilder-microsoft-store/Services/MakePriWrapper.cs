@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PWABuilder.MicrosoftStore
@@ -33,39 +34,41 @@ namespace PWABuilder.MicrosoftStore
         /// </summary>
         /// <param name="appxProjectDirectory">The unzipped appx or msix directory. It should contain AppxManifest.xml and an Images directory.</param>
         /// <param name="outputDirectory">The directory in which to create temporary files.</param>
+        /// <param name="cancelToken">Cancels resource generation and native tools.</param>
         /// <returns>The file path to the generated resources.pri file.</returns>
-        public async Task<string> Execute(string appxProjectDirectory, string outputDirectory)
+        public async Task<string> Execute(string appxProjectDirectory, string outputDirectory, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // Delete any existing .pri file. Without this, we get duplicated resources in final resources.pri file.
             File.Delete(Path.Combine(appxProjectDirectory, "resources.pri"));
 
             // Create priconfig.xml resource config file.
             var priConfigPath = Path.Combine(outputDirectory, "priconfig.xml");
-            await RunMakePri($"createconfig /cf \"{priConfigPath}\" /dq en-US /o /v /pv 10.0.0", appxProjectDirectory);
+            await RunMakePri($"createconfig /cf \"{priConfigPath}\" /dq en-US /o /v /pv 10.0.0", appxProjectDirectory, cancelToken);
 
             // Remove the <autoResourcePackage qualifier="Scale"/> line from the pri config file.
             // Without this, multiple resources files (one for each Windows DPI scale) are generated, e.g. resources.scale-200.pri, resources.scale-400.pri, etc.
             // By removing this line, all the images will be packed into a single resources.pri.
-            await RemoveScaleQualifier(priConfigPath);
+            await RemoveScaleQualifier(priConfigPath, cancelToken);
 
             // Generate the actual resource file, resources.pri
-            await RunMakePri($"new /pr \"{appxProjectDirectory}\" /cf \"{priConfigPath}\" /v /o", appxProjectDirectory);
+            await RunMakePri($"new /pr \"{appxProjectDirectory}\" /cf \"{priConfigPath}\" /v /o", appxProjectDirectory, cancelToken);
 
             return Path.Combine(appxProjectDirectory, "resources.pri");
         }
 
-        private Task<ProcessResult> RunMakePri(string args, string workingDirectory)
+        private Task<ProcessResult> RunMakePri(string args, string workingDirectory, CancellationToken cancelToken)
         {
             var makePriPath = Path.Combine(this.settings.WindowsSdkDirectory, "makepri.exe");
-            return procRunner.Run(makePriPath, args, TimeSpan.FromMinutes(5), workingDirectory, System.Text.Encoding.Unicode);
+            return procRunner.Run(makePriPath, args, TimeSpan.FromMinutes(5), workingDirectory, System.Text.Encoding.Unicode, cancelToken);
         }
 
-        private async Task RemoveScaleQualifier(string priConfigPath)
+        private async Task RemoveScaleQualifier(string priConfigPath, CancellationToken cancelToken)
         {
             // We want to remove the line: <autoResourcePackage qualifier="Scale"/>
             // Removing this line enables the resources to be packed into a single .pri file, regardless of app icon scales.
             var scaleQualifierLine = "<autoResourcePackage qualifier=\"Scale\"/>";
-            var lines = await File.ReadAllLinesAsync(priConfigPath);
+            var lines = await File.ReadAllLinesAsync(priConfigPath, cancelToken);
             var linesWithoutScaleQualifier = lines
                 .Where(l => !l.Contains(scaleQualifierLine, StringComparison.InvariantCultureIgnoreCase))
                 .ToArray();
@@ -76,7 +79,7 @@ namespace PWABuilder.MicrosoftStore
                 logger.LogWarning("Unable to remove the scale qualifier line from the resources. Icons for different DPI scales will not be used in the app.");
             }
 
-            await File.WriteAllLinesAsync(priConfigPath, linesWithoutScaleQualifier);
+            await File.WriteAllLinesAsync(priConfigPath, linesWithoutScaleQualifier, cancelToken);
         }
     }
 }

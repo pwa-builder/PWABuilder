@@ -42,21 +42,26 @@ namespace PWABuilder.MicrosoftStore.Services
         /// Creates the modern Windows hosted app for the PWA.
         /// </summary>
         /// <param name="options"></param>
+        /// <param name="appImages">The generated app images.</param>
+        /// <param name="webManifest">The PWA manifest.</param>
         /// <param name="outputDirectory"></param>
+        /// <param name="cancelToken">Cancels the build and its native processes.</param>
         /// <returns></returns>
-        public async Task<ModernWindowsPackageResult> Create(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, CancellationToken cancelToken)
+        public async Task<ModernWindowsPackageResult> Create(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, CancellationToken cancelToken = default)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // 1. Build the Store package. If widgets are present, build multiple.
             var storeBuilderResult = await BuildStoreReadyPackage(options, appImages, webManifest, outputDirectory, cancelToken);
 
             // 2. Bundle the Store package.
-            var storeBundleFilePath = options.EnableWebAppWidgets != true ? await makeAppx.Bundle(storeBuilderResult.MsixFile, new Version(options.Version).WithZeroRevision()) : await makeAppx.BundlePlatforms(storeBuilderResult.MsixPlatformFiles, outputDirectory, new Version(options.Version).WithZeroRevision());
+            var storeBundleFilePath = options.EnableWebAppWidgets != true ? await makeAppx.Bundle(storeBuilderResult.MsixFile, new Version(options.Version).WithZeroRevision(), cancelToken) : await makeAppx.BundlePlatforms(storeBuilderResult.MsixPlatformFiles, outputDirectory, new Version(options.Version).WithZeroRevision(), cancelToken);
 
             // 3. Build the side load package.
             var sideLoadMsixFilePath = await BuildSideloadPackage(options, storeBuilderResult, appImages, webManifest, outputDirectory, cancelToken);
 
             // 4. Read the generated package info.
             var packageInfo = ReadPackageInfo(storeBuilderResult.AppxManifest);
+            cancelToken.ThrowIfCancellationRequested();
 
             return new ModernWindowsPackageResult(storeBundleFilePath, sideLoadMsixFilePath, packageInfo);
         }
@@ -112,7 +117,7 @@ namespace PWABuilder.MicrosoftStore.Services
             };
 
             // Generate a real resources.pri for the project.
-            appxResult.MsixFile = await UpdateMsixWithLegitResources(appxResult, outputDirectory);
+            appxResult.MsixFile = await UpdateMsixWithLegitResources(appxResult, outputDirectory, cancelToken);
 
             return appxResult;
         }
@@ -125,6 +130,7 @@ namespace PWABuilder.MicrosoftStore.Services
             string outputDirectory,
             CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // The sideload package must have AllowSigning = false.
             // This is required for sideloading the package via /Resources/cli/pwainstaller/pwainstaller.exe
 
@@ -140,7 +146,7 @@ namespace PWABuilder.MicrosoftStore.Services
             var sideLoadOptions = options.Clone();
             sideLoadOptions.AllowSigning = false;
             var sideLoadBuilderResult = await RunPwaBuilderWithOfflineManifestFallback(sideLoadOptions, appImages, webManifest, sideLoadDirectory, string.Empty, cancelToken);
-            return await UpdateMsixWithLegitResources(sideLoadBuilderResult, sideLoadDirectory);
+            return await UpdateMsixWithLegitResources(sideLoadBuilderResult, sideLoadDirectory, cancelToken);
         }
 
         /// <summary>
@@ -148,9 +154,11 @@ namespace PWABuilder.MicrosoftStore.Services
         /// </summary>
         /// <param name="msixResult">The path to the new .msix containing the correct resources.pri file.</param>
         /// <param name="outputDirectory">Temp directory where artifacts can be stored during the build process.</param>
+        /// <param name="cancelToken">Cancels extraction and resource rebuilding.</param>
         /// <returns></returns>
-        private async Task<string> UpdateMsixWithLegitResources(PwaBuilderCommandLineResult msixResult, string outputDirectory)
+        private async Task<string> UpdateMsixWithLegitResources(PwaBuilderCommandLineResult msixResult, string outputDirectory, CancellationToken cancelToken)
         {
+            cancelToken.ThrowIfCancellationRequested();
             // We need to crack open the msix and swap out its resources.pri with
             // a real one generated specifically for this app.
             // Otherwise, the resources.pri contains references to placeholder stuff.
@@ -158,15 +166,16 @@ namespace PWABuilder.MicrosoftStore.Services
             // Crack open the msix.
             var msixUnpackedDirectory = Directory.CreateDirectory(Path.Combine(outputDirectory, "unpacked")).FullName;
             ZipFile.ExtractToDirectory(msixResult.MsixFile, msixUnpackedDirectory);
+            cancelToken.ThrowIfCancellationRequested();
 
             // Delete the placeholder resources.pri file
             File.Delete(Path.Combine(msixUnpackedDirectory, "resources.pri"));
 
             // Generate a legit resources.pri file.
-            await makePri.Execute(msixUnpackedDirectory, Directory.CreateDirectory(Path.Combine(outputDirectory, "pri-config")).FullName);
+            await makePri.Execute(msixUnpackedDirectory, Directory.CreateDirectory(Path.Combine(outputDirectory, "pri-config")).FullName, cancelToken);
             // Repackage the msix.
             var repackagedMsixOutputDir = Directory.CreateDirectory(Path.Combine(outputDirectory, "repackaged")).FullName;
-            return await makeAppx.Execute(msixUnpackedDirectory, repackagedMsixOutputDir);
+            return await makeAppx.Execute(msixUnpackedDirectory, repackagedMsixOutputDir, cancelToken);
         }
 
         private HostedPackage ReadPackageInfo(string xmlSourceFile)
