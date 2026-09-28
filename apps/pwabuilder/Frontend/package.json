@@ -29,8 +29,6 @@
     "@pwabuilder/site-analytics": "file:../../../libraries/site-analytics",
     "@vaadin/router": "^2.0.0",
     "accessibility-insights-scan": "^2.7.0",
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
     "browser-fs-access": "^0.23.0",
     "codemirror": "^6.0.1",
     "ionicons": "^6.0.3",

@@ -28,7 +28,6 @@ namespace PWABuilder.MicrosoftStore.Services
         protected readonly ProcessRunner procRunner;
         protected readonly HttpClient httpClient;
         protected readonly TempDirectory tempDirectory;
-        protected readonly WindowsActionsService windowsActionService;
 
         public PwaBuilderWrapper(
             IOptions<AppSettings> settings,
@@ -36,8 +35,7 @@ namespace PWABuilder.MicrosoftStore.Services
             IWebHostEnvironment host,
             ILogger<PwaBuilderWrapper> logger,
             IHttpClientFactory httpClientFactory,
-            TempDirectory tempDirectory,
-            WindowsActionsService windowsActionService)
+            TempDirectory tempDirectory)
         {
             this.logger = logger;
             this.procRunner = procRunner;
@@ -46,7 +44,6 @@ namespace PWABuilder.MicrosoftStore.Services
             this.httpClient = httpClientFactory.CreateClient();
             this.httpClient.AddLatestEdgeUserAgent();
             this.tempDirectory = tempDirectory;
-            this.windowsActionService = windowsActionService;
         }
 
         /// <summary>
@@ -69,12 +66,11 @@ namespace PWABuilder.MicrosoftStore.Services
         {
             var pwaBuilderFilePath = Path.Combine(host.ContentRootPath, PwaBuilderPath);
 
-            var actionsFiles = await windowsActionService.GetWindowsActionsFilesAsync(options, outputDirectory, cancelToken);
-            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, actionsFiles, outputDirectory, processor);
-            return await RunPwabuilderExe(options, appImages, webManifest, actionsFiles, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
+            var pwaBuilderArgs = CreateCommandLineArgs(options, appImages, webManifest, outputDirectory, processor);
+            return await RunPwabuilderExe(options, appImages, webManifest, outputDirectory, pwaBuilderFilePath, pwaBuilderArgs);
         }
 
-        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
+        private async Task<PwaBuilderCommandLineResult> RunPwabuilderExe(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, string pwaBuilderFilePath, string pwaBuilderArgs)
         {
             ProcessResult procResult;
             try
@@ -86,7 +82,7 @@ namespace PWABuilder.MicrosoftStore.Services
             {
                 var stdOut = (error as ProcessException)?.StandardOutput;
                 var stdErr = (error as ProcessException)?.StandardError;
-                throw CreatePwaBuilderCliError(error, error.Message, actionsFiles, outputDirectory, options, stdOut, stdErr, appImages, webManifest);
+                throw CreatePwaBuilderCliError(error, error.Message, outputDirectory, options, stdOut, stdErr, appImages, webManifest);
             }
 
             // Get the generated files.
@@ -107,7 +103,6 @@ namespace PWABuilder.MicrosoftStore.Services
         private ProcessException CreatePwaBuilderCliError(
             Exception innerException,
             string message,
-            WindowsActionsFiles? actionFiles,
             string outputDirectory,
             WindowsAppPackageOptions options,
             string? standardOutput,
@@ -115,7 +110,7 @@ namespace PWABuilder.MicrosoftStore.Services
             ImageGeneratorResult appImages,
             WebAppManifestContext webManifest)
         {
-            var pwabuilderCLIArgs = CreateCommandLineArgs(options, appImages, webManifest, actionFiles, outputDirectory);
+            var pwabuilderCLIArgs = CreateCommandLineArgs(options, appImages, webManifest, outputDirectory);
             // Read whatever AppxManifest pwa_builder.exe generated (if any). This is invaluable for diagnosing
             // "invalid manifest" failures (error 0x80080204), where the generated AppxManifest violates the Appx schema.
             var appxManifest = TryReadGeneratedAppxManifest(outputDirectory);
@@ -185,7 +180,7 @@ namespace PWABuilder.MicrosoftStore.Services
         /// Creates command line arguments for the pwa_builder.exe command line tool from the specified options.
         /// </summary>
         /// <returns></returns>
-        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, WindowsActionsFiles? actionsFiles, string outputDirectory, string processor = "")
+        protected virtual string CreateCommandLineArgs(WindowsAppPackageOptions options, ImageGeneratorResult appImages, WebAppManifestContext webManifest, string outputDirectory, string processor = "")
         {
             // pwa_builder.exe expects the full version 'x.x.x.x', where the last section (revision) is zero.
             // The store requires the revision to be zero, as it's reserved for store use.
@@ -215,9 +210,6 @@ namespace PWABuilder.MicrosoftStore.Services
                 { "start-url", absoluteStartUrl?.ToString() },
                 { "display-mode", webManifest.GetDisplayModeOrNull() ?? "standalone" },
                 { "application-id", options.ApplicationId },
-                { "web-action-manifest-file", actionsFiles?.ManifestFilePath?.Path },
-                { "web-action-custom-entities-file", actionsFiles?.CustomEntitiesFilePath?.Path },
-                { "web-action-localized-custom-entities-files", actionsFiles?.CustomEntitiesLocalizationDirectoryPath?.Path },
             };
 
             // Widget packages must use the live manifest. pwa_builder.exe rejects local manifest files that contain widgets.

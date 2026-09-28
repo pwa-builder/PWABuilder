@@ -52,7 +52,6 @@ public class Startup
         services.AddTransient<WindowsAppPackageInspector>();
         services.AddTransient<WindowsAppPackageUpdater>();
         services.AddTransient<WindowsAppPackageBundler>();
-        services.AddTransient<WindowsActionsService>();
         services.AddTransient<LooseLayoutPackager>();
         services.AddTransient<SpartanWindowsPackageCreator>();
         services.AddTransient<ModernWindowsPackageCreator>();
