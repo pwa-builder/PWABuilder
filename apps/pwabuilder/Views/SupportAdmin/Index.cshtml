@@ -1,0 +1,28 @@
+@model PWABuilder.Models.SupportDashboard
+@{ Layout = null; }
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>PWABuilder support</title></head>
+<body>
+<main>
+    <h1>PWABuilder support</h1>
+    <p>Read-only diagnostics. Up to 50 failures per service updated in the last 14 days. Detail pages contain bounded, redacted diagnostic text. URLs show origins only; credentials, signing material, and artifacts are withheld.</p>
+    <h2>Failed analyses</h2>
+    @if (Model.Analyses.Count == 0) { <p>No recent failures found.</p> }
+    <ul>
+    @foreach (var analysis in Model.Analyses)
+    {
+        <li><a href="@Url.Action("Analysis", "SupportAdmin", new { id = analysis.Id })">@analysis.Id</a> — @analysis.SiteOrigin — @analysis.UpdatedAt.ToString("u")</li>
+    }
+    </ul>
+    <h2>Failed Google Play packages</h2>
+    @if (Model.Packages.Count == 0) { <p>No recent failures found.</p> }
+    <ul>
+    @foreach (var package in Model.Packages)
+    {
+        <li><a href="@Url.Action("Package", "SupportAdmin", new { supportReference = package.SupportReference.ToString("D") })">@package.SupportReference</a> — @package.SiteOrigin — @package.UpdatedAt.ToString("u")</li>
+    }
+    </ul>
+</main>
+</body>
+</html>

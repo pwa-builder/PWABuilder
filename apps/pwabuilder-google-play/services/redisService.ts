@@ -8,7 +8,8 @@ import { EntraIdCredentialsProviderFactory, REDIS_SCOPE_DEFAULT } from "@redis/e
 export interface RedisDatabaseService {
     ready: Promise<void>;
     getJson<T>(key: string): Promise<T | null>;
-    save<T>(key: string, value: T): Promise<void>;
+    save<T>(key: string, value: T, expirationSeconds?: number): Promise<void>;
+    indexDiagnosticFailure(reference: string, timestamp: number, lifetimeSeconds: number): Promise<void>;
     dequeue<T>(key: string): Promise<T | null>;
     enqueue<T>(key: string, value: T): Promise<number>;
     queueLength(key: string): Promise<number>;
@@ -124,10 +125,8 @@ export class RedisService implements RedisDatabaseService {
      * @param key The key under which to store the object
      * @param value The object to store
      */
-    async save<T>(key: string, value: T): Promise<void> {
+    async save<T>(key: string, value: T, expirationSeconds = 90 * 24 * 60 * 60): Promise<void> {
         try {
-            const expirationSeconds = 90 * 24 * 60 * 60; // 90 days in seconds
-
             const timeoutPromise = new Promise<never>((_, reject) => {
                 setTimeout(() => reject(new Error(`Redis set timeout after 15 seconds for key: ${key}`)), 15000);
             });
@@ -144,6 +143,16 @@ export class RedisService implements RedisDatabaseService {
             console.error(`Error saving JSON to Redis with key ${key}:`, error);
             throw error;
         }
+    }
+
+    async indexDiagnosticFailure(reference: string, timestamp: number, lifetimeSeconds: number): Promise<void> {
+        const key = "package-diagnostics:failed";
+        await this.redis.multi()
+            .zAdd(key, { score: timestamp, value: reference })
+            .zRemRangeByScore(key, "-inf", timestamp - lifetimeSeconds * 1000)
+            .zRemRangeByRank(key, 0, -501)
+            .expire(key, lifetimeSeconds)
+            .exec();
     }
 
     /**
@@ -247,10 +256,15 @@ export class RedisService implements RedisDatabaseService {
 
 class InMemoryDatabaseService implements RedisDatabaseService {
     private readonly store: Map<string, string> = new Map(); // key is ID of the object, value is the JSON string.
+    private readonly expirations = new Map<string, number>();
     private readonly queues: Map<string, any[]> = new Map(); // key is the name of the queue, value is an array of JSON strings representing the items in the queue.
     public readonly ready = Promise.resolve();
 
     getJson<T>(key: string): Promise<T | null> {
+        if ((this.expirations.get(key) ?? Infinity) <= Date.now()) {
+            this.store.delete(key);
+            this.expirations.delete(key);
+        }
         const jsonOrNull = this.store.get(key) || null;
         if (!jsonOrNull) {
             return Promise.resolve(null);
@@ -259,10 +273,16 @@ class InMemoryDatabaseService implements RedisDatabaseService {
         return Promise.resolve(JSON.parse(jsonOrNull) as T);
     }
 
-    save<T>(key: string, value: T): Promise<void> {
+    save<T>(key: string, value: T, expirationSeconds = 90 * 24 * 60 * 60): Promise<void> {
         console.info("Saving object to in-memory storage", key);
         this.store.set(key, JSON.stringify(value));
+        this.expirations.set(key, Date.now() + expirationSeconds * 1000);
         return Promise.resolve();
+    }
+
+    async indexDiagnosticFailure(reference: string, timestamp: number, lifetimeSeconds: number): Promise<void> {
+        // Local Node and ASP.NET in-memory stores are separate; shared Redis is needed for cross-service diagnostics.
+        await this.save(`package-diagnostics-failed:${reference}`, { reference, timestamp }, lifetimeSeconds);
     }
 
     dequeue<T>(key: string): Promise<T | null> {

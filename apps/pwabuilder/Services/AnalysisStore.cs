@@ -19,6 +19,12 @@ public interface IAnalysisStore
     /// <returns>The analysis, or null if it does not exist.</returns>
     Task<Analysis?> GetByIdAsync(string id);
 
+    /// <summary>Gets a sanitized analysis for support within the fourteen-day retention window.</summary>
+    Task<SupportAnalysis?> GetSupportByIdAsync(string id, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets at most fifty recent failed analyses, without raw logs, manifests, or errors.</summary>
+    Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Saves an analysis.
     /// </summary>
@@ -35,6 +41,30 @@ public interface IAnalysisStore
 public sealed class InMemoryAnalysisStore : IAnalysisStore
 {
     private readonly ConcurrentDictionary<string, Analysis> analyses = new();
+
+    /// <inheritdoc/>
+    public Task<SupportAnalysis?> GetSupportByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var found = analyses.TryGetValue(id, out var analysis)
+            && analysis.LastModifiedAt >= now - SupportDiagnosticsService.Retention
+            && analysis.LastModifiedAt <= now;
+        return Task.FromResult(found ? SupportDiagnosticsService.ProjectAnalysis(analysis!) : null);
+    }
+
+    /// <inheritdoc/>
+    public Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default)
+    {
+        var now = DateTimeOffset.UtcNow;
+        IReadOnlyList<SupportAnalysis> results = analyses.Values
+            .Where(analysis => analysis.Status is AnalysisStatus.Failed
+                && analysis.LastModifiedAt >= now - SupportDiagnosticsService.Retention
+                && analysis.LastModifiedAt <= now)
+            .OrderByDescending(analysis => analysis.LastModifiedAt)
+            .Take(SupportDiagnosticsService.RecentLimit)
+            .Select(analysis => SupportDiagnosticsService.ProjectAnalysis(analysis, includeDetails: false)).ToArray();
+        return Task.FromResult(results);
+    }
 
     /// <inheritdoc/>
     public Task<Analysis?> GetByIdAsync(string id)
@@ -58,6 +88,11 @@ public sealed class InMemoryAnalysisStore : IAnalysisStore
 public sealed class CosmosAnalysisStore : IAnalysisStore
 {
     private static readonly int DefaultExpirationInSeconds = (int)TimeSpan.FromDays(14).TotalSeconds;
+    private const string SupportProjection = """
+        c.id, c.analysis.url AS url, c.analysis.status AS status,
+        c.analysis.createdAt AS createdAt, c.analysis.lastModifiedAt AS updatedAt,
+        ARRAY(SELECT VALUE { "id": check.id, "status": check.status } FROM check IN c.analysis.capabilities) AS checks
+        """;
 
     private readonly ILogger<CosmosAnalysisStore> logger;
     private readonly Task<Container> containerTask;
@@ -71,6 +106,56 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
     {
         this.logger = logger;
         this.containerTask = InitializeContainerAsync(settings.Value);
+    }
+
+    /// <inheritdoc/>
+    public async Task<SupportAnalysis?> GetSupportByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var query = CreateSupportQuery(
+            $"SELECT TOP 1 {SupportProjection}, c.analysis.error AS error, ARRAY_SLICE(c.analysis.logs, -100) AS logs FROM c WHERE c.id = @id AND ", "")
+            .WithParameter("@id", id);
+        var results = await QuerySupportAsync(query, new PartitionKey(id), 1, cancellationToken);
+        return results.FirstOrDefault();
+    }
+
+    /// <inheritdoc/>
+    public Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default)
+    {
+        var query = CreateSupportQuery(
+            $"SELECT TOP {SupportDiagnosticsService.RecentLimit} {SupportProjection} FROM c WHERE c.analysis.status = @status AND ",
+            " ORDER BY c.analysis.lastModifiedAt DESC").WithParameter("@status", nameof(AnalysisStatus.Failed));
+        return QuerySupportAsync(query, null, SupportDiagnosticsService.RecentLimit, cancellationToken);
+    }
+
+    /// <summary>Adds the fixed retention window to an internal support query.</summary>
+    private static QueryDefinition CreateSupportQuery(string prefix, string suffix)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return new QueryDefinition(prefix + "c.analysis.lastModifiedAt >= @cutoff AND c.analysis.lastModifiedAt <= @now" + suffix)
+            .WithParameter("@cutoff", (now - SupportDiagnosticsService.Retention).ToString("O"))
+            .WithParameter("@now", now.ToString("O"));
+    }
+
+    /// <summary>Executes a bounded query and removes input URLs before returning results.</summary>
+    private async Task<IReadOnlyList<SupportAnalysis>> QuerySupportAsync(QueryDefinition query, PartitionKey? partitionKey,
+        int limit, CancellationToken cancellationToken)
+    {
+        var container = await containerTask;
+        using var iterator = container.GetItemQueryIterator<SupportAnalysisData>(query, requestOptions: new QueryRequestOptions
+        {
+            PartitionKey = partitionKey,
+            MaxItemCount = limit,
+            MaxBufferedItemCount = limit,
+            MaxConcurrency = 1
+        });
+        var results = new List<SupportAnalysis>();
+        // Bound both results and page requests, even across many partitions or sparse indexes.
+        for (var page = 0; iterator.HasMoreResults && results.Count < limit && page < 10; page++)
+        {
+            var response = await iterator.ReadNextAsync(cancellationToken);
+            results.AddRange(response.Take(limit - results.Count).Select(SupportDiagnosticsService.ProjectAnalysis));
+        }
+        return results;
     }
 
     /// <inheritdoc/>

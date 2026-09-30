@@ -9,11 +9,18 @@ import { PackageCreationProgress } from '../models/packageCreationProgress.js';
 import { errorToString } from "../utils/errorToString.js";
 import { packageJobQueue } from "../services/packageJobQueue.js";
 import { redisService } from "../services/redisService.js";
-import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
+import { StoredPackageJob } from "../utils/package-job-diagnostics.js";
+import { canAccessPackageJob, PackageJobAccess } from "../utils/package-job-access.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
 import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
 
 const router = express.Router();
+
+router.use(["/enqueuePackageJob", "/getPackageJob", "/downloadPackageZip", "/generateAppPackage", "/generateApkZip"], (_request, response, next) => {
+    response.setHeader("Cache-Control", "no-store");
+    response.setHeader("Referrer-Policy", "no-referrer");
+    next();
+});
 
 tmp.setGracefulCleanup(); // remove any tmp file artifacts on process exit
 const packageCreator = new PackageCreator();
@@ -146,17 +153,8 @@ async function generatePackageZip(request: express.Request, response: express.Re
 }
 
 async function downloadPackageZip(request: express.Request, response: express.Response): Promise<void> {
-    // Get the ID of the package job from the request.
-    const jobId = request.query.id;
-    if (!jobId || typeof jobId !== 'string') {
-        response.status(400).send('You must specify a jobId query parameter');
-        return;
-    }
-
-    const job = await redisService.getJson<GooglePlayPackageJob>(jobId);
+    const job = await getOwnedPackageJob(request, response);
     if (!job) {
-        console.warn("No job found with ID", jobId);
-        response.status(404).send(`No job found with ID`);
         return;
     }
 
@@ -188,25 +186,42 @@ async function downloadPackageZip(request: express.Request, response: express.Re
 }
 
 async function getPackageJob(request: express.Request, response: express.Response): Promise<void> {
-    // Get the ID of the package job to check.
-    const jobId = request.query.id;
-    if (!jobId || typeof jobId !== 'string') {
-        response.status(400).send('You must specify a jobId query parameter');
-        return;
-    }
-
-    console.info("Received request for package job status", jobId);
-
-    const job = await redisService.getJson<GooglePlayPackageJob>(jobId);
+    const job = await getOwnedPackageJob(request, response);
     if (!job) {
-        console.warn("No job found with ID", jobId);
-        response.status(404).send(`No job found with ID`);
         return;
     }
+    response.status(200).json({
+        id: job.id,
+        supportReference: job.supportReference,
+        pwaUrl: job.pwaUrl,
+        analysisId: job.analysisId,
+        status: job.status,
+        createdAt: job.createdAt,
+        retryCount: job.retryCount,
+        name: job.name,
+        logs: job.logs,
+        errors: job.errors,
+        downloadAvailable: job.downloadAvailable
+    });
+}
 
-    // Send back the job as JSON.
-    console.info("Request for package job completed successfully. Returning job", jobId, job.status);
-    response.status(200).json(job);
+async function getOwnedPackageJob(request: express.Request, response: express.Response): Promise<StoredPackageJob | null> {
+    const jobId = request.query.id;
+    if (typeof jobId !== "string" || !jobId.startsWith("googleplaypackagejob:") || jobId.length > 512) {
+        response.status(400).send('You must specify a jobId query parameter');
+        return null;
+    }
+    const access = await redisService.getJson<PackageJobAccess>(`package-owner:${jobId}`);
+    if (!canAccessPackageJob(request.headers.authorization, access)) {
+        response.status(403).send("Job access is missing or expired. Create a new package from the original browser tab.");
+        return null;
+    }
+    const job = await redisService.getJson<StoredPackageJob>(jobId);
+    if (!job) {
+        response.status(404).send("Job is no longer available. Create a new package.");
+        return null;
+    }
+    return job;
 }
 
 async function enqueuePackage(request: express.Request, response: express.Response): Promise<void> {
@@ -240,10 +255,10 @@ async function enqueuePackage(request: express.Request, response: express.Respon
         // Enqueue the job.
         const packageOptions = apkRequest.options;
         packageOptions.analyticsInfo = analyticsInfo;
-        const jobId = await packageJobQueue.enqueue(packageOptions);
+        const receipt = await packageJobQueue.enqueue(packageOptions);
 
-        console.info(`Package job enqueued with ID ${jobId} for ${packageOptions.analysisId}`);
-        response.status(200).send(jobId);
+        console.info(`Package job enqueued with ID ${receipt.id} for ${packageOptions.analysisId}`);
+        response.status(200).json(receipt);
     } catch (error) {
         console.error("Failed to enqueue package job:", error);
         trackEvent(analyticsInfo, errorToString(error), false);
