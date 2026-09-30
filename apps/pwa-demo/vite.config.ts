@@ -3,6 +3,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Override for project Pages: npm run build -- --base=/PWABuilder/
   base: '/',
   build: {
     sourcemap: true,
@@ -18,10 +19,9 @@ export default defineConfig({
   plugins: [
     VitePWA({
       strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'sw.js',
       injectManifest: {
-        swSrc: 'public/sw.js',
-        swDest: 'dist/sw.js',
-        globDirectory: 'dist',
         globPatterns: ['**/*.{html,js,css,json,png,svg,ico,woff2}'],
         // The bundled WebAwesome CSS can exceed the default 2 MiB limit.
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,

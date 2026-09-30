@@ -25,7 +25,7 @@ const capabilities: Capability[] = [
   {
     icon: 'database',
     title: 'Local persistence',
-    detail: 'Notes and photos live in IndexedDB; the Storage API reports and persists your quota.',
+    detail: 'Notes, sketches, and photos live together in IndexedDB. Protect local notes requests persistent storage; Export creates a portable backup.',
   },
   {
     icon: 'microchip',
@@ -35,7 +35,7 @@ const capabilities: Capability[] = [
   {
     icon: 'camera',
     title: 'Media capture',
-    detail: 'getUserMedia streams the camera; frames are filtered and can be geotagged.',
+    detail: 'Capture a photo or choose an image, apply worker-powered filters, and attach it to a note.',
   },
   {
     icon: 'pen-nib',
@@ -48,14 +48,14 @@ const capabilities: Capability[] = [
     detail: 'Web Share, Share Target, File Handling, protocol handlers, shortcuts, and app badging.',
   },
   {
-    icon: 'rotate',
-    title: 'Background sync',
-    detail: 'Failed requests are queued by the service worker and replayed when connectivity returns.',
+    icon: 'microphone',
+    title: 'Write and listen',
+    detail: 'Dictate into a note, listen with read-aloud, insert a contact, or copy your text to the clipboard.',
   },
   {
     icon: 'compass',
-    title: 'Device sensors',
-    detail: 'Geolocation, device orientation, battery, network information, and more — all feature-detected.',
+    title: 'Tools with a purpose',
+    detail: 'Add a location to a note, keep the screen awake while reading, or send yourself a notification that opens the note.',
   },
 ];
 
@@ -68,10 +68,10 @@ export class AppAbout extends LitElement {
       <div class="page-head">
         <h1>About Nimbus</h1>
         <p>
-          Nimbus is a demo Progressive Web App — an offline-first “pocket studio”
-          that shows how far the web platform has come. It’s installable, works
-          without a network, and reaches deep into device capabilities that were
-          once native-only.
+          Nimbus is your offline-first notebook. Keep thoughts, sketches, and
+          photos together, then use tools like dictation and read-aloud to work
+          your way. It is also PWABuilder’s demo of what a useful, installable
+          web app can do.
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export class AppAbout extends LitElement {
         <p class="muted" style="margin-top:0">
           This app was scaffolded from the
           <strong>pwa-starter</strong> template — Lit, WebAwesome, Vite, and
-          Workbox — and is packaged for the app stores with PWABuilder. Point
+          Workbox — and can be packaged for the app stores with PWABuilder. Point
           PWABuilder at any URL to score its PWA-readiness and generate native
           packages for the Microsoft Store, Google Play, and iOS.
         </p>
@@ -118,8 +118,10 @@ export class AppAbout extends LitElement {
       </wa-card>
 
       <p class="colophon">
-        Nimbus is open source and part of the PWABuilder project. No data ever
-        leaves your device — everything you create is stored locally.
+        Nimbus is open source and part of the PWABuilder project. Notes and
+        attachments are stored on this device, not synced to a server. Export
+        important notes as backups. Sharing sends the content you choose, and
+        dictation may use your browser’s online speech service.
       </p>
     `;
   }

@@ -1,7 +1,7 @@
 {
   "name": "pwa-demo",
   "version": "1.0.0",
-  "description": "Nimbus - an offline-first pocket studio PWA that showcases the modern web platform. Built with the PWABuilder pwa-starter.",
+  "description": "Nimbus - an offline-first notebook for thoughts, sketches, and photos. Built with the PWABuilder pwa-starter.",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,8 @@
     "icons": "node scripts/generate-icons.mjs",
     "copy-icons": "node scripts/copy-icons.mjs",
     "build": "node scripts/copy-icons.mjs && tsc && vite build",
+    "test": "tsc -p tsconfig.test.json && node --test tests/*.test.mjs",
+    "test:pages": "npm run build -- --base=/PWABuilder/ --outDir=.pages-test && npm run build && playwright test",
     "preview": "vite preview",
     "start": "npm run dev",
     "start-remote": "vite --host"
@@ -19,9 +21,9 @@
   "license": "MIT",
   "dependencies": {
     "@awesome.me/webawesome": "^3.10.0",
+    "dompurify": "^3.2.7",
     "lit": "^3.3.3",
-    "urlpattern-polyfill": "^10.1.0",
-    "workbox-background-sync": "^7.4.1",
+    "marked": "^16.3.0",
     "workbox-build": "^7.4.1",
     "workbox-core": "^7.4.1",
     "workbox-expiration": "^7.4.1",
@@ -30,7 +32,9 @@
     "workbox-strategies": "^7.4.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.0",
     "@fortawesome/fontawesome-free": "^7.3.1",
+    "fake-indexeddb": "^6.2.4",
     "sharp": "^0.34.4",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",

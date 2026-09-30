@@ -16,11 +16,12 @@ export const sketchStyles = css`
   .swatches {
     display: flex;
     gap: 6px;
+    flex-wrap: wrap;
   }
 
   .swatch {
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 2px solid rgba(255, 255, 255, 0.7);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
@@ -58,7 +59,8 @@ export const sketchStyles = css`
   canvas {
     display: block;
     width: 100%;
-    height: min(62vh, 560px);
+    height: auto;
+    aspect-ratio: 3 / 2;
     cursor: crosshair;
   }
 

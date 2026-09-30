@@ -1,53 +1,44 @@
-// A lightweight client-side router built on the web platform Navigation API.
-// See https://developer.chrome.com/docs/web-platform/navigation-api/ for details.
-
 import { html, nothing, type TemplateResult } from 'lit';
+import { keyed } from 'lit/directives/keyed.js';
+import { matchRoute, viewPath, type AppRoute, type View } from './utils/routes';
 
-// URLPattern is used for route matching. Load the polyfill when the browser
-// doesn't ship it natively (e.g. older Safari/Firefox).
-if (!(globalThis as any).URLPattern) {
-  await import('urlpattern-polyfill');
+interface AppNavigateEvent extends Event {
+  canIntercept: boolean;
+  hashChange: boolean;
+  downloadRequest: string | null;
+  formData: FormData | null;
+  navigationType: string;
+  destination: { url: string; sameDocument: boolean };
+  signal: AbortSignal;
+  intercept(options: { handler: () => Promise<void> }): void;
 }
 
-const URLPatternCtor: any = (globalThis as any).URLPattern;
+const baseURL = import.meta.env.BASE_URL;
+const navigation = (window as Window & { navigation?: EventTarget }).navigation;
 
-export interface Route {
-  path: string;
-  title?: string;
-  render: () => TemplateResult;
-  load?: () => Promise<unknown>;
-}
-
-export interface RouterConfig {
-  routes: Route[];
-  fallback?: Route;
-}
-
-const baseURL: string = (import.meta as any).env.BASE_URL;
-
-export class Router extends EventTarget {
-  readonly routes: Route[];
-  private readonly fallback?: Route;
+class Router extends EventTarget {
   private content: TemplateResult | typeof nothing = nothing;
+  currentView: View = 'notes';
 
-  constructor(config: RouterConfig) {
+  constructor() {
     super();
-    this.routes = config.routes;
-    this.fallback = config.fallback;
-
-    const navigation = (window as any).navigation;
-    if (navigation) {
-      navigation.addEventListener('navigate', (event: any) =>
-        this.onNavigate(event)
-      );
-    }
-
-    const url = new URL(window.location.href);
+    const url = new URL(location.href);
     const route = this.match(url);
-    if (route?.load) {
-      void this.activate(route);
-    } else if (route) {
-      this.setContent(route);
+    if (route) void this.activate(route, url);
+
+    if (navigation) {
+      navigation.addEventListener('navigate', (event) => this.onNavigate(event as AppNavigateEvent));
+    } else {
+      // Normal query-string links also work without the Navigation API:
+      // the browser loads index.html and owns history/back/forward. Guard
+      // in-app links before unloading; beforeunload protects browser controls.
+      document.addEventListener('click', (event) => {
+        if (event.defaultPrevented || event.button !== 0 ||
+            event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        const link = event.composedPath().find((node): node is HTMLAnchorElement => node instanceof HTMLAnchorElement);
+        if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+        if (this.match(new URL(link.href)) && !this.canLeave()) event.preventDefault();
+      });
     }
   }
 
@@ -55,98 +46,57 @@ export class Router extends EventTarget {
     return this.content;
   }
 
-  private onNavigate(event: any): void {
-    if (
-      !event.canIntercept ||
-      event.hashChange ||
-      event.downloadRequest !== null ||
-      event.formData
-    ) {
-      return;
-    }
+  private canLeave(): boolean {
+    return window.dispatchEvent(new Event('nimbus-before-navigate', { cancelable: true }));
+  }
 
+  private onNavigate(event: AppNavigateEvent): void {
+    if (!event.canIntercept || event.hashChange || event.downloadRequest !== null || event.formData) return;
     const url = new URL(event.destination.url);
-    if (url.origin !== window.location.origin) {
+    const route = this.match(url);
+    if (!route) return;
+
+    // Notes consumes share/shortcut parameters with replaceState. That change
+    // must not remount the editor, but changing view must still navigate.
+    if (event.navigationType === 'replace' && event.destination.sameDocument &&
+        route.view === this.currentView && url.pathname === location.pathname) return;
+
+    if (!this.canLeave()) {
+      if (event.cancelable) event.preventDefault();
+      // For non-cancelable traversals keep the unsaved editor mounted.
       return;
     }
-
-    if (!this.match(url)) {
-      return;
-    }
-
-    event.intercept({
-      handler: () => this.activate(this.match(url)!),
-    });
+    event.intercept({ handler: () => this.activate(route, url, event.signal) });
   }
 
-  private match(url: URL): Route | undefined {
-    const route = this.routes.find((r) =>
-      new URLPatternCtor({ pathname: r.path }).test({ pathname: url.pathname })
-    );
-    return route ?? this.fallback;
+  private match(url: URL): AppRoute | undefined {
+    return url.origin === location.origin ? matchRoute(url, baseURL) : undefined;
   }
 
-  private async activate(route: Route): Promise<void> {
-    if (route.load) {
-      await route.load();
+  private async activate(route: AppRoute, url: URL, signal?: AbortSignal): Promise<void> {
+    if (route.view === 'about') {
+      try {
+        await import('./pages/app-about/app-about.js');
+      } catch (error) {
+        if (signal?.aborted) return;
+        console.error('Nimbus could not load About', error);
+        this.content = html`<p role="alert">Could not load About. Reload to try again.</p>`;
+        this.dispatchEvent(new Event('route-changed'));
+        return;
+      }
     }
-    this.setContent(route);
-    this.dispatchEvent(new CustomEvent('route-changed', { detail: { route } }));
-  }
-
-  private setContent(route: Route): void {
-    this.content = route.render();
-    if (route.title) {
-      document.title = route.title;
-    }
+    if (signal?.aborted) return;
+    this.currentView = route.view;
+    this.content = route.view === 'about'
+      ? html`<app-about></app-about>`
+      : html`${keyed(url.pathname + url.search, html`<app-notes initial-tool="${route.tool}"></app-notes>`)}`;
+    document.title = route.view === 'about' ? 'Nimbus · About' : 'Nimbus';
+    this.dispatchEvent(new Event('route-changed'));
   }
 }
 
-export const router = new Router({
-  routes: [
-    {
-      path: resolveRouterPath(),
-      title: 'Nimbus',
-      render: () => html`<app-home></app-home>`,
-    },
-    {
-      path: resolveRouterPath('notes'),
-      title: 'Nimbus · Notes',
-      load: () => import('./pages/app-notes/app-notes.js'),
-      render: () => html`<app-notes></app-notes>`,
-    },
-    {
-      path: resolveRouterPath('sketch'),
-      title: 'Nimbus · Sketch',
-      load: () => import('./pages/app-sketch/app-sketch.js'),
-      render: () => html`<app-sketch></app-sketch>`,
-    },
-    {
-      path: resolveRouterPath('capture'),
-      title: 'Nimbus · Capture',
-      load: () => import('./pages/app-capture/app-capture.js'),
-      render: () => html`<app-capture></app-capture>`,
-    },
-    {
-      path: resolveRouterPath('powers'),
-      title: 'Nimbus · Superpowers',
-      load: () => import('./pages/app-powers/app-powers.js'),
-      render: () => html`<app-powers></app-powers>`,
-    },
-    {
-      path: resolveRouterPath('about'),
-      title: 'Nimbus · About',
-      load: () => import('./pages/app-about/app-about.js'),
-      render: () => html`<app-about></app-about>`,
-    },
-  ],
-});
+export const router = new Router();
 
-// Resolve a path against whatever Base URL was passed to the vite build.
-export function resolveRouterPath(unresolvedPath?: string): string {
-  let resolvedPath = baseURL;
-  if (unresolvedPath) {
-    resolvedPath = resolvedPath + unresolvedPath;
-  }
-  return resolvedPath;
+export function resolveRouterPath(view: View = 'notes'): string {
+  return viewPath(baseURL, view);
 }

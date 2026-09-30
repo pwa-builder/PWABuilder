@@ -41,10 +41,10 @@ for (const [size, name] of iconSizes) {
 /** Build a branded screenshot SVG for the manifest. */
 function screenshotSvg(width, height, wide) {
   const title = 'Nimbus';
-  const subtitle = 'Offline-first pocket studio';
-  const chips = ['Notes', 'Sketch', 'Camera', 'Superpowers', 'Installable', 'Offline'];
+  const subtitle = 'Your offline-first notebook';
+  const chips = ['Write', 'Sketch', 'Photos', 'Dictate', 'Offline'];
   const chipGap = 14;
-  const chipY = wide ? height - 120 : height - 200;
+  let chipY = wide ? height - 180 : height - 280;
   let x = 60;
   const chipEls = chips
     .map((c) => {
@@ -58,6 +58,7 @@ function screenshotSvg(width, height, wide) {
       x += w + chipGap;
       if (x > width - 240) {
         x = 60;
+        chipY += 66;
       }
       return el;
     })

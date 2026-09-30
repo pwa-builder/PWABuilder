@@ -1,29 +1,16 @@
 import { LitElement, html, nothing } from 'lit';
 import { customElement, state, query } from 'lit/decorators.js';
-
-import '@awesome.me/webawesome/dist/components/card/card.js';
 import '@awesome.me/webawesome/dist/components/button/button.js';
 import '@awesome.me/webawesome/dist/components/icon/icon.js';
-import '@awesome.me/webawesome/dist/components/badge/badge.js';
-import '@awesome.me/webawesome/dist/components/spinner/spinner.js';
-
 import { captureStyles } from './app-capture.styles';
 import { styles as sharedStyles } from '../../shared.styles';
-import { getAll, putRecord, deleteRecord, uid, type PhotoRecord } from '../../utils/db';
+import { getAll, uid, type PhotoRecord, type NoteAttachment } from '../../utils/db';
 import type { FilterName } from '../../workers/image-filter.worker';
 
-interface GalleryItem {
-  record: PhotoRecord;
-  url: string;
-}
-
 const FILTERS: Array<{ id: FilterName; label: string }> = [
-  { id: 'none', label: 'Original' },
-  { id: 'grayscale', label: 'Mono' },
-  { id: 'sepia', label: 'Sepia' },
-  { id: 'vintage', label: 'Vintage' },
-  { id: 'invert', label: 'Invert' },
-  { id: 'threshold', label: 'B&W' },
+  { id: 'none', label: 'Original' }, { id: 'grayscale', label: 'Mono' },
+  { id: 'sepia', label: 'Sepia' }, { id: 'vintage', label: 'Vintage' },
+  { id: 'invert', label: 'Invert' }, { id: 'threshold', label: 'B&W' },
 ];
 
 @customElement('app-capture')
@@ -32,329 +19,229 @@ export class AppCapture extends LitElement {
   @state() private error = '';
   @state() private filter: FilterName = 'none';
   @state() private previewUrl = '';
-  @state() private processing = false;
-  @state() private geotag = false;
-  @state() private gallery: GalleryItem[] = [];
-  @state() private facing: 'user' | 'environment' = 'environment';
-
+  @state() private busy = false;
+  @state() private gallery: Array<{ record: PhotoRecord; url: string }> = [];
   @query('video') private video!: HTMLVideoElement;
-
   private stream: MediaStream | null = null;
   private worker?: Worker;
+  private original?: Blob;
+  private filtered?: Blob;
   private workerSeq = 0;
-  private lastBlob: Blob | null = null;
+  private pendingFilter?: { reject: (reason: Error) => void; cleanup: () => void };
+  private facing: 'user' | 'environment' = 'environment';
+  private legacyLocation?: PhotoRecord['location'];
+  private readonly filtersSupported = typeof OffscreenCanvas !== 'undefined' && typeof createImageBitmap === 'function';
 
   static styles = [sharedStyles, captureStyles];
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.worker = new Worker(
-      new URL('../../workers/image-filter.worker.ts', import.meta.url),
-      { type: 'module' }
-    );
+    if (this.filtersSupported) {
+      this.worker = new Worker(new URL('../../workers/image-filter.worker.ts', import.meta.url), { type: 'module' });
+    }
     void this.loadGallery();
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     this.stopCamera();
+    const pending = this.pendingFilter;
+    pending?.cleanup();
+    pending?.reject(new Error('Photo editor closed.'));
+    this.pendingFilter = undefined;
     this.worker?.terminate();
-    this.gallery.forEach((g) => URL.revokeObjectURL(g.url));
-    if (this.previewUrl) {
-      URL.revokeObjectURL(this.previewUrl);
+    this.gallery.forEach((item) => URL.revokeObjectURL(item.url));
+    URL.revokeObjectURL(this.previewUrl);
+  }
+
+  private async loadGallery(): Promise<void> {
+    try {
+      const records = await getAll<PhotoRecord>('photos');
+      if (this.isConnected) this.gallery = records.map((record) => ({ record, url: URL.createObjectURL(record.blob) }));
+    } catch (error) {
+      this.error = `Could not load your previously saved photos: ${String(error)}`;
     }
   }
 
-  private async loadGallery() {
-    const records = await getAll<PhotoRecord>('photos');
-    records.sort((a, b) => b.created - a.created);
-    this.gallery = records.map((record) => ({
-      record,
-      url: URL.createObjectURL(record.blob),
-    }));
+  private async run(action: () => Promise<void>): Promise<void> {
+    this.error = '';
+    this.busy = true;
+    try { await action(); }
+    catch (error) { this.error = error instanceof Error ? error.message : String(error); }
+    finally { this.busy = false; }
   }
 
-  private async startCamera() {
-    this.error = '';
-    if (!navigator.mediaDevices?.getUserMedia) {
-      this.error = 'Camera access (getUserMedia) is not available in this browser.';
+  private async startCamera(): Promise<void> {
+    this.stopCamera();
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera access is unavailable. Choose a photo instead.');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: this.facing }, audio: false });
+    if (!this.isConnected) {
+      stream.getTracks().forEach((track) => track.stop());
       return;
     }
-    try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: this.facing },
-        audio: false,
-      });
-      this.streaming = true;
-      await this.updateComplete;
-      this.video.srcObject = this.stream;
-      await this.video.play();
-    } catch (err) {
-      this.error =
-        (err as Error)?.message ||
-        'Could not access the camera. Grant permission and try again.';
-    }
+    URL.revokeObjectURL(this.previewUrl);
+    this.previewUrl = '';
+    this.stream = stream;
+    this.streaming = true;
+    await this.updateComplete;
+    if (!this.isConnected) return;
+    this.video.srcObject = stream;
+    try { await this.video.play(); }
+    catch (error) { this.stopCamera(); throw error; }
   }
 
-  private stopCamera() {
-    this.stream?.getTracks().forEach((t) => t.stop());
+  private stopCamera(): void {
+    this.stream?.getTracks().forEach((track) => track.stop());
     this.stream = null;
     this.streaming = false;
   }
 
-  private async flipCamera() {
-    this.facing = this.facing === 'user' ? 'environment' : 'user';
-    if (this.streaming) {
-      this.stopCamera();
-      await this.startCamera();
-    }
-  }
-
-  private async capture() {
-    if (!this.streaming) {
-      return;
-    }
-    // Snapshot the current video frame as the pristine original.
-    const bitmap = await createImageBitmap(this.video);
-    this.originalBlob = await this.bitmapToBlob(bitmap);
-    await this.renderFilter(this.filter);
-  }
-
-  private async applyFilter(filter: FilterName) {
-    this.filter = filter;
-    await this.renderFilter(filter);
-  }
-
-  // Filter the pristine original on the Web Worker's OffscreenCanvas. Always
-  // starting from the original means filters are never stacked on each other.
-  private async renderFilter(filter: FilterName): Promise<void> {
-    if (!this.originalBlob) {
-      return;
-    }
-    const bitmap = await createImageBitmap(this.originalBlob);
-    this.processing = true;
-    const seq = ++this.workerSeq;
-    await new Promise<void>((resolve) => {
-      const onMessage = (e: MessageEvent) => {
-        if (e.data.id !== seq) {
-          return;
-        }
-        this.worker!.removeEventListener('message', onMessage);
-        this.processing = false;
-        if (e.data.blob) {
-          if (this.previewUrl) {
-            URL.revokeObjectURL(this.previewUrl);
-          }
-          this.previewUrl = URL.createObjectURL(e.data.blob);
-          this.lastBlob = e.data.blob;
-        }
-        resolve();
-      };
-      this.worker!.addEventListener('message', onMessage);
-      this.worker!.postMessage({ id: seq, bitmap, filter }, [bitmap]);
-    });
-  }
-
-  private originalBlob: Blob | null = null;
-
-  private async bitmapToBlob(bitmap: ImageBitmap): Promise<Blob> {
+  private async capture(): Promise<void> {
+    if (!this.video?.videoWidth) throw new Error('The camera is not ready yet. Try again in a moment.');
     const canvas = document.createElement('canvas');
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
-    canvas.getContext('2d')!.drawImage(bitmap, 0, 0);
-    bitmap.close();
-    return new Promise((resolve) =>
-      canvas.toBlob((b) => resolve(b!), 'image/png')
+    canvas.width = this.video.videoWidth;
+    canvas.height = this.video.videoHeight;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Photo capture is unavailable in this browser.');
+    context.drawImage(this.video, 0, 0);
+    const blob = await new Promise<Blob>((resolve, reject) =>
+      canvas.toBlob((value) => value ? resolve(value) : reject(new Error('Could not capture a photo.')), 'image/png')
     );
+    this.stopCamera();
+    this.legacyLocation = undefined;
+    this.setOriginal(blob);
   }
 
-  private async getLocation(): Promise<PhotoRecord['location']> {
-    if (!this.geotag || !navigator.geolocation) {
-      return null;
-    }
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (pos) =>
-          resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () => resolve(null),
-        { timeout: 6000 }
-      );
-    });
+  private setOriginal(blob: Blob): void {
+    this.original = blob;
+    this.filter = 'none';
+    this.preview(blob);
   }
 
-  private async saveToGallery() {
-    if (!this.lastBlob) {
+  private preview(blob: Blob): void {
+    if (!this.isConnected) return;
+    URL.revokeObjectURL(this.previewUrl);
+    this.filtered = blob;
+    this.previewUrl = URL.createObjectURL(blob);
+  }
+
+  private async applyFilter(filter: FilterName): Promise<void> {
+    if (!this.original) return;
+    if (filter === 'none') {
+      this.preview(this.original);
+      this.filter = filter;
       return;
     }
-    const location = await this.getLocation();
-    const record: PhotoRecord = {
-      id: uid(),
-      blob: this.lastBlob,
-      created: Date.now(),
-      location,
-      filter: this.filter,
+    const worker = this.worker;
+    if (!worker) throw new Error('Photo filters are unavailable. You can still attach the original.');
+    const bitmap = await createImageBitmap(this.original);
+    if (!this.isConnected) { bitmap.close(); return; }
+    const id = ++this.workerSeq;
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      const cleanup = () => {
+        clearTimeout(timer);
+        worker.removeEventListener('message', onMessage);
+        worker.removeEventListener('error', onError);
+        this.pendingFilter = undefined;
+      };
+      const onMessage = (event: MessageEvent<{ id: number; blob?: Blob; error?: string }>) => {
+        if (event.data.id !== id) return;
+        cleanup();
+        if (event.data.blob) resolve(event.data.blob);
+        else reject(new Error(event.data.error ?? 'Photo filter failed.'));
+      };
+      const onError = () => { cleanup(); reject(new Error('Photo filter worker failed. Try the original photo.')); };
+      const timer = window.setTimeout(onError, 15_000);
+      this.pendingFilter = { reject, cleanup };
+      worker.addEventListener('message', onMessage);
+      worker.addEventListener('error', onError);
+      worker.postMessage({ id, bitmap, filter }, [bitmap]);
+    });
+    this.filter = filter;
+    this.preview(blob);
+  }
+
+  private async choosePhoto(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      throw new Error('Choose a PNG, JPEG, or WebP photo.');
+    }
+    // Decode before saving so corrupt images cannot become broken attachments.
+    const url = URL.createObjectURL(file);
+    try {
+      const image = new Image();
+      image.src = url;
+      await image.decode();
+    } finally { URL.revokeObjectURL(url); }
+    this.stopCamera();
+    this.legacyLocation = undefined;
+    this.setOriginal(file);
+  }
+
+  private attach(): void {
+    if (!this.filtered) return;
+    const attachment: NoteAttachment = {
+      id: uid(), kind: 'photo', name: 'Photo', blob: this.filtered,
+      created: Date.now(), filter: this.filter, location: this.legacyLocation,
     };
-    await putRecord('photos', record);
-    this.gallery = [
-      { record, url: URL.createObjectURL(record.blob) },
-      ...this.gallery,
-    ];
-    // Update the app badge to reflect the number of saved photos.
-    if ('setAppBadge' in navigator) {
-      (navigator as any).setAppBadge(this.gallery.length).catch(() => {});
-    }
-  }
-
-  private async removePhoto(id: string) {
-    await deleteRecord('photos', id);
-    const item = this.gallery.find((g) => g.record.id === id);
-    if (item) {
-      URL.revokeObjectURL(item.url);
-    }
-    this.gallery = this.gallery.filter((g) => g.record.id !== id);
-    if ('setAppBadge' in navigator) {
-      if (this.gallery.length) {
-        (navigator as any).setAppBadge(this.gallery.length).catch(() => {});
-      } else {
-        (navigator as any).clearAppBadge?.().catch(() => {});
-      }
-    }
-  }
-
-  private async sharePreview() {
-    if (!this.lastBlob) {
-      return;
-    }
-    const file = new File([this.lastBlob], 'nimbus-photo.png', {
-      type: 'image/png',
-    });
-    if (navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: 'Nimbus photo' });
-      } catch {
-        /* cancelled */
-      }
-    }
+    this.dispatchEvent(new CustomEvent('note-attachment', { detail: attachment, bubbles: true, composed: true }));
   }
 
   render() {
     return html`
-      <div class="page-head">
-        <h1>Capture</h1>
-        <p>
-          Take a photo with your camera (getUserMedia). Filters are applied on a
-          background thread using a Web Worker + OffscreenCanvas, and photos are
-          saved offline with an optional geotag.
-        </p>
+      <p>Capture a photo or choose one from your device. It will be saved with this note.</p>
+      <div class="stage">
+        ${this.streaming ? html`<video playsinline muted aria-label="Camera preview"></video>` :
+          this.previewUrl ? html`<img class="preview" src="${this.previewUrl}" alt="Photo to attach" />` :
+          html`<div class="placeholder"><wa-icon name="camera"></wa-icon><div>Camera is off</div></div>`}
       </div>
-
-      <wa-card>
-        <div class="stage">
-          ${this.previewUrl
-            ? html`<img class="preview" src="${this.previewUrl}" alt="Captured photo" />`
-            : this.streaming
-              ? html`<video playsinline muted></video>`
-              : html`<div class="placeholder">
-                  <wa-icon name="camera"></wa-icon>
-                  <div>${this.error || 'Camera is off'}</div>
-                </div>`}
-          ${this.processing
-            ? html`<wa-spinner
-                style="position:absolute;font-size:2rem;--track-color:rgba(255,255,255,.3);--indicator-color:#fff"
-              ></wa-spinner>`
-            : nothing}
+      ${this.error ? html`<p role="alert">${this.error}</p>` : nothing}
+      <div class="toolbar">
+        ${this.streaming ? html`
+          <wa-button variant="brand" ?disabled="${this.busy}" @click="${() => this.run(() => this.capture())}">Take photo</wa-button>
+          <wa-button ?disabled="${this.busy}" @click="${() => this.run(async () => {
+            this.facing = this.facing === 'user' ? 'environment' : 'user';
+            await this.startCamera();
+          })}">Flip camera</wa-button>
+          <wa-button @click="${this.stopCamera}">Stop camera</wa-button>
+        ` : html`
+          <wa-button ?disabled="${this.busy}" @click="${() => this.run(() => this.startCamera())}">
+            ${this.previewUrl ? 'Retake photo' : 'Start camera'}
+          </wa-button>
+        `}
+        <label>Choose photo
+          <input type="file" accept="image/png,image/jpeg,image/webp" ?disabled="${this.busy}"
+            @change="${(event: Event) => this.run(() => this.choosePhoto(event))}" />
+        </label>
+      </div>
+      ${this.previewUrl && !this.streaming ? html`
+        <div class="filters">
+          ${FILTERS.map((filter) => html`
+            <button class="filter-btn" aria-pressed="${this.filter === filter.id}"
+              ?disabled="${this.busy || (!this.filtersSupported && filter.id !== 'none')}"
+              @click="${() => this.run(() => this.applyFilter(filter.id))}">${filter.label}</button>
+          `)}
         </div>
-
-        ${this.previewUrl
-          ? html`<div class="filters">
-              ${FILTERS.map(
-                (f) => html`
-                  <button
-                    class="filter-btn"
-                    aria-pressed="${this.filter === f.id}"
-                    @click="${() => this.applyFilter(f.id)}"
-                  >
-                    ${f.label}
-                  </button>
-                `
-              )}
-            </div>`
-          : nothing}
-
-        <div class="toolbar">
-          ${this.streaming
-            ? html`
-                <wa-button variant="brand" @click="${this.capture}">
-                  <wa-icon slot="prefix" name="circle-dot"></wa-icon>Capture
-                </wa-button>
-                <wa-button appearance="outlined" @click="${this.flipCamera}">
-                  <wa-icon slot="prefix" name="camera-rotate"></wa-icon>Flip
-                </wa-button>
-                <wa-button appearance="outlined" @click="${this.stopCamera}">
-                  <wa-icon slot="prefix" name="stop"></wa-icon>Stop
-                </wa-button>
-              `
-            : html`
-                <wa-button variant="brand" @click="${this.startCamera}">
-                  <wa-icon slot="prefix" name="camera"></wa-icon>Start camera
-                </wa-button>
-              `}
-
-          <span class="spacer"></span>
-
-          ${this.previewUrl
-            ? html`
-                <label class="row" style="font-size:.85rem;gap:6px">
-                  <input
-                    type="checkbox"
-                    .checked="${this.geotag}"
-                    @change="${(e: Event) =>
-                      (this.geotag = (e.target as HTMLInputElement).checked)}"
-                  />
-                  Geotag
-                </label>
-                <wa-button appearance="outlined" @click="${this.sharePreview}">
-                  <wa-icon slot="prefix" name="share-nodes"></wa-icon>Share
-                </wa-button>
-                <wa-button variant="brand" @click="${this.saveToGallery}">
-                  <wa-icon slot="prefix" name="floppy-disk"></wa-icon>Save
-                </wa-button>
-              `
-            : nothing}
+        <p>${this.busy ? 'Processing photo…' : 'Filters run off the main thread. The original is kept while you choose.'}</p>
+        <wa-button variant="brand" ?disabled="${this.busy}" @click="${this.attach}">Add photo to note</wa-button>
+      ` : nothing}
+      ${this.gallery.length ? html`
+        <h3>Previously saved photos</h3>
+        <p>Photos from the earlier Nimbus gallery are still here. Select one to attach it.</p>
+        <div class="gallery">
+          ${this.gallery.map((item, index) => html`
+            <button class="thumb" aria-label="Use saved photo ${index + 1}" ?disabled="${this.busy}"
+              @click="${() => {
+                this.stopCamera();
+                this.legacyLocation = item.record.location;
+                this.setOriginal(item.record.blob);
+              }}"><img src="${item.url}" alt="" /></button>
+          `)}
         </div>
-      </wa-card>
-
-      ${this.gallery.length
-        ? html`
-            <div class="page-head" style="margin-top:26px">
-              <h1 style="font-size:1.3rem">Gallery</h1>
-              <p>Saved offline in IndexedDB. Count is mirrored to the app icon badge.</p>
-            </div>
-            <div class="gallery">
-              ${this.gallery.map(
-                (g) => html`
-                  <div class="thumb">
-                    <img src="${g.url}" alt="Saved photo" />
-                    <button
-                      class="del"
-                      aria-label="Delete photo"
-                      @click="${() => this.removePhoto(g.record.id)}"
-                    >
-                      <wa-icon name="xmark"></wa-icon>
-                    </button>
-                    ${g.record.location
-                      ? html`<span class="geo">
-                          <wa-icon name="location-dot"></wa-icon>
-                          ${g.record.location.lat.toFixed(2)},
-                          ${g.record.location.lon.toFixed(2)}
-                        </span>`
-                      : nothing}
-                  </div>
-                `
-              )}
-            </div>
-          `
-        : nothing}
+      ` : nothing}
     `;
   }
 }

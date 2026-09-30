@@ -1,45 +1,31 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { resolveRouterPath } from '../router';
+import { resolveRouterPath, router } from '../router';
 
 import '@awesome.me/webawesome/dist/components/icon/icon.js';
 
 const links: Array<{ label: string; path: string; icon: string }> = [
-  { label: 'Home', path: resolveRouterPath(), icon: 'house' },
-  { label: 'Notes', path: resolveRouterPath('notes'), icon: 'note-sticky' },
-  { label: 'Sketch', path: resolveRouterPath('sketch'), icon: 'pen-nib' },
-  { label: 'Capture', path: resolveRouterPath('capture'), icon: 'camera' },
-  { label: 'Superpowers', path: resolveRouterPath('powers'), icon: 'bolt' },
+  { label: 'Notes', path: resolveRouterPath(), icon: 'note-sticky' },
   { label: 'About', path: resolveRouterPath('about'), icon: 'circle-info' },
 ];
 
 @customElement('app-header')
 export class AppHeader extends LitElement {
   // Re-render on navigation so the active link highlight stays in sync.
-  @state() private current = window.location.pathname;
+  @state() private current = router.currentView;
 
   connectedCallback(): void {
     super.connectedCallback();
-    const nav = (window as any).navigation;
-    if (nav) {
-      nav.addEventListener('navigatesuccess', this.syncCurrent);
-    } else {
-      window.addEventListener('popstate', this.syncCurrent);
-    }
+    router.addEventListener('route-changed', this.syncCurrent);
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    const nav = (window as any).navigation;
-    if (nav) {
-      nav.removeEventListener('navigatesuccess', this.syncCurrent);
-    } else {
-      window.removeEventListener('popstate', this.syncCurrent);
-    }
+    router.removeEventListener('route-changed', this.syncCurrent);
   }
 
   private syncCurrent = () => {
-    this.current = window.location.pathname;
+    this.current = router.currentView;
   };
 
   static styles = css`
@@ -120,7 +106,7 @@ export class AppHeader extends LitElement {
     }
 
     a.link .label {
-      display: none;
+      display: inline;
     }
 
     @media (min-width: 720px) {
@@ -134,7 +120,7 @@ export class AppHeader extends LitElement {
     return html`
       <header>
         <a class="brand" href="${resolveRouterPath()}">
-          <img src="/assets/icons/icon_192.png" alt="" />
+          <img src="${import.meta.env.BASE_URL}assets/icons/icon_192.png" alt="" />
           <span>Nimbus</span>
         </a>
         <nav aria-label="Primary">
@@ -143,7 +129,7 @@ export class AppHeader extends LitElement {
               <a
                 class="link"
                 href="${l.path}"
-                aria-current="${this.current === l.path ? 'page' : nothing}"
+                aria-current="${l.path === resolveRouterPath(this.current) ? 'page' : nothing}"
               >
                 <wa-icon name="${l.icon}"></wa-icon>
                 <span class="label">${l.label}</span>

@@ -1,10 +1,9 @@
 {
-  "id": "/",
-  "scope": "/",
-  "name": "Nimbus — Offline-First Pocket Studio",
+  "scope": "./",
+  "name": "Nimbus",
   "short_name": "Nimbus",
-  "description": "Capture notes, sketch ideas, snap photos, and explore what the modern web platform can do. An offline-first, installable PWA built with PWABuilder.",
-  "start_url": "/?source=pwa",
+  "description": "Keep your thoughts, sketches, and photos together in an offline-first notebook. Built with PWABuilder.",
+  "start_url": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "browser"],
   "orientation": "any",
@@ -79,26 +78,26 @@
       "name": "New Note",
       "short_name": "Note",
       "description": "Jump straight into a new note",
-      "url": "/notes?new=1",
+      "url": "./?new=1",
       "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Sketch",
-      "short_name": "Sketch",
-      "description": "Open the drawing canvas",
-      "url": "/sketch",
+      "name": "Sketch note",
+      "short_name": "Sketch note",
+      "description": "Create a note with a sketch",
+      "url": "./?new=sketch",
       "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Superpowers",
-      "short_name": "Powers",
-      "description": "Explore web platform capabilities",
-      "url": "/powers",
+      "name": "Photo note",
+      "short_name": "Photo note",
+      "description": "Create a note with a photo",
+      "url": "./?new=photo",
       "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
     }
   ],
   "share_target": {
-    "action": "/notes",
+    "action": "./",
     "method": "GET",
     "enctype": "application/x-www-form-urlencoded",
     "params": {
@@ -109,17 +108,18 @@
   },
   "file_handlers": [
     {
-      "action": "/notes",
+      "action": "./",
       "accept": {
         "text/plain": [".txt"],
-        "text/markdown": [".md"]
+        "text/markdown": [".md"],
+        "application/json": [".json"]
       }
     }
   ],
   "protocol_handlers": [
     {
       "protocol": "web+nimbus",
-      "url": "/notes?protocol=%s"
+      "url": "./?protocol=%s"
     }
   ]
 }

@@ -9,13 +9,14 @@ export const captureStyles = css`
     aspect-ratio: 4 / 3;
     display: grid;
     place-items: center;
+    max-height: 48vh;
   }
 
   video,
   .preview {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
   }
 
@@ -66,6 +67,15 @@ export const captureStyles = css`
   .toolbar .spacer {
     flex: 1;
   }
+
+  input[type='file'] {
+    display: block;
+    max-width: 100%;
+    margin-top: 8px;
+  }
+
+  .toolbar label { min-width: 0; }
+  [role='alert'] { color: var(--wa-color-danger-on-quiet, #b42318); }
 
   .gallery {
     display: grid;

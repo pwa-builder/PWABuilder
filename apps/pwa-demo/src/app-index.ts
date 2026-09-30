@@ -16,7 +16,7 @@ setBasePath('https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.10.0/dist');
 registerIconLibrary('default', {
   resolver: (name: string, family?: string) => {
     const folder = family === 'brands' ? 'brands' : 'solid';
-    return `/assets/fa/${folder}/${name}.svg`;
+    return `${import.meta.env.BASE_URL}assets/fa/${folder}/${name}.svg`;
   },
   // Match the built-in library so icons inherit the current text color.
   mutator: (svg: SVGElement) => {
@@ -26,7 +26,7 @@ registerIconLibrary('default', {
   },
 });
 
-import './pages/app-home/app-home';
+import './pages/app-notes/app-notes';
 import './components/app-header';
 import './components/offline-indicator';
 import './components/install-banner';

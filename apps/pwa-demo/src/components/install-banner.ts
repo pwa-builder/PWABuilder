@@ -103,7 +103,7 @@ export class InstallBanner extends LitElement {
     }
     return html`
       <div class="banner" role="dialog" aria-label="Install Nimbus">
-        <img src="/assets/icons/icon_192.png" alt="" />
+        <img src="${import.meta.env.BASE_URL}assets/icons/icon_192.png" alt="" />
         <div class="text">
           <strong>Install Nimbus</strong>
           <span>Add it to your device for a full-screen, offline experience.</span>

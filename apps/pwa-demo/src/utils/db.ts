@@ -9,6 +9,19 @@ export interface NoteRecord {
   title: string;
   body: string;
   updated: number;
+  attachments?: NoteAttachment[];
+  location?: { lat: number; lon: number };
+  pinned?: boolean;
+}
+
+export interface NoteAttachment {
+  id: string;
+  kind: 'sketch' | 'photo';
+  name: string;
+  blob: Blob;
+  created: number;
+  location?: { lat: number; lon: number } | null;
+  filter?: string;
 }
 
 export interface PhotoRecord {
@@ -54,14 +67,17 @@ function tx<T>(
       new Promise<T>((resolve, reject) => {
         const transaction = db.transaction(store, mode);
         const request = run(transaction.objectStore(store));
-        request.onsuccess = () => resolve(request.result);
+        // A request can succeed before the transaction rolls back on quota errors.
+        transaction.oncomplete = () => resolve(request.result);
+        transaction.onabort = () =>
+          reject(transaction.error ?? new Error('Local storage transaction aborted.'));
         request.onerror = () => reject(request.error);
       })
   );
 }
 
 export function putRecord<T>(store: StoreName, value: T): Promise<IDBValidKey> {
-  return tx(store, 'readwrite', (os) => os.put(value as any));
+  return tx(store, 'readwrite', (os) => os.put(value));
 }
 
 export function deleteRecord(store: StoreName, id: string): Promise<undefined> {

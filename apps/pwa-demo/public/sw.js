@@ -14,13 +14,14 @@ import { NavigationRoute, registerRoute } from 'workbox-routing';
 import {
   StaleWhileRevalidate,
   CacheFirst,
-  NetworkFirst,
 } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
-import { BackgroundSyncPlugin } from 'workbox-background-sync';
 
 self.skipWaiting();
 clientsClaim();
+
+const appRoot = self.registration.scope;
+const appUrl = (path = '') => new URL(path, appRoot).href;
 
 // Precache everything the build produced (app shell, JS, CSS, icons).
 cleanupOutdatedCaches();
@@ -28,7 +29,7 @@ precacheAndRoute(self.__WB_MANIFEST || []);
 
 // SPA navigation fallback: serve the cached index.html for in-app routes so the
 // app boots offline no matter which route was requested.
-const navigationHandler = createHandlerBoundToURL('index.html');
+const navigationHandler = createHandlerBoundToURL(appUrl('index.html'));
 registerRoute(
   new NavigationRoute(navigationHandler, {
     denylist: [/^\/api\//, /\/[^/?]+\.[^/]+$/],
@@ -58,21 +59,9 @@ registerRoute(
   })
 );
 
-// Demonstrate Background Sync: queued POSTs to /sync-demo are replayed when
-// connectivity returns. Used by the Superpowers playground.
-const bgSyncPlugin = new BackgroundSyncPlugin('nimbus-sync-queue', {
-  maxRetentionMinutes: 24 * 60,
-});
-registerRoute(
-  ({ url, request }) =>
-    url.pathname.startsWith('/sync-demo') && request.method === 'POST',
-  new NetworkFirst({ plugins: [bgSyncPlugin] }),
-  'POST'
-);
-
 // --- Push notifications -----------------------------------------------------
-// The playground uses the Notifications API directly, but a real push handler
-// makes the SW a complete example.
+// Note tools use local notifications. This handler is available for deployments
+// that add a push subscription backend; Nimbus itself does not sync notes.
 self.addEventListener('push', (event) => {
   let payload = { title: 'Nimbus', body: 'Something new happened.' };
   try {
@@ -87,19 +76,19 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(payload.title, {
       body: payload.body,
-      icon: '/assets/icons/icon_192.png',
-      badge: '/assets/icons/icon_48.png',
-      data: payload.url || '/',
+      icon: appUrl('assets/icons/icon_192.png'),
+      badge: appUrl('assets/icons/icon_48.png'),
+      data: notificationUrl(payload.url),
     })
   );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const target = event.notification.data || '/';
+  const target = notificationUrl(event.notification.data);
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-      const existing = clients.find((c) => 'focus' in c);
+      const existing = clients.find((c) => c.url.startsWith(appRoot) && 'focus' in c);
       if (existing) {
         existing.navigate(target);
         return existing.focus();
@@ -108,6 +97,17 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
 });
+
+// Keep notifications in this Pages app rather than another project on the origin.
+function notificationUrl(value) {
+  if (typeof value !== 'string') return appRoot;
+  try {
+    const url = new URL(value, appRoot);
+    return url.href.startsWith(appRoot) ? url.href : appRoot;
+  } catch {
+    return appRoot;
+  }
+}
 
 // Allow the page to trigger an immediate activation after an update.
 self.addEventListener('message', (event) => {
