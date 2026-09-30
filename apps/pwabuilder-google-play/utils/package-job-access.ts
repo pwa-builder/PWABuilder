@@ -1,6 +1,6 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 
-export const packageAccessLifetimeSeconds = 24 * 60 * 60;
+export const packageAccessLifetimeSeconds = 72 * 60 * 60;
 
 export interface PackageJobAccess {
     tokenHash: string;

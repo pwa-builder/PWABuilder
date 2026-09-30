@@ -18,6 +18,21 @@ test("package access requires the unexpired job-specific token, not an ID or sup
     assert.ok(!JSON.stringify(owner.access).includes(owner.accessToken));
 });
 
+test("package access remains valid beyond 24 hours and expires exactly 72 hours after enqueue", context => {
+    const enqueuedAt = Date.parse("2026-09-30T12:00:00Z");
+    let now = enqueuedAt;
+    context.mock.method(Date, "now", () => now);
+    const owner = createPackageJobAccess();
+    const authorization = `Bearer ${owner.accessToken}`;
+    assert.equal(owner.access.expiresAt, enqueuedAt + 72 * 60 * 60 * 1000);
+    now = enqueuedAt + 48 * 60 * 60 * 1000;
+    assert.equal(canAccessPackageJob(authorization, owner.access), true);
+    now = owner.access.expiresAt - 1;
+    assert.equal(canAccessPackageJob(authorization, owner.access), true);
+    now = owner.access.expiresAt;
+    assert.equal(canAccessPackageJob(authorization, owner.access), false);
+});
+
 test("status and admin diagnostics explicitly project configuration and redact secrets before storage", () => {
     const job: GooglePlayPackageJob = {
         id: "googleplaypackagejob:example.com:job",

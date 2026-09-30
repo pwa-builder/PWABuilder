@@ -223,11 +223,11 @@ export class GooglePlayPackagingStatus extends LitElement {
     private async jobCompleted(job: GooglePlayPackageJob): Promise<void> {
         this.recordPackagingCompleted(job.analysisId);
 
-        // If the package was generated more than 24 hours ago, skip download because we're looking at a historical job result.
+        // Match the server's fixed access window from enqueue.
         const generatedDate = new Date(job.createdAt);
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        if (generatedDate < oneDayAgo) {
-            this.appendLog("Package access expires after 24 hours. Please create a new package.");
+        const accessCutoff = new Date(Date.now() - 72 * 60 * 60 * 1000);
+        if (generatedDate <= accessCutoff) {
+            this.appendLog("Package access expires after 72 hours. Please create a new package.");
             clearTimeout(this.jobTimeoutHandle);
             return;
         }

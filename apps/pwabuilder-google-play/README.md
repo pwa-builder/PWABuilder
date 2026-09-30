@@ -50,7 +50,7 @@ Keep `accessToken` private. `GET /getPackageJob?id=...` and
 `GET /downloadPackageZip?id=...` (including HEAD) require
 `Authorization: Bearer <accessToken>`. Neither the job ID nor support reference
 authorizes access. Missing, wrong, expired, and legacy ID-only credentials are
-rejected. All job responses use `Cache-Control: no-store`. Access expires 24 hours
+rejected. All job responses use `Cache-Control: no-store`. Access expires 72 hours
 after enqueue, including repeat downloads; progress updates do not renew it.
 
 PWABuilder retains the token in tab-scoped session storage, never in a URL or
@@ -66,7 +66,7 @@ Signing inputs are held only in active worker memory and queue messages; Azure
 queue messages expire after one hour and workers discard jobs older than 30
 minutes. Automatic worker retries remain available within that window.
 User-initiated retries restart packaging and require signing inputs again.
-Status and owner-verifier records expire within 24 hours. Private Blob lifecycle
+Status and owner-verifier records expire within 72 hours. Private Blob lifecycle
 deletion must also be configured and verified separately (see rollout below).
 
 Workers write redacted diagnostic projections to Redis under
@@ -159,8 +159,8 @@ imported from legacy secret-bearing records.
    records. Scope deletion to CloudAPK data, not the entire shared Redis database
    or storage account. Do not delete current jobs accidentally during rollout.
 4. Verify the `google-play-packages` container is private, disable public/direct
-   artifact access, and configure/verify Blob lifecycle deletion after one day.
-   The application rejects downloads after 24 hours even if a blob still exists.
+   artifact access, and configure/verify Blob lifecycle deletion after three days.
+   The application rejects downloads after 72 hours even if a blob still exists.
    Account-level lifecycle execution may lag; it is not the authorization boundary.
 5. Cosmos analyses are separate from CloudAPK's credential-bearing jobs. Deleting
    analyses alone does not remediate this incident. Review diagnostic/log retention

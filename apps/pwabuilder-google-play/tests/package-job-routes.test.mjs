@@ -28,7 +28,7 @@ test("enqueue, status and download separate owner credentials from public suppor
         for (const secret of ["private-key-password", "private-store-password", "private-alias", receipt.accessToken]) {
             assert.ok(!allPersisted.includes(secret));
         }
-        assert.equal(effects.expirations.get(`package-owner:${receipt.id}`), 86400);
+        assert.equal(effects.expirations.get(`package-owner:${receipt.id}`), 72 * 60 * 60);
         assert.equal(effects.expirations.get(`package-diagnostics:${receipt.supportReference}`), 14 * 86400);
 
         const jobUrl = `${origin}/getPackageJob?id=${encodeURIComponent(receipt.id)}`;
@@ -99,6 +99,12 @@ test("worker completion and terminal failure never persist signing inputs", asyn
             assert.ok(!JSON.stringify([stored, diagnostic]).includes(secret));
         }
         assert.ok(!JSON.stringify(diagnostic).includes("private-artifact.zip"));
-        assert.ok(effects.expirations.get(job.id) <= 86400);
+        assert.ok(effects.expirations.get(job.id) <= 72 * 60 * 60);
+        assert.ok(effects.expirations.get(job.id) > 72 * 60 * 60 - 5);
+
+        job.createdAt = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+        await processor.jobProgressed({ level: "info", message: "Saving existing job status" }, job, logger);
+        assert.ok(effects.expirations.get(job.id) <= 24 * 60 * 60);
+        assert.ok(effects.expirations.get(job.id) > 24 * 60 * 60 - 5);
     }
 });
