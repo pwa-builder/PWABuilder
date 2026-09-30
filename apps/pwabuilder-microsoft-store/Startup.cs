@@ -52,7 +52,6 @@ public class Startup
         services.AddTransient<WindowsAppPackageInspector>();
         services.AddTransient<WindowsAppPackageUpdater>();
         services.AddTransient<WindowsAppPackageBundler>();
-        services.AddTransient<WindowsActionsService>();
         services.AddTransient<LooseLayoutPackager>();
         services.AddTransient<SpartanWindowsPackageCreator>();
         services.AddTransient<ModernWindowsPackageCreator>();
@@ -63,6 +62,10 @@ public class Startup
         services.AddTransient<MakeAppxWrapper>();
         services.AddTransient<TempDirectory>();
         services.AddSingleton<CosmosDbService>();
+        services.AddSingleton<IMsStorePackageStore>(provider => provider.GetRequiredService<CosmosDbService>());
+        services.AddSingleton<SfEdgeClient>();
+        services.AddSingleton(TimeProvider.System);
+        services.AddHostedService<StorePwaService>();
         services.AddTransient<Analytics>();
         services.AddSingleton<ZombieProcessKiller>();
         services.AddTransient<ProcessRunner>();
