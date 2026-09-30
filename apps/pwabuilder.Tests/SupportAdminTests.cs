@@ -1,10 +1,11 @@
 using System.Net;
+using System.Net.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using PWABuilder.Controllers;
 using PWABuilder.Models;
 using PWABuilder.Services;
@@ -20,10 +24,12 @@ using Xunit;
 
 namespace PWABuilder.Tests;
 
-/// <summary>Offline coverage of support authorization, safe projections, and real Razor HTTP endpoints.</summary>
+/// <summary>Offline coverage of real JWT authentication, support authorization and diagnostic projections.</summary>
 public sealed class SupportAdminTests
 {
     private static readonly Guid Tenant = Guid.Parse("79313999-1ba1-4b8e-bfe0-ae46b452d287");
+    private static readonly Guid Client = Guid.Parse("e46a0c15-6f87-4a9c-aa4b-57716b43a65e");
+    private static readonly RsaSecurityKey SigningKey = new(RSA.Create(2048)) { KeyId = "offline-test-key" };
 
     /// <summary>The actual policy rejects anonymous, wrong-tenant, missing-role, and unconfigured access.</summary>
     [Theory]
@@ -53,10 +59,10 @@ public sealed class SupportAdminTests
             new ClaimsIdentity([new Claim("tid", Tenant.ToString()), new Claim("email", "reader@microsoft.com")], "one"),
             new ClaimsIdentity([new Claim("roles", SupportAdminAuthentication.Role)], "two")
         ]);
-        Assert.False(SupportAdminAuthentication.IsSupportReader(principal, Tenant));
+        Assert.False(SupportAdminAuthentication.IsSupportReader(principal, Tenant, Client));
     }
 
-    /// <summary>Production options use secure bounded cookies and a single-tenant code flow without Graph.</summary>
+    /// <summary>Production options validate API access tokens without cookies, client secrets or Graph permissions.</summary>
     [Fact]
     public async Task Authentication_options_are_secure_and_do_not_retain_tokens()
     {
@@ -64,20 +70,16 @@ public sealed class SupportAdminTests
         services.AddLogging();
         services.AddSupportAdmin(Configuration(true));
         await using var provider = services.BuildServiceProvider();
-        var cookie = provider.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>()
-            .Get(SupportAdminAuthentication.CookieScheme);
-        Assert.True(cookie.Cookie.HttpOnly);
-        Assert.Equal(Microsoft.AspNetCore.Http.CookieSecurePolicy.Always, cookie.Cookie.SecurePolicy);
-        Assert.Equal("__Host-PWABuilder.Support", cookie.Cookie.Name);
-        Assert.False(cookie.SlidingExpiration);
-        var oidc = provider.GetRequiredService<IOptionsMonitor<OpenIdConnectOptions>>().Get("SupportEntra");
-        Assert.Equal($"https://login.microsoftonline.com/{Tenant:D}/v2.0", oidc.Authority);
-        Assert.Equal("/admin/signin-oidc", oidc.CallbackPath);
-        Assert.Equal("code", oidc.ResponseType);
-        Assert.False(oidc.SaveTokens);
-        Assert.False(oidc.GetClaimsFromUserInfoEndpoint);
-        Assert.Equal(["openid"], oidc.Scope);
-        Assert.Equal("SupportEntra", provider.GetRequiredService<IOptions<AuthenticationOptions>>().Value.DefaultChallengeScheme);
+        var bearer = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(SupportAdminAuthentication.BearerScheme);
+        Assert.Equal($"https://login.microsoftonline.com/{Tenant:D}/v2.0", bearer.Authority);
+        Assert.Equal(Client.ToString("D"), bearer.Audience);
+        Assert.True(bearer.TokenValidationParameters.ValidateIssuer);
+        Assert.True(bearer.TokenValidationParameters.ValidateAudience);
+        Assert.True(bearer.TokenValidationParameters.ValidateLifetime);
+        Assert.True(bearer.TokenValidationParameters.RequireSignedTokens);
+        Assert.False(bearer.SaveToken);
+        Assert.False(bearer.IncludeErrorDetails);
+        Assert.Equal(SupportAdminAuthentication.BearerScheme, provider.GetRequiredService<IOptions<AuthenticationOptions>>().Value.DefaultChallengeScheme);
     }
 
     /// <summary>All three routes enforce policy before reading data and always emit private response headers.</summary>
@@ -87,9 +89,9 @@ public sealed class SupportAdminTests
     [InlineData(true, true, false, 403)]
     public async Task Admin_routes_reject_unauthorized_requests(bool authenticated, bool tenant, bool role, int status)
     {
-        await using var app = await CreateAppAsync(true, Principal(authenticated, tenant, role));
-        var client = app.GetTestClient();
-        foreach (var path in new[] { "/admin", "/admin/analyses/analysis:example.com:123", $"/admin/package-jobs/{Guid.NewGuid():D}" })
+        await using var app = await CreateAppAsync(true);
+        var client = CreateClient(app, Principal(authenticated, tenant, role));
+        foreach (var path in new[] { "/api/admin", "/api/admin/analyses/analysis:example.com:123", $"/api/admin/package-jobs/{Guid.NewGuid():D}" })
         {
             var response = await client.GetAsync(path);
             Assert.Equal(status, (int)response.StatusCode);
@@ -102,47 +104,148 @@ public sealed class SupportAdminTests
     [Fact]
     public async Task Unconfigured_support_fails_closed_without_breaking_public_routes()
     {
-        await using var app = await CreateAppAsync(false, Principal(true, true, true));
+        await using var app = await CreateAppAsync(false);
         var client = app.GetTestClient();
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/admin")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/admin/config")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/admin")).StatusCode);
         Assert.Equal("public", await client.GetStringAsync("/api/support-test-public"));
     }
 
-    /// <summary>Authorized support readers need no owner token; Razor encodes untrusted metadata.</summary>
+    /// <summary>Authorized support readers need no owner token; API responses contain only safe projections.</summary>
     [Fact]
     public async Task Authorized_reader_gets_encoded_safe_diagnostics_without_owner_token()
     {
-        await using var app = await CreateAppAsync(true, Principal(true, true, true));
+        await using var app = await CreateAppAsync(true);
         var reference = Guid.NewGuid();
         var data = Package(reference);
         await app.Services.GetRequiredService<IRedisCache>().SaveAsync($"package-diagnostics:{reference:D}", data);
-        var client = app.GetTestClient();
-        var response = await client.GetAsync($"/admin/package-jobs/{reference:D}");
+        var client = CreateClient(app, Principal(true, true, true));
+        var response = await client.GetAsync($"/api/admin/package-jobs/{reference:D}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var html = await response.Content.ReadAsStringAsync();
-        Assert.Contains("&lt;script&gt;", html);
-        Assert.DoesNotContain("<script>", html);
-        Assert.DoesNotContain("secret-marker", html);
-        Assert.DoesNotContain("hasKeyPassword", html);
-        Assert.Contains("Project generation", html);
-        Assert.Contains("project generation failed", html);
-        Assert.Contains("Gradle build timeout", html);
-        Assert.Contains("Uploaded key supplied", html);
+        var json = await response.Content.ReadAsStringAsync();
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+        Assert.DoesNotContain("secret-marker", json);
+        Assert.Contains("Project generation", json);
+        Assert.Contains("project generation failed", json);
+        Assert.Contains("Gradle build timeout", json);
+        var package = JsonSerializer.Deserialize<SupportPackage>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        Assert.NotNull(package);
+        Assert.True(package.Configuration.HasKeyPassword);
+        Assert.Equal("<script>alert(1)</script>", package.Configuration.Name);
         Assert.True(response.Headers.CacheControl?.NoStore);
         Assert.Contains("default-src 'none'", response.Headers.GetValues("Content-Security-Policy").Single());
-        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/admin")).StatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/admin/package-jobs/raw-job-id")).StatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync($"/admin/package-jobs/{Guid.Empty:D}")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/admin")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/admin/package-jobs/raw-job-id")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync($"/api/admin/package-jobs/{Guid.Empty:D}")).StatusCode);
         var analysis = Analysis("analysis:example.com:123");
         await app.Services.GetRequiredService<IAnalysisStore>().SaveAsync(analysis);
-        var analysisResponse = await client.GetAsync($"/admin/analyses/{analysis.Id}");
+        var analysisResponse = await client.GetAsync($"/api/admin/analyses/{analysis.Id}");
         Assert.Equal(HttpStatusCode.OK, analysisResponse.StatusCode);
         var analysisHtml = await analysisResponse.Content.ReadAsStringAsync();
         Assert.DoesNotContain("secret-marker", analysisHtml);
         Assert.DoesNotContain("password", analysisHtml);
-        Assert.Contains("Structured checks", analysisHtml);
+        Assert.Contains("\"checks\"", analysisHtml);
         Assert.Contains("Manifest parsing failed", analysisHtml);
         Assert.Contains("Starting service worker scan", analysisHtml);
+    }
+
+    /// <summary>The unauthenticated shell exposes only sign-in assets and public IDs, not diagnostics or tokens.</summary>
+    [Fact]
+    public async Task Public_shell_and_configuration_expose_no_diagnostics()
+    {
+        await using var app = await CreateAppAsync(true);
+        var client = app.GetTestClient();
+        var configResponse = await client.GetAsync("/api/admin/config");
+        Assert.Equal(HttpStatusCode.OK, configResponse.StatusCode);
+        var config = JsonDocument.Parse(await configResponse.Content.ReadAsStringAsync()).RootElement;
+        Assert.Equal(3, config.EnumerateObject().Count());
+        Assert.Equal(Tenant.ToString("D"), config.GetProperty("tenantId").GetString());
+        Assert.Equal(Client.ToString("D"), config.GetProperty("clientId").GetString());
+        Assert.Equal($"api://{Client:D}/Support.Read", config.GetProperty("scope").GetString());
+        Assert.True(configResponse.Headers.CacheControl?.NoStore);
+        foreach (var path in new[] { "/admin", "/admin/signin-oidc?code=synthetic-code&state=synthetic-state",
+            "/admin/analyses/analysis:example.com:123", $"/admin/package-jobs/{Guid.NewGuid():D}" })
+        {
+            var shell = await client.GetAsync(path);
+            Assert.Equal(HttpStatusCode.OK, shell.StatusCode);
+            var html = await shell.Content.ReadAsStringAsync();
+            Assert.Contains("<support-admin>", html);
+            Assert.DoesNotContain("app-index", html);
+            Assert.DoesNotContain("synthetic-code", html);
+            Assert.True(shell.Headers.CacheControl?.NoStore);
+            Assert.Equal("no-referrer", shell.Headers.GetValues("Referrer-Policy").Single());
+            Assert.Equal(path.StartsWith("/admin/signin-oidc", StringComparison.Ordinal) ? "SAMEORIGIN" : "DENY",
+                shell.Headers.GetValues("X-Frame-Options").Single());
+        }
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/admin")).StatusCode);
+    }
+
+    /// <summary>ID tokens, app-only tokens, other clients and unassigned identities cannot access diagnostics.</summary>
+    [Theory]
+    [InlineData("scp")]
+    [InlineData("roles")]
+    [InlineData("tid")]
+    [InlineData("oid")]
+    [InlineData("azp")]
+    [InlineData("ver")]
+    public async Task Missing_access_token_claim_is_forbidden(string missingClaim)
+    {
+        await using var app = await CreateAppAsync(true);
+        var client = app.GetTestClient();
+        var claims = Principal(true, true, true).Claims.Where(claim => claim.Type != missingClaim);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(claims));
+        Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync("/api/admin")).StatusCode);
+    }
+
+    /// <summary>Signed tokens still require the exact delegated scope, version, and originating SPA.</summary>
+    [Theory]
+    [InlineData("scp", "Support.Read.All")]
+    [InlineData("scp", "User.Read")]
+    [InlineData("ver", "1.0")]
+    [InlineData("azp", "8bab0280-aeb9-4ddb-b8a3-adf1d20554e7")]
+    [InlineData("oid", "")]
+    public async Task Incorrect_access_token_claim_is_forbidden(string type, string value)
+    {
+        await using var app = await CreateAppAsync(true);
+        var client = app.GetTestClient();
+        var claims = Principal(true, true, true).Claims.Where(claim => claim.Type != type).Append(new Claim(type, value));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(claims));
+        Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync("/api/admin")).StatusCode);
+    }
+
+    /// <summary>Actual bearer validation rejects expired, wrong-audience, wrong-issuer, and forged signatures.</summary>
+    [Theory]
+    [InlineData("expired")]
+    [InlineData("graph")]
+    [InlineData("issuer")]
+    [InlineData("signature")]
+    public async Task Invalid_tokens_are_unauthenticated(string failure)
+    {
+        await using var app = await CreateAppAsync(true);
+        var client = app.GetTestClient();
+        var jwt = Token(Principal(true, true, true).Claims,
+            audience: failure is "graph" ? "00000003-0000-0000-c000-000000000000" : null,
+            issuer: failure is "issuer" ? "https://issuer.example.test" : null,
+            expires: failure is "expired" ? DateTime.UtcNow.AddMinutes(-5) : null,
+            key: failure is "signature" ? new RsaSecurityKey(RSA.Create(2048)) { KeyId = "forged" } : null);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+        var response = await client.GetAsync("/api/admin");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.True(response.Headers.CacheControl?.NoStore);
+        Assert.DoesNotContain(jwt, await response.Content.ReadAsStringAsync());
+    }
+
+    /// <summary>Neither query-string credentials nor the retired support cookie authenticate API calls.</summary>
+    [Fact]
+    public async Task Tokens_are_accepted_only_in_authorization_header()
+    {
+        await using var app = await CreateAppAsync(true);
+        var client = app.GetTestClient();
+        var token = Token(Principal(true, true, true).Claims);
+        client.DefaultRequestHeaders.Add("Cookie", $"__Host-PWABuilder.Support={token}");
+        var response = await client.GetAsync("/api/admin?access_token=" + token);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     /// <summary>Analysis support data never contains raw logs, URLs, errors, or capability error text.</summary>
@@ -270,7 +373,10 @@ public sealed class SupportAdminTests
         var claims = new List<Claim>
         {
             new("tid", (correctTenant ? Tenant : Guid.NewGuid()).ToString("D")),
-            new("oid", Guid.NewGuid().ToString("D"))
+            new("oid", Guid.NewGuid().ToString("D")),
+            new("azp", Client.ToString("D")),
+            new("ver", "2.0"),
+            new("scp", SupportAdminAuthentication.Scope)
         };
         if (role) claims.Add(new Claim("roles", SupportAdminAuthentication.Role));
         return new ClaimsPrincipal(new ClaimsIdentity(claims, authenticated ? "Test" : null));
@@ -281,22 +387,22 @@ public sealed class SupportAdminTests
         .AddInMemoryCollection(configured ? new Dictionary<string, string?>
         {
             ["SupportAdmin:TenantId"] = Tenant.ToString("D"),
-            ["SupportAdmin:ClientId"] = Guid.NewGuid().ToString("D"),
-            ["SupportAdmin:ClientSecret"] = "test-only-not-a-credential"
+            ["SupportAdmin:ClientId"] = Client.ToString("D")
         } : []).Build();
 
-    /// <summary>Hosts the real controller, policy, and compiled Razor views with local test authentication.</summary>
-    private static async Task<WebApplication> CreateAppAsync(bool configured, ClaimsPrincipal principal)
+    /// <summary>Hosts the actual bearer handler with an offline signing key instead of Entra metadata.</summary>
+    private static async Task<WebApplication> CreateAppAsync(bool configured)
     {
-        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Testing" });
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development" });
         builder.WebHost.UseTestServer();
-        var enabled = builder.Services.AddSupportAdmin(Configuration(configured));
-        builder.Services.AddAuthentication(options =>
+        builder.Configuration.AddConfiguration(Configuration(configured));
+        var enabled = builder.Services.AddSupportAdmin(builder.Configuration);
+        builder.Services.PostConfigure<JwtBearerOptions>(SupportAdminAuthentication.BearerScheme, options =>
         {
-            options.DefaultAuthenticateScheme = "Test";
-            options.DefaultChallengeScheme = "Test";
-            options.DefaultForbidScheme = "Test";
-        }).AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", options => options.Principal = principal);
+            var metadata = new OpenIdConnectConfiguration { Issuer = $"https://login.microsoftonline.com/{Tenant:D}/v2.0" };
+            metadata.SigningKeys.Add(SigningKey);
+            options.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(metadata);
+        });
         builder.Services.AddSingleton<IAnalysisStore, InMemoryAnalysisStore>();
         builder.Services.AddSingleton<IRedisCache, InMemoryRedisCache>();
         builder.Services.AddScoped<SupportDiagnosticsService>();
@@ -312,22 +418,26 @@ public sealed class SupportAdminTests
         return app;
     }
 
-    private sealed class TestAuthenticationOptions : AuthenticationSchemeOptions
+    /// <summary>Creates a client carrying a signed test access token, or no credential for anonymous requests.</summary>
+    private static HttpClient CreateClient(WebApplication app, ClaimsPrincipal principal)
     {
-        /// <summary>The synthetic test identity.</summary>
-        public ClaimsPrincipal Principal { get; set; } = new();
+        var client = app.GetTestClient();
+        if (principal.Identity?.IsAuthenticated is true)
+        {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(principal.Claims));
+        }
+        return client;
     }
 
-    private sealed class TestAuthenticationHandler : AuthenticationHandler<TestAuthenticationOptions>
+    /// <summary>Signs a synthetic token for testing the complete bearer-token validation path.</summary>
+    private static string Token(IEnumerable<Claim> claims, string? audience = null, string? issuer = null,
+        DateTime? expires = null, RsaSecurityKey? key = null)
     {
-        /// <summary>Creates the local test authentication handler.</summary>
-        public TestAuthenticationHandler(IOptionsMonitor<TestAuthenticationOptions> options,
-            ILoggerFactory logger, UrlEncoder encoder) : base(options, logger, encoder) { }
-
-        /// <inheritdoc/>
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync() =>
-            Task.FromResult(Options.Principal.Identity?.IsAuthenticated is true
-                ? AuthenticateResult.Success(new AuthenticationTicket(Options.Principal, Scheme.Name))
-                : AuthenticateResult.NoResult());
+        var jwt = new JwtSecurityToken(
+            issuer ?? $"https://login.microsoftonline.com/{Tenant:D}/v2.0",
+            audience ?? Client.ToString("D"),
+            claims, DateTime.UtcNow.AddHours(-1), expires ?? DateTime.UtcNow.AddMinutes(10),
+            new SigningCredentials(key ?? SigningKey, SecurityAlgorithms.RsaSha256));
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 }

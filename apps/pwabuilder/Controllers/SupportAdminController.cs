@@ -5,9 +5,9 @@ using PWABuilder.Services;
 
 namespace PWABuilder.Controllers;
 
-/// <summary>Read-only, server-rendered diagnostics available solely to assigned tenant support readers.</summary>
+/// <summary>Read-only diagnostics API available solely to assigned tenant support readers.</summary>
 [Authorize(Policy = SupportAdminAuthentication.Policy)]
-[Route("admin")]
+[Route("api/admin")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class SupportAdminController : Controller
 {
@@ -31,7 +31,7 @@ public sealed class SupportAdminController : Controller
         Audit("recent-failures", "");
         var failedAnalyses = await analyses.GetRecentFailuresAsync(cancellationToken);
         var failedPackages = await diagnostics.GetRecentPackagesAsync();
-        return View(new SupportDashboard(failedAnalyses, failedPackages));
+        return Ok(new SupportDashboard(failedAnalyses, failedPackages));
     }
 
     /// <summary>Shows an explicit analysis projection without raw errors or private package data.</summary>
@@ -45,7 +45,7 @@ public sealed class SupportAdminController : Controller
         }
         Audit("analysis", id);
         var analysis = await analyses.GetSupportByIdAsync(id, cancellationToken);
-        return analysis is null ? NotFound() : View(analysis);
+        return analysis is null ? NotFound() : Ok(analysis);
     }
 
     /// <summary>Shows a package's separate diagnostics by UUID, without owner tokens or artifact access.</summary>
@@ -58,7 +58,7 @@ public sealed class SupportAdminController : Controller
         }
         Audit("package", reference.ToString("D"));
         var package = await diagnostics.GetPackageAsync(reference);
-        return package is null ? NotFound() : View(package);
+        return package is null ? NotFound() : Ok(package);
     }
 
     /// <summary>Records each valid support read attempt without email addresses, tokens, or diagnostics.</summary>

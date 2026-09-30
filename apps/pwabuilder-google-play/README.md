@@ -81,21 +81,45 @@ The two services' separate in-memory development stores are not shared.
 
 #### Admin sign-in configuration
 
-The public site continues to work without admin configuration; `/admin` fails
-closed until all three deployment settings are supplied:
+Support uses a secretless browser authorization-code flow with PKCE through MSAL.
+The public sign-in shell contains no diagnostics; `/api/admin` authorizes every
+data request using a signed Entra access token. No client secret or support
+authentication cookie is used. The public site continues to work without admin
+configuration; both `/admin` and `/api/admin` fail closed until these settings
+are supplied:
 
 - `SupportAdmin__TenantId`: the approved Microsoft corporate tenant GUID.
-- `SupportAdmin__ClientId`: a single-tenant web app registration's client GUID.
-- `SupportAdmin__ClientSecret`: supplied through a secret store/environment, never
-  checked into source control.
+- `SupportAdmin__ClientId`: the single-tenant support app registration's client GUID.
 
-Register the exact HTTPS redirect URI
-`https://<pwabuilder-host>/admin/signin-oidc`. Define and assign the Entra app role
-`PWABuilder.SupportReader` to the approved support group/users. Authentication
-validates the issuer and tenant and requires this role, not an email suffix.
-Admin sessions use a Secure, HttpOnly cookie with a fixed 30-minute lifetime;
-changes to role assignments may take until the session expires to take effect.
-Admin reads are audited by tenant/object ID and return no-store responses.
+Configure the registration as follows:
+
+1. Register `https://<pwabuilder-host>/admin/signin-oidc` as a **Single-page
+   application** redirect URI for each supported host, not as a Web redirect.
+   Leave implicit token issuance disabled. The callback is an empty browser shell,
+   not a server-side code-exchange endpoint.
+2. Expose `api://<client-id>/Support.Read` as an enabled delegated API scope and
+   set `api.requestedAccessTokenVersion` to `2`. The SPA and API use the same
+   registration; preauthorize this client ID for this one delegated scope.
+   No Microsoft Graph permissions are requested.
+3. Define the user app role `PWABuilder.SupportReader`, require assignment on the
+   enterprise app, and assign that role only to approved support users/groups.
+   Scope consent alone never grants support access.
+4. Supply the two non-secret deployment settings above. Do not configure
+   `SupportAdmin__ClientSecret`; a secret is neither read nor needed.
+
+The API validates signature, issuer, audience, lifetime, tenant, originating
+client, object ID, the `Support.Read` delegated scope, and the assigned support
+role. ID tokens, Graph tokens, app-only tokens, cookies and URL tokens do not
+authorize API access. Email suffixes are not an authorization mechanism.
+Role removal takes effect when outstanding access tokens expire; sign-out is
+not revocation of a previously issued token.
+
+The isolated admin bundle runs no site analytics or service-worker registration.
+MSAL keeps its tokens in tab-scoped session storage and sends API access tokens
+only in Authorization headers to same-origin admin endpoints. Treat same-origin
+scripts as trusted: XSS can read SPA token storage. Diagnostic data stays in
+memory and is cleared on navigation/sign-out. All support responses are no-store,
+and admin reads are audited by tenant/object ID.
 No admin endpoint provides owner tokens, keystores, passwords, or ZIP downloads.
 
 The web app's existing `AppSettings__AzureRedisHost` and
@@ -106,12 +130,14 @@ Recent analysis failures use the existing Cosmos analysis store configuration.
 Verify real Entra redirects, role-denial cases, Redis connectivity and Cosmos
 queries in staging before enabling production support access.
 
-The current admin implementation requires a client secret. A tenant policy that
-blocks password credentials prevents this configuration from being completed;
-creating the app registration and assigning its role alone does not enable sign-in.
-Do not weaken tenant policy to deploy this feature. Use an organization-approved
-authentication design and update the implementation before enabling admin access.
-Customer job protections can be deployed while `/admin` remains disabled.
+Validate locally with `dotnet test apps/pwabuilder.Tests/PWABuilder.Tests.csproj`,
+and in `apps/pwabuilder/Frontend`, `npm run test:admin:unit`,
+`npm run test:admin:browser`, and `npm run build`. Browser tests use mocked API/auth
+boundaries and never sign in to production. If Playwright's bundled Chromium is
+not installed, set `PLAYWRIGHT_CHANNEL=msedge` to use installed Edge.
+For actual local sign-in, an approved development SPA callback registration and
+a secure/loopback origin are required; production registrations need not expose
+localhost callbacks.
 
 #### Incident rollout and legacy cleanup
 
