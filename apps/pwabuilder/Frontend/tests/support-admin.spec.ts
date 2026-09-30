@@ -158,6 +158,30 @@ test('missing configuration has no private request or redirect', async ({ page }
   expect(calls).toEqual([]);
 });
 
+test('admin shell exposes one main landmark and heading before and after component upgrade', async ({ page }) => {
+  let releaseScripts!: () => void;
+  const scriptsReady = new Promise<void>(resolve => { releaseScripts = resolve; });
+  await mockBoundary(page, { signedIn: false });
+  await page.route('**/*', async route => {
+    if (route.request().resourceType() === 'script') {
+      await scriptsReady;
+    }
+    await route.fallback();
+  });
+  try {
+    await page.goto('/admin', { waitUntil: 'commit' });
+    await expect(page.getByRole('main')).toHaveCount(1);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+    await expect(page.getByRole('heading', { level: 1, name: 'PWABuilder support' })).toBeVisible();
+  } finally {
+    releaseScripts();
+  }
+  await expect(page.getByRole('status')).toContainText('Sign in');
+  await expect(page.getByRole('main')).toHaveCount(1);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('heading', { level: 1, name: 'PWABuilder support' })).toBeVisible();
+});
+
 test('the installed MSAL client initializes offline without prompting an anonymous visitor', async ({ page }) => {
   const calls = await mockBoundary(page, { realMsal: true });
   const scripts: string[] = [];

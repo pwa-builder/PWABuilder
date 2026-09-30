@@ -171,6 +171,8 @@ public sealed class SupportAdminTests
             Assert.Equal(HttpStatusCode.OK, shell.StatusCode);
             var html = await shell.Content.ReadAsStringAsync();
             Assert.Contains("<support-admin>", html);
+            Assert.Contains("<main>", html);
+            Assert.Contains("<h1 slot=\"heading\">PWABuilder support</h1>", html);
             Assert.DoesNotContain("app-index", html);
             Assert.DoesNotContain("synthetic-code", html);
             Assert.True(shell.Headers.CacheControl?.NoStore);

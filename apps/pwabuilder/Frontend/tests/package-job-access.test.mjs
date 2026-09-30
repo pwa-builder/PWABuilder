@@ -20,5 +20,5 @@ test("owner credentials stay in tab storage, separate from support references", 
     assert.ok(!body.includes(receipt.accessToken));
     assert.ok(!body.includes("jobId="));
     assert.ok(!body.includes("google-play-packaging-status"));
-    assert.ok(!packageSupportIssueBody("unsafe](https://attacker.test)").includes("https://attacker.test"));
+    assert.equal(packageSupportIssueBody("unsafe](https://attacker.test)"), packageSupportIssueBody(null));
 });

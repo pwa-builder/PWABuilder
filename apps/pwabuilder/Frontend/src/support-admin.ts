@@ -28,7 +28,7 @@ export class SupportAdmin extends LitElement {
 
   static styles = css`
     :host { display: block; font: 1rem/1.5 system-ui, sans-serif; color: #202030; }
-    main { max-width: 70rem; margin: 2rem auto; padding: 0 1rem; }
+    .content { max-width: 70rem; margin: 2rem auto; padding: 0 1rem; }
     nav { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
     article { border: 1px solid #aaa; border-radius: .5rem; padding: 1rem; margin: 1rem 0; }
     dl { display: grid; grid-template-columns: minmax(8rem, 1fr) 3fr; gap: .4rem 1rem; }
@@ -151,8 +151,8 @@ export class SupportAdmin extends LitElement {
 
   render(): TemplateResult {
     const route = adminRoute(this.pathname);
-    return html`<main @click=${this.navigate}>
-      <h1>PWABuilder private support</h1>
+    return html`<div class="content" @click=${this.navigate}>
+      <slot name="heading"></slot>
       <p>Restricted diagnostics. Access is verified by the support API.</p>
       <nav aria-label="Support navigation">
         <a href="/admin">Dashboard</a>
@@ -165,6 +165,6 @@ export class SupportAdmin extends LitElement {
       <p role="status" aria-live="polite">${this.busy ? 'Loading support diagnostics…' : this.message}</p>
       ${this.data === null ? nothing : route?.kind === 'analysis' ? renderAnalysis(this.data, true)
         : route?.kind === 'package' ? renderPackage(this.data, true) : renderDashboard(this.data)}
-    </main>`;
+    </div>`;
   }
 }
