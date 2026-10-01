@@ -6,6 +6,7 @@ export const env = {
     windowsPackageGeneratorUrl: '',
     androidPackageGeneratorUrl: '',
     iosPackageGeneratorUrl: '',
+    macosPackageGeneratorUrl: '',
     safeUrlFetcher: '',
     validateGiveawayUrl: '',
     tokensCampaignRunning: false,
@@ -23,6 +24,7 @@ if (import.meta.env.PROD) {
     env.androidPackageGeneratorUrl =
         'https://pwabuilder-cloudapk.azurewebsites.net';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
+    env.macosPackageGeneratorUrl = '/api/macospackage/create';
     env.safeUrlFetcher =
         '/api/images/getSafeImageForAnalysis';
     env.validateGiveawayUrl =
@@ -37,6 +39,7 @@ if (import.meta.env.PROD) {
     env.androidPackageGeneratorUrl =
         'http://localhost:5858';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
+    env.macosPackageGeneratorUrl = '/api/macospackage/create';
     env.safeUrlFetcher =
         '/api/images/getSafeImageForAnalysis';
     env.validateGiveawayUrl =
