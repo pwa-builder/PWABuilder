@@ -14,6 +14,7 @@ env:
   # ACR Configuration
   ACR_RESOURCE_GROUP: pwabuilder-registry
   ACR_NAME: pwabuilder
+  IMAGE_TAG: pwabuilder.azurecr.io/pwabuilder:preview-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
 
   # Web App Configuration
   WEB_APP_NAME: pwabuilder
@@ -45,21 +46,30 @@ jobs:
         run: docker info
 
       - name: Docker build
-        run: docker build . --file Dockerfile.production --tag pwabuilder.azurecr.io/pwabuilder:production -m 4GB
+        run: docker build . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
 
-      - name: Docker push
-        run: docker push pwabuilder.azurecr.io/pwabuilder:production
+      - name: Docker push and capture immutable image reference
+        id: pushed-image
+        run: |
+          docker push "$IMAGE_TAG"
+          image_reference=$(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE_TAG")
+          if [[ ! "$image_reference" =~ ^pwabuilder\.azurecr\.io/pwabuilder@sha256:[0-9a-f]{64}$ ]]; then
+            echo "::error::Docker did not return the expected pushed image digest."
+            exit 1
+          fi
+          echo "image_reference=$image_reference" >> "$GITHUB_OUTPUT"
 
       - name: Restart Azure Web App Staging Slot
+        env:
+          IMAGE_REFERENCE: ${{ steps.pushed-image.outputs.image_reference }}
         run: |
-          echo "🔄 Restarting Azure Web App staging slot to pull latest container..."
+          echo "🔄 Deploying $IMAGE_REFERENCE to the staging slot..."
 
-          # Force Web App staging slot to pull latest container image
           az webapp config container set \
             --name ${{ env.WEB_APP_NAME }} \
             --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} \
             --slot ${{ env.WEB_APP_SLOT }} \
-            --docker-custom-image-name pwabuilder.azurecr.io/pwabuilder:production
+            --docker-custom-image-name "$IMAGE_REFERENCE"
 
           # Restart the Web App staging slot
           az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} --slot ${{ env.WEB_APP_SLOT }}

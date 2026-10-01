@@ -60,6 +60,20 @@ Using Visual Studio (API only)
 
 Alternatively, build the `Dockerfile.production` container and access it from `http://localhost:8080` 
 
+### Deployment
+
+The web app preview and Google Play staging workflows publish uniquely tagged
+images containing the commit SHA, workflow run ID, and run attempt. Each workflow
+deploys the digest captured from its pushed image, not a mutable `:production`
+or `:latest` tag. This prevents a subsequent preview build from changing the
+image a deployed slot pulls on restart or scale-out.
+
+Promote the tested image by swapping slots or deploying its exact digest.
+Existing production slots using mutable tags must be pinned separately to their
+verified known-good digests; changing these workflows does not update live slots.
+Retain images referenced by deployed slots and images needed for rollback.
+Breaking web app and Google Play API changes still require coordinated releases.
+
 ## License
 
 All files on the PWABuilder repository are subject to the MIT license. Please read the License file at the root of the project.
