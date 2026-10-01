@@ -41,7 +41,12 @@ Once a Google Play app package has been generated, follow the steps on [Next Ste
 
 ## Deploy
 
-Deploys are automatically pushed to cloudapk/staging slot. To deploy to production, swap staging and production.
+Deploys are automatically pushed to the cloudapk/staging slot. Each build uses a
+unique tag containing the commit SHA, workflow run ID, and run attempt, and staging
+is configured with the pushed image's immutable digest rather than `:latest`.
+To deploy to production, swap staging and production or deploy the tested digest.
+Retain deployed and rollback images in ACR. Existing production slots using
+mutable tags must be pinned separately to verified known-good digests.
 
 ### Android build input security
 
