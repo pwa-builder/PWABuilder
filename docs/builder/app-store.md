@@ -342,6 +342,4 @@ After you've successfully published your app to the App Store, you can package a
 
 - [How to Package for Microsoft Store](/builder/windows)
 
-- [How to Package for Meta Quest](/builder/meta)
-
 - [How to Package for the Google Play Store](/builder/android)

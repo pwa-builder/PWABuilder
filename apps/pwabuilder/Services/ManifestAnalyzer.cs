@@ -112,8 +112,9 @@ public class ManifestAnalyzer
             PwaCapabilityId.IconTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.IconSizesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageSizesAreValid(GetManifestArray("icons", manifest), manifest, cancelToken)),
             PwaCapabilityId.IconTypesAreNotIcos => new PwaManifestCapabilityCheck(capability, m => CheckImagesAreNonIcos(m)),
-            PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 192, "image/png")),
-            PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, m => CheckSquareIconOfMinSizeAndTypeAnyPurpose(m, 512, "image/png")),
+            PwaCapabilityId.ImagesAreNotBase64Encoded => new PwaManifestCapabilityCheck(capability, m => CheckImagesAreNotBase64Encoded(m)),
+            PwaCapabilityId.HasSquare192x192PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckSquareIconOfMinSizeAndTypeAnyPurpose(manifest, 192, "image/png", cancelToken)),
+            PwaCapabilityId.HasSquare512x512PngAnyPurposeIcon => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckSquareIconOfMinSizeAndTypeAnyPurpose(manifest, 512, "image/png", cancelToken)),
             PwaCapabilityId.Screenshots => new PwaManifestCapabilityCheck(capability, m => CheckManifestImageArray(m, "screenshots")),
             PwaCapabilityId.ScreenshotsAreFetchable => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImagesAreFetchable(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
             PwaCapabilityId.ScreenshotTypesAreValid => new PwaManifestCapabilityCheck(capability, (manifest, cancelToken) => CheckImageTypesAreValid(GetManifestArray("screenshots", manifest), manifest, cancelToken)),
@@ -169,7 +170,45 @@ public class ManifestAnalyzer
         return hasImages ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
     }
 
-    private static PwaCapabilityCheckStatus CheckSquareIconOfMinSizeAndTypeAnyPurpose(JsonElement manifest, int minSize, string imageType)
+    /// <summary>
+    /// Checks whether the manifest contains a square icon of at least the specified size, with purpose "any", of the specified image type.
+    /// The actual bytes of the candidate icons are inspected, as some web apps declare an icon to be a PNG while the server actually
+    /// serves a different format, such as webp, which app store packaging services can't work with.
+    /// </summary>
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckSquareIconOfMinSizeAndTypeAnyPurpose(ManifestDetection manifestContext, int minSize, string imageType, CancellationToken cancelToken)
+    {
+        var candidates = GetSquareIconSrcsOfMinSizeAndTypeAnyPurpose(manifestContext.Manifest, minSize, imageType).ToList();
+        if (candidates.Count == 0)
+        {
+            return PwaCapabilityCheckStatus.Failed;
+        }
+
+        Exception? typeMismatch = null;
+        foreach (var candidate in candidates)
+        {
+            if (!Uri.TryCreate(manifestContext.Url, candidate, out var iconUri))
+            {
+                return PwaCapabilityCheckStatus.Passed; // We can't resolve the icon URL, so we can't verify its type. Give the benefit of the doubt; broken icon links are surfaced by the icons-are-fetchable check.
+            }
+
+            var (actualType, detectionError) = await this.imageValidator.TryDetectImageTypeAsync(iconUri, cancelToken);
+            if (detectionError != null || string.IsNullOrWhiteSpace(actualType))
+            {
+                return PwaCapabilityCheckStatus.Passed; // We couldn't determine the actual image type, so trust the declared type. Fetch failures are surfaced by the icons-are-fetchable check.
+            }
+
+            if (string.Equals(actualType, imageType, StringComparison.OrdinalIgnoreCase))
+            {
+                return PwaCapabilityCheckStatus.Passed;
+            }
+
+            typeMismatch = new Exception($"Your web manifest declares {iconUri} to be an {imageType} icon, but the image is actually {actualType}. App stores require a real {imageType} icon of {minSize}x{minSize} or larger.");
+        }
+
+        return typeMismatch != null ? typeMismatch : PwaCapabilityCheckStatus.Failed;
+    }
+
+    private static IEnumerable<string> GetSquareIconSrcsOfMinSizeAndTypeAnyPurpose(JsonElement manifest, int minSize, string imageType)
     {
         var hasIcons = manifest.TryGetProperty("icons", out var icons)
             && icons.ValueKind == JsonValueKind.Array
@@ -182,7 +221,7 @@ public class ManifestAnalyzer
                 var declaredTypeMatches = hasTypeProperty && string.Equals(iconType.GetString(), imageType, StringComparison.OrdinalIgnoreCase);
 
                 var isDesiredType = false;
-                var hasSrcProp = icon.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String;
+                var hasSrcProp = icon.TryGetProperty("src", out var src) && src.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(src.GetString());
 
                 if (hasSrcProp)
                 {
@@ -226,7 +265,8 @@ public class ManifestAnalyzer
                                 var isLargeEnough = width >= minSize;
                                 if (isSquare && isLargeEnough)
                                 {
-                                    return PwaCapabilityCheckStatus.Passed;
+                                    yield return src.GetString()!;
+                                    break;
                                 }
                             }
                         }
@@ -234,8 +274,6 @@ public class ManifestAnalyzer
                 }
             }
         }
-
-        return PwaCapabilityCheckStatus.Failed;
     }
 
     private static PwaCapabilityCheckStatus CheckScreenshotFormFactor(JsonElement manifest, string desiredFormFactor)
@@ -282,11 +320,29 @@ public class ManifestAnalyzer
         });
     }
 
+    /// <summary>
+    /// Filters out images whose <c>src</c> is a <c>data:</c> URI, such as inline base64-encoded images (or the
+    /// placeholder we substitute for them during detection). These images can't be fetched or validated over HTTP,
+    /// so fetchability, type, and size checks don't apply to them. The dedicated <see cref="PwaCapabilityId.ImagesAreNotBase64Encoded"/>
+    /// check surfaces the base64 problem instead, so we skip these images here to avoid redundant action items.
+    /// </summary>
+    private static IEnumerable<JsonElement> ExcludeDataUriImages(IEnumerable<JsonElement> images) =>
+        images.Where(image => !(image.TryGetProperty("src", out var src)
+            && src.ValueKind == JsonValueKind.String
+            && IsDataUri(src.GetString())));
+
+    /// <summary>
+    /// Determines whether the specified image <c>src</c> is a <c>data:</c> URI (an inline data URL).
+    /// </summary>
+    private static bool IsDataUri(string? src) =>
+        src is not null && src.TrimStart().StartsWith("data:", StringComparison.OrdinalIgnoreCase);
+
     private async Task<Result<PwaCapabilityCheckStatus>> CheckImagesAreFetchable(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
     {
+        images = ExcludeDataUriImages(images);
         if (!images.Any())
         {
-            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no (non-data-URI) images in this field.
         }
 
         // Grab the icon values. They should look like: 
@@ -322,9 +378,10 @@ public class ManifestAnalyzer
     /// </summary>
     private async Task<Result<PwaCapabilityCheckStatus>> CheckImageTypesAreValid(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
     {
+        images = ExcludeDataUriImages(images);
         if (!images.Any())
         {
-            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no (non-data-URI) images in this field.
         }
 
         var imageValidationTasks = new List<Task<Result<bool>>>();
@@ -368,9 +425,10 @@ public class ManifestAnalyzer
     /// </summary>
     private async Task<Result<PwaCapabilityCheckStatus>> CheckImageSizesAreValid(IEnumerable<JsonElement> images, ManifestDetection manifestContext, CancellationToken cancelToken)
     {
+        images = ExcludeDataUriImages(images);
         if (!images.Any())
         {
-            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no images in this field.
+            return PwaCapabilityCheckStatus.Skipped; // Skip this check if there are no (non-data-URI) images in this field.
         }
 
         var imageValidationTasks = new List<Task<Result<bool>>>();
@@ -440,6 +498,15 @@ public class ManifestAnalyzer
         }
 
         return PwaCapabilityCheckStatus.Passed;
+    }
+
+    /// <summary>
+    /// Checks that the manifest doesn't contain inline base64-encoded image data URLs. Detection is performed earlier, in
+    /// <see cref="ManifestDetector"/>, which strips the base64 payloads and flags them via <see cref="ManifestDetection.HasBase64EncodedImages"/>.
+    /// </summary>
+    private static PwaCapabilityCheckStatus CheckImagesAreNotBase64Encoded(ManifestDetection manifest)
+    {
+        return manifest.HasBase64EncodedImages ? PwaCapabilityCheckStatus.Failed : PwaCapabilityCheckStatus.Passed;
     }
 
     private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)

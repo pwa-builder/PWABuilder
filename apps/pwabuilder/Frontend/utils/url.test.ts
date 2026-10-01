@@ -55,9 +55,9 @@ describe('utils/url', () => {
     );
   });
 
-  it('cleanUrl() returns http on http', async () => {
+  it('cleanUrl() upgrades http to https', async () => {
     expect(await cleanUrl('http://www.pwabuilder.com')).to.equal(
-      'http://www.pwabuilder.com'
+      'https://www.pwabuilder.com'
     );
   });
 
@@ -67,9 +67,9 @@ describe('utils/url', () => {
     );
   });
 
-  it('cleanUrl() ignores http', async () => {
-    expect(await cleanUrl('http://www.pwabuilder.com')).to.equal(
-      'http://www.pwabuilder.com'
+  it('cleanUrl() upgrades http to https, preserving path and query', async () => {
+    expect(await cleanUrl('http://www.pwabuilder.com/path?query=1')).to.equal(
+      'https://www.pwabuilder.com/path?query=1'
     );
   });
 

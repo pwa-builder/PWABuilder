@@ -1498,7 +1498,7 @@ export const appReportStyles = css`
 
 		&::part(header) {
 			background-image: url('/assets/new/mani-dead.webp');
-			background-size: contain;
+			background-size: cover;
 			background-repeat: no-repeat;
 			@media (max-width: 535px) {
 				background-position-x: center;

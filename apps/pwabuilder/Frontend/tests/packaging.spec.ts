@@ -390,6 +390,244 @@ test('Ensure Windows package dialog initially focuses the Package ID field', asy
       internalInputFocused: internalInput === packageIdInput?.shadowRoot?.activeElement
     };
   });
+
   expect(focusState).not.toBeNull();
   expect(focusState?.packageIdFocused || focusState?.internalInputFocused).toBe(true);
+});
+
+test('App URI Handler is disabled by default for URLs containing double hyphens', async ({ page }) => {
+  const appUriHandlerEnabled = await page.evaluate(async () => {
+    const siteUrl = 'https://studio--studio-2987697784-ae82f.us-central1.hosted.app';
+    const manifestContext = {
+      siteUrl,
+      manifestUrl: `${siteUrl}/manifest.webmanifest`,
+      manifest: {
+        dir: 'auto',
+        display: 'standalone',
+        name: 'Example App',
+        short_name: 'Example',
+        start_url: '/',
+        scope: '/',
+        lang: 'en',
+        description: 'Example description',
+        theme_color: '#000000',
+        background_color: '#ffffff',
+        icons: [],
+        screenshots: []
+      },
+      initialManifest: {
+        dir: 'auto',
+        display: 'standalone',
+        name: 'Example App',
+        short_name: 'Example',
+        start_url: '/',
+        scope: '/',
+        lang: 'en',
+        description: 'Example description',
+        theme_color: '#000000',
+        background_color: '#ffffff',
+        icons: [],
+        screenshots: []
+      },
+      isGenerated: false,
+      isEdited: false
+    };
+
+    sessionStorage.setItem('current_url', siteUrl);
+    sessionStorage.setItem('PWABuilderManifest', JSON.stringify(manifestContext));
+    await import('/src/script/components/windows-form.ts');
+    await customElements.whenDefined('windows-form');
+
+    document.body.innerHTML = '<windows-form></windows-form>';
+    const windowsForm = document.querySelector('windows-form') as HTMLElement & {
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    } | null;
+
+    if (!windowsForm) {
+      return null;
+    }
+
+    await windowsForm.updateComplete;
+    const checkbox = windowsForm.shadowRoot?.querySelector('#app-uri-handler-checkbox') as {
+      checked: boolean;
+    } | null;
+
+    return checkbox?.checked ?? null;
+  });
+
+  expect(appUriHandlerEnabled).toBe(false);
+});
+
+test('Google Play packaging status shows host blocking help for 403 analysis failures', async ({ page }) => {
+  const hostBlockingState = await page.evaluate(async () => {
+    document.body.innerHTML = '<google-play-packaging-status></google-play-packaging-status>';
+    await import('/src/script/pages/google-play-packaging-status.ts');
+    await customElements.whenDefined('google-play-packaging-status');
+
+    const statusPage = document.querySelector('google-play-packaging-status') as HTMLElement & {
+      hasFailed: boolean;
+      logs: string[];
+      updateComplete: Promise<void>;
+      shadowRoot: ShadowRoot;
+    } | null;
+
+    if (!statusPage) {
+      return null;
+    }
+
+    statusPage.hasFailed = true;
+    statusPage.logs = [
+      '[warn]: For more help, see https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging'
+    ];
+    (statusPage as any).appendForbiddenAnalysisFailureLog();
+    await statusPage.updateComplete;
+
+    const pageTitle = statusPage.shadowRoot?.querySelector('.page-title')?.textContent?.trim() ?? '';
+    const footerButtons = Array.from(statusPage.shadowRoot?.querySelectorAll('.card-footer wa-button') ?? []);
+    const reportBugButtonExists = footerButtons.some(button => button.textContent?.trim() === 'Report a bug');
+    const helpButton = footerButtons.find(button => button.textContent?.trim() === 'Show me how to fix this');
+
+    return {
+      pageTitle,
+      reportBugButtonExists,
+      helpButtonHref: helpButton?.getAttribute('href') ?? '',
+      hasBlockingErrorLog: statusPage.logs.some(log => log.includes("Your web app is blocking PWABuilder from accessing your app's images"))
+    };
+  });
+
+  expect(hostBlockingState).not.toBeNull();
+  expect(hostBlockingState?.pageTitle).toBe('Your web host is blocking PWABuilder');
+  expect(hostBlockingState?.reportBugButtonExists).toBe(false);
+  expect(hostBlockingState?.helpButtonHref).toBe(
+    'https://docs.pwabuilder.com/#/builder/faq?id=error-403-forbidden-during-analysis-or-packaging'
+  );
+  expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
+});
+
+test('Windows, Android, and iOS app names allow ampersands and colons', async ({ page }) => {
+  const validationResults = await page.evaluate(async () => {
+    const siteUrl = 'https://example.com';
+    const manifest = {
+      dir: 'auto' as const,
+      display: 'standalone' as const,
+      name: 'Example App',
+      short_name: 'Example',
+      start_url: '/',
+      scope: '/',
+      lang: 'en',
+      description: 'Example description',
+      theme_color: '#000000',
+      background_color: '#ffffff',
+      icons: [
+        {
+          src: '/icon.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any'
+        }
+      ],
+      screenshots: []
+    };
+
+    const manifestContext = {
+      siteUrl,
+      manifestUrl: `${siteUrl}/manifest.webmanifest`,
+      manifest,
+      initialManifest: manifest,
+      isGenerated: false,
+      isEdited: false
+    };
+    const { setManifestContext } = await import('/src/script/services/app-info.ts');
+    setManifestContext(manifestContext);
+
+    const formDefinitions = [
+      {
+        store: 'Windows',
+        tagName: 'windows-form',
+        modulePath: '/src/script/components/windows-form.ts',
+        inputId: 'app-name-input'
+      },
+      {
+        store: 'Android',
+        tagName: 'android-form',
+        modulePath: '/src/script/components/android-form.ts',
+        inputId: 'app-name-input'
+      },
+      {
+        store: 'iOS',
+        tagName: 'ios-form',
+        modulePath: '/src/script/components/ios-form.ts',
+        inputId: 'appNameInput'
+      }
+    ] as const;
+
+    const results: Array<{
+      store: string;
+      acceptsCustomerName: boolean;
+      rejectsBlacklistedName: boolean;
+    }> = [];
+
+    for (const definition of formDefinitions) {
+      await import(definition.modulePath);
+      await customElements.whenDefined(definition.tagName);
+      document.body.innerHTML = `<${definition.tagName}></${definition.tagName}>`;
+
+      const form = document.querySelector(definition.tagName) as HTMLElement & {
+        updateComplete: Promise<void>;
+        shadowRoot: ShadowRoot;
+      } | null;
+
+      if (!form) {
+        throw new Error(`Unable to render the ${definition.store} packaging form.`);
+      }
+
+      await form.updateComplete;
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      const input = form.shadowRoot.getElementById(definition.inputId) as HTMLElement & {
+        value: string;
+        checkValidity(): boolean;
+        updateComplete: Promise<void>;
+      } | null;
+
+      if (!input) {
+        throw new Error(`Unable to find the ${definition.store} app-name input.`);
+      }
+
+      input.value = 'Fandango: Movies & Series';
+      await input.updateComplete;
+      const acceptsCustomerName = input.checkValidity();
+
+      input.value = 'Fandango | Movies';
+      await input.updateComplete;
+      const rejectsBlacklistedName = !input.checkValidity();
+
+      results.push({
+        store: definition.store,
+        acceptsCustomerName,
+        rejectsBlacklistedName
+      });
+    }
+
+    return results;
+  });
+
+  expect(validationResults).toEqual([
+    {
+      store: 'Windows',
+      acceptsCustomerName: true,
+      rejectsBlacklistedName: true
+    },
+    {
+      store: 'Android',
+      acceptsCustomerName: true,
+      rejectsBlacklistedName: true
+    },
+    {
+      store: 'iOS',
+      acceptsCustomerName: true,
+      rejectsBlacklistedName: true
+    }
+  ]);
 });

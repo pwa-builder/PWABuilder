@@ -11,19 +11,21 @@ import {
     SigningKeyInfo,
 } from '@bubblewrap/core';
 import { ShortcutInfo } from '@bubblewrap/core/dist/lib/ShortcutInfo.js';
-import { escapeDoubleQuotedShellString, findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
+import { findSuitableIcon } from '@bubblewrap/core/dist/lib/util.js';
 import { AndroidPackageOptions } from '../models/androidPackageOptions.js';
 import fs from 'fs-extra';
-import { KeyTool, CreateKeyOptions } from '@bubblewrap/core/dist/lib/jdk/KeyTool.js';
 import { WebManifestShortcutJson } from '@bubblewrap/core/dist/lib/types/WebManifest.js';
 import { LocalKeyFileSigningOptions } from '../models/signingOptions.js';
 import { GeneratedAppPackage } from '../models/generatedAppPackage.js';
+import { createSigningCommandCredentials } from '../utils/signing-command-credentials.js';
+import { CreateKeyOptions, SafeKeyTool } from './safe-key-tool.js';
 import { TwaManifestJson } from '@bubblewrap/core/dist/lib/TwaManifest.js';
 import { fetchUtils } from '@bubblewrap/core';
 import { FetchEngine } from '@bubblewrap/core/dist/lib/FetchUtils.js';
 import generatePassword from 'password-generator';
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import EventEmitter from "events";
+import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
 
 /*
  * Wraps Google's bubblewrap to build a signed APK from a PWA.
@@ -152,33 +154,36 @@ export class BubbleWrapper {
         //const outputFile = './app-release-signed.aab';
         const outputFile = `${this.projectDirectory}/${appBundleDir}/app-release-signed.aab`;
         const jarSigner = new JarSigner(this.jdkHelper);
+        const signingCommandCredentials = createSigningCommandCredentials(signingInfo);
         const jarSigningInfo: SigningKeyInfo = {
             path: signingInfo.keyFilePath,
-            alias: `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
+            alias: signingCommandCredentials.alias,
         };
 
-        // Escape the store password, otherwise passwords with special characters will break. See https://github.com/pwa-builder/PWABuilder/issues/5017
-        const storePassword = `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`;
-        const keyPassword = `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`;
         try {
             await jarSigner.sign(
                 jarSigningInfo,
-                storePassword,
-                keyPassword,
+                signingCommandCredentials.storePassword,
+                signingCommandCredentials.keyPassword,
                 inputFile,
                 outputFile
             );
             return outputFile;
         } catch (signingError) {
-            const signingErrorStr = `${signingError}`;
-            if (signingErrorStr.includes("toDerInputStream rejects tag type 75")) {
+            // Redact the key alias and passwords before logging or rethrowing, as the underlying
+            // error may include the full signing command - including these secrets - in its
+            // message, cmd, stdout, or stderr properties. See https://github.com/pwa-builder/PWABuilder/issues/6311
+            const redactedSigningError = signingCommandCredentials.redactError(signingError);
+            const signingErrorStr = `${redactedSigningError}`;
+            if (signingErrorStr.includes("toDerInputStream rejects tag type 75") ||
+                signingErrorStr.includes("DerValue.getBigIntegerInternal, not expected 6")) {
                 this.dispatchProgressEvent("Error signing the app bundle due to what appears to be an invalid signing key file.", "error");
             } else {
                 this.dispatchProgressEvent("Error signing the app bundle.", "error");
             }
 
-            console.error("Error signing the app bundle", signingError);
-            throw signingError;
+            console.error("Error signing the app bundle", redactedSigningError);
+            throw redactedSigningError;
         }
     }
 
@@ -209,7 +214,7 @@ export class BubbleWrapper {
     }
 
     private async createSigningKey(signingInfo: LocalKeyFileSigningOptions) {
-        const keyTool = new KeyTool(this.jdkHelper);
+        const keyTool = new SafeKeyTool(() => this.jdkHelper.getEnv());
         const overwriteExisting = true;
         if (
             !signingInfo.fullName ||
@@ -258,15 +263,23 @@ export class BubbleWrapper {
         }
 
         const outputFile = `${this.projectDirectory}/app-release-signed.apk`;
+        const signingCommandCredentials = createSigningCommandCredentials(signingInfo);
         this.dispatchProgressEvent('Signing the app package...');
-        await this.androidSdkTools.apksigner(
-            signingInfo.keyFilePath,
-            `"${escapeDoubleQuotedShellString(signingInfo.storePassword)}"`, // Escape the store password with double quotes, otherwise passwords with spaces will break. See https://github.com/pwa-builder/PWABuilder/issues/5017#issuecomment-3049710075
-            `"${escapeDoubleQuotedShellString(signingInfo.alias)}"`,
-            `"${escapeDoubleQuotedShellString(signingInfo.keyPassword)}"`, // Escape the key password for the same reason.
-            apkFilePath,
-            outputFile
-        );
+        try {
+            await this.androidSdkTools.apksigner(
+                signingInfo.keyFilePath,
+                signingCommandCredentials.storePassword,
+                signingCommandCredentials.alias,
+                signingCommandCredentials.keyPassword,
+                apkFilePath,
+                outputFile
+            );
+        } catch (signingError) {
+            // Redact the key alias and passwords before rethrowing, as the underlying error may
+            // include the full apksigner command - including these secrets - in its message,
+            // cmd, stdout, or stderr properties. See https://github.com/pwa-builder/PWABuilder/issues/6311
+            throw signingCommandCredentials.redactError(signingError);
+        }
         this.dispatchProgressEvent('App package signed successfully');
         return outputFile;
     }
@@ -287,7 +300,7 @@ export class BubbleWrapper {
         signingInfo: LocalKeyFileSigningOptions
     ): Promise<string> {
         this.dispatchProgressEvent('Generating asset links...');
-        const keyTool = new KeyTool(this.jdkHelper);
+        const keyTool = new SafeKeyTool(() => this.jdkHelper.getEnv());
         const assetLinksFilePath = `${this.projectDirectory}/app/build/outputs/apk/release/assetlinks.json`;
         const keyInfo = await keyTool.keyInfo({
             path: signingInfo.keyFilePath,
@@ -311,25 +324,12 @@ export class BubbleWrapper {
     }
 
     private createTwaManifest(pwaSettings: AndroidPackageOptions): TwaManifest {
-        // Bubblewrap expects a TwaManifest object.
-        // We create one using our ApkSettings and signing key info.
-
-        // Host without HTTPS: this is needed because the current version of Bubblewrap doesn't handle
-        // a host with protocol specified. Remove the protocol here. See https://github.com/GoogleChromeLabs/bubblewrap/issues/227
-        // NOTE: we cannot use new URL(pwaSettings.host).host, because this breaks PWAs located at subpaths, e.g. https://ics.hutton.ac.uk/gridscore
-        let hostWithoutHttps = pwaSettings.host;
-        const httpsProtocol = 'https://';
-        if (hostWithoutHttps.startsWith(httpsProtocol)) {
-            hostWithoutHttps = hostWithoutHttps.substring(httpsProtocol.length);
+        // Persisted jobs may predate HTTP validation. Revalidate before generating executable code.
+        const request = validateAndroidOptionsRequest(pwaSettings);
+        if (!request.options || request.validationErrors.length > 0) {
+            throw new Error('Invalid PWA settings: ' + request.validationErrors.join(', '));
         }
-
-        // Trim any trailing slash from the host. See https://github.com/pwa-builder/PWABuilder/issues/1221
-        if (hostWithoutHttps.endsWith('/')) {
-            hostWithoutHttps = hostWithoutHttps.substring(
-                0,
-                hostWithoutHttps.length - 1
-            );
-        }
+        pwaSettings = request.options;
 
         const signingKey = {
             path: this.signingKeyInfo?.keyFilePath || '',
@@ -342,8 +342,44 @@ export class BubbleWrapper {
             ? { enabled: true }
             : undefined;
         const manifestJson: TwaManifestJson = {
-            ...pwaSettings,
-            host: hostWithoutHttps,
+            // Do not spread untrusted JSON: undeclared Bubblewrap features can also emit build code.
+            packageId: pwaSettings.packageId,
+            host: pwaSettings.host,
+            name: pwaSettings.name,
+            launcherName: pwaSettings.launcherName,
+            appVersion: pwaSettings.appVersion,
+            appVersionCode: pwaSettings.appVersionCode,
+            startUrl: pwaSettings.startUrl,
+            display: pwaSettings.display,
+            orientation: pwaSettings.orientation,
+            themeColor: pwaSettings.themeColor,
+            themeColorDark: pwaSettings.themeColorDark,
+            backgroundColor: pwaSettings.backgroundColor,
+            navigationColor: pwaSettings.navigationColor,
+            navigationColorDark: pwaSettings.navigationColorDark,
+            navigationDividerColor: pwaSettings.navigationDividerColor,
+            navigationDividerColorDark: pwaSettings.navigationDividerColorDark,
+            iconUrl: pwaSettings.iconUrl,
+            maskableIconUrl: pwaSettings.maskableIconUrl,
+            monochromeIconUrl: pwaSettings.monochromeIconUrl,
+            splashScreenFadeOutDuration: pwaSettings.splashScreenFadeOutDuration,
+            enableNotifications: pwaSettings.enableNotifications,
+            enableSiteSettingsShortcut: pwaSettings.enableSiteSettingsShortcut,
+            isChromeOSOnly: pwaSettings.isChromeOSOnly,
+            isMetaQuest: pwaSettings.isMetaQuest,
+            minSdkVersion: pwaSettings.minSdkVersion ?? 24,
+            webManifestUrl: pwaSettings.webManifestUrl,
+            fullScopeUrl: pwaSettings.fullScopeUrl,
+            fallbackType: pwaSettings.fallbackType,
+            shareTarget: pwaSettings.shareTarget,
+            additionalTrustedOrigins: pwaSettings.additionalTrustedOrigins,
+            serviceAccountJsonFile: pwaSettings.serviceAccountJsonFile,
+            features: {
+                appsFlyer: pwaSettings.features?.appsFlyer,
+                firstRunFlag: pwaSettings.features?.firstRunFlag,
+                locationDelegation: pwaSettings.features?.locationDelegation,
+                playBilling: pwaSettings.features?.playBilling,
+            },
             shortcuts: this.createShortcuts(
                 pwaSettings.shortcuts,
                 pwaSettings.webManifestUrl

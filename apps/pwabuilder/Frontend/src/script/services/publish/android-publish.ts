@@ -117,7 +117,7 @@ export function emptyAndroidPackageOptions(): AndroidPackageOptions {
         themeColorDark: '#000000',
         webManifestUrl: '',
         fullScopeUrl: '',
-        minSdkVersion: 23
+        minSdkVersion: 24
     };
 }
 
@@ -256,7 +256,7 @@ export function createAndroidPackageOptionsFromManifest(manifestContext: Manifes
         webManifestUrl: maniUrl,
         pwaUrl: manifestContext.siteUrl,
         fullScopeUrl: fullScopeUrl,
-        minSdkVersion: 23  // Setting minSdkVersion to 23 by default as Google Play Console no longer accepts lower versions
+        minSdkVersion: 24  // Google Play automatic protection requires API level 24 or higher.
     };
 }
 
@@ -291,5 +291,4 @@ function getStartUrlRelativeToHost(
 
     return absoluteStartUrl.pathname + (absoluteStartUrl.search || '');
 }
-
 

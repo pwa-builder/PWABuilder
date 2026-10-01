@@ -248,6 +248,21 @@ public class PwaCapability
             },
             new PwaCapability
             {
+                Id = PwaCapabilityId.ImagesAreNotBase64Encoded,
+                Description = "The images in your web manifest must be external URLs, not inline base64-encoded data URLs. Inline base64 images bloat your manifest and aren't supported by app stores.",
+                TodoAction = "Replace inline base64-encoded images in your web manifest with external image URLs.",
+                Level = PwaCapabilityLevel.Required,
+                FeatureName = null,
+                FeatureIcon = null,
+                IsFieldExistenceCheck = false,
+                Field = "icons",
+                LearnMoreUrl = new Uri("https://docs.pwabuilder.com/#/builder/manifest?id=icons"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.WebAppManifest,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
                 Id = PwaCapabilityId.IconSizesAreValid,
                 Description = "The declared sizes of icons in your web manifest must match their actual dimensions.",
                 TodoAction = "Fix the icon sizes in your web app manifest.",

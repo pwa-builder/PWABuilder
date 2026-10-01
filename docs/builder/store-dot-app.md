@@ -43,6 +43,5 @@ Progressive web apps are cross-platform and can be used anywhere!
 After you've successfully published your app to Store.app, you can package and publish for other platforms:
 
 - [How to Package for Microsoft Store](/builder/windows)
-- [How to Package for Meta Quest](/builder/meta)
 - [How to Package for the App Store](/builder/app-store)
 - [How to Package for the Google Play Store](/builder/android)

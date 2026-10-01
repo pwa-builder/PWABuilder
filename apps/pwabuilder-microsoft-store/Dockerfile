@@ -1,10 +1,13 @@
-# Use Windows Server as the base image - using latest 2022 LTSC build for GitHub Actions compatibility
-FROM mcr.microsoft.com/windows/server:ltsc2022-KB5070884
+# Use a serviced Windows Server 2022 LTSC build compatible with GitHub Actions.
+FROM mcr.microsoft.com/windows/server:10.0.20348.5499
 
 # Install .NET 10.0 SDK (includes runtime)
 RUN powershell -Command \
     "$ProgressPreference = 'SilentlyContinue'; \
-    Invoke-WebRequest -Uri 'https://dotnetcli.azureedge.net/dotnet/Sdk/10.0.100/dotnet-sdk-10.0.100-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
+    Invoke-WebRequest -Uri 'https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.400/dotnet-sdk-10.0.400-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
+    $expectedHash = 'fb86b8fa66db46f9caa696fcde2f2d040ea8bd61264c040e11ff716160693961993b10df8a346dd3dac9a8b72939e3e632d9a6f519de02c99d84cd6f7df500dc'; \
+    $actualHash = (Get-FileHash -Path 'dotnet-sdk-installer.exe' -Algorithm SHA512).Hash; \
+    if ($actualHash -ne $expectedHash) { throw 'The .NET SDK installer checksum is invalid.'; } \
     Start-Process -FilePath 'dotnet-sdk-installer.exe' -ArgumentList '/quiet' -Wait; \
     Remove-Item 'dotnet-sdk-installer.exe'"
 

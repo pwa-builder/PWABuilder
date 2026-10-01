@@ -50,6 +50,6 @@ For adding icons and screenshots, you will find two buttons under "Assets". Clic
 
 For more info on generating icons and screenshots with PWABuilder Studio, read our [documentation on generating assets.](/studio/assets)
 
-The "Package" section allows you to package your PWA for the Microsoft Store, Apple App Store, Google Play Store and Meta Quest devices, using the same services as the [PWABuilder website.](https://pwabuilder.com) 
+The "Package" section allows you to package your PWA for the Microsoft Store, Apple App Store, and Google Play Store, using the same services as the [PWABuilder website.](https://pwabuilder.com)
 
 Click the "package" button for the platforms you want to package for, and you'll be guided through the process of packaging your PWA. For more info on packaging with PWABuilder Studio, head over to the [packaging documentation.](/studio/packaging)

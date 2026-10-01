@@ -106,8 +106,8 @@ export class AndroidForm extends AppPackageFormBase {
 
     isMetaQuestChanged(checked: boolean) {
         this.packageOptions.isMetaQuest = checked;
-        // Always keep minSdkVersion at 23 as Google Play Console no longer accepts lower versions
-        this.packageOptions.minSdkVersion = 23;
+        // Keep Google Play automatic protection compatible when toggling Meta Quest support.
+        this.packageOptions.minSdkVersion = 24;
     }
 
     /**

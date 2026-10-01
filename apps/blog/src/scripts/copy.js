@@ -50,6 +50,7 @@ const handleShareButton = () => {
     shareButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         navigator.share({
+          title: document.title,
           url: location.href
         });
         // navigator.clipboard.writeText(location.href).then(() => {

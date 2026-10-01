@@ -9,6 +9,13 @@ namespace PWABuilder.Services;
 /// </summary>
 public class AnalysisLogger : ILogger
 {
+    /// <summary>
+    /// Maximum length of a single log entry stored on the analysis. Entries longer than this are truncated so a single
+    /// oversized value (for example, a manifest served from a multi-megabyte inline <c>data:</c> URI, or a large HTML/stack
+    /// trace dump) can't bloat <see cref="Analysis.Logs"/> and cause the analysis document to exceed Cosmos DB's size limit.
+    /// </summary>
+    private const int MaxLogMessageLength = 4096;
+
     private readonly ConcurrentQueue<string> logs = new();
     private readonly Analysis analysis;
     private readonly ILogger serviceLogger;
@@ -45,6 +52,12 @@ public class AnalysisLogger : ILogger
             {
                 message += $" | StackTrace: {exception.StackTrace}";
             }
+        }
+
+        // Truncate overly long entries so a single huge value can't bloat the analysis document beyond Cosmos DB's size limit.
+        if (message.Length > MaxLogMessageLength)
+        {
+            message = message[..MaxLogMessageLength] + $"…[truncated {message.Length - MaxLogMessageLength} chars]";
         }
 
         logs.Enqueue(message);

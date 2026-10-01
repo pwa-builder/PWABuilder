@@ -188,6 +188,19 @@ public class AnalysisJobProcessor : IHostedService
         analysis.ProcessCapabilities(manifestCapabilities);
         await analysisStore.SaveAsync(analysis);
 
+        // Step 3.5: if the manifest contains inline base64-encoded images, halt analysis immediately.
+        // Such manifests can't be published to app stores and their large inline images bloat the pipeline
+        // (slow service worker/offline checks, oversized documents that fail to persist), so we stop here with
+        // the base64 error surfaced rather than running the remaining checks for several minutes.
+        if (HaltIfManifestHasBase64Images(analysis, cancelTokenSrc))
+        {
+            analysis.Duration = DateTimeOffset.UtcNow.Subtract(analysis.CreatedAt);
+            analysisLogger.FlushLogs();
+            logger.LogWarning("Halted analysis {id} for {url} after {duration} seconds because the manifest contains inline base64-encoded images. Remaining checks were skipped.", analysis.Id, job.Url, analysis.Duration?.TotalSeconds);
+            await analysisStore.SaveAsync(analysis);
+            return;
+        }
+
         // Step 4: find the service worker.
         analysis.ServiceWorker = await serviceWorkerDetectionTask;
         await analysisStore.SaveAsync(analysis);
@@ -236,6 +249,31 @@ public class AnalysisJobProcessor : IHostedService
         }
 
         return servedHtmlCapability.Status;
+    }
+
+    /// <summary>
+    /// Checks whether the detected manifest contains inline base64-encoded images. If so, the analysis is halted:
+    /// the cancellation token is triggered to stop in-flight detection, any remaining in-progress checks are
+    /// skipped, and the analysis is marked as completed so the base64 error is surfaced to the user without
+    /// waiting on the slower service worker and offline checks.
+    /// </summary>
+    /// <param name="analysis">The analysis.</param>
+    /// <param name="cancelTokenSrc">The cancellation token source used to abort remaining work.</param>
+    /// <returns><c>true</c> if the manifest had base64-encoded images and analysis was halted; otherwise <c>false</c>.</returns>
+    private static bool HaltIfManifestHasBase64Images(Analysis analysis, CancellationTokenSource cancelTokenSrc)
+    {
+        if (analysis.WebManifest?.HasBase64EncodedImages is not true)
+        {
+            return false;
+        }
+
+        cancelTokenSrc.Cancel();
+        analysis.Status = AnalysisStatus.Completed;
+        analysis.Capabilities
+            .Where(capability => capability.Status == PwaCapabilityCheckStatus.InProgress)
+            .ToList()
+            .ForEach(capability => capability.Status = PwaCapabilityCheckStatus.Skipped);
+        return true;
     }
 
     // private async Task<LighthouseReport?> TryRunLighthouseAudit(AnalysisJob job, AnalysisLogger logger, CancellationToken cancelToken)

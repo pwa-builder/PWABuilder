@@ -1,8 +1,8 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
 FROM --platform=linux/amd64 ubuntu:24.04  AS ubuntu
 
-ARG ANDROID_SDK_TOOLS_VERSION="11076708"
-ARG NODE_VERSION="20.x"
+ARG ANDROID_SDK_TOOLS_VERSION="15641748"
+ARG NODE_VERSION="24.x"
 ARG JENV_RELEASE="0.5.6"
 
 ARG DIRWORK="/tmp"
@@ -34,16 +34,27 @@ RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jd
     echo . /etc/jdk.env >> /etc/bash.bashrc && echo . /etc.jdk.env >> /etc/profile && \
     apt-get update -qq && \
     apt-get install -qq --no-install-recommends \
-    apt-utils locales unzip curl git git-lfs build-essential openjdk-11-jdk openjdk-17-jdk \
-    wget zip zipalign ruby-full python3-pip tzdata && \
+    apt-utils locales unzip curl git build-essential openjdk-11-jdk openjdk-17-jdk \
+    wget zip zipalign ruby-full tzdata && \
     locale-gen $LANG && \
-    git lfs install && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     rm -rf /var/lib/apt/lists/*
 
 
 FROM pre-base AS base
 
+# Install the Android SDK, then remediate the vulnerable jars that ship inside the
+# Android Lint payload bundled in cmdline-tools. Container scanners keep flagging
+# these and Google's cmdline-tools releases keep bundling them, so a version bump
+# alone doesn't clear the findings.
+#   * lib/external/lint-psi bundles an old protobuf-java (2.6.1) and
+#     jline-remote-telnet (3.24.1) inside its Kotlin compiler. It is only used by
+#     `lint`, which CloudAPK (Bubblewrap + Gradle) never runs, so we delete it.
+#     sdkmanager keeps its own protobuf-java 3.25.5 elsewhere in lib/external.
+#   * commons-lang3 3.16.0 is referenced by sdkmanager's Class-Path manifest, so we
+#     overwrite it in place with the patched 3.18.0 (API-compatible). The 3.16.0
+#     filename is kept intentionally so every bundled *-classpath.jar manifest still
+#     resolves it; scanners read the jar's internal metadata and see 3.18.0.
 RUN wget --quiet -O sdk-tools.zip \
     "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip" && \
     mkdir -p "$ANDROID_HOME/cmdline-tools" && \
@@ -54,9 +65,13 @@ RUN wget --quiet -O sdk-tools.zip \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-31" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" && \
+    echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;36.1.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;35.0.0" && \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" && \
-    echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
+    echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses && \
+    rm -rf "$ANDROID_HOME/cmdline-tools/latest/lib/external/lint-psi" && \
+    wget --quiet -O "$ANDROID_HOME/cmdline-tools/latest/lib/external/org/apache/commons/commons-lang3/3.16.0/commons-lang3-3.16.0.jar" \
+    "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar"
 
 
 FROM base AS jenv-base
@@ -77,30 +92,32 @@ RUN mkdir -p "$ANDROID_HOME"/.android && \
 
 FROM pre-minimal AS node-final
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
-    apt-get update -qq && apt-get install -qq nodejs yarn && \
-    npm install -g npm@latest && \
-    npm install -g bower cordova eslint gulp-cli @ionic/cli mocha node-gyp
+    apt-get update -qq && \
+    apt-get install -qq nodejs yarn && \
+    rm -rf /var/lib/apt/lists/*
 
 FROM node-final AS builder
+ARG NPM_CONFIG_REGISTRY=https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/
+ARG NPM_CONFIG_REPLACE_REGISTRY_HOST=always
 WORKDIR /app
 
 COPY package*.json tsconfig.json ./
 COPY . .
 
 ENV NODE_ENV=development
-RUN npm install
+RUN npm ci --ignore-scripts
 RUN npm run build
 RUN ls -la /app/server.*
 
 FROM builder AS app
 WORKDIR /app
 
-COPY --from=builder /app/package*.json ./
-RUN npm install --omit=dev --ignore-scripts
+RUN npm prune --omit=dev --ignore-scripts && \
+    npm_root="$(npm root -g)" && \
+    rm -rf "$npm_root/npm" /usr/bin/npm /usr/bin/npx
 
-COPY --from=builder /app .
-
+ENV NODE_ENV=production
 ENV PORT=5858
 EXPOSE 5858
 
-CMD npm start
+CMD ["node", "./server.js"]

@@ -20,7 +20,7 @@
           {% if excerpt %}
             <div class="my-2 max-w-2xl text-center">{{ excerpt }}</div>
           {% endif %}
-          <div class="w-full flex justify-between items-center mt-2">
+          <div class="w-full flex flex-wrap justify-between items-center mt-2">
             <div>
               {% if date %}
                 {% if updatedDate and(date | string) !== (updatedDate | string) %}

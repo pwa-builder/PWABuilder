@@ -55,7 +55,10 @@ export function validateUrl(url: string, base?: string): string | null {
 export function cleanUrl(url: string): string {
   let cleanedUrl: string | undefined;
 
-  if (url && !url.startsWith('http') && !url.startsWith('https')) {
+  if (url && url.toLowerCase().startsWith('http://')) {
+    // Upgrade insecure HTTP URLs to HTTPS.
+    cleanedUrl = 'https://' + url.substring('http://'.length);
+  } else if (url && !url.startsWith('http') && !url.startsWith('https')) {
     cleanedUrl = 'https://' + url;
   }
 

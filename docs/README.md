@@ -5,34 +5,34 @@ Welcome to the documentation for the [PWABuilder](https://www.pwabuilder.com/) t
 The suite has three main tools:
 
 <div class="home-nav-container">
-   <sl-card class="home-nav-card">
+   <wa-card class="home-nav-card">
          <h2>
             PWA Starter
          </h2>
          <body>
            Build a new progressive app with the development-ready PWA Starter.
          </body>
-      <sl-button href="#/starter/quick-start">Go to Starter Docs</sl-button>
-   </sl-card>
-   <sl-card class="home-nav-card">
+      <wa-button href="#/starter/quick-start">Go to Starter Docs</wa-button>
+   </wa-card>
+   <wa-card class="home-nav-card">
          <h2>
             PWABuilder
          </h2>
          <body>
          Package progressive web apps for native app stores with PWABuilder.
          </body>
-      <sl-button href="#/builder/quick-start">Go to Builder Docs</sl-button>
-   </sl-card>
+      <wa-button href="#/builder/quick-start">Go to Builder Docs</wa-button>
+   </wa-card>
    
-   <sl-card class="home-nav-card">
+   <wa-card class="home-nav-card">
          <h2>
             PWABuilder Studio
          </h2>
          <body>
             Ease PWA development with the PWABuilder Studio VS Code extension.
          </body>
-      <sl-button href="#/studio/quick-start">Go to Studio Docs</sl-button>
-   </sl-card>
+      <wa-button href="#/studio/quick-start">Go to Studio Docs</wa-button>
+   </wa-card>
 </div>
 
 If you'd like a more in-depth overview of each tool, continue reading below.

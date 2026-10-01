@@ -60,7 +60,7 @@ Clicking install is all you need to access your PWA from the OS!
 
 Depending on the platform, PWAs are now able to be installed from various app stores.
 
-The Microsoft, Google Play, and Meta Quest stores all natively support PWAs, and the install process is the same as it would be for any app. Just search for it in the store of choice and click install.
+The Microsoft and Google Play stores natively support PWAs, and the install process is the same as it would be for any app. Just search for it in the store of choice and click install.
 
 Other platforms, such as iOS, don't natively support PWAs, but PWAs can sometimes be wrapped in native frameworks to allow publishing to stores.
 
@@ -117,11 +117,11 @@ Lastly, let's take a look at an example web capability: push notifications.
 
 Before we can send notifications, we need to request permission from the user. This button will trigger the permission prompt:
 
-<sl-button id="permission-button"> Request Permission to Display Notifications </sl-button>
+<wa-button id="permission-button"> Request Permission to Display Notifications </wa-button>
 
 After permission is granted, trigger a notification:
 
-<sl-button id="notification-button"> Display a Notification </sl-button>
+<wa-button id="notification-button"> Display a Notification </wa-button>
 
 <script>
    const permissionButton = document.querySelector('#permission-button');
@@ -148,4 +148,3 @@ The PWA Starter is a template that comes with a service worker and manifest buil
 
 
 Head over to the [PWA Starter Quick Start](/starter/quick-start) to learn more.
-

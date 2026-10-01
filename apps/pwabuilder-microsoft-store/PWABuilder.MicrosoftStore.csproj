@@ -8,6 +8,7 @@
     <Description>This is a web service that takes a URL and generates a Edge hosted app package (.msix). The app, once signed, can be installed locally or submitted to the Microsoft Store.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="PWABuilder.MicrosoftStore.Tests" />
     <None Include="wwwroot\index.html" />
     <None Include="wwwroot\index.js" />
   </ItemGroup>
