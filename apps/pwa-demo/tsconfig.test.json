@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": ".test-build",
+    "rootDir": "src/utils",
+    "declaration": false,
+    "emitDeclarationOnly": false
+  },
+  "include": ["src/utils/db.ts", "src/utils/note-files.ts", "src/utils/routes.ts"]
+}
