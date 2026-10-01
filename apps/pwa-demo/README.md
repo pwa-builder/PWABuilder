@@ -106,17 +106,21 @@ assets. HTTPS or localhost is required for PWA features.
 repository: do not add a competing workflow that deploys only Nimbus, because
 it would replace the documentation site.
 
-To publish alongside the existing docs at `https://docs.pwabuilder.com/nimbus/`:
+The existing workflow publishes Nimbus alongside the docs at
+`https://docs.pwabuilder.com/nimbus/`:
 
-1. Keep the existing documentation build and Pages upload/deploy steps.
-2. After building the docs, set up Node.js 22 and run `npm ci` and
+1. It builds the documentation with its existing setup.
+2. It then sets up Node.js 22 and runs `npm ci` and
    `npm run build -- --base=/nimbus/` in `apps/pwa-demo`.
-3. Copy the contents of `apps/pwa-demo/dist` into `docs/nimbus` before the
-   existing workflow uploads `docs/`. This publishes both apps in one artifact.
-4. Extend that workflow's push-path filter to include `apps/pwa-demo/**` and the
-   workflow file itself, in addition to `docs/**`. Keep its `main` trigger.
-5. Merge and run the existing Pages workflow. Its existing custom domain and
-   Pages configuration do not need to change.
+3. It copies the contents of `apps/pwa-demo/dist` into `docs/nimbus` before
+   uploading `docs/`, publishing both apps in one artifact.
+4. Pushes to `main` that change `docs/**`, `apps/pwa-demo/**`, or the workflow
+   file trigger deployment. Merging this PR therefore triggers the workflow;
+   a separate manual run is not required. Manual dispatch remains available.
+
+The existing custom domain, Pages settings, environment, and deployment
+concurrency remain unchanged. After deployment succeeds, verify `/nimbus/`
+and `/nimbus/?view=about` before updating PWABuilder's homepage demo URL.
 
 For a separate origin such as a dedicated Nimbus subdomain, use a separate
 Pages repository/site rather than changing the docs site's custom domain.
@@ -161,8 +165,9 @@ Notes are origin-local, so moving domains requires export/import. Other apps
 on the same Pages origin share origin-level storage and permissions; a dedicated
 custom domain gives Nimbus its own origin.
 
-No deployment workflow or Pages settings are changed here, and the PWABuilder
-homepage demo-URL replacement still waits for the final public URL.
+The deployment workflow includes Nimbus, but Pages settings and the PWABuilder
+homepage demo URL are unchanged. The demo-URL replacement waits for a successful
+deployment.
 
 ## License
 
