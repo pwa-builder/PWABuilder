@@ -29,7 +29,13 @@ export default defineConfig(async () => {
         build: {
             sourcemap: true,
             assetsDir: "code",
-            outDir: "../wwwroot"
+            outDir: "../wwwroot",
+            rollupOptions: {
+                input: {
+                    index: "index.html",
+                    admin: "admin.html"
+                }
+            }
         },
         plugins: [
             // JS bundle visualizer. Dynamically imported above so Node/Vite
@@ -45,7 +51,8 @@ export default defineConfig(async () => {
                 base: "/",
                 scope: "/",
                 registerType: "autoUpdate",
-                injectRegister: "inline",
+                // Only index.html registers the worker; admin is an isolated auth shell.
+                injectRegister: false,
                 manifest: false, // We supply our own web app manifest
                 strategies: "injectManifest", // inject the list of versioned files ("manifest") into our service worker
                 filename: "service-worker.js",

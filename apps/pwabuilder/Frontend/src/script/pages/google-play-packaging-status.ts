@@ -1,9 +1,8 @@
 import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, state } from 'lit/decorators.js';
 import "../components/app-header";
-import { downloadGooglePlayPackageZip, enqueueGooglePlayPackageJob, getGooglePlayPackageJob } from "../services/publish/android-publish";
+import { downloadGooglePlayPackageZip, getGooglePlayPackageJob } from "../services/publish/android-publish";
 import { GooglePlayPackageJob } from "../models/google-play-package-job";
-import { env } from "../utils/environment";
 import { googlePlayPackagingStatusStyles } from "./google-play-packaging-status.styles";
 import { AnalyticsBehavior, recordProcessStep } from "@pwabuilder/site-analytics";
 import { repeat } from "lit/directives/repeat.js";
@@ -13,7 +12,7 @@ import '@awesome.me/webawesome/dist/components/button/button.js';
 import '@awesome.me/webawesome/dist/components/card/card.js';
 import '@awesome.me/webawesome/dist/components/icon/icon.js';
 import '@awesome.me/webawesome/dist/components/spinner/spinner.js';
-import { redactSigningSecrets } from "../utils/error";
+import { packageSupportIssueBody } from "../utils/package-job-access";
 
 /**
  * A page that shows the status of a Google Play packaging job.
@@ -26,7 +25,6 @@ export class GooglePlayPackagingStatus extends LitElement {
     @state() hasFailed = false;
     @state() logs: string[] = [];
     @state() job: GooglePlayPackageJob | null = null;
-    @state() isRetrying = false;
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
     private readonly maxWaitTimeMs = 30 * 60 * 1000; // Max wait time of 30 minutes
     private readonly pollQueryRetryDelayMs = 10000; // Wait 10 seconds before retrying a failed query
@@ -41,8 +39,8 @@ export class GooglePlayPackagingStatus extends LitElement {
         super.connectedCallback();
 
         // See if job ID is set in the URL as the jobid query string.
-        const search = new URLSearchParams(window.location.search.toLowerCase());
-        const jobId = search.get("jobid");
+        const search = new URLSearchParams(window.location.search);
+        const jobId = search.get("jobId") || search.get("jobid");
         if (jobId) {
             this.appendLog("Querying for job...");
             this.jobId = jobId;
@@ -136,7 +134,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     renderHeader(): TemplateResult {
-        if (!this.job?.packageOptions) {
+        if (!this.job) {
             return html``;
         }
 
@@ -144,10 +142,9 @@ export class GooglePlayPackagingStatus extends LitElement {
         const formattedDate = queuedDate.toLocaleString();
         return html`
             <div class="pwa-header" slot="header">
-                <img class="pwa-icon" src="${this.job.packageOptions.iconUrl}" alt="PWA Icon" />
                 <div>
-                    <h3 class="pwa-title">${this.job.packageOptions.name}</h3>
-                    <p><a href="${this.job.packageOptions.webManifestUrl}">${this.job.packageOptions.webManifestUrl}</a></p>
+                    <h3 class="pwa-title">${this.job.name}</h3>
+                    <p>${this.job.pwaUrl}</p>
                     <p>Queued for packaging at ${formattedDate}</p>
                 </div>
             </div>
@@ -161,19 +158,19 @@ export class GooglePlayPackagingStatus extends LitElement {
 
         if (this.job?.status === "Failed" || this.hasFailed) {
             const title = encodeURIComponent("Error creating Google Play package");
-            const lastErrorLog = this.getErrorLogForGitHubIssue(this.logs).replaceAll("\n", "\n> ");
-            const body = encodeURIComponent(`I received the [following error](https://pwabuilder.com/google-play-packaging-status?jobId=${this.job?.id || this.jobId}) when creating a Google Play package for ${this.job?.packageOptions.pwaUrl || "[empty]"}.\n\n> ${lastErrorLog}`);
+            const reference = this.job?.supportReference || (this.jobId ? sessionStorage.getItem(`package-support:${this.jobId}`) : null);
+            const body = encodeURIComponent(packageSupportIssueBody(reference));
             if (this.hasForbiddenAnalysisFailure()) {
                 return html`
                     <div class="card-footer" slot="footer">
-                        <wa-button @click="${this.retryJob}">Retry</wa-button>
+                        <wa-button @click="${this.retryJob}">Create a new package</wa-button>
                         <wa-button target="_blank" href="${this.forbiddenAnalysisHelpUrl}">Show me how to fix this</wa-button>
                     </div>
                 `;
             }
             return html`
                 <div class="card-footer" slot="footer">
-                    <wa-button @click="${this.retryJob}">Retry</wa-button>
+                    <wa-button @click="${this.retryJob}">Create a new package</wa-button>
                     <wa-button target="_blank" href="https://github.com/pwa-builder/PWABuilder/issues/new?&labels=bug%20%3Abug%3A,android-platform&title=${title}&body=${body}">Report a bug</wa-button>
                 </div>
             `;
@@ -206,7 +203,7 @@ export class GooglePlayPackagingStatus extends LitElement {
                 this.pollQueryErrorCount++;
                 setTimeout(() => this.pollJob(jobId), this.pollQueryRetryDelayMs);
             } else {
-                this.pollJobFailed(jobId, error);
+                this.pollJobFailed(error);
             }
             return;
         }
@@ -226,11 +223,11 @@ export class GooglePlayPackagingStatus extends LitElement {
     private async jobCompleted(job: GooglePlayPackageJob): Promise<void> {
         this.recordPackagingCompleted(job.analysisId);
 
-        // If the package was generated more than 24 hours ago, skip download because we're looking at a historical job result.
+        // Match the server's fixed access window from enqueue.
         const generatedDate = new Date(job.createdAt);
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        if (generatedDate < oneDayAgo) {
-            this.appendLog(`Package was generated over 24 hours ago. Skipping download of package zip file. Old packages are automatically deleted after a period of time, but you may try downloading manually from ${env.androidPackageGeneratorUrl}//downloadPackageZip?id=${job.id}`);
+        const accessCutoff = new Date(Date.now() - 72 * 60 * 60 * 1000);
+        if (generatedDate <= accessCutoff) {
+            this.appendLog("Package access expires after 72 hours. Please create a new package.");
             clearTimeout(this.jobTimeoutHandle);
             return;
         }
@@ -252,14 +249,16 @@ export class GooglePlayPackagingStatus extends LitElement {
         this.recordPackagingFailed(this.job?.analysisId ?? null, "Timed out waiting for Google Play packaging job to complete.");
     }
 
-    private pollJobFailed(jobId: string, error: unknown): void {
-        this.appendLog(`[error] Error when querying for Google Play packaging job ${jobId}.`);
+    private pollJobFailed(error: unknown): void {
+        clearTimeout(this.jobTimeoutHandle);
+        this.appendLog(`[error] ${error instanceof Error ? error.message : "Unable to query packaging status."}`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
         this.recordPackagingFailed(this.job?.analysisId ?? null, error instanceof Error ? error : `${error}`);
     }
 
     private jobFailed(job: GooglePlayPackageJob): void {
+        clearTimeout(this.jobTimeoutHandle);
         this.hasFailed = true;
         console.error("Google Play packaging job failed.", job.errors);
         this.trackPackageFailure(job.errors.join("\n"));
@@ -267,8 +266,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private downloadFailed(job: GooglePlayPackageJob, error: any): void {
-        const downloadUrl = `${env.androidPackageGeneratorUrl}/downloadPackageZip?id=${encodeURIComponent(job.id)}`;
-        this.appendLog(`Error download Google Play package from ${downloadUrl} for job ${job.id}: ${error}`);
+        this.appendLog(`Error downloading Google Play package: ${error}`);
         this.hasFailed = true;
         this.trackPackageFailure(error);
         this.recordPackagingFailed(job.analysisId, error instanceof Error ? error : `${error}`);
@@ -310,7 +308,7 @@ export class GooglePlayPackagingStatus extends LitElement {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${job.packageOptions.launcherName || job.packageOptions.name || "My PWA"} - Google Play package.zip`;
+        a.download = `${job.name || "My PWA"} - Google Play package.zip`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -322,7 +320,7 @@ export class GooglePlayPackagingStatus extends LitElement {
             `create-android-package-failed`,
             AnalyticsBehavior.CancelProcess,
             {
-                url: this.job?.packageOptions?.pwaUrl || "",
+                url: this.job?.pwaUrl || "",
                 error: error
             });
         recordProcessStep(
@@ -330,7 +328,7 @@ export class GooglePlayPackagingStatus extends LitElement {
             `create-android-package-failed`,
             AnalyticsBehavior.CancelProcess,
             {
-                url: this.job?.packageOptions?.pwaUrl || "",
+                url: this.job?.pwaUrl || "",
                 error: error
             });
     }
@@ -361,25 +359,8 @@ export class GooglePlayPackagingStatus extends LitElement {
         this.appendLog(`${new Date().toISOString()} [error]: ${this.forbiddenAnalysisFailureMessage}`);
     }
 
-    private async retryJob(): Promise<void> {
-        if (!this.job?.packageOptions) {
-            console.error("Can't retry job because the job or its package options are missing.");
-            return;
-        }
-
-        this.isRetrying = true;
-        try {
-            const newJobId = await enqueueGooglePlayPackageJob(this.job.packageOptions);
-            Router.go(`/google-play-packaging-status?jobId=${newJobId}`);
-        } catch (error) {
-            this.appendLog("Error retrying job: " + error);
-        }
-    }
-
-    private getErrorLogForGitHubIssue(logs: string[]): string {
-        const logsReversed = [...logs].reverse();
-        const errorLogs = logsReversed.filter(l => l.includes("[error]"));
-        const logWithStack = errorLogs.find(l => l.includes("\n"));
-        return redactSigningSecrets(logWithStack || errorLogs[0] || "No logs available");
+    private retryJob(): void {
+        clearTimeout(this.jobTimeoutHandle);
+        Router.go(this.job ? `/reportcard?site=${encodeURIComponent(this.job.pwaUrl)}` : "/");
     }
 }
