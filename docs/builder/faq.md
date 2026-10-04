@@ -173,6 +173,8 @@ We'd be glad to accept PRs to add PWA functionality. Our goal is to make this te
 
 To get a glimpse of general PWA support on iOS, we recommend [Maximiliano Firtman's posts on the subject](https://firt.dev/tags/ios/).
 
+For per-feature, per-browser support data with sources (including Safari on iOS), see the [OpenPWA compatibility board](https://openpwa.net/compatibility/); each feature page also exposes its data as JSON, for example [web-push.json](https://openpwa.net/compatibility/web-push.json).
+
 ### Can I use Push Notifications?
 
 We currently don't support push notifications. We have partial support in the platform for enabling push notifications via Firebase, but the code is currently commented out, and PWABuilder has no UI for letting you input your push notification details.

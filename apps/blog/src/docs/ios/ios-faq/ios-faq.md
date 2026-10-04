@@ -41,6 +41,8 @@ This includes [service worker support](https://love2dev.com/blog/apple-ships-ser
 
 To get a glimpse of general PWA support on iOS, we recommend [Maximiliano Firtman's posts on the subject](https://firt.dev/tags/ios/).
 
+For per-feature, per-browser support data with sources (including Safari on iOS), see the [OpenPWA compatibility board](https://openpwa.net/compatibility/); each feature page also exposes its data as JSON, for example [web-push.json](https://openpwa.net/compatibility/web-push.json).
+
 ## How do updates work?
 
 Since your PWA is being loaded in a web view, pushing changes to your web app will automatically be reflected in your iOS app. No App Store resubmission required.
