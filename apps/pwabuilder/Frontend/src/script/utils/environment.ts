@@ -4,7 +4,6 @@ export const env = {
     imageProxyUrl: '',
     api: '',
     windowsPackageGeneratorUrl: '',
-    androidPackageGeneratorUrl: '',
     iosPackageGeneratorUrl: '',
     safeUrlFetcher: '',
     validateGiveawayUrl: '',
@@ -20,8 +19,6 @@ if (import.meta.env.PROD) {
     env.imageProxyUrl = '/api/images/getSafeImageForAnalysis';
     env.windowsPackageGeneratorUrl =
         'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
-    env.androidPackageGeneratorUrl =
-        'https://pwabuilder-cloudapk.azurewebsites.net';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
     env.safeUrlFetcher =
         '/api/images/getSafeImageForAnalysis';
@@ -34,8 +31,6 @@ if (import.meta.env.PROD) {
     env.imageProxyUrl = '/api/images/getSafeImageForAnalysis';
     env.windowsPackageGeneratorUrl =
         'https://localhost:5001/msix/generatezip';
-    env.androidPackageGeneratorUrl =
-        'http://localhost:5858';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
     env.safeUrlFetcher =
         '/api/images/getSafeImageForAnalysis';

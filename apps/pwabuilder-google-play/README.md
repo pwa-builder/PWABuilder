@@ -48,6 +48,37 @@ To deploy to production, swap staging and production or deploy the tested digest
 Retain deployed and rollback images in ACR. Existing production slots using
 mutable tags must be pinned separately to verified known-good digests.
 
+### Web slot routing to CloudAPK
+
+The web frontend reads `GET /api/packaging/config` before every enqueue, poll, and
+download. The backend exposes only `Packaging__AndroidServiceUrl`; responses are
+`Cache-Control: no-store`, and the frontend does not cache the selected endpoint.
+Missing or unsupported hosted configuration disables Android packaging rather
+than silently falling back to production.
+
+On the **pwabuilder web app**, configure these App Service application settings:
+
+| Web slot | `Packaging__AndroidServiceUrl` |
+| --- | --- |
+| Production | `https://pwabuilder-cloudapk.azurewebsites.net` |
+| `preview` (staging) | `https://pwabuilder-cloudapk-staging.azurewebsites.net` |
+
+Mark **`Packaging__AndroidServiceUrl` as a Deployment slot setting** (the site's
+`slotConfigNames.appSettingNames` must include it). Preserve all existing sticky
+setting names. Azure keeps this value attached to the destination slot during a
+swap: the image promoted to production uses production CloudAPK, while preview
+continues using staging CloudAPK. Set both values and stickiness before deploying
+this code. A build-time Vite variable or a non-sticky setting is not equivalent.
+The cloud endpoint setting accepts only the two exact HTTPS origins above.
+Local backend Development defaults to `http://localhost:5858`.
+
+After deployment or a swap, inspect `/api/packaging/config` on both web hosts and
+confirm the Network tab targets the matching CloudAPK service for enqueue, status,
+and download. Existing tabs fetch fresh configuration on their next operation;
+jobs from another service are not migrated and may need to be recreated. Tabs
+running older frontend code must reload to adopt this runtime configuration.
+No deployment or slot swap is performed by changing these settings alone.
+
 ### Private package jobs and support diagnostics
 
 `POST /enqueuePackageJob` returns JSON `{ id, supportReference, accessToken }`.

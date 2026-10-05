@@ -12,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   // Support auth tests require the separate local-only mocked boundary.
-  testIgnore: ['**/support-admin.spec.ts', '**/support-admin.test.mjs'],
+  testIgnore: ['**/support-admin.spec.ts', '**/support-admin.test.mjs', '**/packaging-configuration.spec.ts', '**/packaging-configuration.test.mjs'],
   /* Maximum time one test can run for. */
   timeout: (process.env.CI ? 30 : 50) * 1000,
   expect: {

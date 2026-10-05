@@ -5,7 +5,7 @@ import {
     generatePackageId,
     sanitizeDname
 } from '../../utils/android-validation';
-import { env } from '../../utils/environment';
+import { getAndroidServiceUrl } from '../../utils/packaging-configuration';
 import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { ManifestContext } from '../../utils/interfaces';
 import { getHeaders } from '../../utils/platformTrackingHeaders';
@@ -27,7 +27,8 @@ export async function enqueueGooglePlayPackageJob(androidOptions: AndroidPackage
     let headers = { ...getHeaders(), 'content-type': 'application/json' };
 
     const referrer = sessionStorage.getItem('ref');
-    const generateAppUrl = `${env.androidPackageGeneratorUrl}/enqueuePackageJob${referrer ? '?ref=' + encodeURIComponent(referrer) : ''}`;
+    const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
+    const generateAppUrl = `${serviceUrl}/enqueuePackageJob${referrer ? '?ref=' + encodeURIComponent(referrer) : ''}`;
     const response = await fetch(generateAppUrl, {
         method: 'POST',
         body: JSON.stringify(androidOptions),
@@ -49,7 +50,8 @@ export async function enqueueGooglePlayPackageJob(androidOptions: AndroidPackage
  * Gets the Google Play package job with the specified ID. Throw an error if the job couldn't be found or if the job fetch otherwise failed.
  */
 export async function getGooglePlayPackageJob(jobId: string): Promise<GooglePlayPackageJob> {
-    const jobFetch = await fetch(`${env.androidPackageGeneratorUrl}/getPackageJob?id=${encodeURIComponent(jobId)}`, {
+    const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
+    const jobFetch = await fetch(`${serviceUrl}/getPackageJob?id=${encodeURIComponent(jobId)}`, {
         headers: { Authorization: getPackageAuthorization(jobId, sessionStorage) },
         cache: "no-store"
     });
@@ -69,7 +71,8 @@ export async function getGooglePlayPackageJob(jobId: string): Promise<GooglePlay
  * @returns The zip file as a Blob.
  */
 export async function downloadGooglePlayPackageZip(jobId: string): Promise<Blob> {
-    const zipFetch = await fetch(`${env.androidPackageGeneratorUrl}/downloadPackageZip?id=${encodeURIComponent(jobId)}`, {
+    const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
+    const zipFetch = await fetch(`${serviceUrl}/downloadPackageZip?id=${encodeURIComponent(jobId)}`, {
         headers: { Authorization: getPackageAuthorization(jobId, sessionStorage) },
         cache: "no-store"
     });
