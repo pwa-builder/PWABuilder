@@ -115,7 +115,7 @@ export class RedisService implements RedisDatabaseService {
             }
             return JSON.parse(json) as T;
         } catch (error) {
-            console.error(`Error in getJson for key ${key}:`, error);
+            console.error("Error in getJson for key %s:", key, error);
             throw error;
         }
     }
@@ -140,7 +140,7 @@ export class RedisService implements RedisDatabaseService {
 
             console.info("Saved object to redis", key);
         } catch (error) {
-            console.error(`Error saving JSON to Redis with key ${key}:`, error);
+            console.error("Error saving JSON to Redis with key %s:", key, error);
             throw error;
         }
     }
@@ -191,7 +191,7 @@ export class RedisService implements RedisDatabaseService {
 
             return JSON.parse(json) as T;
         } catch (error) {
-            console.error(`Error in dequeue for key ${key}: `, error);
+            console.error("Error in dequeue for key %s:", key, error);
 
             // If there's a connection error, provide diagnostics but don't try to reconnect here
             // Let the Redis client handle reconnection automatically
