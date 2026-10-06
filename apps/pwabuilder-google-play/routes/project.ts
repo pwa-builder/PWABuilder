@@ -213,7 +213,7 @@ async function getOwnedPackageJob(request: express.Request, response: express.Re
     }
     const access = await redisService.getJson<PackageJobAccess>(`package-owner:${jobId}`);
     if (!canAccessPackageJob(request.headers.authorization, access)) {
-        response.status(403).send("Job access is missing or expired. Create a new package from the original browser tab.");
+        response.status(403).send("Job access is missing or expired. Use the original browser profile and site, or create a new package.");
         return null;
     }
     const job = await redisService.getJson<StoredPackageJob>(jobId);

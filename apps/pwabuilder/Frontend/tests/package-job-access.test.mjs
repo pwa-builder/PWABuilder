@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { getPackageAuthorization, packageSupportIssueBody, savePackageReceipt } from "../src/script/utils/package-job-access.ts";
 
-test("owner credentials stay in tab storage, separate from support references", () => {
+test("owner credentials stay in browser storage, separate from support references", () => {
     const values = new Map();
     const storage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) };
     const receipt = {
@@ -12,7 +12,7 @@ test("owner credentials stay in tab storage, separate from support references", 
     };
     assert.equal(savePackageReceipt(receipt, storage), receipt.id);
     assert.equal(getPackageAuthorization(receipt.id, storage), `Bearer ${receipt.accessToken}`);
-    assert.throws(() => getPackageAuthorization("another-job", storage), /browser tab/);
+    assert.throws(() => getPackageAuthorization("another-job", storage), /browser profile and site/);
     assert.throws(() => savePackageReceipt(receipt.id, storage), /invalid job receipt/);
     const body = packageSupportIssueBody(receipt.supportReference);
     assert.ok(body.includes(`/admin/package-jobs/${receipt.supportReference}`));

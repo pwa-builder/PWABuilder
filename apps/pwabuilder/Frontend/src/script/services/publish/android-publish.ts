@@ -15,8 +15,8 @@ export let hasGeneratedAndroidPackage = false;
 
 export async function enqueueGooglePlayPackageJob(androidOptions: AndroidPackageOptions): Promise<string> {
     // Fail before submitting signing inputs if the browser cannot retain the owner credential.
-    sessionStorage.setItem("package-owner-storage-check", "1");
-    sessionStorage.removeItem("package-owner-storage-check");
+    localStorage.setItem("package-owner-storage-check", "1");
+    localStorage.removeItem("package-owner-storage-check");
     const validationErrors = validateAndroidOptions(androidOptions);
     if (validationErrors.length > 0 || !androidOptions) {
         throw new Error(
@@ -37,7 +37,7 @@ export async function enqueueGooglePlayPackageJob(androidOptions: AndroidPackage
 
     if (response.ok) {
         hasGeneratedAndroidPackage = true;
-        return savePackageReceipt(await response.json(), sessionStorage);
+        return savePackageReceipt(await response.json(), localStorage);
     } else {
         let err = new Error(`Error enqueueing Google Play package job.\nStatus code: ${response.status}\nError: ${response.statusText}`);
         //@ts-ignore
@@ -52,12 +52,12 @@ export async function enqueueGooglePlayPackageJob(androidOptions: AndroidPackage
 export async function getGooglePlayPackageJob(jobId: string): Promise<GooglePlayPackageJob> {
     const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
     const jobFetch = await fetch(`${serviceUrl}/getPackageJob?id=${encodeURIComponent(jobId)}`, {
-        headers: { Authorization: getPackageAuthorization(jobId, sessionStorage) },
+        headers: { Authorization: getPackageAuthorization(jobId, localStorage) },
         cache: "no-store"
     });
     if (!jobFetch.ok) {
         if (jobFetch.status === 403 || jobFetch.status === 404) {
-            throw new Error("Job access has expired or is unavailable in this browser tab. Please create a new package.");
+            throw new Error("Job access has expired or is unavailable in this browser profile and site. Please create a new package.");
         }
         throw new Error(`Error fetching Google Play package job status: ${jobFetch.statusText}`);
     }
@@ -73,7 +73,7 @@ export async function getGooglePlayPackageJob(jobId: string): Promise<GooglePlay
 export async function downloadGooglePlayPackageZip(jobId: string): Promise<Blob> {
     const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
     const zipFetch = await fetch(`${serviceUrl}/downloadPackageZip?id=${encodeURIComponent(jobId)}`, {
-        headers: { Authorization: getPackageAuthorization(jobId, sessionStorage) },
+        headers: { Authorization: getPackageAuthorization(jobId, localStorage) },
         cache: "no-store"
     });
     if (!zipFetch.ok) {

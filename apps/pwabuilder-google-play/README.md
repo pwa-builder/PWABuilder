@@ -89,10 +89,16 @@ authorizes access. Missing, wrong, expired, and legacy ID-only credentials are
 rejected. All job responses use `Cache-Control: no-store`. Access expires 72 hours
 after enqueue, including repeat downloads; progress updates do not renew it.
 
-PWABuilder retains the token in tab-scoped session storage, never in a URL or
-public issue. Reloads in the same tab work. A new browser/device or lost storage
-requires a new package. Treat same-origin scripts as trusted: an XSS could read
-session storage. Do not log Authorization headers or enqueue response bodies.
+PWABuilder retains `package-owner:<id>` and `package-support:<id>` in local storage,
+never in a URL or public issue. New tabs and browser restarts in the same profile
+and origin can access the job until its fixed 72-hour server expiry. Different
+origins (including preview versus production), browser profiles, devices, or cleared
+storage require a new package. Local entries persist until site data is cleared;
+their presence does not extend server access. Jobs created by older session-storage
+clients are not migrated automatically. Treat same-origin scripts and other users
+of the same browser profile as trusted: they can access the locally stored tokens.
+Do not log Authorization headers or enqueue response bodies. Admin MSAL tokens
+remain in session storage; this change applies only to customer packaging receipts.
 Other API clients must update to the JSON receipt and bearer-header contract.
 The legacy synchronous packaging endpoints still return only the caller's own
 newly generated ZIP and are not a way to retrieve an existing job.

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('enqueue, polling and download use destination-slot config, including after a swap', async ({ page }) => {
+test('enqueue, polling and download use destination-slot config and share access with a new tab', async ({ page, context }) => {
   const staging = 'https://pwabuilder-cloudapk-staging.azurewebsites.net';
   const production = 'https://pwabuilder-cloudapk.azurewebsites.net';
   let endpoint = staging;
@@ -12,7 +12,7 @@ test('enqueue, polling and download use destination-slot config, including after
     supportReference: 'bb16f976-b71c-4658-8d83-1e1a36dc0abc',
     accessToken: 'a'.repeat(43),
   };
-  await page.route('**/*', async route => {
+  await context.route('**/*', async route => {
     const url = new URL(route.request().url());
     if (url.origin === 'http://127.0.0.1:5180') {
       if (url.pathname === '/packaging-test') {
@@ -77,7 +77,25 @@ test('enqueue, polling and download use destination-slot config, including after
   expect(packagingRequests).toEqual([staging, production].flatMap(origin => [
     origin + '/enqueuePackageJob', origin + '/getPackageJob', origin + '/downloadPackageZip',
   ]));
+  const newTab = await context.newPage();
+  await newTab.goto('/packaging-test');
+  await newTab.evaluate(async ({ id, supportReference }) => {
+    if (sessionStorage.getItem(`package-owner:${id}`) !== null) {
+      throw new Error('A new tab must not depend on inherited session storage.');
+    }
+    if (localStorage.getItem(`package-support:${id}`) !== supportReference) {
+      throw new Error('The support reference must be available across tabs.');
+    }
+    const modulePath = '/src/script/services/publish/android-publish.ts';
+    const packaging = await import(/* @vite-ignore */ modulePath);
+    await packaging.getGooglePlayPackageJob(id);
+    await packaging.downloadGooglePlayPackageZip(id);
+  }, { id: receipt.id, supportReference: receipt.supportReference });
+  expect(packagingRequests.slice(-2)).toEqual([
+    production + '/getPackageJob', production + '/downloadPackageZip',
+  ]);
+  await newTab.close();
   unavailable = true;
   await expect(exercise()).rejects.toThrow('configuration is unavailable');
-  expect(packagingRequests).toHaveLength(6);
+  expect(packagingRequests).toHaveLength(8);
 });

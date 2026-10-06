@@ -158,7 +158,7 @@ export class GooglePlayPackagingStatus extends LitElement {
 
         if (this.job?.status === "Failed" || this.hasFailed) {
             const title = encodeURIComponent("Error creating Google Play package");
-            const reference = this.job?.supportReference || (this.jobId ? sessionStorage.getItem(`package-support:${this.jobId}`) : null);
+            const reference = this.job?.supportReference || (this.jobId ? localStorage.getItem(`package-support:${this.jobId}`) : null);
             const body = encodeURIComponent(packageSupportIssueBody(reference));
             if (this.hasForbiddenAnalysisFailure()) {
                 return html`

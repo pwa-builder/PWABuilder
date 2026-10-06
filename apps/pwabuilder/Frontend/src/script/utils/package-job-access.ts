@@ -21,7 +21,7 @@ export function savePackageReceipt(receipt: unknown, storage: OwnerStorage): str
 export function getPackageAuthorization(jobId: string, storage: OwnerStorage): string {
     const token = storage.getItem(`package-owner:${jobId}`);
     if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) {
-        throw new Error("This job is only accessible in the browser tab that created it. Please create a new package.");
+        throw new Error("This job is only accessible in the browser profile and site that created it. Please create a new package.");
     }
     return `Bearer ${token}`;
 }
