@@ -151,17 +151,20 @@ async function submit() {
             return;
         }
 
-        const jobId = await response.text();
+        const { id: jobId, accessToken } = await response.json();
         appendResults(`Enqueued job ${jobId}. Waiting for processing...`);
-        setTimeout(() => this.pollJob(jobId), 2000);
+        setTimeout(() => this.pollJob(jobId, accessToken), 2000);
     } catch (err) {
         appendResults(`Failed. Error: ${err}`);
         setLoading(false);
     }
 }
 
-async function pollJob(jobId) {
-    const jobFetch = await fetch("/getPackageJob?id=" + encodeURIComponent(jobId));
+async function pollJob(jobId, accessToken) {
+    const jobFetch = await fetch("/getPackageJob?id=" + encodeURIComponent(jobId), {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: "no-store"
+    });
     if (!jobFetch.ok) {
         appendResults(`Failed to fetch job ${jobId}. Status code ${jobFetch.status}, Error: ${jobFetch.statusText}.`);
         setLoading(false);
@@ -173,19 +176,22 @@ async function pollJob(jobId) {
     // If it's completed, download the zip.
     if (job.status === "Completed") {
         appendResults(`Job completed in ${Date.now() - packagingStartMs}ms. Triggering download...`);
-        downloadJobZip(jobId);
+        downloadJobZip(jobId, accessToken);
     } else if (job.status === "Failed") {
         appendResults(`Job failed in ${Date.now() - packagingStartMs}ms. See logs above for details.`);
         setLoading(false);
     } else {
         // If we're enqueued or in progress, show the logs from the packaging process and poll again in 2s.
-        setTimeout(() => this.pollJob(jobId), 2000);
+        setTimeout(() => this.pollJob(jobId, accessToken), 2000);
         job.logs.forEach(l => appendResultIfNotIncluded(l));
     }
 }
 
-async function downloadJobZip(jobId) {
-    const zipFetch = await fetch("/downloadPackageZip?id=" + encodeURIComponent(jobId));
+async function downloadJobZip(jobId, accessToken) {
+    const zipFetch = await fetch("/downloadPackageZip?id=" + encodeURIComponent(jobId), {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: "no-store"
+    });
     if (zipFetch.ok) {
         const data = await zipFetch.blob();
         const url = window.URL.createObjectURL(data);
