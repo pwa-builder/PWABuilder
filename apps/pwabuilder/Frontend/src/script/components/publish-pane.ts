@@ -124,7 +124,7 @@ export class PublishPane extends LitElement {
 
     renderWindowsDownloadButton(): TemplateResult {
         return html`
-      <button class="package-button" id="windows-package-button" @click="${() => this.showWindowsOptions()}">
+      <button class="package-button" id="windows-package-button" aria-label="Generate package for Microsoft Store" @click="${() => this.showWindowsOptions()}">
         Generate Package
       </button>
     `;
@@ -132,7 +132,7 @@ export class PublishPane extends LitElement {
 
     renderAndroidDownloadButton(): TemplateResult {
         return html`
-      <button class="package-button" id="android-package-button" @click="${() => this.showAndroidOptions()}">
+      <button class="package-button" id="android-package-button" aria-label="Generate package for Google Play" @click="${() => this.showAndroidOptions()}">
         Generate Package
       </button>
     `;
@@ -140,7 +140,7 @@ export class PublishPane extends LitElement {
 
     renderiOSDownloadButton(): TemplateResult {
         return html`
-      <button class="package-button" id="ios-package-button" @click="${() => this.showiOSOptions()}">
+      <button class="package-button" id="ios-package-button" aria-label="Generate package for iOS App Store" @click="${() => this.showiOSOptions()}">
         Generate Package
       </button>
     `;
