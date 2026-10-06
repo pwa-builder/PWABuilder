@@ -88,6 +88,8 @@ builder.Services.AddSingleton(services =>
     return PuppeteerService.CreateBrowserAsync(env);
 });
 builder.Services.AddControllersWithViews();
+var supportAdminConfigured = builder.Services.AddSupportAdmin(builder.Configuration);
+builder.Services.AddScoped<SupportDiagnosticsService>();
 // An HTTP client with the PWABuilderHttpAgent string appended. 
 builder.Services.AddHttpClient(Constants.PwaBuilderAgentHttpClient, client =>
 {
@@ -160,6 +162,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseSupportAdmin(supportAdminConfigured);
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
