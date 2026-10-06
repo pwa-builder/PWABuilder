@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using PWABuilder.Models;
 using PWABuilder.Services;
@@ -14,14 +15,16 @@ public sealed class SupportAdminController : Controller
     private readonly IAnalysisStore analyses;
     private readonly SupportDiagnosticsService diagnostics;
     private readonly ILogger<SupportAdminController> logger;
+    private readonly SupportCursorProtector cursors;
 
     /// <summary>Creates the support controller with read-only diagnostics dependencies.</summary>
     public SupportAdminController(IAnalysisStore analyses, SupportDiagnosticsService diagnostics,
-        ILogger<SupportAdminController> logger)
+        ILogger<SupportAdminController> logger, IDataProtectionProvider protection)
     {
         this.analyses = analyses;
         this.diagnostics = diagnostics;
         this.logger = logger;
+        cursors = new SupportCursorProtector(protection);
     }
 
     /// <summary>Lists at most fifty failures per service from the preceding fourteen days.</summary>
@@ -29,9 +32,34 @@ public sealed class SupportAdminController : Controller
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         Audit("recent-failures", "");
-        var failedAnalyses = await analyses.GetRecentFailuresAsync(cancellationToken);
-        var failedPackages = await diagnostics.GetRecentPackagesAsync();
-        return Ok(new SupportDashboard(failedAnalyses, failedPackages));
+        SupportPageRequest analysisRequest;
+        SupportPageRequest packageRequest;
+        try
+        {
+            var now = DateTimeOffset.UtcNow;
+            analysisRequest = cursors.Read("analysis", Cursor("analysisCursor"), now);
+            packageRequest = cursors.Read("package", Cursor("packageCursor"), now);
+        }
+        catch (ArgumentException)
+        {
+            return BadRequest(new { message = "Invalid or expired support cursor. Reload the dashboard." });
+        }
+        var failedAnalyses = await analyses.GetFailuresPageAsync(analysisRequest, cancellationToken);
+        var failedPackages = await diagnostics.GetPackagesPageAsync(packageRequest);
+        return Ok(new SupportDashboard(failedAnalyses.Items, failedPackages.Items,
+            cursors.Write("analysis", analysisRequest, failedAnalyses.ContinuationToken),
+            cursors.Write("package", packageRequest, failedPackages.ContinuationToken),
+            cursors.WritePage("analysis", analysisRequest), cursors.WritePage("package", packageRequest)));
+    }
+
+    /// <summary>Rejects duplicate query values and distinguishes absent cursors from invalid empty cursors.</summary>
+    private string? Cursor(string name)
+    {
+        if (!Request.Query.TryGetValue(name, out var values))
+        {
+            return null;
+        }
+        return values.Count is 1 ? values[0] ?? "" : throw new ArgumentException("Invalid support cursor.");
     }
 
     /// <summary>Shows an explicit analysis projection without raw errors or private package data.</summary>

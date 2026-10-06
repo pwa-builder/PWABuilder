@@ -32,20 +32,27 @@ public sealed class SupportDiagnosticsService
     /// <summary>Reads at most fifty failures from the bounded time-window index; no Redis key scanning.</summary>
     public async Task<IReadOnlyList<SupportPackage>> GetRecentPackagesAsync()
     {
-        var references = await cache.GetRecentFailedPackageReferencesAsync();
+        return (await GetPackagesPageAsync(new SupportPageRequest(DateTimeOffset.UtcNow))).Items;
+    }
+
+    /// <summary>Reads a bounded index page and only its separate diagnostics keys, never raw jobs.</summary>
+    public async Task<SupportPage<SupportPackage>> GetPackagesPageAsync(SupportPageRequest request)
+    {
+        var references = await cache.GetFailedPackageReferencesPageAsync(request);
         var packages = new List<SupportPackage>();
-        foreach (var reference in references.Take(RecentLimit))
+        foreach (var entry in references.Items)
         {
-            if (Guid.TryParseExact(reference, "D", out var id))
+            if (Guid.TryParseExact(entry.Reference, "D", out var id))
             {
-                var package = await GetPackageAsync(id, includeDetails: false);
-                if (package?.Status is "Failed")
+                var data = await cache.GetPackageDiagnosticsAsync(id);
+                var package = ProjectPackage(data, id, request.UpperBound, includeDetails: false);
+                if (package?.Status is "Failed" && package.UpdatedAt <= request.UpperBound)
                 {
                     packages.Add(package);
                 }
             }
         }
-        return packages;
+        return new SupportPage<SupportPackage>(packages, references.ContinuationToken);
     }
 
     /// <summary>Reduces a URL to its HTTP(S) origin, stripping credentials and all user-controlled path data.</summary>
@@ -62,20 +69,20 @@ public sealed class SupportDiagnosticsService
         Status = analysis.Status,
         CreatedAt = analysis.CreatedAt,
         UpdatedAt = analysis.LastModifiedAt,
-        Error = includeDetails ? analysis.Error : null,
+        Error = analysis.Error,
         Logs = includeDetails ? analysis.Logs.TakeLast(SupportDiagnosticSanitizer.MaximumLogs).ToList() : [],
         Checks = analysis.Capabilities.Select(check => new SupportAnalysisCheckData { Id = check.Id, Status = check.Status }).ToList()
-    });
+    }, includeDetails);
 
     /// <summary>Sanitizes the narrow Cosmos query projection before it leaves the backend.</summary>
-    public static SupportAnalysis ProjectAnalysis(SupportAnalysisData data) => new(
+    public static SupportAnalysis ProjectAnalysis(SupportAnalysisData data, bool includeDetails = true) => new(
         new string(data.Id.Where(character => !char.IsControl(character)).Take(256).ToArray()),
         SanitizeOrigin(data.Url), data.Status, data.CreatedAt, data.UpdatedAt,
-        data.Status is AnalysisStatus.Failed ? "Analysis failed. Diagnostic details below are redacted." : "No analysis execution failure.",
+        data.Status is AnalysisStatus.Failed ? FailureSummary([data.Error ?? ""], "Analysis failed.") : "No analysis execution failure.",
         data.Checks.Where(check => Enum.IsDefined(check.Id) && Enum.IsDefined(check.Status))
             .Take(100).Select(check => new SupportCheck(check.Id, check.Status)).ToArray(),
-        SupportDiagnosticSanitizer.Sanitize(data.Error),
-        SupportDiagnosticSanitizer.SanitizeEntries(data.Logs, SupportDiagnosticSanitizer.MaximumLogs));
+        includeDetails ? SupportDiagnosticSanitizer.Sanitize(data.Error) : "",
+        includeDetails ? SupportDiagnosticSanitizer.SanitizeEntries(data.Logs, SupportDiagnosticSanitizer.MaximumLogs) : []);
 
     /// <summary>Validates retention and identity and discards raw strings that may contain secrets.</summary>
     public static SupportPackage? ProjectPackage(PackageDiagnosticsData? data, Guid reference, DateTimeOffset now,
@@ -105,12 +112,12 @@ public sealed class SupportDiagnosticsService
         return new SupportPackage(reference, data.Status, data.CreatedAt, data.UpdatedAt,
             Math.Clamp(data.RetryCount, 0, 1000), SanitizeOrigin(data.SiteOrigin), safeConfig,
             includeDetails ? (data.Logs ?? []).Take(200).Select(ClassifyStage).Distinct().Take(10).ToArray() : [],
-            data.Status is "Failed" ? ClassifyFailure(data.Errors ?? []) : "No packaging failure.",
+            data.Status is "Failed" ? FailureSummary(data.Errors ?? [], "Packaging failed.") : "No packaging failure.",
             includeDetails ? SupportDiagnosticSanitizer.SanitizeEntries(data.Logs, SupportDiagnosticSanitizer.MaximumLogs) : [],
             includeDetails ? SupportDiagnosticSanitizer.SanitizeEntries(data.Errors, SupportDiagnosticSanitizer.MaximumErrors) : []);
     }
 
-    /// <summary>Bounds display metadata and removes control characters; Razor performs HTML encoding.</summary>
+    /// <summary>Bounds sanitized display metadata and removes control characters; the UI renders it as escaped text.</summary>
     private static string SafeText(string? value) =>
         new(SupportDiagnosticSanitizer.Sanitize(value).Where(character => !char.IsControl(character)).Take(256).ToArray());
 
@@ -128,10 +135,15 @@ public sealed class SupportDiagnosticsService
         return "Processing";
     }
 
-    /// <summary>Returns only a safe timeout or generic failure category.</summary>
-    private static string ClassifyFailure(IEnumerable<string> errors) =>
-        errors.Take(50).Any(error => error?.Contains("timeout", StringComparison.OrdinalIgnoreCase) is true
-            || error?.Contains("timed out", StringComparison.OrdinalIgnoreCase) is true)
-            ? "Packaging timed out. Diagnostic details below are redacted."
-            : "Packaging failed. Diagnostic details below are redacted.";
+    /// <summary>Redacts complete error entries before taking two nonempty lines and the 400-character budget.</summary>
+    private static string FailureSummary(IEnumerable<string> errors, string fallback)
+    {
+        var lines = errors.Take(SupportDiagnosticSanitizer.MaximumErrors)
+            .Select(SupportDiagnosticSanitizer.Sanitize)
+            .SelectMany(error => error.Split(['\r', '\n'], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+            .Take(2);
+        var summary = string.Join("\n", lines);
+        return summary.Length is 0 ? fallback + " No error message available."
+            : summary.Length <= 400 ? summary : summary[..399] + "…";
+    }
 }

@@ -104,6 +104,20 @@ test('interaction_required is actionable but never automatically redirects', asy
   assert.deepEqual(f.calls.find(call => call[0] === 'consent')[1].scopes, [config.scope]);
 });
 
+test('dashboard cursor queries are encoded and limited to the same-origin dashboard endpoint', async () => {
+  const f = fixture();
+  await f.client.initialize();
+  await f.client.get('/admin', undefined, { analysisCursor: 'opaque_cursor-1', packageCursor: 'opaque_cursor-2' });
+  const api = f.calls.filter(call => call[0] === 'fetch').at(-1);
+  assert.equal(api[1], '/api/admin?analysisCursor=opaque_cursor-1&packageCursor=opaque_cursor-2');
+  assert.equal(api[2].credentials, 'omit');
+  assert.equal(f.browser.location.pathname, '/admin');
+  assert.equal(f.browser.sessionStorage.getItem(returnPathKey), null);
+  await assert.rejects(f.client.get(analysisPath, undefined, { analysisCursor: 'opaque_cursor-1' }), /not valid/);
+  await assert.rejects(f.client.get('/admin', undefined, { analysisCursor: 'x'.repeat(4000) }), /not valid/);
+  await assert.rejects(f.client.get('/admin?analysisCursor=opaque_cursor-1'), /not valid/);
+});
+
 test('signed-out flow is explicit and signout prevents further diagnostics', async () => {
   const f = fixture('/admin', null);
   await f.client.initialize();

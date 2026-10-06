@@ -4,6 +4,19 @@ import { adminRoute } from './admin-route.ts';
 
 type Fields = Record<string, unknown>;
 
+export interface PageNavigation {
+  page: number;
+  canPrevious: boolean;
+  canNext: boolean;
+  previous: () => void;
+  next: () => void;
+}
+
+export interface DashboardNavigation {
+  analysis: PageNavigation;
+  package: PageNavigation;
+}
+
 function fields(value: unknown): Fields {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
     ? value as Fields : {};
@@ -123,14 +136,30 @@ export function renderPackage(value: unknown, detail: boolean): TemplateResult {
   </article>`;
 }
 
-export function renderDashboard(value: unknown): TemplateResult {
+function pageControls(label: string, count: number, navigation?: PageNavigation): TemplateResult {
+  return html`<nav aria-label=${label}>
+    <wa-button ?disabled=${!navigation?.canPrevious} @click=${navigation?.previous}>Previous</wa-button>
+    <p>Page ${navigation?.page || 1} · ${count} ${count === 1 ? 'failure' : 'failures'} on this page</p>
+    <wa-button ?disabled=${!navigation?.canNext} @click=${navigation?.next}>Next</wa-button>
+  </nav>`;
+}
+
+export function renderDashboard(value: unknown, navigation?: DashboardNavigation): TemplateResult {
   const data = fields(value);
   const analyses = items(data.analyses);
   const packages = items(data.packages);
   return html`
-    <h2>Recent analysis failures</h2>
-    ${analyses.length ? analyses.map(value => renderAnalysis(value, false)) : html`<p>No recent analysis failures.</p>`}
-    <h2>Recent package failures</h2>
-    ${packages.length ? packages.map(value => renderPackage(value, false)) : html`<p>No recent package failures.</p>`}
+    <p>Retained failures from the last 14 days, up to 50 per page. Package history is limited to the latest 500 indexed failures.
+      Records may expire or change while browsing.</p>
+    <section aria-labelledby="analysis-failures">
+      <h2 id="analysis-failures">Recent analysis failures</h2>
+      ${pageControls('Analysis failure pages', analyses.length, navigation?.analysis)}
+      ${analyses.length ? analyses.map(value => renderAnalysis(value, false)) : html`<p>No analysis failures on this page.</p>`}
+    </section>
+    <section aria-labelledby="package-failures">
+      <h2 id="package-failures">Recent package failures</h2>
+      ${pageControls('Package failure pages', packages.length, navigation?.package)}
+      ${packages.length ? packages.map(value => renderPackage(value, false)) : html`<p>No package failures on this page.</p>`}
+    </section>
   `;
 }

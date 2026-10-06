@@ -21,6 +21,11 @@ interface AdminConfig {
   scope: string;
 }
 
+export interface DashboardCursors {
+  analysisCursor?: string;
+  packageCursor?: string;
+}
+
 type AuthClient = Pick<IPublicClientApplication,
   'handleRedirectPromise' | 'getActiveAccount' | 'getAllAccounts' | 'setActiveAccount' |
   'acquireTokenSilent' | 'acquireTokenRedirect' | 'loginRedirect' | 'logoutRedirect'>;
@@ -42,6 +47,7 @@ function checkResponse(response: Response): void {
     return;
   }
   const messages: Record<number, string> = {
+    400: 'This diagnostics page has expired or is invalid. Retry to reload the dashboard.',
     401: 'Your support session was not accepted. Sign in again.',
     403: 'Access denied. Your account is not authorized for support diagnostics.',
     404: 'Support diagnostics are unavailable or this record was not found.',
@@ -167,10 +173,20 @@ export class AdminClient {
     }
   }
 
-  async get(pathname: string, signal?: AbortSignal): Promise<unknown> {
+  async get(pathname: string, signal?: AbortSignal, cursors?: DashboardCursors): Promise<unknown> {
     const route = adminRoute(pathname);
-    if (!route) {
+    if (!route || (cursors && route.kind !== 'dashboard')) {
       throw new AdminError('This support link is not valid.');
+    }
+    const query = new URLSearchParams();
+    for (const name of ['analysisCursor', 'packageCursor'] as const) {
+      const cursor = cursors?.[name];
+      if (cursor !== undefined) {
+        if (typeof cursor !== 'string' || !/^[A-Za-z0-9_-]{1,3000}$/.test(cursor)) {
+          throw new AdminError('This support link is not valid.');
+        }
+        query.set(name, cursor);
+      }
     }
     if (!this.ready || !this.auth || !this.signedIn) {
       throw new AdminError('Sign in to view private support diagnostics.', true);
@@ -180,7 +196,7 @@ export class AdminClient {
     if (!token.accessToken || this.signedOut || signal?.aborted) {
       throw new AdminError('The support request was cancelled.');
     }
-    const response = await this.request(route.apiPath, {
+    const response = await this.request(route.apiPath + (query.size ? `?${query}` : ''), {
       headers: { Authorization: `Bearer ${token.accessToken}` },
       cache: 'no-store', credentials: 'omit', redirect: 'error', signal,
     });

@@ -8,6 +8,61 @@ namespace PWABuilder.Tests;
 /// <summary>Adversarial fixtures for admin-only diagnostic redaction without external services.</summary>
 public sealed class SupportDiagnosticSanitizerTests
 {
+    /// <summary>Summaries redact complete multiline values before selecting the first two nonempty lines.</summary>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Failure_summaries_are_useful_redacted_excerpts_even_without_details(bool details)
+    {
+        const string error = "\nGradle resource linking failed\n\npassword=\"secret-marker\nsecret-marker\"\nThird line not shown";
+        var analysis = SupportDiagnosticsService.ProjectAnalysis(new Analysis
+        {
+            Id = "analysis:example.com:summary", Url = new Uri("https://example.com"),
+            Status = AnalysisStatus.Failed, Error = error
+        }, details);
+        var reference = Guid.NewGuid();
+        var now = DateTimeOffset.UtcNow;
+        var package = SupportDiagnosticsService.ProjectPackage(new PackageDiagnosticsData
+        {
+            SupportReference = reference.ToString("D"), Status = "Failed",
+            CreatedAt = now, UpdatedAt = now, Errors = [error]
+        }, reference, now, details)!;
+        Assert.Equal("Gradle resource linking failed\npassword=[redacted]", analysis.FailureSummary);
+        Assert.Equal(analysis.FailureSummary, package.FailureSummary);
+        Assert.DoesNotContain("secret-marker", JsonSerializer.Serialize(new { analysis, package }));
+        if (!details)
+        {
+            Assert.Empty(analysis.Error);
+            Assert.Empty(analysis.Logs);
+            Assert.Empty(package.Errors);
+            Assert.Empty(package.Logs);
+        }
+    }
+
+    /// <summary>Summary bounds are applied after sanitization and absent errors have a safe fallback.</summary>
+    [Theory]
+    [InlineData(null, "Analysis failed. No error message available.")]
+    [InlineData(" \n\t", "Analysis failed. No error message available.")]
+    public void Empty_analysis_failure_has_safe_fallback(string? error, string expected)
+    {
+        var result = SupportDiagnosticsService.ProjectAnalysis(new SupportAnalysisData { Status = AnalysisStatus.Failed, Error = error });
+        Assert.Equal(expected, result.FailureSummary);
+    }
+
+    /// <summary>Long error lines stay within the dashboard budget.</summary>
+    [Fact]
+    public void Failure_summary_is_capped_at_400_characters()
+    {
+        var result = SupportDiagnosticsService.ProjectAnalysis(new SupportAnalysisData
+        {
+            Status = AnalysisStatus.Failed,
+            Error = string.Concat(Enumerable.Repeat("Build failed. ", 40)) + "password=\"secret-marker\nsecret-marker\""
+        });
+        Assert.Equal(400, result.FailureSummary.Length);
+        Assert.StartsWith("Build failed.", result.FailureSummary);
+        Assert.DoesNotContain("secret-marker", result.FailureSummary);
+    }
+
     /// <summary>Useful build context survives while common credential formats and URL-private parts do not.</summary>
     [Theory]
     [InlineData("Gradle task failed: Authorization: Bearer secret-marker")]

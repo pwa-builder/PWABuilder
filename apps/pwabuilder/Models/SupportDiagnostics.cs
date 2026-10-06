@@ -13,7 +13,7 @@ public sealed record SupportCheck(PwaCapabilityId Id, PwaCapabilityCheckStatus S
 /// <param name="Status">The analysis status.</param>
 /// <param name="CreatedAt">Creation time.</param>
 /// <param name="UpdatedAt">Last update time.</param>
-/// <param name="FailureSummary">A fixed, non-sensitive failure summary.</param>
+/// <param name="FailureSummary">The first two nonempty sanitized error lines, bounded to 400 characters.</param>
 /// <param name="Checks">Structured check outcomes without free-text messages.</param>
 /// <param name="Error">Bounded, sanitized failure detail.</param>
 /// <param name="Logs">Bounded, sanitized processing logs.</param>
@@ -109,7 +109,7 @@ public sealed class PackageSupportConfiguration
 /// <param name="SiteOrigin">Sanitized origin.</param>
 /// <param name="Configuration">Package metadata and signing-presence indicators, never signing material.</param>
 /// <param name="Stages">Fixed stage labels, never raw logs.</param>
-/// <param name="FailureSummary">Fixed failure summary, never raw errors.</param>
+/// <param name="FailureSummary">A bounded, sanitized error excerpt, never raw errors.</param>
 /// <param name="Logs">Bounded, sanitized producer logs.</param>
 /// <param name="Errors">Bounded, sanitized producer errors.</param>
 public sealed record SupportPackage(Guid SupportReference, string Status, DateTimeOffset CreatedAt,
@@ -119,4 +119,10 @@ public sealed record SupportPackage(Guid SupportReference, string Status, DateTi
 /// <summary>The bounded, recent failure lists shown on the dashboard.</summary>
 /// <param name="Analyses">Recent analysis failures.</param>
 /// <param name="Packages">Recent package failures.</param>
-public sealed record SupportDashboard(IReadOnlyList<SupportAnalysis> Analyses, IReadOnlyList<SupportPackage> Packages);
+/// <param name="AnalysisContinuationToken">Protected analysis continuation, or null when exhausted.</param>
+/// <param name="PackageContinuationToken">Protected package continuation, or null when exhausted.</param>
+/// <param name="AnalysisPageToken">Protected current page, including the first page's fixed window.</param>
+/// <param name="PackagePageToken">Protected current package page.</param>
+public sealed record SupportDashboard(IReadOnlyList<SupportAnalysis> Analyses, IReadOnlyList<SupportPackage> Packages,
+    string? AnalysisContinuationToken = null, string? PackageContinuationToken = null,
+    string? AnalysisPageToken = null, string? PackagePageToken = null);

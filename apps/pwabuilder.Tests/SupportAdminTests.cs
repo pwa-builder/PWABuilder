@@ -262,7 +262,7 @@ public sealed class SupportAdminTests
         var json = JsonSerializer.Serialize(projection);
         Assert.DoesNotContain("secret-marker", json);
         Assert.DoesNotContain("password", json);
-        Assert.Contains("Analysis failed", json);
+        Assert.Contains("Manifest parsing failed", projection.FailureSummary);
         Assert.Contains("Manifest parsing failed", projection.Error);
         Assert.Contains("Starting service worker scan", projection.Logs.Single());
     }
@@ -340,6 +340,112 @@ public sealed class SupportAdminTests
         var failures = await diagnostics.GetRecentPackagesAsync();
         Assert.Equal(50, failures.Count);
         Assert.Null(await diagnostics.GetPackageAsync(unrelated));
+    }
+
+    /// <summary>Independent opaque cursors traverse tied timestamps without skipping or repeating records.</summary>
+    [Fact]
+    public async Task Dashboard_pages_keep_a_fixed_window_and_visit_all_retained_failures()
+    {
+        await using var app = await CreateAppAsync(true);
+        var store = app.Services.GetRequiredService<IAnalysisStore>();
+        var cache = app.Services.GetRequiredService<IRedisCache>();
+        var timestamp = DateTimeOffset.UtcNow.AddMinutes(-2);
+        for (var index = 0; index < 125; index++)
+        {
+            var analysis = Analysis($"analysis:example.com:{index:D3}");
+            await store.SaveAsync(analysis);
+            analysis.LastModifiedAt = timestamp;
+            var reference = Guid.NewGuid();
+            await cache.SaveAsync($"package-diagnostics:{reference:D}", new PackageDiagnosticsData
+            {
+                SupportReference = reference.ToString("D"), Status = "Failed",
+                CreatedAt = timestamp, UpdatedAt = timestamp, Errors = ["Build failed: token=secret-marker"]
+            });
+        }
+        var client = CreateClient(app, Principal(true, true, true));
+        var analysisIds = new List<string>();
+        var packageIds = new List<string>();
+        string? analysisCursor = null;
+        string? packageCursor = null;
+        var pageSizes = new List<int>();
+        string? firstAnalysisCursor = null;
+        string? firstPackageCursor = null;
+        do
+        {
+            var url = "/api/admin" + (analysisCursor is null ? "" :
+                $"?analysisCursor={Uri.EscapeDataString(analysisCursor)}&packageCursor={Uri.EscapeDataString(packageCursor!)}");
+            var response = await client.GetAsync(url);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var json = await response.Content.ReadAsStringAsync();
+            Assert.DoesNotContain("secret-marker", json);
+            var page = JsonDocument.Parse(json).RootElement;
+            var analyses = page.GetProperty("analyses").EnumerateArray().ToArray();
+            var packages = page.GetProperty("packages").EnumerateArray().ToArray();
+            pageSizes.Add(analyses.Length);
+            Assert.Equal(analyses.Length, packages.Length);
+            analysisIds.AddRange(analyses.Select(item => item.GetProperty("id").GetString()!));
+            packageIds.AddRange(packages.Select(item => item.GetProperty("supportReference").GetString()!));
+            Assert.All(analyses, item => Assert.Equal("", item.GetProperty("error").GetString()));
+            Assert.All(packages, item => Assert.Equal(0, item.GetProperty("errors").GetArrayLength()));
+            analysisCursor = page.GetProperty("analysisContinuationToken").GetString();
+            packageCursor = page.GetProperty("packageContinuationToken").GetString();
+            Assert.Equal(analysisCursor is null, packageCursor is null);
+            if (analysisCursor is not null)
+            {
+                Assert.DoesNotContain("analysis:", analysisCursor);
+                Assert.DoesNotContain(packageIds.Last(), packageCursor!);
+                var replay = await client.GetStringAsync(url);
+                Assert.Equal(analyses.Select(item => item.GetProperty("id").GetString()),
+                    JsonDocument.Parse(replay).RootElement.GetProperty("analyses").EnumerateArray().Select(item => item.GetProperty("id").GetString()));
+                var wrongKind = await client.GetAsync($"/api/admin?packageCursor={Uri.EscapeDataString(analysisCursor)}");
+                Assert.Equal(HttpStatusCode.BadRequest, wrongKind.StatusCode);
+                var tampered = await client.GetAsync($"/api/admin?analysisCursor=X{Uri.EscapeDataString(analysisCursor[1..])}");
+                Assert.Equal(HttpStatusCode.BadRequest, tampered.StatusCode);
+                foreach (var identity in new[] { Principal(false, true, true), Principal(true, false, true), Principal(true, true, false) })
+                {
+                    var rejected = await CreateClient(app, identity).GetAsync($"/api/admin?analysisCursor={Uri.EscapeDataString(analysisCursor)}");
+                    Assert.True(rejected.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden);
+                }
+            }
+            if (pageSizes.Count == 1)
+            {
+                firstAnalysisCursor = page.GetProperty("analysisPageToken").GetString();
+                firstPackageCursor = page.GetProperty("packagePageToken").GetString();
+                await store.SaveAsync(Analysis("analysis:example.com:new"));
+                var reference = Guid.NewGuid();
+                var now = DateTimeOffset.UtcNow;
+                await cache.SaveAsync($"package-diagnostics:{reference:D}", new PackageDiagnosticsData
+                {
+                    SupportReference = reference.ToString("D"), Status = "Failed", CreatedAt = now, UpdatedAt = now
+                });
+            }
+            Assert.InRange(pageSizes.Count, 1, 3);
+        } while (analysisCursor is not null);
+        Assert.Equal(new[] { 50, 50, 25 }, pageSizes);
+        Assert.Equal(125, analysisIds.Distinct().Count());
+        Assert.Equal(125, packageIds.Distinct().Count());
+        var previous = JsonDocument.Parse(await client.GetStringAsync(
+            $"/api/admin?analysisCursor={Uri.EscapeDataString(firstAnalysisCursor!)}&packageCursor={Uri.EscapeDataString(firstPackageCursor!)}")).RootElement;
+        Assert.Equal(analysisIds.Take(50), previous.GetProperty("analyses").EnumerateArray().Select(item => item.GetProperty("id").GetString()));
+        Assert.Equal(packageIds.Take(50), previous.GetProperty("packages").EnumerateArray().Select(item => item.GetProperty("supportReference").GetString()));
+    }
+
+    /// <summary>Malformed and oversized cursors fail closed rather than restarting the query.</summary>
+    [Theory]
+    [InlineData("analysisCursor", "invalid")]
+    [InlineData("packageCursor", "invalid")]
+    [InlineData("analysisCursor", "")]
+    [InlineData("packageCursor", "")]
+    [InlineData("analysisCursor", null)]
+    [InlineData("packageCursor", null)]
+    [InlineData("analysisCursor", "invalid&analysisCursor=other")]
+    [InlineData("packageCursor", "invalid&packageCursor=other")]
+    public async Task Invalid_dashboard_cursor_is_bad_request(string parameter, string? value)
+    {
+        await using var app = await CreateAppAsync(true);
+        var client = CreateClient(app, Principal(true, true, true));
+        var response = await client.GetAsync($"/api/admin?{parameter}={value ?? new string('x', 4000)}");
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     /// <summary>Creates an analysis containing sensitive sentinel values.</summary>

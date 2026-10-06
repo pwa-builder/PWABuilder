@@ -25,6 +25,9 @@ public interface IAnalysisStore
     /// <summary>Gets at most fifty recent failed analyses, without raw logs, manifests, or errors.</summary>
     Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default);
 
+    /// <summary>Reads one bounded page of failures within a frozen server-controlled time window.</summary>
+    Task<SupportPage<SupportAnalysis>> GetFailuresPageAsync(SupportPageRequest request, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Saves an analysis.
     /// </summary>
@@ -53,18 +56,31 @@ public sealed class InMemoryAnalysisStore : IAnalysisStore
     }
 
     /// <inheritdoc/>
-    public Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default) =>
+        (await GetFailuresPageAsync(new SupportPageRequest(DateTimeOffset.UtcNow), cancellationToken)).Items;
+
+    /// <inheritdoc/>
+    public Task<SupportPage<SupportAnalysis>> GetFailuresPageAsync(SupportPageRequest request, CancellationToken cancellationToken = default)
     {
-        var now = DateTimeOffset.UtcNow;
-        IReadOnlyList<SupportAnalysis> results = analyses.Values
+        cancellationToken.ThrowIfCancellationRequested();
+        var after = request.ContinuationToken is null ? null : JsonSerializer.Deserialize<AnalysisPosition>(request.ContinuationToken);
+        var candidates = analyses.Values
             .Where(analysis => analysis.Status is AnalysisStatus.Failed
-                && analysis.LastModifiedAt >= now - SupportDiagnosticsService.Retention
-                && analysis.LastModifiedAt <= now)
-            .OrderByDescending(analysis => analysis.LastModifiedAt)
-            .Take(SupportDiagnosticsService.RecentLimit)
+                && analysis.LastModifiedAt >= request.Cutoff && analysis.LastModifiedAt <= request.UpperBound)
+            .OrderByDescending(analysis => analysis.LastModifiedAt).ThenByDescending(analysis => analysis.Id, StringComparer.Ordinal)
+            .Where(analysis => after is null || analysis.LastModifiedAt < after.UpdatedAt
+                || analysis.LastModifiedAt == after.UpdatedAt && string.CompareOrdinal(analysis.Id, after.Id) < 0)
+            .Take(SupportDiagnosticsService.RecentLimit + 1).ToArray();
+        var results = candidates.Take(SupportDiagnosticsService.RecentLimit)
             .Select(analysis => SupportDiagnosticsService.ProjectAnalysis(analysis, includeDetails: false)).ToArray();
-        return Task.FromResult(results);
+        return Task.FromResult(new SupportPage<SupportAnalysis>(results, candidates.Length > results.Length
+            ? JsonSerializer.Serialize(new AnalysisPosition(results[^1].UpdatedAt, results[^1].Id)) : null));
     }
+
+    /// <summary>Stable local cursor including an identifier to disambiguate equal update times.</summary>
+    /// <param name="UpdatedAt">The last returned update time.</param>
+    /// <param name="Id">The last returned identifier.</param>
+    private sealed record AnalysisPosition(DateTimeOffset UpdatedAt, string Id);
 
     /// <inheritdoc/>
     public Task<Analysis?> GetByIdAsync(string id)
@@ -119,21 +135,39 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
     }
 
     /// <inheritdoc/>
-    public Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<SupportAnalysis>> GetRecentFailuresAsync(CancellationToken cancellationToken = default) =>
+        (await GetFailuresPageAsync(new SupportPageRequest(DateTimeOffset.UtcNow), cancellationToken)).Items;
+
+    /// <inheritdoc/>
+    public async Task<SupportPage<SupportAnalysis>> GetFailuresPageAsync(SupportPageRequest request,
+        CancellationToken cancellationToken = default)
     {
         var query = CreateSupportQuery(
-            $"SELECT TOP {SupportDiagnosticsService.RecentLimit} {SupportProjection} FROM c WHERE c.analysis.status = @status AND ",
-            " ORDER BY c.analysis.lastModifiedAt DESC").WithParameter("@status", nameof(AnalysisStatus.Failed));
-        return QuerySupportAsync(query, null, SupportDiagnosticsService.RecentLimit, cancellationToken);
+            $"SELECT {SupportProjection}, c.analysis.error AS error FROM c WHERE c.analysis.status = @status AND ",
+            " ORDER BY c.analysis.lastModifiedAt DESC", request).WithParameter("@status", nameof(AnalysisStatus.Failed));
+        var container = await containerTask;
+        using var iterator = container.GetItemQueryIterator<SupportAnalysisData>(query,
+            continuationToken: request.ContinuationToken, requestOptions: new QueryRequestOptions
+            {
+                MaxItemCount = SupportDiagnosticsService.RecentLimit,
+                MaxBufferedItemCount = SupportDiagnosticsService.RecentLimit,
+                MaxConcurrency = 1,
+                ResponseContinuationTokenLimitInKb = 1
+            });
+        // A native page may be short or empty. Preserve its continuation instead of draining the query.
+        var response = await iterator.ReadNextAsync(cancellationToken);
+        return new SupportPage<SupportAnalysis>(
+            response.Select(data => SupportDiagnosticsService.ProjectAnalysis(data, includeDetails: false)).ToArray(),
+            response.ContinuationToken);
     }
 
     /// <summary>Adds the fixed retention window to an internal support query.</summary>
-    private static QueryDefinition CreateSupportQuery(string prefix, string suffix)
+    private static QueryDefinition CreateSupportQuery(string prefix, string suffix, SupportPageRequest? request = null)
     {
-        var now = DateTimeOffset.UtcNow;
+        request ??= new SupportPageRequest(DateTimeOffset.UtcNow);
         return new QueryDefinition(prefix + "c.analysis.lastModifiedAt >= @cutoff AND c.analysis.lastModifiedAt <= @now" + suffix)
-            .WithParameter("@cutoff", (now - SupportDiagnosticsService.Retention).ToString("O"))
-            .WithParameter("@now", now.ToString("O"));
+            .WithParameter("@cutoff", request.Cutoff.ToString("O"))
+            .WithParameter("@now", request.UpperBound.ToString("O"));
     }
 
     /// <summary>Executes a bounded query and removes input URLs before returning results.</summary>
@@ -153,7 +187,7 @@ public sealed class CosmosAnalysisStore : IAnalysisStore
         for (var page = 0; iterator.HasMoreResults && results.Count < limit && page < 10; page++)
         {
             var response = await iterator.ReadNextAsync(cancellationToken);
-            results.AddRange(response.Take(limit - results.Count).Select(SupportDiagnosticsService.ProjectAnalysis));
+            results.AddRange(response.Take(limit - results.Count).Select(data => SupportDiagnosticsService.ProjectAnalysis(data)));
         }
         return results;
     }

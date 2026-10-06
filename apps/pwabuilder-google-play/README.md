@@ -115,6 +115,21 @@ or artifact locations. They are available through the PWABuilder Entra-protected
 The web app must be configured to read the same Redis instance/database.
 The two services' separate in-memory development stores are not shared.
 
+The admin dashboard pages analyses and packages independently using Previous/Next
+controls, with up to 50 failures per page within a fixed 14-day window. Package
+history is limited to the latest 500 indexed failures. Summaries show the first
+two nonempty lines of sanitized error text (at most 400 characters); full sanitized
+details remain on the detail page. Missing errors have an explicit fallback.
+
+Paging uses protected, service-specific continuations with a one-hour lifetime.
+Previous-page history stays in browser memory and resets on navigation/sign-out.
+Expired or invalid cursors return HTTP 400; Retry restarts the dashboard traversal.
+Cosmos may return a short or empty page with more results available; Next remains
+available when a continuation exists. Records can change or expire while browsing.
+Replicas must share the ASP.NET Data Protection key ring and application identity.
+Loss of keys, or a slot swap to a different key ring, invalidates existing cursors;
+reload the dashboard. No new key storage is provisioned by this feature.
+
 #### Admin sign-in configuration
 
 Support uses a secretless browser authorization-code flow with PKCE through MSAL.
