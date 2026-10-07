@@ -1426,7 +1426,8 @@ export class AppReport extends LitElement {
         }
 
         const errorInfo = `${this.analysis.url} failed due to an internal error.\r\n\r\n> ${this.analysis.error}\r\n\r\nId: ${this.analysis.id}\r\n\r\nLogs:\r\n> ${this.analysis.logs.join("\r\n")}`;
-        const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(errorInfo.substring(0, 4000))}`;
+        const supportInfo = `Analysis failed.\n\n[Private support diagnostics](https://www.pwabuilder.com/admin/analyses/${encodeURIComponent(this.analysis.id)})\n\nPlease describe what happened. Do not include credentials or private URLs.`;
+        const bugLink = `https://github.com/pwa-builder/pwabuilder/issues/new?title=Analysis%20Failed&labels=bug%20:bug:&body=${encodeURIComponent(supportInfo)}`;
         return html`
       <wa-dialog label="Error" class="analysis-error-dialog" light-dismiss>
         <p>
