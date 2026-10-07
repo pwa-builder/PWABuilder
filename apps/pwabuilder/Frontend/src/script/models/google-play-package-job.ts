@@ -1,7 +1,7 @@
-import { AndroidPackageOptions } from "../utils/android-validation";
-
 export interface GooglePlayPackageJob {
     id: string;
+    supportReference: string;
+    name: string;
     pwaUrl: string;
     analysisId: string | null;
     status: "Queued" | "InProgress" | "Completed" | "Failed";
@@ -9,6 +9,5 @@ export interface GooglePlayPackageJob {
     retryCount: number;
     errors: string[];
     logs: string[];
-    packageOptions: AndroidPackageOptions;
-    uploadedBlobFileName: string | null;
+    downloadAvailable: boolean;
 }
