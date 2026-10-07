@@ -129,7 +129,7 @@ if ($userIdentities.Count -gt 0) {
 if ($sourceSite.virtualNetworkSubnetId) {
     $subnet = $sourceSite.virtualNetworkSubnetId
     $vnet = $subnet -replace '/subnets/[^/]+$', ''
-    # The source subnet is already delegated; avoid requiring permissions on the whole VNet.
+    # Reuse the delegated subnet without changing delegation; some CLI versions also read the VNet.
     Invoke-Azure (@('webapp', 'vnet-integration', 'add') + $target +
         @('--vnet', $vnet, '--subnet', $subnet, '--skip-delegation-check')) | Out-Null
 }

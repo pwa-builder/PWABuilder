@@ -131,7 +131,10 @@ Before enabling PR deployments, configure Azure and GitHub:
   slots retain their original identity selections.
 * Each deployment identity has **Managed Identity Operator** scoped to its own
   existing user-assigned identity and **Network Contributor** scoped to the
-  existing staging subnet. PR slots attach those identities and join those
+  existing staging subnet, plus **Reader** scoped to the subnet's parent VNet.
+  Some Azure CLI versions read the parent VNet even when delegation checks are
+  skipped; Reader allows that lookup without granting VNet write permissions.
+  PR slots attach those identities and join those
   subnets without changing subnet delegation or source slot configuration.
   These grants do not authorize changing unrelated identities or networks.
   Runtime data permissions (such as Cosmos DB data roles) are separate from
