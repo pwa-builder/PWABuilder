@@ -1,5 +1,6 @@
 import { GooglePlayPackageJob } from "./googlePlayPackageJob.js";
 import { PackageCreationProgress } from "./packageCreationProgress.js";
+import { sanitizeJobText } from "../utils/package-job-diagnostics.js";
 
 /**
  * A logger that writes logs to a Google Play packaging job's log storage.
@@ -31,7 +32,7 @@ export class PackageJobLogger {
     private log(level: "info" | "warn" | "error", message: string, ...optionalArgs: any[]): void {
         const timestamp = new Date().toISOString();
         const optionsArgsStr = optionalArgs && optionalArgs.length > 0 ? " " + optionalArgs.map(arg => JSON.stringify(arg || "")).join(" ") : "";
-        const logEntry = `${timestamp} [${level}]: ${message}${optionsArgsStr}`;
+        const logEntry = sanitizeJobText(this.job, `${timestamp} [${level}]: ${message}${optionsArgsStr}`);
 
         this.job.logs.push(logEntry);
         if (level === "error") {
@@ -43,10 +44,6 @@ export class PackageJobLogger {
                 : console.info;
 
         //const args = optionalArgs && optionalArgs.length > 0 ? [message, optionalArgs] : [message];
-        if (optionalArgs && optionalArgs.length > 0) {
-            consoleMethod(message, ...optionalArgs);
-        } else {
-            consoleMethod(message);
-        }
+        consoleMethod(logEntry);
     }
 }

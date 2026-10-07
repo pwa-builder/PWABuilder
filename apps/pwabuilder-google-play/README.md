@@ -48,6 +48,187 @@ To deploy to production, swap staging and production or deploy the tested digest
 Retain deployed and rollback images in ACR. Existing production slots using
 mutable tags must be pinned separately to verified known-good digests.
 
+### Web slot routing to CloudAPK
+
+The web frontend reads `GET /api/packaging/config` before every enqueue, poll, and
+download. The backend exposes only `Packaging__AndroidServiceUrl`; responses are
+`Cache-Control: no-store`, and the frontend does not cache the selected endpoint.
+Missing or unsupported hosted configuration disables Android packaging rather
+than silently falling back to production.
+
+On the **pwabuilder web app**, configure these App Service application settings:
+
+| Web slot | `Packaging__AndroidServiceUrl` |
+| --- | --- |
+| Production | `https://pwabuilder-cloudapk.azurewebsites.net` |
+| `preview` (staging) | `https://pwabuilder-cloudapk-staging.azurewebsites.net` |
+
+Mark **`Packaging__AndroidServiceUrl` as a Deployment slot setting** (the site's
+`slotConfigNames.appSettingNames` must include it). Preserve all existing sticky
+setting names. Azure keeps this value attached to the destination slot during a
+swap: the image promoted to production uses production CloudAPK, while preview
+continues using staging CloudAPK. Set both values and stickiness before deploying
+this code. A build-time Vite variable or a non-sticky setting is not equivalent.
+The cloud endpoint setting accepts only the two exact HTTPS origins above.
+Local backend Development defaults to `http://localhost:5858`.
+
+After deployment or a swap, inspect `/api/packaging/config` on both web hosts and
+confirm the Network tab targets the matching CloudAPK service for enqueue, status,
+and download. Existing tabs fetch fresh configuration on their next operation;
+jobs from another service are not migrated and may need to be recreated. Tabs
+running older frontend code must reload to adopt this runtime configuration.
+No deployment or slot swap is performed by changing these settings alone.
+
+### Private package jobs and support diagnostics
+
+`POST /enqueuePackageJob` returns JSON `{ id, supportReference, accessToken }`.
+Keep `accessToken` private. `GET /getPackageJob?id=...` and
+`GET /downloadPackageZip?id=...` (including HEAD) require
+`Authorization: Bearer <accessToken>`. Neither the job ID nor support reference
+authorizes access. Missing, wrong, expired, and legacy ID-only credentials are
+rejected. All job responses use `Cache-Control: no-store`. Access expires 72 hours
+after enqueue, including repeat downloads; progress updates do not renew it.
+
+PWABuilder retains `package-owner:<id>` and `package-support:<id>` in local storage,
+never in a URL or public issue. New tabs and browser restarts in the same profile
+and origin can access the job until its fixed 72-hour server expiry. Different
+origins (including preview versus production), browser profiles, devices, or cleared
+storage require a new package. Local entries persist until site data is cleared;
+their presence does not extend server access. Jobs created by older session-storage
+clients are not migrated automatically. Treat same-origin scripts and other users
+of the same browser profile as trusted: they can access the locally stored tokens.
+Do not log Authorization headers or enqueue response bodies. Admin MSAL tokens
+remain in session storage; this change applies only to customer packaging receipts.
+Other API clients must update to the JSON receipt and bearer-header contract.
+The legacy synchronous packaging endpoints still return only the caller's own
+newly generated ZIP and are not a way to retrieve an existing job.
+
+Status records contain an explicit safe projection, not `packageOptions`.
+Signing inputs are held only in active worker memory and queue messages; Azure
+queue messages expire after one hour and workers discard jobs older than 30
+minutes. Automatic worker retries remain available within that window.
+User-initiated retries restart packaging and require signing inputs again.
+Status and owner-verifier records expire within 72 hours. Private Blob lifecycle
+deletion must also be configured and verified separately (see rollout below).
+
+Workers write redacted diagnostic projections to Redis under
+`package-diagnostics:<supportReference>` for 14 days. Failed references are
+indexed in `package-diagnostics:failed` (14 days, at most 500 entries).
+Diagnostics include allowlisted configuration, sanitized logs, retry count,
+and signing-input presence flags, but not keystores, passwords, owner tokens,
+or artifact locations. They are available through the PWABuilder Entra-protected
+`/admin` pages; admin authorization is independent of customer tokens.
+The web app must be configured to read the same Redis instance/database.
+The two services' separate in-memory development stores are not shared.
+
+The admin dashboard pages analyses and packages independently using Previous/Next
+controls, with up to 50 failures per page within a fixed 14-day window. Package
+history is limited to the latest 500 indexed failures. Summaries show the first
+two nonempty lines of sanitized error text (at most 400 characters); full sanitized
+details remain on the detail page. Missing errors have an explicit fallback.
+
+Paging uses protected, service-specific continuations with a one-hour lifetime.
+Previous-page history stays in browser memory and resets on navigation/sign-out.
+Expired or invalid cursors return HTTP 400; Retry restarts the dashboard traversal.
+Cosmos may return a short or empty page with more results available; Next remains
+available when a continuation exists. Records can change or expire while browsing.
+Replicas must share the ASP.NET Data Protection key ring and application identity.
+Loss of keys, or a slot swap to a different key ring, invalidates existing cursors;
+reload the dashboard. No new key storage is provisioned by this feature.
+
+#### Admin sign-in configuration
+
+Support uses a secretless browser authorization-code flow with PKCE through MSAL.
+The public sign-in shell contains no diagnostics; `/api/admin` authorizes every
+data request using a signed Entra access token. No client secret or support
+authentication cookie is used. The public site continues to work without admin
+configuration; both `/admin` and `/api/admin` fail closed until these settings
+are supplied:
+
+- `SupportAdmin__TenantId`: the approved Microsoft corporate tenant GUID.
+- `SupportAdmin__ClientId`: the single-tenant support app registration's client GUID.
+
+Configure the registration as follows:
+
+1. Register `https://<pwabuilder-host>/admin/signin-oidc` as a **Single-page
+   application** redirect URI for each supported host, not as a Web redirect.
+   Leave implicit token issuance disabled. The callback is an empty browser shell,
+   not a server-side code-exchange endpoint.
+2. Expose `api://<client-id>/Support.Read` as an enabled delegated API scope and
+   set `api.requestedAccessTokenVersion` to `2`. The SPA and API use the same
+   registration; preauthorize this client ID for this one delegated scope.
+   No Microsoft Graph permissions are requested.
+3. Define the user app role `PWABuilder.SupportReader`, require assignment on the
+   enterprise app, and assign that role only to approved support users/groups.
+   Scope consent alone never grants support access.
+4. Supply the two non-secret deployment settings above. Do not configure
+   `SupportAdmin__ClientSecret`; a secret is neither read nor needed.
+
+The API validates signature, issuer, audience, lifetime, tenant, originating
+client, object ID, the `Support.Read` delegated scope, and the assigned support
+role. ID tokens, Graph tokens, app-only tokens, cookies and URL tokens do not
+authorize API access. Email suffixes are not an authorization mechanism.
+Role removal takes effect when outstanding access tokens expire; sign-out is
+not revocation of a previously issued token.
+
+The isolated admin bundle runs no site analytics or service-worker registration.
+MSAL keeps its tokens in tab-scoped session storage and sends API access tokens
+only in Authorization headers to same-origin admin endpoints. Treat same-origin
+scripts as trusted: XSS can read SPA token storage. Diagnostic data stays in
+memory and is cleared on navigation/sign-out. All support responses are no-store,
+and admin reads are audited by tenant/object ID.
+No admin endpoint provides owner tokens, keystores, passwords, or ZIP downloads.
+
+The web app's existing `AppSettings__AzureRedisHost` and
+`AppSettings__AzureManagedIdentityApplicationId` must authorize reading CloudAPK's
+sanitized diagnostics keys/index in the same Redis database. Grant the narrowest
+available access rather than adding blanket credential/artifact access.
+Recent analysis failures use the existing Cosmos analysis store configuration.
+Verify real Entra redirects, role-denial cases, Redis connectivity and Cosmos
+queries in staging before enabling production support access.
+
+Validate locally with `dotnet test apps/pwabuilder.Tests/PWABuilder.Tests.csproj`,
+and in `apps/pwabuilder/Frontend`, `npm run test:admin:unit`,
+`npm run test:admin:browser`, and `npm run build`. Browser tests use mocked API/auth
+boundaries and never sign in to production. If Playwright's bundled Chromium is
+not installed, set `PLAYWRIGHT_CHANNEL=msedge` to use installed Edge.
+For actual local sign-in, an approved development SPA callback registration and
+a secure/loopback origin are required; production registrations need not expose
+localhost callbacks.
+
+#### Incident rollout and legacy cleanup
+
+This release intentionally revokes ID-only access to existing jobs. There is no
+safe migration that issues an owner token based only on a previously public ID.
+Users must create a new package. Existing diagnostic records are not automatically
+imported from legacy secret-bearing records.
+
+1. Coordinate evidence preservation, publisher notifications, and any affected
+   signing/upload-key resets with incident response. Do not put secrets in tickets
+   or exports. Deletion does not revoke copies of exposed signing keys.
+2. Pause packaging and workers; deploy the protected API and compatible frontend
+   to every production instance/slot before resuming. Old workers must not run
+   alongside the new contract. GitHub Actions only deploys to staging: verify the
+   production slot swap and deployed image explicitly.
+3. Under an approved, separately executed cleanup, purge legacy
+   `googleplaypackagejob:*` records and corresponding package ZIPs. Drain/purge
+   legacy queue messages and replace old workers so they cannot recreate sensitive
+   records. Scope deletion to CloudAPK data, not the entire shared Redis database
+   or storage account. Do not delete current jobs accidentally during rollout.
+4. Verify the `google-play-packages` container is private, disable public/direct
+   artifact access, and configure/verify Blob lifecycle deletion after three days.
+   The application rejects downloads after 72 hours even if a blob still exists.
+   Account-level lifecycle execution may lag; it is not the authorization boundary.
+5. Cosmos analyses are separate from CloudAPK's credential-bearing jobs. Deleting
+   analyses alone does not remediate this incident. Review diagnostic/log retention
+   and remove sensitive legacy content under the same incident process.
+6. Verify old public references fail for GET and HEAD, a fresh owner can poll and
+   download only their own job, and authorized admins can inspect sanitized
+   diagnostics without an owner token.
+
+No production purge, Entra registration, role assignment, storage policy change,
+or deployment is performed by this code change.
+
 ### Android build input security
 
 Packaging options are untrusted, including options loaded from queued jobs. The
