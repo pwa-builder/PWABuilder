@@ -10,6 +10,11 @@
     "stop": "npm run kill-dev-server",
     "kill-dev-server": "kill-port 5173",
     "test": "playwright test",
+    "test:package-access": "node --test tests/package-job-access.test.mjs",
+    "test:packaging-config": "node --test tests/packaging-configuration.test.mjs",
+    "test:packaging-config:browser": "playwright test --config playwright.packaging.config.ts",
+    "test:admin:unit": "node --test tests/support-admin.test.mjs",
+    "test:admin:browser": "playwright test --config playwright.admin.config.ts",
     "preinstall": "node ../../../scripts/setupDeps.js"
   },
   "author": "",
