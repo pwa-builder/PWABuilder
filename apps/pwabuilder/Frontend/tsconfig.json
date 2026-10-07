@@ -4,6 +4,7 @@
     "target": "esnext",
     "lib": ["es2017", "esnext", "dom", "dom.iterable"],
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
