@@ -73,7 +73,7 @@ jobs:
           echo "image_reference=$image_reference" >> "$GITHUB_OUTPUT"
 
       - name: Restart Azure Web App Staging Slot
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           IMAGE_REFERENCE: ${{ steps.pushed-image.outputs.image_reference }}
         run: |

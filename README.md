@@ -78,7 +78,9 @@ Breaking web app and Google Play API changes still require coordinated releases.
 
 Pushes to `main` deploy changed services to their existing shared slots:
 `pwabuilder/preview`, `pwabuilder-windows-docker/staging`, and
-`pwabuilder-cloudapk/staging`. Manual workflow runs also use those shared slots.
+`pwabuilder-cloudapk/staging`. Manual packager workflow runs also use their shared
+slots. The web app deploys to shared preview only on a push to `main` (including
+PR merges); manual web workflow runs build an image but do not deploy it.
 PRs targeting `main` from branches in this repository instead create or update
 `pr-<number>` slots on the affected apps. Fork PRs are skipped before any build
 or Azure login. The deployed slot URLs appear in workflow run summaries and
