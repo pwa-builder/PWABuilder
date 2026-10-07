@@ -14,11 +14,8 @@ jobs:
       matrix:
         include:
           - app_name: pwabuilder
-            client_id_secret: AZURE_WESTUS3_APP_ID
           - app_name: pwabuilder-windows-docker
-            client_id_secret: AZURE_EASTUS_APP_ID
           - app_name: pwabuilder-cloudapk
-            client_id_secret: AZURE_CENTRALUS_APP_ID
     permissions:
       contents: read
       pull-requests: read
@@ -33,10 +30,25 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
           persist-credentials: false
-      - name: Log in to Azure
+      - name: Log in to Azure for PWABuilder
+        if: matrix.app_name == 'pwabuilder'
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets[matrix.client_id_secret] }}
+          client-id: ${{ secrets.AZURE_WESTUS3_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Log in to Azure for Microsoft Store
+        if: matrix.app_name == 'pwabuilder-windows-docker'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_EASTUS_APP_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Log in to Azure for Google Play
+        if: matrix.app_name == 'pwabuilder-cloudapk'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CENTRALUS_APP_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Delete PR slot if present
