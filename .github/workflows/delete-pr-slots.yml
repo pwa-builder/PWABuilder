@@ -1,0 +1,51 @@
+name: Delete closed PR slots
+
+on:
+  # No path filter: cleanup must run even if a later commit removes the relevant changes.
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  cleanup:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app_name: pwabuilder
+            client_id_secret: AZURE_WESTUS3_APP_ID
+          - app_name: pwabuilder-windows-docker
+            client_id_secret: AZURE_EASTUS_APP_ID
+          - app_name: pwabuilder-cloudapk
+            client_id_secret: AZURE_CENTRALUS_APP_ID
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    concurrency:
+      group: pr-slot-${{ matrix.app_name }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    environment: staging
+    steps:
+      # Only execute the trusted default branch, never the PR head or merge commit.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets[matrix.client_id_secret] }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Delete PR slot if present
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APP_NAME: ${{ matrix.app_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          & ./.github/scripts/manage-pr-slot.ps1 -Operation Delete `
+            -AppName $env:APP_NAME -PullRequestNumber $env:PR_NUMBER `
+            -Repository $env:GITHUB_REPOSITORY
