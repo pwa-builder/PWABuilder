@@ -7,28 +7,11 @@ const lighthouseSettings = {
 		{ id: 'DevtoolsLog', gatherer: 'devtools-log' },
 		{ id: 'InstallabilityErrors', gatherer: 'installability-errors' },
 		{ id: 'InspectorIssues', gatherer: 'inspector-issues' },
-		{
-			id: 'ServiceWorkerGatherer',
-			gatherer: 'custom-audits/service-worker/service-worker-gatherer',
-		},
 		{ id: 'WebAppManifest', gatherer: 'web-app-manifest' },
-		{
-			id: 'OfflineGatherer',
-			gatherer: 'custom-audits/offline/offline-gatherer',
-		},
-		{
-			id: 'WebAppManifestRawGatherer',
-			gatherer: 'custom-audits/web-app-manifest-raw/web-app-manifest-raw-gatherer',
-		},
-		{ id: 'devtoolsLogs', gatherer: 'devtools-log-compat' },
 	],
 
 	audits: [
 		'is-on-https',
-		'custom-audits/service-worker/service-worker-audit',
-		'custom-audits/web-app-manifest-raw/web-app-manifest-raw-audit',
-		'custom-audits/offline/offline-audit',
-		'custom-audits/https/https-audit',
 		'viewport',
 		'metrics/first-contentful-paint',
 		'metrics/largest-contentful-paint',
@@ -118,9 +101,6 @@ const lighthouseSettings = {
 			supportedModes: ['navigation'],
 			auditRefs: [
 				{ id: 'installable-manifest', weight: 2, group: 'pwa-installable' },
-				{ id: 'service-worker-audit', weight: 2, group: 'pwa-installable' },
-				{ id: 'offline-audit', weight: 1, group: 'pwa-installable' },
-				{ id: 'https-audit', weight: 1, group: 'pwa-installable' },
 			],
 		},
 	},
