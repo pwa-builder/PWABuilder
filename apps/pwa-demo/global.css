@@ -1,0 +1,89 @@
+/*
+  Global CSS variables and styles that apply across the whole app.
+  See https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
+*/
+:root {
+  --font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  /* Opt into both schemes so light-dark() resolves against the user's choice. */
+  color-scheme: light dark;
+
+  /*
+    Remap Web Awesome's "brand" variant to the blue palette so every brand
+    element (buttons, links, focus rings) picks up the Nimbus sky-blue hue.
+  */
+  --wa-color-brand-95: var(--wa-color-blue-95);
+  --wa-color-brand-90: var(--wa-color-blue-90);
+  --wa-color-brand-80: var(--wa-color-blue-80);
+  --wa-color-brand-70: var(--wa-color-blue-70);
+  --wa-color-brand-60: var(--wa-color-blue-60);
+  --wa-color-brand-50: var(--wa-color-blue-50);
+  --wa-color-brand-40: var(--wa-color-blue-40);
+  --wa-color-brand-30: var(--wa-color-blue-30);
+  --wa-color-brand-20: var(--wa-color-blue-20);
+  --wa-color-brand-10: var(--wa-color-blue-10);
+  --wa-color-brand-05: var(--wa-color-blue-05);
+  --wa-color-brand: var(--wa-color-blue);
+  --wa-color-brand-on: var(--wa-color-blue-on);
+
+  /* App-level color aliases built on Web Awesome tokens. */
+  --app-color-primary: var(--wa-color-brand-fill-loud);
+  --app-color-on-primary: var(--wa-color-brand-on-loud);
+  --app-color-surface: var(--wa-color-surface-default);
+  --app-color-text: var(--wa-color-text-normal);
+  --app-color-link: var(--wa-color-text-link);
+
+  /* Nimbus brand gradient used for hero surfaces and the app header. */
+  --nimbus-gradient: linear-gradient(135deg, #2563eb 0%, #0ea5e9 55%, #22d3ee 100%);
+  --nimbus-gradient-soft: linear-gradient(
+    135deg,
+    color-mix(in srgb, #2563eb 16%, transparent),
+    color-mix(in srgb, #22d3ee 16%, transparent)
+  );
+
+  --nimbus-header-height: 60px;
+  --nimbus-max-width: 1100px;
+}
+
+html,
+body {
+  font-family: var(--font-family);
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
+  background-color: light-dark(#eef2f8, #0d1117);
+  color: light-dark(#111827, #e6edf3);
+}
+
+a {
+  color: var(--app-color-link);
+}
+
+/* A calm animated backdrop that reads as "sky/clouds" without being noisy. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      60vw 60vw at 12% -8%,
+      color-mix(in srgb, #22d3ee 22%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      55vw 55vw at 100% 0%,
+      color-mix(in srgb, #6366f1 20%, transparent),
+      transparent 55%
+    );
+  pointer-events: none;
+}
+
+/* Smooth cross-page transitions when the View Transitions API is available. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 220ms;
+  }
+}

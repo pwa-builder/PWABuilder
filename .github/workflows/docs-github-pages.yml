@@ -5,7 +5,10 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-    paths: ["docs/**"]
+    paths:
+      - "docs/**"
+      - "apps/pwa-demo/**"
+      - ".github/workflows/docs-github-pages.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,12 +40,27 @@ jobs:
           node-version: "18"
       - name: Setup Docs
         run: cd docs/ && npm i && npm run setup
+      - name: Set up Node for Nimbus
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/pwa-demo/package-lock.json
+      - name: Build Nimbus
+        working-directory: apps/pwa-demo
+        run: |
+          npm ci
+          npm run build -- --base=/nimbus/
+      - name: Include Nimbus in the Pages site
+        run: |
+          mkdir -p docs/nimbus
+          cp -a apps/pwa-demo/dist/. docs/nimbus/
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Publish the documentation and Nimbus together.
           path: "docs/"
       - name: Deploy to GitHub Pages
         id: deployment

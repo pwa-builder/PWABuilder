@@ -1,0 +1,12 @@
+.DS_Store
+node_modules
+dist
+dev-dist
+build
+types
+.test-build
+.pages-test
+test-results
+playwright-report
+.idea
+.spiderloop/
