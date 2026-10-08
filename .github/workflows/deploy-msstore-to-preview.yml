@@ -92,11 +92,29 @@ jobs:
       - name: Verify pwa_builder extraction
         run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
 
+      - name: Ensure Windows Docker daemon is ready
+        run: |
+          $ErrorActionPreference = "Stop"
+          $service = Get-Service -Name docker -ErrorAction Stop
+          if ($service.Status -ne "Running") {
+            Start-Service -InputObject $service
+          }
+          $service.WaitForStatus("Running", [TimeSpan]::FromSeconds(60))
+          $ready = $false
+          for ($attempt = 0; $attempt -lt 12; $attempt++) {
+            docker info
+            if ($LASTEXITCODE -eq 0) {
+              $ready = $true
+              break
+            }
+            Start-Sleep -Seconds 5
+          }
+          if (-not $ready) {
+            throw "Docker service is running, but the Docker daemon did not become responsive."
+          }
+
       - name: Log in to Azure docker registry (ACR)
         run: az acr login --name pwabuilder
-
-      - name: docker info
-        run: docker info
 
       - name: Docker build
         working-directory: ./apps/pwabuilder-microsoft-store

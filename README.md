@@ -115,6 +115,9 @@ Before enabling PR deployments, configure Azure and GitHub:
   PR deployments and cleanup use
   `repository_owner_id:11843769:repository_id:33142199:environment:staging`.
   The existing Azure identities already trust these required subjects.
+  The web deployment identity `pwabuilder-managed-id-west-us-3` explicitly trusts
+  the staging-environment subject for PR deployment and cleanup; its existing
+  main and PR-build credentials are preserved.
   Keep any GitHub `staging` environment protection rules compatible with PR
   deployments and cleanup. Required approval rules also delay slot deletion.
 * Source slots must have auto-swap disabled and working container registry
