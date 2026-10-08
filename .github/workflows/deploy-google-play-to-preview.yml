@@ -2,7 +2,7 @@
 # It pushes a uniquely tagged image to the pwabuilder/cloudapk-prod repository in ACR.
 # It then deploys that image by digest to the Azure Web App's staging slot.
 
-name: Deploy Google Play packager to staging
+name: Deploy Google Play packager to staging or PR slot
 
 on:
   push:
@@ -11,6 +11,18 @@ on:
     paths:
       - "apps/pwabuilder-google-play/**"
       - ".github/workflows/deploy-google-play-to-preview.yml"
+      - ".github/workflows/deploy-pr-slot.yml"
+      - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - "apps/pwabuilder-google-play/**"
+      - ".github/workflows/deploy-google-play-to-preview.yml"
+      - ".github/workflows/deploy-pr-slot.yml"
+      - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
   workflow_dispatch: null
 
 env:
@@ -18,6 +30,7 @@ env:
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     outputs:
       image_reference: ${{ steps.pushed-image.outputs.image_reference }}
@@ -55,6 +68,7 @@ jobs:
           echo "image_reference=$image_reference" >> "$GITHUB_OUTPUT"
 
   deploy:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,3 +93,21 @@ jobs:
           app-name: pwabuilder-cloudapk
           slot-name: staging
           images: ${{ needs.build.outputs.image_reference }}
+
+  deploy-pr:
+    if: github.event_name == 'pull_request'
+    needs: build
+    permissions:
+      contents: read
+      pull-requests: write
+      deployments: read
+      id-token: write
+    uses: ./.github/workflows/deploy-pr-slot.yml
+    with:
+      app_name: pwabuilder-cloudapk
+      source_slot: staging
+      image_reference: ${{ needs.build.outputs.image_reference }}
+    secrets:
+      azure_client_id: ${{ secrets.AZURE_CENTRALUS_APP_ID }}
+      azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+      azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
