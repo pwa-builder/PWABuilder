@@ -172,7 +172,7 @@ async function shareFiles(filesArray, shareTitle, shareText) {
 };
 ```
 
-The only primary change here is that we are making a call to `navigator.canShare()` to confirm that the file types we are trying to share are compatible with the Web Share API. You can find a list of supported file types <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share#shareable_file_types" aria-label="Click here to learn more">here</a> 
+The only primary change here is that we are making a call to `navigator.canShare()` to confirm that the file types we are trying to share are compatible with the Web Share API. [View the Web Share API's supported file types](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share#shareable_file_types).
 
 ### How to Share *To* Your PWA
 
@@ -307,7 +307,7 @@ A notification displayed on Windows would look something like this:
 
 Notifications are often displayed in response to `push` event from the back end. A service worker can listen for this event and then display a notification when a push is received. 
 
-?> **Note** For simplicity sake, this guidance will focus on handling `push` from the front end, but you can learn more about the Push API <a href="https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=how-to-start-1" aria-label="Click here to learn more">here</a>
+?> **Note** For simplicity sake, this guidance will focus on handling `push` from the front end, but you can [learn more about the Push API](https://microsoft.github.io/win-student-devs/#/30DaysOfPWA/advanced-capabilities/07?id=how-to-start-1).
 
 ### Requesting Permission
 
@@ -340,7 +340,7 @@ self.addEventListener('push', (event) => {
 
 In this snippet we are making a call to `showNotification` and passing in a `title` argument and an object containing further specifications for our notification. In this case, we are sending body text and a custom icon for our notification.
 
-?> **Note** You can view a list of data you can pass to your Notification <a href="https://developer.mozilla.org/en-US/docs/Web/API/notification" aria-label="Click here to learn more">here</a> 
+?> **Note** [View the data you can pass to a Notification](https://developer.mozilla.org/en-US/docs/Web/API/notification).
 
 
 ### Handling Notification Clicks
@@ -365,7 +365,7 @@ Read more in [MDN's Official Documentation.](https://developer.mozilla.org/docs/
 
 ## Background Sync
 
-?> **Note** The Background Sync APIs are an experimental web feature, and may not be compatible with all browsers. [Check here for a table on compatibility.](https://developer.mozilla.org/docs/Web/API/Background_Synchronization_API#browser_compatibility)
+?> **Note** The Background Sync APIs are an experimental web feature, and may not be compatible with all browsers. [Check Background Sync browser compatibility](https://developer.mozilla.org/docs/Web/API/Background_Synchronization_API#browser_compatibility).
 
 Progressive web apps now have the capability to sync content and update your app in the background, regardless of whether or not your application is currently open. 
 

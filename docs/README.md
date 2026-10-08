@@ -47,7 +47,7 @@ The PWA Starter uses a lightweight, fast, and extensible stack that allows you t
 
 It comes with the key pieces of any PWA, including a manifest and service worker functionality through [Workbox.](https://developers.google.com/web/tools/workbox/)
 
-To learn more about the starter's tech stack and how to develop on it, take a look at the [quick start.](/starter/quick-start)
+To learn more about the starter's tech stack and how to develop on it, take a look at the [PWA Starter quick start](/starter/quick-start).
 
 ## PWABuilder Studio
 
@@ -67,7 +67,7 @@ You can use PWABuilder Studio to:
   
 * Add web capabilities with code snippets
 
-To learn more about PWABuilder Studio, take a look at the [quick start.](/studio/quick-start)
+To learn more about PWABuilder Studio, take a look at the [PWABuilder Studio quick start](/studio/quick-start).
 
 ## PWABuilder
 
@@ -77,7 +77,7 @@ PWABuilder enables developers to quickly and easily to generate store uploadable
 
 In addition to store-ready packages, you can also generate side-loadable packages for testing and validation.
 
-To learn more about packaging with PWABuilder, take a look at the [quick start.](/builder/quick-start)
+To learn more about packaging with PWABuilder, take a look at the [PWABuilder quick start](/builder/quick-start).
 
 <div class="docs-image">
    <img src="assets/PWABuilder.png" alt="PWABuilder.com landing page" />
