@@ -9,6 +9,7 @@ on:
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
@@ -18,6 +19,7 @@ on:
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
   workflow_dispatch:
 
 env:
@@ -95,7 +97,8 @@ jobs:
     needs: build-and-deploy
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
+      deployments: read
       id-token: write
     uses: ./.github/workflows/deploy-pr-slot.yml
     with:

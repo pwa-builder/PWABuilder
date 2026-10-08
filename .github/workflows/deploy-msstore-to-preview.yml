@@ -7,6 +7,7 @@ on:
       - ".github/workflows/deploy-msstore-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
     branches: ["main"]
   pull_request:
     types: [opened, synchronize, reopened]
@@ -15,6 +16,7 @@ on:
       - ".github/workflows/deploy-msstore-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
     branches: [main]
   workflow_dispatch:
 
@@ -164,7 +166,8 @@ jobs:
     needs: build
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
+      deployments: read
       id-token: write
     uses: ./.github/workflows/deploy-pr-slot.yml
     with:

@@ -84,7 +84,14 @@ PR merges); manual web workflow runs build an image but do not deploy it.
 PRs targeting `main` from branches in this repository instead create or update
 `pr-<number>` slots on the affected apps. Fork PRs are skipped before any build
 or Azure login. The deployed slot URLs appear in workflow run summaries and
-GitHub's `staging` environment deployment records.
+GitHub's `staging` environment deployment records. After deployment, a separate
+job refreshes a `PR deployments` section of the PR description with successful
+service links for that commit. Hidden `pwabuilder-pr-deployments:start` and
+`pwabuilder-pr-deployments:end` markers delimit the managed section; text outside
+those markers is preserved. Publishing jobs share a per-PR concurrency lock and
+collect all successful service deployments so concurrent builds do not lose links.
+Only publishing receives `pull-requests: write`; Azure deployment retains read
+access. Failed, closed, superseded, and fork PR deployments do not publish links.
 
 The three service workflows retain their own builds and call `deploy-pr-slot.yml`
 for PR deployment. `delete-pr-slots.yml` handles both merged and unmerged closed
@@ -166,6 +173,8 @@ digests.
 Run the slot lifecycle regression checks with
 `pwsh -NoProfile -File .github/scripts/tests/test-pr-slot.ps1`.
 They simulate Azure and GitHub responses without changing cloud resources.
+Run PR-description publishing tests with
+`node --test .github/scripts/tests/test-pr-deployment-links.cjs`.
 
 ## License
 
