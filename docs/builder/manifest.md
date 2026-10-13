@@ -68,8 +68,7 @@ Just like `short_name`, this data should usually align with any store listings.
 "background_color": "green"
 ```
 
-!> PWABuilder expects a HEX color value for this member. You can convert an RGB color value to HEX
-<a href="https://www.rgbtohex.net/" aria-label="Click here to convert color value">here</a> 
+!> PWABuilder expects a HEX color value for this member. [Convert an RGB color value to HEX](https://www.rgbtohex.net/).
 
 ### theme_color: `string`
 
@@ -79,8 +78,7 @@ Just like `short_name`, this data should usually align with any store listings.
 "theme_color": "purple"
 ```
 
-!> PWABuilder expects a HEX color value for this member. You can convert an RGB color value to HEX 
-<a href="https://www.rgbtohex.net/" aria-label="Click here to convert color value">here</a> 
+!> PWABuilder expects a HEX color value for this member. [Convert an RGB color value to HEX](https://www.rgbtohex.net/).
 
 ## Settings
 
@@ -117,7 +115,7 @@ It has three values to choose from:
 ```
 
 ### lang: `string`
-`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each language, and a list can be found <a href="https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry" aria-label="Click here to view list">here</a> 
+`lang` is an optional member that specifies the primary language of your app. The `Language` member expects a proper subtag for each language. [View the IANA language subtag registry](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry).
 
 
 ```json
@@ -182,7 +180,7 @@ In addition to the four display values above, `display_override` can also take t
 `iarc_rating_id` is an optional member that allows you to specify a suitable age range for their application. A rating ID is obtained by answering a questionnaire about an application, and then providing the associated ID for that application.
 
 
-You can read more about IARC <a href="https://www.globalratings.com/how-iarc-works/" aria-label="Click here to read more">here</a> 
+[Read more about how IARC works](https://www.globalratings.com/how-iarc-works/).
 
 
 ```json
@@ -262,8 +260,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### categories: `Array`
 
-`categories` is an optional member that specifies an array of categories that the application belongs to. Though this array isn't limited to specific values, you can find a list of known categories 
-<a href="https://github.com/w3c/manifest/wiki/Categories" aria-label="Click here to read more">here</a> 
+`categories` is an optional member that specifies an array of categories that the application belongs to. Though this array isn't limited to specific values, you can [view the list of known manifest categories](https://github.com/w3c/manifest/wiki/Categories).
 
 ```json
 "categories": ["games", "finance", "navigation"]
@@ -271,7 +268,7 @@ The `shortcuts` member is an array of `shortcut` objects, which can contain the 
 
 ### edge_side_panel: `Object`
 
-`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. You can learn more about side panel use cases <a href="https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa" aria-label="Click here to learn more">here</a>
+`edge_side_panel` is an optional member that specifies whether or not your app supports the side panel view in Microsoft Edge. The side panel provides an alternative view that allows your app to display UI in a manner conducive to side-by-side browsing. [Learn more about Microsoft Edge side panel use cases](https://learn.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/sidebar#enable-sidebar-support-in-your-pwa).
 You can also specify the `preferred_width` member as part of your `edge_side_panel` specification.
 
 ```json

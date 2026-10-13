@@ -52,7 +52,7 @@ Add this snippet to the body of your application's `index.html`:
 
 Let's take a look at a basic service worker that we could add to our PWA.
 
-We'll step through it in pieces, but you can find the full source code <a href="https://github.com/pwa-builder/PWABuilder/tree/main/docs/assets/code-examples/example-sw.js" aria-label="Click here to learn more">here</a>
+We'll step through it in pieces, but you can [view the full example service worker source code](https://github.com/pwa-builder/PWABuilder/tree/main/docs/assets/code-examples/example-sw.js).
 
 ### Pre-caching During the *Install* Event
 
