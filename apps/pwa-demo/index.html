@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Nimbus</title>
+
+  <base href="%BASE_URL%" />
+
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="Nimbus is your offline-first notebook. Keep thoughts, sketches, and photos together, with dictation, read-aloud, and sharing. Built with PWABuilder." />
+
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1117" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#2563eb" />
+
+  <!-- Apple-specific tags: run full-screen when added to the Home Screen. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Nimbus" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="%BASE_URL%assets/icons/apple-touch-icon.png" />
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:title" content="Nimbus" />
+  <meta property="og:description" content="Keep thoughts, sketches, and photos together in your offline-first notebook." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="%BASE_URL%assets/screenshots/wide.png" />
+
+  <!-- This tag is used by the PWA Starter CLI to identify template projects. -->
+  <meta name="pwa-starter-template-identity" content="pwa-starter" />
+
+  <link rel="icon" href="%BASE_URL%assets/icons/icon_24.png" type="image/png" />
+
+  <!-- A web app must have a manifest to be a PWA. -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Web Awesome styles are bundled by app-index.ts for offline use. -->
+  <link rel="stylesheet" href="global.css" />
+
+  <!-- Web Awesome uses class-based color schemes. Track the OS preference. -->
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const applyScheme = (isDark) => {
+        root.classList.toggle('wa-dark', isDark);
+        root.classList.toggle('wa-light', !isDark);
+      };
+      applyScheme(media.matches);
+      media.addEventListener('change', (event) => applyScheme(event.matches));
+    })();
+  </script>
+
+  <script type="module" src="/src/app-index.ts"></script>
+</head>
+
+<body>
+  <app-index></app-index>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.onload = () => {
+        navigator.serviceWorker.register('%BASE_URL%sw.js', { type: 'module', scope: '%BASE_URL%' })
+          .catch((error) => console.error('Nimbus service worker registration failed', error));
+      };
+    }
+  </script>
+</body>
+
+</html>
