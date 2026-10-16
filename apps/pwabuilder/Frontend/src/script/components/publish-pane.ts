@@ -14,6 +14,7 @@ import { showToast } from '../services/toast-service';
 import './windows-form';
 import './android-form';
 import './ios-form';
+import './macos-form';
 import { AppPackageFormBase } from './app-package-form-base';
 import { PackageOptions } from '../utils/interfaces';
 import { getDataFromDB, setDataInDB } from '../utils/indexedDB';
@@ -67,6 +68,12 @@ export class PublishPane extends LitElement {
             "logo": "/assets/apple_icon.svg",
             "packaging_text": "Click below for instructions on how to submit to the Apple App Store.",
             "package_instructions": "https://docs.pwabuilder.com/#/builder/app-store"
+        },
+        "macOS":
+        {
+            "logo": "/assets/apple_icon.svg",
+            "packaging_text": "Click below for instructions on how to sideload your macOS app.",
+            "package_instructions": "https://docs.pwabuilder.com/#/builder/mac"
         }
     }
 
@@ -110,6 +117,18 @@ export class PublishPane extends LitElement {
             isActionCard: true,
             icon: '/assets/Publish_Apple.svg',
             renderDownloadButton: () => this.renderiOSDownloadButton()
+        },
+        {
+            operatingSystem: 'macOS',
+            appStore: 'Mac',
+            factoids: [
+                "Full-screen WKWebView app with no browser toolbar",
+                "Same experience as Chrome/Edge PWA install",
+                "Distribute as a .dmg for sideloading"
+            ],
+            isActionCard: true,
+            icon: '/assets/Publish_Apple.svg',
+            renderDownloadButton: () => this.renderMacOSDownloadButton()
         }
     ];
     static styles = [publishPaneStyles];
@@ -146,6 +165,14 @@ export class PublishPane extends LitElement {
     `;
     }
 
+    renderMacOSDownloadButton(): TemplateResult {
+        return html`
+      <button class="package-button" id="macos-package-button" @click="${() => this.showMacOSOptions()}">
+        Generate Package
+      </button>
+    `;
+    }
+
     renderForm() {
         if (this.selectedStore === "Windows") {
             return html`<windows-form id="packaging-form" .generating=${this.generating}></windows-form>`
@@ -172,6 +199,8 @@ export class PublishPane extends LitElement {
         } else if (this.selectedStore === "Meta") {
             return html`<oculus-form id="packaging-form" .generating=${this.generating}>
       </oculus-form>`
+        } else if (this.selectedStore === "macOS") {
+            return html`<macos-form id="packaging-form" .generating=${this.generating}></macos-form>`
         } else {
             return html`<ios-form id="packaging-form" .generating=${this.generating}></ios-form>`
         }
@@ -208,6 +237,13 @@ export class PublishPane extends LitElement {
     showiOSOptions() {
         recordPWABuilderProcessStep("ios_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
         this.selectedStore = "iOS";
+        this.cardsOrForm = false;
+        this.requestUpdate();
+    }
+
+    showMacOSOptions() {
+        recordPWABuilderProcessStep("macos_store_form_opened", AnalyticsBehavior.ProcessCheckpoint);
+        this.selectedStore = "macOS";
         this.cardsOrForm = false;
         this.requestUpdate();
     }
@@ -321,6 +357,8 @@ export class PublishPane extends LitElement {
                 return "GooglePlayStore";
             case "ios":
                 return "IOSAppStore";
+            case "macos":
+                return null;
             default:
                 return null;
         }
@@ -429,11 +467,11 @@ export class PublishPane extends LitElement {
         return this.platforms.map(
             platform => html`
         <div class="card-wrapper">
-          ${platform.operatingSystem != "iOS" ? null :
+          ${(platform.operatingSystem === "iOS" || platform.operatingSystem === "macOS") ?
                     html`
             <div class="experimental-tracker">
             <p>Experimental</p>
-            </div>`
+            </div>` : null
                 }
           <div class="title-block">
             <div class="platform-header">
@@ -579,6 +617,7 @@ export class PublishPane extends LitElement {
             case "Windows": return "Microsoft Store";
             case "Android": return "Google Play Store";
             case "iOS": return "Apple iOS App Store";
+            case "macOS": return "macOS";
             default: return this.selectedStore;
         }
     }
@@ -697,8 +736,8 @@ export class PublishPane extends LitElement {
 }
 
 interface ICardData {
-    operatingSystem: 'Windows' | 'Android' | 'iOS';
-    appStore: 'Microsoft Store' | 'Google Play' | 'App Store';
+    operatingSystem: 'Windows' | 'Android' | 'iOS' | 'macOS';
+    appStore: 'Microsoft Store' | 'Google Play' | 'App Store' | 'Mac';
     factoids: string[];
     isActionCard: boolean;
     icon: string;
