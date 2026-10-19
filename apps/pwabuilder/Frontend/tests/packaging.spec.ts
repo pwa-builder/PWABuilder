@@ -505,6 +505,72 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
   expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
 });
 
+test('Google Play packaging status lets the user retry a failed package download', async ({ page }) => {
+  const jobId = 'googleplaypackagejob:example.com:retry-test';
+  let downloadAttempts = 0;
+  await page.route('**/api/packaging/config', route => route.fulfill({
+    json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' }
+  }));
+  await page.route('https://pwabuilder-cloudapk.azurewebsites.net/downloadPackageZip**', route => {
+    downloadAttempts++;
+    return downloadAttempts === 1
+      ? route.abort('connectionreset')
+      : route.fulfill({
+        status: 200,
+        contentType: 'application/zip',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: 'zip'
+      });
+  });
+
+  const states = await page.evaluate(async (id) => {
+    localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+    document.body.innerHTML = '<google-play-packaging-status></google-play-packaging-status>';
+    await import('/src/script/pages/google-play-packaging-status.ts');
+    await customElements.whenDefined('google-play-packaging-status');
+
+    const statusPage = document.querySelector('google-play-packaging-status') as any;
+    const job = {
+      id,
+      supportReference: null,
+      pwaUrl: 'https://example.com',
+      analysisId: null,
+      status: 'Completed',
+      createdAt: new Date().toISOString(),
+      retryCount: 0,
+      name: 'Example',
+      logs: [],
+      errors: [],
+      downloadAvailable: true
+    };
+    statusPage.job = job;
+    statusPage.downloadBlob = () => { };
+
+    const snapshot = async () => {
+      await statusPage.updateComplete;
+      const buttons = Array.from(statusPage.shadowRoot.querySelectorAll('.card-footer wa-button')) as HTMLElement[];
+      return {
+        title: statusPage.shadowRoot.querySelector('.page-title')?.textContent?.trim() ?? '',
+        hasRetryButton: buttons.some(b => b.textContent?.trim() === 'Retry download'),
+        lastLog: statusPage.logs[statusPage.logs.length - 1] as string
+      };
+    };
+
+    await statusPage.jobCompleted(job);
+    const afterFailure = await snapshot();
+    await statusPage.retryDownload();
+    const afterRetry = await snapshot();
+    return { afterFailure, afterRetry };
+  }, jobId);
+
+  expect(downloadAttempts).toBe(2);
+  expect(states.afterFailure.title).toBe('Package created, but the download failed');
+  expect(states.afterFailure.hasRetryButton).toBe(true);
+  expect(states.afterRetry.title).toBe('Package created successfully');
+  expect(states.afterRetry.hasRetryButton).toBe(false);
+  expect(states.afterRetry.lastLog).toBe('Package created successfully. Download has begun.');
+});
+
 test('Windows, Android, and iOS app names allow ampersands and colons', async ({ page }) => {
   const validationResults = await page.evaluate(async () => {
     const siteUrl = 'https://example.com';
