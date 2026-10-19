@@ -30,6 +30,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
     private readonly maxWaitTimeMs = 30 * 60 * 1000; // Max wait time of 30 minutes
     private readonly pollQueryRetryDelayMs = 10000; // Wait 10 seconds before retrying a failed query
+    autoDownloadRetryDelayMs = 3000; // Wait 3 seconds before automatically retrying a failed download
     private jobTimeoutHandle = 0;
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
@@ -253,7 +254,7 @@ export class GooglePlayPackagingStatus extends LitElement {
 
         this.isDownloading = true;
         try {
-            const blob = await downloadGooglePlayPackageZip(job.id);
+            const blob = await this.downloadPackageZipWithRetry(job.id);
             this.downloadBlob(blob, job);
             this.hasDownloadFailed = false;
             this.hasFailed = false;
@@ -262,6 +263,21 @@ export class GooglePlayPackagingStatus extends LitElement {
             this.downloadFailed(job, downloadError);
         } finally {
             this.isDownloading = false;
+        }
+    }
+
+    /**
+     * Downloads the package zip, automatically retrying once after a short delay.
+     * Transient network failures (e.g. "TypeError: Failed to fetch") can occur even though the package was built successfully.
+     */
+    private async downloadPackageZipWithRetry(jobId: string): Promise<Blob> {
+        try {
+            return await downloadGooglePlayPackageZip(jobId);
+        } catch (firstError) {
+            console.warn("Google Play package download failed. Retrying automatically.", firstError);
+            this.appendLog(`Download failed (${firstError}). Retrying automatically...`);
+            await new Promise(resolve => setTimeout(resolve, this.autoDownloadRetryDelayMs));
+            return await downloadGooglePlayPackageZip(jobId);
         }
     }
 

@@ -505,7 +505,7 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
   expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
 });
 
-test('Google Play packaging status lets the user retry a failed package download', async ({ page }) => {
+async function runGooglePlayDownloadScenario(page: Page, failedAttempts: number) {
   const jobId = 'googleplaypackagejob:example.com:retry-test';
   let downloadAttempts = 0;
   await page.route('**/api/packaging/config', route => route.fulfill({
@@ -513,7 +513,7 @@ test('Google Play packaging status lets the user retry a failed package download
   }));
   await page.route('https://pwabuilder-cloudapk.azurewebsites.net/downloadPackageZip**', route => {
     downloadAttempts++;
-    return downloadAttempts === 1
+    return downloadAttempts <= failedAttempts
       ? route.abort('connectionreset')
       : route.fulfill({
         status: 200,
@@ -544,6 +544,7 @@ test('Google Play packaging status lets the user retry a failed package download
       downloadAvailable: true
     };
     statusPage.job = job;
+    statusPage.autoDownloadRetryDelayMs = 0;
     statusPage.downloadBlob = () => { };
 
     const snapshot = async () => {
@@ -557,18 +558,36 @@ test('Google Play packaging status lets the user retry a failed package download
     };
 
     await statusPage.jobCompleted(job);
-    const afterFailure = await snapshot();
-    await statusPage.retryDownload();
-    const afterRetry = await snapshot();
-    return { afterFailure, afterRetry };
+    const afterCompletion = await snapshot();
+    let afterManualRetry = null;
+    if (afterCompletion.hasRetryButton) {
+      await statusPage.retryDownload();
+      afterManualRetry = await snapshot();
+    }
+    return { afterCompletion, afterManualRetry };
   }, jobId);
 
-  expect(downloadAttempts).toBe(2);
-  expect(states.afterFailure.title).toBe('Package created, but the download failed');
-  expect(states.afterFailure.hasRetryButton).toBe(true);
-  expect(states.afterRetry.title).toBe('Package created successfully');
-  expect(states.afterRetry.hasRetryButton).toBe(false);
-  expect(states.afterRetry.lastLog).toBe('Package created successfully. Download has begun.');
+  return { downloadAttempts, ...states };
+}
+
+test('Google Play packaging status automatically retries a failed package download', async ({ page }) => {
+  const result = await runGooglePlayDownloadScenario(page, 1);
+
+  expect(result.downloadAttempts).toBe(2);
+  expect(result.afterCompletion.title).toBe('Package created successfully');
+  expect(result.afterCompletion.hasRetryButton).toBe(false);
+  expect(result.afterCompletion.lastLog).toBe('Package created successfully. Download has begun.');
+});
+
+test('Google Play packaging status shows Retry download after the automatic retry fails', async ({ page }) => {
+  const result = await runGooglePlayDownloadScenario(page, 2);
+
+  expect(result.afterCompletion.title).toBe('Package created, but the download failed');
+  expect(result.afterCompletion.hasRetryButton).toBe(true);
+  expect(result.downloadAttempts).toBe(3);
+  expect(result.afterManualRetry?.title).toBe('Package created successfully');
+  expect(result.afterManualRetry?.hasRetryButton).toBe(false);
+  expect(result.afterManualRetry?.lastLog).toBe('Package created successfully. Download has begun.');
 });
 
 test('Windows, Android, and iOS app names allow ampersands and colons', async ({ page }) => {
