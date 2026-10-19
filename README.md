@@ -62,7 +62,7 @@ Alternatively, build the `Dockerfile.production` container and access it from `h
 
 ### Deployment
 
-The web app preview and Google Play staging workflows publish uniquely tagged
+The web app, Microsoft Store, and Google Play deployment workflows publish uniquely tagged
 images containing the commit SHA, workflow run ID, and run attempt. Each workflow
 deploys the digest captured from its pushed image, not a mutable `:production`
 or `:latest` tag. This prevents a subsequent preview build from changing the
@@ -73,6 +73,108 @@ Existing production slots using mutable tags must be pinned separately to their
 verified known-good digests; changing these workflows does not update live slots.
 Retain images referenced by deployed slots and images needed for rollback.
 Breaking web app and Google Play API changes still require coordinated releases.
+
+#### Pull request deployment slots
+
+Pushes to `main` deploy changed services to their existing shared slots:
+`pwabuilder/preview`, `pwabuilder-windows-docker/staging`, and
+`pwabuilder-cloudapk/staging`. Manual packager workflow runs also use their shared
+slots. The web app deploys to shared preview only on a push to `main` (including
+PR merges); manual web workflow runs build an image but do not deploy it.
+PRs targeting `main` from branches in this repository instead create or update
+`pr-<number>` slots on the affected apps. Fork PRs are skipped before any build
+or Azure login. The deployed slot URLs appear in workflow run summaries and
+GitHub's `staging` environment deployment records. After deployment, a separate
+job refreshes a `PR deployments` section of the PR description with successful
+service links for that commit. Hidden `pwabuilder-pr-deployments:start` and
+`pwabuilder-pr-deployments:end` markers delimit the managed section; text outside
+those markers is preserved. Publishing jobs share a per-PR concurrency lock and
+collect all successful service deployments so concurrent builds do not lose links.
+Only publishing receives `pull-requests: write`; Azure deployment retains read
+access. Failed, closed, superseded, and fork PR deployments do not publish links.
+
+The three service workflows retain their own builds and call `deploy-pr-slot.yml`
+for PR deployment. `delete-pr-slots.yml` handles both merged and unmerged closed
+PRs, without path filters, and executes only the trusted default branch.
+Cleanup checks all three apps and tolerates missing slots, but reports Azure
+errors. Deploy and cleanup jobs share a per-app/PR concurrency lock and recheck
+the current PR state; obsolete builds are skipped, late builds clean up closed
+PRs, and cleanup skips reopened PRs. A reopened PR gets a fresh deployment.
+If cleanup fails or is cancelled, rerun the cleanup workflow run.
+
+Before enabling PR deployments, configure Azure and GitHub:
+
+* Ensure each App Service plan has spare deployment slots and enough shared
+  compute capacity. Slots require Standard, Premium, or Isolated plans.
+  Standard supports five deployment slots per app, including existing staging
+  slots; reaching the limit fails deployment rather than replacing another slot.
+* Grant the deployment identities permission to list apps, read source slot
+  configuration, and create, configure, restart, and delete slots on their
+  corresponding apps. `AZURE_WESTUS3_APP_ID` handles the web app,
+  `AZURE_EASTUS_APP_ID` handles Microsoft Store, and `AZURE_CENTRALUS_APP_ID`
+  handles Google Play. The existing `AZURE_WESTUS_APP_ID` build identity still
+  pushes packager images to ACR. Subscription and tenant secrets are unchanged.
+* Configure federated OIDC credentials for the contexts used by these workflows.
+  This repository uses customized subjects with stable owner/repository IDs:
+  builds without a GitHub environment use
+  `repository_owner_id:11843769:repository_id:33142199:ref:refs/heads/main` or
+  `repository_owner_id:11843769:repository_id:33142199:pull_request`;
+  PR deployments and cleanup use
+  `repository_owner_id:11843769:repository_id:33142199:environment:staging`.
+  The existing Azure identities already trust these required subjects.
+  The web deployment identity `pwabuilder-managed-id-west-us-3` explicitly trusts
+  the staging-environment subject for PR deployment and cleanup; its existing
+  main and PR-build credentials are preserved.
+  Keep any GitHub `staging` environment protection rules compatible with PR
+  deployments and cleanup. Required approval rules also delay slot deletion.
+* Source slots must have auto-swap disabled and working container registry
+  authentication. User-assigned identities are attached to PR slots without
+  creating new role assignments; the workflow identity needs permission to
+  assign them, and those identities need existing access to ACR and any runtime
+  dependencies. A source with both system- and user-assigned identities is
+  supported: PR slots use the existing user-assigned identity, not a new
+  system-assigned principal. The helper selects the configured ACR identity or
+  the single attached user identity, sets the PR slot's ACR client ID and
+  `AZURE_CLIENT_ID`, and fills an empty
+  `AppSettings__AzureManagedIdentityApplicationId` with that client ID.
+  It rejects system-only or ambiguous identity configurations. Existing source
+  slots retain their original identity selections.
+* Each deployment identity has **Managed Identity Operator** scoped to its own
+  existing user-assigned identity and **Network Contributor** scoped to the
+  existing staging subnet, plus **Reader** scoped to the subnet's parent VNet.
+  Some Azure CLI versions read the parent VNet even when delegation checks are
+  skipped; Reader allows that lookup without granting VNet write permissions.
+  PR slots attach those identities and join those
+  subnets without changing subnet delegation or source slot configuration.
+  These grants do not authorize changing unrelated identities or networks.
+  Runtime data permissions (such as Cosmos DB data roles) are separate from
+  these deployment permissions and must cover the selected user identity.
+  Microsoft Store's `pwabuilder-managed-id-east-us` has Cosmos DB Built-in Data
+  Contributor scoped to `pwabuilder-cosmosdb`'s
+  `PWABuilder/PWABuilderPackages` container for PR package analytics.
+* Review the cloned staging configuration, credentials, network dependencies,
+  and background workers. PR slots share staging databases, queues, and other
+  configured dependencies; they are not isolated test infrastructure. Private
+  endpoints are not automatically provisioned by this workflow. VNet integration
+  reuses the source slot's subnet, which must have spare addresses for PR slots.
+  All source app settings and typed connection strings, including sticky values,
+  are copied explicitly on deployment. Only the PR slot's values are written;
+  app-wide sticky setting metadata and source/production values are unchanged.
+  Configuration values are not printed or passed as command-line arguments;
+  temporary request files are private on Linux and removed even after failure.
+
+The web PR slot retains the preview slot's packaging endpoints. It does not
+automatically route to matching PR packager slots, and the existing Android
+endpoint allowlist is unchanged. Packager PR slots can be tested directly.
+Never swap a PR slot into production. Deleting a slot does not delete its ACR
+images; apply an image retention policy that preserves deployed and rollback
+digests.
+
+Run the slot lifecycle regression checks with
+`pwsh -NoProfile -File .github/scripts/tests/test-pr-slot.ps1`.
+They simulate Azure and GitHub responses without changing cloud resources.
+Run PR-description publishing tests with
+`node --test .github/scripts/tests/test-pr-deployment-links.cjs`.
 
 ## License
 
