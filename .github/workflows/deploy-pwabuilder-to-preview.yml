@@ -1,6 +1,15 @@
-name: Deploy PWABuilder web app to staging
+name: Deploy PWABuilder web app to staging or PR slot
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/pwabuilder/**"
+      - "Dockerfile.production"
+      - ".github/workflows/deploy-pwabuilder-to-preview.yml"
+      - ".github/workflows/deploy-pr-slot.yml"
+      - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
@@ -8,6 +17,9 @@ on:
       - "apps/pwabuilder/**"
       - "Dockerfile.production"
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
+      - ".github/workflows/deploy-pr-slot.yml"
+      - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
   workflow_dispatch:
 
 env:
@@ -23,7 +35,10 @@ env:
 
 jobs:
   build-and-deploy:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    outputs:
+      image_reference: ${{ steps.pushed-image.outputs.image_reference }}
     permissions:
       id-token: write
       contents: read
@@ -60,6 +75,7 @@ jobs:
           echo "image_reference=$image_reference" >> "$GITHUB_OUTPUT"
 
       - name: Restart Azure Web App Staging Slot
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           IMAGE_REFERENCE: ${{ steps.pushed-image.outputs.image_reference }}
         run: |
@@ -75,3 +91,21 @@ jobs:
           az webapp restart --name ${{ env.WEB_APP_NAME }} --resource-group ${{ env.WEB_APP_RESOURCE_GROUP }} --slot ${{ env.WEB_APP_SLOT }}
 
           echo "✅ Web App staging slot restart completed"
+
+  deploy-pr:
+    if: github.event_name == 'pull_request'
+    needs: build-and-deploy
+    permissions:
+      contents: read
+      pull-requests: write
+      deployments: read
+      id-token: write
+    uses: ./.github/workflows/deploy-pr-slot.yml
+    with:
+      app_name: pwabuilder
+      source_slot: preview
+      image_reference: ${{ needs.build-and-deploy.outputs.image_reference }}
+    secrets:
+      azure_client_id: ${{ secrets.AZURE_WESTUS3_APP_ID }}
+      azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+      azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

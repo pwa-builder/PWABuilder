@@ -1,21 +1,34 @@
-name: Deploy Microsoft Store packager to staging
+name: Deploy Microsoft Store packager to staging or PR slot
 
 on:
   push:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
       - ".github/workflows/deploy-msstore-to-preview.yml"
+      - ".github/workflows/deploy-pr-slot.yml"
+      - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
     branches: ["main"]
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "apps/pwabuilder-microsoft-store/**"
       - ".github/workflows/deploy-msstore-to-preview.yml"
+      - ".github/workflows/deploy-pr-slot.yml"
+      - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/publish-pr-deployment-links.cjs"
     branches: [main]
   workflow_dispatch:
 
+env:
+  IMAGE_TAG: pwabuilder.azurecr.io/pwa-windows:staging-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: windows-2022
+    outputs:
+      image_reference: ${{ steps.pushed-image.outputs.image_reference }}
     permissions:
       contents: read
       id-token: write
@@ -81,21 +94,48 @@ jobs:
       - name: Verify pwa_builder extraction
         run: Get-ChildItem apps/pwabuilder-microsoft-store/Resources/cli/PWABuilder -Recurse | Format-List
 
+      - name: Ensure Windows Docker daemon is ready
+        run: |
+          $ErrorActionPreference = "Stop"
+          $service = Get-Service -Name docker -ErrorAction Stop
+          if ($service.Status -ne "Running") {
+            Start-Service -InputObject $service
+          }
+          $service.WaitForStatus("Running", [TimeSpan]::FromSeconds(60))
+          $ready = $false
+          for ($attempt = 0; $attempt -lt 12; $attempt++) {
+            docker info
+            if ($LASTEXITCODE -eq 0) {
+              $ready = $true
+              break
+            }
+            Start-Sleep -Seconds 5
+          }
+          if (-not $ready) {
+            throw "Docker service is running, but the Docker daemon did not become responsive."
+          }
+
       - name: Log in to Azure docker registry (ACR)
         run: az acr login --name pwabuilder
 
-      - name: docker info
-        run: docker info
-
       - name: Docker build
         working-directory: ./apps/pwabuilder-microsoft-store
-        run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-windows:production -m 2GB
+        run: docker build . --file Dockerfile --tag "$env:IMAGE_TAG" -m 2GB
 
-      - name: Docker push
+      - name: Docker push and capture immutable image reference
+        id: pushed-image
         working-directory: ./apps/pwabuilder-microsoft-store
-        run: docker push pwabuilder.azurecr.io/pwa-windows:production
+        run: |
+          docker push "$env:IMAGE_TAG"
+          if ($LASTEXITCODE -ne 0) { throw "Docker push failed." }
+          $imageReference = docker image inspect --format '{{index .RepoDigests 0}}' "$env:IMAGE_TAG"
+          if ($LASTEXITCODE -ne 0 -or $imageReference -notmatch '^pwabuilder\.azurecr\.io/pwa-windows@sha256:[0-9a-f]{64}$') {
+            throw "Docker did not return the expected pushed image digest."
+          }
+          "image_reference=$imageReference" >> $env:GITHUB_OUTPUT
 
   deploy:
+    if: github.event_name != 'pull_request'
     runs-on: windows-2022
     permissions:
       contents: read
@@ -119,4 +159,22 @@ jobs:
         with:
           app-name: pwabuilder-windows-docker
           slot-name: staging
-          images: pwabuilder.azurecr.io/pwa-windows:production
+          images: ${{ needs.build.outputs.image_reference }}
+
+  deploy-pr:
+    if: github.event_name == 'pull_request'
+    needs: build
+    permissions:
+      contents: read
+      pull-requests: write
+      deployments: read
+      id-token: write
+    uses: ./.github/workflows/deploy-pr-slot.yml
+    with:
+      app_name: pwabuilder-windows-docker
+      source_slot: staging
+      image_reference: ${{ needs.build.outputs.image_reference }}
+    secrets:
+      azure_client_id: ${{ secrets.AZURE_EASTUS_APP_ID }}
+      azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+      azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
