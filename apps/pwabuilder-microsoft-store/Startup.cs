@@ -71,6 +71,10 @@ public class Startup
         services.AddTransient<ProcessRunner>();
         services.AddApplicationInsightsTelemetry(appInsightsOptions);
         services.AddHttpClient();
+        // Fetches user-supplied URLs (manifests, icons), so it only connects to public IP addresses (SSRF protection).
+        services
+            .AddHttpClient(PublicNetworkGuard.HttpClientName, client => client.AddLatestEdgeUserAgent())
+            .ConfigurePrimaryHttpMessageHandler(PublicNetworkGuard.CreateHandler);
         services
             .AddHttpClient(
                 "NoRedirectClient",
