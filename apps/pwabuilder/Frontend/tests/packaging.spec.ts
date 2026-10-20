@@ -505,6 +505,91 @@ test('Google Play packaging status shows host blocking help for 403 analysis fai
   expect(hostBlockingState?.hasBlockingErrorLog).toBe(true);
 });
 
+async function runGooglePlayDownloadScenario(page: Page, failedAttempts: number) {
+  const jobId = 'googleplaypackagejob:example.com:retry-test';
+  let downloadAttempts = 0;
+  await page.route('**/api/packaging/config', route => route.fulfill({
+    json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' }
+  }));
+  await page.route('https://pwabuilder-cloudapk.azurewebsites.net/downloadPackageZip**', route => {
+    downloadAttempts++;
+    return downloadAttempts <= failedAttempts
+      ? route.abort('connectionreset')
+      : route.fulfill({
+        status: 200,
+        contentType: 'application/zip',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: 'zip'
+      });
+  });
+
+  const states = await page.evaluate(async (id) => {
+    localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+    document.body.innerHTML = '<google-play-packaging-status></google-play-packaging-status>';
+    await import('/src/script/pages/google-play-packaging-status.ts');
+    await customElements.whenDefined('google-play-packaging-status');
+
+    const statusPage = document.querySelector('google-play-packaging-status') as any;
+    const job = {
+      id,
+      supportReference: null,
+      pwaUrl: 'https://example.com',
+      analysisId: null,
+      status: 'Completed',
+      createdAt: new Date().toISOString(),
+      retryCount: 0,
+      name: 'Example',
+      logs: [],
+      errors: [],
+      downloadAvailable: true
+    };
+    statusPage.job = job;
+    statusPage.autoDownloadRetryDelayMs = 0;
+    statusPage.downloadBlob = () => { };
+
+    const snapshot = async () => {
+      await statusPage.updateComplete;
+      const buttons = Array.from(statusPage.shadowRoot.querySelectorAll('.card-footer wa-button')) as HTMLElement[];
+      return {
+        title: statusPage.shadowRoot.querySelector('.page-title')?.textContent?.trim() ?? '',
+        hasRetryButton: buttons.some(b => b.textContent?.trim() === 'Retry download'),
+        lastLog: statusPage.logs[statusPage.logs.length - 1] as string
+      };
+    };
+
+    await statusPage.jobCompleted(job);
+    const afterCompletion = await snapshot();
+    let afterManualRetry = null;
+    if (afterCompletion.hasRetryButton) {
+      await statusPage.retryDownload();
+      afterManualRetry = await snapshot();
+    }
+    return { afterCompletion, afterManualRetry };
+  }, jobId);
+
+  return { downloadAttempts, ...states };
+}
+
+test('Google Play packaging status automatically retries a failed package download', async ({ page }) => {
+  const result = await runGooglePlayDownloadScenario(page, 1);
+
+  expect(result.downloadAttempts).toBe(2);
+  expect(result.afterCompletion.title).toBe('Package created successfully');
+  expect(result.afterCompletion.hasRetryButton).toBe(false);
+  expect(result.afterCompletion.lastLog).toBe('Package created successfully. Download has begun.');
+});
+
+test('Google Play packaging status shows Retry download after the automatic retry fails', async ({ page }) => {
+  const result = await runGooglePlayDownloadScenario(page, 2);
+
+  expect(result.afterCompletion.title).toBe('Package created, but the download failed');
+  expect(result.afterCompletion.hasRetryButton).toBe(true);
+  expect(result.downloadAttempts).toBe(3);
+  expect(result.afterManualRetry?.title).toBe('Package created successfully');
+  expect(result.afterManualRetry?.hasRetryButton).toBe(false);
+  expect(result.afterManualRetry?.lastLog).toBe('Package created successfully. Download has begun.');
+});
+
 test('Windows, Android, and iOS app names allow ampersands and colons', async ({ page }) => {
   const validationResults = await page.evaluate(async () => {
     const siteUrl = 'https://example.com';
