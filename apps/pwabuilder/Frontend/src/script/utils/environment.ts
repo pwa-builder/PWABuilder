@@ -5,6 +5,7 @@ export const env = {
     api: '',
     windowsPackageGeneratorUrl: '',
     iosPackageGeneratorUrl: '',
+    macosPackageGeneratorUrl: '',
     safeUrlFetcher: '',
     validateGiveawayUrl: '',
     tokensCampaignRunning: false,
@@ -20,6 +21,7 @@ if (import.meta.env.PROD) {
     env.windowsPackageGeneratorUrl =
         'https://pwabuilder-windows-docker.azurewebsites.net/msix/generatezip';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
+    env.macosPackageGeneratorUrl = '/api/macospackage/create';
     env.safeUrlFetcher =
         '/api/images/getSafeImageForAnalysis';
     env.validateGiveawayUrl =
@@ -32,6 +34,7 @@ if (import.meta.env.PROD) {
     env.windowsPackageGeneratorUrl =
         'https://localhost:5001/msix/generatezip';
     env.iosPackageGeneratorUrl = '/api/iospackage/create';
+    env.macosPackageGeneratorUrl = '/api/macospackage/create';
     env.safeUrlFetcher =
         '/api/images/getSafeImageForAnalysis';
     env.validateGiveawayUrl =
