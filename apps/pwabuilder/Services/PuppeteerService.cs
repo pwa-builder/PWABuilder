@@ -98,20 +98,23 @@ namespace PWABuilder.Services
         {
             var browser = await this.reusableBrowser;
 
-            // Safety check: if we have too many pages open, something might be wrong
-            var pages = await browser.PagesAsync();
-            if (pages.Length > 10)
+            // Safety check: if we have too many pages open, something might be wrong.
+            // Count the page targets instead of calling browser.PagesAsync(): that call initializes every page target in the shared browser,
+            // and a tab that crashed earlier (for example during another analysis's offline reload) makes the initialization throw
+            // "Protocol error (Performance.enable): Session closed ... Inspector.targetCrashed", which would fail this unrelated analysis.
+            var pageCount = CountPageTargets(browser);
+            if (pageCount > 10)
             {
-                logger.LogWarning("There are {pageCount} pages open in the Puppeteer browser. Possible page leak detected.", pages.Length);
+                logger.LogWarning("There are {pageCount} pages open in the Puppeteer browser. Possible page leak detected.", pageCount);
             }
 
             await TryCleanupOldPages();
 
             // If we still have too many pages after cleanup, force-close the oldest tracked pages.
-            if (pages.Length > MaxOpenPages)
+            if (pageCount > MaxOpenPages)
             {
-                logger.LogWarning("Page count ({pageCount}) exceeds max ({maxPages}) after cleanup. Force-closing oldest pages.", pages.Length, MaxOpenPages);
-                await ForceCloseOldestPages(pages.Length - MaxOpenPages + 1);
+                logger.LogWarning("Page count ({pageCount}) exceeds max ({maxPages}) after cleanup. Force-closing oldest pages.", pageCount, MaxOpenPages);
+                await ForceCloseOldestPages(pageCount - MaxOpenPages + 1);
             }
 
             var page = await browser.NewPageAsync();
@@ -172,14 +175,21 @@ namespace PWABuilder.Services
             try
             {
                 var browser = await this.reusableBrowser;
-                var pages = await browser.PagesAsync();
-                return pages.Length;
+                return CountPageTargets(browser);
             }
             catch (Exception ex)
             {
                 logger.LogWarning(ex, "Error getting open page count from Puppeteer browser.");
                 return -1;
             }
+        }
+
+        /// <summary>
+        /// Counts the open page targets without initializing them. Safe to call while one of them has crashed.
+        /// </summary>
+        public static int CountPageTargets(IBrowser browser)
+        {
+            return browser.Targets().Count(t => t.Type == TargetType.Page);
         }
 
         /// <summary>
