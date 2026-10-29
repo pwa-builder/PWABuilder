@@ -24,6 +24,8 @@ namespace PWABuilder.IOS.Models
         {
             UpdateAppColors();
             UpdateAppNameAndUrls();
+            UpdateShellOptions();
+            UpdateSplashIconSize();
             UpdateAppBundleId();
             RenameProjectFolders();
             UpdateProjectFolderReferences();
@@ -61,9 +63,9 @@ namespace PWABuilder.IOS.Models
             var settingsFile = GetFile("Settings.swift");
             var entitlementsXmlFile = GetFile("Entitlements.plist");
 
-            // Update app name
+            // Update the display name, the name under the icon on the home screen. It defaults to the app name.
             var appNameExisting = "<string>{{PWABuilder.iOS.appName}}</string>";
-            var appNameDesired = $"<string>{GetXmlSafeNodeValue(options.Name)}</string>";
+            var appNameDesired = $"<string>{GetXmlSafeNodeValue(options.DisplayName)}</string>";
             infoPlistXmlFile.Replace(appNameExisting, appNameDesired);
 
             // Add URL and permitted URLs to app bound domains (used for service worker) in Info.plist
@@ -120,6 +122,78 @@ namespace PWABuilder.IOS.Models
                 entitlementsWebcredentialsUrlExisting,
                 entitlementsWebcredentialsUrlDesired
             );
+        }
+
+        /// <summary>
+        /// Writes the display mode, status bar style and appearance into Settings.swift and Info.plist.
+        /// The shell already reads these constants; they were fixed values until now.
+        /// </summary>
+        private void UpdateShellOptions()
+        {
+            var settingsFile = GetFile("Settings.swift");
+            var infoPlistXmlFile = GetFile("Info.plist");
+
+            settingsFile.Replace("{{PWABuilder.iOS.displayMode}}", options.DisplayMode);
+
+            // Status bar text and icons. "auto" keeps the shell's adaptive behavior; "light" or "dark" fix the style.
+            // The shell's statusBarTheme names the app background: "dark" background means light status bar text.
+            var overrideStatusBar = options.StatusBarStyle != "auto";
+            var statusBarTheme = options.StatusBarStyle == "light" ? "dark" : "light";
+            settingsFile.Replace("{{PWABuilder.iOS.overrideStatusBar}}", overrideStatusBar ? "true" : "false");
+            settingsFile.Replace("{{PWABuilder.iOS.statusBarTheme}}", statusBarTheme);
+            var statusBarStyleValue = options.StatusBarStyle switch
+            {
+                "light" => "UIStatusBarStyleLightContent",
+                "dark" => "UIStatusBarStyleDarkContent",
+                _ => "UIStatusBarStyleDefault"
+            };
+            infoPlistXmlFile.Replace("<string>{{PWABuilder.iOS.statusBarStyle}}</string>", $"<string>{statusBarStyleValue}</string>");
+
+            // Appearance. "auto" lets iOS 15+ follow the web view background (adaptiveUIStyle) and the system theme.
+            // "light" or "dark" lock the app with UIUserInterfaceStyle and switch the adaptive behavior off.
+            settingsFile.Replace("{{PWABuilder.iOS.adaptiveUIStyle}}", options.Appearance == "auto" ? "true" : "false");
+            var appearanceEntry = options.Appearance switch
+            {
+                "light" => "\t<key>UIUserInterfaceStyle</key>\n\t<string>Light</string>\n",
+                "dark" => "\t<key>UIUserInterfaceStyle</key>\n\t<string>Dark</string>\n",
+                _ => string.Empty
+            };
+            infoPlistXmlFile.Replace("\t{{PWABuilder.iOS.appearance}}\n", appearanceEntry);
+
+            // Fullscreen hides the status bar at launch; the shell's displayMode keeps it hidden afterwards.
+            infoPlistXmlFile.Replace("<{{PWABuilder.iOS.statusBarHidden}}/>", options.DisplayMode == "fullscreen" ? "<true/>" : "<false/>");
+        }
+
+        /// <summary>
+        /// Sizes the launch screen icon. The storyboard pins the image view to a square of this many points.
+        /// </summary>
+        private void UpdateSplashIconSize()
+        {
+            var launchScreenStoryboard = GetFile("LaunchScreen.storyboard");
+            var size = options.SplashIconSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            launchScreenStoryboard.Replace("{{PWABuilder.iOS.splashIconSize}}", size);
+
+            // Pick the generated launch icon files that stay sharp at this size on 1x, 2x and 3x screens.
+            var launchIconSet = GetFileByPath(Path.Combine("LaunchIcon.imageset", "Contents.json"));
+            launchIconSet.Replace("{{PWABuilder.iOS.launchIcon1x}}", GetLaunchIconFileName(options.SplashIconSize));
+            launchIconSet.Replace("{{PWABuilder.iOS.launchIcon2x}}", GetLaunchIconFileName(options.SplashIconSize * 2));
+            launchIconSet.Replace("{{PWABuilder.iOS.launchIcon3x}}", GetLaunchIconFileName(options.SplashIconSize * 3));
+        }
+
+        /// <summary>
+        /// Gets the name of the smallest generated launch icon whose pixel size covers the requested pixel size.
+        /// The generated launch icons are 64, 128, 192, 256 and 512 pixels.
+        /// </summary>
+        public static string GetLaunchIconFileName(int pixels)
+        {
+            var available = new[] { 64, 128, 192, 256, 512 };
+            var chosen = available.FirstOrDefault(px => px >= pixels);
+            if (chosen == 0)
+            {
+                chosen = available[^1];
+            }
+
+            return $"launch-{chosen}.png";
         }
 
         private void UpdateShortcuts(XcodeFile infoPlistXmlFile)

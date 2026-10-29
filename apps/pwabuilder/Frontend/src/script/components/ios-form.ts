@@ -1,7 +1,7 @@
-import { html } from 'lit';
+import { html, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { fetchOrCreateManifest } from '../services/manifest';
-import { AppPackageFormBase } from './app-package-form-base';
+import { AppPackageFormBase, FormInput } from './app-package-form-base';
 import {
     createIOSPackageOptionsFromManifest,
     emptyIOSPackageOptions,
@@ -11,6 +11,8 @@ import { ManifestContext, PackageOptions } from '../utils/interfaces';
 import { AppNameInputPattern } from '../utils/constants';
 import { iosFormStyles } from './ios-form.styles';
 import "@awesome.me/webawesome/dist/components/details/details.js";
+import "@awesome.me/webawesome/dist/components/select/select.js";
+import "@awesome.me/webawesome/dist/components/option/option.js";
 
 @customElement('ios-form')
 export class IOSForm extends AppPackageFormBase {
@@ -83,6 +85,19 @@ export class IOSForm extends AppPackageFormBase {
             pattern: AppNameInputPattern,
             // pattern: // NOTE: avoid using a regex pattern here, as it often has unintended consequences, such as blocking non-English names
             inputHandler: (val: string) => this.packageOptions.name = val
+        })}
+            </div>
+
+            <div class="form-group">
+              ${this.renderFormInput({
+            label: 'Home screen name',
+            tooltip: `The short name shown under your app icon on the home screen (CFBundleDisplayName). iOS truncates names longer than about 12 characters, so keep it short. Defaults to the app name.`,
+            tooltipLink: "https://developer.apple.com/documentation/bundleresources/information-property-list/cfbundledisplayname",
+            inputId: 'displayNameInput',
+            placeholder: 'My PWA',
+            value: this.packageOptions.displayName || this.packageOptions.name || '',
+            spellcheck: false,
+            inputHandler: (val: string) => this.packageOptions.displayName = val
         })}
             </div>
 
@@ -170,10 +185,83 @@ export class IOSForm extends AppPackageFormBase {
             inputHandler: (val: string) => this.packageOptions.permittedUrls = val.split(',').map(i => i.trim()).filter(i => !!i)
         })}
             </div>
+
+            <div class="form-group">
+              ${this.renderSelect({
+            label: 'Display mode',
+            inputId: 'displayModeInput',
+            tooltip: `Standalone keeps the iOS status bar above your app. Fullscreen hides it so your app fills the whole screen. Defaults to your manifest's display value.`,
+            value: this.packageOptions.displayMode || 'standalone',
+            inputHandler: (val: string) => this.packageOptions.displayMode = val as 'standalone' | 'fullscreen'
+        }, [
+            { value: 'standalone', label: 'Standalone (status bar visible)' },
+            { value: 'fullscreen', label: 'Fullscreen (status bar hidden)' }
+        ])}
+            </div>
+
+            <div class="form-group">
+              ${this.renderSelect({
+            label: 'Status bar text',
+            inputId: 'statusBarStyleInput',
+            tooltip: `The color of the time, battery and signal icons in the status bar. Auto follows the system theme. Choose light text for an app with a dark background, or dark text for an app with a light background.`,
+            value: this.packageOptions.statusBarStyle || 'auto',
+            inputHandler: (val: string) => this.packageOptions.statusBarStyle = val as 'auto' | 'light' | 'dark'
+        }, [
+            { value: 'auto', label: 'Auto (follow the system)' },
+            { value: 'light', label: 'Light text (for dark apps)' },
+            { value: 'dark', label: 'Dark text (for light apps)' }
+        ])}
+            </div>
+
+            <div class="form-group">
+              ${this.renderSelect({
+            label: 'Appearance',
+            inputId: 'appearanceInput',
+            tooltip: `Auto follows the system light or dark setting and, on iOS 15 and later, the background color of your web app. Light or dark locks the app to that appearance.`,
+            value: this.packageOptions.appearance || 'auto',
+            inputHandler: (val: string) => this.packageOptions.appearance = val as 'auto' | 'light' | 'dark'
+        }, [
+            { value: 'auto', label: 'Auto (follow the system)' },
+            { value: 'light', label: 'Always light' },
+            { value: 'dark', label: 'Always dark' }
+        ])}
+            </div>
+
+            <div class="form-group">
+              ${this.renderFormInput({
+            label: 'Splash icon size',
+            inputId: 'splashIconSizeInput',
+            tooltip: `The size in points of your icon on the splash screen shown while the app launches. 64 is the iOS default. Values between 32 and 512 are allowed.`,
+            type: 'number',
+            placeholder: '64',
+            value: String(this.packageOptions.splashIconSize || 64),
+            minValue: 32,
+            maxValue: 512,
+            inputHandler: (val: string) => this.packageOptions.splashIconSize = parseInt(val, 10) || 64
+        })}
+            </div>
             </wa-details>
         </div>
       </form>
     </div>
+    `;
+    }
+
+    renderSelect(formInput: FormInput, options: { value: string; label: string }[]): TemplateResult {
+        return html`
+      <label for="${formInput.inputId}">
+        ${formInput.label}
+        ${this.renderTooltip(formInput)}
+      </label>
+      <wa-select
+        id="${formInput.inputId}"
+        name="${formInput.inputId}"
+        size="s"
+        value=${formInput.value as string}
+        @change=${(e: Event) => formInput.inputHandler?.(this.getInputValue(e.target), false, e.target as HTMLInputElement)}
+      >
+        ${options.map(o => html`<wa-option value=${o.value}>${o.label}</wa-option>`)}
+      </wa-select>
     `;
     }
 

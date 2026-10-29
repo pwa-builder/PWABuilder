@@ -60,6 +60,11 @@ export function createIOSPackageOptionsFromManifest(manifestContext: ManifestCon
     progressBarColor: manifestContext.manifest.theme_color || '#000000',
     statusBarColor: manifestContext.manifest.theme_color || manifestContext.manifest.background_color || '#ffffff',
     permittedUrls: [],
+    displayName: manifestContext.manifest.short_name || manifestContext.manifest.name || "My PWA",
+    displayMode: manifestContext.manifest.display === 'fullscreen' ? 'fullscreen' : 'standalone',
+    statusBarStyle: 'auto',
+    appearance: 'auto',
+    splashIconSize: 64,
     manifestUrl: manifestContext.manifestUrl,
     manifest: manifestContext.manifest
   };
@@ -75,6 +80,11 @@ export function emptyIOSPackageOptions(): IOSAppPackageOptions {
     progressBarColor: '#000000',
     statusBarColor: '#ffffff',
     permittedUrls: [],
+    displayName: '',
+    displayMode: 'standalone',
+    statusBarStyle: 'auto',
+    appearance: 'auto',
+    splashIconSize: 64,
     manifestUrl: '',
     manifest: {}
   }

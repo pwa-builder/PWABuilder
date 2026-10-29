@@ -14,6 +14,16 @@ export interface IOSAppPackageOptions extends PackageOptions {
   progressBarColor: string;
   statusBarColor: string;
   permittedUrls: string[];
+  /** The name under the icon on the home screen. Defaults to name. */
+  displayName?: string;
+  /** standalone keeps the iOS status bar, fullscreen hides it. Defaults to the manifest display value. */
+  displayMode?: 'standalone' | 'fullscreen';
+  /** The foreground of the status bar text: auto follows the system, light for dark apps, dark for light apps. */
+  statusBarStyle?: 'auto' | 'light' | 'dark';
+  /** auto follows the system and the web view background, light or dark locks the app appearance. */
+  appearance?: 'auto' | 'light' | 'dark';
+  /** The size in points of the icon on the splash screen, 32 to 512. Defaults to 64. */
+  splashIconSize?: number;
   manifestUrl: string;
   manifest: Manifest;
 }
@@ -55,6 +65,10 @@ export function validateIOSOptions(options: IOSAppPackageOptions): string[] {
 
   if (!options.manifestUrl) {
     errors.push("Manifest URL required");
+  }
+
+  if (options.splashIconSize !== undefined && (options.splashIconSize < 32 || options.splashIconSize > 512)) {
+    errors.push("Splash icon size must be between 32 and 512");
   }
 
   if (!options.name) {

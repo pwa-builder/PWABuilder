@@ -44,6 +44,35 @@
         public string? StatusBarColor { get; set; }
 
         /// <summary>
+        /// The name shown under the icon on the home screen (CFBundleDisplayName). Defaults to <see cref="Name"/>.
+        /// Apple truncates long display names, so this is usually a shorter version of the app name.
+        /// </summary>
+        public string? DisplayName { get; set; }
+
+        /// <summary>
+        /// How the app fills the screen: "standalone" keeps the iOS status bar, "fullscreen" hides it.
+        /// Defaults to the web manifest display value when it is one of those two, otherwise "standalone".
+        /// </summary>
+        public string? DisplayMode { get; set; }
+
+        /// <summary>
+        /// The foreground style of the iOS status bar text and icons: "auto" follows the system theme,
+        /// "light" draws light text for a dark app background, "dark" draws dark text for a light app background. Defaults to "auto".
+        /// </summary>
+        public string? StatusBarStyle { get; set; }
+
+        /// <summary>
+        /// The appearance the app runs in: "auto" follows the system light or dark setting (and iOS 15+ follows the web view background),
+        /// "light" or "dark" lock the app to that appearance. Defaults to "auto".
+        /// </summary>
+        public string? Appearance { get; set; }
+
+        /// <summary>
+        /// The size in points of the icon shown on the splash (launch) screen. Defaults to 64. Allowed range 32 to 512.
+        /// </summary>
+        public int? SplashIconSize { get; set; }
+
+        /// <summary>
         /// The list of domains your app is permitted to navigate. This will automatically include <see cref="Url"/>, so no need to include it again.
         /// This should contain any domains you expect your users to navigate to while using your app, for example, account.google.com or other authentication domains.
         /// It is not necessary to include the protocol with the URL.
@@ -127,6 +156,15 @@
                 .Where(url => url != null)
                 .Select(url => url!)
                 .ToList();
+            var displayName = string.IsNullOrWhiteSpace(DisplayName) ? Name.Trim() : DisplayName.Trim();
+            var displayMode = GetValidChoice(DisplayMode, ["standalone", "fullscreen"], GetValidChoice(Manifest.Display, ["standalone", "fullscreen"], "standalone"));
+            var statusBarStyle = GetValidChoice(StatusBarStyle, ["auto", "light", "dark"], "auto");
+            var appearance = GetValidChoice(Appearance, ["auto", "light", "dark"], "auto");
+            if (SplashIconSize is < 32 or > 512)
+            {
+                throw new ArgumentOutOfRangeException(nameof(SplashIconSize), SplashIconSize, "Splash icon size must be between 32 and 512 points");
+            }
+
             return new Validated(
                 Name.Trim(),
                 BundleId.Trim(),
@@ -137,8 +175,22 @@
                 validStatusBarColor,
                 permittedUris,
                 Manifest,
-                manifestUri
+                manifestUri,
+                displayName,
+                displayMode,
+                statusBarStyle,
+                appearance,
+                SplashIconSize ?? 64
             );
+        }
+
+        /// <summary>
+        /// Returns the input lower cased and trimmed when it is one of the allowed values, otherwise the fallback.
+        /// </summary>
+        private static string GetValidChoice(string? input, string[] allowed, string fallback)
+        {
+            var value = input?.Trim().ToLowerInvariant();
+            return value != null && allowed.Contains(value) ? value : fallback;
         }
 
         private static Color GetValidColor(
@@ -184,7 +236,12 @@
             Color StatusBarColor,
             List<Uri> PermittedUrls,
             WebAppManifest Manifest,
-            Uri ManifestUri
+            Uri ManifestUri,
+            string DisplayName,
+            string DisplayMode,
+            string StatusBarStyle,
+            string Appearance,
+            int SplashIconSize
         );
     }
 }
