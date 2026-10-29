@@ -937,4 +937,75 @@ public class PwaCapability
             }
         ];
     }
+
+    /// <summary>
+    /// Creates the agent readiness capabilities (PE WA BE). These describe whether AI agents and assistants can read the app's purpose and act on it without scraping.
+    /// </summary>
+    /// <returns>A list of agent readiness capabilities.</returns>
+    public static List<PwaCapability> CreateAgentReadinessCapabilities()
+    {
+        return
+        [
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.PageSummary,
+                Description = "Your start page should carry a title, a meta description and a language so that agents and search engines can summarize it without guessing.",
+                TodoAction = "Add a <title>, a <meta name=\"description\"> and a lang attribute on <html> to your start page.",
+                Level = PwaCapabilityLevel.Recommended,
+                FeatureName = null,
+                FeatureIcon = null,
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta/name"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.AgentReadiness,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.StructuredData,
+                Description = "Structured data (JSON-LD) on the start page tells agents what the app is about: an organization, a person, a product, an event.",
+                TodoAction = "Add a <script type=\"application/ld+json\"> block with schema.org data to your start page.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "Structured Data",
+                FeatureIcon = new Uri("/assets/new/structured_data_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.AgentReadiness,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.LlmsTxt,
+                Description = "An llms.txt file at the root of your site gives language models a short, plain text guide to the app and its pages.",
+                TodoAction = "Serve a text file at /llms.txt that describes your app and links to its main pages.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "llms.txt",
+                FeatureIcon = new Uri("/assets/new/llms_txt_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://llmstxt.org/"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.AgentReadiness,
+                Status = PwaCapabilityCheckStatus.InProgress
+            },
+            new PwaCapability
+            {
+                Id = PwaCapabilityId.AgentCard,
+                Description = "An agent card at /.well-known/agent-card.json (Agent2Agent protocol) lets other agents discover what your app can do for them and how to call it.",
+                TodoAction = "Publish an agent card at /.well-known/agent-card.json describing the skills your app offers to agents.",
+                Level = PwaCapabilityLevel.Feature,
+                FeatureName = "Agent Card",
+                FeatureIcon = new Uri("/assets/new/agent_card_icon.svg", UriKind.Relative),
+                Field = null,
+                IsFieldExistenceCheck = false,
+                LearnMoreUrl = new Uri("https://a2a-protocol.org/latest/specification/"),
+                ImageUrl = null,
+                Category = PwaCapabilityCategory.AgentReadiness,
+                Status = PwaCapabilityCheckStatus.InProgress
+            }
+        ];
+    }
 }

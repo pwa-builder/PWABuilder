@@ -156,7 +156,10 @@ public class ManifestAnalyzer
             PwaCapabilityId.HasHttps => throw new NotImplementedException(),
 
             // General capabilities are handled elsewhere.
-            PwaCapabilityId.ServesHtml => throw new NotImplementedException()
+            PwaCapabilityId.ServesHtml => throw new NotImplementedException(),
+
+            // Agent readiness capabilities are handled by AgentReadinessDetector.
+            PwaCapabilityId.LlmsTxt or PwaCapabilityId.StructuredData or PwaCapabilityId.PageSummary or PwaCapabilityId.AgentCard => throw new NotImplementedException()
         };
 #pragma warning restore CS8524
     }

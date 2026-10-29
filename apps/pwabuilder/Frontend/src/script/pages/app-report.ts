@@ -1135,6 +1135,8 @@ export class AppReport extends LitElement {
             ${this.renderServiceWorkerFeaturesSection()}
             ${this.renderAppCapabilitiesSection()}
           </div>
+
+          ${this.renderAgentReadinessSection()}
         </div>
       </div>
 
@@ -1287,6 +1289,47 @@ export class AppReport extends LitElement {
       </div>
       `;
 
+    }
+
+    renderAgentReadinessSection(): TemplateResult {
+        const caps = (this.analysis?.capabilities || []).filter(c => c.category === "AgentReadiness");
+        if (caps.length === 0) {
+            return html``;
+        }
+
+        const loading = caps.every(c => c.status === "InProgress");
+        const passed = caps.filter(c => c.status === "Passed").length;
+        const features = caps.filter(c => !!c.featureName);
+        const summary = caps.find(c => c.id === "PageSummary");
+        const summaryText = summary?.status === "Passed"
+            ? "Your start page carries a title, a description and a language, so agents can summarize it without guessing."
+            : summary?.status === "Failed"
+                ? (summary.errorMessage || summary.description)
+                : "";
+        return html`
+      <div id="agent" class="full-width-card">
+        <div id="agent-header" class="flex-col">
+          <div id="agent-top">
+            <div id="agent-text" class="flex-col">
+              <h2 class="card-header">Agent Readiness</h2>
+              ${loading
+                ? html`<wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>`
+                : html`<p class="card-desc">${passed} of ${caps.length} agent readiness checks passed. AI agents and assistants read these to learn what your app is and how to act on it. ${summaryText}</p>`}
+            </div>
+            ${loading ? html`<div class="loader-round large"></div>` : html`<wa-progress-ring id="agentProgressRing" class="counterRing" value="${passed > 0 ? Math.round(passed / caps.length * 100) : 0}">${passed}/${caps.length}</wa-progress-ring>`}
+          </div>
+          <div class="icons-holder sw">
+            ${repeat(features, c => c.id, c => this.renderServiceWorkerCapability(c))}
+          </div>
+          <div id="agent-actions" class="flex-col">
+            <a class="arrow_anchor" rel="noopener" target="_blank" href="https://hamdibenjarrar.is-a.dev/pewabe" @click=${() => recordPWABuilderProcessStep("agent_readiness_documentation_clicked", AnalyticsBehavior.ProcessCheckpoint)}>
+              <p class="arrow_link">Agent Readiness Documentation (PE WA BE)</p>
+              <img src="/assets/new/arrow.svg" alt="" />
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
     }
 
     renderAppCapabilitiesSection(): TemplateResult {
