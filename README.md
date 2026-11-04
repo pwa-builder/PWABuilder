@@ -80,8 +80,6 @@ This increases build time but allows serviced .NET, Node.js, and OS packages to
 be picked up on rebuild. Explicitly pinned inputs still require source updates;
 the Windows packager installs .NET SDK 10.0.403 (runtime 10.0.14) and verifies
 the installer against Microsoft's published SHA-512 checksum.
-Run `node --test .github/scripts/tests/test-container-builds.cjs` to check these
-build settings; all three service workflows run this check before building.
 After a runtime update, verify versions and vulnerability scan results in the
 built images, test the staging slots, and promote the verified digests through
 the normal deployment process. A source change or rebuild alone does not

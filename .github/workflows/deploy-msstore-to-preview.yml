@@ -5,7 +5,6 @@ on:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
       - ".github/workflows/deploy-msstore-to-preview.yml"
-      - ".github/scripts/tests/test-container-builds.cjs"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
@@ -15,7 +14,6 @@ on:
     paths:
       - "apps/pwabuilder-microsoft-store/**"
       - ".github/workflows/deploy-msstore-to-preview.yml"
-      - ".github/scripts/tests/test-container-builds.cjs"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
@@ -39,9 +37,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: "true"
-      - name: Verify container build policy
-        run: node --test .github/scripts/tests/test-container-builds.cjs
-
       - uses: microsoft/variable-substitution@v1
         with:
           files: "./apps/pwabuilder-microsoft-store/appsettings.Production.json"

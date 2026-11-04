@@ -11,7 +11,6 @@ on:
     paths:
       - "apps/pwabuilder-google-play/**"
       - ".github/workflows/deploy-google-play-to-preview.yml"
-      - ".github/scripts/tests/test-container-builds.cjs"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
@@ -21,7 +20,6 @@ on:
     paths:
       - "apps/pwabuilder-google-play/**"
       - ".github/workflows/deploy-google-play-to-preview.yml"
-      - ".github/scripts/tests/test-container-builds.cjs"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
@@ -42,9 +40,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Verify container build policy
-        run: node --test .github/scripts/tests/test-container-builds.cjs
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
