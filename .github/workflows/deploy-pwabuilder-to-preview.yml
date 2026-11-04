@@ -7,6 +7,7 @@ on:
       - "apps/pwabuilder/**"
       - "Dockerfile.production"
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
+      - ".github/scripts/tests/test-container-builds.cjs"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
@@ -17,6 +18,7 @@ on:
       - "apps/pwabuilder/**"
       - "Dockerfile.production"
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
+      - ".github/scripts/tests/test-container-builds.cjs"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
@@ -47,6 +49,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Verify container build policy
+        run: node --test .github/scripts/tests/test-container-builds.cjs
+
       - name: Log in to Azure with Managed Identity
         uses: azure/login@v2
         with:
@@ -61,7 +66,7 @@ jobs:
         run: docker info
 
       - name: Docker build
-        run: docker build . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
+        run: docker build --pull --no-cache . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
 
       - name: Docker push and capture immutable image reference
         id: pushed-image

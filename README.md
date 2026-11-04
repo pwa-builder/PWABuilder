@@ -74,6 +74,19 @@ verified known-good digests; changing these workflows does not update live slots
 Retain images referenced by deployed slots and images needed for rollback.
 Breaking web app and Google Play API changes still require coordinated releases.
 
+Service image builds use `docker build --pull --no-cache` to refresh base images
+and rerun OS and runtime package installation rather than reuse cached layers.
+This increases build time but allows serviced .NET, Node.js, and OS packages to
+be picked up on rebuild. Explicitly pinned inputs still require source updates;
+the Windows packager installs .NET SDK 10.0.403 (runtime 10.0.14) and verifies
+the installer against Microsoft's published SHA-512 checksum.
+Run `node --test .github/scripts/tests/test-container-builds.cjs` to check these
+build settings; all three service workflows run this check before building.
+After a runtime update, verify versions and vulnerability scan results in the
+built images, test the staging slots, and promote the verified digests through
+the normal deployment process. A source change or rebuild alone does not
+remediate an already deployed image or older images retained in the registry.
+
 #### Pull request deployment slots
 
 Pushes to `main` deploy changed services to their existing shared slots:
