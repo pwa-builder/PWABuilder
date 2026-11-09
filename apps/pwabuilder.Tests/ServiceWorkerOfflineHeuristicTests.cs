@@ -1,3 +1,4 @@
+using PuppeteerSharp;
 using PWABuilder.Services;
 using Xunit;
 
@@ -26,5 +27,25 @@ public sealed class ServiceWorkerOfflineHeuristicTests
     public void Missing_offline_caching_logic_is_not_detected(string serviceWorkerJs)
     {
         Assert.False(ServiceWorkerAnalyzer.HasOfflineCachingLogic(serviceWorkerJs));
+    }
+
+    /// <summary>A crashed or closed browser tab is recognized so the offline check can retry or fall back to static analysis.</summary>
+    [Fact]
+    public void Browser_crashes_are_recognized()
+    {
+        Assert.True(ServiceWorkerAnalyzer.IsBrowserCrash(new TargetClosedException("Protocol error (Performance.enable): Session closed.", "Page failed to process Inspector.targetCrashed.")));
+        Assert.True(ServiceWorkerAnalyzer.IsBrowserCrash(new InvalidOperationException("wrapped", new TargetClosedException("Session closed", "Inspector.targetCrashed"))));
+        Assert.True(ServiceWorkerAnalyzer.IsBrowserCrash(new Exception("Page failed to process Inspector.targetCrashed.")));
+    }
+
+    /// <summary>Ordinary failures of the app under test are not mistaken for a browser crash.</summary>
+    [Theory]
+    [InlineData("net::ERR_INTERNET_DISCONNECTED")]
+    [InlineData("Navigation timeout of 20000 ms exceeded")]
+    [InlineData("")]
+    public void Other_failures_are_not_browser_crashes(string message)
+    {
+        Assert.False(ServiceWorkerAnalyzer.IsBrowserCrash(new Exception(message)));
+        Assert.False(ServiceWorkerAnalyzer.IsBrowserCrash(new TimeoutException(message)));
     }
 }
