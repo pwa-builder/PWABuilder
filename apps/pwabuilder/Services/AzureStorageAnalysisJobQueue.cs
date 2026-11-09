@@ -15,6 +15,9 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
     private readonly QueueClient queueClient;
     private readonly AnalysisJobProcessorHealthMonitor healthMonitor;
     private readonly ILogger<AzureStorageAnalysisJobQueue> logger;
+    private readonly string queueName;
+    private readonly bool createQueueIfMissing;
+    private bool queueVerified;
 
     /// <summary>
     /// Creates a new AzureStorageAnalysisJobQueue.
@@ -30,8 +33,13 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
         var managedIdentityAppId = appSettings.Value.AzureManagedIdentityApplicationId;
         var credential = new ManagedIdentityCredential(clientId: managedIdentityAppId);
 
-        var queueUri = new Uri($"{appSettings.Value.AzureStorageQueueUri.TrimEnd('/')}/{QueueName}");
+        var queueNameOverride = appSettings.Value.AnalysisJobQueueName;
+        queueName = string.IsNullOrWhiteSpace(queueNameOverride) ? GetEnvironmentQueueName() : queueNameOverride.Trim().ToLowerInvariant();
+        var queueUri = new Uri($"{appSettings.Value.AzureStorageQueueUri.TrimEnd('/')}/{queueName}");
         this.queueClient = new QueueClient(queueUri, credential);
+
+        // Environment queues are provisioned ahead of time. Overridden queues (e.g. per-PR slots) are created on first use.
+        createQueueIfMissing = !string.IsNullOrWhiteSpace(queueNameOverride);
     }
 
     /// <summary>
@@ -41,6 +49,7 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
     {
         try
         {
+            await EnsureQueueExistsAsync(CancellationToken.None);
             var properties = await queueClient.GetPropertiesAsync();
             var queueLength = properties.Value.ApproximateMessagesCount;
 
@@ -58,7 +67,7 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
             await queueClient.SendMessageAsync(BinaryData.FromString(json));
 
             healthMonitor.AnalysisQueueLength = queueLength + 1;
-            logger.LogInformation("Enqueued analysis job for {AnalysisId} to {QueueName}. Approximate queue length: {QueueLength}", job.AnalysisId, QueueName, queueLength + 1);
+            logger.LogInformation("Enqueued analysis job for {AnalysisId} to {QueueName}. Approximate queue length: {QueueLength}", job.AnalysisId, queueName, queueLength + 1);
         }
         catch (Exception error) when (error is not InvalidOperationException)
         {
@@ -75,6 +84,7 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
+            await EnsureQueueExistsAsync(cancellationToken);
 
             var response = await queueClient.ReceiveMessageAsync(visibilityTimeout: TimeSpan.FromMinutes(5), cancellationToken: cancellationToken);
             var message = response.Value;
@@ -87,7 +97,7 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
             var job = JsonSerializer.Deserialize<AnalysisJob>(message.Body.ToString());
             if (job is null)
             {
-                logger.LogWarning("Dequeued a message from {QueueName} but failed to deserialize it. Deleting invalid message.", QueueName);
+                logger.LogWarning("Dequeued a message from {QueueName} but failed to deserialize it. Deleting invalid message.", queueName);
                 await queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, cancellationToken);
                 return null;
             }
@@ -96,26 +106,37 @@ public sealed class AzureStorageAnalysisJobQueue : IAnalysisJobQueue
             // If processing fails, AnalysisJobProcessor will re-enqueue.
             await queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt, cancellationToken);
 
-            logger.LogInformation("Dequeued analysis job for {AnalysisId} from {QueueName}", job.AnalysisId, QueueName);
+            logger.LogInformation("Dequeued analysis job for {AnalysisId} from {QueueName}", job.AnalysisId, queueName);
             return job;
         }
         catch (Exception error) when (error is not OperationCanceledException)
         {
-            logger.LogError(error, "Error dequeuing analysis job from {QueueName}", QueueName);
+            logger.LogError(error, "Error dequeuing analysis job from {QueueName}", queueName);
             throw;
         }
     }
 
     /// <summary>
+    /// Creates the queue if this instance uses an overridden queue name and the queue hasn't been verified yet.
+    /// </summary>
+    private async Task EnsureQueueExistsAsync(CancellationToken cancellationToken)
+    {
+        if (!createQueueIfMissing || queueVerified)
+        {
+            return;
+        }
+
+        await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+        queueVerified = true;
+    }
+
+    /// <summary>
     /// Gets the queue name based on the current environment.
     /// </summary>
-    private static string QueueName
+    private static string GetEnvironmentQueueName()
     {
-        get
-        {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown-env";
-            // Azure Queue names must be lowercase, 3-63 chars, alphanumeric and dashes only
-            return $"analysis-jobs-{env}".ToLowerInvariant();
-        }
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "unknown-env";
+        // Azure Queue names must be lowercase, 3-63 chars, alphanumeric and dashes only
+        return $"analysis-jobs-{env}".ToLowerInvariant();
     }
 }

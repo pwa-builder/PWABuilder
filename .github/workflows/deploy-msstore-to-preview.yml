@@ -120,7 +120,7 @@ jobs:
 
       - name: Docker build
         working-directory: ./apps/pwabuilder-microsoft-store
-        run: docker build . --file Dockerfile --tag "$env:IMAGE_TAG" -m 2GB
+        run: docker build --pull --no-cache . --file Dockerfile --tag "$env:IMAGE_TAG" -m 2GB
 
       - name: Docker push and capture immutable image reference
         id: pushed-image
