@@ -54,7 +54,7 @@ jobs:
         run: az acr login --name pwabuilder
 
       - name: Docker build
-        run: docker build -f apps/pwabuilder-google-play/Dockerfile apps/pwabuilder-google-play -t "$IMAGE_TAG"
+        run: docker build --pull --no-cache -f apps/pwabuilder-google-play/Dockerfile apps/pwabuilder-google-play -t "$IMAGE_TAG"
 
       - name: Docker push and capture immutable image reference
         id: pushed-image

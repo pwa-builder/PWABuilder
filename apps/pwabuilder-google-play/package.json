@@ -36,7 +36,7 @@
         "@redis/client": "^5.10.0",
         "@redis/entraid": "^5.10.0",
         "archiver": "^8.0.0",
-        "body-parser": "^2.3.0",
+        "body-parser": "^2.4.0",
         "cors": "^2.8.5",
         "del": "^8.0.1",
         "dotenv": "^16.6.1",
