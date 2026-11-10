@@ -57,6 +57,15 @@ function assertStringLiteral(source: string, prefix: string, expected: string): 
     assert.equal(decoded, expected);
 }
 
+test('stable and alpha packages render androidbrowserhelper 2.7.4', async () => {
+    for (const enabled of [false, true]) {
+        const twa = manifest();
+        twa.alphaDependencies.enabled = enabled;
+        const source = await renderGradle(twa);
+        assert.match(source, /implementation 'com\.google\.androidbrowserhelper:androidbrowserhelper:2\.7\.4'/u);
+    }
+});
+
 test('normalizes DNS, IDNs, ports and legacy subpaths without discarding paths', () => {
     for (const [input, expected] of [
         ['example.com', 'example.com'],
