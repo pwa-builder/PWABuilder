@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using PWABuilder.MicrosoftStore.Common;
 
 namespace PWABuilder.MicrosoftStore.Models
 {
@@ -148,10 +149,15 @@ namespace PWABuilder.MicrosoftStore.Models
             }
 
             var uri = this.Url;
-            // Ensure the URL is an absolute HTTPS, non-loopback URL.
-            if (uri == null || !uri.IsAbsoluteUri || uri.Scheme != Uri.UriSchemeHttps || uri.IsLoopback)
+            // Ensure the URL is an absolute HTTPS URL that isn't loopback or a private/reserved IP literal.
+            if (uri == null || !uri.IsAbsoluteUri || uri.Scheme != Uri.UriSchemeHttps || uri.IsLoopback || PublicNetworkGuard.HasNonPublicIPLiteralHost(uri))
             {
-                errors.Add("URL must be an absolute HTTPS URL and cannot be a loopback address.");
+                errors.Add("URL must be an absolute HTTPS URL and cannot be a loopback or private network address.");
+            }
+
+            if (ManifestUrl is not null && ManifestUrl.IsAbsoluteUri && (ManifestUrl.IsLoopback || PublicNetworkGuard.HasNonPublicIPLiteralHost(ManifestUrl)))
+            {
+                errors.Add("Manifest URL cannot be a loopback or private network address.");
             }
 
             // The version requirements for the Microsoft Store: https://docs.microsoft.com/en-us/windows/uwp/publish/package-version-numbering

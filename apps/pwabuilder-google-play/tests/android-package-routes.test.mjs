@@ -33,7 +33,9 @@ test('all public packaging endpoints reject injection before queueing or buildin
             body: JSON.stringify({ ...validOptions(), host: 'https://example.com/subpath/' }),
         });
         assert.equal(response.status, 200);
-        assert.equal(await response.text(), 'test-job');
+        const receipt = await response.json();
+        assert.match(receipt.id, /^googleplaypackagejob:/);
+        assert.match(receipt.accessToken, /^[A-Za-z0-9_-]{43}$/);
         assert.equal(effects.enqueued.length, 1);
         assert.equal(effects.enqueued[0].host, 'example.com/subpath');
         assert.equal(effects.builds, 0);

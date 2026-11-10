@@ -22,6 +22,15 @@ public interface IRedisCache
     /// <returns>The analysis with the specified ID, or null if it doesn't exist.</returns>
     Task<T?> GetByIdAsync<T>(string id) where T : class;
 
+    /// <summary>Reads only the separate diagnostics key for a validated support UUID.</summary>
+    Task<PackageDiagnosticsData?> GetPackageDiagnosticsAsync(Guid supportReference);
+
+    /// <summary>Reads up to fifty UUIDs from the fourteen-day failed diagnostics sorted-set window.</summary>
+    Task<IReadOnlyList<string>> GetRecentFailedPackageReferencesAsync();
+
+    /// <summary>Pages through the bounded failed index by score and UUID, without scanning Redis keys.</summary>
+    Task<SupportPage<SupportPackageIndexEntry>> GetFailedPackageReferencesPageAsync(SupportPageRequest request);
+
     /// <summary>
     /// Saves the specified object to the Redis cache.
     /// </summary>
@@ -63,6 +72,27 @@ public interface IRedisCache
 public class InMemoryRedisCache : IRedisCache
 {
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, object> store = new();
+
+    /// <inheritdoc/>
+    public Task<PackageDiagnosticsData?> GetPackageDiagnosticsAsync(Guid supportReference) =>
+        GetByIdAsync<PackageDiagnosticsData>($"package-diagnostics:{supportReference:D}");
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<string>> GetRecentFailedPackageReferencesAsync() =>
+        (await GetFailedPackageReferencesPageAsync(new SupportPageRequest(DateTimeOffset.UtcNow))).Items
+            .Select(entry => entry.Reference).ToArray();
+
+    /// <inheritdoc/>
+    public Task<SupportPage<SupportPackageIndexEntry>> GetFailedPackageReferencesPageAsync(SupportPageRequest request)
+    {
+        var references = store
+            .Where(item => item.Key.StartsWith("package-diagnostics:", StringComparison.Ordinal))
+            .Select(item => item.Value).OfType<PackageDiagnosticsData>()
+            .Where(item => item.Status is "Failed" && item.UpdatedAt >= request.Cutoff
+                && item.UpdatedAt <= request.UpperBound)
+            .Select(item => new SupportPackageIndexEntry(item.SupportReference, item.UpdatedAt.ToUnixTimeMilliseconds()));
+        return Task.FromResult(SupportPackagePaging.Select(references, request));
+    }
 
     public Task<T?> GetByIdAsync<T>(string id)
         where T : class
@@ -115,6 +145,11 @@ public class RedisCache : IRedisCache
 {
     // How long items should remain in the cache before expiring.
     private static readonly TimeSpan itemExpiration = TimeSpan.FromDays(3);
+    private static readonly JsonSerializerOptions diagnosticsJsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+    };
     private readonly ILogger<RedisCache> logger;
     private readonly Task<IDatabase> redisTask;
 
@@ -122,6 +157,53 @@ public class RedisCache : IRedisCache
     {
         this.redisTask = InitializeRedis(options);
         this.logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public async Task<PackageDiagnosticsData?> GetPackageDiagnosticsAsync(Guid supportReference)
+    {
+        if (supportReference == Guid.Empty)
+        {
+            return null;
+        }
+        var redis = await redisTask;
+        var json = await redis.StringGetAsync($"package-diagnostics:{supportReference:D}");
+        return DeserializePackageDiagnostics(json.ToString());
+    }
+
+    /// <summary>Deserializes Node camelCase separately, preserving existing cache serialization behavior.</summary>
+    public static PackageDiagnosticsData? DeserializePackageDiagnostics(string json)
+    {
+        // The producer permits 100 logs and 20 errors of 4,000 characters each, plus metadata.
+        if (string.IsNullOrWhiteSpace(json) || json.Length > 600 * 1024)
+        {
+            return null;
+        }
+        try
+        {
+            return JsonSerializer.Deserialize<PackageDiagnosticsData>(json, diagnosticsJsonOptions);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<string>> GetRecentFailedPackageReferencesAsync() =>
+        (await GetFailedPackageReferencesPageAsync(new SupportPageRequest(DateTimeOffset.UtcNow))).Items
+            .Select(entry => entry.Reference).ToArray();
+
+    /// <inheritdoc/>
+    public async Task<SupportPage<SupportPackageIndexEntry>> GetFailedPackageReferencesPageAsync(SupportPageRequest request)
+    {
+        var redis = await redisTask;
+        // The producer caps this index at 500. Reading that bounded set preserves score ties without KEYS scans.
+        var values = await redis.SortedSetRangeByScoreWithScoresAsync("package-diagnostics:failed",
+            start: request.Cutoff.ToUnixTimeMilliseconds(), stop: request.UpperBound.ToUnixTimeMilliseconds(),
+            order: Order.Descending, take: SupportPackagePaging.IndexLimit);
+        return SupportPackagePaging.Select(values.Select(value =>
+            new SupportPackageIndexEntry(value.Element.ToString(), value.Score)), request);
     }
 
     /// <summary>

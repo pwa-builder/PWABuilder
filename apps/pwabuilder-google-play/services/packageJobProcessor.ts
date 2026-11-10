@@ -6,6 +6,7 @@ import { blobStorage } from "./azureStorageBlobService.js";
 import { redisService } from "./redisService.js";
 import { azureQueue, AzureQueueService } from "./azureQueueService.js";
 import { packageJobQueue } from "./packageJobQueue.js";
+import { savePackageJob } from "./package-job-store.js";
 
 /**
  * Processes Google Play packaging jobs one at a time. Multiple instances of this processor
@@ -46,11 +47,11 @@ export class PackageJobProcessor {
             if (job) {
                 // Skip stale jobs — users won't be waiting for results after 15 minutes.
                 // Discarding these prevents the queue from staying backed up with dead work.
-                if (this.isJobStale(job)) {
+                if (!job.supportReference || this.isJobStale(job)) {
                     console.info(`Discarding stale job ${job.id} (created ${job.createdAt}). Job exceeded max age of ${this.maxJobAgeMs / 60000} minutes.`);
                     job.errors.push(`Discarding job due to exceeding max age of ${this.maxJobAgeMs / 60000} minutes.`);
                     job.status = "Failed";
-                    await redisService.save(job.id, job);
+                    await savePackageJob(job);
                 } else {
                     jobLogger = new PackageJobLogger(job);
                     await this.processJob(job, jobLogger);
@@ -77,7 +78,7 @@ export class PackageJobProcessor {
         try {
             // Mark it as in progress.
             job.status = "InProgress";
-            await redisService.save(job.id, job);
+            await savePackageJob(job);
 
             const zipFilePath = await packageCreator.createZip(job.packageOptions);
             this.jobProgressed({ level: "info", message: "Successfully generated Google Play package. Saving zip file..." }, job, logger);
@@ -96,20 +97,20 @@ export class PackageJobProcessor {
         if (this.isJobStale(job)) {
             logger.error(`Job expired after ${this.maxJobAgeMs / 60000} minutes. Marking as failed without retry.`, jobError);
             job.status = "Failed";
-            await redisService.save(job.id, job);
+            await savePackageJob(job);
             return;
         }
 
         if (job.retryCount < this.maxRetryCount) {
             job.retryCount++;
             logger.info("Retrying job", { attempt: job.retryCount + 1, maxAttempts: this.maxRetryCount + 1 });
-            await redisService.save(job.id, job);
+            await savePackageJob(job);
             await packageJobQueue.requeue(job);
         } else {
             // We've already attempted processing this max times. Mark the job as failed.
             logger.error(`Job failed after ${this.maxRetryCount + 1} attempts.`, jobError);
             job.status = "Failed";
-            await redisService.save(job.id, job);
+            await savePackageJob(job);
         }
     }
 
@@ -127,7 +128,7 @@ export class PackageJobProcessor {
 
         // Save the job state back to Redis so we have a record of progress.
         try {
-            await redisService.save(job.id, job);
+            await savePackageJob(job);
         } catch (statusSaveError) {
             // Don't throw the error, we don't want to fail the job just because we couldn't save progress.
             logger.error("Failed to save job progress to Redis", statusSaveError);
@@ -150,7 +151,7 @@ export class PackageJobProcessor {
             job.status = "Completed";
             job.uploadedBlobFileName = blobFileName;
             jobLogger.info("Successfully uploaded package zip file", blobFileName);
-            await redisService.save(job.id, job);
+            await savePackageJob(job);
             await packageJobQueue.recordProcessedJob(job.id);
         } catch (completionError) {
             jobLogger.error("Error marking job as completed.", completionError);

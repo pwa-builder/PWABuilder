@@ -1,4 +1,4 @@
-?> **Note** This article assumes a baseline understanding of web development. If you're looking for resources to start your web dev journey, take a look <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web" aria-label="Click here to learn more">here</a> 
+?> **Note** This article assumes a baseline understanding of web development. If you're looking for resources to start your web dev journey, read [Getting started with the web](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web).
 
 # Beginner's Guide to Progressive Web Apps
 
@@ -23,7 +23,7 @@ A web app manifest (often shortened to web manifest, or even just *manifest*) is
 
 The manifest also contains other information about your app, such as the title, theme colors, and description. Your manifest can even enable certain app capabilities, such as shortcuts and display modes.
 
-Learn more <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest" aria-label="Click here to learn more">here</a> 
+[Learn more about the web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest).
 
 ### Service Workers
 Service workers are a type of [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) that serve as a proxy to the network, intercepting any requests that your PWA may make. 

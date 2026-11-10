@@ -55,7 +55,7 @@ export class AzureQueueService {
         }
 
         const json = JSON.stringify(value);
-        await this.queueClient.sendMessage(Buffer.from(json).toString("base64"));
+        await this.queueClient.sendMessage(Buffer.from(json).toString("base64"), { messageTimeToLive: 3600 });
 
         console.info(`Enqueued message to ${this.queueClient.name}. Approximate queue length: ${currentLength + 1}`);
         return currentLength + 1;

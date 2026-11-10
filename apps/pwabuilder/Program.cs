@@ -91,15 +91,15 @@ builder.Services.AddSingleton(services =>
     return PuppeteerService.CreateBrowserAsync(env);
 });
 builder.Services.AddControllersWithViews();
+var supportAdminConfigured = builder.Services.AddSupportAdmin(builder.Configuration);
+builder.Services.AddScoped<SupportDiagnosticsService>();
 // An HTTP client with the PWABuilderHttpAgent string appended. 
+// It fetches user-supplied URLs, so it only connects to public IP addresses (SSRF protection).
 builder.Services.AddHttpClient(Constants.PwaBuilderAgentHttpClient, client =>
 {
     client.DefaultRequestHeaders.UserAgent.ParseAdd($"{Constants.DesktopUserAgent} PWABuilderHttpAgent");
 })
-.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-{
-    AutomaticDecompression = System.Net.DecompressionMethods.All
-});
+.ConfigurePrimaryHttpMessageHandler(PublicNetworkGuard.CreateHandler);
 
 builder
     .Services.AddControllers()
@@ -163,6 +163,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseSupportAdmin(supportAdminConfigured);
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

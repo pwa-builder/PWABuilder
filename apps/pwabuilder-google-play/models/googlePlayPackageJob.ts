@@ -2,6 +2,7 @@ import { AndroidPackageOptions } from "./androidPackageOptions.js";
 
 export interface GooglePlayPackageJob {
     id: string;
+    supportReference?: string;
     pwaUrl: string;
     analysisId: string | null;
     status: "Queued" | "InProgress" | "Completed" | "Failed";

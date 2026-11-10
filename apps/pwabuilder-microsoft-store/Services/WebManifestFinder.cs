@@ -22,6 +22,7 @@ namespace PWABuilder.MicrosoftStore
     {
         private readonly ILogger<WebManifestFinder> logger;
         private readonly HttpClient http;
+        private readonly HttpClient publicUrlHttp;
         private readonly TempDirectory temp;
 
         private const string webManifestFinderServiceUrl = "https://pwabuilder.com/api/manifests/findManifestLegacyApiV2";
@@ -30,6 +31,7 @@ namespace PWABuilder.MicrosoftStore
         {
             this.http = httpClientFactory.CreateClient();
             this.http.AddLatestEdgeUserAgent();
+            this.publicUrlHttp = httpClientFactory.CreateClient(PublicNetworkGuard.HttpClientName);
             this.logger = logger;
             this.temp = temp;
         }
@@ -146,7 +148,7 @@ namespace PWABuilder.MicrosoftStore
             {
                 using var manifestFetchMessage = new HttpRequestMessage(HttpMethod.Get, manifestUrl);
                 manifestFetchMessage.Version = new Version(2, 0);
-                using var manifestResponse = await this.http.SendAsync(manifestFetchMessage);
+                using var manifestResponse = await this.publicUrlHttp.SendAsync(manifestFetchMessage);
                 manifestResponse.EnsureSuccessStatusCode();
                 var manifestJson = await JsonDocument.ParseAsync(await manifestResponse.Content.ReadAsStreamAsync());
                 return manifestJson;

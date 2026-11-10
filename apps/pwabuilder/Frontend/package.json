@@ -10,6 +10,11 @@
     "stop": "npm run kill-dev-server",
     "kill-dev-server": "kill-port 5173",
     "test": "playwright test",
+    "test:package-access": "node --test tests/package-job-access.test.mjs",
+    "test:packaging-config": "node --test tests/packaging-configuration.test.mjs",
+    "test:packaging-config:browser": "playwright test --config playwright.packaging.config.ts",
+    "test:admin:unit": "node --test tests/support-admin.test.mjs",
+    "test:admin:browser": "playwright test --config playwright.admin.config.ts",
     "preinstall": "node ../../../scripts/setupDeps.js"
   },
   "author": "",
@@ -68,7 +73,7 @@
     "rollup-plugin-visualizer": "^7.0.1",
     "tslib": "^2.1.0",
     "typescript": "^7.0.2",
-    "vite": "^8.0.16",
+    "vite": "^8.1.6",
     "vite-plugin-pwa": "^1.3.0"
   },
   "prettier": {

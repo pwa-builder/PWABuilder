@@ -3,6 +3,9 @@ import { GooglePlayPackageJob } from "../models/googlePlayPackageJob.js";
 import { createPackageJobId } from "../utils/package-job-id.js";
 import { redisService } from "./redisService.js";
 import { azureQueue } from "./azureQueueService.js";
+import { randomUUID } from "node:crypto";
+import { createPackageJobAccess, packageAccessLifetimeSeconds } from "../utils/package-job-access.js";
+import { savePackageJob } from "./package-job-store.js";
 
 /**
  * A queue containing Google Play packaging jobs to be processed. Backed by Azure Queue Storage in production, in-memory queue in local dev.
@@ -20,11 +23,15 @@ export class PackageJobQueue {
      * @param packageArgs The arguments to use for the packaging job.
      * @return The ID of the newly created job.
      */
-    public async enqueue(packageArgs: AndroidPackageOptions): Promise<string> {
+    public async enqueue(packageArgs: AndroidPackageOptions): Promise<{ id: string; supportReference: string; accessToken: string }> {
         const job = this.createJobFromPackageArgs(packageArgs);
+        const { accessToken, access } = createPackageJobAccess();
+        const supportReference = randomUUID();
+        job.supportReference = supportReference;
         try {
             // Store the job itself in the database as its own key so we can immediately look up the status.
-            await redisService.save(job.id, job);
+            await redisService.save(`package-owner:${job.id}`, access, packageAccessLifetimeSeconds);
+            await savePackageJob(job);
 
             // Put the job into the queue for processing.
             if (azureQueue) {
@@ -35,9 +42,16 @@ export class PackageJobQueue {
                 console.info(`Enqueued new Google Play packaging job ${job.id} (in-memory). ${this.inMemoryQueue.length} jobs in queue.`);
             }
 
-            return job.id;
+            return { id: job.id, supportReference, accessToken };
         } catch (enqueueError) {
             console.error("Error enqueueing Google Play packaging job", enqueueError);
+            job.status = "Failed";
+            job.errors.push("Unable to enqueue the packaging job.");
+            try {
+                await savePackageJob(job);
+            } catch (diagnosticError) {
+                console.error("Unable to save enqueue failure diagnostics", diagnosticError);
+            }
             throw enqueueError;
         }
     }

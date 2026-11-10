@@ -60,7 +60,7 @@ WORKDIR /src/apps/pwabuilder/Frontend
 RUN npm install
 RUN npm run build
 
-# Build lighthouse custom audits
+# Build Lighthouse scripts
 WORKDIR /src/apps/pwabuilder/node-scripts
 RUN npm ci
 RUN npm run build

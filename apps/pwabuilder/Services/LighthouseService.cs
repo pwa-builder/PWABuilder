@@ -242,7 +242,7 @@ public class LighthouseService : ILighthouseService
             + $"--output=json --output-path=stdout "
             + $"--port={headlessChromePort} "
             + $"--config-path=\"{lighthouseSettingsPath}\" "
-            + $"--only-audits=installable-manifest,is-on-https,service-worker-audit,https-audit,offline-audit,web-app-manifest-raw-audit " // To find a list of all audits supported by Lighthouse, run npx lighthouse --list-all-audits
+            + $"--only-audits=installable-manifest,is-on-https " // To find a list of all audits supported by Lighthouse, run npx lighthouse --list-all-audits
             + $"--form-factor={(formFactor == BrowserFormFactor.Desktop ? "desktop" : "mobile")} "
             + $"{(formFactor == BrowserFormFactor.Mobile ? "--screenEmulation.mobile " : string.Empty)}"
             + $"--screenEmulation.width={viewport.Width} "

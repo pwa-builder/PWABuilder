@@ -33,8 +33,20 @@ public class ManifestsController : ControllerBase
             url = new Uri($"https://{url}", UriKind.Absolute);
         }
 
-        var manifest = await manifestCreatorService.Create(url, cancellationToken);
-        return Ok(manifest);
+        if (!url.IsAbsoluteInternetHttpOrHttps())
+        {
+            return BadRequest("URL must be an absolute HTTP or HTTPS URI pointing to a public address.");
+        }
+
+        try
+        {
+            var manifest = await manifestCreatorService.Create(url, cancellationToken);
+            return Ok(manifest);
+        }
+        catch (Exception error) when (PublicNetworkGuard.IsAccessDenied(error))
+        {
+            return BadRequest("URL must point to a public address.");
+        }
     }
 
     /// <summary>
@@ -62,6 +74,10 @@ public class ManifestsController : ControllerBase
         catch (HttpRequestException httpRequestEx) when (httpRequestEx.StatusCode != null)
         {
             return StatusCode((int)httpRequestEx.StatusCode.Value, httpRequestEx.Message);
+        }
+        catch (Exception error) when (PublicNetworkGuard.IsAccessDenied(error))
+        {
+            return BadRequest("Manifest URL must point to a public address.");
         }
 
         if (string.IsNullOrEmpty(manifestContent) && Uri.TryCreate(manifestUrl.Scheme + "://" + manifestUrl.Host, UriKind.Absolute, out var hostUrl))
