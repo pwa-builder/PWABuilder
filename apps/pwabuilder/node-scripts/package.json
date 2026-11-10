@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "lighthouse": "13.5.0",
-    "puppeteer": "^23.5.0"
+    "puppeteer": "^25.16.0"
   },
   "devDependencies": {
     "typescript": "^7.0.2"

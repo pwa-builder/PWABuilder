@@ -25,9 +25,12 @@ export class GooglePlayPackagingStatus extends LitElement {
     @state() hasFailed = false;
     @state() logs: string[] = [];
     @state() job: GooglePlayPackageJob | null = null;
+    @state() hasDownloadFailed = false;
+    @state() isDownloading = false;
     private readonly pollIntervalMs = 3000; // Poll the job every 3 seconds
     private readonly maxWaitTimeMs = 30 * 60 * 1000; // Max wait time of 30 minutes
     private readonly pollQueryRetryDelayMs = 10000; // Wait 10 seconds before retrying a failed query
+    autoDownloadRetryDelayMs = 3000; // Wait 3 seconds before automatically retrying a failed download
     private jobTimeoutHandle = 0;
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
@@ -78,6 +81,15 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     renderTitle(): TemplateResult {
+        if (this.hasDownloadFailed) {
+            return html`
+                <h2 class="page-title">
+                    <wa-icon name="exclamation-octagon"></wa-icon>
+                    Package created, but the download failed
+                </h2>
+            `;
+        }
+
         if (this.hasFailed) {
             const failureTitle = this.hasForbiddenAnalysisFailure() ? "Your web host is blocking PWABuilder" : "Unable to create Google Play package";
             return html`
@@ -168,8 +180,13 @@ export class GooglePlayPackagingStatus extends LitElement {
                     </div>
                 `;
             }
+            // The package was built successfully, so let the user retry just the download rather than rebuilding.
+            const retryDownloadButton = this.hasDownloadFailed
+                ? html`<wa-button variant="brand" ?loading="${this.isDownloading}" ?disabled="${this.isDownloading}" @click="${this.retryDownload}">Retry download</wa-button>`
+                : html``;
             return html`
                 <div class="card-footer" slot="footer">
+                    ${retryDownloadButton}
                     <wa-button @click="${this.retryJob}">Create a new package</wa-button>
                     <wa-button target="_blank" href="https://github.com/pwa-builder/PWABuilder/issues/new?&labels=bug%20%3Abug%3A,android-platform&title=${title}&body=${body}">Report a bug</wa-button>
                 </div>
@@ -222,25 +239,55 @@ export class GooglePlayPackagingStatus extends LitElement {
 
     private async jobCompleted(job: GooglePlayPackageJob): Promise<void> {
         this.recordPackagingCompleted(job.analysisId);
+        clearTimeout(this.jobTimeoutHandle);
+        await this.downloadPackage(job);
+    }
 
+    private async downloadPackage(job: GooglePlayPackageJob): Promise<void> {
         // Match the server's fixed access window from enqueue.
         const generatedDate = new Date(job.createdAt);
         const accessCutoff = new Date(Date.now() - 72 * 60 * 60 * 1000);
         if (generatedDate <= accessCutoff) {
             this.appendLog("Package access expires after 72 hours. Please create a new package.");
-            clearTimeout(this.jobTimeoutHandle);
             return;
         }
 
-        let blob: Blob;
+        this.isDownloading = true;
         try {
-            blob = await downloadGooglePlayPackageZip(job.id);
-            clearTimeout(this.jobTimeoutHandle);
+            const blob = await this.downloadPackageZipWithRetry(job.id);
             this.downloadBlob(blob, job);
+            this.hasDownloadFailed = false;
+            this.hasFailed = false;
             this.appendLog("Package created successfully. Download has begun.");
         } catch (downloadError) {
             this.downloadFailed(job, downloadError);
+        } finally {
+            this.isDownloading = false;
         }
+    }
+
+    /**
+     * Downloads the package zip, automatically retrying once after a short delay.
+     * Transient network failures (e.g. "TypeError: Failed to fetch") can occur even though the package was built successfully.
+     */
+    private async downloadPackageZipWithRetry(jobId: string): Promise<Blob> {
+        try {
+            return await downloadGooglePlayPackageZip(jobId);
+        } catch (firstError) {
+            console.warn("Google Play package download failed. Retrying automatically.", firstError);
+            this.appendLog(`Download failed (${firstError}). Retrying automatically...`);
+            await new Promise(resolve => setTimeout(resolve, this.autoDownloadRetryDelayMs));
+            return await downloadGooglePlayPackageZip(jobId);
+        }
+    }
+
+    private async retryDownload(): Promise<void> {
+        if (!this.job || this.isDownloading) {
+            return;
+        }
+
+        this.appendLog("Retrying download...");
+        await this.downloadPackage(this.job);
     }
 
     private jobTimedOut(): void {
@@ -266,7 +313,9 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private downloadFailed(job: GooglePlayPackageJob, error: any): void {
-        this.appendLog(`Error downloading Google Play package: ${error}`);
+        this.appendLog(`[error] Error downloading Google Play package: ${error}`);
+        this.appendLog("Your package was created successfully. Click Retry download to try again. If the download keeps failing, check whether antivirus, a firewall, a proxy, or a browser extension is blocking ZIP downloads.");
+        this.hasDownloadFailed = true;
         this.hasFailed = true;
         this.trackPackageFailure(error);
         this.recordPackagingFailed(job.analysisId, error instanceof Error ? error : `${error}`);

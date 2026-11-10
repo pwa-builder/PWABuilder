@@ -25,12 +25,30 @@
         }
 
         /// <summary>
-        /// Tests whether the URI is an absolute HTTPS URI that is not loopback.
+        /// Tests whether the URI is an absolute HTTPS URI that is not loopback and is not a private or reserved IP literal.
         /// </summary>
-        /// <returns>True if the URI is absolute, HTTPS, and not loopback; false otherwise.</returns>
+        /// <remarks>
+        /// DNS names are validated when connecting; see <see cref="PublicNetworkGuard"/>.
+        /// </remarks>
+        /// <returns>True if the URI is absolute, HTTPS, and not loopback or a non-public IP literal; false otherwise.</returns>
         public static bool IsAbsoluteInternetHttps(this Uri uri)
         {
-            return uri.IsAbsoluteUri && !uri.IsLoopback && uri.Scheme == Uri.UriSchemeHttps;
+            return uri.IsAbsoluteInternetHttpOrHttps() && uri.Scheme == Uri.UriSchemeHttps;
+        }
+
+        /// <summary>
+        /// Tests whether the URI is an absolute HTTP or HTTPS URI that is not loopback and is not a private or reserved IP literal.
+        /// </summary>
+        /// <remarks>
+        /// DNS names are validated when connecting; see <see cref="PublicNetworkGuard"/>.
+        /// </remarks>
+        /// <returns>True if the URI is absolute, HTTP or HTTPS, and not loopback or a non-public IP literal; false otherwise.</returns>
+        public static bool IsAbsoluteInternetHttpOrHttps(this Uri uri)
+        {
+            return uri.IsAbsoluteUri
+                && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)
+                && !uri.IsLoopback
+                && !PublicNetworkGuard.HasNonPublicIPLiteralHost(uri);
         }
     }
 }

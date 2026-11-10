@@ -41,7 +41,11 @@ Once a Google Play app package has been generated, follow the steps on [Next Ste
 
 ## Deploy
 
-Deploys are automatically pushed to the cloudapk/staging slot. Each build uses a
+Main branch deploys are automatically pushed to the cloudapk/staging slot.
+Same-repository PRs targeting main deploy to temporary `pr-<number>` slots, which
+are deleted when the PR closes. See the root README's deployment section for
+Azure prerequisites, cleanup behavior, and shared staging dependencies.
+Each build uses a
 unique tag containing the commit SHA, workflow run ID, and run attempt, and staging
 is configured with the pushed image's immutable digest rather than `:latest`.
 To deploy to production, swap staging and production or deploy the tested digest.
