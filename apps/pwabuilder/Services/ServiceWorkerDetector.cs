@@ -10,6 +10,8 @@ namespace PWABuilder.Services;
 /// </summary>
 public class ServiceWorkerDetector
 {
+    private const int RegistrationWaitMilliseconds = 10000;
+
     private readonly WebStringCache webStringCache;
     private readonly IPuppeteerService puppeteer;
 
@@ -64,7 +66,7 @@ public class ServiceWorkerDetector
             // Cool. Can we grab the script contents? That'd be fabulous and we can skip fetching it from C#.
             logger.LogInformation("Found service worker URL {serviceWorkerUrl} for {appUrl} via Puppeteer. Attempting to fetch service worker contents...", serviceWorkerUrl, appUrl);
             var serviceWorkerUri = new Uri(appUrl, serviceWorkerUrl);
-            var serviceWorkerContent = await TryGetServiceWorkerContentsFromPuppeteer(page, logger);
+            var serviceWorkerContent = await TryGetServiceWorkerContentsFromPuppeteer(page, serviceWorkerUri, logger);
             if (!string.IsNullOrWhiteSpace(serviceWorkerContent))
             {
                 return new ServiceWorkerDetection
@@ -98,8 +100,22 @@ public class ServiceWorkerDetector
     {
         try
         {
-            var jsGetServiceWorker = @"('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then((registration) => registration ? registration.active?.scriptURL || registration.installing?.scriptURL || registration.waiting?.scriptURL : null ) : Promise.resolve(null))";
-            var serviceWorkerUrl = await puppeteerPage.EvaluateExpressionAsync<string?>(jsGetServiceWorker);
+            // Many apps register their service worker after the window load event, sometimes after dynamically importing
+            // a helper library (e.g. vite-plugin-pwa loads workbox-window on load, then registers). So the registration
+            // often doesn't exist yet when navigation completes. Poll for a registration in any state for a short while.
+            var jsGetServiceWorker = $@"
+                async () => {{
+                    if (!('serviceWorker' in navigator)) return null;
+                    const deadline = Date.now() + {RegistrationWaitMilliseconds};
+                    while (true) {{
+                        const registration = await navigator.serviceWorker.getRegistration();
+                        const worker = registration && (registration.active || registration.waiting || registration.installing);
+                        if (worker) return worker.scriptURL;
+                        if (Date.now() >= deadline) return null;
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }}
+                }}";
+            var serviceWorkerUrl = await puppeteerPage.EvaluateFunctionAsync<string?>(jsGetServiceWorker);
             return serviceWorkerUrl;
         }
         catch (Exception evalError)
@@ -109,18 +125,16 @@ public class ServiceWorkerDetector
         }
     }
 
-    private static async Task<string?> TryGetServiceWorkerContentsFromPuppeteer(IPage puppeteerPage, ILogger logger)
+    private static async Task<string?> TryGetServiceWorkerContentsFromPuppeteer(IPage puppeteerPage, Uri serviceWorkerUrl, ILogger logger)
     {
         try
         {
+            // Fetch by URL rather than via registration.active: the service worker may still be installing (e.g. precaching lots of assets).
             var jsGetServiceWorkerContent = @"
-                navigator.serviceWorker.getRegistration().then(registration => {
-                    if (!registration || !registration.active) return null;
-                    return fetch(registration.active.scriptURL)
-                        .then(response => response.text())
-                        .catch(() => null);
-                })";
-            var serviceWorkerContent = await puppeteerPage.EvaluateExpressionAsync<string?>(jsGetServiceWorkerContent);
+                (url) => fetch(url)
+                    .then(response => response.ok ? response.text() : null)
+                    .catch(() => null)";
+            var serviceWorkerContent = await puppeteerPage.EvaluateFunctionAsync<string?>(jsGetServiceWorkerContent, serviceWorkerUrl.ToString());
             return serviceWorkerContent;
         }
         catch (Exception evalError)

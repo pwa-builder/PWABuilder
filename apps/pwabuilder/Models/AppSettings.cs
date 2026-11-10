@@ -14,5 +14,10 @@ public class AppSettings
     public string AzureCosmosAnalysesContainerName { get; set; } = string.Empty;
     public string AzureCosmosLocalConnectionString { get; set; } = string.Empty;
     public string AzureStorageQueueUri { get; set; } = string.Empty;
+    /// <summary>
+    /// Optional analysis job queue name override. PR deployment slots set this so they don't share the staging queue with the preview slot.
+    /// When empty, the queue name is derived from the ASP.NET Core environment.
+    /// </summary>
+    public string AnalysisJobQueueName { get; set; } = string.Empty;
     public string PWABuilderCliKey { get; set; } = string.Empty;
 }

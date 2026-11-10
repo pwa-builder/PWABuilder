@@ -119,6 +119,9 @@ if ($clientId) {
         $runtimeIdentity.Value = $clientId
     }
 }
+# Give the PR slot its own analysis job queue. Otherwise it shares the staging queue with the source slot,
+# and the source slot (running different code) can process this PR's analysis jobs.
+$settings.properties | Add-Member -NotePropertyName AppSettings__AnalysisJobQueueName -NotePropertyValue "analysis-jobs-$slot" -Force
 if (-not $exists) {
     Invoke-Azure (@('webapp', 'deployment', 'slot', 'create') + $target +
         @('--configuration-source', $SourceSlot, '--container-image-name', $ImageReference)) | Out-Null

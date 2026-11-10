@@ -1,11 +1,11 @@
 # Use a serviced Windows Server 2022 LTSC build compatible with GitHub Actions.
 FROM mcr.microsoft.com/windows/server:10.0.20348.5499
 
-# Install .NET 10.0 SDK (includes runtime)
+# Install .NET 10.0.403 SDK (includes the serviced 10.0.14 runtime)
 RUN powershell -Command \
     "$ProgressPreference = 'SilentlyContinue'; \
-    Invoke-WebRequest -Uri 'https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.400/dotnet-sdk-10.0.400-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
-    $expectedHash = 'fb86b8fa66db46f9caa696fcde2f2d040ea8bd61264c040e11ff716160693961993b10df8a346dd3dac9a8b72939e3e632d9a6f519de02c99d84cd6f7df500dc'; \
+    Invoke-WebRequest -Uri 'https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.403/dotnet-sdk-10.0.403-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
+    $expectedHash = 'cca8d82788252a8d13e778150a5e8393e204af274a12d19de7da10a0d98370a4edd5361ce5da73d0db13997fe5191e5db3a69c9665c6ddd6fba0d77845046f3c'; \
     $actualHash = (Get-FileHash -Path 'dotnet-sdk-installer.exe' -Algorithm SHA512).Hash; \
     if ($actualHash -ne $expectedHash) { throw 'The .NET SDK installer checksum is invalid.'; } \
     Start-Process -FilePath 'dotnet-sdk-installer.exe' -ArgumentList '/quiet' -Wait; \
