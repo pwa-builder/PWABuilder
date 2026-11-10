@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+$originalLastExitCode = $global:LASTEXITCODE
 $scriptPath = Join-Path $PSScriptRoot '..\manage-pr-slot.ps1'
 
 function az {
@@ -171,3 +172,5 @@ foreach ($case in $cases) {
     Remove-Variable prSlotTest -Scope Global
     Write-Host "PASS: $($case.Name)"
 }
+
+$global:LASTEXITCODE = $originalLastExitCode

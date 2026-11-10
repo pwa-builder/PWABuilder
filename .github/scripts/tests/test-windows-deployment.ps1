@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+$originalLastExitCode = $global:LASTEXITCODE
 $workflow = Get-Content (Join-Path $PSScriptRoot '..\..\workflows\deploy-msstore-to-preview.yml') -Raw
 $match = [regex]::Match($workflow, '(?ms)        id: pushed-image\r?\n.*?        run: \|\r?\n(?<script>.*?)(?=^  [a-z][\w-]*:)')
 if (-not $match.Success) { throw 'Windows image publication step not found.' }
@@ -54,6 +55,7 @@ try {
         Write-Host "PASS: $($case.Name)"
     }
 } finally {
+    $global:LASTEXITCODE = $originalLastExitCode
     $env:IMAGE_TAG = $originalTag
     $env:GITHUB_OUTPUT = $originalOutput
     Remove-Item -LiteralPath $outputPath -Force

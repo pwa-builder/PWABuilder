@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+$originalLastExitCode = $global:LASTEXITCODE
 $scriptPath = Join-Path $PSScriptRoot '..\wait-webapp-ready.ps1'
 if (-not (Test-Path -LiteralPath $scriptPath)) { throw 'Deployment readiness script is missing.' }
 
@@ -76,3 +77,5 @@ foreach ($case in $cases) {
     Remove-Variable readinessTest -Scope Global
     Write-Host "PASS: $($case.Name)"
 }
+
+$global:LASTEXITCODE = $originalLastExitCode
