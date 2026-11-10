@@ -26,17 +26,17 @@ The first step is to generate your Android package with PWABuilder:
      <img src="/assets/builder/general/pwabuilder-enter-url.png" alt="URL submission area on PWABuilder homepage" width=500>
 </div>
 
-3. Click Package for stores to navigate to the package selection page.
+3. Click <code role="none">Package for stores</code> to navigate to the package selection page.
    
-4. Click on Generate Package in the Android section.
+4. Click on <code role="none">Generate Package</code> in the Android section.
 
 <div class="docs-image">
     <img src="/assets/builder/android/store_package.jpg" alt="PWABuilder store package selection page showing options to generate packages for both Windows and Android" width=550>
 </div>
 
-5. Make sure you are on the Google Play tab and fill out the required options for your package.
+5. Make sure you are on the <code role="none">Google Play</code> tab and fill out the required options for your package.
    
-6. Click Download Package.
+6. Click <code role="none">Download Package</code>.
 
 <div class="docs-image">
     <img src="/assets/builder/android/android-options.png" alt="Android packaging options page on PWABuilder.com" width=550>
@@ -114,7 +114,7 @@ This step is required for running the production version of your app. If you ski
     <img src="/assets/builder/android/google-play-app-release.png" alt="Image of where to find your app release in the Google Play Console" width=700>
 </div>
 
-3. Click Setup and then App integrity in the sidebar. Navigate to the App signing tab and copy your SHA-256 fingerprint:
+3. Click <code role="none">Setup</code> and then <code role="none">App integrity</code> in the sidebar. Navigate to the <code role="none">App signing</code> tab and copy your SHA-256 fingerprint:
 
 <div class="docs-image">
     <img src="/assets/builder/android/google-play-sha256.png" alt="Image of where to find your SHA-256 fingerprint in the Google Play Console" width=700>
@@ -156,7 +156,7 @@ If have an existing app in the Play Store and you want to publish a new version 
    
 2. Specify your new App version and App version code.
    
-3. Scroll down to Signing key and choose Use mine
+3. Scroll down to Signing key and choose <code role="none">Use mine</code>
    
 4. Choose your existing signing key file, and fill in your existing signing key information (key alias, key password, store password)
    
