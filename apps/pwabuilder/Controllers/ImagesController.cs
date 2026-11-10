@@ -54,6 +54,13 @@ public class ImagesController : ControllerBase
         }
         catch (Exception error)
         {
+            // Never fall back to Puppeteer for blocked addresses: the browser's fetch would bypass the public network guard.
+            if (PublicNetworkGuard.IsAccessDenied(error))
+            {
+                logger.LogWarning("Image proxy blocked a request to a non-public address for analysis {analysisId}", analysisId);
+                return BadRequest("Image URL must point to a public address.");
+            }
+
             // Download via C# HttpClient failed. Try to load the image via Puppeteer.
             if (!string.IsNullOrEmpty(analysisId))
             {

@@ -24,6 +24,7 @@ namespace PWABuilder.MicrosoftStore
     {
         private readonly ILogger<ImageGenerator> logger;
         private readonly HttpClient http;
+        private readonly HttpClient publicUrlHttp;
         private readonly Uri imageGeneratorServiceUrl;
 
         public ImageGenerator(
@@ -33,6 +34,7 @@ namespace PWABuilder.MicrosoftStore
         {
             this.http = httpClientFactory.CreateClient();
             this.http.AddLatestEdgeUserAgent();
+            this.publicUrlHttp = httpClientFactory.CreateClient(PublicNetworkGuard.HttpClientName);
             this.imageGeneratorServiceUrl = appSettings.Value.ImageGeneratorApiUrl;
             this.logger = logger;
         }
@@ -229,12 +231,17 @@ namespace PWABuilder.MicrosoftStore
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
-                imageFetch = await http.SendAsync(request);
+                imageFetch = await publicUrlHttp.SendAsync(request);
                 if (!imageFetch.IsSuccessStatusCode)
                 {
                     logger.LogWarning("Attempted to fetch image at {url}, but download failed with status {code}, {reason}", imageUri, imageFetch.StatusCode, imageFetch.ReasonPhrase);
                     return null;
                 }
+            }
+            catch (Exception fetchError) when (PublicNetworkGuard.IsAccessDenied(fetchError))
+            {
+                logger.LogWarning("Blocked fetching image at {url} because it resolves to a non-public address", imageUri);
+                return null;
             }
             catch (Exception fetchError)
             {
@@ -248,7 +255,7 @@ namespace PWABuilder.MicrosoftStore
                 {
                     using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
                     request.Version = HttpVersion.Version20;
-                    imageFetch = await http.SendAsync(request);
+                    imageFetch = await publicUrlHttp.SendAsync(request);
                     if (!imageFetch.IsSuccessStatusCode)
                     {
                         logger.LogWarning("Attempted to fetch image at {url} with HTTP/2, but download failed with status {code}, {reason}", imageUri, imageFetch.StatusCode, imageFetch.ReasonPhrase);

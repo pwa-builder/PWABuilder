@@ -1,0 +1,87 @@
+name: Deploy PR slot
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+      source_slot:
+        required: true
+        type: string
+      image_reference:
+        required: true
+        type: string
+    secrets:
+      azure_client_id:
+        required: true
+      azure_tenant_id:
+        required: true
+      azure_subscription_id:
+        required: true
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    concurrency:
+      group: pr-slot-${{ inputs.app_name }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.azure_client_id }}
+          tenant-id: ${{ secrets.azure_tenant_id }}
+          subscription-id: ${{ secrets.azure_subscription_id }}
+      - name: Create or update PR slot
+        id: deploy
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APP_NAME: ${{ inputs.app_name }}
+          SOURCE_SLOT: ${{ inputs.source_slot }}
+          IMAGE_REFERENCE: ${{ inputs.image_reference }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          & ./.github/scripts/manage-pr-slot.ps1 -Operation Deploy `
+            -AppName $env:APP_NAME -SourceSlot $env:SOURCE_SLOT `
+            -ImageReference $env:IMAGE_REFERENCE -PullRequestNumber $env:PR_NUMBER `
+            -Repository $env:GITHUB_REPOSITORY -ExpectedHeadSha $env:HEAD_SHA
+
+  publish-links:
+    needs: deploy
+    if: needs.deploy.outputs.url != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: read
+      pull-requests: write
+    concurrency:
+      group: pr-deployment-links-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Update PR description with successful deployment links
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { publish } = require('./.github/scripts/publish-pr-deployment-links.cjs');
+            await publish({ github, context, core });
