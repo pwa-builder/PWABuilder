@@ -48,9 +48,9 @@ Wait until activation is complete before proceeding.
 
 Open the Azure web app for the service you are deploying:
 
-- [PWABuilder web app](https://ms.portal.azure.com/#resource/subscriptions/fd642677-2fa9-4d8a-8b25-788656871b24/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder)
-- [Google Play platform web app](https://ms.portal.azure.com/#resource/subscriptions/fd642677-2fa9-4d8a-8b25-788656871b24/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder-cloudapk)
-- [Microsoft Store platform web app](https://ms.portal.azure.com/#resource/subscriptions/fd642677-2fa9-4d8a-8b25-788656871b24/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder-windows-docker)
+- [pwabuilder](https://ms.portal.azure.com/#resource/subscriptions/fd642677-2fa9-4d8a-8b25-788656871b24/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder), the web app running on pwabuilder.com
+- [pwabuilder-cloudapk](https://ms.portal.azure.com/#resource/subscriptions/fd642677-2fa9-4d8a-8b25-788656871b24/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder-cloudapk), the web app that packages PWAs for the Google Play Store
+- [pwabuilder-windows-docker](https://ms.portal.azure.com/#resource/subscriptions/fd642677-2fa9-4d8a-8b25-788656871b24/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder-windows-docker), the web app that packages PWAs for the Microsoft Store
 
 Go to **Deployments** and click **Swap**. Select the tested staging slot as the
 source (`preview` for the web app, `staging` for either platform) and
