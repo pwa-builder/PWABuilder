@@ -62,6 +62,9 @@ Alternatively, build the `Dockerfile.production` container and access it from `h
 
 ### Deployment
 
+See the [deployment guide](DEPLOYMENT.md) for the steps to test a PR deployment,
+validate staging, elevate your Azure role, and swap to production.
+
 The web app, Microsoft Store, and Google Play deployment workflows publish uniquely tagged
 images containing the commit SHA, workflow run ID, and run attempt. Each workflow
 deploys the digest captured from its pushed image, not a mutable `:production`
