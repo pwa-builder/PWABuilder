@@ -13,6 +13,15 @@ test('ensure application loads home page', async ({ page }) => {
     await expect(loginButton).toBeVisible();
 });
 
+test('demo url analyzes Nimbus and preserves demo mode', async ({ page }) => {
+    await page.locator('#demo-action').click();
+
+    await expect(page).toHaveURL(url =>
+        url.pathname === '/reportcard' &&
+        url.searchParams.get('site') === 'https://pwa-builder.github.io/nimbus/');
+    expect(await page.evaluate(() => sessionStorage.getItem('demoURL'))).toBe('true');
+});
+
 test('carousel pause and play button keeps keyboard focus after activation', async ({ page }) => {
     const carouselButton = page.getByRole('button', { name: 'Click here to pause carousel' });
     await expect(carouselButton).toBeVisible();

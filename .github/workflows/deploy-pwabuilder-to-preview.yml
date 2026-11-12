@@ -61,7 +61,7 @@ jobs:
         run: docker info
 
       - name: Docker build
-        run: docker build . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
+        run: docker build --pull --no-cache . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
 
       - name: Docker push and capture immutable image reference
         id: pushed-image
