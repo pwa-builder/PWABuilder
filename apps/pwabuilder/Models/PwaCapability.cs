@@ -995,7 +995,7 @@ public class PwaCapability
             {
                 Id = PwaCapabilityId.AgentCard,
                 Description = "An agent card at /.well-known/agent-card.json (Agent2Agent protocol) lets other agents discover what your app can do for them and how to call it.",
-                TodoAction = "Publish an agent card at /.well-known/agent-card.json describing the skills your app offers to agents.",
+                TodoAction = "Publish an agent card at /.well-known/agent-card.json with a name, a description, an endpoint address and the skills your app offers to agents.",
                 Level = PwaCapabilityLevel.Feature,
                 FeatureName = "Agent Card",
                 FeatureIcon = new Uri("/assets/new/agent_card_icon.svg", UriKind.Relative),

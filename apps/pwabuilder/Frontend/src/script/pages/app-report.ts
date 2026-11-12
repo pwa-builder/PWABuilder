@@ -1299,6 +1299,10 @@ export class AppReport extends LitElement {
 
         const loading = caps.every(c => c.status === "InProgress");
         const passed = caps.filter(c => c.status === "Passed").length;
+        const skipped = caps.filter(c => c.status === "Skipped").length;
+        const skippedText = skipped > 0
+            ? `${skipped} could not be checked because the site did not answer in time or returned a server error; run the report again to retry.`
+            : "";
         const features = caps.filter(c => !!c.featureName);
         const summary = caps.find(c => c.id === "PageSummary");
         const summaryText = summary?.status === "Passed"
@@ -1314,7 +1318,7 @@ export class AppReport extends LitElement {
               <h2 class="card-header">Agent Readiness</h2>
               ${loading
                 ? html`<wa-skeleton class="desc-skeleton" effect="pulse"></wa-skeleton>`
-                : html`<p class="card-desc">${passed} of ${caps.length} agent readiness checks passed. AI agents and assistants read these to learn what your app is and how to act on it. ${summaryText}</p>`}
+                : html`<p class="card-desc">${passed} of ${caps.length} agent readiness checks passed. AI agents and assistants read these to learn what your app is and how to act on it. ${summaryText} ${skippedText}</p>`}
             </div>
             ${loading ? html`<div class="loader-round large"></div>` : html`<wa-progress-ring id="agentProgressRing" class="counterRing" value="${passed > 0 ? Math.round(passed / caps.length * 100) : 0}">${passed}/${caps.length}</wa-progress-ring>`}
           </div>
