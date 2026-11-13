@@ -26,14 +26,17 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
     private var themeObservation: NSKeyValueObservation?
     var currentWebViewTheme: UIUserInterfaceStyle = .unspecified
     override var preferredStatusBarStyle : UIStatusBarStyle {
-        if #available(iOS 13, *), overrideStatusBar{
-            if #available(iOS 15, *) {
-                return .default
-            } else {
-                return statusBarTheme == "dark" ? .lightContent : .darkContent
-            }
+        if #available(iOS 13, *), overrideStatusBar {
+            // statusBarTheme names the app background: a dark background gets light status bar text.
+            return statusBarTheme == "dark" ? .lightContent : .darkContent
         }
         return .default
+    }
+
+    // Info.plist hides the status bar on the launch screen. With view controller based status bar appearance,
+    // the controller has to keep it hidden once the app is running, or it comes back after launch.
+    override var prefersStatusBarHidden: Bool {
+        return displayMode == "fullscreen"
     }
 
     override func viewDidLoad() {
