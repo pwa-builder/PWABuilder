@@ -26,6 +26,7 @@ jobs:
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     outputs:
       url: ${{ steps.deploy.outputs.url }}
     permissions:
@@ -63,6 +64,15 @@ jobs:
             -AppName $env:APP_NAME -SourceSlot $env:SOURCE_SLOT `
             -ImageReference $env:IMAGE_REFERENCE -PullRequestNumber $env:PR_NUMBER `
             -Repository $env:GITHUB_REPOSITORY -ExpectedHeadSha $env:HEAD_SHA
+
+      - name: Upload startup diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.app_name }}-pr-${{ github.event.pull_request.number }}-startup-logs
+          path: ${{ runner.temp }}/${{ inputs.app_name }}-pr-${{ github.event.pull_request.number }}-startup-logs.zip
+          if-no-files-found: ignore
+          retention-days: 3
 
   publish-links:
     needs: deploy

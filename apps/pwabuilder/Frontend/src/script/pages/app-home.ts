@@ -219,4 +219,4 @@ export class AppHome extends LitElement {
     }
 }
 
-const demoURL: string = "https://webboard.app";
+const demoURL: string = "https://pwa-builder.github.io/nimbus/";

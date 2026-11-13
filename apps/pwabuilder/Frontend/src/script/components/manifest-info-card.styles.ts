@@ -102,6 +102,7 @@ export const manifestInfoCardStyles = css`
 		align-items: center;
 		justify-content: flex-start;
 		width: 100%;
+		box-sizing: border-box;
 		gap: 15px;
 		margin: 0;
 		border-radius: 0;

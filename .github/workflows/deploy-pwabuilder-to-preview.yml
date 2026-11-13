@@ -9,6 +9,7 @@ on:
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/wait-webapp-ready.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
   pull_request:
     branches: [main]
@@ -19,6 +20,7 @@ on:
       - ".github/workflows/deploy-pwabuilder-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/wait-webapp-ready.ps1"
       - ".github/scripts/publish-pr-deployment-links.cjs"
   workflow_dispatch:
 
@@ -61,7 +63,7 @@ jobs:
         run: docker info
 
       - name: Docker build
-        run: docker build . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
+        run: docker build --pull --no-cache . --file Dockerfile.production --tag "$IMAGE_TAG" -m 4GB
 
       - name: Docker push and capture immutable image reference
         id: pushed-image

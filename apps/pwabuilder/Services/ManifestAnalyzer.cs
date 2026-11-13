@@ -61,6 +61,19 @@ public class ManifestAnalyzer
 
             try
             {
+                var structureError = GetManifestStructureError(manifestDetection.Manifest, capability.Field);
+                if (structureError is not null)
+                {
+                    var isActionItem = capability.IsFieldExistenceCheck || capability.Id == PwaCapabilityId.HasManifest;
+                    capability.Status = isActionItem ? PwaCapabilityCheckStatus.Failed : PwaCapabilityCheckStatus.Skipped;
+                    if (isActionItem)
+                    {
+                        capability.TodoAction = "Fix your malformed web manifest.";
+                        capability.ErrorMessage = structureError;
+                    }
+                    continue;
+                }
+
                 var manifestCheck = this.manifestChecks[capability.Id];
                 var (status, error) = await manifestCheck.Check(manifestDetection, cancelToken);
                 capability.Status = error != null ? PwaCapabilityCheckStatus.Failed : status;
@@ -159,6 +172,45 @@ public class ManifestAnalyzer
             PwaCapabilityId.ServesHtml => throw new NotImplementedException()
         };
 #pragma warning restore CS8524
+    }
+
+    /// <summary>
+    /// Checks the manifest root and image array structure before checks access their JSON properties.
+    /// </summary>
+    private static string? GetManifestStructureError(JsonElement manifest, string? fieldName)
+    {
+        if (manifest.ValueKind != JsonValueKind.Object)
+        {
+            return "Your web manifest is malformed: the root must be a JSON object.";
+        }
+
+        if (fieldName is not ("icons" or "screenshots") || !manifest.TryGetProperty(fieldName, out var images))
+        {
+            return null;
+        }
+
+        if (images.ValueKind != JsonValueKind.Array)
+        {
+            return $"Your web manifest is malformed: '{fieldName}' must be an array of image objects.";
+        }
+
+        foreach (var image in images.EnumerateArray())
+        {
+            if (image.ValueKind != JsonValueKind.Object)
+            {
+                return $"Your web manifest is malformed: each entry in '{fieldName}' must be an image object, not an array or primitive value.";
+            }
+
+            foreach (var property in new[] { "src", "sizes", "type", "purpose" })
+            {
+                if (image.TryGetProperty(property, out var value) && value.ValueKind != JsonValueKind.String)
+                {
+                    return $"Your web manifest is malformed: '{fieldName}.{property}' must be a string.";
+                }
+            }
+        }
+
+        return null;
     }
 
     private static PwaCapabilityCheckStatus CheckManifestImageArray(JsonElement manifest, string fieldName)

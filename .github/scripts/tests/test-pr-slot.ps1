@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+$originalLastExitCode = $global:LASTEXITCODE
 $scriptPath = Join-Path $PSScriptRoot '..\manage-pr-slot.ps1'
 
 function az {
@@ -46,6 +47,11 @@ function gh {
     $global:prSlotTest.Pr | ConvertTo-Json -Compress -Depth 10
 }
 
+function Invoke-WebRequest {
+    $global:prSlotTest.ReadinessChecks++
+    @{ StatusCode = 200 }
+}
+
 function Assert-True([bool] $Condition, [string] $Message) {
     if (-not $Condition) { throw $Message }
 }
@@ -83,6 +89,7 @@ $cases = @(
 foreach ($case in $cases) {
     $global:prSlotTest = [pscustomobject]@{
         Commands = [System.Collections.Generic.List[string]]::new()
+        ReadinessChecks = 0
         Slots = $(if ($case.ContainsKey('Slots')) { $case.Slots } else { @() })
         Config = $(if ($case.ContainsKey('Config')) { $case.Config } else { @{ autoSwapSlotName = '' } })
         Identity = $(if ($case.ContainsKey('Identity')) { $case.Identity } else { @{ type = 'None' } })
@@ -118,6 +125,7 @@ foreach ($case in $cases) {
         'create' {
             Assert-True ($creates.Count -eq 1 -and $creates[0] -like '*--configuration-source staging*') 'Must clone staging'
             Assert-True ($updates.Count -eq 1 -and $updates[0] -like '*--slot pr-123*') 'Must deploy only to PR slot'
+            Assert-True ($global:prSlotTest.ReadinessChecks -eq 1) 'Must verify PR slot readiness before publishing its URL'
         }
         'update' { Assert-True ($creates.Count -eq 0 -and $updates.Count -eq 1) 'Must reuse existing slot' }
         'delete' { Assert-True ($deletes.Count -eq 1 -and $deletes[0] -like '*--slot pr-123*') 'Must delete only PR slot' }
@@ -164,3 +172,5 @@ foreach ($case in $cases) {
     Remove-Variable prSlotTest -Scope Global
     Write-Host "PASS: $($case.Name)"
 }
+
+$global:LASTEXITCODE = $originalLastExitCode

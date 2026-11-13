@@ -7,6 +7,8 @@ on:
       - ".github/workflows/deploy-msstore-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/wait-webapp-ready.ps1"
+      - ".github/scripts/tests/**"
       - ".github/scripts/publish-pr-deployment-links.cjs"
     branches: ["main"]
   pull_request:
@@ -16,6 +18,8 @@ on:
       - ".github/workflows/deploy-msstore-to-preview.yml"
       - ".github/workflows/deploy-pr-slot.yml"
       - ".github/scripts/manage-pr-slot.ps1"
+      - ".github/scripts/wait-webapp-ready.ps1"
+      - ".github/scripts/tests/**"
       - ".github/scripts/publish-pr-deployment-links.cjs"
     branches: [main]
   workflow_dispatch:
@@ -37,6 +41,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: "true"
+      - name: Test deployment scripts
+        shell: pwsh
+        run: |
+          & ./.github/scripts/tests/test-windows-deployment.ps1
+          & ./.github/scripts/tests/test-webapp-readiness.ps1
+          & ./.github/scripts/tests/test-pr-slot.ps1
       - uses: microsoft/variable-substitution@v1
         with:
           files: "./apps/pwabuilder-microsoft-store/appsettings.Production.json"
@@ -120,9 +130,9 @@ jobs:
 
       - name: Docker build
         working-directory: ./apps/pwabuilder-microsoft-store
-        run: docker build . --file Dockerfile --tag "$env:IMAGE_TAG" -m 2GB
+        run: docker build --pull --no-cache . --file Dockerfile --tag "$env:IMAGE_TAG" -m 2GB
 
-      - name: Docker push and capture immutable image reference
+      - name: Docker push and lock unique image tag
         id: pushed-image
         working-directory: ./apps/pwabuilder-microsoft-store
         run: |
@@ -132,11 +142,17 @@ jobs:
           if ($LASTEXITCODE -ne 0 -or $imageReference -notmatch '^pwabuilder\.azurecr\.io/pwa-windows@sha256:[0-9a-f]{64}$') {
             throw "Docker did not return the expected pushed image digest."
           }
-          "image_reference=$imageReference" >> $env:GITHUB_OUTPUT
+          Write-Host "Pushed image digest: $imageReference"
+          # Windows App Service misparses digest references; deploy a locked, unique tag instead.
+          $registryImage = $env:IMAGE_TAG -replace '^pwabuilder\.azurecr\.io/', ''
+          az acr repository update --name pwabuilder --image "$registryImage" --write-enabled false --delete-enabled false --output none
+          if ($LASTEXITCODE -ne 0) { throw "Could not lock the Windows image tag." }
+          "image_reference=$env:IMAGE_TAG" >> $env:GITHUB_OUTPUT
 
   deploy:
     if: github.event_name != 'pull_request'
     runs-on: windows-2022
+    timeout-minutes: 45
     permissions:
       contents: read
       id-token: write
@@ -146,6 +162,9 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Login with Azure CLI with federated credentials
         uses: azure/login@v2
         with:
@@ -160,6 +179,21 @@ jobs:
           app-name: pwabuilder-windows-docker
           slot-name: staging
           images: ${{ needs.build.outputs.image_reference }}
+
+      - name: Verify staging readiness
+        shell: pwsh
+        run: |
+          & ./.github/scripts/wait-webapp-ready.ps1 -AppName pwabuilder-windows-docker `
+            -Slot staging -Url https://pwabuilder-windows-docker-staging.azurewebsites.net/
+
+      - name: Upload startup diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-staging-startup-logs
+          path: ${{ runner.temp }}/pwabuilder-windows-docker-staging-startup-logs.zip
+          if-no-files-found: ignore
+          retention-days: 3
 
   deploy-pr:
     if: github.event_name == 'pull_request'
