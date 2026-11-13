@@ -52,6 +52,15 @@ To deploy to production, swap staging and production or deploy the tested digest
 Retain deployed and rollback images in ACR. Existing production slots using
 mutable tags must be pinned separately to verified known-good digests.
 
+### Container dependency servicing
+
+The lockfile resolves `brace-expansion` to 5.0.13, which includes the fixes for
+CVE-2026-102276 and CVE-2026-102278 (minimum 5.0.11 for both).
+Keep the lockfile committed: the container installs it with `npm ci` and retains
+this transitive dependency after pruning development packages.
+Rebuild and deploy every affected image variant, then rescan the deployed
+digests; updating the lockfile does not remediate existing containers.
+
 ### Web slot routing to CloudAPK
 
 The web frontend reads `GET /api/packaging/config` before every enqueue, poll, and
