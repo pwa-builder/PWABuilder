@@ -65,5 +65,11 @@ public enum PwaCapabilityId
     HasHttps,
 
     // General capabilities
-    ServesHtml
+    ServesHtml,
+
+    // Agent readiness capabilities (PE WA BE): can AI agents and assistants read and act on the app?
+    LlmsTxt,
+    StructuredData,
+    PageSummary,
+    AgentCard
 }
