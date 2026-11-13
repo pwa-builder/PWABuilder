@@ -68,9 +68,12 @@
         public string? Appearance { get; set; }
 
         /// <summary>
-        /// The size in points of the icon shown on the splash (launch) screen. Defaults to 64. Allowed range 32 to 512.
+        /// The size in points of the icon shown on the splash (launch) screen. Defaults to 64. Allowed range 32 to 256: the largest generated launch image is 1024 pixels, which keeps 256 points sharp on 3x screens.
         /// </summary>
         public int? SplashIconSize { get; set; }
+
+        public const int MinSplashIconSize = 32;
+        public const int MaxSplashIconSize = 256;
 
         /// <summary>
         /// The list of domains your app is permitted to navigate. This will automatically include <see cref="Url"/>, so no need to include it again.
@@ -160,9 +163,9 @@
             var displayMode = GetValidChoice(DisplayMode, ["standalone", "fullscreen"], GetValidChoice(Manifest.Display, ["standalone", "fullscreen"], "standalone"));
             var statusBarStyle = GetValidChoice(StatusBarStyle, ["auto", "light", "dark"], "auto");
             var appearance = GetValidChoice(Appearance, ["auto", "light", "dark"], "auto");
-            if (SplashIconSize is < 32 or > 512)
+            if (SplashIconSize is < MinSplashIconSize or > MaxSplashIconSize)
             {
-                throw new ArgumentOutOfRangeException(nameof(SplashIconSize), SplashIconSize, "Splash icon size must be between 32 and 512 points");
+                throw new ArgumentOutOfRangeException(nameof(SplashIconSize), SplashIconSize, $"Splash icon size must be between {MinSplashIconSize} and {MaxSplashIconSize} points");
             }
 
             return new Validated(

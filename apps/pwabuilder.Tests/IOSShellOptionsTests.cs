@@ -1,3 +1,4 @@
+using PWABuilder.IOS.Common;
 using PWABuilder.IOS.Models;
 using Xunit;
 
@@ -71,7 +72,8 @@ public sealed class IOSShellOptionsTests
 
     [Theory]
     [InlineData(31)]
-    [InlineData(513)]
+    [InlineData(257)]
+    [InlineData(512)]
     public void Splash_icon_size_outside_the_range_is_rejected(int size)
     {
         var options = CreateOptions(manifestDisplay: "standalone");
@@ -79,17 +81,35 @@ public sealed class IOSShellOptionsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => options.Validate());
     }
 
+    /// <summary>The smallest generated image that covers the wanted pixels is picked; when none does, the largest one.</summary>
     [Theory]
-    [InlineData(32, "launch-64.png")]
-    [InlineData(64, "launch-64.png")]
-    [InlineData(128, "launch-128.png")]
-    [InlineData(192, "launch-192.png")]
-    [InlineData(200, "launch-256.png")]
-    [InlineData(384, "launch-512.png")]
-    [InlineData(1536, "launch-512.png")]
-    public void Launch_icon_file_covers_the_requested_pixels(int pixels, string expected)
+    [InlineData(32, 64)]
+    [InlineData(64, 64)]
+    [InlineData(65, 128)]
+    [InlineData(192, 192)]
+    [InlineData(200, 256)]
+    [InlineData(384, 512)]
+    [InlineData(513, 1024)]
+    [InlineData(768, 1024)]
+    [InlineData(2000, 1024)]
+    public void Launch_image_covers_the_wanted_pixels(int wanted, int expected)
     {
-        Assert.Equal(expected, XcodePwaShellProject.GetLaunchIconFileName(pixels));
+        Assert.Equal(expected, XcodePwaShellProject.PickLaunchImage([64, 128, 192, 256, 512, 1024], wanted));
+    }
+
+    /// <summary>Every allowed size is covered at 3x by a generated image, so no allowed size is upscaled.</summary>
+    [Fact]
+    public void Every_allowed_size_is_covered_on_3x_screens()
+    {
+        var generated = ImageTargetSizeExtensions.GetAll().Where(size => size.IsLaunchIconSize()).Select(size => size.GetDimensions().Item1).ToList();
+        Assert.Contains(1024, generated);
+        for (var size = IOSAppPackageOptions.MinSplashIconSize; size <= IOSAppPackageOptions.MaxSplashIconSize; size++)
+        {
+            foreach (var scale in new[] { 1, 2, 3 })
+            {
+                Assert.True(XcodePwaShellProject.PickLaunchImage(generated, size * scale) >= size * scale, $"{size} points at {scale}x is not covered");
+            }
+        }
     }
 
     [Fact]
@@ -110,9 +130,13 @@ public sealed class IOSShellOptionsTests
         Assert.Contains("firstAttribute=\"height\" constant=\"64\"", files.LaunchScreen);
         Assert.Contains("<image name=\"LaunchIcon\" width=\"64\" height=\"64\"/>", files.LaunchScreen);
 
-        Assert.Contains("\"filename\" : \"launch-64.png\"", files.LaunchIconSet);
-        Assert.Contains("\"filename\" : \"launch-128.png\"", files.LaunchIconSet);
-        Assert.Contains("\"filename\" : \"launch-192.png\"", files.LaunchIconSet);
+        // The loading view shown after launch keeps the frames the template always had.
+        Assert.Contains("<rect key=\"frame\" x=\"95\" y=\"322\" width=\"200\" height=\"200\"/>", files.MainStoryboard);
+        Assert.Contains("<rect key=\"frame\" x=\"68\" y=\"68\" width=\"64\" height=\"64\"/>", files.MainStoryboard);
+        Assert.Contains("<rect key=\"frame\" x=\"50\" y=\"146\" width=\"100\" height=\"15\"/>", files.MainStoryboard);
+        Assert.Contains("<image name=\"LaunchIcon\" width=\"64\" height=\"64\"/>", files.MainStoryboard);
+
+        AssertLaunchImages(files, expected1x: 64, expected2x: 128, expected3x: 192);
 
         AssertNoPlaceholders(files);
     }
@@ -142,10 +166,48 @@ public sealed class IOSShellOptionsTests
         Assert.Contains("firstAttribute=\"width\" constant=\"160\"", files.LaunchScreen);
         Assert.Contains("firstAttribute=\"height\" constant=\"160\"", files.LaunchScreen);
 
-        Assert.Contains("\"filename\" : \"launch-192.png\"", files.LaunchIconSet);
-        Assert.Contains("\"filename\" : \"launch-512.png\"", files.LaunchIconSet);
+        // The loading view shown after launch uses the same icon size, centered, with the progress bar under it.
+        Assert.Contains("<rect key=\"frame\" x=\"95\" y=\"274\" width=\"200\" height=\"296\"/>", files.MainStoryboard);
+        Assert.Contains("<rect key=\"frame\" x=\"20\" y=\"68\" width=\"160\" height=\"160\"/>", files.MainStoryboard);
+        Assert.Contains("<rect key=\"frame\" x=\"50\" y=\"242\" width=\"100\" height=\"15\"/>", files.MainStoryboard);
+        Assert.Contains("<image name=\"LaunchIcon\" width=\"160\" height=\"160\"/>", files.MainStoryboard);
+
+        AssertLaunchImages(files, expected1x: 192, expected2x: 512, expected3x: 512);
 
         AssertNoPlaceholders(files);
+    }
+
+    /// <summary>The largest allowed size gets the 1024 pixel image on 3x screens, and the loading view grows to hold the icon.</summary>
+    [Fact]
+    public async Task Largest_splash_icon_uses_the_1024_pixel_image()
+    {
+        var options = CreateOptions(manifestDisplay: "standalone");
+        options.SplashIconSize = 256;
+
+        var files = await GenerateProject(options);
+
+        AssertLaunchImages(files, expected1x: 256, expected2x: 512, expected3x: 1024);
+        Assert.Contains("<rect key=\"frame\" x=\"67\" y=\"226\" width=\"256\" height=\"392\"/>", files.MainStoryboard);
+        Assert.Contains("<rect key=\"frame\" x=\"0\" y=\"68\" width=\"256\" height=\"256\"/>", files.MainStoryboard);
+        AssertNoPlaceholders(files);
+    }
+
+    /// <summary>The launch screen lets the size constraints win over the image's own size, and the shell keeps the status bar hidden in fullscreen.</summary>
+    [Fact]
+    public void Template_layout_and_status_bar_rules_hold()
+    {
+        var template = FindTemplateDirectory();
+        var launchScreen = File.ReadAllText(Path.Combine(template, "pwa-shell", "Base.lproj", "LaunchScreen.storyboard"));
+        var imageView = launchScreen.Split('\n').Single(line => line.Contains("<imageView") && line.Contains("LaunchIcon"));
+        Assert.DoesNotContain("Priority=\"1000\"", imageView);
+
+        var viewController = File.ReadAllText(Path.Combine(template, "pwa-shell", "ViewController.swift"));
+        Assert.Matches(@"override var prefersStatusBarHidden: Bool \{\s+return displayMode == ""fullscreen""", viewController);
+
+        // The image set names three real slots and nothing else: no placeholders, valid JSON.
+        var imageSet = System.Text.Json.JsonDocument.Parse(File.ReadAllText(Path.Combine(template, "pwa-shell", "Assets.xcassets", "LaunchIcon.imageset", "Contents.json")));
+        var entries = imageSet.RootElement.GetProperty("images").EnumerateArray().Select(image => (image.GetProperty("filename").GetString(), image.GetProperty("scale").GetString())).ToList();
+        Assert.Equal([("launch-1x.png", "1x"), ("launch-2x.png", "2x"), ("launch-3x.png", "3x")], entries);
     }
 
     [Fact]
@@ -180,6 +242,12 @@ public sealed class IOSShellOptionsTests
         Assert.Contains("{{PWABuilder.iOS.statusBarHidden}}", infoPlist);
         Assert.Contains("{{PWABuilder.iOS.appearance}}", infoPlist);
         Assert.Contains("{{PWABuilder.iOS.splashIconSize}}", launchScreen);
+
+        var mainStoryboard = File.ReadAllText(Path.Combine(template, "pwa-shell", "Base.lproj", "Main.storyboard"));
+        foreach (var name in new[] { "splashIconSize", "loadingViewX", "loadingViewY", "loadingViewWidth", "loadingViewHeight", "loadingIconX", "loadingProgressX", "loadingProgressY", "loadingOfflineIconX", "loadingOfflineIconY" })
+        {
+            Assert.Contains("{{PWABuilder.iOS." + name + "}}", mainStoryboard);
+        }
     }
 
     private static IOSAppPackageOptions CreateOptions(string manifestDisplay)
@@ -213,6 +281,13 @@ public sealed class IOSShellOptionsTests
         CopyDirectory(template, outputDir);
         try
         {
+            // The image writer puts the generated launch images, 1024 included, into the image set before the project is updated.
+            // The template ships 64 to 512; stand in for the 1024 one with a file the tests can recognize.
+            var imageSetDir = Path.Combine(outputDir, "pwa-shell", "Assets.xcassets", "LaunchIcon.imageset");
+            File.WriteAllBytes(Path.Combine(imageSetDir, "launch-1024.png"), Fake1024Image);
+            var sourceImages = Directory.GetFiles(imageSetDir, "launch-*.png")
+                .ToDictionary(path => int.Parse(Path.GetFileNameWithoutExtension(path)["launch-".Length..]), File.ReadAllBytes);
+
             var project = new XcodePwaShellProject(validated, outputDir);
             project.Load();
             await project.ApplyChanges();
@@ -223,7 +298,12 @@ public sealed class IOSShellOptionsTests
                 ReadSingle(outputDir, "Settings.swift"),
                 ReadSingle(outputDir, "LaunchScreen.storyboard"),
                 File.ReadAllText(Directory.GetFiles(outputDir, "Contents.json", SearchOption.AllDirectories)
-                    .Single(p => p.Contains("LaunchIcon.imageset")))
+                    .Single(p => p.Contains("LaunchIcon.imageset"))),
+                ReadSingle(outputDir, "Main.storyboard"),
+                Directory.GetFiles(outputDir, "*.png", SearchOption.AllDirectories)
+                    .Where(p => p.Contains("LaunchIcon.imageset"))
+                    .ToDictionary(p => Path.GetFileName(p), File.ReadAllBytes),
+                sourceImages
             );
         }
         finally
@@ -238,7 +318,27 @@ public sealed class IOSShellOptionsTests
         Assert.DoesNotContain("{{PWABuilder.iOS.", files.Settings);
         Assert.DoesNotContain("{{PWABuilder.iOS.", files.LaunchScreen);
         Assert.DoesNotContain("{{PWABuilder.iOS.", files.LaunchIconSet);
+        Assert.DoesNotContain("{{PWABuilder.iOS.", files.MainStoryboard);
+        System.Xml.Linq.XDocument.Parse(files.MainStoryboard);
+        System.Xml.Linq.XDocument.Parse(files.LaunchScreen);
     }
+
+    /// <summary>
+    /// The image set holds exactly the three files its Contents.json names, and each is a copy of the expected generated size.
+    /// </summary>
+    private static void AssertLaunchImages(GeneratedFiles files, int expected1x, int expected2x, int expected3x)
+    {
+        Assert.Equal(["launch-1x.png", "launch-2x.png", "launch-3x.png"], files.LaunchImages.Keys.Order());
+        Assert.Equal(files.SourceImages[expected1x], files.LaunchImages["launch-1x.png"]);
+        Assert.Equal(files.SourceImages[expected2x], files.LaunchImages["launch-2x.png"]);
+        Assert.Equal(files.SourceImages[expected3x], files.LaunchImages["launch-3x.png"]);
+        foreach (var name in files.LaunchImages.Keys)
+        {
+            Assert.Contains($"\"filename\" : \"{name}\"", files.LaunchIconSet);
+        }
+    }
+
+    private static readonly byte[] Fake1024Image = "stand-in for the generated 1024 pixel launch image"u8.ToArray();
 
     private static string ReadSingle(string root, string fileName)
     {
@@ -276,5 +376,5 @@ public sealed class IOSShellOptionsTests
         }
     }
 
-    private sealed record GeneratedFiles(string InfoPlist, string Settings, string LaunchScreen, string LaunchIconSet);
+    private sealed record GeneratedFiles(string InfoPlist, string Settings, string LaunchScreen, string LaunchIconSet, string MainStoryboard, Dictionary<string, byte[]> LaunchImages, Dictionary<int, byte[]> SourceImages);
 }

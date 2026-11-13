@@ -33,6 +33,12 @@ class ViewController: UIViewController, WKNavigationDelegate, UIDocumentInteract
         return .default
     }
 
+    // Info.plist hides the status bar on the launch screen. With view controller based status bar appearance,
+    // the controller has to keep it hidden once the app is running, or it comes back after launch.
+    override var prefersStatusBarHidden: Bool {
+        return displayMode == "fullscreen"
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         initWebView()

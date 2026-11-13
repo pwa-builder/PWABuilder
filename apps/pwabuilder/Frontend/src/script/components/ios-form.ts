@@ -231,12 +231,12 @@ export class IOSForm extends AppPackageFormBase {
               ${this.renderFormInput({
             label: 'Splash icon size',
             inputId: 'splashIconSizeInput',
-            tooltip: `The size in points of your icon on the splash screen shown while the app launches. 64 is the iOS default. Values between 32 and 512 are allowed.`,
+            tooltip: `The size in points of your icon on the splash screen shown while the app launches. 64 is the default. Values between 32 and 256 are allowed. For large sizes, use a source image of 1024x1024 or larger so the icon stays sharp.`,
             type: 'number',
             placeholder: '64',
             value: String(this.packageOptions.splashIconSize || 64),
             minValue: 32,
-            maxValue: 512,
+            maxValue: 256,
             inputHandler: (val: string) => this.packageOptions.splashIconSize = parseInt(val, 10) || 64
         })}
             </div>

@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="I2s-HW-Q4d">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="750" verticalCompressionResistancePriority="750" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="I2s-HW-Q4d">
                                 <rect key="frame" x="175" y="416" width="{{PWABuilder.iOS.splashIconSize}}" height="{{PWABuilder.iOS.splashIconSize}}"/>
                                 <color key="tintColor" systemColor="secondarySystemFillColor"/>
                             </imageView>

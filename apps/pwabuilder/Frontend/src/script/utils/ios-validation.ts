@@ -22,7 +22,7 @@ export interface IOSAppPackageOptions extends PackageOptions {
   statusBarStyle?: 'auto' | 'light' | 'dark';
   /** auto follows the system and the web view background, light or dark locks the app appearance. */
   appearance?: 'auto' | 'light' | 'dark';
-  /** The size in points of the icon on the splash screen, 32 to 512. Defaults to 64. */
+  /** The size in points of the icon on the splash screen, 32 to 256. Defaults to 64. */
   splashIconSize?: number;
   manifestUrl: string;
   manifest: Manifest;
@@ -67,8 +67,8 @@ export function validateIOSOptions(options: IOSAppPackageOptions): string[] {
     errors.push("Manifest URL required");
   }
 
-  if (options.splashIconSize !== undefined && (options.splashIconSize < 32 || options.splashIconSize > 512)) {
-    errors.push("Splash icon size must be between 32 and 512");
+  if (options.splashIconSize !== undefined && (options.splashIconSize < 32 || options.splashIconSize > 256)) {
+    errors.push("Splash icon size must be between 32 and 256");
   }
 
   if (!options.name) {

@@ -165,36 +165,84 @@ namespace PWABuilder.IOS.Models
         }
 
         /// <summary>
-        /// Sizes the launch screen icon. The storyboard pins the image view to a square of this many points.
+        /// Sizes the splash icon in both places it is shown: the system launch screen (LaunchScreen.storyboard) and the
+        /// loading view the app shows while the first page loads (Main.storyboard). The two must match or the icon jumps in size after launch.
         /// </summary>
         private void UpdateSplashIconSize()
         {
-            var launchScreenStoryboard = GetFile("LaunchScreen.storyboard");
-            var size = options.SplashIconSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
-            launchScreenStoryboard.Replace("{{PWABuilder.iOS.splashIconSize}}", size);
+            var iconSize = options.SplashIconSize;
+            GetFile("LaunchScreen.storyboard").Replace("{{PWABuilder.iOS.splashIconSize}}", Number(iconSize));
 
-            // Pick the generated launch icon files that stay sharp at this size on 1x, 2x and 3x screens.
-            var launchIconSet = GetFileByPath(Path.Combine("LaunchIcon.imageset", "Contents.json"));
-            launchIconSet.Replace("{{PWABuilder.iOS.launchIcon1x}}", GetLaunchIconFileName(options.SplashIconSize));
-            launchIconSet.Replace("{{PWABuilder.iOS.launchIcon2x}}", GetLaunchIconFileName(options.SplashIconSize * 2));
-            launchIconSet.Replace("{{PWABuilder.iOS.launchIcon3x}}", GetLaunchIconFileName(options.SplashIconSize * 3));
+            // The loading view holds the icon, the progress bar under it and the offline icon. It uses fixed frames with
+            // flexible margins, so the frames are worked out here. The icon sits at the center of the loading view, which
+            // is centered on screen, the same place the launch screen puts it. At 64 points these are the original frames.
+            const int sceneWidth = 390, sceneHeight = 844, iconTop = 68, progressWidth = 100, offlineIconWidth = 30;
+            var viewWidth = Math.Max(200, iconSize);
+            var viewHeight = iconSize + (2 * iconTop);
+            var mainStoryboard = GetFile("Main.storyboard");
+            mainStoryboard.Replace("{{PWABuilder.iOS.splashIconSize}}", Number(iconSize));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewX}}", Number((sceneWidth - viewWidth) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewY}}", Number((sceneHeight - viewHeight) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewWidth}}", Number(viewWidth));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewHeight}}", Number(viewHeight));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingIconX}}", Number((viewWidth - iconSize) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingProgressX}}", Number((viewWidth - progressWidth) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingProgressY}}", Number(iconTop + iconSize + 14));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingOfflineIconX}}", Number((viewWidth - offlineIconWidth) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingOfflineIconY}}", Number(iconTop + iconSize + 27));
+
+            WriteLaunchIconSet(iconSize);
         }
 
         /// <summary>
-        /// Gets the name of the smallest generated launch icon whose pixel size covers the requested pixel size.
-        /// The generated launch icons are 64, 128, 192, 256 and 512 pixels.
+        /// Fills the LaunchIcon image set with one file per screen scale, each the smallest generated launch image that
+        /// covers the icon at that scale, and removes the generated sizes the set does not use so Xcode sees no unassigned files.
         /// </summary>
-        public static string GetLaunchIconFileName(int pixels)
+        private void WriteLaunchIconSet(int iconSize)
         {
-            var available = new[] { 64, 128, 192, 256, 512 };
-            var chosen = available.FirstOrDefault(px => px >= pixels);
-            if (chosen == 0)
+            var imageSetDirectory = Path.GetDirectoryName(GetFileByPath(Path.Combine("LaunchIcon.imageset", "Contents.json")).ItemPath)!;
+            var generated = Directory.GetFiles(imageSetDirectory, "launch-*.png")
+                .Select(path => (Path: path, Pixels: GetLaunchImagePixels(path)))
+                .Where(image => image.Pixels > 0)
+                .OrderBy(image => image.Pixels)
+                .ToList();
+            if (generated.Count == 0)
             {
-                chosen = available[^1];
+                return;
             }
 
-            return $"launch-{chosen}.png";
+            var slots = new List<(string Destination, byte[] Bytes)>(3);
+            foreach (var scale in new[] { 1, 2, 3 })
+            {
+                var source = PickLaunchImage(generated.Select(image => image.Pixels), iconSize * scale);
+                var bytes = File.ReadAllBytes(generated.First(image => image.Pixels == source).Path);
+                slots.Add((Path.Combine(imageSetDirectory, $"launch-{scale}x.png"), bytes));
+            }
+
+            generated.ForEach(image => File.Delete(image.Path));
+            slots.ForEach(slot => File.WriteAllBytes(slot.Destination, slot.Bytes));
         }
+
+        /// <summary>
+        /// Picks the smallest available launch image that covers the wanted pixel size, or the largest one when none does.
+        /// </summary>
+        public static int PickLaunchImage(IEnumerable<int> availablePixels, int wantedPixels)
+        {
+            var ordered = availablePixels.OrderBy(pixels => pixels).ToList();
+            var covering = ordered.Where(pixels => pixels >= wantedPixels).ToList();
+            return covering.Count > 0 ? covering[0] : ordered[^1];
+        }
+
+        /// <summary>
+        /// Reads the pixel size out of a generated launch image name such as launch-512.png. Returns 0 for any other name.
+        /// </summary>
+        private static int GetLaunchImagePixels(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return int.TryParse(name.AsSpan("launch-".Length), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var pixels) ? pixels : 0;
+        }
+
+        private static string Number(double value) => value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 
         private void UpdateShortcuts(XcodeFile infoPlistXmlFile)
         {
