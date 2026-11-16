@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/pwa-builder/pwabuilder-google-play/",
     "dependencies": {
-        "@azure/identity": "^4.13.1",
+        "@azure/identity": "^4.14.1",
         "@azure/monitor-opentelemetry": "^1.20.1",
         "@azure/storage-blob": "^12.29.0",
         "@azure/storage-queue": "^12.29.0",
@@ -67,12 +67,13 @@
         "protobufjs": ">=7.3.2",
         "form-data": "4.0.6",
         "uuid": "11.1.1",
-        "node-forge": ">=0.7.2",
-        "qs": ">=6.3.2",
+        "node-forge": ">=1.4.3",
+        "qs": ">=6.16.1",
         "path-parse": ">=1.0.7",
         "async": ">=3.2.2",
         "file-type": "21.3.4",
-        "minimatch": ">=3.0.2",
+        "minimatch": ">=11.0.1",
+        "brace-expansion": "5.0.12",
         "tar": ">=7.5.21",
         "@opentelemetry/propagator-jaeger": ">=2.9.0"
     }

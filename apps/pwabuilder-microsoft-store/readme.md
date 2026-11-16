@@ -27,16 +27,17 @@ The Dockerfile pins the November 2026 Windows Server 2022 image
 `--pull --no-cache` alone does not advance a version-pinned base.
 Windows container images must be rebuilt, not patched in place.
 
-The installed .NET SDK 10.0.403 includes runtime 10.0.14, newer than the
-10.0.12 minimum in the September runtime alerts. This runtime is separate from
+The installed .NET SDK 10.0.404 includes runtime 10.0.15, servicing the
+November runtime alerts as well as September and October. This runtime is separate from
 Windows' built-in .NET Framework. After rebuilding, verify that the final image
-also includes KB5126050 or a superseding .NET Framework update; the OS build
+also includes KB5127687 or a superseding .NET Framework update; the OS build
 number or .NET SDK version alone does not establish Framework patch status.
-The build checks both Framework architectures' `System.Core.dll` versions and
-fails if either is missing or older than the fixed 4.8.4806.0 version.
+The build checks both Framework architectures' `System.Core.dll` and
+`Mscorlib.dll` versions and fails if any is missing or older than the fixed
+4.8.4811.0 version from [KB5127687](https://support.microsoft.com/help/5127687).
 
-Deploy the rebuilt image's immutable digest to each affected slot and rescan
-that digest before closing alerts. Retain the previous known-good digest for
+Deploy the rebuilt image's locked unique tag to each affected slot and rescan
+its digest before closing alerts. Retain the previous known-good image for
 rollback. If a kernel finding belongs to the container host rather than the
 image, the hosting platform must also be serviced.
 

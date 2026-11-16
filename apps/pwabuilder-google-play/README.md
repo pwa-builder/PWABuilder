@@ -54,10 +54,17 @@ mutable tags must be pinned separately to verified known-good digests.
 
 ### Container dependency servicing
 
-The lockfile resolves `brace-expansion` to 5.0.13, which includes the fixes for
-CVE-2026-102276 and CVE-2026-102278 (minimum 5.0.11 for both).
+The lockfile resolves `brace-expansion` to 5.0.12, which includes the fixes for
+CVE-2026-102276, CVE-2026-102278, and GHSA-q2hr-2g5m-vwhr. This version is
+available in the container build's configured npm mirror; 5.0.13 is not.
+The production tree also includes patched `node-forge`, `minimatch`, `qs`,
+`follow-redirects`, and MSAL Node (through `@azure/identity`).
 Keep the lockfile committed: the container installs it with `npm ci` and retains
-this transitive dependency after pruning development packages.
+these transitive dependencies after pruning development packages.
+The image installs Node.js 24.22.3 and upgrades Ubuntu packages during the build
+to pick up APT and PCRE2 security fixes. Android SDK's bundled Guava is replaced
+with checksum-verified 33.7.2-jre at its original path so SDK manifest references
+continue to resolve; `sdkmanager` runs again after replacement during the build.
 Rebuild and deploy every affected image variant, then rescan the deployed
 digests; updating the lockfile does not remediate existing containers.
 
