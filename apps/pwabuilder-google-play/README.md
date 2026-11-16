@@ -241,7 +241,7 @@ legacy path prefixes) and the runtime types of Gradle scalar inputs. The worker
 revalidates before project generation and only forwards supported manifest fields
 and features to Bubblewrap.
 
-`scripts/patch-bubblewrap-gradle.mjs` patches Bubblewrap 1.25.0's Gradle template
+`scripts/patch-bubblewrap-gradle.mjs` patches Bubblewrap 1.27.0's Gradle template
 and shortcut URL serializer. Strings are encoded as single-quoted Groovy literals,
 not interpolated GStrings; numbers and booleans are type-checked at the template
 boundary. The patch checks the dependency version and complete source hashes and

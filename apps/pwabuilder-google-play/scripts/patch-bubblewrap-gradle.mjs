@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-// Bubblewrap 1.25.0 interpolates request data into executable Groovy. Keep this
+// Bubblewrap 1.27.0 interpolates request data into executable Groovy. Keep this
 // local patch until upstream encodes these sinks; dependency changes must be reviewed.
 // Single-quoted Groovy literals deliberately avoid GString (${...}) interpolation.
 const stringLiteralFunction = String.raw`function gradleString(value) {
@@ -105,7 +105,7 @@ export async function patchBubblewrapGradle(
     coreDirectory = new URL('../node_modules/@bubblewrap/core/', import.meta.url)
 ) {
     const packageJson = JSON.parse(await readFile(new URL('package.json', coreDirectory), 'utf8'));
-    if (packageJson.version !== '1.25.0') {
+    if (packageJson.version !== '1.27.0') {
         throw new Error('Review the Gradle security patch for this Bubblewrap version');
     }
 

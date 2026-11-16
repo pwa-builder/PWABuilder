@@ -7,6 +7,11 @@ public static class ManifestJsonExtensions
 {
     public static IEnumerable<WebManifestIcon> GetIcons(this JsonElement manifest)
     {
+        if (manifest.ValueKind != JsonValueKind.Object)
+        {
+            return [];
+        }
+
         var hasIcons = manifest.TryGetProperty("icons", out var icons)
             && icons.ValueKind == JsonValueKind.Array
             && icons.GetArrayLength() > 0;
@@ -15,7 +20,9 @@ public static class ManifestJsonExtensions
             return [];
         }
 
-        return icons.EnumerateArray().Select(ParseIcon);
+        return icons.EnumerateArray()
+            .Where(icon => icon.ValueKind == JsonValueKind.Object)
+            .Select(ParseIcon);
     }
 
     /// <summary>

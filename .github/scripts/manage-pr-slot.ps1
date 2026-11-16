@@ -151,6 +151,8 @@ Invoke-Azure (@('webapp', 'restart') + $target) | Out-Null
 $deployed = Invoke-Azure (@('webapp', 'show') + $target)
 if (-not $deployed.defaultHostName) { throw 'Azure did not return the PR slot hostname.' }
 $url = "https://$($deployed.defaultHostName)"
+& (Join-Path $PSScriptRoot 'wait-webapp-ready.ps1') -AppName $AppName `
+    -ResourceGroup $resourceGroup -Slot $slot -Url "$url/"
 if ($env:GITHUB_OUTPUT) { "url=$url" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8 }
 if ($env:GITHUB_STEP_SUMMARY) {
     "PR #${PullRequestNumber}: [$AppName/$slot]($url)" |

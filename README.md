@@ -63,16 +63,33 @@ Alternatively, build the `Dockerfile.production` container and access it from `h
 ### Deployment
 
 The web app, Microsoft Store, and Google Play deployment workflows publish uniquely tagged
-images containing the commit SHA, workflow run ID, and run attempt. Each workflow
-deploys the digest captured from its pushed image, not a mutable `:production`
-or `:latest` tag. This prevents a subsequent preview build from changing the
-image a deployed slot pulls on restart or scale-out.
+images containing the commit SHA, workflow run ID, and run attempt. The web app
+and Google Play workflows deploy the digest captured from their pushed image.
+Windows App Service misparses digest references, so the Microsoft Store workflow
+deploys its unique tag after locking it in ACR against writes and deletion.
+Locking must succeed before the build publishes its deployment output; the build
+identity needs permission to update ACR image attributes.
+Neither approach uses a mutable `:production` or `:latest` tag, preventing a
+subsequent preview build from changing the image a slot pulls on restart or scale-out.
 
-Promote the tested image by swapping slots or deploying its exact digest.
-Existing production slots using mutable tags must be pinned separately to their
-verified known-good digests; changing these workflows does not update live slots.
+Promote the tested image by swapping slots or deploying its exact digest (the
+locked unique tag for Windows). Existing production slots using mutable tags
+must be pinned separately to their verified known-good image references;
+changing these workflows does not update live slots.
 Retain images referenced by deployed slots and images needed for rollback.
+Locked Windows tags must be explicitly unlocked before intentional cleanup.
 Breaking web app and Google Play API changes still require coordinated releases.
+
+Windows staging and all PR slots must return HTTP 200 from their root URL within
+30 minutes before deployment succeeds or PR links are published. Checks retry
+warming-up responses and connection failures without accepting redirects.
+On timeout, the workflow attempts to download platform logs and uploads them as
+a startup diagnostics artifact retained for three days; it still fails if log
+collection fails. No logging settings are changed.
+Run the deployment regression checks with PowerShell 7:
+`pwsh -NoProfile -File .github/scripts/tests/test-windows-deployment.ps1`,
+`pwsh -NoProfile -File .github/scripts/tests/test-webapp-readiness.ps1`, and
+`pwsh -NoProfile -File .github/scripts/tests/test-pr-slot.ps1`.
 
 Service image builds use `docker build --pull --no-cache` to refresh base images
 and rerun OS and runtime package installation rather than reuse cached layers.
@@ -81,7 +98,7 @@ be picked up on rebuild. Explicitly pinned inputs still require source updates;
 the Windows packager installs .NET SDK 10.0.403 (runtime 10.0.14) and verifies
 the installer against Microsoft's published SHA-512 checksum.
 After a runtime update, verify versions and vulnerability scan results in the
-built images, test the staging slots, and promote the verified digests through
+built images, test the staging slots, and promote the verified image references through
 the normal deployment process. A source change or rebuild alone does not
 remediate an already deployed image or older images retained in the registry.
 

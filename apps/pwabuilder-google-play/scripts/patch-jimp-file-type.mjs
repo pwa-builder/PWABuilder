@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-// Bubblewrap 1.25.0 depends on Jimp 0.22, which imports the vulnerable
+// Bubblewrap 1.27.0 depends on Jimp 0.22, which imports the vulnerable
 // file-type 16 CommonJS API. We override file-type with the patched ESM-only
 // release and adapt Jimp's installed wrappers to its named export.
 //

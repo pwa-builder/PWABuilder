@@ -32,8 +32,8 @@ test('ensure demo app is testable', async ({ page }) => {
     // expect reportCardAppTitle to exist and be visible
     await expect(reportCardAppTitle).toBeVisible();
 
-    // // expect reportCardAppTitle to contain text "Webboard"
-    await expect(reportCardAppTitle).toContainText('Webboard');
+    // expect reportCardAppTitle to contain the demo app name
+    await expect(reportCardAppTitle).toContainText('Nimbus');
 });
 
 test('ensure Package For Stores button is not disabled for demo app', async ({ page }) => {
