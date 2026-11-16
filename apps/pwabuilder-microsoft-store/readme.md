@@ -19,6 +19,27 @@ To run locally:
 
 In deployed staging and production environments, this project is a Windows-based docker image that has the necessary Windows SDK components to run the package generation process. The docker image is built using GitHub Actions and pushed to the PWABuilder container registry.
 
+### Container security servicing
+
+The Dockerfile pins the November 2026 Windows Server 2022 image
+`10.0.20348.5870` (KB5131090). Update this pin when Microsoft publishes a newer
+[serviced container image](https://learn.microsoft.com/virtualization/windowscontainers/deploy-containers/update-containers);
+`--pull --no-cache` alone does not advance a version-pinned base.
+Windows container images must be rebuilt, not patched in place.
+
+The installed .NET SDK 10.0.403 includes runtime 10.0.14, newer than the
+10.0.12 minimum in the September runtime alerts. This runtime is separate from
+Windows' built-in .NET Framework. After rebuilding, verify that the final image
+also includes KB5126050 or a superseding .NET Framework update; the OS build
+number or .NET SDK version alone does not establish Framework patch status.
+The build checks both Framework architectures' `System.Core.dll` versions and
+fails if either is missing or older than the fixed 4.8.4806.0 version.
+
+Deploy the rebuilt image's immutable digest to each affected slot and rescan
+that digest before closing alerts. Retain the previous known-good digest for
+rollback. If a kernel finding belongs to the container host rather than the
+image, the hosting platform must also be serviced.
+
 ### Store publication tracking
 
 The packaging service runs `StorePwaService` five minutes after startup and every 24 hours thereafter. It pages through the SFEdge PWA catalog in the US market, fetches each product's details, and matches the identity name in each `PackageFamilyNames` entry to stored `packageId` values. All SFEdge requests use `User-Agent: StoreWeb PWABuilder`.

@@ -1,5 +1,5 @@
-# Use a serviced Windows Server 2022 LTSC build compatible with GitHub Actions.
-FROM mcr.microsoft.com/windows/server:10.0.20348.5499
+# November 2026 servicing (KB5131090); retain Windows Server 2022 host compatibility.
+FROM mcr.microsoft.com/windows/server:10.0.20348.5870
 
 # Install .NET 10.0.403 SDK (includes the serviced 10.0.14 runtime)
 RUN powershell -Command \
@@ -17,6 +17,16 @@ RUN ["powershell.exe", "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"]
 RUN powershell  Invoke-WebRequest https://go.microsoft.com/fwlink/?linkid=2120843 -OutFile ./downloadsdk.exe
 RUN ["powershell.exe", "Start-Process -Wait -FilePath ./downloadsdk.exe -ArgumentList '/quiet /norestart /log log.txt'"]
 RUN ["powershell.exe", "Get-Content log.txt"]
+
+# .NET SDK servicing does not patch Windows' built-in .NET Framework (KB5126050).
+RUN powershell -Command \
+    "$ErrorActionPreference = 'Stop'; \
+    foreach ($framework in @('Framework', 'Framework64')) { \
+        $path = Join-Path $env:WINDIR ('Microsoft.NET\' + $framework + '\v4.0.30319\System.Core.dll'); \
+        $info = (Get-Item -LiteralPath $path).VersionInfo; \
+        $version = [version]::new($info.FileMajorPart, $info.FileMinorPart, $info.FileBuildPart, $info.FilePrivatePart); \
+        if ($version -lt [version]'4.8.4806.0') { throw ('Unpatched .NET Framework: ' + $path + ' (' + $version + '). Rebase onto a serviced Windows image.'); } \
+    }"
 
 WORKDIR /app
 EXPOSE 5000
