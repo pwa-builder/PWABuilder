@@ -10,6 +10,7 @@ export interface RedisDatabaseService {
     getJson<T>(key: string): Promise<T | null>;
     save<T>(key: string, value: T, expirationSeconds?: number): Promise<void>;
     indexDiagnosticFailure(reference: string, timestamp: number, lifetimeSeconds: number): Promise<void>;
+    appendPackageDiagnostic(reference: string, line: string): Promise<void>;
     dequeue<T>(key: string): Promise<T | null>;
     enqueue<T>(key: string, value: T): Promise<number>;
     queueLength(key: string): Promise<number>;
@@ -155,6 +156,15 @@ export class RedisService implements RedisDatabaseService {
             .exec();
     }
 
+    async appendPackageDiagnostic(reference: string, line: string): Promise<void> {
+        const key = `package-delivery:${reference}`;
+        await this.redis.multi()
+            .rPush(key, line)
+            .lTrim(key, -100, -1)
+            .expire(key, 14 * 86400)
+            .exec();
+    }
+
     /**
      * Finds a list with the given key and removes and returns the first item from it.
      * @param key The key of the list to pop from.
@@ -259,6 +269,14 @@ class InMemoryDatabaseService implements RedisDatabaseService {
     private readonly expirations = new Map<string, number>();
     private readonly queues: Map<string, any[]> = new Map(); // key is the name of the queue, value is an array of JSON strings representing the items in the queue.
     public readonly ready = Promise.resolve();
+
+    async appendPackageDiagnostic(reference: string, line: string): Promise<void> {
+        const key = `package-delivery:${reference}`;
+        const logs: string[] = (this.expirations.get(key) ?? 0) > Date.now()
+            ? JSON.parse(this.store.get(key) || "[]") : [];
+        this.store.set(key, JSON.stringify([...logs, line].slice(-100)));
+        this.expirations.set(key, Date.now() + 14 * 86400 * 1000);
+    }
 
     getJson<T>(key: string): Promise<T | null> {
         if ((this.expirations.get(key) ?? Infinity) <= Date.now()) {

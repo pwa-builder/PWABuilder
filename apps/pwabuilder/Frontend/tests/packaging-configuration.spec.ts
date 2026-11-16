@@ -24,6 +24,7 @@ test('enqueue, polling and download use destination-slot config and share access
           headers: { 'cache-control': 'no-store' },
           json: { androidPackageGeneratorUrl: endpoint },
         });
+
       } else {
         await route.continue();
       }
@@ -98,4 +99,230 @@ test('enqueue, polling and download use destination-slot config and share access
   unavailable = true;
   await expect(exercise()).rejects.toThrow('configuration is unavailable');
   expect(packagingRequests).toHaveLength(8);
+});
+
+for (const failedAttempts of [1, 2]) {
+  test(`download diagnostics preserve retries and report browser handoff after ${failedAttempts} failures`, async ({
+    page,
+  }) => {
+    const events: Record<string, unknown>[] = [];
+    let downloads = 0;
+    await page.route('**/packaging-test', (route) =>
+      route.fulfill({
+        contentType: 'text/html',
+        body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>',
+      })
+    );
+    await page.route('**/api/packaging/config', (route) =>
+      route.fulfill({
+        json: {
+          androidPackageGeneratorUrl:
+            'https://pwabuilder-cloudapk.azurewebsites.net',
+        },
+      })
+    );
+    await page.route(
+      'https://pwabuilder-cloudapk.azurewebsites.net/**',
+      async (route) => {
+        const request = route.request();
+        const headers = {
+          'access-control-allow-origin': '*',
+          'access-control-allow-headers': '*',
+        };
+        if (request.method() === 'OPTIONS') {
+          await route.fulfill({ status: 204, headers });
+        } else if (
+          new URL(request.url()).pathname === '/packageJobDiagnostics'
+        ) {
+          expect(request.headers().authorization).toBe(
+            `Bearer ${'a'.repeat(43)}`
+          );
+          events.push(...request.postDataJSON());
+          await route.fulfill({ status: 204, headers });
+        } else {
+          downloads++;
+          await route.fulfill({
+            status: downloads <= failedAttempts ? 503 : 200,
+            headers,
+            contentType: 'application/zip',
+            body: 'zip',
+          });
+        }
+      }
+    );
+    await page.goto('/packaging-test');
+    await page.evaluate(async () => {
+      const modulePath = '/src/script/pages/google-play-packaging-status.ts';
+      await import(/* @vite-ignore */ modulePath);
+      const element = document.createElement('google-play-packaging-status');
+      document.body.append(element);
+      const id = 'googleplaypackagejob:example.com:diagnostics';
+      localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+      Reflect.set(element, 'job', {
+        id,
+        supportReference: 'bb16f976-b71c-4658-8d83-1e1a36dc0abc',
+        pwaUrl: 'https://example.com',
+        analysisId: null,
+        status: 'Completed',
+        createdAt: new Date().toISOString(),
+        retryCount: 0,
+        name: 'Example',
+        logs: [],
+        errors: [],
+        downloadAvailable: true,
+      });
+      Reflect.set(element, 'autoDownloadRetryDelayMs', 0);
+      await Reflect.get(element, 'jobCompleted').call(
+        element,
+        Reflect.get(element, 'job')
+      );
+    });
+    if (failedAttempts === 2) {
+      await page
+        .getByRole('button', { name: 'Retry download', exact: true })
+        .click();
+    }
+    await expect
+      .poll(() => events.map((event) => event.event))
+      .toContain('download-handoff');
+    expect(downloads).toBe(failedAttempts + 1);
+    expect(
+      events.filter((event) => event.event === 'download-retry')
+    ).toHaveLength(failedAttempts);
+    expect(
+      events.some(
+        (event) =>
+          event.event === 'download-failed' &&
+          event.status === 503 &&
+          event.phase === 'response'
+      )
+    ).toBe(true);
+    expect(
+      events.some(
+        (event) => event.event === 'download-body-read' && event.bytes === 3
+      )
+    ).toBe(true);
+    expect(JSON.stringify(events)).not.toContain('a'.repeat(43));
+    expect(JSON.stringify(events)).not.toContain('https://');
+  });
+}
+
+test('polling diagnostics include phase and page lifecycle context before download starts', async ({ page }) => {
+  const events: Record<string, unknown>[] = [];
+  await page.route('**/packaging-test', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>'
+  }));
+  await page.route('**/api/packaging/config', route => route.fulfill({
+    json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' }
+  }));
+  await page.route('https://pwabuilder-cloudapk.azurewebsites.net/**', async route => {
+    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' };
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers });
+    } else if (new URL(route.request().url()).pathname === '/packageJobDiagnostics') {
+      events.push(...route.request().postDataJSON());
+      await route.fulfill({ status: 204, headers });
+    } else {
+      await route.fulfill({ status: 503, headers });
+    }
+  });
+  await page.goto('/packaging-test');
+  await page.evaluate(async () => {
+    const modulePath = '/src/script/pages/google-play-packaging-status.ts';
+    await import(/* @vite-ignore */ modulePath);
+    const id = 'googleplaypackagejob:example.com:poll-diagnostics';
+    localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+    const element = document.createElement('google-play-packaging-status');
+    document.body.append(element);
+    Reflect.set(element, 'jobId', id);
+    Reflect.set(element, 'pollQueryErrorCount', 1);
+    await Reflect.get(element, 'pollJob').call(element, id);
+    window.dispatchEvent(new ErrorEvent('error', { error: new TypeError('secret-marker?accessToken=do-not-log') }));
+    window.dispatchEvent(new Event('offline'));
+    window.dispatchEvent(new Event('pagehide'));
+  });
+  await expect.poll(() => events.map(event => event.event)).toContain('page-left');
+  expect(events.some(event => event.event === 'poll-failed' && event.status === 503 && event.phase === 'response')).toBe(true);
+  expect(events.some(event => event.event === 'poll-stopped')).toBe(true);
+  expect(events.some(event => event.event === 'offline')).toBe(true);
+  expect(events.some(event => event.event === 'client-error' && event.errorName === 'TypeError')).toBe(true);
+  expect(JSON.stringify(events)).not.toContain('secret-marker');
+});
+
+test('failed diagnostics retain a bounded queue and flush after reporting resumes', async ({ page }) => {
+  const events: Record<string, unknown>[] = [];
+  let diagnosticsAvailable = false;
+  await page.route('**/packaging-test', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>'
+  }));
+  await page.route('**/api/packaging/config', route => route.fulfill({
+    json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' }
+  }));
+  await page.route('https://pwabuilder-cloudapk.azurewebsites.net/**', async route => {
+    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' };
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers });
+    } else if (diagnosticsAvailable) {
+      events.push(...route.request().postDataJSON());
+      await route.fulfill({ status: 204, headers });
+    } else {
+      await route.fulfill({ status: 503, headers });
+    }
+  });
+  await page.goto('/packaging-test');
+  await page.evaluate(async () => {
+    const modulePath = '/src/script/utils/package-delivery-diagnostics.ts';
+    const { PackageDeliveryDiagnostics } = await import(/* @vite-ignore */ modulePath);
+    const id = 'googleplaypackagejob:example.com:queued-diagnostics';
+    localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+    const diagnostics = new PackageDeliveryDiagnostics(id);
+    Reflect.set(window, 'testDiagnostics', diagnostics);
+    for (let count = 0; count < 65; count++) {
+      diagnostics.report('download-started', { attempt: count });
+    }
+  });
+  await expect.poll(() => page.evaluate(() => Reflect.get(window, 'testDiagnostics').flushing)).toBe(false);
+  diagnosticsAvailable = true;
+  await page.evaluate(() => Reflect.get(window, 'testDiagnostics').report('online'));
+  await expect.poll(() => events.length).toBe(60);
+  expect(events[0].attempt).toBe(0);
+  expect(events[59].attempt).toBe(59);
+});
+
+test('body-read failures keep their phase and HTTP status without exposing the exception text', async ({ page }) => {
+  await page.route('**/packaging-test', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>'
+  }));
+  await page.route('**/api/packaging/config', route => route.fulfill({
+    json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' }
+  }));
+  await page.goto('/packaging-test');
+  const details = await page.evaluate(async () => {
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      if (String(args[0]).includes('/downloadPackageZip')) {
+        return new Response(new ReadableStream({
+          start(controller) { controller.error(new TypeError('secret-marker?accessToken=do-not-log')); }
+        }), { status: 200 });
+      }
+      return originalFetch(...args);
+    };
+    try {
+      const publishPath = '/src/script/services/publish/android-publish.ts';
+      const diagnosticsPath = '/src/script/utils/package-delivery-diagnostics.ts';
+      const { downloadGooglePlayPackageZip } = await import(/* @vite-ignore */ publishPath);
+      const { packageFailureDetails } = await import(/* @vite-ignore */ diagnosticsPath);
+      const id = 'googleplaypackagejob:example.com:body-failure';
+      localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+      try {
+        await downloadGooglePlayPackageZip(id);
+        throw new Error('Expected the body read to fail.');
+      } catch (error) {
+        return packageFailureDetails(error);
+      }
+    } finally {
+      window.fetch = originalFetch;
+    }
+  });
+  expect(details).toEqual({ phase: 'body', status: 200, errorName: 'TypeError' });
 });
