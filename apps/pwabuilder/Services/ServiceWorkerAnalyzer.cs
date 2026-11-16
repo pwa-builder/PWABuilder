@@ -8,6 +8,7 @@ namespace PWABuilder.Services
     public class ServiceWorkerAnalyzer : IServiceWorkerAnalyzer
     {
         private const int ActivationWaitMilliseconds = 60000;
+        private const int OfflineCheckAttempts = 2;
         private static readonly Regex WorkboxRoutingRegex = new(@"precacheAndRoute|registerRoute|NavigationRoute|createHandlerBoundToURL");
         private static readonly Regex FetchHandlerRegex = new(@"addEventListener\s*\(\s*['""]fetch['""]|\bonfetch\s*=");
         private static readonly Regex CacheStorageRegex = new(@"\bcaches\s*\.\s*(open|match)\s*\(");
@@ -102,99 +103,154 @@ namespace PWABuilder.Services
         {
             var offlineCapability = PwaCapability.CreateServiceWorkerCapabilities()
                 .First(c => c.Id == PwaCapabilityId.OfflineSupport);
-            if (swDetection == null)
+            if (swDetection is null)
             {
                 offlineCapability.Status = PwaCapabilityCheckStatus.Skipped;
                 return offlineCapability;
             }
 
-            // To test offline capability, we load the page in puppeteer. Then we disconnect the network and try to reload the page.
-            // If the page loads successfully while offline, we mark the capability as passed.
-            // NOTE: in the past we used Lighthouse's offline audit for this check. But as of summer 2025, Lighthouse has removed PWA audits including offline support audit.
-            try
+            // The live check runs in a headless browser tab. That tab can crash for reasons unrelated to the app being tested
+            // (memory pressure in the shared browser, a renderer hiccup during the offline reload), which showed up as
+            // "Page failed to process Inspector.targetCrashed" and marked working PWAs as having no offline support.
+            // So we retry once on a fresh tab, and if the browser still crashes we fall back to static analysis of the service worker.
+            for (var attempt = 1; attempt <= OfflineCheckAttempts; attempt++)
             {
-                using var page = await puppeteerService.NavigateAsync(appUrl);
-                cancelToken.ThrowIfCancellationRequested();
-
-                // Give the page a chance to settle. Many PWAs never reach network idle (e.g. long-polling, large asset streaming), so this is best-effort.
                 try
                 {
-                    await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 2000, Timeout = 10000 });
+                    return await RunLiveOfflineCheck(swDetection, appUrl, offlineCapability, logger, cancelToken);
                 }
-                catch (TimeoutException)
+                catch (Exception ex) when (IsBrowserCrash(ex) && attempt < OfflineCheckAttempts)
                 {
-                    logger.LogInformation("During offline detection for {url}, network didn't become idle. Continuing with offline check.", appUrl);
+                    logger.LogWarning(ex, "The browser tab crashed during offline detection for {url} (attempt {attempt} of {attempts}). Retrying on a fresh tab.", appUrl, attempt, OfflineCheckAttempts);
                 }
-
-                cancelToken.ThrowIfCancellationRequested();
-
-                // Wait until we have an active service worker. Service workers that precache many assets can take a long time to install,
-                // so we wait a while. Returns the state of the service worker when we stopped waiting.
-                var swState = await page.EvaluateFunctionAsync<string>($@"
-                    async () => {{
-                        if (!('serviceWorker' in navigator)) return 'none';
-                        const deadline = Date.now() + {ActivationWaitMilliseconds};
-                        while (true) {{
-                            const registration = await navigator.serviceWorker.getRegistration();
-                            if (registration?.active) return 'active';
-                            if (Date.now() >= deadline) {{
-                                return registration?.installing || registration?.waiting ? 'installing' : 'none';
-                            }}
-                            await new Promise(resolve => setTimeout(resolve, 1000));
-                        }}
-                    }}
-                ");
-                if (swState == "installing")
+                catch (Exception ex) when (IsBrowserCrash(ex))
                 {
-                    // The service worker is still installing, typically because it's precaching a large number of assets.
-                    // We can't run a real offline test in our time budget, so fall back to static analysis of the service worker code.
                     var hasOfflineLogic = HasOfflineCachingLogic(swDetection.Raw);
-                    logger.LogInformation("During offline detection for {url}, service worker was still installing after {seconds} seconds. Falling back to static analysis, which found offline caching logic: {hasOfflineLogic}", appUrl, ActivationWaitMilliseconds / 1000, hasOfflineLogic);
+                    logger.LogWarning(ex, "The browser tab crashed during offline detection for {url} on every attempt. Falling back to static analysis, which found offline caching logic: {hasOfflineLogic}", appUrl, hasOfflineLogic);
                     offlineCapability.Status = hasOfflineLogic ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
                     if (!hasOfflineLogic)
                     {
-                        offlineCapability.ErrorMessage = "Service worker was still installing during offline detection, and no offline caching logic was found in the service worker.";
+                        offlineCapability.ErrorMessage = "The browser crashed during the live offline check, and no offline caching logic was found in the service worker.";
                     }
 
                     return offlineCapability;
                 }
-
-                if (swState != "active")
+                catch (Exception ex)
                 {
-                    logger.LogInformation("During offline detection attempt for {url}, no service worker was registered. Marking offline detection test as failed.", appUrl);
+                    offlineCapability.ErrorMessage = $"Offline capability check failed due to an exception: {ex.Message}";
+                    logger.LogWarning(ex, "Error checking offline capability for {url}", appUrl);
                     offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
-                    offlineCapability.ErrorMessage = "During offline detection attempt, no active service worker found after load.";
                     return offlineCapability;
                 }
+            }
 
-                cancelToken.ThrowIfCancellationRequested();
+            return offlineCapability;
+        }
 
-                // Disconnect network
-                await page.SetOfflineModeAsync(true);
+        /// <summary>
+        /// Loads the page in the headless browser, waits for an active service worker, goes offline and reloads.
+        /// Throws if the browser tab crashes; the caller decides whether to retry.
+        /// </summary>
+        /// <param name="swDetection">The detected service worker.</param>
+        /// <param name="appUrl">The URL of the PWA.</param>
+        /// <param name="offlineCapability">The capability to fill in.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="cancelToken">The cancellation token.</param>
+        /// <returns>The offline capability with its status set.</returns>
+        private async Task<PwaCapability> RunLiveOfflineCheck(ServiceWorkerDetection swDetection, Uri appUrl, PwaCapability offlineCapability, ILogger logger, CancellationToken cancelToken)
+        {
+            // To test offline capability, we load the page in puppeteer. Then we disconnect the network and try to reload the page.
+            // If the page loads successfully while offline, we mark the capability as passed.
+            // NOTE: in the past we used Lighthouse's offline audit for this check. But as of summer 2025, Lighthouse has removed PWA audits including offline support audit.
+            using var page = await puppeteerService.NavigateAsync(appUrl);
+            cancelToken.ThrowIfCancellationRequested();
 
-                // Try to reload the page
-                var response = await page.ReloadAsync(20000, [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load]);
-                if (response != null && response.Ok)
+            // Give the page a chance to settle. Many PWAs never reach network idle (e.g. long-polling, large asset streaming), so this is best-effort.
+            try
+            {
+                await page.WaitForNetworkIdleAsync(new WaitForNetworkIdleOptions { IdleTime = 2000, Timeout = 10000 });
+            }
+            catch (TimeoutException)
+            {
+                logger.LogInformation("During offline detection for {url}, network didn't become idle. Continuing with offline check.", appUrl);
+            }
+
+            cancelToken.ThrowIfCancellationRequested();
+
+            // Wait until we have an active service worker. Service workers that precache many assets can take a long time to install,
+            // so we wait a while. Returns the state of the service worker when we stopped waiting.
+            var swState = await page.EvaluateFunctionAsync<string>($@"
+                async () => {{
+                    if (!('serviceWorker' in navigator)) return 'none';
+                    const deadline = Date.now() + {ActivationWaitMilliseconds};
+                    while (true) {{
+                        const registration = await navigator.serviceWorker.getRegistration();
+                        if (registration?.active) return 'active';
+                        if (Date.now() >= deadline) {{
+                            return registration?.installing || registration?.waiting ? 'installing' : 'none';
+                        }}
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }}
+                }}
+            ");
+            if (swState == "installing")
+            {
+                // The service worker is still installing, typically because it's precaching a large number of assets.
+                // We can't run a real offline test in our time budget, so fall back to static analysis of the service worker code.
+                var hasOfflineLogic = HasOfflineCachingLogic(swDetection.Raw);
+                logger.LogInformation("During offline detection for {url}, service worker was still installing after {seconds} seconds. Falling back to static analysis, which found offline caching logic: {hasOfflineLogic}", appUrl, ActivationWaitMilliseconds / 1000, hasOfflineLogic);
+                offlineCapability.Status = hasOfflineLogic ? PwaCapabilityCheckStatus.Passed : PwaCapabilityCheckStatus.Failed;
+                if (!hasOfflineLogic)
                 {
-                    offlineCapability.Status = PwaCapabilityCheckStatus.Passed;
-                }
-                else
-                {
-                    offlineCapability.ErrorMessage = $"Offline capability check failed due to response {response?.Status}";
-                    offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
-                    logger.LogInformation("Offline capability check for {url} failed. Response: {status} {statusText}", appUrl, (int?)response?.Status, response?.StatusText);
+                    offlineCapability.ErrorMessage = "Service worker was still installing during offline detection, and no offline caching logic was found in the service worker.";
                 }
 
                 return offlineCapability;
             }
-            catch (Exception ex)
+
+            if (swState != "active")
             {
-                offlineCapability.ErrorMessage = $"Offline capability check failed due to an exception: {ex.Message}";
-                logger.LogWarning(ex, "Error checking offline capability for {url}", appUrl);
+                logger.LogInformation("During offline detection attempt for {url}, no service worker was registered. Marking offline detection test as failed.", appUrl);
                 offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
+                offlineCapability.ErrorMessage = "During offline detection attempt, no active service worker found after load.";
+                return offlineCapability;
+            }
+
+            cancelToken.ThrowIfCancellationRequested();
+
+            // Disconnect network
+            await page.SetOfflineModeAsync(true);
+
+            // Try to reload the page
+            var response = await page.ReloadAsync(20000, [WaitUntilNavigation.DOMContentLoaded, WaitUntilNavigation.Load]);
+            if (response is { Ok: true })
+            {
+                offlineCapability.Status = PwaCapabilityCheckStatus.Passed;
+            }
+            else
+            {
+                offlineCapability.ErrorMessage = $"Offline capability check failed due to response {response?.Status}";
+                offlineCapability.Status = PwaCapabilityCheckStatus.Failed;
+                logger.LogInformation("Offline capability check for {url} failed. Response: {status} {statusText}", appUrl, (int?)response?.Status, response?.StatusText);
             }
 
             return offlineCapability;
+        }
+
+        /// <summary>
+        /// Whether an exception means the headless browser tab died under us, as opposed to the app failing the check.
+        /// PuppeteerSharp reports a crashed renderer as TargetCrashedException, and any protocol call made afterwards
+        /// fails with TargetClosedException whose close reason carries "Inspector.targetCrashed".
+        /// </summary>
+        /// <param name="ex">The exception thrown by the live check.</param>
+        /// <returns>True when the browser tab crashed or was closed from under the check.</returns>
+        public static bool IsBrowserCrash(Exception ex)
+        {
+            // TargetCrashedException is internal to PuppeteerSharp, so it is matched by name.
+            return ex is TargetClosedException
+                || ex.GetType().Name is "TargetCrashedException"
+                || ex.Message.Contains("targetCrashed", StringComparison.OrdinalIgnoreCase)
+                || (ex.InnerException is not null && IsBrowserCrash(ex.InnerException));
         }
 
         /// <summary>
