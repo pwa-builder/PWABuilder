@@ -30,7 +30,7 @@ function getUnsignedApkOptions() {
         "additionalTrustedOrigins": [],
         "appVersion": "1.0.0.0",
         "appVersionCode": 1,
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#0d1117",
         "display": "standalone",
         "enableSiteSettingsShortcut": true,
         "enableNotifications": false,
@@ -44,28 +44,50 @@ function getUnsignedApkOptions() {
                 "enabled": false
             }
         },
-        "host": "https://webboard.app",
-        "iconUrl": "https://webboard.app/icons/android/android-launchericon-512-512.png",
-        "launcherName": "Webboard",
-        "name": "Webboard",
-        "maskableIconUrl": "https://webboard.app/icons/android/maskable_icon_192.png",
-        "navigationColor": "#1976d2",
-        "navigationColorDark": "#1976d2",
-        "navigationDividerColor": "#1976d2",
-        "navigationDividerColorDark": "#1976d2",
+        "host": "https://pwa-builder.github.io",
+        "iconUrl": "https://pwa-builder.github.io/nimbus/assets/icons/icon_512.png",
+        "launcherName": "Nimbus",
+        "name": "Nimbus",
+        "maskableIconUrl": "https://pwa-builder.github.io/nimbus/assets/icons/maskable_512.png",
+        "navigationColor": "#2563eb",
+        "navigationColorDark": "#0d1117",
+        "navigationDividerColor": "#2563eb",
+        "navigationDividerColorDark": "#0d1117",
         "orientation": "default",
-        "packageId": "app.webboard",
-        "pwaUrl": "https://webboard.app",
+        "packageId": "io.github.pwa_builder.nimbus",
+        "pwaUrl": "https://pwa-builder.github.io/nimbus/",
         "serviceAccountJsonFile": undefined,
         "shortcuts": [
             {
-                "name": "Start Live Session",
-                "short_name": "Start Live",
-                "url": "/?startLive",
+                "name": "New Note",
+                "short_name": "Note",
+                "url": "./?new=1",
                 "icons": [
                     {
                         "sizes": "192x192",
-                        "src": "/icons/android/maskable_icon_192.png"
+                        "src": "assets/icons/icon_192.png"
+                    }
+                ]
+            },
+            {
+                "name": "Sketch note",
+                "short_name": "Sketch note",
+                "url": "./?new=sketch",
+                "icons": [
+                    {
+                        "sizes": "192x192",
+                        "src": "assets/icons/icon_192.png"
+                    }
+                ]
+            },
+            {
+                "name": "Photo note",
+                "short_name": "Photo note",
+                "url": "./?new=photo",
+                "icons": [
+                    {
+                        "sizes": "192x192",
+                        "src": "assets/icons/icon_192.png"
                     }
                 ]
             }
@@ -82,10 +104,10 @@ function getUnsignedApkOptions() {
             "storePassword": "iOp987#@"
         },
         "splashScreenFadeOutDuration": 300,
-        "startUrl": "/",
-        "themeColor": "#1976d2",
+        "startUrl": "/nimbus/",
+        "themeColor": "#2563eb",
         "themeColorDark": "#0d1117",
-        "webManifestUrl": "https://webboard.app/manifest.json"
+        "webManifestUrl": "https://pwa-builder.github.io/nimbus/manifest.json"
     };
 }
 

@@ -78,7 +78,7 @@ test('redirect processing precedes private API access; only scoped access tokens
   assert.equal(msal.auth.redirectUri, `https://support.example${callbackPath}`);
   assert.equal(msal.auth.postLogoutRedirectUri, msal.auth.redirectUri);
   assert.equal(msal.auth.navigateToLoginRequestUrl, false);
-  assert.equal(msal.cache.cacheLocation, 'sessionStorage');
+  assert.equal(msal.cache.cacheLocation, 'localStorage');
   assert.equal(msal.cache.temporaryCacheLocation, 'sessionStorage');
   assert.equal(msal.cache.storeAuthStateInCookie, false);
   const silent = f.calls.find(call => call[0] === 'silent');

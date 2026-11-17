@@ -39,11 +39,11 @@ async function mockBoundary(page: Page, options: Options = {}): Promise<string[]
     const url = new URL(route.request().url());
     if (url.origin !== 'http://127.0.0.1:5178') {
       await route.abort();
-      throw new Error('An offline admin test attempted an external request.');
+      throw new Error(`An offline admin test attempted an external request to ${url.origin}${url.pathname}.`);
     }
     if (url.pathname.includes('@azure_msal-browser') && !options.realMsal) {
       await route.fulfill({ contentType: 'application/javascript', body: `
-        export const BrowserCacheLocation = { SessionStorage: 'sessionStorage' };
+        export const BrowserCacheLocation = { LocalStorage: 'localStorage', SessionStorage: 'sessionStorage' };
         export class InteractionRequiredAuthError extends Error {}
         export class PublicClientApplication {
           constructor(config) {
@@ -282,6 +282,94 @@ test('the installed MSAL client initializes offline without prompting an anonymo
   expect(calls).toEqual([]);
   expect(scripts.some(url => /app-index|site-analytics|appinsights|service-worker/.test(url))).toBe(false);
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
+});
+
+test('the installed MSAL client reuses sign-in after the original tab closes and clears it on signout', async ({ page, context }) => {
+  await mockBoundary(page, { realMsal: true });
+  let msalModuleUrl = '';
+  page.on('request', request => {
+    if (new URL(request.url()).pathname.includes('@azure_msal-browser')) {
+      msalModuleUrl = request.url();
+    }
+  });
+  await page.goto('/admin');
+  await expect(page.getByRole('status')).toContainText('Sign in');
+  expect(msalModuleUrl).not.toBe('');
+
+  // Seed synthetic tokens through MSAL's public cache API, never contact Entra.
+  await page.evaluate(async ({ msalModuleUrl, clientId }) => {
+    const { PublicClientApplication }: typeof import('@azure/msal-browser') = await import(msalModuleUrl);
+    const clientModuleUrl = location.origin + '/src/support/admin-client.ts';
+    const { AdminClient }: typeof import('../src/support/admin-client.ts') = await import(clientModuleUrl);
+    let auth: import('@azure/msal-browser').PublicClientApplication | undefined;
+    const client = new AdminClient(window, undefined, config => {
+      auth = new PublicClientApplication(config);
+      return auth;
+    });
+    await client.initialize();
+    if (!auth) {
+      throw new Error('Admin authentication did not initialize.');
+    }
+    const tenantId = '22222222-2222-4222-8222-222222222222';
+    const objectId = '44444444-4444-4444-8444-444444444444';
+    const expiresOn = Math.floor(Date.now() / 1000) + 3600;
+    const encode = (value: object): string => btoa(JSON.stringify(value))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const idToken = `${encode({ alg: 'none' })}.${encode({
+      aud: clientId, iss: `https://login.microsoftonline.com/${tenantId}/v2.0`,
+      oid: objectId, sub: objectId, tid: tenantId,
+      preferred_username: 'offline@example.test', exp: expiresOn,
+    })}.offline`;
+    const result = auth.getTokenCache().loadExternalTokens({
+      authority: `https://login.microsoftonline.com/${tenantId}`,
+      scopes: [`api://${clientId}/Support.Read`],
+    }, {
+      id_token: idToken, access_token: 'offline-api-token', expires_in: 3600,
+      client_info: encode({ uid: objectId, utid: tenantId }),
+    }, { extendedExpiresOn: expiresOn });
+    auth.setActiveAccount(result.account);
+    sessionStorage.setItem('pwabuilder.support.return-path', '/admin/unknown');
+  }, { msalModuleUrl, clientId });
+  await page.close();
+
+  const reopened = await context.newPage();
+  const calls = await mockBoundary(reopened, { realMsal: true });
+  const authority = 'https://login.microsoftonline.com/22222222-2222-4222-8222-222222222222';
+  await reopened.route('https://login.microsoftonline.com/common/discovery/instance?**', route =>
+    route.fulfill({ json: {
+      tenant_discovery_endpoint: `${authority}/v2.0/.well-known/openid-configuration`,
+      metadata: [{
+        preferred_network: 'login.microsoftonline.com', preferred_cache: 'login.microsoftonline.com',
+        aliases: ['login.microsoftonline.com'],
+      }],
+    } }));
+  await reopened.route(`${authority}/v2.0/.well-known/openid-configuration`, route =>
+    route.fulfill({ json: {
+      issuer: `${authority}/v2.0`,
+      authorization_endpoint: `${authority}/oauth2/v2.0/authorize`,
+      token_endpoint: `${authority}/oauth2/v2.0/token`,
+      end_session_endpoint: `${authority}/oauth2/v2.0/logout`,
+      jwks_uri: `${authority}/discovery/v2.0/keys`,
+    } }));
+  await reopened.goto(analysisPath);
+  await expect(reopened.getByRole('heading', { name: 'Checks', exact: true })).toBeVisible();
+  expect(calls).toEqual(['/api' + analysisPath]);
+  expect(await reopened.evaluate(() => sessionStorage.getItem('pwabuilder.support.return-path'))).toBeNull();
+  expect(await reopened.evaluate(() => JSON.stringify(localStorage))).not.toContain('Analysis failed');
+
+  await reopened.route('https://login.microsoftonline.com/**/logout**', route =>
+    route.fulfill({ contentType: 'text/plain', body: 'Offline Microsoft sign-out endpoint.' }));
+  await Promise.all([
+    reopened.waitForRequest(request => new URL(request.url()).pathname.endsWith('/logout')),
+    reopened.getByRole('button', { name: 'Sign out', exact: true }).click(),
+  ]);
+  await reopened.close();
+
+  const signedOut = await context.newPage();
+  const signedOutCalls = await mockBoundary(signedOut, { realMsal: true });
+  await signedOut.goto('/admin');
+  await expect(signedOut.getByRole('status')).toContainText('Sign in');
+  expect(signedOutCalls).toEqual([]);
 });
 
 test('restoring a page clears diagnostic content until an explicit reload', async ({ page }) => {

@@ -148,6 +148,17 @@ test('only supported options and features reach Bubblewrap from persisted JSON',
     assert.equal(twa.alphaDependencies.enabled, true);
 });
 
+test('generated Gradle uses androidbrowserhelper 2.7.4 for stable and alpha dependencies', async () => {
+    for (const enabled of [false, true]) {
+        const twa = manifest();
+        twa.alphaDependencies = { enabled };
+        assert.match(
+            await renderGradle(twa),
+            /^\s*implementation 'com\.google\.androidbrowserhelper:androidbrowserhelper:2\.7\.4'\s*$/mu,
+        );
+    }
+});
+
 test('installed Gradle template emits literal strings for every string injection sink', async () => {
     const payload = "before\\', injected: (1 + 1), ignored: ' \"${1 + 1}\"\r\n\u2028after";
     const twa = manifest();

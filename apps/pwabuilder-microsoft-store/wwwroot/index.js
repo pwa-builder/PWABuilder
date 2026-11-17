@@ -30,9 +30,9 @@ function setCode(options) {
 function getSimpleMsix() {
     // This creates an unsigned package. Should be considered the bare minimum.
     return {
-        name: "Webboard",
-        packageId: "JustinWillis.Webboard",
-        url: "https://webboard.app",
+        name: "Nimbus",
+        packageId: "PWABuilder.Nimbus",
+        url: "https://pwa-builder.github.io/nimbus/",
         version: "1.0.1",
         allowSigning: true,
         classicPackage: {
@@ -45,7 +45,7 @@ function getSimpleMsix() {
 function getPublisherMsix() {
     const options = getSimpleMsix();
     options.publisher = {
-        displayName: "Webboard, Inc.",
+        displayName: "Nimbus, Inc.",
         commonName: "CN=3a54a224-05dd-42aa-85bd-3f3c1478fdca"
     };
     return options;
@@ -54,7 +54,7 @@ function getPublisherMsix() {
 function getImagesArgsMsix() {
     const options = getSimpleMsix();
     options.images = options.images = {
-        baseImage: "https://webboard.app/icons/android/android-launchericon-512-512.png",
+        baseImage: "https://pwa-builder.github.io/nimbus/assets/icons/icon_512.png",
         backgroundColor: "transparent",
         padding: 0.3,
         splashScreen: {
@@ -135,9 +135,9 @@ function getEdgeHtmlMsix() {
     options.edgeHtmlPackage = {
         generate: true,
         version: "1.0.1",
-        url: "https://webboard.app/?v=legacy-edgehtml",
+        url: "https://pwa-builder.github.io/nimbus/?v=legacy-edgehtml",
         urlsWithWindowsRuntimeAccess: [
-            "https://webboard.app/*"
+            "https://pwa-builder.github.io/nimbus/*"
         ]
     };
     options.generateModernPackage = false;
@@ -171,15 +171,15 @@ function getKitchenSinkMsix() {
     options.classicPackage = {
         generate: true,
         version: "1.0.0",
-        url: "https://webboard.app/?v=classic",
+        url: "https://pwa-builder.github.io/nimbus/?v=classic",
     };
     options.edgeHtmlPackage = getEdgeHtmlMsix().edgeHtmlPackage;
-    options.manifestUrl = "https://webboard.app/manifest.json";
+    options.manifestUrl = "https://pwa-builder.github.io/nimbus/manifest.json";
     options.manifest = getManifest();
     options.images = getImagesArgsMsix().images;
     options.generateModernPackage = true;
     options.resourceLanguage = "EN-US";
-    options.startUrl = "https://webboard.app";
+    options.startUrl = "https://pwa-builder.github.io/nimbus/";
     
     return options;
 }
@@ -189,64 +189,90 @@ function getManifest() {
     return {
         "dir": "ltr",
         "lang": "en",
-        "name": "Webboard",
-        "scope": "/",
+        "name": "Nimbus",
+        "scope": "./",
         "display": "standalone",
-        "start_url": "/",
-        "short_name": "Webboard",
-        "theme_color": "#FFFFFF",
-        "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
+        "start_url": "./",
+        "short_name": "Nimbus",
+        "theme_color": "#2563eb",
+        "description": "Keep your thoughts, sketches, and photos together in an offline-first notebook. Built with PWABuilder.",
         "orientation": "any",
-        "background_color": "#FFFFFF",
+        "background_color": "#0d1117",
         "related_applications": [],
         "prefer_related_applications": false,
         "screenshots": [
             {
-                "src": "assets/screen.png"
+                "src": "assets/screenshots/wide.png",
+                "sizes": "1280x720",
+                "type": "image/png",
+                "form_factor": "wide",
+                "label": "Nimbus on the desktop"
             },
             {
-                "src": "assets/screen.png"
-            },
-            {
-                "src": "assets/screen.png"
+                "src": "assets/screenshots/narrow.png",
+                "sizes": "720x1280",
+                "type": "image/png",
+                "form_factor": "narrow",
+                "label": "Nimbus on mobile"
             }
-        ],
-        "features": [
-            "Cross Platform",
-            "low-latency inking",
-            "fast",
-            "useful AI"
         ],
         "shortcuts": [
             {
-                "name": "Start Live Session",
-                "short_name": "Start Live",
-                "description": "Jump direction into starting or joining a live session",
-                "url": "/?startLive",
-                "icons": [{ "src": "icons/android/maskable_icon_192.png", "sizes": "192x192" }]
+                "name": "New Note",
+                "short_name": "Note",
+                "description": "Jump straight into a new note",
+                "url": "./?new=1",
+                "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+            },
+            {
+                "name": "Sketch note",
+                "short_name": "Sketch note",
+                "description": "Create a note with a sketch",
+                "url": "./?new=sketch",
+                "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
+            },
+            {
+                "name": "Photo note",
+                "short_name": "Photo note",
+                "description": "Create a note with a photo",
+                "url": "./?new=photo",
+                "icons": [{ "src": "assets/icons/icon_192.png", "sizes": "192x192" }]
             }
         ],
         "icons": [
             {
-                "src": "icons/android/android-launchericon-64-64.png",
-                "sizes": "64x64"
+                "src": "assets/icons/icon_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any"
             },
             {
-                "src": "icons/android/maskable_icon_192.png",
-                "sizes": "192x192",
+                "src": "assets/icons/maskable_512.png",
+                "sizes": "512x512",
+                "type": "image/png",
                 "purpose": "maskable"
             },
             {
-                "src": "icons/android/android-launchericon-48-48.png",
-                "sizes": "48x48"
+                "src": "assets/icons/icon_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any"
             },
             {
-                "src": "icons/android/android-launchericon-512-512.png",
-                "sizes": "512x512"
+                "src": "assets/icons/maskable_192.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "maskable"
             },
             {
-                "src": "icons/android/android-launchericon-28-28.png",
-                "sizes": "28x28"
+                "src": "assets/icons/icon_48.png",
+                "sizes": "48x48",
+                "type": "image/png"
+            },
+            {
+                "src": "assets/icons/icon_24.png",
+                "sizes": "24x24",
+                "type": "image/png"
             }
         ]
     }

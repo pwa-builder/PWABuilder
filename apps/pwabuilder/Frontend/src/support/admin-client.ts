@@ -120,7 +120,8 @@ export class AdminClient {
         navigateToLoginRequestUrl: false,
       },
       cache: {
-        cacheLocation: BrowserCacheLocation.SessionStorage,
+        // Reuse MSAL's sign-in across tabs; redirect state remains isolated to each tab.
+        cacheLocation: BrowserCacheLocation.LocalStorage,
         temporaryCacheLocation: BrowserCacheLocation.SessionStorage,
         storeAuthStateInCookie: false,
       },
